@@ -159,6 +159,8 @@ const VavityEthereum: React.FC = () => {
   const [deletingInvestments, setDeletingInvestments] = useState<string[]>([]);
   const [pendingDeleteInvestments, setPendingDeleteInvestments] = useState<string[]>([]);
   const [deleteHeights, setDeleteHeights] = useState<Record<string, number>>({});
+  const deleteInFlight =
+    pendingDeleteInvestments.length > 0 || deletingInvestments.length > 0 || closingInvestments.length > 0;
   const [collapsedInvestments, setCollapsedInvestments] = useState<string[]>([]);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
@@ -285,6 +287,9 @@ const VavityEthereum: React.FC = () => {
   const profitHeightPendingRef = useRef(false);
   const summaryAnimatedOnceRef = useRef(false);
   const profitOpenAnimOnceRef = useRef(false);
+  const allowNumberHeightAnimationsRef = useRef(true);
+  const numberHeightDisableTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const prevInvestmentCountRef = useRef(0);
   const [addFormPanelHeight, setAddFormPanelHeight] = useState<number>(0);
   const [addFormSubmitMaxHeight, setAddFormSubmitMaxHeight] = useState<number | null>(null);
   const [addFormOuterSubmitMaxHeight, setAddFormOuterSubmitMaxHeight] = useState<number | null>(null);
@@ -896,7 +901,7 @@ const VavityEthereum: React.FC = () => {
     }
     let isMounted = true;
     const loadData = async () => {
-      if (isMutatingRef.current) return;
+      if (isMutatingRef.current || deleteInFlight || isClearingInvestments) return;
       const seq = ++loadDataSeqRef.current;
       setLoading(true);
       try {
@@ -937,7 +942,7 @@ const VavityEthereum: React.FC = () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [fetchVavityAggregator, sessionId, sessionReady, isSignedIn, email]);
+  }, [fetchVavityAggregator, sessionId, sessionReady, isSignedIn, email, deleteInFlight, isClearingInvestments]);
 
   useEffect(() => {
     if (!vavityData) return;
@@ -1270,9 +1275,6 @@ const VavityEthereum: React.FC = () => {
     },
     [investmentsWholeHeight, isClearingInvestments]
   );
-
-  const deleteInFlight =
-    pendingDeleteInvestments.length > 0 || deletingInvestments.length > 0 || closingInvestments.length > 0;
 
   useLayoutEffect(() => {
     const prev = prevLiveCountRef.current;
@@ -1794,6 +1796,27 @@ const VavityEthereum: React.FC = () => {
     []
   );
 
+  const enableNumberHeightAnimationsFor = useCallback((ms: number = 2200) => {
+    allowNumberHeightAnimationsRef.current = true;
+    if (numberHeightDisableTimerRef.current) {
+      globalThis.clearTimeout(numberHeightDisableTimerRef.current);
+      numberHeightDisableTimerRef.current = null;
+    }
+    numberHeightDisableTimerRef.current = globalThis.setTimeout(() => {
+      numberHeightDisableTimerRef.current = null;
+      allowNumberHeightAnimationsRef.current = false;
+    }, ms);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (numberHeightDisableTimerRef.current) {
+        globalThis.clearTimeout(numberHeightDisableTimerRef.current);
+        numberHeightDisableTimerRef.current = null;
+      }
+    };
+  }, []);
+
   useEffect(() => {
     if (!summaryOpen || isClearingInvestments || !hasInvestmentsUI) {
       profitOpenAnimOnceRef.current = false;
@@ -1830,6 +1853,34 @@ const VavityEthereum: React.FC = () => {
       ro.disconnect();
     };
   }, [animateNumberHeight, hasInvestmentsUI, summaryAnimating, summaryOpen, isClearingInvestments]);
+
+  useLayoutEffect(() => {
+    if (!summaryOpen || isClearingInvestments) {
+      allowNumberHeightAnimationsRef.current = false;
+      if (numberHeightDisableTimerRef.current) {
+        globalThis.clearTimeout(numberHeightDisableTimerRef.current);
+        numberHeightDisableTimerRef.current = null;
+      }
+      return;
+    }
+    enableNumberHeightAnimationsFor();
+  }, [summaryOpen, isClearingInvestments, enableNumberHeightAnimationsFor]);
+
+  useLayoutEffect(() => {
+    const prev = prevInvestmentCountRef.current;
+    const next = investments.length;
+    if (prev !== next) {
+      prevInvestmentCountRef.current = next;
+      if (summaryOpen && !isClearingInvestments) {
+        enableNumberHeightAnimationsFor();
+      }
+    }
+  }, [investments.length, summaryOpen, isClearingInvestments, enableNumberHeightAnimationsFor]);
+
+  useLayoutEffect(() => {
+    if (!summaryOpen || isClearingInvestments) return;
+    enableNumberHeightAnimationsFor();
+  }, [selectedRangeDays, summaryOpen, isClearingInvestments, enableNumberHeightAnimationsFor]);
 
   useEffect(() => {
     if (!summaryOpen || isClearingInvestments) return;
@@ -1876,11 +1927,15 @@ const VavityEthereum: React.FC = () => {
       maximumFractionDigits: decimals
     });
     if (lastFormattedVatopRef.current === formatted) return;
-    lastFormattedVatopRef.current = formatted;
     if (!summaryOpen || isClearingInvestments || (!summaryAnimating && !summaryAnimatedOnceRef.current)) {
       purchasedHeightPendingRef.current = true;
       return;
     }
+    if (!allowNumberHeightAnimationsRef.current) {
+      lastFormattedVatopRef.current = formatted;
+      return;
+    }
+    lastFormattedVatopRef.current = formatted;
     animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValuePrevRef, purchasedValueTimerRef);
   }, [animateNumberHeight, summaryTotals.acVatop, summaryOpen, isClearingInvestments, summaryAnimating]);
 
@@ -1893,11 +1948,15 @@ const VavityEthereum: React.FC = () => {
       maximumFractionDigits: decimals
     });
     if (lastFormattedVactRef.current === formatted) return;
-    lastFormattedVactRef.current = formatted;
     if (!summaryOpen || isClearingInvestments || (!summaryAnimating && !summaryAnimatedOnceRef.current)) {
       currentHeightPendingRef.current = true;
       return;
     }
+    if (!allowNumberHeightAnimationsRef.current) {
+      lastFormattedVactRef.current = formatted;
+      return;
+    }
+    lastFormattedVactRef.current = formatted;
     animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValuePrevRef, currentValueTimerRef);
   }, [animateNumberHeight, summaryTotals.acVact, summaryOpen, isClearingInvestments, summaryAnimating]);
 
@@ -1912,11 +1971,15 @@ const VavityEthereum: React.FC = () => {
     });
     const profitKey = `${formatted}|${summaryTotals.acVactTaa ?? 0}`;
     if (lastFormattedProfitRef.current === profitKey) return;
-    lastFormattedProfitRef.current = profitKey;
     if (!summaryOpen || isClearingInvestments || (!summaryAnimating && !summaryAnimatedOnceRef.current)) {
       profitHeightPendingRef.current = true;
       return;
     }
+    if (!allowNumberHeightAnimationsRef.current) {
+      lastFormattedProfitRef.current = profitKey;
+      return;
+    }
+    lastFormattedProfitRef.current = profitKey;
     animateNumberHeight(
       profitValueRef,
       setProfitValueHeight,
@@ -2775,6 +2838,7 @@ const VavityEthereum: React.FC = () => {
 
   const handleSubmitInvestment = async () => {
     if (!isSignedIn && !sessionId) return;
+    if (deleteInFlight || deleteLocked) return;
     const amt = parseTokenAmount(tokenAmount || '0');
     if (!amt || amt <= 0) return;
     if (!purchaseDate) return;
@@ -3151,7 +3215,7 @@ const VavityEthereum: React.FC = () => {
 
               <button
                 onClick={handleSubmitInvestment}
-                disabled={submitLoading || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
+                disabled={submitLoading || deleteInFlight || deleteLocked || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
                 {submitLoading ? 'Submitting...' : 'Submit'}

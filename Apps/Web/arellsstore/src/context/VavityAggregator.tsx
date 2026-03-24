@@ -174,6 +174,23 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       },
     });
     const data = response.data || {};
+    const hasCreatedAt = typeof data.createdAt === 'number' && Number.isFinite(data.createdAt);
+    const hasExpiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt);
+    if (!hasCreatedAt || !hasExpiresAt) {
+      try {
+        await saveVavityAggregator(currentSessionId, [], asset);
+        const refreshed = await axios.get(`/api/fetchVavityAggregator`, {
+          params: {
+            sessionId: currentSessionId,
+            asset,
+            ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: '1' } : {}),
+          },
+        });
+        Object.assign(data, refreshed.data || {});
+      } catch {
+        // ignore session init errors
+      }
+    }
     const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
     const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
     const fetchedTotalsLiquid: TotalsState = data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
