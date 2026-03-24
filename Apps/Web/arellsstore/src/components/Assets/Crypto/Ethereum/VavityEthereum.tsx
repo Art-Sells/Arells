@@ -1337,6 +1337,10 @@ const VavityEthereum: React.FC = () => {
           clearInvestmentsAnimTimerRef.current = null;
         }
         clearInvestmentsAnimTimerRef.current = globalThis.setTimeout(() => {
+          if (showEmptyAddForm || showAddForm || addFormOpen) {
+            clearInvestmentsAnimTimerRef.current = null;
+            return;
+          }
           // Ensure empty buttons animate in (height down 1s) after clearing.
           setEmptySigninHiding(true);
           setEmptySigninGone(false);
@@ -1369,6 +1373,10 @@ const VavityEthereum: React.FC = () => {
           clearInvestmentsAnimTimerRef.current = null;
         }, 2000);
       } else if (!isClearingInvestments) {
+        if (showEmptyAddForm || showAddForm || addFormOpen) {
+          prevSummaryCountRef.current = next;
+          return;
+        }
         setSummaryOpen(false);
         // Initial empty mount or already-finished clear.
         setShowEmptyAddForm(false);

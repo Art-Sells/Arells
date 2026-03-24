@@ -2,8 +2,6 @@
 
 ## Arells v1
 
-- *after add investments/sign in to save investments section heights down after all deletions...... when I click "Add Investments" immediatelly... the add investments form begins to load but dissapears and reloads the add investments save investments section again... I basically have to click add investments again for the form to height down and not reload the add investments/ sign in to save investmnts section... investigate why make sure you compare our current code to this commit which wasn't running into those issues: b11df9f38f2433bc7991c7cff58aeee1fce68aa6*
-
 - *minor my investment box UI/spacing issues (top padding fix) to fix... Also loading issues on page mount if numbers haven't popped up yet... Might have to add a circular loader filed with the arells icon color changes just like the asset summary box loader for the summary box numbers and place it pretty high on top*
 
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
