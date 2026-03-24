@@ -216,6 +216,7 @@ const VavityBitcoin: React.FC = () => {
   const clearInvestmentsAnimTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [slowOpenInvestments, setSlowOpenInvestments] = useState<string[]>([]);
   const isMutatingRef = useRef(false);
+  const loadDataSeqRef = useRef(0);
   const prevInvestmentIdsRef = useRef<string[]>([]);
   const prevSummaryCountRef = useRef(0);
   const pendingNewIdsRef = useRef<string[]>([]);
@@ -907,6 +908,7 @@ const VavityBitcoin: React.FC = () => {
 
     const loadData = async () => {
       if (isMutatingRef.current) return;
+      const seq = ++loadDataSeqRef.current;
       setLoading(true);
       try {
         const data = isSignedIn
@@ -928,13 +930,13 @@ const VavityBitcoin: React.FC = () => {
             console.warn('[delete-debug] poll returned deleted investment', { signature, ageMs });
           }
         }
-        if (isMounted) {
+        if (isMounted && seq === loadDataSeqRef.current) {
           setVavityData(data);
         }
       } catch (error) {
         // Intentionally quiet to avoid UI noise
       } finally {
-        if (isMounted) {
+        if (isMounted && seq === loadDataSeqRef.current) {
           setLoading(false);
           setInitialFetchDone((prev) => prev || true);
         }
@@ -1579,6 +1581,10 @@ const VavityBitcoin: React.FC = () => {
   }, [addMoreOpen, tokenAmount, purchaseDate, historicalLoading, historicalPrice, vapa]);
 
   useLayoutEffect(() => {
+    if (!summaryOpen || isClearingInvestments || !hasInvestmentsUI) {
+      setProfitInlineHeight(0);
+      return;
+    }
     const el = profitInlineAnimRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
     let raf = 0;
@@ -1595,7 +1601,7 @@ const VavityBitcoin: React.FC = () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [selectedRangeDays, rangeLoading]);
+  }, [summaryOpen, isClearingInvestments, hasInvestmentsUI, selectedRangeDays, rangeLoading]);
   const oldestInvestmentDate = useMemo(() => {
     if (investments.length === 0) return null;
     const dates = investments
@@ -2120,9 +2126,33 @@ const VavityBitcoin: React.FC = () => {
     const sign = value > 0 ? '+' : '';
     return `${sign}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
   }, []);
+  const allTimeTotals = useMemo(() => {
+    return investments.reduce(
+      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
+        const amount = Number(entry.cVactTaa) || 0;
+        const currentModeSpot = displayIsLiquidMode ? assetPrice : vapa;
+        const purchasePrice = displayIsLiquidMode
+          ? Number(entry.lCpVatop ?? entry.rCpVatop ?? entry.cpVatop) || currentModeSpot || 0
+          : Number(entry.cpVatop) || currentModeSpot || 0;
+        const currentValue = displayIsLiquidMode
+          ? Number(entry.lCVact ?? entry.rCVact) || amount * (currentModeSpot || 0)
+          : Number(entry.cVact) || amount * (currentModeSpot || 0);
+        const purchaseValue = displayIsLiquidMode
+          ? Number(entry.lCVatop ?? entry.rCVatop) || amount * (purchasePrice || 0)
+          : Number(entry.cVatop) || amount * (purchasePrice || 0);
+        acc.acVatop += purchaseValue;
+        acc.acVact += currentValue;
+        acc.acdVatop += currentValue - purchaseValue;
+        acc.acVactTaa += amount;
+        return acc;
+      },
+      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
+    );
+  }, [investments, displayIsLiquidMode, assetPrice, vapa]);
+
   const filteredTotals = useMemo(() => {
     if (!selectedRangeDays) {
-      return displayTotals;
+      return allTimeTotals;
     }
     if (rangeHistoricalPrice == null) {
       return displayTotals;
@@ -2152,7 +2182,7 @@ const VavityBitcoin: React.FC = () => {
       },
       { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
     );
-  }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice]);
+  }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice, allTimeTotals]);
   const summaryTotals = summaryTotalsSnapshot ?? filteredTotals;
   const summaryRangePrice = summaryRangePriceSnapshot ?? rangeHistoricalPrice;
 
@@ -2165,7 +2195,9 @@ const VavityBitcoin: React.FC = () => {
     ) => {
       const node = ref.current;
       if (!node) return;
-      const next = Math.ceil(node.getBoundingClientRect().height);
+      const rectHeight = node.getBoundingClientRect().height;
+      const scrollHeight = node.scrollHeight;
+      const next = Math.ceil(rectHeight > 0 ? rectHeight : scrollHeight);
       if (next <= 0) {
         prevRef.current = next;
         return;
@@ -2201,19 +2233,41 @@ const VavityBitcoin: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!summaryOpen || isClearingInvestments) {
+    if (!summaryOpen || isClearingInvestments || !hasInvestmentsUI) {
       profitOpenAnimOnceRef.current = false;
       return;
     }
+    if (!summaryAnimating && !summaryAnimatedOnceRef.current) return;
     if (profitOpenAnimOnceRef.current) return;
-    profitOpenAnimOnceRef.current = true;
-    requestAnimationFrame(() => {
+    const node = profitValueRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') {
+      profitOpenAnimOnceRef.current = true;
       requestAnimationFrame(() => {
-        if (!summaryOpen || isClearingInvestments) return;
-        animateNumberHeight(profitValueRef, setProfitValueHeight, profitValuePrevRef, profitValueTimerRef);
+        requestAnimationFrame(() => {
+          if (!summaryOpen || isClearingInvestments) return;
+          animateNumberHeight(profitValueRef, setProfitValueHeight, profitValuePrevRef, profitValueTimerRef);
+        });
       });
-    });
-  }, [animateNumberHeight, summaryOpen, isClearingInvestments]);
+      return;
+    }
+    let didRun = false;
+    const run = () => {
+      if (didRun) return;
+      const rectHeight = node.getBoundingClientRect().height;
+      const scrollHeight = node.scrollHeight;
+      const next = Math.ceil(rectHeight > 0 ? rectHeight : scrollHeight);
+      if (next <= 0) return;
+      didRun = true;
+      profitOpenAnimOnceRef.current = true;
+      animateNumberHeight(profitValueRef, setProfitValueHeight, profitValuePrevRef, profitValueTimerRef);
+    };
+    run();
+    const ro = new ResizeObserver(run);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+    };
+  }, [animateNumberHeight, hasInvestmentsUI, summaryAnimating, summaryOpen, isClearingInvestments]);
 
   useEffect(() => {
     if (!summaryOpen || isClearingInvestments) return;
@@ -2746,6 +2800,8 @@ const VavityBitcoin: React.FC = () => {
 
     isMutatingRef.current = true;
     setSubmitLoading(true);
+    lastFormattedProfitRef.current = null;
+    profitValuePrevRef.current = null;
     // Mark which panel is currently being submitted from, so we can collapse that panel smoothly.
     submitTargetRef.current = showAddMoreForm ? 'addMore' : 'add';
     const isAddMoreSubmit = submitTargetRef.current === 'addMore';
