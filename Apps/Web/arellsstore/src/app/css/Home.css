@@ -219,13 +219,11 @@ body {
 }
 
 .about-title {
-	font-size: 20px;
 	font-weight: 800;
 	margin: 0;
 }
 
 .about-text {
-	font-size: 20px;
 	font-weight: 800;
 	margin: 0;
 }
@@ -257,6 +255,34 @@ body {
 .about-section--inner {
 	padding: 12px;
 	background: transparent;
+}
+
+.about-text--outer { 
+	width: 180px;
+	margin: 0 auto;
+	font-size: 16px;
+	margin-bottom: 20px;
+	margin-top: 10px;
+	color: black;
+	letter-spacing: -.7px;
+ }
+.about-text--mid { 
+	width: 200px;
+	margin: 0 auto;
+	font-size: 13px;
+	margin-bottom: 20px;
+	margin-top: 10px;
+	color: black;
+	letter-spacing: -.5px;
+ }
+.about-text--inner { 
+	width: 200px;
+	margin: 0 auto;
+	font-size: 13px;
+	margin-bottom: 25px;
+	margin-top: 10px;
+	color: black;
+	letter-spacing: -.5px;
 }
 
 .about-section--cta {
