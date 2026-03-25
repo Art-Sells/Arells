@@ -3,24 +3,6 @@
 ## Arells v1
 
 
-### About:
-
-
-    Arells Icon at the top center overlapping a section with the same shadow as the homepage that wrapps the asset cards that wraps this:
-
-    Arells is a belief that investments should never lose value.
-    ______________________
-
-    This belief is powered by a ledger that shows how your investments would look if they never lost value.
-
-    ______________________
-
-    This ledger is powered by a new psychological and technological invention called Vavity.
-
-    Learn more > (Vavity (V)) <links to /vavity
-
-    All the words above (with the exception of the button) are 20 px, 800 font weight and centered.
-
 ### Vavity (take everything from vavity.info)
 - Change desc to: Remove "Investment losses are a human psychology issue" just tell WHAT Vavity is... that's it - don't lecture (replace bear markets with investment losses in vavity info and readme) so Vavity solves this psychologically through technical autonomy. By eliminating investment losses etc etc (in github also..., remove "cryptocurrency" from it and make it simply (remove Bitcoin and make it general))
 

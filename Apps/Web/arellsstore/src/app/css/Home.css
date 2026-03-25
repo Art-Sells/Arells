@@ -231,7 +231,6 @@ body {
 .about-section {
 	position: relative;
 	border-radius: 12px;
-	padding: 12px;
 	box-sizing: border-box;
 	margin: 0px 0;
 	background: transparent;
@@ -241,19 +240,24 @@ body {
 	margin-top: -20px;
 	padding-top: 14px;
 	padding-bottom: 14px;
-	margin-bottom: 15px;
+	margin-bottom: 0px;
 	padding-left: 14px;
 	padding-right: 14px;
 	background: transparent;
 }
 
 .about-section--mid {
-	padding: 12px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	padding-left: 12px;
+	padding-right: 12px;
 	background: transparent;
 }
 
 .about-section--inner {
-	padding: 12px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	width: 230px;
 	background: transparent;
 }
 
@@ -261,33 +265,51 @@ body {
 	width: 180px;
 	margin: 0 auto;
 	font-size: 16px;
-	margin-bottom: 20px;
+	margin-bottom: 25px;
 	margin-top: 10px;
 	color: black;
 	letter-spacing: -.7px;
  }
 .about-text--mid { 
-	width: 200px;
+	width: 150px;
 	margin: 0 auto;
 	font-size: 13px;
-	margin-bottom: 20px;
-	margin-top: 10px;
+	margin-bottom: 25px;
+	margin-top: 20px;
 	color: black;
 	letter-spacing: -.5px;
  }
 .about-text--inner { 
-	width: 200px;
+	width: 140px;
 	margin: 0 auto;
 	font-size: 13px;
-	margin-bottom: 25px;
-	margin-top: 10px;
+	margin-top: 20px;
+	margin-bottom: 30px;
 	color: black;
 	letter-spacing: -.5px;
 }
 
 .about-section--cta {
 	border-radius: 10px;
-	padding: 10px;
+	width: 210px;
+	margin: 0 auto;
+}
+
+.about-cta-button {
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.about-cta-button:hover,
+.about-cta-button:active,
+.about-cta-button:focus-visible {
+	transform: translateY(-2px);
+	color: var(--myinv-accent-color);
+	outline: none;
 }
 
 .about-section--cta::after {
@@ -296,7 +318,7 @@ body {
 	inset: 0;
 	border-radius: inherit;
 	background: var(--myinv-accent-color);
-	opacity: 0.2;
+	opacity: var(--about-cta-bg-opacity, 0.00);
 	pointer-events: none;
 	z-index: 0;
 }

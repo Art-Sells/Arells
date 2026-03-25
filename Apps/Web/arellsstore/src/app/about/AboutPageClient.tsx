@@ -4,10 +4,12 @@ import type { ImageLoaderProps } from 'next/image';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import '../css/Home.css';
 import '../css/HomeLoaderOverrides.css';
 
 const AboutPageClient = () => {
+  const router = useRouter();
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   };
@@ -127,12 +129,13 @@ const AboutPageClient = () => {
                     This ledger is powered by a new psychological and technological invention called Vavity.
                   </p>
                   <div className="about-section about-section--cta myinv-accent-border">
-                    <div className={`about-cta-row${aboutSlideIn ? ' page-slide-in' : ''}`}>
-                      <span className="about-cta-text">Learn more &gt;</span>
-                      <Link href="/vavity" className="asset-action-button asset-action-button--invest-show about-cta">
-                        (Vavity (V))
-                      </Link>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => router.push('/vavity')}
+                      className="asset-range-button myinv-range-button about-cta-button"
+                    >
+                      Learn more
+                    </button>
                   </div>
                 </div>
               </div>
