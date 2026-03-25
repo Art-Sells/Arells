@@ -619,7 +619,7 @@ const MyInvestmentsPageClient: React.FC = () => {
         </div>
         <div className={`myinv-slogan-layer${slideIn ? ' page-slide-in' : ''}`}>
           <div className={`myinv-slogan asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}>
-            if investments never lost value
+            if they never lost value
           </div>
         </div>
         <div className="myinv-shell shadow-border-wrap">

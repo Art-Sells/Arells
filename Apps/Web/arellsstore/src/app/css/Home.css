@@ -3445,7 +3445,7 @@ transform: translateY(calc(-50% - 0.5px));
 	animation-fill-mode: both;
 	justify-content: flex-end;
 	position: relative;
-	z-index: 1;
+	z-index: 3;
 	pointer-events: none;
 }
 
