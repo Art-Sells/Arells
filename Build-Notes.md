@@ -2,8 +2,6 @@
 
 ## Arells v1
 
-- *minor my investment box UI/spacing issues (top padding fix) to fix... Also loading issues on page mount if numbers haven't popped up yet... Might have to add a circular loader filed with the arells icon color changes just like the asset summary box loader for the summary box numbers and place it pretty high on top*
-
 
 ### About:
 

@@ -59,6 +59,8 @@ const MyInvestmentsPageClient: React.FC = () => {
       : assetsMissingInEmail;
 
   const [open, setOpen] = useState(false);
+  const myinvWrapperRef = useRef<HTMLDivElement | null>(null);
+  const [shellMaxHeight, setShellMaxHeight] = useState(0);
   const [isLiquidMode, setIsLiquidMode] = useState(false);
   const [toggleKnobLeftPx, setToggleKnobLeftPx] = useState<number | null>(null);
   const [toggleAlpha, setToggleAlpha] = useState<number>(0);
@@ -113,6 +115,9 @@ const MyInvestmentsPageClient: React.FC = () => {
   const purchasedValueHeightRef = useRef<number | null>(null);
   const currentValueHeightRef = useRef<number | null>(null);
   const profitValueHeightRef = useRef<number | null>(null);
+  const pendingPurchasedHeightRef = useRef(false);
+  const pendingCurrentHeightRef = useRef(false);
+  const pendingProfitHeightRef = useRef(false);
   const purchasedValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const currentValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const profitValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
@@ -122,8 +127,38 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [profitValueHidden, setProfitValueHidden] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setOpen(true), 0);
-    return () => clearTimeout(t);
+    setOpen(false);
+    let raf = 0;
+    let raf2 = 0;
+    raf = window.requestAnimationFrame(() => {
+      const h = myinvWrapperRef.current?.scrollHeight ?? 0;
+      const next = Math.max(0, h + 24);
+      setShellMaxHeight(next);
+      raf2 = window.requestAnimationFrame(() => setOpen(true));
+    });
+    return () => {
+      if (raf) window.cancelAnimationFrame(raf);
+      if (raf2) window.cancelAnimationFrame(raf2);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const node = myinvWrapperRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    let raf = 0;
+    const measure = () => {
+      raf = window.requestAnimationFrame(() => {
+        const next = Math.max(0, node.scrollHeight + 24);
+        setShellMaxHeight((prev) => (prev === next ? prev : next));
+      });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
   }, []);
 
   useEffect(() => {
@@ -483,7 +518,9 @@ const MyInvestmentsPageClient: React.FC = () => {
     ) => {
       const node = ref.current;
       if (!node) return;
-      const next = Math.ceil(node.getBoundingClientRect().height);
+      const rectHeight = node.getBoundingClientRect().height;
+      const scrollHeight = node.scrollHeight;
+      const next = Math.ceil(rectHeight > 0 ? rectHeight : scrollHeight);
       if (next <= 0) {
         prevRef.current = next;
         return;
@@ -519,16 +556,37 @@ const MyInvestmentsPageClient: React.FC = () => {
   );
 
   useEffect(() => {
+    if (!open || !hasAny || !purchasedValueRef.current) {
+      pendingPurchasedHeightRef.current = true;
+      return;
+    }
+    if (pendingPurchasedHeightRef.current) {
+      pendingPurchasedHeightRef.current = false;
+    }
     animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValueHeightRef, purchasedValueTimerRef);
-  }, [animateNumberHeight, summaryTotals.acVatop]);
+  }, [animateNumberHeight, open, hasAny, summaryTotals.acVatop]);
 
   useEffect(() => {
+    if (!open || !hasAny || !currentValueRef.current) {
+      pendingCurrentHeightRef.current = true;
+      return;
+    }
+    if (pendingCurrentHeightRef.current) {
+      pendingCurrentHeightRef.current = false;
+    }
     animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValueHeightRef, currentValueTimerRef);
-  }, [animateNumberHeight, summaryTotals.acVact]);
+  }, [animateNumberHeight, open, hasAny, summaryTotals.acVact]);
 
   useEffect(() => {
+    if (!open || !hasAny || !profitValueRef.current) {
+      pendingProfitHeightRef.current = true;
+      return;
+    }
+    if (pendingProfitHeightRef.current) {
+      pendingProfitHeightRef.current = false;
+    }
     animateNumberHeight(profitValueRef, setProfitValueHeight, profitValueHeightRef, profitValueTimerRef);
-  }, [animateNumberHeight, totalProfit, profitLabel, selectedRangeDays]);
+  }, [animateNumberHeight, open, hasAny, totalProfit, profitLabel, selectedRangeDays]);
 
   useEffect(() => {
     if (rangeLoading) return;
@@ -568,9 +626,9 @@ const MyInvestmentsPageClient: React.FC = () => {
           <span className="shadow-border" aria-hidden="true" />
           <div
             className={`asset-slide-panel myinv-slide${open ? ' is-open' : ''}`}
-            style={{ maxHeight: open ? '2200px' : '0px', transition: 'max-height 2s ease' }}
+            style={{ maxHeight: open ? `${shellMaxHeight}px` : '0px', transition: 'max-height 2s ease' }}
           >
-            <div className="myinv-wrapper">
+            <div ref={myinvWrapperRef} className="myinv-wrapper">
               <div className={`myinv-topbar${slideIn ? ' page-slide-in' : ''}`}>
                 <span />
               </div>
