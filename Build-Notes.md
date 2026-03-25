@@ -4,34 +4,6 @@
 
 - *minor my investment box UI/spacing issues (top padding fix) to fix... Also loading issues on page mount if numbers haven't popped up yet... Might have to add a circular loader filed with the arells icon color changes just like the asset summary box loader for the summary box numbers and place it pretty high on top*
 
-## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
-
-
-If email is read and no investments exist inside the email json:
-- (Arells icon) <- button that takes to home page same size and dynamics/etc as the asset page icon buttons
-*Main Wrapper:*
-- My Investments <-title same placing/styling/etc as the "asset titles" 
-- if they never lost value <- Slogan same placing/styling/etc as the asset slogans
-*Add Investments Wrapper (main child wrapper):*
-- Add Investments <- title same sizing styling as the "Investments" title inside asset pages except same color as the "My Investments" title....
-*Add Investments Child Wrapper:*
-- - (BTCicon)  (ETHicon) all Icons of assets that exist styled exactly like the "voting" buttons so each asset has its own unique color and styling that link to asset pages.
-
-If Investments exist inside email json, replace Add Investments Wrapper with:
-*Investments Wrapper (main child wrapper):*
-- [total of all investments from all assets "acVatops","acVacts", etc with ] <- should be styled exactly like the "Purchased Amount, Current Amount, profits, etc" sections below the asset pages
-- "Toggle liquid solid"
-*Add Investments Wrapper (Investments Child Wrapper): only show if there's an asset/investment not shown from email json, otherwise hide*
-- - Add Investments <- title same sizing styling as the "Investments" title inside asset pages except same color as the "My Investments" title....
-*Add Investments Child Wrapper:*
-- - - (BTCicon) or (ETHicon) or both <- only shows button if there's an asset that exists that does not exist inside email json, otherwise, dont show button and add to:
-*Add More Investments Wrapper (investments CHild Wrapper below Add Investments Wrapper)*
-- - - (BTCicon)(ETHicon) (should start center for one if only one asset icon button is shown and expand...) that link to asset pages... should only show based on jsons if investments were added from their assets, otherwise, 
-
-
-
-- *remove the 1 minute and on page mount delete flags for sessions in all pages and test ...*
-
 
 ### About:
 
@@ -64,6 +36,8 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 - Title: Sign In to Save Investments
 - Integrate sign-in/up with google....
 - Creates json with the email inside /users inside arells/users/ that functions exactly like the session vavity, except it never deletes any unless specifically asked for by the user...
+- *remove the flag that stops the 1 minute and on page mount delete flags for sessions in all pages ...*
+
 
 ### Metatags/ Description (all pages.tsx (dont forget my investments page) & components)
 - Add unique favicons (and add to online tests)

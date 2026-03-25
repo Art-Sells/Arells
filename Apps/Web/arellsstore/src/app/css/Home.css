@@ -3328,7 +3328,7 @@ transform: translateY(calc(-50% - 0.5px));
 	width: min(700px, 100%);
 	margin: 0 auto;
 	padding-top: 20px;
-	padding-bottom: 20px;
+	padding-bottom: 0px;
 	padding-left: 20px;
 	padding-right: 20px;
 	box-shadow: none;
