@@ -136,10 +136,9 @@ body {
 }
 
 .about-card {
-	width: min(400px, 90%);
-	min-width: 280px;
+	width: 350px;
 	margin: 0 auto;
-	padding: 22px 28px 20px;
+	padding: 0px 15px 15px;
 	border-radius: 15px;
 	position: relative;
 	background: rgba(255, 255, 255, 0.8);
@@ -3301,7 +3300,8 @@ transform: translateY(calc(-50% - 0.5px));
 /* My Investments page */
 .myinv-page {
 	min-height: 100vh;
-	padding-top: 15px;
+	padding-top: 0px;
+	margin-top: -20px;
 	padding-bottom: 60px;
 	box-sizing: border-box;
 	font-family: Arial, sans-serif;
