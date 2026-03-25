@@ -280,13 +280,13 @@ body {
 	letter-spacing: -.5px;
  }
 .about-text--inner { 
-	width: 140px;
+	width: 120px;
 	margin: 0 auto;
-	font-size: 13px;
+	font-size: 12px;
 	margin-top: 20px;
 	margin-bottom: 30px;
 	color: black;
-	letter-spacing: -.5px;
+	letter-spacing: -.35px;
 }
 
 .about-section--cta {
