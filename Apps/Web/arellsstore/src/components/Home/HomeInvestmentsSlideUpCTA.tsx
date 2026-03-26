@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
 
@@ -16,6 +16,7 @@ export default function HomeInvestmentsSlideUpCTA({
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [layout, setLayout] = useState<{ left: number; width: number; buttonHeight: number } | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -81,8 +82,30 @@ export default function HomeInvestmentsSlideUpCTA({
     document.body.classList.remove(cls);
   }, [visible]);
 
+  useEffect(() => {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    if (!visible) {
+      document.documentElement.style.removeProperty('--home-investments-cta-offset');
+      return;
+    }
+    const node = rootRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    const update = () => {
+      const height = node.offsetHeight || 0;
+      document.documentElement.style.setProperty('--home-investments-cta-offset', `${height + 12}px`);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      document.documentElement.style.removeProperty('--home-investments-cta-offset');
+    };
+  }, [visible, layout]);
+
   const node = (
     <div
+      ref={rootRef}
       className={rootClassName}
       aria-hidden={!visible}
       style={

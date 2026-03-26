@@ -2,12 +2,12 @@
 
 ## Arells v1
 
-
 ### Vavity (take everything from vavity.info)
 - Change desc to: Remove "Investment losses are a human psychology issue" just tell WHAT Vavity is... that's it - don't lecture (replace bear markets with investment losses in vavity info and readme) so Vavity solves this psychologically through technical autonomy. By eliminating investment losses etc etc (in github also..., remove "cryptocurrency" from it and make it simply (remove Bitcoin and make it general))
 
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
+- Toggle Animations should resize with pages
 - Remove "sign in" dynamic and "1 minute timer "to test in mobile...
 - Make the section in assets holding all the sections maximum height dynamic and the sections inside them width 100% so they resize smoothly without major changes to the UI
 - - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes, the dollar sign in the my assets page... My investments page If no Email, If email is read and no investments exist inside the email json, If Investments exist inside email json
@@ -17,7 +17,6 @@
 - Integrate sign-in/up with google....
 - Creates json with the email inside /users inside arells/users/ that functions exactly like the session vavity, except it never deletes any unless specifically asked for by the user...
 - *remove the flag that stops the 1 minute and on page mount delete flags for sessions in all pages ...*
-
 
 ### Metatags/ Description (all pages.tsx (dont forget my investments page) & components)
 - Add unique favicons (and add to online tests)
@@ -40,11 +39,9 @@
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 
 ### Test Online 
-- Set voting blocks to 3 minutes
--  both desktop(multiple browsers)/mobile
+- both desktop(multiple browsers)/mobile
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - look at Analytics
-
 
 ## After Test
 - Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git and vavity.info(change this or alter it)
@@ -52,7 +49,6 @@ Vavity Architecture:
 Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
 
 ## Final Test
-- Set voting blocks to 7 days
 - Remove typos from Arells/Vavity readmes, and UI
 - - In notion:  
 - - Users
@@ -74,7 +70,7 @@ Users
 - Flip sloth pngs horizontally
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
-- Prepare to launch new Voting Blocks and Winning asset (gather evertyhing bitcoin does (components/api-pointers/css-styles)basically and duplicate and change asset names and colors... )
+- Prepare to launch new assets (components/api-pointers/css-styles)basically and duplicate and change asset names and colors...
 - Contact CSC (TAX)
 
 ## 2 days after launch

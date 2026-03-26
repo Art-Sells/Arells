@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Ethereum from './ethereum';
 import '../../../../app/css/Home.css';
@@ -19,6 +19,7 @@ const EthereumPageClient: React.FC = () => {
   const [portfolioClampY, setPortfolioClampY] = useState(0);
   const { email } = useUser();
   const pageRef = useRef<HTMLDivElement>(null);
+  const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
   const portfolioBottomRef = useRef<number | null>(null);
   const sessionResetTimersRef = useRef<number[]>([]);
   const loaderHideAtRef = useRef<number | null>(null);
@@ -26,6 +27,82 @@ const EthereumPageClient: React.FC = () => {
   const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;
   const showSessionResetFade = sessionResetFade && !forceSessionResetPreview;
   const sessionResetKeyValue = forceSessionResetPreview ? 'preview' : sessionResetKey;
+
+  const updateLoaderToggleRange = useCallback((btn: HTMLButtonElement) => {
+    const shell = loaderToggleShellRef.current;
+    if (!shell) return;
+    const cs = window.getComputedStyle(btn);
+    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
+    const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 0;
+    const w = Math.round(btn.getBoundingClientRect().width);
+    if (w <= 0) return;
+    const minLeft = Math.round(leftInset - knobSize / 2);
+    const maxLeft = Math.round(w - rightInset - knobSize / 2);
+    shell.style.setProperty('--asset-loader-toggle-min-left', `${minLeft}px`);
+    shell.style.setProperty('--asset-loader-toggle-max-left', `${maxLeft}px`);
+    shell.style.setProperty('--asset-loader-toggle-width', `${w}px`);
+  }, []);
+
+  const updateLoaderToggleRangeFromLoader = useCallback(() => {
+    const shell = loaderToggleShellRef.current;
+    if (!shell) return;
+    const btn = shell.querySelector<HTMLButtonElement>('.asset-reality-toggle--loader');
+    if (!btn) return;
+    const cs = window.getComputedStyle(btn);
+    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
+    const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 0;
+    const w = Math.round(btn.getBoundingClientRect().width);
+    if (w <= 0) return;
+    const minLeft = Math.round(leftInset - knobSize / 2);
+    const maxLeft = Math.round(w - rightInset - knobSize / 2);
+    shell.style.setProperty('--asset-loader-toggle-min-left', `${minLeft}px`);
+    shell.style.setProperty('--asset-loader-toggle-max-left', `${maxLeft}px`);
+    shell.style.setProperty('--asset-loader-toggle-width', `${w}px`);
+  }, []);
+
+  useLayoutEffect(() => {
+    const root = pageRef.current;
+    if (!root || typeof ResizeObserver === 'undefined') return;
+    let raf: number | null = null;
+    let ro: ResizeObserver | null = null;
+    let mo: MutationObserver | null = null;
+    const attach = (btn: HTMLButtonElement) => {
+      updateLoaderToggleRange(btn);
+      ro = new ResizeObserver(() => {
+        if (raf != null) return;
+        raf = window.requestAnimationFrame(() => {
+          raf = null;
+          updateLoaderToggleRange(btn);
+        });
+      });
+      ro.observe(btn);
+    };
+    const findAndAttach = () => {
+      const btn = root.querySelector<HTMLButtonElement>('.asset-reality-toggle:not(.asset-reality-toggle--loader)');
+      if (btn) {
+        attach(btn);
+        return true;
+      }
+      return false;
+    };
+    updateLoaderToggleRangeFromLoader();
+    if (!findAndAttach()) {
+      mo = new MutationObserver(() => {
+        if (findAndAttach() && mo) {
+          mo.disconnect();
+          mo = null;
+        }
+      });
+      mo.observe(root, { childList: true, subtree: true });
+    }
+    return () => {
+      if (raf != null) window.cancelAnimationFrame(raf);
+      if (ro) ro.disconnect();
+      if (mo) mo.disconnect();
+    };
+  }, [updateLoaderToggleRange, updateLoaderToggleRangeFromLoader]);
 
   // Set global background immediately for overscroll beyond the asset page.
   useEffect(() => {
@@ -214,7 +291,10 @@ const EthereumPageClient: React.FC = () => {
         <div
           className={`asset-loader-overlay asset-loader-overlay--ethereum${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >
-          <div className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--ethereum">
+          <div
+            ref={loaderToggleShellRef}
+            className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--ethereum"
+          >
             <div className="asset-reality-toggle-row">
               <button type="button" className="asset-reality-toggle asset-reality-toggle--loader" aria-hidden="true">
                 <span className="asset-loader-toggle-knob" aria-hidden="true" />

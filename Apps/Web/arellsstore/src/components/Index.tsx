@@ -2,24 +2,13 @@
 
 import type { ImageLoaderProps } from 'next/image';
 import '../app/css/Home.css';
-import '../app/css/HomeLoaderOverrides.css';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback, useLayoutEffect, useRef } from 'react';
 import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
 import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
-
-type VotingAsset = 'solana' | 'xrp';
-
-type VotingBlockData = {
-  expiresAt: number;
-  votes: { solana: number; xrp: number };
-  sessions: string[];
-  remainingMs: number;
-  isExpired: boolean;
-};
 
 const Index = () => {
   // Loader Functions
@@ -32,18 +21,42 @@ const Index = () => {
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     wordLogo: false,
   });
-  const { getAsset, sessionId } = useVavity();
+  const { getAsset } = useVavity();
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
-  const forceVotingPreview = false;
-  const forceVoteModalPreview = false;
-  const [votingData, setVotingData] = useState<VotingBlockData | null>(null);
-  const [votingHidden, setVotingHidden] = useState<boolean>(false);
-  const [countdownMs, setCountdownMs] = useState<number>(0);
-  const [voteModal, setVoteModal] = useState<null | { asset: VotingAsset; status: 'winning' | 'losing' | 'tied'; pct: number }>(
-    null
-  );
-  const [voteModalClosing, setVoteModalClosing] = useState<boolean>(false);
+  const [isLiquidMode, setIsLiquidMode] = useState(false);
+  const [toggleKnobLeftPx, setToggleKnobLeftPx] = useState<number | null>(null);
+  const [toggleAlpha, setToggleAlpha] = useState<number>(0);
+  const toggleAlphaRef = useRef(0);
+  const [toggleAnimating, setToggleAnimating] = useState(false);
+  const toggleAnimRafRef = useRef<number | null>(null);
+  const toggleResizeTimerRef = useRef<number | null>(null);
+  const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
+  const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
+  const homeHeaderRef = useRef<HTMLDivElement | null>(null);
+  const homeLogoRef = useRef<HTMLImageElement | null>(null);
+  const [homeAssetsLayout, setHomeAssetsLayout] = useState<{ left: number; width: number } | null>(null);
+  const homeAssetsWrapRef = useRef<HTMLDivElement | null>(null);
+  const [toggleTrack, setToggleTrack] = useState<{ minLeft: number; maxLeft: number; mid: number } | null>(null);
+  const toggleDragRef = useRef<{
+    active: boolean;
+    pointerId: number | null;
+    startX: number;
+    startLeft: number;
+    lastLeft: number;
+    didDrag: boolean;
+    track: { minLeft: number; maxLeft: number; mid: number } | null;
+    raf: number | null;
+  }>({
+    active: false,
+    pointerId: null,
+    startX: 0,
+    startLeft: 0,
+    lastLeft: 0,
+    didDrag: false,
+    track: null,
+    raf: null,
+  });
 
   // Home should always own/reset the global background so asset-page tint never bleeds into `/`.
   useEffect(() => {
@@ -104,86 +117,223 @@ const Index = () => {
     }
   }, [imagesLoaded]);
 
-  useEffect(() => {
-    if (forceVotingPreview) return;
-    const fetchVoting = async () => {
-      try {
-        const res = await fetch('/api/votingBlock/getVotingBlock');
-        const data = await res.json();
-        const next: VotingBlockData = data;
-        setVotingData(next);
-        setCountdownMs(next.remainingMs || 0);
-        const hasVoted = sessionId && next.sessions?.includes(sessionId);
-        if (next.isExpired || hasVoted) {
-          setVotingHidden(true);
-        } else {
-          setVotingHidden(false);
-        }
-      } catch {
-        setVotingHidden(true);
-      }
-    };
+  const displayIsLiquidMode = toggleAlpha > 0.5;
+  const realityOpacity = Math.max(0, Math.min(1, Math.abs(toggleAlpha - 0.5) * 2));
+  const toggleKnobLeftComputedPx = useMemo(() => {
+    if (!toggleTrack) return null;
+    return toggleTrack.maxLeft - toggleAlpha * (toggleTrack.maxLeft - toggleTrack.minLeft);
+  }, [toggleAlpha, toggleTrack]);
+  const toggleKnobLeftEffectivePx = useMemo(() => {
+    const base = toggleKnobLeftPx ?? toggleKnobLeftComputedPx;
+    if (base == null || !toggleTrack) return base;
+    return Math.min(toggleTrack.maxLeft, Math.max(toggleTrack.minLeft, base));
+  }, [toggleKnobLeftPx, toggleKnobLeftComputedPx, toggleTrack]);
+  const realityFadeStyle = useMemo(() => {
+    return {
+      opacity: realityOpacity,
+      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+    } as React.CSSProperties;
+  }, [realityOpacity, toggleAnimating, toggleKnobLeftPx]);
 
-    fetchVoting();
-  }, [forceVotingPreview, sessionId]);
+  const clamp01 = useCallback((v: number) => Math.max(0, Math.min(1, v)), []);
 
-  // (intentionally no debug modal auto-open)
-
-  useEffect(() => {
-    if (forceVotingPreview) return;
-    if (votingHidden || !votingData) return;
-    const interval = setInterval(() => {
-      setCountdownMs((prev) => {
-        const next = Math.max(prev - 1000, 0);
-        if (next <= 0) {
-          setVotingHidden(true);
-        }
-        return next;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [forceVotingPreview, votingHidden, votingData]);
+  const measureToggleTrack = useCallback(() => {
+    const btn = toggleBtnRef.current;
+    if (!btn) return null;
+    const cs = window.getComputedStyle(btn);
+    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
+    const w = btn.getBoundingClientRect().width;
+    const minLeft = leftInset;
+    const maxLeft = Math.max(leftInset, w - rightInset);
+    const mid = (minLeft + maxLeft) / 2;
+    const next = { minLeft, maxLeft, mid };
+    setToggleTrack(next);
+    return next;
+  }, []);
 
   useEffect(() => {
-    if (!forceVoteModalPreview) return;
-    setVoteModal({ asset: 'solana', status: 'winning', pct: 62.5 });
-  }, [forceVoteModalPreview]);
+    toggleAlphaRef.current = toggleAlpha;
+  }, [toggleAlpha]);
 
-  const formatCountdown = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const days = Math.floor(totalSeconds / (60 * 60 * 24));
-    const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
-    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
-    const seconds = totalSeconds % 60;
-    return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
-  };
+  useEffect(() => {
+    if (toggleKnobLeftPx != null) return;
+    setToggleAlpha(isLiquidMode ? 1 : 0);
+  }, [isLiquidMode, toggleKnobLeftPx]);
 
-  const handleVote = async (asset: VotingAsset) => {
-    if (forceVotingPreview) return;
-    if (!sessionId || votingHidden) return;
-    try {
-      const res = await fetch('/api/votingBlock/vote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ asset, sessionId }),
-      });
-      const data = await res.json();
-      const next: VotingBlockData = data;
-      setVotingData(next);
-      const totalVotes = (next.votes?.solana || 0) + (next.votes?.xrp || 0);
-      const assetVotes = next.votes?.[asset] || 0;
-      const pct = totalVotes > 0 ? Number(((assetVotes / totalVotes) * 100).toFixed(2)) : 0;
-      let status: 'winning' | 'losing' | 'tied' = 'tied';
-      if (next.votes.solana > next.votes.xrp) {
-        status = asset === 'solana' ? 'winning' : 'losing';
-      } else if (next.votes.xrp > next.votes.solana) {
-        status = asset === 'xrp' ? 'winning' : 'losing';
-      }
-      setVoteModal({ asset, status, pct });
-    } catch {
-      // ignore for now
+  useLayoutEffect(() => {
+    const btn = toggleBtnRef.current;
+    if (!btn || typeof ResizeObserver === 'undefined') return;
+    const initialTrack = measureToggleTrack();
+    if (initialTrack && !toggleDragRef.current.active && !toggleAnimating) {
+      const alpha = toggleAlphaRef.current;
+      const left = initialTrack.maxLeft - alpha * (initialTrack.maxLeft - initialTrack.minLeft);
+      btn.style.setProperty('--toggle-knob-left', `${left}px`);
     }
-  };
+    let raf: number | null = null;
+    const ro = new ResizeObserver(() => {
+      if (raf != null) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = null;
+        const track = measureToggleTrack();
+        if (!track || toggleDragRef.current.active || toggleAnimating) return;
+        const alpha = toggleAlphaRef.current;
+        const left = track.maxLeft - alpha * (track.maxLeft - track.minLeft);
+        btn.style.setProperty('--toggle-knob-left', `${left}px`);
+        setToggleKnobLeftPx(left);
+        btn.classList.add('is-resizing');
+        if (toggleResizeTimerRef.current != null) {
+          window.clearTimeout(toggleResizeTimerRef.current);
+        }
+        toggleResizeTimerRef.current = window.setTimeout(() => {
+          btn.classList.remove('is-resizing');
+          toggleResizeTimerRef.current = null;
+        }, 150);
+      });
+    });
+    ro.observe(btn);
+    return () => {
+      if (raf != null) window.cancelAnimationFrame(raf);
+      if (toggleResizeTimerRef.current != null) {
+        window.clearTimeout(toggleResizeTimerRef.current);
+        toggleResizeTimerRef.current = null;
+      }
+      ro.disconnect();
+    };
+  }, [measureToggleTrack, toggleAnimating]);
+
+  const animateToggleToAlpha = useCallback(
+    (targetAlpha: number) => {
+      const track = toggleTrack ?? measureToggleTrack();
+      if (!track) return;
+      const fromAlpha = toggleAlphaRef.current;
+      const toAlpha = clamp01(targetAlpha);
+      if (toggleAnimRafRef.current != null) window.cancelAnimationFrame(toggleAnimRafRef.current);
+      setToggleAnimating(true);
+
+      const start = performance.now();
+      const duration = 350;
+      const step = (now: number) => {
+        const t = Math.min(1, Math.max(0, (now - start) / duration));
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const alpha = fromAlpha + (toAlpha - fromAlpha) * eased;
+        const left = track.maxLeft - alpha * (track.maxLeft - track.minLeft);
+        setToggleKnobLeftPx(left);
+        setToggleAlpha(alpha);
+        if (t < 1) {
+          toggleAnimRafRef.current = window.requestAnimationFrame(step);
+          return;
+        }
+        toggleAnimRafRef.current = null;
+        setToggleAnimating(false);
+        setToggleKnobLeftPx(null);
+        const nextMode = toAlpha > 0.5;
+        setIsLiquidMode(nextMode);
+        setToggleAlpha(toAlpha);
+      };
+      toggleAnimRafRef.current = window.requestAnimationFrame(step);
+    },
+    [clamp01, measureToggleTrack, toggleTrack]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (toggleAnimRafRef.current != null) window.cancelAnimationFrame(toggleAnimRafRef.current);
+    };
+  }, []);
+
+  const updateHomeLogoShift = useCallback(() => {
+    const header = homeHeaderRef.current;
+    const logo = homeLogoRef.current;
+    if (!header || !logo) return;
+    const headerWidth = header.clientWidth;
+    const logoWidth = logo.offsetWidth;
+    const currentLeft = logo.offsetLeft;
+    const targetLeft = (headerWidth - logoWidth) / 2;
+    const shift = targetLeft - currentLeft;
+    header.style.setProperty('--home-logo-shift', `${shift}px`);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    updateHomeLogoShift();
+    const handleResize = () => updateHomeLogoShift();
+    window.addEventListener('resize', handleResize);
+    const headerEl = homeHeaderRef.current;
+    const logoEl = homeLogoRef.current;
+    let resizeObserver: ResizeObserver | null = null;
+    if (headerEl && logoEl && 'ResizeObserver' in window) {
+      resizeObserver = new ResizeObserver(updateHomeLogoShift);
+      resizeObserver.observe(headerEl);
+      resizeObserver.observe(logoEl);
+    }
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (resizeObserver) resizeObserver.disconnect();
+    };
+  }, [updateHomeLogoShift]);
+
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+    const wrapper = homeAssetsWrapRef.current;
+    if (!wrapper || typeof ResizeObserver === 'undefined') return;
+    const measure = () => {
+      const r = wrapper.getBoundingClientRect();
+      setHomeAssetsLayout({
+        left: r.left + r.width / 2,
+        width: r.width,
+      });
+    };
+    measure();
+    let raf: number | null = null;
+    const ro = new ResizeObserver(() => {
+      if (raf != null) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = null;
+        measure();
+      });
+    });
+    ro.observe(wrapper);
+    return () => {
+      if (raf != null) window.cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, []);
+
+  const updateLoaderToggleRange = useCallback(() => {
+    const btn = toggleBtnRef.current;
+    const shell = loaderToggleShellRef.current;
+    if (!btn || !shell) return;
+    const cs = window.getComputedStyle(btn);
+    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
+    const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 0;
+    const w = Math.round(btn.getBoundingClientRect().width);
+    const minLeft = Math.round(leftInset - knobSize / 2);
+    const maxLeft = Math.round(w - rightInset - knobSize / 2);
+    shell.style.setProperty('--asset-loader-toggle-min-left', `${minLeft}px`);
+    shell.style.setProperty('--asset-loader-toggle-max-left', `${maxLeft}px`);
+    shell.style.setProperty('--asset-loader-toggle-width', `${w}px`);
+  }, []);
+
+  useLayoutEffect(() => {
+    const btn = toggleBtnRef.current;
+    if (!btn || typeof ResizeObserver === 'undefined') return;
+    updateLoaderToggleRange();
+    let raf: number | null = null;
+    const ro = new ResizeObserver(() => {
+      if (raf != null) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = null;
+        updateLoaderToggleRange();
+      });
+    });
+    ro.observe(btn);
+    return () => {
+      if (raf != null) window.cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, [updateLoaderToggleRange]);
 
   const formatCurrency = (value: number) =>
     value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -222,65 +372,58 @@ const Index = () => {
 
     return assets.map((asset) => {
       const snapshot = getAsset(asset.id);
-      const history =
+      const solidHistory =
         (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
           ? snapshot.solidHistory
           : Array.isArray(snapshot?.liquidHistory)
             ? snapshot.liquidHistory
             : []) ?? [];
-      const vapa = snapshot?.vapa ?? 0;
+      const liquidHistory =
+        (Array.isArray(snapshot?.liquidHistory) && snapshot.liquidHistory.length > 0
+          ? snapshot.liquidHistory
+          : Array.isArray(snapshot?.solidHistory)
+            ? snapshot.solidHistory
+            : []) ?? [];
+      const solidPrice = snapshot?.vapa ?? 0;
+      const liquidPrice =
+        typeof snapshot?.price === 'number' ? snapshot.price : typeof snapshot?.vapa === 'number' ? snapshot.vapa : 0;
       return {
         ...asset,
-        vapa,
-        change1w: getPercentChange(history, 7),
-        change1y: getPercentChange(history, 365),
-        changeAll: getPercentChange(history),
+        solidPrice,
+        liquidPrice,
+        solidChange1w: getPercentChange(solidHistory, 7),
+        solidChange1y: getPercentChange(solidHistory, 365),
+        solidChangeAll: getPercentChange(solidHistory),
+        liquidChange1w: getPercentChange(liquidHistory, 7),
+        liquidChange1y: getPercentChange(liquidHistory, 365),
+        liquidChangeAll: getPercentChange(liquidHistory),
       };
     });
   }, [getAsset]);
 
   const sortedRows = assetRows;
 
-  const previewVotingData: VotingBlockData = {
-    expiresAt: Date.now() + 60 * 60 * 1000,
-    votes: { solana: 0, xrp: 0 },
-    sessions: [],
-    remainingMs: 60 * 60 * 1000,
-    isExpired: false,
-  };
-  const effectiveVotingData = forceVotingPreview ? previewVotingData : votingData;
-  const effectiveVotingHidden = forceVotingPreview ? false : votingHidden;
-
   return (
     <>
       {showLoading && (
-        <div className={`home-loader-overlay${fadeOut ? ' home-loader-overlay-fade' : ''}`}>
-          <div className={`home-loader-ring${fadeOut ? ' home-loader-fade' : ''}`}>
-            <svg className="home-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
-              <defs>
-                <filter id="homeLoaderBlur" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="10" />
-                </filter>
-              </defs>
-              <circle cx="30" cy="30" r="26" filter="url(#homeLoaderBlur)" />
-            </svg>
-            <span className="home-loader-icon-wrap" aria-hidden="true">
-              <span className="home-loader-icon-tint" aria-hidden="true" />
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={29}
-                height={30}
-                id="arells-loader-icon-bitcoin"
-                className="home-loader-icon-img"
-                src="images/Arells-Icon.png"
-              />
-            </span>
+        <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
+          <div
+            ref={loaderToggleShellRef}
+            className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--myinv"
+          >
+            <div className="asset-reality-toggle-row">
+              <button type="button" className="asset-reality-toggle asset-reality-toggle--loader" aria-hidden="true">
+                <span className="asset-loader-toggle-knob" aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="home-header-inner page-slide-down">
+      <div
+        ref={homeHeaderRef}
+        className={`home-header-inner page-slide-down${displayIsLiquidMode ? ' is-liquid' : ''}`}
+      >
         <Image
           loader={imageLoader}
           onLoad={() => handleImageLoaded('wordLogo')}
@@ -289,41 +432,32 @@ const Index = () => {
             height={23}
           id="word-logoo"
           src="images/Arells-Logo-Ebony.png"
+          ref={homeLogoRef}
         />
       </div>
       <div className="home-slogan-layer page-slide-down">
         <div id="descriptioner-wrapper">
-          <p id="descriptioner" style={{ letterSpacing: '0px', marginLeft: '0px' }}>
+          <p
+            id="descriptioner"
+            className={`home-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
+            style={{ letterSpacing: '0px', marginLeft: '0px' }}
+          >
             if investments never lost value
           </p>
         </div>
       </div>
 
-      {!effectiveVotingHidden && effectiveVotingData && (
-        <div className="home-voting-block page-slide-down">
-          <div className="home-voting-options myinv-accent-border">
-            <button type="button" className="home-voting-button home-voting-button--solana" onClick={() => handleVote('solana')}>
-              <Image className="home-voting-icon" alt="Solana" width={22} height={22} src="/images/assets/crypto/Solana.svg" />
-              <span>Solana</span>
-            </button>
-            <button type="button" className="home-voting-button home-voting-button--xrp" onClick={() => handleVote('xrp')}>
-              <Image className="home-voting-icon" alt="XRP" width={22} height={22} src="/images/assets/crypto/XRP.svg" />
-              <span>XRP</span>
-            </button>
-          </div>
-          <div className="home-voting-countdown">
-            <span>Choose Asset, Voting ends</span>
-            <span>{formatCountdown(forceVotingPreview ? previewVotingData.remainingMs : countdownMs)}</span>
-          </div>
-        </div>
-      )}
-
-      <div className="home-assets-wrapper shadow-border-wrap page-slide-down">
+      <div ref={homeAssetsWrapRef} className="home-assets-wrapper shadow-border-wrap page-slide-down">
         <span className="shadow-border" aria-hidden="true" />
         <div className="home-assets-list">
           <div className="home-assets-table-shell myinv-accent-border">
           <div className="home-assets-rows-shell">
-            {sortedRows.map((row, index) => (
+            {sortedRows.map((row) => {
+              const displayPrice = displayIsLiquidMode ? row.liquidPrice : row.solidPrice;
+              const change1w = displayIsLiquidMode ? row.liquidChange1w : row.solidChange1w;
+              const change1y = displayIsLiquidMode ? row.liquidChange1y : row.solidChange1y;
+              const changeAll = displayIsLiquidMode ? row.liquidChangeAll : row.solidChangeAll;
+              return (
                 <div key={row.id} className="home-asset-row">
                   <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
                     <span className="home-asset-icon-wrap">
@@ -342,54 +476,69 @@ const Index = () => {
                       </span>
                     </div>
                     <div className="home-assets-cell">
-                      <span className="home-assets-currency home-assets-currency-dollar">$</span>
-                      <span className="home-assets-number home-assets-price">{formatCurrency(row.vapa)}</span>
+                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                        <span className="home-assets-currency home-assets-currency-dollar">$</span>
+                        <span className="home-assets-number home-assets-price">{formatCurrency(displayPrice)}</span>
+                      </span>
                     </div>
                     <div className="home-assets-cell home-assets-percent home-assets-1w">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={12}
-                        height={12}
-                        className="home-asset-arrow"
-                        src={row.change1w > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
-                      />
-                      <span className="home-assets-number">
-                        {formatPercent(row.change1w).replace('%', '')}
-                        <span className="home-assets-currency home-assets-currency-percent">%</span>
+                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                        <Image
+                          loader={imageLoader}
+                          alt=""
+                          width={12}
+                          height={12}
+                          className="home-asset-arrow"
+                          src={change1w > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                        />
+                      </span>
+                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                        <span className="home-assets-number">
+                          {formatPercent(change1w).replace('%', '')}
+                          <span className="home-assets-currency home-assets-currency-percent">%</span>
+                        </span>
                       </span>
                     </div>
                     <div className="home-assets-cell home-assets-percent home-assets-1y">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={12}
-                        height={12}
-                        className="home-asset-arrow"
-                        src={row.change1y > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
-                      />
-                      <span className="home-assets-number">
-                        {formatPercent(row.change1y).replace('%', '')}
-                        <span className="home-assets-currency home-assets-currency-percent">%</span>
+                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                        <Image
+                          loader={imageLoader}
+                          alt=""
+                          width={12}
+                          height={12}
+                          className="home-asset-arrow"
+                          src={change1y > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                        />
+                      </span>
+                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                        <span className="home-assets-number">
+                          {formatPercent(change1y).replace('%', '')}
+                          <span className="home-assets-currency home-assets-currency-percent">%</span>
+                        </span>
                       </span>
                     </div>
                     <div className="home-assets-cell home-assets-percent">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={12}
-                        height={12}
-                        className="home-asset-arrow"
-                        src={row.changeAll > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
-                      />
-                      <span className="home-assets-number">
-                        {formatPercent(row.changeAll).replace('%', '')}
-                        <span className="home-assets-currency home-assets-currency-percent">%</span>
+                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                        <Image
+                          loader={imageLoader}
+                          alt=""
+                          width={12}
+                          height={12}
+                          className="home-asset-arrow"
+                          src={changeAll > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                        />
+                      </span>
+                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                        <span className="home-assets-number">
+                          {formatPercent(changeAll).replace('%', '')}
+                          <span className="home-assets-currency home-assets-currency-percent">%</span>
+                        </span>
                       </span>
                     </div>
                   </Link>
                 </div>
-              ))}
+              );
+            })}
           </div>
           </div>
         </div>
@@ -397,52 +546,153 @@ const Index = () => {
       <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
         <div className="home-assets-footer-text">A new asset added weekly</div>
       </div>
+      <div
+        className="home-toggle-footer page-slide-in"
+        style={
+          homeAssetsLayout
+            ? {
+                left: homeAssetsLayout.left - homeAssetsLayout.width / 2,
+                width: homeAssetsLayout.width,
+                transform: 'none',
+              }
+            : undefined
+        }
+      >
+        <div className="home-toggle-shell-wrap shadow-border-wrap">
+          <span className="shadow-border" aria-hidden="true" />
+          <div className="home-toggle-shell-bg">
+            <div className="home-toggle-shell home-toggle-shell--bordered myinv-accent-border">
+              <div className="asset-reality-toggle-row home-toggle-row">
+                <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
+                <button
+                  type="button"
+                  ref={toggleBtnRef}
+                  className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${
+                    toggleKnobLeftPx != null ? ' is-dragging' : ''
+                  }${toggleAnimating ? ' is-animating' : ''}`}
+                  aria-pressed={displayIsLiquidMode}
+                  aria-label="Toggle Liquid/Solid mode"
+                  style={
+                    toggleKnobLeftEffectivePx != null
+                      ? ({ ['--toggle-knob-left' as any]: `${toggleKnobLeftEffectivePx}px` } as React.CSSProperties)
+                      : undefined
+                  }
+                  onPointerDown={(e) => {
+                    if (toggleAnimating) return;
+                    const btn = e.currentTarget;
+                    const cs = window.getComputedStyle(btn);
+                    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+                    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
+                    const w = btn.getBoundingClientRect().width;
+                    const minLeft = leftInset;
+                    const maxLeft = Math.max(leftInset, w - rightInset);
+                    const currentLeft = toggleKnobLeftPx ?? (displayIsLiquidMode ? minLeft : maxLeft);
+                    setToggleTrack({ minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 });
+
+                    toggleDragRef.current.active = true;
+                    toggleDragRef.current.pointerId = e.pointerId;
+                    toggleDragRef.current.startX = e.clientX;
+                    toggleDragRef.current.startLeft = currentLeft;
+                    toggleDragRef.current.lastLeft = currentLeft;
+                    toggleDragRef.current.didDrag = false;
+                    toggleDragRef.current.track = { minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 };
+                    btn.classList.add('is-dragging');
+
+                    try {
+                      btn.setPointerCapture(e.pointerId);
+                    } catch {}
+                    setToggleKnobLeftPx(currentLeft);
+                    btn.style.setProperty('--toggle-knob-left', `${currentLeft}px`);
+                    const alpha = (maxLeft - currentLeft) / Math.max(1e-6, maxLeft - minLeft);
+                    toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
+                    setToggleAlpha(toggleAlphaRef.current);
+                    e.preventDefault();
+                  }}
+                  onPointerMove={(e) => {
+                    if (!toggleDragRef.current.active) return;
+                    const btn = e.currentTarget;
+                    const track = toggleDragRef.current.track;
+                    if (!track) return;
+                    const minLeft = track.minLeft;
+                    const maxLeft = track.maxLeft;
+                    const dx = e.clientX - toggleDragRef.current.startX;
+                    if (Math.abs(dx) > 2) toggleDragRef.current.didDrag = true;
+                    const next = Math.min(maxLeft, Math.max(minLeft, toggleDragRef.current.startLeft + dx));
+                    toggleDragRef.current.lastLeft = next;
+                    btn.style.setProperty('--toggle-knob-left', `${next}px`);
+                    const alpha = (maxLeft - next) / Math.max(1e-6, maxLeft - minLeft);
+                    toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
+                    if (toggleDragRef.current.raf == null) {
+                      toggleDragRef.current.raf = window.requestAnimationFrame(() => {
+                        toggleDragRef.current.raf = null;
+                        setToggleAlpha((prev) => (Math.abs(prev - toggleAlphaRef.current) > 0.001 ? toggleAlphaRef.current : prev));
+                      });
+                    }
+                    e.preventDefault();
+                  }}
+                  onPointerUp={(e) => {
+                    if (!toggleDragRef.current.active) return;
+                    const btn = e.currentTarget;
+                    const cs = window.getComputedStyle(btn);
+                    const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
+                    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
+                    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+                    const w = btn.getBoundingClientRect().width;
+                    const minLeft = leftInset;
+                    const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                    const mid = (minLeft + maxLeft) / 2;
+                    const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
+                    const nextIsLiquid = finalLeft <= mid;
+
+                    toggleDragRef.current.active = false;
+                    toggleDragRef.current.pointerId = null;
+                    toggleDragRef.current.track = null;
+                    btn.classList.remove('is-dragging');
+                    try {
+                      btn.releasePointerCapture(e.pointerId);
+                    } catch {}
+
+                    if (!toggleDragRef.current.didDrag) {
+                      animateToggleToAlpha(displayIsLiquidMode ? 0 : 1);
+                      e.preventDefault();
+                      return;
+                    }
+
+                    animateToggleToAlpha(nextIsLiquid ? 1 : 0);
+                    e.preventDefault();
+                  }}
+                  onPointerCancel={(e) => {
+                    if (!toggleDragRef.current.active) return;
+                    toggleDragRef.current.active = false;
+                    toggleDragRef.current.pointerId = null;
+                    toggleDragRef.current.track = null;
+                    if (toggleDragRef.current.raf != null) {
+                      window.cancelAnimationFrame(toggleDragRef.current.raf);
+                      toggleDragRef.current.raf = null;
+                    }
+                    setToggleKnobLeftPx(null);
+                    setToggleAlpha(isLiquidMode ? 1 : 0);
+                    try {
+                      e.currentTarget.classList.remove('is-dragging');
+                      e.currentTarget.releasePointerCapture(e.pointerId);
+                    } catch {}
+                  }}
+                  onClick={() => {}}
+                >
+                  <span className="asset-reality-toggle-knob" aria-hidden="true" />
+                </button>
+                <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="home-assets-about-wrap page-slide-in">
         <Link className="myinv-about-button home-assets-about-button" href="/about">
           <span className="myinv-about-button-bg" aria-hidden="true" />
           <span className="myinv-about-button-text">about</span>
         </Link>
       </div>
-
-      {voteModal && (
-        <div className={`home-vote-modal-overlay${voteModalClosing ? ' is-fading' : ''}`}>
-          <div className={`home-vote-modal${voteModalClosing ? ' is-fading' : ''}`}>
-            <Image
-              className="home-vote-modal-icon"
-              alt={voteModal.asset === 'solana' ? 'Solana' : 'XRP'}
-              width={22}
-              height={22}
-              src={voteModal.asset === 'solana' ? '/images/assets/crypto/Solana.svg' : '/images/assets/crypto/XRP.svg'}
-            />
-            <div className="home-vote-modal-title">
-              {voteModal.asset === 'solana' ? 'Solana' : 'XRP'}
-            </div>
-            <div className="home-vote-modal-subtitle">{voteModal.pct}% of votes</div>
-            <div className="home-vote-modal-body">Check back next week to see which asset won and was added.</div>
-            <button
-              type="button"
-              className={`home-vote-modal-button ${
-                voteModal.asset === 'xrp' ? 'home-vote-modal-button--xrp' : 'home-vote-modal-button--solana'
-              }`}
-              onClick={() => {
-                setVoteModalClosing(true);
-                setTimeout(() => {
-                  if (typeof window !== 'undefined') {
-                    if (forceVoteModalPreview) {
-                      setVoteModal(null);
-                      setVoteModalClosing(false);
-                      return;
-                    }
-                    window.location.reload();
-                  }
-                }, 1000);
-              }}
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
 
       {!showLoading && (!!email || forceHomeInvestmentsPreview) && <HomeInvestmentsSlideUpCTA />}
 
