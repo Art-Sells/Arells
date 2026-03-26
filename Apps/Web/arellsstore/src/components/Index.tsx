@@ -284,19 +284,26 @@ const Index = () => {
         width: r.width,
       });
     };
-    measure();
     let raf: number | null = null;
-    const ro = new ResizeObserver(() => {
+    const schedule = () => {
       if (raf != null) return;
       raf = window.requestAnimationFrame(() => {
         raf = null;
         measure();
       });
-    });
+    };
+    measure();
+    const ro = new ResizeObserver(schedule);
     ro.observe(wrapper);
+    const onResize = () => {
+      schedule();
+      window.requestAnimationFrame(schedule);
+    };
+    window.addEventListener('resize', onResize);
     return () => {
       if (raf != null) window.cancelAnimationFrame(raf);
       ro.disconnect();
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
