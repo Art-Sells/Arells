@@ -346,7 +346,7 @@ const Index = () => {
     value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const formatPercent = (value: number) =>
-    `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+    `${Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
 
   const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
     if (!history.length) return 0;
@@ -416,7 +416,7 @@ const Index = () => {
         <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
           <div
             ref={loaderToggleShellRef}
-            className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--myinv"
+            className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--myinv asset-loader-toggle-shell--home"
           >
             <div className="asset-reality-toggle-row">
               <button type="button" className="asset-reality-toggle asset-reality-toggle--loader" aria-hidden="true">
@@ -554,7 +554,7 @@ const Index = () => {
         <div className="home-assets-footer-text">A new asset added weekly</div>
       </div>
       <div
-        className="home-toggle-footer page-slide-in"
+        className="home-toggle-footer"
         style={
           homeAssetsLayout
             ? {

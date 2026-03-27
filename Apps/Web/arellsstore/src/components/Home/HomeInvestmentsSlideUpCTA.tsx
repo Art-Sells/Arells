@@ -60,8 +60,15 @@ export default function HomeInvestmentsSlideUpCTA({
     };
 
     measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+    let lastWidth = window.innerWidth;
+    const onResize = () => {
+      const w = window.innerWidth;
+      if (w === lastWidth) return;
+      lastWidth = w;
+      measure();
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, [mounted]);
 
   // Sticky: no scroll listener needed.
