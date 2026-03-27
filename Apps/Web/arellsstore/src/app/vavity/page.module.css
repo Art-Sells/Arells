@@ -1,0 +1,329 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000000;
+}
+
+.main {
+  width: 100%;
+  padding: 4rem 3rem;
+  background: #000000;
+  position: relative;
+}
+
+.main::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/vavity/Vavity-Background.png');
+  background-size: auto 1600px;
+  background-repeat: no-repeat;
+  background-position: -775px center;
+  background-attachment: fixed;
+  filter: brightness(0.18) contrast(1.2);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.main::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/vavity/Vavity-Background.png');
+  background-size: auto 1600px;
+  background-repeat: no-repeat;
+  background-position: calc(100% + 795px) center;
+  background-attachment: fixed;
+  filter: brightness(0.18) contrast(1.2);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.logoPlaceholder {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.logoImage {
+  object-fit: contain;
+  width: 60px;
+  height: auto;
+}
+
+.title {
+  font-size: calc(1.75rem - 10px);
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #FFFFFF !important;
+  letter-spacing: 0.5em;
+  margin-left: calc(0.35em + 5px);
+}
+
+.contentSection {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.description {
+  font-size: 0.75rem;
+  line-height: 1.7;
+  margin-top: 35px;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #FFFFFF !important;
+  max-width: 220px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.description strong {
+  color: #FFFFFF !important;
+}
+
+.psychologyText {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  color: #b0b0b0;
+}
+
+.description + .psychologyText {
+  margin-top: 0;
+  margin-bottom: calc(1.5rem + 8px);
+  max-width: 250px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.4;
+}
+
+@media (min-width: 701px) {
+  .description + .psychologyText {
+    max-width: 400px;
+  }
+}
+
+.marketplaceContent {
+  padding-left: 20px;
+  padding-right: 20px;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 701px) {
+  .marketplaceContent {
+    max-width: 600px;
+  }
+}
+
+.marketplaceContent > .psychologyText:first-child {
+  margin-top: 10px;
+}
+
+.marketplaceContent > .psychologyText:first-child::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #C0C0C0;
+  border-radius: 2px;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.marketplaceContent > .psychologyText:last-child::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #C0C0C0;
+  border-radius: 2px;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.solidMarketplaceLogo {
+  object-fit: contain;
+  width: 60px;
+  height: auto;
+  opacity: 0.9;
+}
+
+.slothMarketplaceLogo {
+  object-fit: contain;
+  width: 40px;
+  height: auto;
+  opacity: 0.7;
+}
+
+.marketplaceItemContainer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.marketplaceLabel {
+  margin-bottom: 0.5rem;
+  line-height: 1.8;
+  color: #C0C0C0;
+}
+
+.marketplaceLabel strong {
+  color: #C0C0C0 !important;
+}
+
+.marketplaceSection {
+  margin-bottom: 2rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: calc(3rem + 10px);
+  align-items: center;
+}
+
+.readMoreButton {
+  display: inline-block;
+  padding: 18px 20px 20px 20px;
+  background-color: transparent;
+  color: #C0C0C0;
+  border: 1px solid #404040;
+  border-radius: 12px;
+  font-weight: normal;
+  font-size: 15px;
+  transition: opacity 0.2s;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+  margin-top: -20px;
+  margin-bottom: 11px;
+}
+
+.readMoreButton:hover {
+  opacity: 0.8;
+}
+
+.readMoreButton:focus,
+.readMoreButton:active {
+  outline: none;
+  border: 1px solid #404040;
+}
+
+.githubLink {
+  display: inline-block;
+  padding: 18px 20px 20px 20px;
+  background-color: transparent;
+  color: #C0C0C0;
+  border: 1px solid #404040;
+  border-radius: 12px;
+  font-weight: normal;
+  font-size: 15px;
+  transition: opacity 0.2s;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+}
+
+.githubLink:hover {
+  opacity: 0.8;
+}
+
+.githubLink:focus,
+.githubLink:active {
+  outline: none;
+  border: 1px solid #404040;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 9999;
+  padding-top: 300px;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+.modalClosing {
+  opacity: 0;
+}
+
+@media (max-height: 600px) {
+  .modal {
+    padding-top: 80px;
+  }
+}
+
+.modalContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 60px;
+}
+
+.modalIcon {
+  width: 40px !important;
+  height: auto !important;
+  opacity: 0;
+  animation: fadeInIcon 0.5s ease-in-out forwards;
+}
+
+.modalIconClosing {
+  animation: fadeOutIcon 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInIcon {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutIcon {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

@@ -2,9 +2,6 @@
 
 ## Arells v1
 
-### Vavity (take everything from vavity.info)
-- Change desc to: Remove "Investment losses are a human psychology issue" just tell WHAT Vavity is... that's it - don't lecture (replace bear markets with investment losses in vavity info and readme) so Vavity solves this psychologically through technical autonomy. By eliminating investment losses etc etc (in github also..., remove "cryptocurrency" from it and make it simply (remove Bitcoin and make it general))
-
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
 - Toggle Animations should resize with pages
@@ -18,7 +15,7 @@
 - Creates json with the email inside /users inside arells/users/ that functions exactly like the session vavity, except it never deletes any unless specifically asked for by the user...
 - *remove the flag that stops the 1 minute and on page mount delete flags for sessions in all pages ...*
 
-### Metatags/ Description (all pages.tsx (dont forget my investments page) & components)
+### Metatags/ Description (all pages.tsx (vavity inluded) (dont forget my investments page) & components)
 - Add unique favicons (and add to online tests)
 - Alter: Descriptions & BannerImages (make images for promotions top asset icon, with bordered section like the asset page below it wrapping: If investments never lost value (bold)), add same color scheme on top behind logos.
 - - If investments never lost value (Bitcoin/Ethereum - If investments never lost value)

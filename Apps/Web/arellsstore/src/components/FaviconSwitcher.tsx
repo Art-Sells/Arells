@@ -3,15 +3,17 @@
  import { useEffect } from 'react';
  import { usePathname } from 'next/navigation';
  
- const DEFAULT_FAVICON = '/ArellsIcoIcon.png';
- const BITCOIN_FAVICON = '/images/assets/crypto/Bitcoin.svg';
- const ETHEREUM_FAVICON = '/images/assets/crypto/Ethereum.svg';
- 
- const resolveFavicon = (pathname: string) => {
-   if (pathname.startsWith('/bitcoin')) return BITCOIN_FAVICON;
-   if (pathname.startsWith('/ethereum')) return ETHEREUM_FAVICON;
-   return DEFAULT_FAVICON;
- };
+const DEFAULT_FAVICON = '/ArellsIcoIcon.png';
+const BITCOIN_FAVICON = '/images/assets/crypto/Bitcoin.svg';
+const ETHEREUM_FAVICON = '/images/assets/crypto/Ethereum.svg';
+const VAVITY_FAVICON = '/images/vavity/favicon.png';
+
+const resolveFavicon = (pathname: string) => {
+  if (pathname.startsWith('/bitcoin')) return BITCOIN_FAVICON;
+  if (pathname.startsWith('/ethereum')) return ETHEREUM_FAVICON;
+  if (pathname.startsWith('/vavity')) return VAVITY_FAVICON;
+  return DEFAULT_FAVICON;
+};
  
  const ensureLink = (rel: string, type?: string) => {
    let link = document.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`);
