@@ -131,7 +131,7 @@ const AboutPageClient = () => {
                   <div className="about-section about-section--cta myinv-accent-border">
                     <button
                       type="button"
-                      onClick={() => router.push('/vavity')}
+                      onClick={() => window.open('/vavity', '_blank')}
                       className="asset-range-button myinv-range-button about-cta-button"
                     >
                       Learn more
