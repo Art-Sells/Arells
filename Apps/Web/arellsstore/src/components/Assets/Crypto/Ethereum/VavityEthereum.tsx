@@ -267,6 +267,8 @@ const VavityEthereum: React.FC = () => {
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
   const sloganRef = useRef<HTMLDivElement | null>(null);
+  const sectionHeaderRef = useRef<HTMLDivElement | null>(null);
+  const assetTitleRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
   const prevSummaryHeightRef = useRef<number>(0);
   const [purchasedValueHeight, setPurchasedValueHeight] = useState<number | null>(null);
@@ -417,6 +419,47 @@ const VavityEthereum: React.FC = () => {
     };
     tick();
   }, []);
+
+  const updateAssetHeaderShift = useCallback(() => {
+    const header = sectionHeaderRef.current;
+    const title = assetTitleRef.current;
+    const slogan = sloganRef.current;
+    if (!header || !title) return;
+    header.style.setProperty('--asset-title-shift', '0px');
+    header.style.setProperty('--asset-slogan-shift', '0px');
+    requestAnimationFrame(() => {
+      const headerRect = header.getBoundingClientRect();
+      const titleRect = title.getBoundingClientRect();
+      const titleCenter = (headerRect.width - titleRect.width) / 2;
+      const titleCurrentOffset = titleRect.left - headerRect.left;
+      header.style.setProperty('--asset-title-shift', `${titleCenter - titleCurrentOffset}px`);
+      if (slogan) {
+        const sloganRect = slogan.getBoundingClientRect();
+        const sloganCenter = (headerRect.width - sloganRect.width) / 2;
+        const sloganCurrentOffset = sloganRect.left - headerRect.left;
+        header.style.setProperty('--asset-slogan-shift', `${sloganCenter - sloganCurrentOffset}px`);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    updateAssetHeaderShift();
+    const handleResize = () => updateAssetHeaderShift();
+    window.addEventListener('resize', handleResize);
+    const headerEl = sectionHeaderRef.current;
+    const titleEl = assetTitleRef.current;
+    let ro: ResizeObserver | null = null;
+    if (headerEl && titleEl && 'ResizeObserver' in window) {
+      ro = new ResizeObserver(handleResize);
+      ro.observe(headerEl);
+      ro.observe(titleEl);
+    }
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      ro?.disconnect();
+    };
+  }, [updateAssetHeaderShift]);
 
   // Follow the page height change frame-by-frame during collapse, so the bottom sections
   // (Sign In / Show Investments) move up smoothly instead of clamping/popping at the end.
@@ -3423,8 +3466,8 @@ const VavityEthereum: React.FC = () => {
         className="asset-panel asset-panel--ethereum asset-header-panel asset-section-slide"
         ref={headerPanelRef}
       >
-        <div className="asset-section-header">
-          <div className="asset-header-title">Ethereum</div>
+        <div ref={sectionHeaderRef} className={`asset-section-header${displayIsLiquidMode ? ' is-liquid' : ''}`}>
+          <div ref={assetTitleRef} className="asset-header-title">Ethereum</div>
           <div
             className={`asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}
             ref={sloganRef}
