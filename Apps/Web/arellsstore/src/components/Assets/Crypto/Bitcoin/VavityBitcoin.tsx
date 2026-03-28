@@ -1197,16 +1197,17 @@ const VavityBitcoin: React.FC = () => {
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
   const openInvestmentsSection = useCallback(() => {
     followScrollHeightDeltaFor(5000);
-    setSummaryOpen(false);
+    setInvestmentsWholeHeight(0);
+    setSummaryOpen(true);
     requestAnimationFrame(() => {
-      const whole = investmentsWholeContentRef.current;
-      if (whole) {
-        const h = whole.scrollHeight + 24;
-        setInvestmentsWholeHeight((prevH) => (prevH === h ? prevH : h));
-      }
-      requestAnimationFrame(() => setSummaryOpen(true));
+      requestAnimationFrame(() => {
+        const whole = investmentsWholeContentRef.current;
+        if (whole) {
+          const h = whole.scrollHeight + 24;
+          setInvestmentsWholeHeight(h);
+        }
+      });
     });
-    // Keep scroll synced with the ONE combined height-down of the full investments section.
     followScrollHeightDeltaFor(5000);
   }, [followScrollHeightDeltaFor]);
   const triggerEmptyButtonsExpand = useCallback(() => {

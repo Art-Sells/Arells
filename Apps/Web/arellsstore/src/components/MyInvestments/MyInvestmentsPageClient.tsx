@@ -69,6 +69,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const toggleAnimRafRef = useRef<number | null>(null);
   const toggleResizeTimerRef = useRef<number | null>(null);
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
+  const refreshInFlightRef = useRef(false);
 
   const [toggleTrack, setToggleTrack] = useState<{ minLeft: number; maxLeft: number; mid: number } | null>(null);
   const toggleDragRef = useRef<{
@@ -128,6 +129,32 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [profitValueHeight, setProfitValueHeight] = useState<number | null>(null);
   const [profitValueHidden, setProfitValueHidden] = useState(false);
   const [loaderToggleShellWidth, setLoaderToggleShellWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    const shouldPoll = forceSessionPreview ? Boolean(sessionId) : Boolean(effectiveEmail);
+    if (!shouldPoll) return;
+    let disposed = false;
+    const tick = async () => {
+      if (refreshInFlightRef.current || disposed) return;
+      refreshInFlightRef.current = true;
+      try {
+        if (forceSessionPreview) {
+          if (!sessionId) return;
+          await fetchVavityAggregatorAll(sessionId);
+        } else {
+          await refreshEmailAggregator();
+        }
+      } finally {
+        refreshInFlightRef.current = false;
+      }
+    };
+    tick();
+    const id = window.setInterval(tick, 5000);
+    return () => {
+      disposed = true;
+      window.clearInterval(id);
+    };
+  }, [forceSessionPreview, fetchVavityAggregatorAll, refreshEmailAggregator, sessionId, effectiveEmail]);
 
   useEffect(() => {
     setOpen(false);
@@ -520,7 +547,13 @@ const MyInvestmentsPageClient: React.FC = () => {
   }, [oldestInvestmentDate]);
 
   const summaryTotals = summaryTotalsSnapshot ?? filteredTotals;
-  const totalProfit = (summaryTotals?.acdVatop || 0) as number;
+  const summaryVatop = Number(summaryTotals?.acVatop);
+  const summaryVact = Number(summaryTotals?.acVact);
+  const totalProfitRaw = Number(summaryTotals?.acdVatop || 0);
+  const totalProfit =
+    Number.isFinite(summaryVatop) && Number.isFinite(summaryVact)
+      ? summaryVact - summaryVatop
+      : totalProfitRaw;
   const profitLabel = totalProfit >= 0 ? 'Profits' : 'Losses';
   const profitPrefix = totalProfit >= 0 ? '+$' : '-$';
 
@@ -580,7 +613,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     []
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open || !hasAny || !purchasedValueRef.current) {
       pendingPurchasedHeightRef.current = true;
       return;
@@ -591,7 +624,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValueHeightRef, purchasedValueTimerRef);
   }, [animateNumberHeight, open, hasAny, summaryTotals.acVatop]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open || !hasAny || !currentValueRef.current) {
       pendingCurrentHeightRef.current = true;
       return;
@@ -602,7 +635,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValueHeightRef, currentValueTimerRef);
   }, [animateNumberHeight, open, hasAny, summaryTotals.acVact]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open || !hasAny || !profitValueRef.current) {
       pendingProfitHeightRef.current = true;
       return;

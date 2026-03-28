@@ -2188,8 +2188,8 @@ body {
 .loader-toggle-clone--myinv {
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
-	padding-left: 0;
-	padding-right: 0;
+	padding-left: 20px;
+	padding-right: 20px;
 	box-sizing: border-box;
 }
 
@@ -4504,6 +4504,27 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		font-size: 11px;
 	}
 
+	.myinv-metric-title {
+		font-size: 10.5px;
+	}
+
+	.myinv-metric-symbol,
+	.myinv-metric-inline-symbol {
+		font-size: 14px;
+	}
+
+	.myinv-metric-value {
+		font-size: 25px;
+	}
+
+	.myinv-profit-block {
+		margin-top: -15px;
+	}
+
+	.myinv-summary-block {
+		padding-top: 0;
+	}
+
 	.myinv-header-outside,
 	.myinv-slogan-layer {
 		width: min(340px, calc(100% - 20px));
@@ -4521,6 +4542,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		margin-right: 50px;
 	}
 
+	.myinv-panel-title--add {
+		font-size: 23.5px;
+	}
+
 	.asset-page-content > .asset-header-panel {
 		width: 340px;
 		height: 720px;
@@ -4530,10 +4555,14 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		width: min(340px, calc(100% - 20px));
 	}
 
+	.myinv-panel-section {
+		width: min(340px, calc(100% - 20px));
+	}
+
 	.loader-toggle-clone--myinv {
 		width: min(340px, calc(100% - 20px));
-		padding-left: 0;
-		padding-right: 0;
+		padding-left: 20px;
+		padding-right: 20px;
 	}
 
 	.asset-loader-toggle-shell--myinv {
