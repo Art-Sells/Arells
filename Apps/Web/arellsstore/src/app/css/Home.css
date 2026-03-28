@@ -4520,9 +4520,26 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 @media (max-width: 750px) {
+	.asset-page-content--bitcoin .asset-header-panel {
+		padding-top: 5px;
+		padding-right: 10px;   /* <- edit this */
+		padding-bottom: 0px;
+		padding-left: 10px;
+	}
+	.asset-page-content--ethereum .asset-header-panel {
+		padding-top: 5px;
+		padding-right: 10px;   /* <- edit this */
+		padding-bottom: 0px;
+		padding-left: 10px;
+	}
+	.asset-price-chart-row--combined {
+		width: 100%;
+		gap: 10px;
+		padding: 10px;
+	}
 	.asset-home-button--section {
-		left: 0px;
-		top: -67px;
+		left: 7px;
+		top: -60px;
 	}
 	.asset-home-button {
 		width: 35px;
@@ -4640,11 +4657,15 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.asset-price-panel {
 		align-items: center;
 		text-align: center;
-		width: 300px;
+		width: 100%;
+		box-sizing: border-box;
+		height: auto;
 	}
 
 	.asset-chart-wrap {
-		width: 300px;
+		width: 100%;
+		box-sizing: border-box;
+		overflow: hidden;
 	}
 
 	.asset-price-button-row {
@@ -4655,9 +4676,15 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		width: 100%;
 	}
 
+	.asset-chart-panel {
+		width: 100%;
+	}
+
 	.asset-market-controls {
 		width: 100%;
 		box-sizing: border-box;
+		margin-top: 0px;
+		padding: 10px;
 	}
 
 	.asset-reality-toggle-shell {
@@ -4680,9 +4707,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		width: 100% !important;
 		box-sizing: border-box;
 	}
-}
-
-.asset-header-panel {
 }
 
 .asset-panel--bitcoin {
