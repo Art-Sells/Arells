@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { createPortal } from 'react-dom';
 
 type Props = {
   href?: string;
@@ -61,14 +60,25 @@ export default function HomeInvestmentsSlideUpCTA({
 
     measure();
     let lastWidth = window.innerWidth;
+    let lastScrollX = window.scrollX;
     const onResize = () => {
       const w = window.innerWidth;
       if (w === lastWidth) return;
       lastWidth = w;
       measure();
     };
+    const onScroll = () => {
+      const x = window.scrollX;
+      if (x === lastScrollX) return;
+      lastScrollX = x;
+      measure();
+    };
     window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, [mounted]);
 
   // Sticky: no scroll listener needed.
@@ -142,6 +152,6 @@ export default function HomeInvestmentsSlideUpCTA({
   );
 
   if (!mounted || typeof document === 'undefined') return null;
-  return createPortal(node, document.body);
+  return node;
 }
 

@@ -2155,6 +2155,10 @@ body {
 	pointer-events: none;
 }
 
+.loader-toggle-clone--myinv .myinv-toggle-shell {
+	width: var(--myinv-loader-toggle-shell-width, 100%);
+}
+
 .loader-toggle-clone .asset-reality-toggle::before {
 	opacity: 0.2;
 	background: var(--asset-chart-line-color, var(--asset-line-color));
@@ -2184,8 +2188,8 @@ body {
 .loader-toggle-clone--myinv {
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-left: 0;
+	padding-right: 0;
 	box-sizing: border-box;
 }
 
@@ -4469,7 +4473,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	color: #222;
 }
 
-@media (min-width: 801px) {
+@media (min-width: 751px) {
 	.asset-price-chart-row {
 		margin-left: 20px;
 	}
@@ -4491,7 +4495,32 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 }
 
-@media (max-width: 800px) {
+@media (max-width: 750px) {
+	.myinv-title {
+		font-size: 20px;
+	}
+
+	.myinv-slogan {
+		font-size: 11px;
+	}
+
+	.myinv-header-outside,
+	.myinv-slogan-layer {
+		width: min(340px, calc(100% - 20px));
+	}
+
+	.myinv-header-outside {
+		--myinv-title-offset: 42px;
+	}
+
+	.myinv-header-outside .myinv-title {
+		margin-left: 50px;
+	}
+
+	.myinv-slogan-layer .myinv-slogan {
+		margin-right: 50px;
+	}
+
 	.asset-page-content > .asset-header-panel {
 		width: 340px;
 		height: 720px;
@@ -4499,14 +4528,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.myinv-shell {
 		width: min(340px, calc(100% - 20px));
-		padding-left: 30px;
-		padding-right: 30px;
 	}
 
 	.loader-toggle-clone--myinv {
 		width: min(340px, calc(100% - 20px));
-		padding-left: 30px;
-		padding-right: 30px;
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 	.asset-loader-toggle-shell--myinv {
@@ -4527,7 +4554,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		grid-template-columns: 300px;
 		justify-content: center;
 		row-gap: 16px;
-		height: 700px;
+		height: 750px;
 	}
 
 	.asset-price-chart-row--combined {
@@ -5725,7 +5752,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 
 	  
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 700px) {
 	#overlayy {
 	  -webkit-text-size-adjust: none;
 	}  
@@ -5807,10 +5834,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	  
 	}	
 
-  @media screen and (min-width: 801px) {
+  @media screen and (min-width: 701px) {
   }
 
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 700px) {
 	.home-assets-1w {
 		display: none !important;
 	}

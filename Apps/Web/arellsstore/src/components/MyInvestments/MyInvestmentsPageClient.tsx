@@ -127,6 +127,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [currentValueHeight, setCurrentValueHeight] = useState<number | null>(null);
   const [profitValueHeight, setProfitValueHeight] = useState<number | null>(null);
   const [profitValueHidden, setProfitValueHidden] = useState(false);
+  const [loaderToggleShellWidth, setLoaderToggleShellWidth] = useState<number | null>(null);
 
   useEffect(() => {
     setOpen(false);
@@ -621,11 +622,43 @@ const MyInvestmentsPageClient: React.FC = () => {
   const showLiquidityToggle = forceSessionPreview ? true : !!effectiveEmail;
   const footnoteLabel = forceSessionPreview ? '' : effectiveEmail ? `Signed in as ${effectiveEmail}` : null;
 
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    const btn = toggleBtnRef.current;
+    if (!btn) return;
+    const shell = btn.closest<HTMLElement>('.myinv-toggle-shell');
+    if (!shell) return;
+    const update = () => {
+      const width = shell.getBoundingClientRect().width;
+      setLoaderToggleShellWidth((prev) => (Math.abs((prev ?? 0) - width) < 0.5 ? prev : width));
+    };
+    update();
+    const raf = window.requestAnimationFrame(update);
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(update);
+      ro.observe(shell);
+    }
+    window.addEventListener('resize', update);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener('resize', update);
+      if (ro) ro.disconnect();
+    };
+  }, [showLiquidityToggle]);
+
   return (
     <>
       {showLoading && (
         <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
-          <div className="loader-toggle-clone loader-toggle-clone--myinv">
+          <div
+            className="loader-toggle-clone loader-toggle-clone--myinv"
+            style={
+              loaderToggleShellWidth != null
+                ? ({ ['--myinv-loader-toggle-shell-width' as any]: `${loaderToggleShellWidth}px` } as React.CSSProperties)
+                : undefined
+            }
+          >
             <div className="myinv-toggle-shell myinv-accent-border">
               <div className="asset-reality-toggle-row myinv-toggle-row">
                 <span className="asset-reality-toggle-label">Liquid</span>
