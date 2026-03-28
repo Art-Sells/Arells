@@ -629,19 +629,12 @@ body {
 	font-weight: 700;
 	color: #222;
 	font-size: 15px;
-	margin-left: 0px;
+	margin-left: 10px;
 	transform: translate(22px, 10px);
-	opacity: 1;
 	transition: transform 1s ease;
+	opacity: 1;
 }
 
-.asset-section-header.is-liquid .asset-header-title {
-	transform: translate(calc(22px + var(--asset-title-shift, 0px) + 13px), 10px);
-}
-
-.asset-section-header.is-liquid .asset-header-slogan {
-	transform: translateX(var(--asset-slogan-shift, 0px));
-}
 
 
 .asset-header-slogan {
@@ -649,7 +642,8 @@ body {
 	font-weight: 200;
 	margin-top: 20px;
 	margin-bottom: 0px;
-	margin-right: -13px;
+	margin-right: 11px;
+	transform: translateY(2px);
 	transition: transform 1s ease, opacity 1.5s ease, visibility 0s linear 0s;
 }
 
@@ -800,13 +794,13 @@ body {
 .asset-header-slogan.is-hidden {
 	opacity: 0;
 	visibility: hidden;
-	transition: transform 1s ease, opacity 1.5s ease, visibility 0s linear 1.5s;
+	transition: opacity 1.5s ease, visibility 0s linear 1.5s;
 }
 
 .asset-header-slogan {
 	opacity: 1;
 	visibility: visible;
-	transition: transform 1s ease, opacity 1.5s ease, visibility 0s linear 0s;
+	transition: opacity 1.5s ease, visibility 0s linear 0s;
 }
 
 .asset-percentage-value {
@@ -918,8 +912,8 @@ body {
 
 .asset-home-button--section {
 	position: absolute;
-	top: -95px;
-	left: -35px;
+	top: -73.5px;
+	left: -72px;
 	z-index: 5;
 	box-sizing: border-box;
 	background: transparent;
@@ -1120,7 +1114,12 @@ body {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 25px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+}
+
+.asset-section-header.is-liquid .asset-header-title {
+	transform: translate(calc(22px + var(--asset-title-shift, 0px)), 10px);
 }
 
 .asset-metric-number {
@@ -2221,8 +2220,6 @@ body {
 	pointer-events: none;
 	width: var(--asset-loader-toggle-shell-width, 380px);
 	max-width: 100%;
-	transition: width 0.25s ease;
-	will-change: width;
 }
 
 .asset-loader-toggle-shell {
@@ -2235,10 +2232,7 @@ body {
 }
 
 .asset-reality-toggle-shell--loader .asset-reality-toggle--loader {
-	width: var(--asset-loader-toggle-width, calc(100% - 156px));
-	max-width: 100%;
-	transition: width 0.25s ease;
-	will-change: width;
+	width: var(--asset-loader-toggle-width, 154px);
 }
 
 .asset-reality-toggle--loader::before {
@@ -4501,14 +4495,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		margin-left: 20px;
 	}
 
-	/* Header panel has 14px right padding; 14 + 6 = 20px from the wrapper edge */
-	.asset-header-slogan {
-		margin-right: 6px;
-	}
 
-	.asset-home-button--section {
-		left: -72px;
-	}
+
+	/* Header panel has 14px right padding; 14 + 6 = 20px from the wrapper edge */
 
 	.asset-chart-wrap {
 		min-width: 0;
@@ -4519,8 +4508,20 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 @media (max-width: 750px) {
-	.myinv-title {
-		font-size: 20px;
+	.asset-home-button--section {
+		left: -51px;
+		top: -65px;
+	}
+	.asset-header-title {
+		margin-left: 0px;
+		transform: translate(22px, 5px);
+	}
+	.asset-section-header.is-liquid .asset-header-title {
+		transform: translate(calc(22px + var(--asset-title-shift, 0px)), 5px);
+	}
+	.asset-header-slogan {
+		margin-top: 10px;
+		transform: translate(-8px, 2px);
 	}
 
 	.myinv-slogan {
@@ -4646,7 +4647,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.asset-reality-toggle-shell--loader:not(.asset-loader-toggle-shell--myinv):not(.asset-loader-toggle-shell--home) {
 		--asset-loader-toggle-shell-width: 100%;
-		--asset-loader-toggle-width: 154px;
 	}
 
 	.asset-portfolio-center {
