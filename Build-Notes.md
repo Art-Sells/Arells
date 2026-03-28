@@ -77,8 +77,8 @@ Users
 - Prepare for WACA transition (LTP folder)
 
 ## 1 mnth and beyond:
-- Fix long marketcap numbers/etc...
-- Asset/Prices/etc sorting (default by Marketcap always)
+- Fix long marketcap numbers and jitter issues at the end of summary height down....
+- (Sort)MarketCap/Volume/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust LTP based on feedback...
 - - If traction is good look at LTP folder post WACA
 - - increase CG API limit? (track)
@@ -87,7 +87,6 @@ Users
 
 ### 3 mnths and beyond
 - Start process of building Featured/Sponsored section (with analytics, CTR, etc)... do not launch until at least 200k MAU
-
 
 ### iOS & Android App (after 1-2 years?)
 - iOS App (night/dark mode automatic (website) setting that reads your settings)

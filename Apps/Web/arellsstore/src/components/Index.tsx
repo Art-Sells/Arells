@@ -366,14 +366,27 @@ const Index = () => {
     <>
       {showLoading && (
         <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
-          <div className="loader-toggle-clone loader-toggle-clone--home">
-            <div className="home-toggle-shell home-toggle-shell--bordered myinv-accent-border">
-              <div className="asset-reality-toggle-row home-toggle-row">
-                <span className="asset-reality-toggle-label">Liquid</span>
-                <button type="button" className="asset-reality-toggle" aria-hidden="true" tabIndex={-1}>
-                  <span className="asset-reality-toggle-knob" aria-hidden="true" />
-                </button>
-                <span className="asset-reality-toggle-label">Solid</span>
+          <div
+            className="loader-toggle-clone loader-toggle-clone--home"
+            style={
+              homeAssetsLayout
+                ? {
+                    left: homeAssetsLayout.left - homeAssetsLayout.width / 2,
+                    width: homeAssetsLayout.width,
+                    transform: 'none',
+                  }
+                : { visibility: 'hidden' as const }
+            }
+          >
+            <div className="home-toggle-shell-wrap">
+              <div className="home-toggle-shell home-toggle-shell--bordered myinv-accent-border">
+                <div className="asset-reality-toggle-row home-toggle-row">
+                  <span className="asset-reality-toggle-label">Liquid</span>
+                  <button type="button" className="asset-reality-toggle" aria-hidden="true" tabIndex={-1}>
+                    <span className="asset-reality-toggle-knob" aria-hidden="true" />
+                  </button>
+                  <span className="asset-reality-toggle-label">Solid</span>
+                </div>
               </div>
             </div>
           </div>

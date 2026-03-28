@@ -2194,8 +2194,13 @@ body {
 }
 
 .loader-toggle-clone--home {
+	position: fixed;
+	left: 50%;
+	bottom: calc(60vh - 70px);
+	transform: translateX(-50%);
 	width: min(700px, 100%);
 	min-width: 350px;
+	box-sizing: border-box;
 }
 
 /* Keep old classes alive for asset-page loaders (bitcoin/ethereum) */
