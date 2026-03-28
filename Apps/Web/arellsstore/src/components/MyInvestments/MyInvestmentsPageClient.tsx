@@ -518,6 +518,27 @@ const MyInvestmentsPageClient: React.FC = () => {
       globalThis.clearTimeout(summaryQuickFadeEndRef.current);
       summaryQuickFadeEndRef.current = null;
     }
+    if (purchasedValueTimerRef.current) {
+      globalThis.clearTimeout(purchasedValueTimerRef.current);
+      purchasedValueTimerRef.current = null;
+    }
+    if (currentValueTimerRef.current) {
+      globalThis.clearTimeout(currentValueTimerRef.current);
+      currentValueTimerRef.current = null;
+    }
+    if (profitValueTimerRef.current) {
+      globalThis.clearTimeout(profitValueTimerRef.current);
+      profitValueTimerRef.current = null;
+    }
+    setPurchasedValueHeight(null);
+    setCurrentValueHeight(null);
+    setProfitValueHeight(null);
+    purchasedValueHeightRef.current = null;
+    currentValueHeightRef.current = null;
+    profitValueHeightRef.current = null;
+    lastFormattedVatopRef.current = null;
+    lastFormattedVactRef.current = null;
+    lastFormattedProfitRef.current = null;
     setSummaryQuickFade(true);
     if (!summaryTotalsSnapshot) {
       setSummaryTotalsSnapshot({ ...filteredTotals });
