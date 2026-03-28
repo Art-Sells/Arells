@@ -643,8 +643,12 @@ body {
 	margin-top: 20px;
 	margin-bottom: 0px;
 	margin-right: 11px;
-	transform: translateY(2px);
-	transition: transform 1s ease, opacity 1.5s ease, visibility 0s linear 0s;
+	transition: opacity 1.5s ease, visibility 0s linear 0s;
+}
+
+.asset-page-content .asset-header-slogan {
+	position: relative;
+	top: 2px;
 }
 
 .asset-page--bitcoin .asset-header-slogan,
@@ -913,7 +917,7 @@ body {
 .asset-home-button--section {
 	position: absolute;
 	top: -73.5px;
-	left: -72px;
+	left: -10px;
 	z-index: 5;
 	box-sizing: border-box;
 	background: transparent;
@@ -1070,7 +1074,7 @@ body {
 }
 
 .asset-page-content {
-	padding: 30px 0px 0px;
+	padding: 20px 0px 0px;
 	color: #222;
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
@@ -2751,6 +2755,14 @@ body {
 	animation-delay: 0s;
 	animation-timing-function: ease;
 	animation-fill-mode: both;
+}
+
+.asset-page-content .asset-header-slogan {
+	animation-name: pageSlideUp;
+	animation-duration: 1s;
+	animation-delay: 2s;
+	animation-timing-function: ease;
+	animation-fill-mode: backwards;
 }
 
 .asset-page-content > .asset-panel:nth-of-type(2) {
@@ -4509,19 +4521,28 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 @media (max-width: 750px) {
 	.asset-home-button--section {
-		left: -51px;
-		top: -65px;
+		left: 0px;
+		top: -67px;
+	}
+	.asset-home-button {
+		width: 35px;
+		height: 35px;
+	}
+	.asset-home-icon {
+		width: 32px !important;
+		height: 32px !important;
 	}
 	.asset-header-title {
+		font-size: 13px;
 		margin-left: 0px;
-		transform: translate(22px, 5px);
+		transform: translate(22px, 8px);
 	}
 	.asset-section-header.is-liquid .asset-header-title {
-		transform: translate(calc(22px + var(--asset-title-shift, 0px)), 5px);
+		transform: translate(calc(22px + var(--asset-title-shift, 0px)), 8px);
 	}
 	.asset-header-slogan {
-		margin-top: 10px;
-		transform: translate(-8px, 2px);
+		margin-top: 15px;
+		margin-right: 20px;
 	}
 
 	.myinv-slogan {
