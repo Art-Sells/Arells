@@ -2236,7 +2236,7 @@ body {
 }
 
 .asset-reality-toggle-shell--loader .asset-reality-toggle--loader {
-	width: var(--asset-loader-toggle-width, 154px);
+	width: 154px;
 }
 
 .asset-reality-toggle--loader::before {
@@ -4667,7 +4667,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-reality-toggle-shell--loader:not(.asset-loader-toggle-shell--myinv):not(.asset-loader-toggle-shell--home) {
-		--asset-loader-toggle-shell-width: 100%;
+		--asset-loader-toggle-shell-width: 380px;
 	}
 
 	.asset-portfolio-center {
