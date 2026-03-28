@@ -3688,7 +3688,7 @@ body {
 .myinv-panel-group {
 	width: 100%;
 	min-width: 350px;
-	margin-top: 18px;
+	margin-top: 5px;
 }
 
 .myinv-panel-section {
@@ -3845,7 +3845,7 @@ body {
 .myinv-profit-summary {
 	position: relative;
 	border-radius: 10px;
-	padding: 10px 12px;
+	padding: 20px 12px;
 	box-sizing: border-box;
 }
 
@@ -3963,7 +3963,7 @@ body {
 
 .myinv-profit-row {
 	flex-direction: column;
-	gap: 6px;
+	gap: 2px;
 }
 
 .myinv-about-wrap {

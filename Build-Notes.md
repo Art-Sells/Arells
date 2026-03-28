@@ -2,6 +2,10 @@
 
 ## Arells v1
 
+### Clean Up Cursor storage (monthly):
+- find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
+- find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
+
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
 - Make the section in assets holding all the sections maximum height dynamic and the sections inside them width 100% so they resize smoothly without major changes to the UI

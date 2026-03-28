@@ -165,6 +165,7 @@ const VavityEthereum: React.FC = () => {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
   const summaryAnimatingRef = useRef(false);
+  const [summaryAnimatingCooldown, setSummaryAnimatingCooldown] = useState(false);
   const clearAfterDeleteRef = useRef(false);
   const [addMorePulse, setAddMorePulse] = useState(false);
   const [showPulse, setShowPulse] = useState(false);
@@ -1186,6 +1187,7 @@ const VavityEthereum: React.FC = () => {
   const openInvestmentsSection = useCallback(() => {
     followScrollHeightDeltaFor(5000);
     setInvestmentsWholeHeight(0);
+    setSummaryValuesHidden(true);
     setSummaryOpen(true);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -1239,7 +1241,7 @@ const VavityEthereum: React.FC = () => {
         : '0px';
   const investmentsWholeTransition = isClearingInvestments
     ? 'max-height 2s ease'
-    : summaryAnimating || addFormSubmitCollapsing
+    : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
       ? 'max-height 2s ease'
       : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
@@ -1433,16 +1435,42 @@ const VavityEthereum: React.FC = () => {
     if (!summaryOpen || isClearingInvestments) {
       setSummaryAnimating(false);
       summaryAnimatingRef.current = false;
+      setPurchasedValueHeight(null);
+      setCurrentValueHeight(null);
+      setProfitValueHeight(null);
+      purchasedValuePrevRef.current = null;
+      currentValuePrevRef.current = null;
+      profitValuePrevRef.current = null;
+      lastFormattedVatopRef.current = null;
+      lastFormattedVactRef.current = null;
+      lastFormattedProfitRef.current = null;
+      purchasedHeightPendingRef.current = true;
+      currentHeightPendingRef.current = true;
+      profitHeightPendingRef.current = true;
       return;
     }
     setSummaryAnimating(true);
     summaryAnimatingRef.current = true;
+    setSummaryValuesHidden(true);
+    const revealTimer = window.setTimeout(() => setSummaryValuesHidden(false), 150);
     const timer = window.setTimeout(() => {
       setSummaryAnimating(false);
       summaryAnimatingRef.current = false;
     }, 2000);
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(revealTimer);
+      window.clearTimeout(timer);
+    };
   }, [summaryOpen, isClearingInvestments]);
+
+  useEffect(() => {
+    if (summaryAnimating) {
+      setSummaryAnimatingCooldown(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setSummaryAnimatingCooldown(false), 500);
+    return () => window.clearTimeout(timer);
+  }, [summaryAnimating]);
 
   useEffect(() => {
     if (!summaryOpen) {
