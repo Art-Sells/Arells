@@ -3663,9 +3663,9 @@ body {
 .myinv-slogan {
 	margin-top: 5px;
 	font-weight: 200;
-	font-size: 14px;
+	font-size: 12px;
 	opacity: 1;
-	color: gray;
+	color: var(--myinv-label-color, #222);
 	text-align: center;
 	width: 100%;
 	white-space: nowrap;
@@ -3821,6 +3821,7 @@ body {
 .myinv-profit-block {
 	width: 100%;
 	margin: 10px auto 0;
+	margin-top: -10px;
 	padding: 10px 12px 12px;
 	border-radius: 12px;
 	box-sizing: border-box;
@@ -3831,6 +3832,7 @@ body {
 	width: min(700px, 100%);
 	margin: 0 auto 12px;
 	padding: 12px 12px 14px;
+	padding-top: 5px;
 	border-radius: 12px;
 	box-sizing: border-box;
 }
@@ -4501,7 +4503,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.myinv-slogan {
-		font-size: 11px;
+		font-size: 10.5px;
 	}
 
 	.myinv-metric-title {

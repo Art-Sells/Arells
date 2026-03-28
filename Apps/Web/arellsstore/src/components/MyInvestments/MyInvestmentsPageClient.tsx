@@ -129,6 +129,11 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [profitValueHeight, setProfitValueHeight] = useState<number | null>(null);
   const [profitValueHidden, setProfitValueHidden] = useState(false);
   const [loaderToggleShellWidth, setLoaderToggleShellWidth] = useState<number | null>(null);
+  const allowNumberHeightAnimationsRef = useRef(true);
+  const numberHeightDisableTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const lastFormattedVatopRef = useRef<string | null>(null);
+  const lastFormattedVactRef = useRef<string | null>(null);
+  const lastFormattedProfitRef = useRef<string | null>(null);
 
   useEffect(() => {
     const shouldPoll = forceSessionPreview ? Boolean(sessionId) : Boolean(effectiveEmail);
@@ -567,6 +572,49 @@ const MyInvestmentsPageClient: React.FC = () => {
     return `${days} days`;
   }, []);
 
+  const enableNumberHeightAnimationsFor = useCallback((ms: number = 2200) => {
+    allowNumberHeightAnimationsRef.current = true;
+    if (numberHeightDisableTimerRef.current) {
+      globalThis.clearTimeout(numberHeightDisableTimerRef.current);
+      numberHeightDisableTimerRef.current = null;
+    }
+    numberHeightDisableTimerRef.current = globalThis.setTimeout(() => {
+      numberHeightDisableTimerRef.current = null;
+      allowNumberHeightAnimationsRef.current = false;
+    }, ms);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (numberHeightDisableTimerRef.current) {
+        globalThis.clearTimeout(numberHeightDisableTimerRef.current);
+        numberHeightDisableTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      allowNumberHeightAnimationsRef.current = false;
+      if (numberHeightDisableTimerRef.current) {
+        globalThis.clearTimeout(numberHeightDisableTimerRef.current);
+        numberHeightDisableTimerRef.current = null;
+      }
+      return;
+    }
+    enableNumberHeightAnimationsFor();
+  }, [open, enableNumberHeightAnimationsFor]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    enableNumberHeightAnimationsFor();
+  }, [selectedRangeDays, open, enableNumberHeightAnimationsFor]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    enableNumberHeightAnimationsFor();
+  }, [displayIsLiquidMode, open, enableNumberHeightAnimationsFor]);
+
   const animateNumberHeight = useCallback(
     (
       ref: React.RefObject<HTMLDivElement>,
@@ -608,41 +656,77 @@ const MyInvestmentsPageClient: React.FC = () => {
       timerRef.current = globalThis.setTimeout(() => {
         timerRef.current = null;
         setHeight(null);
+        requestAnimationFrame(() => {
+          const el = ref.current;
+          if (el) {
+            const h = el.getBoundingClientRect().height;
+            prevRef.current = Math.ceil(h > 0 ? h : el.scrollHeight);
+          }
+        });
       }, 2000);
     },
     []
   );
 
   useLayoutEffect(() => {
+    const value = summaryTotals?.acVatop || 0;
+    const formatted = formatCurrencyParts(value);
+    const key = `${formatted.integer}.${formatted.decimals}`;
     if (!open || !hasAny || !purchasedValueRef.current) {
       pendingPurchasedHeightRef.current = true;
       return;
     }
     if (pendingPurchasedHeightRef.current) {
       pendingPurchasedHeightRef.current = false;
+    } else {
+      if (lastFormattedVatopRef.current === key) return;
+      if (!allowNumberHeightAnimationsRef.current) {
+        lastFormattedVatopRef.current = key;
+        return;
+      }
     }
+    lastFormattedVatopRef.current = key;
     animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValueHeightRef, purchasedValueTimerRef);
   }, [animateNumberHeight, open, hasAny, summaryTotals.acVatop]);
 
   useLayoutEffect(() => {
+    const value = summaryTotals?.acVact || 0;
+    const formatted = formatCurrencyParts(value);
+    const key = `${formatted.integer}.${formatted.decimals}`;
     if (!open || !hasAny || !currentValueRef.current) {
       pendingCurrentHeightRef.current = true;
       return;
     }
     if (pendingCurrentHeightRef.current) {
       pendingCurrentHeightRef.current = false;
+    } else {
+      if (lastFormattedVactRef.current === key) return;
+      if (!allowNumberHeightAnimationsRef.current) {
+        lastFormattedVactRef.current = key;
+        return;
+      }
     }
+    lastFormattedVactRef.current = key;
     animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValueHeightRef, currentValueTimerRef);
   }, [animateNumberHeight, open, hasAny, summaryTotals.acVact]);
 
   useLayoutEffect(() => {
+    const formatted = formatCurrencyParts(Math.abs(totalProfit || 0));
+    const key = `${profitLabel}|${formatted.integer}.${formatted.decimals}|${selectedRangeDays}`;
     if (!open || !hasAny || !profitValueRef.current) {
       pendingProfitHeightRef.current = true;
       return;
     }
     if (pendingProfitHeightRef.current) {
       pendingProfitHeightRef.current = false;
+    } else {
+      if (lastFormattedProfitRef.current === key) return;
+      if (!allowNumberHeightAnimationsRef.current) {
+        lastFormattedProfitRef.current = key;
+        return;
+      }
     }
+    lastFormattedProfitRef.current = key;
     animateNumberHeight(profitValueRef, setProfitValueHeight, profitValueHeightRef, profitValueTimerRef);
   }, [animateNumberHeight, open, hasAny, totalProfit, profitLabel, selectedRangeDays]);
 
