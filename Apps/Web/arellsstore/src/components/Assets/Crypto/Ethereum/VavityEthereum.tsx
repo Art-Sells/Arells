@@ -164,6 +164,7 @@ const VavityEthereum: React.FC = () => {
   const [collapsedInvestments, setCollapsedInvestments] = useState<string[]>([]);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
+  const summaryAnimatingRef = useRef(false);
   const clearAfterDeleteRef = useRef(false);
   const [addMorePulse, setAddMorePulse] = useState(false);
   const [showPulse, setShowPulse] = useState(false);
@@ -958,7 +959,7 @@ const VavityEthereum: React.FC = () => {
     sessionMountSubmitLoaderTimerRef.current = globalThis.setTimeout(() => {
       sessionMountSubmitLoaderTimerRef.current = null;
       setSubmitLoaderHold(false);
-    }, 2000);
+    }, 3000);
   }, [vavityData, submitLoading, submitLoaderHold, submitPhase]);
 
   useEffect(() => {
@@ -1431,11 +1432,14 @@ const VavityEthereum: React.FC = () => {
   useLayoutEffect(() => {
     if (!summaryOpen || isClearingInvestments) {
       setSummaryAnimating(false);
+      summaryAnimatingRef.current = false;
       return;
     }
     setSummaryAnimating(true);
+    summaryAnimatingRef.current = true;
     const timer = window.setTimeout(() => {
       setSummaryAnimating(false);
+      summaryAnimatingRef.current = false;
     }, 2000);
     return () => window.clearTimeout(timer);
   }, [summaryOpen, isClearingInvestments]);
@@ -1531,8 +1535,7 @@ const VavityEthereum: React.FC = () => {
     let raf = 0;
     const measure = () => {
       raf = window.requestAnimationFrame(() => {
-        // Add a small buffer so late micro-layout changes don't cause a final "pop down"
-        // by increasing max-height after the 2s open animation completes.
+        if (summaryAnimatingRef.current) return;
         const next = node.scrollHeight + 24;
         setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
       });
@@ -1545,6 +1548,16 @@ const VavityEthereum: React.FC = () => {
       if (raf) window.cancelAnimationFrame(raf);
     };
   }, [summaryOpen, isClearingInvestments]);
+
+  useEffect(() => {
+    if (summaryAnimating || !summaryOpen || isClearingInvestments) return;
+    const node = investmentsWholeContentRef.current;
+    if (!node) return;
+    requestAnimationFrame(() => {
+      const next = node.scrollHeight + 24;
+      setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
+    });
+  }, [summaryAnimating, summaryOpen, isClearingInvestments]);
 
   useEffect(() => {
     if (investmentsWholeHeight > 0) {
@@ -3912,7 +3925,7 @@ const VavityEthereum: React.FC = () => {
                 </div>
             </div>
               <div
-                className="asset-panel asset-panel--ethereum asset-profit-block asset-slide-in asset-section-slide"
+                className="asset-panel asset-panel--ethereum asset-profit-block asset-slide-in"
                 style={{ padding: '20px 20px 20px', marginBottom: '10px', width: '92%', marginLeft: 'auto', marginRight: 'auto' }}
               >
                 <div className="asset-profit-summary asset-profit-summary--ethereum">
