@@ -1,6 +1,5 @@
 
 // Change below link after test
-import './css/Home.css';
 
 import Index from '../components/Index';
 import React from 'react';

@@ -690,10 +690,12 @@ const MyInvestmentsPageClient: React.FC = () => {
                               }}
                             >
                               <span
-                                className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                                className={`asset-money-wrap asset-profit-range-anim${
+                                  (selectedRangeDays && rangeLoading) || summaryValuesHidden ? ' is-hidden' : ''
+                                }`}
                                 style={{
-                                  opacity: summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  opacity: (selectedRangeDays && rangeLoading) || summaryValuesHidden ? 0 : realityOpacity,
+                                  transition: toggleAnimating ? 'none' : 'opacity 1s ease',
                                 }}
                               >
                               <span className="myinv-metric-symbol">$</span>
@@ -721,10 +723,12 @@ const MyInvestmentsPageClient: React.FC = () => {
                               }}
                             >
                               <span
-                                className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                                className={`asset-money-wrap asset-profit-range-anim${
+                                  (selectedRangeDays && rangeLoading) || summaryValuesHidden ? ' is-hidden' : ''
+                                }`}
                                 style={{
-                                  opacity: summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  opacity: (selectedRangeDays && rangeLoading) || summaryValuesHidden ? 0 : realityOpacity,
+                                  transition: toggleAnimating ? 'none' : 'opacity 1s ease',
                                 }}
                               >
                               <span className="myinv-metric-symbol">$</span>
@@ -753,7 +757,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                               style={{
                                 opacity:
                                   (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                transition: toggleAnimating ? 'none' : 'opacity 1s ease',
                               }}
                             >
                               {profitLabel}
@@ -775,7 +779,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                               style={{
                                 opacity:
                                   (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                transition: toggleAnimating ? 'none' : 'opacity 1s ease',
                               }}
                             >
                               <span className="myinv-metric-inline-symbol">{profitPrefix}</span>

@@ -45,14 +45,8 @@ body {
 	padding: 0;
 }
 
-/* Shared solid shadow for Home card wrappers. */
 :root {
-	--home-shadow-angle: 0deg;
-	--home-shadow-bg: var(--myinv-accent-color);
-	--about-shadow-bg: var(--myinv-accent-color);
 	--myinv-asset-border-opacity: 0.3;
-	--shadow-offset-x: -6px;
-	--shadow-offset-y: 0px;
 	--about-card-opacity: 0.8;
 	--page-accent-tint: color-mix(in srgb, var(--myinv-accent-color) 6%, #ffffff);
 	--button-border-gradient: conic-gradient(
