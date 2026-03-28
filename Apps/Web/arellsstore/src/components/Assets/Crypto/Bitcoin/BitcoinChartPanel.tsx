@@ -204,7 +204,7 @@ const BitcoinChartPanel: React.FC = () => {
           width={35}
           height={35}
           id="profits-icon-home"
-          src="images/howitworks/up-arrow-ebony.png"
+          src="images/icons/up-arrow-ebony.png"
         />
       </div>
       <p className={styles.lastThirtyDays}>5 YEARS</p>

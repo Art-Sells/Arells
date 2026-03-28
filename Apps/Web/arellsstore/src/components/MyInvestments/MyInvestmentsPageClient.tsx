@@ -67,8 +67,9 @@ const MyInvestmentsPageClient: React.FC = () => {
   const toggleAlphaRef = useRef(0);
   const [toggleAnimating, setToggleAnimating] = useState(false);
   const toggleAnimRafRef = useRef<number | null>(null);
+  const toggleResizeTimerRef = useRef<number | null>(null);
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
-  const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
+
   const [toggleTrack, setToggleTrack] = useState<{ minLeft: number; maxLeft: number; mid: number } | null>(null);
   const toggleDragRef = useRef<{
     active: boolean;
@@ -219,21 +220,43 @@ const MyInvestmentsPageClient: React.FC = () => {
   useLayoutEffect(() => {
     const btn = toggleBtnRef.current;
     if (!btn || typeof ResizeObserver === 'undefined') return;
-    measureToggleTrack();
+    const initialTrack = measureToggleTrack();
+    if (initialTrack && !toggleDragRef.current.active && !toggleAnimating) {
+      const alpha = toggleAlphaRef.current;
+      const left = initialTrack.maxLeft - alpha * (initialTrack.maxLeft - initialTrack.minLeft);
+      btn.style.setProperty('--toggle-knob-left', `${left}px`);
+    }
     let raf: number | null = null;
     const ro = new ResizeObserver(() => {
       if (raf != null) return;
       raf = window.requestAnimationFrame(() => {
         raf = null;
-        measureToggleTrack();
+        const track = measureToggleTrack();
+        if (!track || toggleDragRef.current.active || toggleAnimating) return;
+        const alpha = toggleAlphaRef.current;
+        const left = track.maxLeft - alpha * (track.maxLeft - track.minLeft);
+        btn.style.setProperty('--toggle-knob-left', `${left}px`);
+        setToggleKnobLeftPx(left);
+        btn.classList.add('is-resizing');
+        if (toggleResizeTimerRef.current != null) {
+          window.clearTimeout(toggleResizeTimerRef.current);
+        }
+        toggleResizeTimerRef.current = window.setTimeout(() => {
+          btn.classList.remove('is-resizing');
+          toggleResizeTimerRef.current = null;
+        }, 150);
       });
     });
     ro.observe(btn);
     return () => {
       if (raf != null) window.cancelAnimationFrame(raf);
+      if (toggleResizeTimerRef.current != null) {
+        window.clearTimeout(toggleResizeTimerRef.current);
+        toggleResizeTimerRef.current = null;
+      }
       ro.disconnect();
     };
-  }, [measureToggleTrack]);
+  }, [measureToggleTrack, toggleAnimating]);
 
   const animateToggleToAlpha = useCallback(
     (targetAlpha: number) => {
@@ -274,44 +297,6 @@ const MyInvestmentsPageClient: React.FC = () => {
       if (toggleAnimRafRef.current != null) window.cancelAnimationFrame(toggleAnimRafRef.current);
     };
   }, []);
-
-  const updateLoaderToggleRangeFromLoader = useCallback(() => {
-    const shell = loaderToggleShellRef.current;
-    if (!shell) return;
-    const btn = shell.querySelector<HTMLButtonElement>('.asset-reality-toggle--loader');
-    if (!btn) return;
-    const btnWidth = Math.round(btn.getBoundingClientRect().width);
-    if (btnWidth <= 0) return;
-    const btnCs = window.getComputedStyle(btn);
-    const leftInset = parseFloat(btnCs.getPropertyValue('--toggle-knob-left-inset')) || 0;
-    const rightInset = parseFloat(btnCs.getPropertyValue('--toggle-knob-right-inset')) || 0;
-    const knobSize = parseFloat(btnCs.getPropertyValue('--toggle-knob-size')) || 0;
-    const minLeft = Math.round(leftInset - knobSize / 2);
-    const maxLeft = Math.round(btnWidth - rightInset - knobSize / 2);
-    shell.style.setProperty('--asset-loader-toggle-min-left', `${minLeft}px`);
-    shell.style.setProperty('--asset-loader-toggle-max-left', `${maxLeft}px`);
-  }, []);
-
-  useLayoutEffect(() => {
-    if (typeof ResizeObserver === 'undefined') return;
-    let raf: number | null = null;
-    const shell = loaderToggleShellRef.current;
-    if (!shell) return;
-    const update = () => updateLoaderToggleRangeFromLoader();
-    update();
-    const ro = new ResizeObserver(() => {
-      if (raf != null) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = null;
-        update();
-      });
-    });
-    ro.observe(shell);
-    return () => {
-      if (raf != null) window.cancelAnimationFrame(raf);
-      ro.disconnect();
-    };
-  }, [updateLoaderToggleRangeFromLoader]);
 
   const updateTitleShift = useCallback(() => {
     if (!headerRef.current || !titleRef.current) return;
@@ -640,16 +625,15 @@ const MyInvestmentsPageClient: React.FC = () => {
     <>
       {showLoading && (
         <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
-          <div
-            ref={loaderToggleShellRef}
-            className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--myinv"
-          >
-            <div className="asset-reality-toggle-row myinv-toggle-row">
-              <span className="asset-reality-toggle-label myinv-toggle-loader-label">Liquid</span>
-              <button type="button" className="asset-reality-toggle asset-reality-toggle--loader" aria-hidden="true">
-                <span className="asset-loader-toggle-knob" aria-hidden="true" />
-              </button>
-              <span className="asset-reality-toggle-label myinv-toggle-loader-label">Solid</span>
+          <div className="loader-toggle-clone loader-toggle-clone--myinv">
+            <div className="myinv-toggle-shell myinv-accent-border">
+              <div className="asset-reality-toggle-row myinv-toggle-row">
+                <span className="asset-reality-toggle-label">Liquid</span>
+                <button type="button" className="asset-reality-toggle" aria-hidden="true" tabIndex={-1}>
+                  <span className="asset-reality-toggle-knob" aria-hidden="true" />
+                </button>
+                <span className="asset-reality-toggle-label">Solid</span>
+              </div>
             </div>
           </div>
         </div>

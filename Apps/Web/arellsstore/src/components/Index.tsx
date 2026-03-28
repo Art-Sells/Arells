@@ -32,7 +32,7 @@ const Index = () => {
   const toggleAnimRafRef = useRef<number | null>(null);
   const toggleResizeTimerRef = useRef<number | null>(null);
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
-  const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
+
   const homeHeaderRef = useRef<HTMLDivElement | null>(null);
   const homeLogoRef = useRef<HTMLImageElement | null>(null);
   const [homeAssetsLayout, setHomeAssetsLayout] = useState<{ left: number; width: number } | null>(null);
@@ -300,47 +300,14 @@ const Index = () => {
       window.requestAnimationFrame(schedule);
     };
     window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', schedule);
     return () => {
       if (raf != null) window.cancelAnimationFrame(raf);
       ro.disconnect();
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', schedule);
     };
   }, []);
-
-  const updateLoaderToggleRange = useCallback(() => {
-    const btn = toggleBtnRef.current;
-    const shell = loaderToggleShellRef.current;
-    if (!btn || !shell) return;
-    const cs = window.getComputedStyle(btn);
-    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
-    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
-    const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 0;
-    const w = Math.round(btn.getBoundingClientRect().width);
-    const minLeft = Math.round(leftInset - knobSize / 2);
-    const maxLeft = Math.round(w - rightInset - knobSize / 2);
-    shell.style.setProperty('--asset-loader-toggle-min-left', `${minLeft}px`);
-    shell.style.setProperty('--asset-loader-toggle-max-left', `${maxLeft}px`);
-    shell.style.setProperty('--asset-loader-toggle-width', `${w}px`);
-  }, []);
-
-  useLayoutEffect(() => {
-    const btn = toggleBtnRef.current;
-    if (!btn || typeof ResizeObserver === 'undefined') return;
-    updateLoaderToggleRange();
-    let raf: number | null = null;
-    const ro = new ResizeObserver(() => {
-      if (raf != null) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = null;
-        updateLoaderToggleRange();
-      });
-    });
-    ro.observe(btn);
-    return () => {
-      if (raf != null) window.cancelAnimationFrame(raf);
-      ro.disconnect();
-    };
-  }, [updateLoaderToggleRange]);
 
   const formatCurrency = (value: number) =>
     value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -414,14 +381,15 @@ const Index = () => {
     <>
       {showLoading && (
         <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
-          <div
-            ref={loaderToggleShellRef}
-            className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--myinv asset-loader-toggle-shell--home"
-          >
-            <div className="asset-reality-toggle-row">
-              <button type="button" className="asset-reality-toggle asset-reality-toggle--loader" aria-hidden="true">
-                <span className="asset-loader-toggle-knob" aria-hidden="true" />
-              </button>
+          <div className="loader-toggle-clone loader-toggle-clone--home">
+            <div className="home-toggle-shell home-toggle-shell--bordered myinv-accent-border">
+              <div className="asset-reality-toggle-row home-toggle-row">
+                <span className="asset-reality-toggle-label">Liquid</span>
+                <button type="button" className="asset-reality-toggle" aria-hidden="true" tabIndex={-1}>
+                  <span className="asset-reality-toggle-knob" aria-hidden="true" />
+                </button>
+                <span className="asset-reality-toggle-label">Solid</span>
+              </div>
             </div>
           </div>
         </div>
@@ -496,7 +464,7 @@ const Index = () => {
                           width={12}
                           height={12}
                           className="home-asset-arrow"
-                          src={change1w > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                          src={change1w > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                         />
                       </span>
                       <span className="asset-header-switch-fade" style={realityFadeStyle}>
@@ -514,7 +482,7 @@ const Index = () => {
                           width={12}
                           height={12}
                           className="home-asset-arrow"
-                          src={change1y > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                          src={change1y > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                         />
                       </span>
                       <span className="asset-header-switch-fade" style={realityFadeStyle}>
@@ -532,7 +500,7 @@ const Index = () => {
                           width={12}
                           height={12}
                           className="home-asset-arrow"
-                          src={changeAll > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                          src={changeAll > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                         />
                       </span>
                       <span className="asset-header-switch-fade" style={realityFadeStyle}>

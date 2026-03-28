@@ -11,6 +11,7 @@
 	border-radius: 0px;
 	padding-bottom: 90px;
 	background: var(--page-accent-tint);
+	min-width: 370px;
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 1.00s;
 	animation-name: animatetop;
@@ -115,11 +116,14 @@ body {
 .about-page {
 	padding-top: 80px;
 	padding-bottom: 50px;
+	padding-left: 10px;
+	padding-right: 10px;
 	display: flex;
 	justify-content: center;
 	color: #666;
 	font-family: Arial, sans-serif;
 	width: 100%;
+	min-width: 370px;
 	box-sizing: border-box;
 	position: relative;
 	z-index: 1;
@@ -339,6 +343,7 @@ body {
 .home-loader-overlay {
 	position: fixed;
 	inset: 0;
+	min-width: 370px;
 	background: rgba(255, 255, 255, 0.95);
 	display: flex;
 	justify-content: center;
@@ -352,6 +357,16 @@ body {
 
 .home-loader-overlay.home-loader-overlay--about {
 	background: rgba(255, 255, 255, 0.98);
+}
+
+.home-loader-overlay--about .home-loader-ring::before {
+	animation: none;
+	background: var(--myinv-accent-color);
+}
+
+.home-loader-overlay--about .home-loader-icon-tint {
+	animation: none;
+	background: var(--myinv-accent-color);
 }
 
 .home-loader-ring {
@@ -502,6 +517,7 @@ body {
 .asset-submit-loader-overlay {
 	position: fixed;
 	inset: 0;
+	min-width: 370px;
 	background: rgba(255, 255, 255, 0);
 	display: flex;
 	justify-content: center;
@@ -581,6 +597,7 @@ body {
 
 .asset-page {
 	min-height: 100vh;
+	min-width: 370px;
 	/* Let per-asset and global app background show through (also fixes overscroll edge cases). */
 	background: transparent;
 	font-family: Arial;
@@ -1055,7 +1072,8 @@ body {
 .asset-page-content {
 	padding: 30px 0px 0px;
 	color: #222;
-	width: min(700px, 100%);
+	width: min(700px, calc(100% - 20px));
+	min-width: 350px;
 	margin: 0 auto;
 	box-sizing: border-box;
 	position: relative;
@@ -1209,11 +1227,11 @@ body {
 	width: 12px;
 	height: 12px;
 	background-color: currentColor;
-	-webkit-mask-image: url('/images/up-arrow-ebony.png');
+	-webkit-mask-image: url('/images/icons/up-arrow-ebony.png');
 	-webkit-mask-repeat: no-repeat;
 	-webkit-mask-position: center;
 	-webkit-mask-size: contain;
-	mask-image: url('/images/up-arrow-ebony.png');
+	mask-image: url('/images/icons/up-arrow-ebony.png');
 	mask-repeat: no-repeat;
 	mask-position: center;
 	mask-size: contain;
@@ -1222,8 +1240,8 @@ body {
 }
 
 .asset-metric-trend-icon--down {
-	-webkit-mask-image: url('/images/down-arrow-ebony.png');
-	mask-image: url('/images/down-arrow-ebony.png');
+	-webkit-mask-image: url('/images/icons/down-arrow-ebony.png');
+	mask-image: url('/images/icons/down-arrow-ebony.png');
 }
 
 .asset-metric-trend-icon--bitcoin {
@@ -2115,12 +2133,74 @@ body {
 	transition: none;
 }
 
+.asset-reality-toggle.is-resizing .asset-reality-toggle-knob {
+	transition: none;
+}
+
 .asset-reality-toggle.is-fantasy .asset-reality-toggle-knob {
 	left: calc(var(--toggle-knob-left, calc(100% - var(--toggle-knob-right-inset))) - (var(--toggle-knob-size) / 2));
 	transform: translateY(-50%);
 }
 
-/* Loader toggle variant (below the asset loader ring) */
+/* Loader toggle variant: clone of the real toggle inside the loader overlay.
+   The real toggle classes provide identical sizing; this wrapper just hides
+   labels, disables interaction, and adds the sliding-knob animation. */
+
+.loader-toggle-clone {
+	pointer-events: none;
+	margin: 10px auto 0;
+}
+
+.loader-toggle-clone .asset-reality-toggle-label {
+	opacity: 0 !important;
+	visibility: hidden;
+}
+
+.loader-toggle-clone .asset-reality-toggle {
+	cursor: default;
+	pointer-events: none;
+}
+
+.loader-toggle-clone .asset-reality-toggle::before {
+	opacity: 0.2;
+	background: var(--asset-chart-line-color, var(--asset-line-color));
+}
+
+.loader-toggle-clone .myinv-accent-border::before {
+	display: none;
+}
+
+.loader-toggle-clone .asset-reality-toggle-knob {
+	animation: loaderKnobSlide 2.6s ease-in-out infinite;
+	transition: none;
+}
+
+@keyframes loaderKnobSlide {
+	0% {
+		left: calc(var(--toggle-knob-left-inset) - (var(--toggle-knob-size) / 2));
+	}
+	50% {
+		left: calc(100% - var(--toggle-knob-right-inset) - (var(--toggle-knob-size) / 2));
+	}
+	100% {
+		left: calc(var(--toggle-knob-left-inset) - (var(--toggle-knob-size) / 2));
+	}
+}
+
+.loader-toggle-clone--myinv {
+	width: min(700px, calc(100% - 20px));
+	min-width: 350px;
+	padding-left: 20px;
+	padding-right: 20px;
+	box-sizing: border-box;
+}
+
+.loader-toggle-clone--home {
+	width: min(700px, 100%);
+	min-width: 350px;
+}
+
+/* Keep old classes alive for asset-page loaders (bitcoin/ethereum) */
 .asset-reality-toggle-shell--loader {
 	margin: 10px auto 0;
 	pointer-events: none;
@@ -2167,13 +2247,12 @@ body {
 	width: var(--loader-circle-size);
 	height: var(--loader-circle-size);
 	border-radius: 999px;
-	background: var(--asset-chart-line-color, var(--asset-line-color));
 	background: color-mix(in srgb, var(--asset-chart-line-color, var(--asset-line-color)) 20%, transparent);
 	border: var(--asset-chart-line-width, 6.5px) solid var(--asset-hover-dot-color, rgba(255, 255, 255, 0.85));
 	display: flex;
 	align-items: center;
 	justify-content: center;
-transform: translateY(calc(-50% - 0.5px));
+	transform: translateY(calc(-50% - 0.5px));
 	box-sizing: border-box;
 	animation: assetLoaderToggleSlide 2.6s ease-in-out infinite;
 }
@@ -2609,6 +2688,7 @@ transform: translateY(calc(-50% - 0.5px));
 	animation-fill-mode: both;
 	position: relative;
 	z-index: 3;
+	min-width: 350px;
 	--home-logo-offset: 0px;
 }
 
@@ -2764,6 +2844,7 @@ transform: translateY(calc(-50% - 0.5px));
 	bottom: calc(20px + var(--home-investments-cta-offset, 0px) + env(safe-area-inset-bottom, 0px));
 	transform: translateX(-50%);
 	width: min(700px, 100%);
+	min-width: 350px;
 	z-index: 3;
 	pointer-events: auto;
 	will-change: bottom, opacity;
@@ -3195,6 +3276,7 @@ transform: translateY(calc(-50% - 0.5px));
 	z-index: 2;
 	isolation: isolate;
 	transition: transform 1s ease;
+	min-width: 350px;
 }
 
 .home-investments-slideup.is-visible {
@@ -3349,6 +3431,7 @@ transform: translateY(calc(-50% - 0.5px));
 .arells-signin-overlay {
 	position: fixed;
 	inset: 0;
+	min-width: 370px;
 	background: rgba(255, 255, 255, 0.86);
 	display: flex;
 	justify-content: center;
@@ -3427,10 +3510,10 @@ transform: translateY(calc(-50% - 0.5px));
 /* My Investments page */
 .myinv-page {
 	min-height: 100vh;
+	min-width: 370px;
 	padding-top: 0px;
 	margin-top: -20px;
 	padding-bottom: 60px;
-	box-sizing: border-box;
 	font-family: Arial, sans-serif;
 	background: var(--page-accent-tint);
 }
@@ -3452,7 +3535,8 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .myinv-shell {
-	width: min(700px, 100%);
+	width: min(700px, calc(100% - 20px));
+	min-width: 350px;
 	margin: 0 auto;
 	padding-top: 20px;
 	padding-bottom: 0px;
@@ -3486,7 +3570,8 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .myinv-header-outside {
-	width: min(700px, 100%);
+	width: min(700px, calc(100% - 20px));
+	min-width: 350px;
 	margin: 0 auto 12px;
 	display: flex;
 	justify-content: space-between;
@@ -3509,7 +3594,8 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .myinv-slogan-layer {
-	width: min(700px, 100%);
+	width: min(700px, calc(100% - 20px));
+	min-width: 350px;
 	margin: 0 auto 12px;
 	display: flex;
 	animation-duration: 1s;
@@ -3598,11 +3684,13 @@ transform: translateY(calc(-50% - 0.5px));
 
 .myinv-panel-group {
 	width: 100%;
+	min-width: 350px;
 	margin-top: 18px;
 }
 
 .myinv-panel-section {
-	width: min(700px, 100%);
+	width: min(700px, calc(100% - 20px));
+	min-width: 350px;
 	margin: 0 auto;
 	padding: 14px 14px 16px;
 	border-radius: 12px;
@@ -3878,6 +3966,7 @@ transform: translateY(calc(-50% - 0.5px));
 	display: flex;
 	justify-content: center;
 	width: 100%;
+	min-width: 350px;
 }
 
 .myinv-about-wrap.page-slide-in {
@@ -3886,6 +3975,7 @@ transform: translateY(calc(-50% - 0.5px));
 
 .home-assets-about-wrap {
 	width: min(920px, 90%);
+	min-width: 350px;
 	margin: var(--home-assets-about-gap, 0px) auto	35px;
 	display: flex;
 	justify-content: center;
@@ -4414,13 +4504,19 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.myinv-shell {
-		width: min(340px, 100%);
+		width: min(340px, calc(100% - 20px));
+		padding-left: 30px;
+		padding-right: 30px;
+	}
+
+	.loader-toggle-clone--myinv {
+		width: min(340px, calc(100% - 20px));
 		padding-left: 30px;
 		padding-right: 30px;
 	}
 
 	.asset-loader-toggle-shell--myinv {
-		--asset-loader-toggle-shell-width: calc(min(340px, 100%) - 80px) !important;
+		--asset-loader-toggle-shell-width: calc(min(340px, calc(100% - 20px)) - 80px) !important;
 		--asset-loader-toggle-width: calc(100%) !important;
 	}
 
@@ -4632,6 +4728,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .asset-loader-overlay {
 	position: fixed;
 	inset: 0;
+	min-width: 370px;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
@@ -4650,22 +4747,23 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	opacity: 1;
 }
 
-.asset-loader-toggle-shell--myinv {
+/* Loader clone for MyInvestments: color cycling + line opacity */
+.loader-toggle-clone--myinv {
 	--myinv-loader-color: #ff5aa0;
 	--asset-chart-line-color: var(--myinv-loader-color);
 	--asset-hover-dot-color: var(--myinv-loader-color);
 	animation: myInvLoaderColor 2s linear infinite;
-	--asset-loader-toggle-shell-width: calc(min(700px, 100%) - 40px);
-	--asset-loader-toggle-width: calc(100% - 156px);
-	box-sizing: border-box;
-	padding: 10px 12px;
 }
 
-.myinv-toggle-loader-label {
-	opacity: 0;
-	visibility: hidden;
+/* Loader clone for Home: same color cycling */
+.loader-toggle-clone--home {
+	--myinv-loader-color: #ff5aa0;
+	--asset-chart-line-color: var(--myinv-loader-color);
+	--asset-hover-dot-color: var(--myinv-loader-color);
+	animation: myInvLoaderColor 2s linear infinite;
 }
 
+/* Keep old classes for asset-page loaders (bitcoin/ethereum) */
 .asset-loader-toggle-shell--bitcoin,
 .asset-loader-toggle-shell--ethereum {
 	--asset-loader-toggle-shell-width: 154px;
@@ -4680,6 +4778,17 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .asset-loader-toggle-shell--myinv .asset-loader-toggle-knob {
 	opacity: var(--home-loader-icon-opacity, 1);
 	animation: assetLoaderToggleSlide 2.6s ease-in-out infinite;
+}
+
+.asset-loader-toggle-shell--myinv {
+	--myinv-loader-color: #ff5aa0;
+	--asset-chart-line-color: var(--myinv-loader-color);
+	--asset-hover-dot-color: var(--myinv-loader-color);
+	animation: myInvLoaderColor 2s linear infinite;
+	--asset-loader-toggle-shell-width: calc(min(700px, calc(100% - 20px)) - 40px);
+	--asset-loader-toggle-width: calc(100% - 156px);
+	box-sizing: border-box;
+	padding: 10px 12px;
 }
 
 .asset-loader-toggle-shell--home {
@@ -4839,6 +4948,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	gap: 12px;
 	margin-top: 20px;
 	margin-bottom: 15px;
+	min-width: 350px;
 }
 
 .asset-footer-viewmore {
@@ -5036,23 +5146,26 @@ body.has-home-investments-cta .home-assets-about-wrap {
 			width: calc(min(920px, 90%) - 50px);
 			margin-left: auto;
 			margin-right: auto;
-			padding-left: 100px;
+			padding-left: 50px;
 			margin-bottom: 2px;
 			text-align: left;
 			display: flex;
 			align-items: center;
+			box-sizing: border-box;
 			justify-content: space-between;
 			transform: translateX(10px);
 		}
 
 		.home-slogan-layer {
 			width: calc(min(920px, 90%) - 50px);
+			min-width: 350px;
 			margin-left: auto;
 			margin-right: auto;
 			padding-left: 100px;
 			margin-bottom: 2px;
 			text-align: left;
 			display: flex;
+			box-sizing: border-box;
 			align-items: center;
 			justify-content: flex-end;
 			transform: translateX(10px);
@@ -5069,7 +5182,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	word-spacing: 0px;
 	display: inline-block;
 	font-size: 14px;
-	margin-right: 100px;
+	margin-right: 50px;
 }	
 
 #descriptioner {
@@ -5113,6 +5226,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin-top: -10px;
 	margin-bottom: 30px;
 	justify-content: center;
+	min-width: 350px;
 }
 
 			.home-assets-footer-text {
@@ -5310,7 +5424,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 			.home-assets-wrapper {
 				width: min(920px, 90%);
-				min-width: 200px;
+				min-width: 350px;
 				margin: 0 auto;
 				padding-top: 5px;
 				padding-bottom: 15px;

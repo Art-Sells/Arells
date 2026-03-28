@@ -16,10 +16,12 @@ export default function VavityHome() {
     const prevBody = document.body.style.getPropertyValue('--app-bg');
     const prevHtmlBg = document.documentElement.style.backgroundColor;
     const prevBodyBg = document.body.style.backgroundColor;
+    const prevBodyMargin = document.body.style.margin;
     document.documentElement.style.setProperty('--app-bg', bg);
     document.body.style.setProperty('--app-bg', bg);
     document.documentElement.style.backgroundColor = bg;
     document.body.style.backgroundColor = bg;
+    document.body.style.margin = '0';
     return () => {
       if (prevHtml) document.documentElement.style.setProperty('--app-bg', prevHtml);
       else document.documentElement.style.removeProperty('--app-bg');
@@ -27,6 +29,7 @@ export default function VavityHome() {
       else document.body.style.removeProperty('--app-bg');
       document.documentElement.style.backgroundColor = prevHtmlBg;
       document.body.style.backgroundColor = prevBodyBg;
+      document.body.style.margin = prevBodyMargin;
     };
   }, [])
 
@@ -51,7 +54,7 @@ export default function VavityHome() {
   }, [])
 
   return (
-    <div className={styles.page}>
+    <main className={styles.main}>
       {showModal && (
         <div className={`${styles.modal} ${isClosing ? styles.modalClosing : ''}`}>
           <div className={styles.modalContent}>
@@ -65,7 +68,6 @@ export default function VavityHome() {
           </div>
         </div>
       )}
-      <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.logoPlaceholder}>
             <Image
@@ -143,9 +145,22 @@ export default function VavityHome() {
             <Link href="/vavity/terminologies" className={styles.githubLink}>
               View Terminologies
             </Link>
+
+            <a
+              href="https://github.com/Art-Sells/Vavity"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.githubIconLink}
+            >
+              <Image
+                src="/images/vavity/icons/github.png"
+                alt="GitHub"
+                width={32}
+                height={32}
+              />
+            </a>
           </div>
         </div>
-      </main>
-    </div>
+    </main>
   )
 }
