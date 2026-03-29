@@ -4827,6 +4827,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		overflow: hidden;
 	}
 
+	.asset-page-content .asset-chart-wrap {
+		width: 297px; /* edit chart width */
+		height: 150px; /* edit chart height */
+	}
+
 	.asset-price-button-row {
 		justify-content: center;
 	}
