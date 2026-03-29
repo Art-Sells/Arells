@@ -1118,7 +1118,7 @@ body {
 }
 
 .asset-section-header.is-liquid .asset-header-title {
-	transform: translate(var(--asset-title-shift, 22px), 10px);
+	transform: translate(22px, 10px);
 }
 
 .asset-metric-number {
@@ -4674,7 +4674,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		transform: translate(22px, 8px);
 	}
 	.asset-section-header.is-liquid .asset-header-title {
-		transform: translate(var(--asset-title-shift, 0px), 8px);
+		transform: translate(22px, 8px);
 	}
 	.asset-header-slogan {
 		margin-top: 15px;
@@ -4873,6 +4873,13 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		width: 100%;
 		box-sizing: border-box;
 		transform: none;
+		margin-top: 10px;
+		margin-bottom: 13px;
+	}
+
+	.asset-page-content .asset-reality-toggle {
+		margin-left: -25px;
+		margin-right: -25px;
 	}
 
 	.asset-reality-toggle-shell--loader:not(.asset-loader-toggle-shell--myinv):not(.asset-loader-toggle-shell--home) {
@@ -5639,12 +5646,16 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	opacity: 1;
 }
 
+@keyframes assetChartGridSweep {
+	0%   { -webkit-mask-position: -80vw 0; mask-position: -80vw 0; }
+	100% { -webkit-mask-position: calc(100% + 80vw) 0; mask-position: calc(100% + 80vw) 0; }
+}
+
 .asset-chart-loader {
 	position: absolute;
 	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	overflow: hidden;
+	border-radius: inherit;
 	opacity: 1;
 	transition: opacity 1s ease;
 	pointer-events: auto;
@@ -5656,23 +5667,71 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	pointer-events: none;
 }
 
-.asset-chart-loader-ring {
-	width: 64px;
-	height: 64px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: transparent;
-	position: relative;
+.asset-chart-grid-shimmer {
+	position: absolute;
+	inset: 1px;
+	border-radius: inherit;
+	pointer-events: none;
 }
 
-.asset-chart-loader-spinner {
+.asset-chart-grid-shimmer-thin,
+.asset-chart-grid-shimmer-thick {
 	position: absolute;
 	inset: 0;
-	border-radius: 50%;
-	border: 10px solid rgba(0, 0, 0, 0.2);
-	border-top-color: rgba(0, 0, 0, 0.6);
-	animation: assetSubmitSpin 1s linear infinite;
+	border-radius: inherit;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	animation: assetChartGridSweep 2s linear infinite;
+}
+
+.asset-chart-grid-shimmer-thin {
+	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+	mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+	-webkit-mask-size: 45vw 100%;
+	mask-size: 45vw 100%;
+}
+
+.asset-chart-grid-shimmer-thick {
+	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 35%, black 65%, transparent 100%);
+	mask-image: linear-gradient(to right, transparent 0%, black 35%, black 65%, transparent 100%);
+	-webkit-mask-size: 28vw 100%;
+	mask-size: 28vw 100%;
+}
+
+@media (max-width: 750px) {
+	.asset-chart-grid-shimmer-thin {
+		-webkit-mask-size: 70vw 100%;
+		mask-size: 70vw 100%;
+	}
+
+	.asset-chart-grid-shimmer-thick {
+		-webkit-mask-size: 40vw 100%;
+		mask-size: 40vw 100%;
+	}
+}
+
+.asset-chart-grid-shimmer--bitcoin .asset-chart-grid-shimmer-thin {
+	background-image:
+		repeating-linear-gradient(to right, rgba(248, 141, 0, 0.25) 0px, rgba(248, 141, 0, 0.25) 1px, transparent 1px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(248, 141, 0, 0.25) 0px, rgba(248, 141, 0, 0.25) 1px, transparent 1px, transparent 30px);
+}
+
+.asset-chart-grid-shimmer--bitcoin .asset-chart-grid-shimmer-thick {
+	background-image:
+		repeating-linear-gradient(to right, rgba(248, 141, 0, 0.2) 0px, rgba(248, 141, 0, 0.2) 2px, transparent 2px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(248, 141, 0, 0.2) 0px, rgba(248, 141, 0, 0.2) 2px, transparent 2px, transparent 30px);
+}
+
+.asset-chart-grid-shimmer--ethereum .asset-chart-grid-shimmer-thin {
+	background-image:
+		repeating-linear-gradient(to right, rgba(107, 114, 168, 0.25) 0px, rgba(107, 114, 168, 0.25) 1px, transparent 1px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(107, 114, 168, 0.25) 0px, rgba(107, 114, 168, 0.25) 1px, transparent 1px, transparent 30px);
+}
+
+.asset-chart-grid-shimmer--ethereum .asset-chart-grid-shimmer-thick {
+	background-image:
+		repeating-linear-gradient(to right, rgba(107, 114, 168, 0.2) 0px, rgba(107, 114, 168, 0.2) 2px, transparent 2px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(107, 114, 168, 0.2) 0px, rgba(107, 114, 168, 0.2) 2px, transparent 2px, transparent 30px);
 }
 
 .asset-chart-fade {

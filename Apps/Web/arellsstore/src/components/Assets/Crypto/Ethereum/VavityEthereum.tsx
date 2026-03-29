@@ -425,29 +425,6 @@ const VavityEthereum: React.FC = () => {
   }, []);
 
 
-  const updateAssetHeaderShift = useCallback(() => {
-    const header = sectionHeaderRef.current;
-    const title = assetTitleRef.current;
-    if (!header || !title) return;
-    if (!displayIsLiquidMode) {
-      header.style.setProperty('--asset-title-shift', '0px');
-      return;
-    }
-    const headerW = header.offsetWidth;
-    const titleW = title.offsetWidth;
-    const titleLeft = title.offsetLeft;
-    const shift = (headerW - titleW) / 2 - titleLeft;
-    header.style.setProperty('--asset-title-shift', `${shift}px`);
-  }, [displayIsLiquidMode]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    updateAssetHeaderShift();
-    const handleResize = () => updateAssetHeaderShift();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [updateAssetHeaderShift, displayIsLiquidMode]);
-
   // Follow the page height change frame-by-frame during collapse, so the bottom sections
   // (Sign In / Show Investments) move up smoothly instead of clamping/popping at the end.
   const followScrollHeightDeltaFor = useCallback((ms: number) => {
@@ -3644,30 +3621,23 @@ const VavityEthereum: React.FC = () => {
               </div>
             )}
               <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
-                <div
-                  className="asset-chart-loader-ring"
-                  style={{ borderColor: 'rgba(107, 114, 168, 0.1)', borderTopColor: 'rgba(107, 114, 168, 0.4)' }}
-                >
-                  <div
-                    className="asset-chart-loader-spinner"
-                    style={{ borderColor: 'rgba(107, 114, 168, 0.1)', borderTopColor: 'rgba(107, 114, 168, 0.4)' }}
-                  />
+                <div className="asset-chart-grid-shimmer asset-chart-grid-shimmer--ethereum">
+                  <div className="asset-chart-grid-shimmer-thin" />
+                  <div className="asset-chart-grid-shimmer-thick" />
                 </div>
               </div>
-              {!(chartReady && !forceChartLoader) && (
-                <div
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    inset: 1,
-                    borderRadius: 14,
-                    pointerEvents: 'none',
-                    zIndex: 0,
-                    backgroundImage:
-                      'repeating-linear-gradient(to right, rgba(107, 114, 168, 0.1) 0px, rgba(107, 114, 168, 0.1) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(107, 114, 168, 0.1) 0px, rgba(107, 114, 168, 0.1) 1px, transparent 1px, transparent 30px)',
-                  }}
-                />
-              )}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: 1,
+                  borderRadius: 14,
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                  backgroundImage:
+                    'repeating-linear-gradient(to right, rgba(107, 114, 168, 0.25) 0px, rgba(107, 114, 168, 0.25) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(107, 114, 168, 0.25) 0px, rgba(107, 114, 168, 0.25) 1px, transparent 1px, transparent 30px)',
+                }}
+              />
               <div
                 className={`asset-chart-fade asset-chart-interactive${
                   chartReady && !forceChartLoader ? ' is-visible' : ''
@@ -3678,7 +3648,7 @@ const VavityEthereum: React.FC = () => {
                   color="rgba(107, 114, 168, 0.5)"
                   activeColor="rgba(107, 114, 168, 0.6)"
                   markerColor="rgba(107, 114, 168, 1)"
-                  gridColor="rgba(107, 114, 168, 0.1)"
+                  gridColor="transparent"
                   gridSpacing={30}
                   height={chartCanvasHeight}
                   interactiveHeight={chartPanelHeight}
