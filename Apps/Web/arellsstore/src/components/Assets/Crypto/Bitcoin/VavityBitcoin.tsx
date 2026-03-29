@@ -3627,7 +3627,7 @@ const VavityBitcoin: React.FC = () => {
                   pointerEvents: 'none',
                   zIndex: 0,
                   backgroundImage:
-                    'repeating-linear-gradient(to right, rgba(248, 141, 0, 0.25) 0px, rgba(248, 141, 0, 0.25) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(248, 141, 0, 0.25) 0px, rgba(248, 141, 0, 0.25) 1px, transparent 1px, transparent 30px)',
+                    'repeating-linear-gradient(to right, rgba(248, 141, 0, 0.1) 0px, rgba(248, 141, 0, 0.1) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(248, 141, 0, 0.1) 0px, rgba(248, 141, 0, 0.1) 1px, transparent 1px, transparent 30px)',
                 }}
               />
               <div
