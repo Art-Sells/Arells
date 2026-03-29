@@ -2066,20 +2066,16 @@ const VavityBitcoin: React.FC = () => {
 
   const chartHistoryForLine = chartHistoryMorph ?? chartHistoryDisplay;
 
-  const chartMarketCaps = useMemo(() => {
-    if (!chartRangeDays || !history.length || !vapaMarketCap.length) return vapaMarketCap;
-    const cutoff = chartRangeAnchorMs - chartRangeDays * 24 * 60 * 60 * 1000;
-    const combined = history
-      .map((item, idx) => ({ t: new Date(item.date).getTime(), cap: vapaMarketCap[idx] }))
-      .filter((entry) => Number.isFinite(entry.t) && typeof entry.cap === 'number' && Number.isFinite(entry.cap));
-    if (!combined.length) return vapaMarketCap.length >= 2 ? vapaMarketCap.slice(-2) : vapaMarketCap;
-    const firstInRangeIdx = combined.findIndex((entry) => entry.t >= cutoff);
-    if (firstInRangeIdx === -1) return combined.length >= 2 ? combined.slice(-2).map((e) => e.cap) : combined.map((e) => e.cap);
-    const startIdx = Math.max(0, firstInRangeIdx - 1);
-    const anchored = combined.slice(startIdx).map((entry) => entry.cap);
-    if (anchored.length >= 2) return anchored;
-    return combined.length >= 2 ? combined.slice(-2).map((e) => e.cap) : anchored;
-  }, [chartRangeAnchorMs, chartRangeDays, history, vapaMarketCap]);
+  const marketCapByDate = useMemo(() => {
+    const map = new Map<string, number>();
+    for (let i = 0; i < history.length; i++) {
+      const cap = vapaMarketCap[i];
+      if (typeof cap === 'number' && Number.isFinite(cap)) {
+        map.set(history[i].date, cap);
+      }
+    }
+    return map;
+  }, [history, vapaMarketCap]);
 
   const activeIndex = useMemo(() => {
     if (!chartHistory.length) return null;
@@ -2102,13 +2098,14 @@ const VavityBitcoin: React.FC = () => {
   }, [activePoint, chartHoverPoint]);
 
   const activeMarketCap = useMemo(() => {
-    if (activeIndex != null && chartMarketCaps.length) {
-      const val = chartMarketCaps[activeIndex];
+    if (displayPoint?.date) {
+      const dateKey = displayPoint.date.slice(0, 10);
+      const val = marketCapByDate.get(dateKey);
       if (typeof val === 'number' && !Number.isNaN(val)) return val;
     }
     const fallback = vapaMarketCap.length ? vapaMarketCap[vapaMarketCap.length - 1] : null;
     return typeof fallback === 'number' && !Number.isNaN(fallback) ? fallback : null;
-  }, [activeIndex, chartMarketCaps, vapaMarketCap]);
+  }, [displayPoint, marketCapByDate, vapaMarketCap]);
 
   const percentageIncrease = useMemo(() => {
     const series =

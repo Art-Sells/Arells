@@ -759,11 +759,6 @@ body {
 	box-shadow: none;
 }
 
-.asset-home-icon--bitcoin {
-}
-
-.asset-home-icon--ethereum {
-}
 
 .asset-price-panel {
 	height: 270px;
@@ -1154,6 +1149,16 @@ body {
 	gap: 4px;
 	flex-wrap: wrap;
 	max-width: 100%;
+}
+
+.asset-price-panel > .asset-metric-row:first-of-type {
+	margin-top: -4px;
+	margin-bottom: -9px;
+}
+
+.asset-price-panel > .asset-metric-row:nth-of-type(3) {
+	margin-top: -5px;
+	margin-bottom: 4px;
 }
 
 .asset-metric-inline-row {
@@ -4655,11 +4660,51 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-price-panel {
-		align-items: center;
-		text-align: center;
+		align-items: flex-start;
+		text-align: left;
 		width: 100%;
 		box-sizing: border-box;
 		height: auto;
+		padding-top: 20px !important;
+		padding-bottom: 20px !important;
+		padding-left: 15px !important;
+		padding-right: 15px !important;
+	}
+
+	.asset-price-panel > .asset-metric-row:nth-of-type(3) {
+		margin-top: -7px;
+	}
+
+	.asset-price-panel > .asset-metric-row {
+		margin-left: 10px;
+	}
+
+	.asset-price-panel > .asset-metric-row:nth-of-type(2) {
+		margin-top: -2.5px;
+	}
+
+	.asset-price-panel .asset-metric-title--bitcoin,
+	.asset-price-panel .asset-metric-title--ethereum,
+	.asset-market-controls .asset-metric-inline-title--bitcoin,
+	.asset-market-controls .asset-metric-inline-title--ethereum {
+		font-size: 10.3px;
+	}
+
+	.asset-price-panel .asset-metric-value,
+	.asset-price-panel .asset-metric-symbol--bitcoin,
+	.asset-price-panel .asset-metric-symbol--ethereum,
+	.asset-price-panel .asset-metric-percent-symbol--bitcoin,
+	.asset-price-panel .asset-metric-percent-symbol--ethereum,
+	.asset-market-controls .asset-market-status-value {
+		font-size: 10.8px;
+	}
+
+	.asset-price-panel .asset-metric-percent-symbol--bitcoin {
+		margin-left: -1.5px;
+	}
+
+	.asset-price-panel .asset-metric-percent-symbol--ethereum {
+		margin-left: -2px;
 	}
 
 	.asset-chart-wrap {

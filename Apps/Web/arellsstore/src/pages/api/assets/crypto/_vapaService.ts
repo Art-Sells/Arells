@@ -4,7 +4,7 @@ import axios from 'axios';
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
-const HISTORY_REFRESH_MS = 24 * 60 * 60 * 1000;
+const HISTORY_REFRESH_MS = 60 * 60 * 1000;
 
 export type VapaAssetConfig = {
   id: string;
@@ -36,9 +36,18 @@ const buildDailyHistory = (prices: [number, number][], marketCaps: [number, numb
   let maxPrice = 0;
   let maxDate: string | null = null;
 
+  let lastKnownSupply: number | null = null;
   for (const [date, price] of dailyEntries) {
     history.push({ date, price });
-    marketCap.push(dailyCapMap.get(date) ?? 0);
+    const cap = dailyCapMap.get(date);
+    if (cap != null && cap > 0 && price > 0) {
+      lastKnownSupply = cap / price;
+      marketCap.push(cap);
+    } else if (lastKnownSupply != null && price > 0) {
+      marketCap.push(price * lastKnownSupply);
+    } else {
+      marketCap.push(0);
+    }
     if (price > maxPrice) {
       maxPrice = price;
       maxDate = date;
@@ -67,12 +76,16 @@ const buildMonotonicHistory = (prices: [number, number][], marketCaps: [number, 
   let maxPrice = 0;
   let maxDate: string | null = null;
 
+  let lastKnownSupply: number | null = null;
   for (const [date, price] of dailyEntries) {
     const lastPrice = history.length ? history[history.length - 1].price : 0;
     const adjusted = Math.max(price, lastPrice);
     history.push({ date, price: adjusted });
     const cap = dailyCapMap.get(date);
-    const supply = cap && price > 0 ? cap / price : null;
+    if (cap != null && cap > 0 && price > 0) {
+      lastKnownSupply = cap / price;
+    }
+    const supply = lastKnownSupply;
     const computedMarketCap = supply ? adjusted * supply : null;
     vapaMarketCap.push(typeof computedMarketCap === 'number' ? computedMarketCap : 0);
     if (adjusted > maxPrice) {
@@ -135,13 +148,17 @@ export async function refreshVapa(config: VapaAssetConfig) {
   }
 
     let currentPrice = storedPrice ?? storedVAPA;
+    let currentMarketCap: number | null = null;
     try {
     const currentPriceResponse = await axios.get(config.priceUrl, {
       timeout: 5000,
       headers: COINGECKO_API_KEY ? { 'x-cg-pro-api-key': COINGECKO_API_KEY } : undefined
     });
-    const val = currentPriceResponse.data?.ethereum?.usd ?? currentPriceResponse.data?.bitcoin?.usd ?? currentPriceResponse.data?.[config.id]?.usd;
+    const assetData = currentPriceResponse.data?.[config.id];
+    const val = assetData?.usd;
     if (typeof val === 'number') currentPrice = val;
+    const capVal = assetData?.usd_market_cap;
+    if (typeof capVal === 'number') currentMarketCap = capVal;
   } catch {
       // keep stored
     }
@@ -156,12 +173,16 @@ export async function refreshVapa(config: VapaAssetConfig) {
     const missingVapaMarketCap = !Array.isArray(storedVapaMarketCap) || storedVapaMarketCap.length === 0;
     const missingRealHistory = !Array.isArray(storedRealHistory) || storedRealHistory.length === 0;
     const missingRealMarketCap = !Array.isArray(storedRealMarketCap) || storedRealMarketCap.length === 0;
-    const shouldRefreshHistory = !storedHistory.length || !storedHistoryLastUpdated || Date.now() - storedHistoryLastUpdated > HISTORY_REFRESH_MS;
+    const hasZeroCaps = Array.isArray(storedRealMarketCap) && storedRealMarketCap.length > 0 && storedRealMarketCap[storedRealMarketCap.length - 1] === 0;
+    const today = new Date().toISOString().slice(0, 10);
+    const lastHistoryDate = storedRealHistory.length ? storedRealHistory[storedRealHistory.length - 1].date : null;
+    const historyStale = !lastHistoryDate || lastHistoryDate < today;
+    const shouldRefreshHistory = !storedHistory.length || !storedHistoryLastUpdated || Date.now() - storedHistoryLastUpdated > HISTORY_REFRESH_MS || historyStale || hasZeroCaps;
 
     if (shouldRefreshHistory || missingVapaMarketCap || missingRealHistory || missingRealMarketCap) {
       try {
       const historicalResponse = await axios.get(config.historyUrl, {
-        timeout: 8000,
+        timeout: 30000,
         headers: COINGECKO_API_KEY ? { 'x-cg-pro-api-key': COINGECKO_API_KEY } : undefined
       });
         const prices: [number, number][] = historicalResponse.data?.prices || [];
@@ -195,6 +216,18 @@ export async function refreshVapa(config: VapaAssetConfig) {
     else newVapaDate = currentPriceDate;
     }
 
+  if (currentMarketCap != null && realMarketCap.length > 0) {
+    realMarketCap[realMarketCap.length - 1] = currentMarketCap;
+  }
+  if (currentMarketCap != null && vapaMarketCap.length > 0 && realMarketCap.length > 0) {
+    const lastRealPrice = realHistory.length ? realHistory[realHistory.length - 1].price : currentPrice;
+    const supply = lastRealPrice > 0 ? currentMarketCap / lastRealPrice : null;
+    if (supply) {
+      vapaMarketCap[vapaMarketCap.length - 1] = newVAPA * supply;
+    }
+  }
+
+  const priceChanged = storedPrice !== currentPrice;
   const shouldWrite =
     !fileExists ||
     newVAPA > storedVAPA ||
@@ -202,7 +235,8 @@ export async function refreshVapa(config: VapaAssetConfig) {
     missingVapaMarketCap ||
     missingRealHistory ||
     missingRealMarketCap ||
-    storedPrice == null;
+    storedPrice == null ||
+    priceChanged;
   if (shouldWrite) {
     await s3
       .putObject({
