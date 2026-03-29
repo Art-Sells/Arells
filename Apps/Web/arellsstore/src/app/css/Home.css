@@ -4828,8 +4828,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-page-content .asset-chart-wrap {
-		width: 297px; /* edit chart width */
+		width: 100%; /* edit chart width */
 		height: 150px; /* edit chart height */
+		margin-left: 0;
 	}
 
 	.asset-price-button-row {
@@ -4842,6 +4843,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.asset-chart-panel {
 		width: 100%;
+		margin-left: 0;
 	}
 
 	.asset-market-controls {
