@@ -116,10 +116,10 @@ const EthereumChart: React.FC<Props> = ({
     const min = Math.min(...values);
     const max = Math.max(...values);
     const baseRange = Math.max(max - min, Math.max(Math.abs(max), 1) * 0.05);
-    // Expand Y range to visually shorten the line without shrinking chart canvas height.
-    const pad = baseRange * 2;
+    const padMultiplier = height < 250 ? 0.5 : 2; /* edit mobile (0.5) / desktop (2) Y padding */
+    const pad = baseRange * padMultiplier;
     return { min: min - pad, max: max + pad };
-  }, [dataPoints]);
+  }, [dataPoints, height]);
 
   const xRange = useMemo(() => {
     if (!dataPoints.length) return null;

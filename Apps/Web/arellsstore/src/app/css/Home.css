@@ -4730,6 +4730,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.asset-page-content > .asset-header-panel {
 		width: 340px;
 		height: auto;
+		min-height: auto !important;
 	}
 
 	.myinv-shell {
@@ -4760,11 +4761,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.asset-price-chart-row {
 		align-items: stretch;
-		min-height: 360px;
+		min-height: auto;
 		grid-template-columns: 300px;
 		justify-content: center;
 		row-gap: 16px;
-		height: 750px;
+		height: auto;
 	}
 
 	.asset-price-chart-row--combined {
@@ -4828,9 +4829,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-page-content .asset-chart-wrap {
-		width: 100%; /* edit chart width */
 		height: 150px; /* edit chart height */
 		margin-left: 0;
+		width: 100%;
 	}
 
 	.asset-price-button-row {
@@ -4844,6 +4845,21 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.asset-chart-panel {
 		width: 100%;
 		margin-left: 0;
+	}
+
+	.asset-chart-date-badge {
+		top: 0px;
+		right: auto;
+		left: 0px;
+	}
+
+	.asset-chart-date-badge .asset-metric-inline-title--bitcoin,
+	.asset-chart-date-badge .asset-metric-inline-title--ethereum {
+		font-size: 10.3px;
+	}
+
+	.asset-chart-date-badge .asset-metric-inline-value {
+		font-size: 10.8px;
 	}
 
 	.asset-market-controls {

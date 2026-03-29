@@ -315,11 +315,15 @@ const VavityEthereum: React.FC = () => {
   const clearingHeightRafRef = useRef<number | null>(null);
   const prevLiveCountRef = useRef(0);
   const [chartHeight, setChartHeight] = useState<number>(200);
+  const [mobileChartHeight, setMobileChartHeight] = useState<number | null>(null);
   const chartTopPadding = 0;
   const chartBottomPadding = 0;
   const chartProtrusion = 0;
   const chartExtraPanelHeight = 0;
-  const chartHeightAdjusted = Math.max(120, chartHeight - 0);
+  const effectiveChartHeight = mobileChartHeight != null && typeof window !== 'undefined' && window.innerWidth < 750
+    ? mobileChartHeight
+    : chartHeight;
+  const chartHeightAdjusted = Math.max(120, effectiveChartHeight - 0);
   const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartExtraPanelHeight + chartTopPadding + chartBottomPadding;
   const chartCanvasHeight = chartHeightAdjusted;
   const forceChartLoader = false;
@@ -1124,17 +1128,24 @@ const VavityEthereum: React.FC = () => {
     const el = chartWrapRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
     const update = () => {
+      if (window.innerWidth < 750) return;
       const height = el.getBoundingClientRect().height;
       const next = Math.max(120, Math.round(height));
       setChartHeight((prev) => (prev === next ? prev : next));
     };
+    const updateMobile = () => {
+      setMobileChartHeight(window.innerWidth < 750 ? 150 : null); /* edit mobile chart height */
+    };
     update();
+    updateMobile();
     const observer = new ResizeObserver(update);
     observer.observe(el);
     window.addEventListener('resize', update);
+    window.addEventListener('resize', updateMobile);
     return () => {
       observer.disconnect();
       window.removeEventListener('resize', update);
+      window.removeEventListener('resize', updateMobile);
     };
   }, []);
 
