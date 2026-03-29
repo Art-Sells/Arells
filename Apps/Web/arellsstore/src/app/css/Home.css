@@ -4875,6 +4875,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		transform: none;
 		margin-top: 10px;
 		margin-bottom: 13px;
+		border-radius: 10px;
 	}
 
 	.asset-page-content .asset-reality-toggle {

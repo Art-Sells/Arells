@@ -2616,7 +2616,7 @@ const VavityBitcoin: React.FC = () => {
 
   const formatDate = useCallback((iso: string) => {
     if (!iso) return '...';
-    const d = new Date(iso);
+    const d = new Date(iso.includes('T') ? iso : `${iso}T00:00:00`);
     if (Number.isNaN(d.getTime())) return '...';
     return d.toLocaleDateString('en-US');
   }, []);
@@ -2641,7 +2641,7 @@ const VavityBitcoin: React.FC = () => {
 
   const formatShortDate = useCallback((iso?: string) => {
     if (!iso) return '...';
-    const d = new Date(iso);
+    const d = new Date(iso.includes('T') ? iso : `${iso}T00:00:00`);
     if (Number.isNaN(d.getTime())) return '...';
     return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
   }, []);
@@ -3609,7 +3609,7 @@ const VavityBitcoin: React.FC = () => {
             {chartHoverPoint != null && displayPoint && (
                 <div className="asset-chart-date-badge asset-chart-date-badge--bitcoin">
                 <span className="asset-metric-inline-title--bitcoin">Date:</span>{' '}
-                <span className="asset-metric-inline-value">{new Date(displayPoint.date).toLocaleDateString('en-US')}</span>
+                <span className="asset-metric-inline-value">{new Date(displayPoint.date.includes('T') ? displayPoint.date : `${displayPoint.date}T00:00:00`).toLocaleDateString('en-US')}</span>
               </div>
             )}
               <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
