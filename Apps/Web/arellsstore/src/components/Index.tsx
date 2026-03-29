@@ -24,6 +24,10 @@ const Index = () => {
   const { getAsset } = useVavity();
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
+  const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
+  const [cardShimmersFading, setCardShimmersFading] = useState(false);
+  const [cardFadeInDone, setCardFadeInDone] = useState(false);
+  const cardNumbersDidMountRef = useRef(false);
   const [isLiquidMode, setIsLiquidMode] = useState(false);
   const [toggleKnobLeftPx, setToggleKnobLeftPx] = useState<number | null>(null);
   const [toggleAlpha, setToggleAlpha] = useState<number>(0);
@@ -362,6 +366,26 @@ const Index = () => {
 
   const sortedRows = assetRows;
 
+  useEffect(() => {
+    if (cardNumbersDidMountRef.current) return;
+    const hasData = sortedRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0);
+    if (!hasData) return;
+    cardNumbersDidMountRef.current = true;
+    setCardShimmersFading(true);
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        setCardNumbersVisible(true);
+        setTimeout(() => setCardFadeInDone(true), 2100);
+      });
+    }, 600);
+  }, [sortedRows]);
+
+  const cardFadeStyle = useMemo<React.CSSProperties>(() => {
+    if (!cardNumbersVisible) return { opacity: 0, transition: 'opacity 2s ease' };
+    if (!cardFadeInDone) return { opacity: realityOpacity, transition: 'opacity 2s ease' };
+    return realityFadeStyle;
+  }, [cardFadeInDone, cardNumbersVisible, realityFadeStyle, realityOpacity]);
+
   return (
     <>
       {showLoading && (
@@ -448,14 +472,20 @@ const Index = () => {
                         <span className="home-asset-name">{row.label}</span>
                       </span>
                     </div>
-                    <div className="home-assets-cell">
-                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                    <div className="home-assets-cell" style={{ position: 'relative' }}>
+                      {!cardNumbersVisible && (
+                        <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-price${cardShimmersFading ? ' is-hidden' : ''}`} />
+                      )}
+                      <span className="asset-header-switch-fade" style={cardFadeStyle}>
                         <span className="home-assets-currency home-assets-currency-dollar">$</span>
                         <span className="home-assets-number home-assets-price">{formatCurrency(displayPrice)}</span>
                       </span>
                     </div>
-                    <div className="home-assets-cell home-assets-percent home-assets-1w">
-                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                    <div className="home-assets-cell home-assets-percent home-assets-1w" style={{ position: 'relative' }}>
+                      {!cardNumbersVisible && (
+                        <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading ? ' is-hidden' : ''}`} />
+                      )}
+                      <span className="asset-header-switch-fade" style={cardFadeStyle}>
                         <Image
                           loader={imageLoader}
                           alt=""
@@ -465,15 +495,18 @@ const Index = () => {
                           src={change1w > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                         />
                       </span>
-                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                      <span className="asset-header-switch-fade" style={cardFadeStyle}>
                         <span className="home-assets-number">
                           {formatPercent(change1w).replace('%', '')}
                           <span className="home-assets-currency home-assets-currency-percent">%</span>
                         </span>
                       </span>
                     </div>
-                    <div className="home-assets-cell home-assets-percent home-assets-1y">
-                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                    <div className="home-assets-cell home-assets-percent home-assets-1y" style={{ position: 'relative' }}>
+                      {!cardNumbersVisible && (
+                        <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading ? ' is-hidden' : ''}`} />
+                      )}
+                      <span className="asset-header-switch-fade" style={cardFadeStyle}>
                         <Image
                           loader={imageLoader}
                           alt=""
@@ -483,15 +516,18 @@ const Index = () => {
                           src={change1y > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                         />
                       </span>
-                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                      <span className="asset-header-switch-fade" style={cardFadeStyle}>
                         <span className="home-assets-number">
                           {formatPercent(change1y).replace('%', '')}
                           <span className="home-assets-currency home-assets-currency-percent">%</span>
                         </span>
                       </span>
                     </div>
-                    <div className="home-assets-cell home-assets-percent">
-                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                    <div className="home-assets-cell home-assets-percent" style={{ position: 'relative' }}>
+                      {!cardNumbersVisible && (
+                        <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading ? ' is-hidden' : ''}`} />
+                      )}
+                      <span className="asset-header-switch-fade" style={cardFadeStyle}>
                         <Image
                           loader={imageLoader}
                           alt=""
@@ -501,7 +537,7 @@ const Index = () => {
                           src={changeAll > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                         />
                       </span>
-                      <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                      <span className="asset-header-switch-fade" style={cardFadeStyle}>
                         <span className="home-assets-number">
                           {formatPercent(changeAll).replace('%', '')}
                           <span className="home-assets-currency home-assets-currency-percent">%</span>

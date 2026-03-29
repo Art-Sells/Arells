@@ -198,6 +198,7 @@ const VavityEthereum: React.FC = () => {
   const [formCalcHidden, setFormCalcHidden] = useState(false);
   const formCalcDidMountRef = useRef(false);
   const [headerNumbersVisible, setHeaderNumbersVisible] = useState(false);
+  const [shimmersFading, setShimmersFading] = useState(false);
   const headerNumbersDidMountRef = useRef(false);
   const [emptySigninGone, setEmptySigninGone] = useState(false);
   const emptySigninGoneTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
@@ -2586,8 +2587,10 @@ const VavityEthereum: React.FC = () => {
     if (!ready) return;
     if (headerNumbersDidMountRef.current) return;
     headerNumbersDidMountRef.current = true;
-    // Ensure the DOM paints once at opacity:0 before toggling visibility (prevents "pop" on first data load).
-    requestAnimationFrame(() => setHeaderNumbersVisible(true));
+    setShimmersFading(true);
+    setTimeout(() => {
+      requestAnimationFrame(() => setHeaderNumbersVisible(true));
+    }, 600);
   }, [activeMarketCap, assetPrice, chartHistory, displayPoint, history, isLiquidMode, vapa]);
 
   useEffect(() => {
@@ -3484,51 +3487,62 @@ const VavityEthereum: React.FC = () => {
             </Link>
             <div className="asset-metric-row">
               <span className="asset-metric-title--ethereum">Price:</span>
-              <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
-                $
-              </span>
-              <span className="asset-header-switch-fade" style={realityFadeStyle}>
-                <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
-                  {headerNumbersVisible ? formatCurrency(displayPoint?.price ?? (displayIsLiquidMode ? assetPrice : vapa) ?? 0) : '\u00A0'}
+              <span className="asset-metric-value-wrap">
+                {!headerNumbersVisible && (
+                  <span className={`asset-number-loader asset-number-loader--ethereum asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
+                )}
+                <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
+                <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                  <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                    {formatCurrency(displayPoint?.price ?? (displayIsLiquidMode ? assetPrice : vapa) ?? 0)}
+                  </span>
                 </span>
               </span>
             </div>
             <div className="asset-metric-row">
               <span className="asset-metric-title--ethereum">Market Cap:</span>
-              <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
-                $
-              </span>
-              <span className="asset-header-switch-fade" style={realityFadeStyle}>
-                <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
-                  {headerNumbersVisible ? renderDecimalSafe(formatMarketCap(activeMarketCap)) : '\u00A0'}
+              <span className="asset-metric-value-wrap">
+                {!headerNumbersVisible && (
+                  <span className={`asset-number-loader asset-number-loader--ethereum asset-number-loader--wide asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
+                )}
+                <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
+                <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                  <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                    {renderDecimalSafe(formatMarketCap(activeMarketCap))}
+                  </span>
                 </span>
               </span>
             </div>
             <div className="asset-metric-row">
-              {percentageIncrease > 0 ? (
-                <span className="asset-metric-trend-icon asset-metric-trend-icon--ethereum" aria-hidden="true" />
-              ) : (
+              <span className="asset-metric-value-wrap">
+                {!headerNumbersVisible && (
+                  <span className={`asset-number-loader asset-number-loader--ethereum asset-number-loader--narrow asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
+                )}
+                {percentageIncrease > 0 ? (
+                  <span className={`asset-metric-trend-icon asset-metric-trend-icon--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`} aria-hidden="true" />
+                ) : (
+                  <span
+                    className={`asset-metric-trend-icon asset-metric-trend-icon--down asset-metric-trend-icon--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}
+                    aria-hidden="true"
+                  />
+                )}
                 <span
-                  className="asset-metric-trend-icon asset-metric-trend-icon--down asset-metric-trend-icon--ethereum"
-                  aria-hidden="true"
-                />
-              )}
-              <span
-                key={chartRangeDays ?? 'all'}
-                className={`asset-metric-value asset-percentage-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}
-              >
-                <span className="asset-header-switch-fade" style={realityFadeStyle}>
-                  {headerNumbersVisible
-                    ? formatPercent(Math.abs(percentageIncrease)).replace('%', '').replace('+', '')
-                    : '\u00A0'}
+                  key={chartRangeDays ?? 'all'}
+                  className={`asset-metric-value asset-percentage-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}
+                >
+                  <span className="asset-header-switch-fade" style={realityFadeStyle}>
+                    {headerNumbersVisible
+                      ? formatPercent(Math.abs(percentageIncrease)).replace('%', '').replace('+', '')
+                      : '\u00A0'}
+                  </span>
                 </span>
-              </span>
-              <span
-                className={`asset-metric-symbol--ethereum asset-metric-percent-symbol--ethereum asset-mount-fade-2s${
-                  headerNumbersVisible ? ' is-visible' : ''
-                }`}
-              >
-                %
+                <span
+                  className={`asset-metric-symbol--ethereum asset-metric-percent-symbol--ethereum asset-mount-fade-2s${
+                    headerNumbersVisible ? ' is-visible' : ''
+                  }`}
+                >
+                  %
+                </span>
               </span>
             </div>
             <div

@@ -1118,7 +1118,7 @@ body {
 }
 
 .asset-section-header.is-liquid .asset-header-title {
-	transform: translate(calc(22px + var(--asset-title-shift, 0px)), 10px);
+	transform: translate(var(--asset-title-shift, 22px), 10px);
 }
 
 .asset-metric-number {
@@ -1532,6 +1532,120 @@ body {
 	min-width: 0;
 	text-align: left;
 	justify-self: start;
+}
+
+/* Sliding loader line shown while numbers load */
+@keyframes assetNumberSlide {
+	0%   { left: -40%; opacity: 0; }
+	10%  { opacity: 1; }
+	80%  { opacity: 1; }
+	100% { left: 100%; opacity: 0; }
+}
+
+.asset-metric-value-wrap {
+	position: relative;
+	display: inline-flex;
+	align-items: baseline;
+	gap: 4px;
+}
+
+.asset-number-loader {
+	position: relative;
+	display: inline-block;
+	height: 5px;
+	clip-path: inset(0 0 0 0 round 2.5px);
+	pointer-events: none;
+	opacity: 1;
+	transition: opacity 0.5s ease;
+}
+
+.asset-number-loader--overlay {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 1;
+}
+
+.asset-number-loader.is-hidden {
+	opacity: 0;
+}
+
+.asset-number-loader::after {
+	content: '';
+	position: absolute;
+	left: -40%;
+	top: 0;
+	width: 40%;
+	height: 5px;
+	border-radius: 2.5px;
+	animation: assetNumberSlide 2s ease-in-out infinite;
+}
+
+.asset-number-loader--bitcoin {
+	width: 80px;
+	background: rgba(248, 141, 0, 0.1);
+}
+
+.asset-number-loader--bitcoin::after {
+	background: rgba(248, 141, 0, 0.5);
+}
+
+.asset-number-loader--bitcoin.asset-number-loader--wide {
+	width: 140px;
+}
+
+.asset-number-loader--bitcoin.asset-number-loader--narrow {
+	width: 55px;
+}
+
+.asset-number-loader--ethereum {
+	width: 80px;
+	background: rgba(107, 114, 168, 0.1);
+}
+
+.asset-number-loader--ethereum::after {
+	background: rgba(107, 114, 168, 0.5);
+}
+
+.asset-number-loader--ethereum.asset-number-loader--wide {
+	width: 140px;
+}
+
+.asset-number-loader--ethereum.asset-number-loader--narrow {
+	width: 55px;
+}
+
+.asset-number-loader--card {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 50px;
+	z-index: 1;
+}
+
+.asset-number-loader--card.asset-number-loader--card-price {
+	width: 65px;
+}
+
+.asset-number-loader--card.asset-number-loader--card-percent {
+	width: 35px;
+}
+
+.home-asset-bitcoin .asset-number-loader--card {
+	background: rgba(248, 141, 0, 0.1);
+}
+
+.home-asset-bitcoin .asset-number-loader--card::after {
+	background: rgba(248, 141, 0, 0.3);
+}
+
+.home-asset-ethereum .asset-number-loader--card {
+	background: rgba(107, 114, 168, 0.1);
+}
+
+.home-asset-ethereum .asset-number-loader--card::after {
+	background: rgba(107, 114, 168, 0.3);
 }
 
 /* Page mount number fade (used for Price / Market Cap / % in asset header) */
@@ -4560,7 +4674,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		transform: translate(22px, 8px);
 	}
 	.asset-section-header.is-liquid .asset-header-title {
-		transform: translate(calc(22px + var(--asset-title-shift, 0px)), 8px);
+		transform: translate(var(--asset-title-shift, 0px), 8px);
 	}
 	.asset-header-slogan {
 		margin-top: 15px;
