@@ -335,11 +335,6 @@ const VavityBitcoin: React.FC = () => {
     }, delayMs);
   }, []);
 
-  const suppressPortfolioCta = useCallback((ms = 2200) => {
-    if (typeof window === 'undefined') return;
-    window.dispatchEvent(new CustomEvent('arells:portfolioCtaSuppress', { detail: { ms } }));
-  }, []);
-
   // Keep the viewport pinned to the bottom while panels are height-animating (prevents scroll/height drift).
   const followScrollUntilRef = useRef<number>(0);
   const followScrollRafRef = useRef<number | null>(null);
@@ -3822,7 +3817,6 @@ const VavityBitcoin: React.FC = () => {
                     ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
                   }}
                   onClick={() => {
-                    suppressPortfolioCta();
                     if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
                     clearEmptyButtonsSequenceTimers();
                     if (clearInvestmentsAnimTimerRef.current) {
@@ -4110,7 +4104,6 @@ const VavityBitcoin: React.FC = () => {
                     addMorePulse ? ' asset-action-button--pulse' : ''
                   }`}
                   onClick={() => {
-                    suppressPortfolioCta();
                     triggerAddMorePulse();
                     if (addMoreOpen) {
                       setAddMoreOpen(false);
@@ -4122,7 +4115,7 @@ const VavityBitcoin: React.FC = () => {
                     followScrollHeightDeltaFor(2000);
                   }}
                 >
-                  {addMoreOpen ? 'Hide add investments' : 'Add investments'}
+                  {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
                 </button>
               </div>
               {showAddMoreForm && (
@@ -4149,7 +4142,7 @@ const VavityBitcoin: React.FC = () => {
                   <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                     <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
                       {renderAddForm(
-                        'Add investments',
+                        'Add more investments',
                         closeAddMoreForm,
                         'asset-action-button asset-action-button--bitcoin'
                       )}
@@ -4210,7 +4203,6 @@ const VavityBitcoin: React.FC = () => {
                     }`}
                     disabled={!investments.length || showMoreDisabled}
                     onClick={() => {
-                      suppressPortfolioCta();
                       triggerShowPulse();
                       if (investmentsListOpen) {
                         setInvestmentsListOpen(false);
@@ -4450,7 +4442,6 @@ const VavityBitcoin: React.FC = () => {
                           type="button"
                           className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-show"
                           onClick={() => {
-                            suppressPortfolioCta();
                             setVisibleInvestments((prev) => prev + 3);
                             followScrollHeightDeltaFor(2000);
                           }}

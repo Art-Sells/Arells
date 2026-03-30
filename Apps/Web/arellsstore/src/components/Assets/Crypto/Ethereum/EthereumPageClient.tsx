@@ -16,11 +16,9 @@ const EthereumPageClient: React.FC = () => {
   const [sessionResetFade, setSessionResetFade] = useState(false);
   const [sessionResetKey, setSessionResetKey] = useState(0);
   const [sessionResetVisible, setSessionResetVisible] = useState(false);
-  const [portfolioClampY, setPortfolioClampY] = useState(0);
   const { email } = useUser();
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
-  const portfolioBottomRef = useRef<number | null>(null);
   const sessionResetTimersRef = useRef<number[]>([]);
   const loaderHideAtRef = useRef<number | null>(null);
   const forceSessionResetPreview = false;
@@ -243,47 +241,6 @@ const EthereumPageClient: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const page = pageRef.current;
-      if (!page) return;
-      const content = page.querySelector('.asset-page-content--ethereum') as HTMLElement | null;
-      const anchor = page.querySelector('.asset-portfolio-icon-anchor') as HTMLElement | null;
-      if (!content || !anchor) return;
-
-      const contentBottom = content.getBoundingClientRect().bottom;
-      const footer = page.querySelector('.asset-footer') as HTMLElement | null;
-      const footerTop = footer ? footer.getBoundingClientRect().top : contentBottom;
-      const computedBottom = parseFloat(window.getComputedStyle(anchor).bottom || '');
-      if (!Number.isNaN(computedBottom) && computedBottom > 0) {
-        portfolioBottomRef.current = computedBottom;
-      }
-      const bottomOffset = portfolioBottomRef.current ?? 0;
-      const fixedBottom = window.innerHeight - bottomOffset;
-      const clampGap = 105;
-      const clampBottom = footerTop - clampGap;
-      const overlap = Math.max(0, fixedBottom - clampBottom);
-      const nextY = overlap > 0 ? -overlap : 0;
-      setPortfolioClampY((prev) => (prev === nextY ? prev : nextY));
-    };
-    const onScroll = () => {
-      if (raf) return;
-      raf = window.requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      if (raf) window.cancelAnimationFrame(raf);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
-
   return (
     <div className="asset-page asset-page--ethereum" ref={pageRef}>
       <header className="asset-header asset-header--ethereum" />
@@ -329,22 +286,16 @@ const EthereumPageClient: React.FC = () => {
       )}
 
       <Ethereum key={`session-reset-${sessionResetKeyValue}`} />
-      {!!email && (
-        <div
-          className="asset-portfolio-icon-anchor"
-          style={portfolioClampY ? { transform: `translateY(${portfolioClampY}px)` } : undefined}
-        >
-          <Link
-            href="/my-investments"
-            className="asset-range-button asset-range-button--ethereum asset-portfolio-icon-button"
-            aria-label="View my investments"
-          >
-            <span className="asset-portfolio-icon-text" aria-hidden="true">$</span>
-          </Link>
-        </div>
-      )}
 
       <footer className="asset-footer">
+        {!!email && (
+          <Link
+            href="/my-investments"
+            className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show asset-footer-about-button"
+          >
+            <span className="asset-footer-about-text">view my portfolio</span>
+          </Link>
+        )}
         {!email && (
           <Link
             href="/"

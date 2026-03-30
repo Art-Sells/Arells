@@ -1098,7 +1098,7 @@ const MyInvestmentsPageClient: React.FC = () => {
 
             {effectiveAssetsMissing.length > 0 && (
               <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
+                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">{effectiveAssetsPresent.length > 0 ? 'Other Assets' : 'Add Investments'}</div>
                 <div className="myinv-panel-section myinv-accent-border">
                   <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
                     <span className="myinv-asset-border" aria-hidden="true" />

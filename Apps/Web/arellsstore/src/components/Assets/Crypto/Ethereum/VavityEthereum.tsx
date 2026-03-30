@@ -336,11 +336,6 @@ const VavityEthereum: React.FC = () => {
     }, delayMs);
   }, []);
 
-  const suppressPortfolioCta = useCallback((ms = 2200) => {
-    if (typeof window === 'undefined') return;
-    window.dispatchEvent(new CustomEvent('arells:portfolioCtaSuppress', { detail: { ms } }));
-  }, []);
-
   const followScrollUntilRef = useRef<number>(0);
   const followScrollRafRef = useRef<number | null>(null);
   const addFormScrollRafRef = useRef<number | null>(null);
@@ -3830,7 +3825,6 @@ const VavityEthereum: React.FC = () => {
                       ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
                     }}
                     onClick={() => {
-                      suppressPortfolioCta();
                       if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
                       clearEmptyButtonsSequenceTimers();
                       if (clearInvestmentsAnimTimerRef.current) {
@@ -4117,7 +4111,6 @@ const VavityEthereum: React.FC = () => {
                       addMorePulse ? ' asset-action-button--pulse' : ''
                     }`}
                     onClick={() => {
-                      suppressPortfolioCta();
                       triggerAddMorePulse();
                       if (addMoreOpen) {
                         setAddMoreOpen(false);
@@ -4129,7 +4122,7 @@ const VavityEthereum: React.FC = () => {
                       followScrollHeightDeltaFor(2000);
                     }}
                   >
-                    {addMoreOpen ? 'Hide add investments' : 'Add investments'}
+                    {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
                   </button>
                 </div>
                 {showAddMoreForm && (
@@ -4156,7 +4149,7 @@ const VavityEthereum: React.FC = () => {
                     <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                       <div className="asset-invest-form-box asset-invest-form-box--ethereum">
                         {renderAddForm(
-                          'Add investments',
+                          'Add more investments',
                           closeAddMoreForm,
                         'asset-action-button asset-action-button--ethereum'
                         )}
@@ -4221,7 +4214,6 @@ const VavityEthereum: React.FC = () => {
                       }`}
                       disabled={!investments.length || showMoreDisabled}
                       onClick={() => {
-                        suppressPortfolioCta();
                         triggerShowPulse();
                         if (investmentsListOpen) {
                           setInvestmentsListOpen(false);
@@ -4469,7 +4461,6 @@ const VavityEthereum: React.FC = () => {
                             type="button"
                             className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show"
                             onClick={() => {
-                              suppressPortfolioCta();
                               setVisibleInvestments((prev) => prev + 3);
                               followScrollHeightDeltaFor(2000);
                             }}
