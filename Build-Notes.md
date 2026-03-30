@@ -10,6 +10,7 @@
 - Test everything........... (including inspect)
 - Make the section in assets holding all the sections maximum height dynamic and the sections inside them width 100% so they resize smoothly without major changes to the UI
 - - After Asset UI, test Toggle Animation and Resetting Investments with Inspect right scrolls...
+- - if signed in.... the sign in to save investments button should dissapear... see how it looks
 - - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes, the dollar sign in the my assets page... My investments page If no Email, If email is read and no investments exist inside the email json, If Investments exist inside email json
 - Remove "sign in" dynamic and "1 minute timer "to test in mobile...
 
