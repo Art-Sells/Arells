@@ -808,7 +808,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                                 }`}
                                 style={{
                                   opacity: (selectedRangeDays && rangeLoading) || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                                 }}
                               >
                               <span className="myinv-metric-symbol">$</span>
@@ -841,7 +841,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                                 }`}
                                 style={{
                                   opacity: (selectedRangeDays && rangeLoading) || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                                 }}
                               >
                               <span className="myinv-metric-symbol">$</span>
@@ -870,7 +870,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                               style={{
                                 opacity:
                                   (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleAnimating ? 'none' : 'opacity 1s ease',
+                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                               }}
                             >
                               {profitLabel}
@@ -892,7 +892,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                               style={{
                                 opacity:
                                   (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleAnimating ? 'none' : 'opacity 1s ease',
+                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                               }}
                             >
                               <span className="myinv-metric-inline-symbol">{profitPrefix}</span>
