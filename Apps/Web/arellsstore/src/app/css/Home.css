@@ -5432,6 +5432,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		font-size: 13px;
 	}
 
+	.asset-portfolio-actions--signin.asset-portfolio-actions--signin-standalone {
+		--asset-portfolio-actions-signin-margin-top: 10px; /* <- edit signin-under-summary top spacing */
+		margin-top: var(--asset-portfolio-actions-signin-margin-top) !important;
+	}
+
 	.asset-footer {
 		margin-top: 10px; /* <- edit footer top spacing */
 	}
