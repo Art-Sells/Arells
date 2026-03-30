@@ -4902,6 +4902,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		padding-bottom: 0px !important; /* <- edit bottom */
 		padding-left: 5px !important;   /* <- edit left */
 		padding-right: 5px !important;  /* <- edit right */
+		margin-bottom: 10px !important;  /* <- edit bottom margin */
 	}
 
 	.asset-profit-block {
@@ -4910,9 +4911,24 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-action-button--save-signin {
-		margin-top: 0px !important;    /* <- edit signin button top spacing */
-		margin-bottom: 13px; /* <- edit signin button bottom spacing */
+		margin-top: 0px; /* <- edit signin button top spacing */
+		margin-bottom: 13px;
+		padding-top: 20px;    /* <- edit signin button top spacing */
+		padding-bottom: 21px;    /* <- edit signin button bottom spacing */
+		padding-left: 10px;    /* <- edit signin button left spacing */
+		padding-right: 10px; 
+		font-size: 12px;   /* <- edit signin button right spacing */
 	}
+
+	.asset-action-button--add-investments {
+		font-size: 15px;  
+		padding-top: 12px;    /* <- edit add investments font size */
+		padding-bottom: 12px;    /* <- edit add investments font size */
+		padding-left: 10px;    /* <- edit add investments font size */
+		padding-right: 10px;    /* <- edit add investments font size */
+		margin-bottom: 10px;  /* <- edit add investments bottom spacing */
+	}
+
 }
 
 .asset-panel--bitcoin {
@@ -5405,6 +5421,20 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 .asset-view-more-assets-text {
 	display: inline-block;
+}
+
+@media (max-width: 750px) {
+	.asset-footer-about-text {
+		font-size: 10px;
+	}
+
+	.asset-view-more-assets {
+		font-size: 13px;
+	}
+
+	.asset-footer {
+		margin-top: 10px; /* <- edit footer top spacing */
+	}
 }
 
 .asset-fade-in {
