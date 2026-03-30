@@ -94,6 +94,8 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
+  const [initialDataReady, setInitialDataReady] = useState(false);
+  const initialFetchDoneRef = useRef(false);
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState(false);
   const [rangePricesSolid, setRangePricesSolid] = useState<Record<string, number | null>>({});
@@ -135,7 +137,14 @@ const MyInvestmentsPageClient: React.FC = () => {
 
   useEffect(() => {
     const shouldPoll = forceSessionPreview ? Boolean(sessionId) : Boolean(effectiveEmail);
-    if (!shouldPoll) return;
+    if (!shouldPoll) {
+      const stillWaiting = forceSessionPreview ? !sessionId : !effectiveEmail;
+      if (!stillWaiting && !initialFetchDoneRef.current) {
+        initialFetchDoneRef.current = true;
+        setInitialDataReady(true);
+      }
+      return;
+    }
     let disposed = false;
     const tick = async () => {
       if (refreshInFlightRef.current || disposed) return;
@@ -146,6 +155,10 @@ const MyInvestmentsPageClient: React.FC = () => {
           await fetchVavityAggregatorAll(sessionId);
         } else {
           await refreshEmailAggregator();
+        }
+        if (!initialFetchDoneRef.current) {
+          initialFetchDoneRef.current = true;
+          setInitialDataReady(true);
         }
       } finally {
         refreshInFlightRef.current = false;
@@ -358,16 +371,17 @@ const MyInvestmentsPageClient: React.FC = () => {
   }, [updateTitleShift]);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
+    if (!initialDataReady) return;
+    const fadeTimer = setTimeout(() => setFadeOut(true), 300);
     const hideTimer = setTimeout(() => {
       setLoading(false);
       setFadeOut(false);
-    }, 2000);
+    }, 1300);
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
-  }, []);
+  }, [initialDataReady]);
 
   useEffect(() => {
     if (forceSessionPreview) return;
@@ -1066,7 +1080,7 @@ const MyInvestmentsPageClient: React.FC = () => {
             </div>
           </div>
         </div>
-        {effectiveSignedIn && (
+        {effectiveSignedIn && initialDataReady && (
           <>
             {effectiveAssetsPresent.length > 0 && (
               <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>

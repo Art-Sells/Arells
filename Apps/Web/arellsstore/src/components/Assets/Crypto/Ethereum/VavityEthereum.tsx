@@ -310,11 +310,6 @@ const VavityEthereum: React.FC = () => {
   const emptyActionsRef = useRef<HTMLDivElement | null>(null);
   const emptyActionsMeasureRef = useRef<HTMLDivElement | null>(null);
   const [emptyActionsHeight, setEmptyActionsHeight] = useState<number>(0);
-  const portfolioCenterRef = useRef<HTMLDivElement | null>(null);
-  const portfolioCenterInnerRef = useRef<HTMLDivElement | null>(null);
-  const [portfolioCenterExpanded, setPortfolioCenterExpanded] = useState(false);
-  const [portfolioCenterOverflow, setPortfolioCenterOverflow] = useState(false);
-  const [portfolioCenterTargetH, setPortfolioCenterTargetH] = useState(0);
   const lastEmptyActionsHeightRef = useRef<number>(0);
   const [clearingHeight, setClearingHeight] = useState<number | null>(null);
   const clearingHeightRafRef = useRef<number | null>(null);
@@ -1198,21 +1193,31 @@ const VavityEthereum: React.FC = () => {
     setDeleteLocked(false);
   }, []);
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
+  const firstOpenRef = useRef(true);
   const openInvestmentsSection = useCallback(() => {
+    const delay = firstOpenRef.current ? 1000 : 0;
+    firstOpenRef.current = false;
     followScrollHeightDeltaFor(5000);
-    setInvestmentsWholeHeight(0);
-    setSummaryValuesHidden(true);
-    setSummaryOpen(true);
-    requestAnimationFrame(() => {
+    const doOpen = () => {
+      setInvestmentsWholeHeight(0);
+      setSummaryValuesHidden(true);
+      setSummaryOpen(true);
       requestAnimationFrame(() => {
-        const whole = investmentsWholeContentRef.current;
-        if (whole) {
-          const h = whole.scrollHeight + 24;
-          setInvestmentsWholeHeight(h);
-        }
+        requestAnimationFrame(() => {
+          const whole = investmentsWholeContentRef.current;
+          if (whole) {
+            const h = whole.scrollHeight + 24;
+            setInvestmentsWholeHeight(h);
+          }
+        });
       });
-    });
-    followScrollHeightDeltaFor(5000);
+      followScrollHeightDeltaFor(5000);
+    };
+    if (delay > 0) {
+      globalThis.setTimeout(doOpen, delay);
+    } else {
+      doOpen();
+    }
   }, [followScrollHeightDeltaFor]);
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptySigninGone(false);
@@ -1255,8 +1260,8 @@ const VavityEthereum: React.FC = () => {
         : '0px';
   const investmentsWholeTransition = isClearingInvestments
     ? 'max-height 2s ease'
-    : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
-      ? 'max-height 2s ease'
+    : summaryAnimating || summaryAnimatingCooldown
+      ? `max-height 2s ease`
       : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   const summaryTransition =
@@ -1466,7 +1471,7 @@ const VavityEthereum: React.FC = () => {
     setSummaryAnimating(true);
     summaryAnimatingRef.current = true;
     setSummaryValuesHidden(true);
-    const revealTimer = window.setTimeout(() => setSummaryValuesHidden(false), 150);
+    const revealTimer = window.setTimeout(() => setSummaryValuesHidden(false), 1200);
     const timer = window.setTimeout(() => {
       setSummaryAnimating(false);
       summaryAnimatingRef.current = false;
@@ -3408,27 +3413,6 @@ const VavityEthereum: React.FC = () => {
     };
   }, [isSignedIn, email]);
 
-  useEffect(() => {
-    if (showInitialFetchLoader) {
-      setPortfolioCenterExpanded(false);
-      setPortfolioCenterOverflow(false);
-      setPortfolioCenterTargetH(0);
-      return;
-    }
-    if (!shouldFetchInitialData) {
-      setPortfolioCenterExpanded(true);
-      setPortfolioCenterOverflow(true);
-      return;
-    }
-    const raf = requestAnimationFrame(() => {
-      const h = portfolioCenterInnerRef.current?.scrollHeight ?? 200;
-      setPortfolioCenterTargetH(h);
-      requestAnimationFrame(() => setPortfolioCenterExpanded(true));
-    });
-    const timer = globalThis.setTimeout(() => setPortfolioCenterOverflow(true), 2000);
-    return () => { cancelAnimationFrame(raf); globalThis.clearTimeout(timer); };
-  }, [showInitialFetchLoader, shouldFetchInitialData]);
-
   return (
     <>
       {submitLoaderMounted && (
@@ -3820,28 +3804,16 @@ const VavityEthereum: React.FC = () => {
           </div>
 
       <div
-        ref={portfolioCenterRef}
         className={`asset-panel asset-panel--ethereum asset-portfolio-center asset-section-slide${
           summaryOpen && !isClearingInvestments ? ' asset-portfolio-center--summary-open' : ''
         }${summaryAnimating ? ' asset-portfolio-center--summary-animating' : ''}`}
         style={{ 
           marginBottom: '10px', 
-          paddingTop: portfolioCenterOverflow ? '30px' : (portfolioCenterExpanded ? '30px' : '0px'),
-          paddingBottom: portfolioCenterOverflow ? '10px' : (portfolioCenterExpanded ? '10px' : '0px'),
+          paddingTop: '30px', 
+          paddingBottom: '10px',
           paddingLeft: '20px',
-          paddingRight: '20px',
-          ...(portfolioCenterOverflow
-            ? {}
-            : {
-                maxHeight: portfolioCenterExpanded ? `${portfolioCenterTargetH + 60}px` : '0px',
-                overflow: 'hidden' as const,
-                transition: portfolioCenterExpanded
-                  ? 'max-height 1.8s ease-out, padding-top 1.8s ease-out, padding-bottom 1.8s ease-out'
-                  : 'none',
-              }),
-        }}
+          paddingRight: '20px' }}
       >
-       <div ref={portfolioCenterInnerRef}>
         {!hasInvestmentsUI && !showInitialFetchLoader ? (
           <>
             <div
@@ -4148,7 +4120,9 @@ const VavityEthereum: React.FC = () => {
                     className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-add${
                       addMorePulse ? ' asset-action-button--pulse' : ''
                     }`}
+                    disabled={deleteInFlight}
                     onClick={() => {
+                      if (deleteInFlight) return;
                       triggerAddMorePulse();
                       if (addMoreOpen) {
                         setAddMoreOpen(false);
@@ -4557,7 +4531,6 @@ const VavityEthereum: React.FC = () => {
             </div>
           </div>
         )}
-       </div>
       </div>
 
       </div>
