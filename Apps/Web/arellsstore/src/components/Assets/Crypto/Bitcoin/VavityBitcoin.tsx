@@ -208,9 +208,8 @@ const VavityBitcoin: React.FC = () => {
   const [emptyAddHiding, setEmptyAddHiding] = useState(false);
   const [emptyAddFadeIn, setEmptyAddFadeIn] = useState(true);
   const [emptyActionsExpanding, setEmptyActionsExpanding] = useState(false);
+  const [emptyActionsMountPhase, setEmptyActionsMountPhase] = useState<'hidden' | 'revealing' | 'done'>('hidden');
   const emptyActionsExpandTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
-  const [emptyMountPhase, setEmptyMountPhase] = useState<'hidden' | 'revealing' | 'done'>('hidden');
-  const [emptyMountTargetH, setEmptyMountTargetH] = useState(0);
   const emptyButtonsSequenceTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
   const submitCollapseTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const submitResetPendingRef = useRef(false);
@@ -1207,64 +1206,25 @@ const VavityBitcoin: React.FC = () => {
     deleteLockRef.current = false;
     setDeleteLocked(false);
   }, []);
-  useEffect(() => {
-    if (hasInvestmentsUI) {
-      setEmptyMountPhase('done');
-      return;
-    }
-    if (showInitialFetchLoader) return;
-    setEmptyMountPhase((prev) => {
-      if (prev !== 'hidden') return prev;
-      return 'hidden';
-    });
-    const revealTimer = globalThis.setTimeout(() => {
-      const h = emptyActionsRef.current?.scrollHeight ?? 0;
-      setEmptyMountTargetH(h);
-      requestAnimationFrame(() => {
-        setEmptyMountPhase((prev) => (prev === 'hidden' ? 'revealing' : prev));
-      });
-    }, 1000);
-    const doneTimer = globalThis.setTimeout(() => {
-      setEmptyMountPhase((prev) => (prev === 'revealing' ? 'done' : prev));
-    }, 3200);
-    return () => {
-      globalThis.clearTimeout(revealTimer);
-      globalThis.clearTimeout(doneTimer);
-    };
-  }, [hasInvestmentsUI, showInitialFetchLoader]);
-
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
-  const mountedWithInvestmentsRef = useRef(hasInvestmentsUI);
-  const firstOpenRef = useRef(mountedWithInvestmentsRef.current);
-  const firstSummaryOpenRef = useRef(mountedWithInvestmentsRef.current);
   const openInvestmentsSection = useCallback(() => {
-    const isFirstOpen = firstOpenRef.current;
-    const delay = isFirstOpen ? 1000 : 0;
-    firstOpenRef.current = false;
-    const doOpen = () => {
-      followScrollHeightDeltaFor(5000);
-      setInvestmentsWholeHeight(0);
-      if (!isFirstOpen) setSummaryValuesHidden(true);
-      setSummaryOpen(true);
+    followScrollHeightDeltaFor(5000);
+    setInvestmentsWholeHeight(0);
+    setSummaryValuesHidden(true);
+    setSummaryOpen(true);
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        const panel = investmentsWholePanelRef.current;
-        if (panel) panel.getBoundingClientRect();
-        requestAnimationFrame(() => {
-          const whole = investmentsWholeContentRef.current;
-          if (whole) {
-            const h = whole.scrollHeight + 24;
-            setInvestmentsWholeHeight(h);
-          }
-        });
+        const whole = investmentsWholeContentRef.current;
+        if (whole) {
+          const h = whole.scrollHeight + 24;
+          setInvestmentsWholeHeight(h);
+        }
       });
-    };
-    if (delay > 0) {
-      globalThis.setTimeout(doOpen, delay);
-    } else {
-      doOpen();
-    }
+    });
+    followScrollHeightDeltaFor(5000);
   }, [followScrollHeightDeltaFor]);
   const triggerEmptyButtonsExpand = useCallback(() => {
+    setEmptyActionsMountPhase('done');
     setEmptySigninGone(false);
     setEmptyAddGone(false);
     setEmptySigninHiding(true);
@@ -1295,9 +1255,7 @@ const VavityBitcoin: React.FC = () => {
       setHideEmptyActionsOnSubmit(false);
     }
   }, [investments.length, isSubmitCollapsing]);
-  const summaryMaxHeight = summaryOpen && !isClearingInvestments
-    ? (summaryAnimating ? 'none' : `${summaryHeight}px`)
-    : '0px';
+  const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
   const investmentsWholeMaxHeight =
     summaryOpen && !isClearingInvestments
@@ -1307,15 +1265,15 @@ const VavityBitcoin: React.FC = () => {
         : '0px';
   const investmentsWholeTransition = isClearingInvestments
     ? 'max-height 2s ease'
-    : summaryAnimating || summaryAnimatingCooldown
-      ? `max-height 2s ease`
+    : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
+      ? 'max-height 2s ease'
       : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   // Add-more form lives inside the summary panel. If both the outer summary and the inner form
   // animate max-height, it feels slower because the outer panel clips the inner one during its own expand.
   // When Add-more is showing, snap the outer summary height and let only the inner form animate.
   const summaryTransition =
-    summaryAnimating ? 'max-height 0s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
+    summaryAnimating ? 'max-height 2s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
   const shouldRenderAddForm =
     (showEmptyAddForm && showAddForm) || addFormSubmitAnimating || addFormSubmitCollapsing;
 
@@ -1496,18 +1454,16 @@ const VavityBitcoin: React.FC = () => {
       profitHeightPendingRef.current = true;
       return;
     }
-    const isFirst = firstSummaryOpenRef.current;
-    firstSummaryOpenRef.current = false;
     setSummaryAnimating(true);
     summaryAnimatingRef.current = true;
-    if (!isFirst) setSummaryValuesHidden(true);
-    const revealTimer = isFirst ? 0 : window.setTimeout(() => setSummaryValuesHidden(false), 1200);
+    setSummaryValuesHidden(true);
+    const revealTimer = window.setTimeout(() => setSummaryValuesHidden(false), 150);
     const timer = window.setTimeout(() => {
       setSummaryAnimating(false);
       summaryAnimatingRef.current = false;
     }, 2000);
     return () => {
-      if (revealTimer) window.clearTimeout(revealTimer);
+      window.clearTimeout(revealTimer);
       window.clearTimeout(timer);
     };
   }, [summaryOpen, isClearingInvestments]);
@@ -3443,6 +3399,22 @@ const VavityBitcoin: React.FC = () => {
     };
   }, [isSignedIn, email]);
 
+  useEffect(() => {
+    if (hasInvestmentsUI) return;
+    if (showInitialFetchLoader) return;
+    if (emptyActionsMountPhase !== 'hidden') return;
+    const revealTimer = globalThis.setTimeout(() => {
+      setEmptyActionsMountPhase('revealing');
+    }, 1000);
+    const doneTimer = globalThis.setTimeout(() => {
+      setEmptyActionsMountPhase('done');
+    }, 3200);
+    return () => {
+      globalThis.clearTimeout(revealTimer);
+      globalThis.clearTimeout(doneTimer);
+    };
+  }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
+
   return (
     <>
       {submitLoaderMounted && (
@@ -3844,7 +3816,9 @@ const VavityBitcoin: React.FC = () => {
           paddingTop: '30px', 
           paddingBottom: '10px',
           paddingLeft: '20px',
-          paddingRight: '20px' }}
+          paddingRight: '20px',
+          ...(!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : {}),
+        }}
       >
         {!hasInvestmentsUI && !showInitialFetchLoader ? (
           <>
@@ -3854,10 +3828,10 @@ const VavityBitcoin: React.FC = () => {
               style={
                 hideEmptyActionsOnSubmit
                   ? { display: 'none' }
-                  : emptyMountPhase === 'hidden'
-                    ? { maxHeight: '0px', overflow: 'hidden' }
-                    : emptyMountPhase === 'revealing'
-                      ? { maxHeight: `${emptyMountTargetH}px`, overflow: 'hidden', transition: 'max-height 2s ease' }
+                  : emptyActionsMountPhase === 'hidden'
+                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 2s ease' }
+                    : emptyActionsMountPhase === 'revealing'
+                      ? { maxHeight: `${emptyActionsHeight || 200}px`, overflow: 'hidden', transition: 'max-height 2s ease' }
                       : undefined
               }
             >
@@ -3975,7 +3949,7 @@ const VavityBitcoin: React.FC = () => {
                     className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
                     style={{
                       opacity: summaryValuesHidden ? 0 : realityOpacity,
-                      transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : undefined,
+                      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                     }}
                   >
                     <span className="asset-metric-symbol--bitcoin">$</span>
@@ -4000,7 +3974,7 @@ const VavityBitcoin: React.FC = () => {
                     className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
                     style={{
                       opacity: summaryValuesHidden ? 0 : realityOpacity,
-                      transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : undefined,
+                      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                     }}
                   >
                     <span className="asset-metric-symbol--bitcoin">$</span>
@@ -4043,7 +4017,7 @@ const VavityBitcoin: React.FC = () => {
                                   style={{
                                     opacity:
                                       (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                    transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : 'opacity 1s ease',
+                                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
                                   }}
                                 >
                                   {label}
@@ -4063,7 +4037,7 @@ const VavityBitcoin: React.FC = () => {
                                   style={{
                                     opacity:
                                       (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                    transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : 'opacity 1s ease',
+                                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
                                   }}
                                 >
                                   <span className="asset-metric-symbol--bitcoin">
@@ -4092,7 +4066,7 @@ const VavityBitcoin: React.FC = () => {
                                 style={{
                                   opacity:
                                     (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : 'opacity 1s ease',
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
                                 }}
                               >
                                 {label}
@@ -4112,7 +4086,7 @@ const VavityBitcoin: React.FC = () => {
                                 style={{
                                   opacity:
                                     (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : 'opacity 1s ease',
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
                                 }}
                               >
                                 <span className="asset-metric-symbol--bitcoin">
@@ -4157,9 +4131,7 @@ const VavityBitcoin: React.FC = () => {
                   className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-add${
                     addMorePulse ? ' asset-action-button--pulse' : ''
                   }`}
-                  disabled={deleteInFlight}
                   onClick={() => {
-                    if (deleteInFlight) return;
                     triggerAddMorePulse();
                     if (addMoreOpen) {
                       setAddMoreOpen(false);
