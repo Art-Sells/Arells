@@ -4639,6 +4639,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 @media (max-width: 750px) {
+	.myinv-title {
+		font-size: 20px;
+	}
+
 	.asset-page-content--bitcoin .asset-header-panel {
 		padding-top: 5px;
 		padding-right: 10px;   /* <- edit this */
@@ -4780,10 +4784,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		width: 100%;
 		box-sizing: border-box;
 		height: auto;
+		margin-bottom: -5px !important;
 		padding-top: 20px !important;
-		padding-bottom: 20px !important;
-		padding-left: 15px !important;
-		padding-right: 15px !important;
+		padding-bottom: 10px !important;
+		padding-left: 10px !important;
+		padding-right: 10px !important;
 	}
 
 	.asset-price-panel > .asset-metric-row:nth-of-type(3) {
@@ -4870,11 +4875,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-reality-toggle-shell {
-		width: 100%;
+		width: 93%;
 		box-sizing: border-box;
 		transform: none;
 		margin-top: 10px;
-		margin-bottom: 13px;
+		margin-bottom: 13px; /* <- edit toggle right */
 		border-radius: 10px;
 	}
 

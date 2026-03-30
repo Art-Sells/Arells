@@ -3905,7 +3905,7 @@ const VavityEthereum: React.FC = () => {
               <div ref={investmentsWholeContentRef}>
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">investments</span>
+                    <span className="asset-portfolio-title-muted">my ethereum</span>
                   </h2>
                 )}
                 <div
@@ -3987,7 +3987,7 @@ const VavityEthereum: React.FC = () => {
                   if (selectedRangeDays && rangeHistoricalPrice != null) {
                     const pastValue = (summaryTotals.acVactTaa || 0) * (summaryRangePrice ?? 0);
                     const profitValue = (summaryTotals.acVact || 0) - pastValue;
-                        const isProfit = profitValue > 0.005;
+                        const isProfit = profitValue >= -0.005;
                         const label = isProfit ? 'Profits' : 'Losses';
                         const formattedValue = formatMoneyFixed(Math.abs(profitValue));
                         return (
@@ -4026,7 +4026,7 @@ const VavityEthereum: React.FC = () => {
                                   }}
                                 >
                                   <span className="asset-metric-symbol--ethereum">
-                                    {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                    {isProfit ? '+$' : '-$'}
                                   </span>
                                   <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                                 </span>
@@ -4036,7 +4036,7 @@ const VavityEthereum: React.FC = () => {
                         );
                   }
                       const defaultProfit = (summaryTotals.acVact || 0) - (summaryTotals.acVatop || 0);
-                      const isProfit = defaultProfit > 0.005;
+                      const isProfit = defaultProfit >= -0.005;
                       const label = isProfit ? 'Profits' : 'Losses';
                       const formattedValue = formatMoneyFixed(Math.abs(defaultProfit));
                       return (
@@ -4075,7 +4075,7 @@ const VavityEthereum: React.FC = () => {
                                 }}
                               >
                                 <span className="asset-metric-symbol--ethereum">
-                                  {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                  {isProfit ? '+$' : '-$'}
                                 </span>
                                 <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                               </span>
@@ -4129,7 +4129,7 @@ const VavityEthereum: React.FC = () => {
                       followScrollHeightDeltaFor(2000);
                     }}
                   >
-                    {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
+                    {addMoreOpen ? 'Hide add investments' : 'Add investments'}
                   </button>
                 </div>
                 {showAddMoreForm && (
@@ -4156,7 +4156,7 @@ const VavityEthereum: React.FC = () => {
                     <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                       <div className="asset-invest-form-box asset-invest-form-box--ethereum">
                         {renderAddForm(
-                          'Add more investments',
+                          'Add investments',
                           closeAddMoreForm,
                         'asset-action-button asset-action-button--ethereum'
                         )}
@@ -4235,7 +4235,7 @@ const VavityEthereum: React.FC = () => {
                         followScrollHeightDeltaFor(2000);
                       }}
                     >
-                      {investmentsListOpen ? 'Hide more investments' : 'Show more investments'}
+                      {investmentsListOpen ? 'Hide investments' : 'Show investments'}
                     </button>
                   </div>
 
@@ -4251,7 +4251,7 @@ const VavityEthereum: React.FC = () => {
                         className="asset-investments-header asset-investments-header--more"
                         ref={investmentsListHeaderRef}
                       >
-                        <span className="asset-portfolio-title-muted">more investments</span>
+                        <span className="asset-portfolio-title-muted">investments</span>
                       </h2>
                       <div
                         className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
@@ -4371,7 +4371,7 @@ const VavityEthereum: React.FC = () => {
                                         const value = Number(
                                           (isLiquidMode ? (entry.lCdVatop ?? entry.rCdVatop) : entry.cdVatop) ?? 0
                                         );
-                                        const isProfit = value > 0.005;
+                                        const isProfit = value >= -0.005;
                                         const title = isProfit ? 'Profits' : 'Losses';
                                         const prefix = isProfit ? '+$' : '-$';
                                         return (

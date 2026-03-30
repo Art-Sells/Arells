@@ -1068,34 +1068,6 @@ const MyInvestmentsPageClient: React.FC = () => {
         </div>
         {effectiveSignedIn && (
           <>
-            {effectiveAssetsMissing.length > 0 && (
-              <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
-                <div className="myinv-panel-section myinv-accent-border">
-                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
-                    <span className="myinv-asset-border" aria-hidden="true" />
-                    <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
-                      {effectiveAssetsMissing.map((asset) => {
-                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
-                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
-                        return (
-                          <Link
-                            key={`missing-${asset}`}
-                            href={href}
-                            className={`myinv-asset-button myinv-asset-button--${asset}`}
-                            aria-label={label}
-                          >
-                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {effectiveAssetsPresent.length > 0 && (
               <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
                 <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">My Assets</div>
@@ -1110,6 +1082,34 @@ const MyInvestmentsPageClient: React.FC = () => {
                         return (
                           <Link
                             key={`more-${asset}`}
+                            href={href}
+                            className={`myinv-asset-button myinv-asset-button--${asset}`}
+                            aria-label={label}
+                          >
+                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {effectiveAssetsMissing.length > 0 && (
+              <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
+                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
+                <div className="myinv-panel-section myinv-accent-border">
+                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
+                    <span className="myinv-asset-border" aria-hidden="true" />
+                    <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
+                      {effectiveAssetsMissing.map((asset) => {
+                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
+                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        return (
+                          <Link
+                            key={`missing-${asset}`}
                             href={href}
                             className={`myinv-asset-button myinv-asset-button--${asset}`}
                             aria-label={label}

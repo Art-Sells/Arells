@@ -3897,7 +3897,7 @@ const VavityBitcoin: React.FC = () => {
               <div ref={investmentsWholeContentRef}>
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">investments</span>
+                    <span className="asset-portfolio-title-muted">my bitcoin</span>
                   </h2>
                 )}
                 <div
@@ -3980,7 +3980,7 @@ const VavityBitcoin: React.FC = () => {
                   if (selectedRangeDays && rangeHistoricalPrice != null) {
                     const pastValue = (summaryTotals.acVactTaa || 0) * (summaryRangePrice ?? 0);
                     const profitValue = (summaryTotals.acVact || 0) - pastValue;
-                        const isProfit = profitValue > 0.005;
+                        const isProfit = profitValue >= -0.005;
                         const label = isProfit ? 'Profits' : 'Losses';
                         const formattedValue = formatMoneyFixed(Math.abs(profitValue));
                         return (
@@ -4019,17 +4019,17 @@ const VavityBitcoin: React.FC = () => {
                                   }}
                                 >
                                   <span className="asset-metric-symbol--bitcoin">
-                                    {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                    {isProfit ? '+$' : '-$'}
                                   </span>
                                   <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                                 </span>
                               </div>
-                            </span>
                           </span>
+                        </span>
                         );
                   }
                       const defaultProfit = (summaryTotals.acVact || 0) - (summaryTotals.acVatop || 0);
-                      const isProfit = defaultProfit > 0.005;
+                      const isProfit = defaultProfit >= -0.005;
                       const label = isProfit ? 'Profits' : 'Losses';
                       const formattedValue = formatMoneyFixed(Math.abs(defaultProfit));
                       return (
@@ -4068,7 +4068,7 @@ const VavityBitcoin: React.FC = () => {
                                 }}
                               >
                                 <span className="asset-metric-symbol--bitcoin">
-                                  {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                  {isProfit ? '+$' : '-$'}
                                 </span>
                                 <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                               </span>
@@ -4122,7 +4122,7 @@ const VavityBitcoin: React.FC = () => {
                     followScrollHeightDeltaFor(2000);
                   }}
                 >
-                  {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
+                  {addMoreOpen ? 'Hide add investments' : 'Add investments'}
                 </button>
               </div>
               {showAddMoreForm && (
@@ -4149,7 +4149,7 @@ const VavityBitcoin: React.FC = () => {
                   <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                     <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
                       {renderAddForm(
-                        'Add more investments',
+                        'Add investments',
                         closeAddMoreForm,
                         'asset-action-button asset-action-button--bitcoin'
                       )}
@@ -4224,7 +4224,7 @@ const VavityBitcoin: React.FC = () => {
                       followScrollHeightDeltaFor(2000);
                     }}
                   >
-                  {investmentsListOpen ? 'Hide more investments' : 'Show more investments'}
+                  {investmentsListOpen ? 'Hide investments' : 'Show investments'}
                   </button>
                 </div>
 
@@ -4237,7 +4237,7 @@ const VavityBitcoin: React.FC = () => {
                     }}
                   >
                     <h2 className="asset-investments-header asset-investments-header--more" ref={investmentsListHeaderRef}>
-                      <span className="asset-portfolio-title-muted">more investments</span>
+                      <span className="asset-portfolio-title-muted">investments</span>
                     </h2>
                     <div
                       className={`asset-investments-wrap asset-investments-wrap--bitcoin asset-slide-panel${
@@ -4353,7 +4353,7 @@ const VavityBitcoin: React.FC = () => {
                                       const value = Number(
                                         (isLiquidMode ? (entry.lCdVatop ?? entry.rCdVatop) : entry.cdVatop) ?? 0
                                       );
-                                      const isProfit = value > 0.005;
+                                      const isProfit = value >= -0.005;
                                       const title = isProfit ? 'Profits' : 'Losses';
                                       const prefix = isProfit ? '+$' : '-$';
                                       return (
