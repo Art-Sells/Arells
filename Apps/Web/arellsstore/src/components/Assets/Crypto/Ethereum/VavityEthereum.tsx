@@ -209,6 +209,8 @@ const VavityEthereum: React.FC = () => {
   const [emptyAddFadeIn, setEmptyAddFadeIn] = useState(true);
   const [emptyActionsExpanding, setEmptyActionsExpanding] = useState(false);
   const emptyActionsExpandTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const [emptyMountPhase, setEmptyMountPhase] = useState<'hidden' | 'revealing' | 'done'>('hidden');
+  const [emptyMountTargetH, setEmptyMountTargetH] = useState(0);
   const emptyButtonsSequenceTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
   const pulseTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
   const didMountAddMorePulseRef = useRef(false);
@@ -1192,17 +1194,48 @@ const VavityEthereum: React.FC = () => {
     deleteLockRef.current = false;
     setDeleteLocked(false);
   }, []);
+  useEffect(() => {
+    if (hasInvestmentsUI) {
+      setEmptyMountPhase('done');
+      return;
+    }
+    if (showInitialFetchLoader) return;
+    setEmptyMountPhase((prev) => {
+      if (prev !== 'hidden') return prev;
+      return 'hidden';
+    });
+    const revealTimer = globalThis.setTimeout(() => {
+      const h = emptyActionsRef.current?.scrollHeight ?? 0;
+      setEmptyMountTargetH(h);
+      requestAnimationFrame(() => {
+        setEmptyMountPhase((prev) => (prev === 'hidden' ? 'revealing' : prev));
+      });
+    }, 1000);
+    const doneTimer = globalThis.setTimeout(() => {
+      setEmptyMountPhase((prev) => (prev === 'revealing' ? 'done' : prev));
+    }, 3200);
+    return () => {
+      globalThis.clearTimeout(revealTimer);
+      globalThis.clearTimeout(doneTimer);
+    };
+  }, [hasInvestmentsUI, showInitialFetchLoader]);
+
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
-  const firstOpenRef = useRef(true);
+  const mountedWithInvestmentsRef = useRef(hasInvestmentsUI);
+  const firstOpenRef = useRef(mountedWithInvestmentsRef.current);
+  const firstSummaryOpenRef = useRef(mountedWithInvestmentsRef.current);
   const openInvestmentsSection = useCallback(() => {
-    const delay = firstOpenRef.current ? 1000 : 0;
+    const isFirstOpen = firstOpenRef.current;
+    const delay = isFirstOpen ? 1000 : 0;
     firstOpenRef.current = false;
-    followScrollHeightDeltaFor(5000);
     const doOpen = () => {
+      followScrollHeightDeltaFor(5000);
       setInvestmentsWholeHeight(0);
-      setSummaryValuesHidden(true);
+      if (!isFirstOpen) setSummaryValuesHidden(true);
       setSummaryOpen(true);
       requestAnimationFrame(() => {
+        const panel = investmentsWholePanelRef.current;
+        if (panel) panel.getBoundingClientRect();
         requestAnimationFrame(() => {
           const whole = investmentsWholeContentRef.current;
           if (whole) {
@@ -1211,7 +1244,6 @@ const VavityEthereum: React.FC = () => {
           }
         });
       });
-      followScrollHeightDeltaFor(5000);
     };
     if (delay > 0) {
       globalThis.setTimeout(doOpen, delay);
@@ -1250,7 +1282,9 @@ const VavityEthereum: React.FC = () => {
       setHideEmptyActionsOnSubmit(false);
     }
   }, [investments.length, isSubmitCollapsing]);
-  const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
+  const summaryMaxHeight = summaryOpen && !isClearingInvestments
+    ? (summaryAnimating ? 'none' : `${summaryHeight}px`)
+    : '0px';
   const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
   const investmentsWholeMaxHeight =
     summaryOpen && !isClearingInvestments
@@ -1265,7 +1299,7 @@ const VavityEthereum: React.FC = () => {
       : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   const summaryTransition =
-    summaryAnimating ? 'max-height 2s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
+    summaryAnimating ? 'max-height 0s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
   const shouldRenderAddForm =
     (showEmptyAddForm && showAddForm) || addFormSubmitAnimating || addFormSubmitCollapsing;
 
@@ -1468,16 +1502,18 @@ const VavityEthereum: React.FC = () => {
       profitHeightPendingRef.current = true;
       return;
     }
+    const isFirst = firstSummaryOpenRef.current;
+    firstSummaryOpenRef.current = false;
     setSummaryAnimating(true);
     summaryAnimatingRef.current = true;
-    setSummaryValuesHidden(true);
-    const revealTimer = window.setTimeout(() => setSummaryValuesHidden(false), 1200);
+    if (!isFirst) setSummaryValuesHidden(true);
+    const revealTimer = isFirst ? 0 : window.setTimeout(() => setSummaryValuesHidden(false), 1200);
     const timer = window.setTimeout(() => {
       setSummaryAnimating(false);
       summaryAnimatingRef.current = false;
     }, 2000);
     return () => {
-      window.clearTimeout(revealTimer);
+      if (revealTimer) window.clearTimeout(revealTimer);
       window.clearTimeout(timer);
     };
   }, [summaryOpen, isClearingInvestments]);
@@ -3822,7 +3858,11 @@ const VavityEthereum: React.FC = () => {
               style={
                 hideEmptyActionsOnSubmit
                   ? { display: 'none' }
-                  : undefined
+                  : emptyMountPhase === 'hidden'
+                    ? { maxHeight: '0px', overflow: 'hidden' }
+                    : emptyMountPhase === 'revealing'
+                      ? { maxHeight: `${emptyMountTargetH}px`, overflow: 'hidden', transition: 'max-height 2s ease' }
+                      : undefined
               }
             >
                 <div
@@ -3939,7 +3979,7 @@ const VavityEthereum: React.FC = () => {
                     className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
                     style={{
                       opacity: summaryValuesHidden ? 0 : realityOpacity,
-                      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                      transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : undefined,
                     }}
                   >
                     <span className="asset-metric-symbol--ethereum">$</span>
@@ -3964,7 +4004,7 @@ const VavityEthereum: React.FC = () => {
                     className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
                     style={{
                       opacity: summaryValuesHidden ? 0 : realityOpacity,
-                      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                      transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : undefined,
                     }}
                   >
                     <span className="asset-metric-symbol--ethereum">$</span>
@@ -4006,7 +4046,7 @@ const VavityEthereum: React.FC = () => {
                                   style={{
                                     opacity:
                                       (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                    transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : 'opacity 1s ease',
                                   }}
                                 >
                                   {label}
@@ -4026,7 +4066,7 @@ const VavityEthereum: React.FC = () => {
                                   style={{
                                     opacity:
                                       (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                    transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : 'opacity 1s ease',
                                   }}
                                 >
                                   <span className="asset-metric-symbol--ethereum">
@@ -4055,7 +4095,7 @@ const VavityEthereum: React.FC = () => {
                                 style={{
                                   opacity:
                                     (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : 'opacity 1s ease',
                                 }}
                               >
                                 {label}
@@ -4075,7 +4115,7 @@ const VavityEthereum: React.FC = () => {
                                 style={{
                                   opacity:
                                     (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  transition: toggleKnobLeftPx != null || toggleAnimating || summaryValuesHidden ? 'none' : 'opacity 1s ease',
                                 }}
                               >
                                 <span className="asset-metric-symbol--ethereum">
