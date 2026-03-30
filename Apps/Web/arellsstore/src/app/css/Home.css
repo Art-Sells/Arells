@@ -4898,11 +4898,20 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		width: 100%;
 		margin-left: 0;
 		box-sizing: border-box;
+		padding-top: 12px !important;    /* <- edit top */
+		padding-bottom: 0px !important; /* <- edit bottom */
+		padding-left: 5px !important;   /* <- edit left */
+		padding-right: 5px !important;  /* <- edit right */
 	}
 
 	.asset-profit-block {
 		width: 100% !important;
 		box-sizing: border-box;
+	}
+
+	.asset-action-button--save-signin {
+		margin-top: 0px !important;    /* <- edit signin button top spacing */
+		margin-bottom: 13px; /* <- edit signin button bottom spacing */
 	}
 }
 
