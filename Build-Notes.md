@@ -6,6 +6,7 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
+- *Test with big numbers in Mobile UI to test cut offs...*
 
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)

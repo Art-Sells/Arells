@@ -508,29 +508,6 @@ const VavityBitcoin: React.FC = () => {
     tick();
   }, []);
 
-  const startSummaryTransitionFollow = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    if (summaryTransitionActiveRef.current) return;
-    summaryTransitionActiveRef.current = true;
-    followScrollHeightDeltaFor(2000);
-    if (summaryTransitionStopTimerRef.current) {
-      globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
-      summaryTransitionStopTimerRef.current = null;
-    }
-    summaryTransitionStopTimerRef.current = globalThis.setTimeout(() => {
-      summaryTransitionActiveRef.current = false;
-      summaryTransitionStopTimerRef.current = null;
-    }, 2200);
-  }, []);
-
-  const stopSummaryTransitionFollow = useCallback(() => {
-    summaryTransitionActiveRef.current = false;
-    if (summaryTransitionStopTimerRef.current) {
-      globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
-      summaryTransitionStopTimerRef.current = null;
-    }
-  }, []);
-
   const followWholePanelHeightDeltaFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
     const until = Date.now() + ms;
@@ -544,21 +521,41 @@ const VavityBitcoin: React.FC = () => {
         summaryScrollRafRef.current = null;
         return;
       }
-      const scroller = document.scrollingElement ?? document.documentElement;
-      const h = scroller?.scrollHeight ?? 0;
-      const maxScroll = Math.max(0, h - window.innerHeight);
-      const current = scroller?.scrollTop ?? window.scrollY;
+      const node = investmentsWholePanelRef.current;
+      const h = node ? node.getBoundingClientRect().height : 0;
       if (prevH != null) {
-        const deltaH = h - prevH;
-        if (deltaH !== 0) {
-          const next = Math.min(maxScroll, Math.max(0, current + deltaH));
-          window.scrollTo({ top: next, behavior: 'auto' });
+        const delta = h - prevH;
+        if (Math.abs(delta) > 0.1) {
+          window.scrollBy({ top: delta, left: 0, behavior: 'auto' });
         }
       }
       prevH = h;
       summaryScrollRafRef.current = window.requestAnimationFrame(tick);
     };
     tick();
+  }, []);
+
+  const startSummaryTransitionFollow = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (summaryTransitionActiveRef.current) return;
+    summaryTransitionActiveRef.current = true;
+    followWholePanelHeightDeltaFor(3500);
+    if (summaryTransitionStopTimerRef.current) {
+      globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
+      summaryTransitionStopTimerRef.current = null;
+    }
+    summaryTransitionStopTimerRef.current = globalThis.setTimeout(() => {
+      summaryTransitionActiveRef.current = false;
+      summaryTransitionStopTimerRef.current = null;
+    }, 3500);
+  }, [followWholePanelHeightDeltaFor]);
+
+  const stopSummaryTransitionFollow = useCallback(() => {
+    summaryTransitionActiveRef.current = false;
+    if (summaryTransitionStopTimerRef.current) {
+      globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
+      summaryTransitionStopTimerRef.current = null;
+    }
   }, []);
 
   useEffect(() => {
@@ -1208,7 +1205,6 @@ const VavityBitcoin: React.FC = () => {
   }, []);
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
   const openInvestmentsSection = useCallback(() => {
-    followScrollHeightDeltaFor(5000);
     setInvestmentsWholeHeight(0);
     setSummaryAnimating(true);
     summaryAnimatingRef.current = true;
@@ -1220,10 +1216,10 @@ const VavityBitcoin: React.FC = () => {
           const h = whole.scrollHeight + 24;
           setInvestmentsWholeHeight(h);
         }
+        followWholePanelHeightDeltaFor(5000);
       });
     });
-    followScrollHeightDeltaFor(5000);
-  }, [followScrollHeightDeltaFor]);
+  }, [followWholePanelHeightDeltaFor]);
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptyActionsMountPhase('done');
     setEmptySigninGone(false);
@@ -1240,7 +1236,7 @@ const VavityBitcoin: React.FC = () => {
       setEmptyActionsExpanding(false);
       emptyActionsExpandTimerRef.current = null;
     }, 1000);
-    followScrollHeightDeltaFor(1200);
+    followWholePanelHeightDeltaFor(1200);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setEmptyAddFadeIn(true);
@@ -1248,7 +1244,7 @@ const VavityBitcoin: React.FC = () => {
         setEmptyAddHiding(false);
       });
     });
-  }, [followScrollHeightDeltaFor]);
+  }, [followWholePanelHeightDeltaFor]);
   useEffect(() => {
     if (!emptyActionsHoldRef.current) return;
     if (investments.length > 0 && !isSubmitCollapsing) {
