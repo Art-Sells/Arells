@@ -6,6 +6,7 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
+- *Fix summary section that flashes down quicklu on first investment additions when its height down starts*
 
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
@@ -46,7 +47,7 @@
 - both desktop(multiple browsers)/mobile
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - look at Analytics
-- *Test Number flash on first investment additions*
+
 
 ## After Test
 - Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git and vavity.info(change this or alter it)

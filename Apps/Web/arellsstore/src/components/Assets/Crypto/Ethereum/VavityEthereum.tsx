@@ -1197,7 +1197,6 @@ const VavityEthereum: React.FC = () => {
   const openInvestmentsSection = useCallback(() => {
     followScrollHeightDeltaFor(5000);
     setInvestmentsWholeHeight(0);
-    setSummaryValuesHidden(true);
     setSummaryOpen(true);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -1388,7 +1387,7 @@ const VavityEthereum: React.FC = () => {
           emptyActionsHoldRef.current = false;
           setSummaryOpen(false);
           clearInvestmentsAnimTimerRef.current = null;
-        }, 2000);
+        }, 3000);
       } else if (!isClearingInvestments) {
         if (showEmptyAddForm || showAddForm || addFormOpen) {
           prevSummaryCountRef.current = next;
@@ -1464,14 +1463,11 @@ const VavityEthereum: React.FC = () => {
     }
     setSummaryAnimating(true);
     summaryAnimatingRef.current = true;
-    setSummaryValuesHidden(true);
-    const revealTimer = window.setTimeout(() => setSummaryValuesHidden(false), 150);
     const timer = window.setTimeout(() => {
       setSummaryAnimating(false);
       summaryAnimatingRef.current = false;
     }, 3000);
     return () => {
-      window.clearTimeout(revealTimer);
       window.clearTimeout(timer);
     };
   }, [summaryOpen, isClearingInvestments]);
@@ -3416,7 +3412,7 @@ const VavityEthereum: React.FC = () => {
     }, 1000);
     const doneTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('done');
-    }, 3200);
+    }, 4200);
     return () => {
       globalThis.clearTimeout(revealTimer);
       globalThis.clearTimeout(doneTimer);
@@ -3835,9 +3831,9 @@ const VavityEthereum: React.FC = () => {
                 hideEmptyActionsOnSubmit
                   ? { display: 'none' }
                   : emptyActionsMountPhase === 'hidden'
-                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 2s ease' }
+                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 3s ease' }
                     : emptyActionsMountPhase === 'revealing'
-                      ? { maxHeight: `${emptyActionsHeight || 200}px`, overflow: 'hidden', transition: 'max-height 2s ease' }
+                      ? { maxHeight: `${emptyActionsHeight || 200}px`, overflow: 'hidden', transition: 'max-height 3s ease' }
                       : undefined
               }
             >
