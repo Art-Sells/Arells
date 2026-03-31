@@ -1242,7 +1242,9 @@ const VavityEthereum: React.FC = () => {
       setHideEmptyActionsOnSubmit(false);
     }
   }, [investments.length, isSubmitCollapsing]);
-  const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
+  const summaryMaxHeight = summaryOpen && !isClearingInvestments
+    ? (summaryAnimating ? 'none' : `${summaryHeight}px`)
+    : '0px';
   const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
   const investmentsWholeMaxHeight =
     summaryOpen && !isClearingInvestments
@@ -1251,13 +1253,13 @@ const VavityEthereum: React.FC = () => {
         ? `${emptyActionsTargetHeight}px`
         : '0px';
   const investmentsWholeTransition = isClearingInvestments
-    ? 'max-height 2s ease'
+    ? 'max-height 3s ease'
     : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
-      ? 'max-height 2s ease'
+      ? 'max-height 3s ease'
       : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   const summaryTransition =
-    summaryAnimating ? 'max-height 2s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
+    summaryAnimating ? 'max-height 0s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 3s ease';
   const shouldRenderAddForm =
     (showEmptyAddForm && showAddForm) || addFormSubmitAnimating || addFormSubmitCollapsing;
 
@@ -1467,7 +1469,7 @@ const VavityEthereum: React.FC = () => {
     const timer = window.setTimeout(() => {
       setSummaryAnimating(false);
       summaryAnimatingRef.current = false;
-    }, 2000);
+    }, 3000);
     return () => {
       window.clearTimeout(revealTimer);
       window.clearTimeout(timer);
@@ -3915,7 +3917,7 @@ const VavityEthereum: React.FC = () => {
               className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-ethereum' : ''}`}
               style={{
                 maxHeight: isClearingInvestments ? clearingHeightPx : investmentsWholeMaxHeight,
-                transition: isClearingInvestments ? 'max-height 2s ease' : investmentsWholeTransition,
+                transition: isClearingInvestments ? 'max-height 3s ease' : investmentsWholeTransition,
                 overflowX: 'visible',
                 overflowY: 'hidden',
               }}

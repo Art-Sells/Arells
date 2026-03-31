@@ -6,7 +6,6 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-- *Fix Number flash on first investment additions*
 
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
@@ -47,6 +46,7 @@
 - both desktop(multiple browsers)/mobile
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - look at Analytics
+- *Test Number flash on first investment additions*
 
 ## After Test
 - Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git and vavity.info(change this or alter it)
@@ -85,7 +85,7 @@ Users
 - Prepare for WACA transition (LTP folder)
 
 ## 1 mnth and beyond:
-- Fix long marketcap numbers, jitter issues at the end of summary height down, and add investments/sign in to save investments popping down sometimes on page mount....
+- Fix long marketcap numbers....
 - (Sort)MarketCap/Volume/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust LTP based on feedback...
 - - If traction is good look at LTP folder post WACA
