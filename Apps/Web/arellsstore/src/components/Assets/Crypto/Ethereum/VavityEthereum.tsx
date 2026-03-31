@@ -1197,6 +1197,8 @@ const VavityEthereum: React.FC = () => {
   const openInvestmentsSection = useCallback(() => {
     followScrollHeightDeltaFor(5000);
     setInvestmentsWholeHeight(0);
+    setSummaryAnimating(true);
+    summaryAnimatingRef.current = true;
     setSummaryOpen(true);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -3816,7 +3818,7 @@ const VavityEthereum: React.FC = () => {
         style={{ 
           marginBottom: '10px', 
           paddingTop: '30px', 
-          paddingBottom: '10px',
+          paddingBottom: '16px',
           paddingLeft: '20px',
           paddingRight: '20px',
           ...(!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : {}),

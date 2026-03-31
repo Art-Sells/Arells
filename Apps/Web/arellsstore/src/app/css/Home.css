@@ -2014,7 +2014,7 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 20px;
-	margin-top: 0px;
+	margin-top: 6px;
 	font-weight: 800;
 	font-size: 25px;
 	letter-spacing: -1.5px;
@@ -4900,9 +4900,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		margin-left: 0;
 		box-sizing: border-box;
 		padding-top: 12px !important;    /* <- edit top */
-		padding-bottom: 0px !important; /* <- edit bottom */
-		padding-left: 5px !important;   /* <- edit left */
-		padding-right: 5px !important;  /* <- edit right */
+		padding-bottom: 4px !important; /* <- edit bottom */
+		padding-left: 7px !important;   /* <- edit left */
+		padding-right: 7px !important;  /* <- edit right */
 		margin-bottom: 10px !important;  /* <- edit bottom margin */
 	}
 
