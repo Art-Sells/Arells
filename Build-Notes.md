@@ -6,7 +6,7 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-- *Fix summary section that flashes down quicklu on first investment additions when its height down starts*
+- *Fix summary section flashes down quickly on first investment additions when its height down starts after first investment addition*
 
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
