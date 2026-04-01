@@ -5949,8 +5949,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 			.home-asset-bitcoin .home-assets-cell + .home-assets-cell {
 				border-left: 5px solid rgba(248, 141, 0, 0.1);
-				margin-left: -10px;
-				margin-right: 10px;
+				margin-left: -6.5px;
+				margin-right: 6.5px;
 				border-top-left-radius: 5px;
 				border-bottom-left-radius: 5px;
 			}
@@ -5962,8 +5962,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 			.home-asset-ethereum .home-assets-cell + .home-assets-cell {
 				border-left: 5px solid rgba(107, 114, 168, 0.1);
-				margin-left: -10px;
-				margin-right: 10px;
+				margin-left: -6.5px;
+				margin-right: 6.5px;
 				border-top-left-radius: 5px;
 				border-bottom-left-radius: 5px;
 			}
