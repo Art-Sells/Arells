@@ -5342,10 +5342,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 .asset-footer .asset-footer-about-button {
-	padding-left: 23px;
-	padding-right: 20px;
-	padding-top: 10px;
-	padding-bottom: 11px;
+	padding-left: 17px;
+	padding-right: 15px;
+	padding-top: 9px;
+	padding-bottom: 10px;
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
@@ -5374,7 +5374,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	letter-spacing: 0px;
 	margin-right: 3px;
 	opacity: 1;
-	font-weight: 800;
+	font-weight: 200;
 }
 
 .asset-footer-about-logo {
@@ -5412,9 +5412,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 .asset-view-more-assets {
-	font-size: 15px;
-	font-weight: 600;
-	letter-spacing: -.7px;
+	font-size: 12px;
+	font-weight: 200;
+	letter-spacing: 0px;
 	border-radius: 50px;
 	display: inline-flex;
 	align-items: center;
@@ -5431,7 +5431,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-view-more-assets {
-		font-size: 11px;
+		font-size: 10px;
 		letter-spacing: 0px;
 	}
 
@@ -5452,8 +5452,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-footer .asset-footer-about-button {
-		padding-top: 6px;
-		padding-bottom: 7px;
+		padding-top: 5px;
+		padding-bottom: 6px;
 		padding-left: 20px;
 		padding-right: 17px;
 	}
