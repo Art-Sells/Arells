@@ -527,8 +527,8 @@ body {
 }
 
 .asset-submit-loader-ring {
-	width: 60px;
-	height: 60px;
+	width: 33px;
+	height: 33px;
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
@@ -546,7 +546,7 @@ body {
 
 .asset-submit-loader-spinner circle {
 	stroke: var(--asset-chart-line-color, var(--asset-line-color));
-	stroke-width: var(--asset-chart-line-width, 6.5px);
+	stroke-width: 12px;
 	stroke-linecap: round;
 	fill: none;
 	stroke-dasharray: 140 60;
@@ -4169,6 +4169,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	padding-top: 17px;
 	padding-bottom: 17px;
 	font-weight: 700;
+	font-size: 12.5px;
+	letter-spacing: -.6px;
 	color: #666;
 	cursor: pointer;
 	text-align: center;
@@ -4186,11 +4188,13 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .myinv-asset-button--bitcoin {
 	background: rgba(248, 141, 0, 0.12);
 	border: 1px solid rgba(248, 141, 0, 0.5);
+	color: rgba(248, 141, 0, 1);
 }
 
 .myinv-asset-button--ethereum {
 	background: rgba(107, 114, 168, 0.12);
 	border: 1px solid rgba(107, 114, 168, 0.5);
+	color: rgba(107, 114, 168, 1);
 }
 
 .myinv-asset-icon {
@@ -4636,6 +4640,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 @media (max-width: 750px) {
 	.myinv-title {
 		font-size: 20px;
+	}
+
+	.myinv-asset-button {
+		font-size: 10.5px;
 	}
 
 	.asset-page-content--bitcoin .asset-header-panel {
@@ -5315,6 +5323,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	min-width: 350px;
 }
 
+
 .asset-footer-viewmore {
 	margin-bottom: 0;
 	padding: 10px;
@@ -5326,10 +5335,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	padding-right: 28px;
 	padding-bottom: 12px;
 	padding-top: 10px;
-	border-top-left-radius: 11px;
-	border-bottom-left-radius: 11px;
-	border-top-right-radius: 11px;
-	border-bottom-right-radius: 11px;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
 }
 
 .asset-footer .asset-footer-about-button {
@@ -5340,10 +5349,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
-	border-top-left-radius: 11px;
-	border-bottom-left-radius: 11px;
-	border-top-right-radius: 11px;
-	border-bottom-right-radius: 11px;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
 	margin-top: 0px;
 }
 
@@ -5433,6 +5442,20 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.asset-footer {
 		margin-top: 10px; /* <- edit footer top spacing */
+	}
+
+	.asset-footer .asset-action-button--invest-show {
+		padding-top: 6px;
+		padding-bottom: 7px;
+		padding-left: 28px;
+		padding-right: 20px;
+	}
+
+	.asset-footer .asset-footer-about-button {
+		padding-top: 6px;
+		padding-bottom: 7px;
+		padding-left: 20px;
+		padding-right: 17px;
 	}
 }
 

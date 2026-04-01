@@ -6,9 +6,9 @@ export const metadata: Metadata = {
   description: 'if investments never lost value.',
   robots: 'noimageindex',
   icons: {
-    icon: '/images/favicons/ArellsEthereum.svg',
-    shortcut: '/images/favicons/ArellsEthereum.svg',
-    apple: '/images/favicons/ArellsEthereum.svg'
+    icon: '/ArellsIcoIcon.png',
+    shortcut: '/ArellsIcoIcon.png',
+    apple: '/ArellsIcoIcon.png'
   },
   openGraph: {
     title: 'Ethereum',

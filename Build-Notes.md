@@ -24,8 +24,7 @@
 - *remove the flag that stops the 1 minute and on page mount delete flags for sessions in all pages ...*
 
 ### Metatags/ Description (all pages.tsx (vavity inluded) (dont forget my investments page) & components)
-- Add unique favicons (and add to online tests)
-- Alter: Descriptions & BannerImages (make images for promotions top asset icon, with bordered section like the asset page below it wrapping: If investments never lost value (bold)), add same color scheme on top behind logos.
+- Alter: Descriptions & BannerImages (make images for promotions with bordered section like the asset page below it wrapping: If investments never lost value (bold)), add same color scheme on top behind logos.
 - - If investments never lost value (Bitcoin/Ethereum - If investments never lost value)
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
@@ -76,7 +75,7 @@ Users
 - Flip sloth pngs horizontally
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
-- Prepare to launch new assets (components/api-pointers/css-styles)basically and duplicate and change asset names and colors...
+- Prepare to launch new assets (components/api-pointers/css-styles (match similar colors (make sure you're 1-2 points out of the hex, not exact colors)))basically and duplicate and change asset names and colors...
 - Contact CSC (TAX)
 
 ## 2 days after launch
