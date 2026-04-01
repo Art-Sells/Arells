@@ -5,9 +5,9 @@ export const metadata: Metadata = {
   description: "if investments never lost value.",
   robots: "noimageindex",
   icons: {
-    icon: "/images/assets/crypto/Bitcoin.svg",
-    shortcut: "/images/assets/crypto/Bitcoin.svg",
-    apple: "/images/assets/crypto/Bitcoin.svg"
+    icon: "/images/favicons/ArellsBitcoin.svg",
+    shortcut: "/images/favicons/ArellsBitcoin.svg",
+    apple: "/images/favicons/ArellsBitcoin.svg"
   },
   openGraph: {
     title: "Bitcoin",

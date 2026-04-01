@@ -170,20 +170,6 @@ const BitcoinChartPanel: React.FC = () => {
 
   return (
     <div className={styles.chartContainer}>
-      <div id="b-logo-home">
-        <span>
-          <div id="b-how-wrapper">
-            <Image
-              loader={imageLoader}
-              alt=""
-              width={50}
-              height={50}
-              id="bitcoin-b-home"
-              src="/images/assets/crypto/Bitcoin.svg"
-            />
-          </div>
-        </span>
-      </div>
       <div id="spacer-if-error" style={{ display: percentageIncrease === null ? 'block' : 'none' }}>
       </div>
       <div className={styles.percentageContainer}>

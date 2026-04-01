@@ -4,8 +4,8 @@
  import { usePathname } from 'next/navigation';
  
  const DEFAULT_FAVICON = '/ArellsIcoIcon.png';
- const BITCOIN_FAVICON = '/images/assets/crypto/Bitcoin.svg';
- const ETHEREUM_FAVICON = '/images/assets/crypto/Ethereum.svg';
+const BITCOIN_FAVICON = '/images/favicons/ArellsBitcoin.svg';
+const ETHEREUM_FAVICON = '/images/favicons/ArellsEthereum.svg';
  
  const resolveFavicon = (pathname: string) => {
    if (pathname.startsWith('/bitcoin')) return BITCOIN_FAVICON;

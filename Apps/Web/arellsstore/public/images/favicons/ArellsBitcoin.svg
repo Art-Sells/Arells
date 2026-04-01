@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Left leg: top-center to bottom-left (extends lowest) -->
+  <line x1="256" y1="68" x2="88" y2="444" stroke="rgb(248,141,0)" stroke-width="44" stroke-linecap="round"/>
+  <!-- Right leg: top-center to bottom-right (ends higher than left) -->
+  <line x1="256" y1="68" x2="424" y2="380" stroke="rgb(248,141,0)" stroke-width="44" stroke-linecap="round"/>
+  <!-- Crossbar: from left-leg bottom area up to right-leg end area, angled -->
+  <line x1="108" y1="412" x2="424" y2="380" stroke="rgb(248,141,0)" stroke-width="44" stroke-linecap="round"/>
+</svg>

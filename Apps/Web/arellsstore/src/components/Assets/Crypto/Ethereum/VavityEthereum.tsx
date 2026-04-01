@@ -3429,14 +3429,6 @@ const VavityEthereum: React.FC = () => {
             <svg className="asset-submit-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
               <circle cx="30" cy="30" r="26" />
             </svg>
-            <Image
-              className="asset-submit-loader-icon"
-              alt="Ethereum"
-              width={29}
-              height={30}
-              style={{ transform: 'translate(0.2px, -0.3px)', opacity: 1 }}
-              src="/images/assets/crypto/Ethereum.svg"
-            />
           </div>
         </div>
       )}
@@ -3468,20 +3460,6 @@ const VavityEthereum: React.FC = () => {
               gap: '8px'
             }}
           >
-            <Link
-              className="asset-home-button asset-home-button--section asset-home-button--ethereum"
-              href="https://ethereum.org/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Image
-                className="asset-home-icon asset-home-icon--ethereum"
-                alt="Ethereum"
-                width={37}
-                height={37}
-                src="/images/assets/crypto/Ethereum.svg"
-              />
-            </Link>
             <div className="asset-metric-row">
               <span className="asset-metric-title--ethereum">Price:</span>
               <span className="asset-metric-value-wrap">

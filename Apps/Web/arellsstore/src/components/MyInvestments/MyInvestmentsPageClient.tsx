@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import '../../app/css/Home.css';
 import '../../app/css/HomeLoaderOverrides.css';
 import { useUser } from '../../context/UserContext';
@@ -1091,7 +1090,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsPresent.map((asset) => {
                         const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
                         const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
                         return (
                           <Link
@@ -1100,7 +1098,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                             className={`myinv-asset-button myinv-asset-button--${asset}`}
                             aria-label={label}
                           >
-                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
+                            {label}
                           </Link>
                         );
                       })}
@@ -1119,7 +1117,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsMissing.map((asset) => {
                         const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
                         const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
                         return (
                           <Link
@@ -1128,7 +1125,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                             className={`myinv-asset-button myinv-asset-button--${asset}`}
                             aria-label={label}
                           >
-                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
+                            {label}
                           </Link>
                         );
                       })}

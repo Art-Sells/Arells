@@ -3423,13 +3423,6 @@ const VavityBitcoin: React.FC = () => {
             <svg className="asset-submit-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
               <circle cx="30" cy="30" r="26" />
             </svg>
-            <Image
-              className="asset-submit-loader-icon asset-submit-loader-icon--bitcoin"
-              alt="Bitcoin"
-              width={29}
-              height={30}
-              src="/images/assets/crypto/Bitcoin.svg"
-            />
           </div>
         </div>
       )}
@@ -3461,20 +3454,6 @@ const VavityBitcoin: React.FC = () => {
               gap: '10px'
         }}
       >
-            <Link
-              className="asset-home-button asset-home-button--section asset-home-button--bitcoin"
-              href="https://bitcoin.org/en/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Image
-                className="asset-home-icon asset-home-icon--bitcoin"
-                alt="Bitcoin"
-                width={37}
-                height={37}
-                src="/images/assets/crypto/Bitcoin.svg"
-              />
-            </Link>
             <div className="asset-metric-row">
               <span className="asset-metric-title--bitcoin">Price:</span>
               <span className="asset-metric-value-wrap">
