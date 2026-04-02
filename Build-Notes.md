@@ -7,6 +7,7 @@
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 - *Test with big numbers in Mobile UI to test cut offs...*
+- Remove the asset portfolio summary box margin completelly if issues arise for height downs in mobile UI 
 
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)

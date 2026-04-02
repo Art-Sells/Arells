@@ -4676,9 +4676,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		height: 32px !important;
 	}
 	.asset-header-title {
-		font-size: 20px;
+		font-size: 17px;
 		margin-left: 32px;
-		transform: translateY(7px);
+		transform: translateY(8px);
 	}
 	.asset-header-slogan {
 		font-size: 7px;
@@ -4899,11 +4899,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		width: 100%;
 		margin-left: 0;
 		box-sizing: border-box;
-		padding-top: 12px !important;    /* <- edit top */
-		padding-bottom: 4px !important; /* <- edit bottom */
-		padding-left: 7px !important;   /* <- edit left */
-		padding-right: 7px !important;  /* <- edit right */
-		margin-bottom: 10px !important;  /* <- edit bottom margin */
+		padding-top: 10px !important;    /* <- edit top */
+		padding-bottom: 10px !important; /* <- edit bottom */
+		padding-left: 10px !important;   /* <- edit left */
+		padding-right: 10px !important;  /* <- edit right */
+		margin-bottom: 13px !important;  /* <- edit bottom margin */
 	}
 
 	.asset-profit-block {
@@ -4919,6 +4919,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		padding-left: 10px;    /* <- edit signin button left spacing */
 		padding-right: 10px; 
 		font-size: 12px;   /* <- edit signin button right spacing */
+		letter-spacing: 0px;
 	}
 
 	.asset-action-button--add-investments {
@@ -4928,6 +4929,66 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		padding-left: 10px;    /* <- edit add investments font size */
 		padding-right: 10px;    /* <- edit add investments font size */
 		margin-bottom: 10px;  /* <- edit add investments bottom spacing */
+		letter-spacing: -0.4px;
+	}
+
+	/* --- Invest form bordered sections (under 750px) --- */
+	.asset-invest-form-box {
+		width: 100%;              /* <- edit form outer box width */
+		margin-left: auto;       /* <- edit form outer box left margin */
+		margin-right: auto;      /* <- edit form outer box right margin */
+		margin-top: 12px;        /* <- edit form outer box top margin */
+		margin-bottom: 0px;      /* <- edit form outer box bottom margin */
+		padding: 10px;           /* <- edit form outer box padding */
+		border-radius: 14px;     /* <- edit form outer box border-radius */
+	}
+
+	.asset-invest-form-metrics-panel {
+		padding-left: 10px;      /* <- edit metrics panel left padding */
+		padding-right: 10px;     /* <- edit metrics panel right padding */
+		padding-top: 30px;       /* <- edit metrics panel top padding */
+		padding-bottom: 5px;     /* <- edit metrics panel bottom padding */
+		border-radius: 14px;     /* <- edit metrics panel border-radius */
+	}
+
+	.asset-invest-form-controls {
+		margin-top: 10px;        /* <- edit controls panel top margin */
+		padding-left: 16px;      /* <- edit controls panel left padding */
+		padding-right: 16px;     /* <- edit controls panel right padding */
+		padding-top: 20px;       /* <- edit controls panel top padding */
+		padding-bottom: 5px;     /* <- edit controls panel bottom padding */
+		border-radius: 14px;     /* <- edit controls panel border-radius */
+	}
+
+	.asset-invest-form-body {
+		width: 100%;             /* <- edit form body width */
+		padding: 0;              /* <- edit form body padding */
+	}
+
+	/* --- Summary bordered box (under 750px) --- */
+	.asset-portfolio-summary-box {
+		width: 100%;             /* <- edit summary box width */
+		padding-left: 12px;      /* <- edit summary box left padding */
+		padding-right: 12px;     /* <- edit summary box right padding */
+		padding-top: 0px;        /* <- edit summary box top padding */
+		padding-bottom: 10px;    /* <- edit summary box bottom padding */
+		border-radius: 14px; 
+		margin-bottom: 0px;    /* <- edit summary box border-radius */
+	}
+
+	/* --- Profit/loss block (under 750px) --- */
+	.asset-profit-block {
+		margin-top: 30px;        /* <- edit profit block top margin */
+		margin-bottom: 0px;      /* <- edit profit block bottom margin */
+		margin-left: 0;          /* <- edit profit block left margin */
+		margin-right: 0;         /* <- edit profit block right margin */
+	}
+
+	/* --- Portfolio action rows (under 750px) --- */
+	.asset-portfolio-actions {
+		margin-top: 20px;        /* <- edit actions row top margin */
+		margin-bottom: 0px;      /* <- edit actions row bottom margin */
+		gap: 8px;                /* <- edit actions row gap */
 	}
 
 }
@@ -4954,10 +5015,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	background: transparent !important;
 }
 
-.asset-header-panel.asset-panel--bitcoin {
-	/* Shadow matches chart line hue; offset left/up by 10px */
-}
-
 .asset-panel--ethereum {
 	background: rgba(107, 114, 168, 0.07);
 	border: 1px solid rgba(107, 114, 168, 0.3);
@@ -4969,18 +5026,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	background: transparent !important;
 }
 
-
-
-.asset-header-panel.asset-panel--ethereum {
-	/* Shadow matches chart line hue; offset left/up by 10px */
-}
-
 .asset-price-panel--bitcoin {
 	border: 1px solid rgba(248, 141, 0, 0.3);
 	border-radius: 14px;
-}
-
-.asset-market-controls.asset-panel--bitcoin {
 }
 
 .asset-price-panel--ethereum {
