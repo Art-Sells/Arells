@@ -4991,6 +4991,75 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		gap: 8px;                /* <- edit actions row gap */
 	}
 
+	/* --- Typography: match My Investments sizing (under 750px) --- */
+
+	/* Group 2 — Metric word titles → match myinv-metric-title (10.5px, -0.6px) */
+	.asset-portfolio-summary-box .asset-metric-title--bitcoin,
+	.asset-portfolio-summary-box .asset-metric-title--ethereum,
+	.asset-portfolio-summary-box .asset-metric-inline-title--bitcoin,
+	.asset-portfolio-summary-box .asset-metric-inline-title--ethereum,
+	.asset-invest-form-metrics-panel .asset-metric-title--bitcoin,
+	.asset-invest-form-metrics-panel .asset-metric-title--ethereum,
+	.asset-invest-form-controls .asset-metric-title--bitcoin,
+	.asset-invest-form-controls .asset-metric-title--ethereum,
+	.asset-invest-form-metric-title,
+	.asset-investments-wrap .asset-metric-title--bitcoin,
+	.asset-investments-wrap .asset-metric-title--ethereum,
+	.asset-investments-wrap .asset-metric-inline-title--bitcoin,
+	.asset-investments-wrap .asset-metric-inline-title--ethereum {
+		font-size: 10.5px !important;
+	}
+
+	/* Group 1 — Section titles → match myinv-panel-title--add (23.5px, -2px)
+	   MUST appear after Group 2 so form headings win over the broader summary-box rule */
+	.asset-investments-header {
+		font-size: 23.5px !important;
+		letter-spacing: -2px !important;
+	}
+
+	.asset-invest-form-heading .asset-metric-title--bitcoin,
+	.asset-invest-form-heading .asset-metric-title--ethereum {
+		font-size: 23.5px !important;
+		letter-spacing: -2px !important;
+	}
+
+	.asset-invest-form-subnote {
+		font-size: 10.5px !important;
+	}
+
+	/* Date picker trigger + text input inside forms */
+	.asset-invest-form-controls .asset-date-trigger,
+	.asset-invest-form-controls .asset-invest-input {
+		font-size: 10.5px !important;
+	}
+
+	/* Group 3 — $ symbols → match myinv-metric-symbol (14px) */
+	.asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
+	.asset-portfolio-summary-box .asset-metric-symbol--ethereum,
+	.asset-portfolio-summary-box .asset-metric-inline-symbol--bitcoin,
+	.asset-portfolio-summary-box .asset-metric-inline-symbol--ethereum,
+	.asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
+	.asset-invest-form-metrics-panel .asset-metric-symbol--ethereum,
+	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--bitcoin,
+	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--ethereum,
+	.asset-investments-wrap .asset-metric-symbol--bitcoin,
+	.asset-investments-wrap .asset-metric-symbol--ethereum,
+	.asset-investments-wrap .asset-metric-inline-symbol--bitcoin,
+	.asset-investments-wrap .asset-metric-inline-symbol--ethereum {
+		font-size: 14px !important;
+	}
+
+	/* Group 4 — Numbers → match myinv-metric-value (25px, -2px) */
+	.asset-portfolio-summary-box .asset-metric-value,
+	.asset-portfolio-summary-box .asset-metric-inline-value,
+	.asset-invest-form-metrics-panel .asset-metric-value,
+	.asset-invest-form-metrics-panel .asset-metric-inline-value,
+	.asset-investments-wrap .asset-metric-value,
+	.asset-investments-wrap .asset-metric-inline-value {
+		font-size: 25px !important;
+		letter-spacing: -2px !important;
+	}
+
 }
 
 .asset-panel--bitcoin {
@@ -5474,15 +5543,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 @media (max-width: 750px) {
-	.asset-footer-about-text {
-		font-size: 10px;
-	}
-
-	.asset-view-more-assets {
-		font-size: 10px;
-		letter-spacing: 0px;
-	}
-
 	.asset-portfolio-actions--signin.asset-portfolio-actions--signin-standalone {
 		--asset-portfolio-actions-signin-margin-top: 10px; /* <- edit signin-under-summary top spacing */
 		margin-top: var(--asset-portfolio-actions-signin-margin-top) !important;
@@ -5490,20 +5550,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.asset-footer {
 		margin-top: 10px; /* <- edit footer top spacing */
-	}
-
-	.asset-footer .asset-action-button--invest-show {
-		padding-top: 6px;
-		padding-bottom: 7px;
-		padding-left: 28px;
-		padding-right: 20px;
-	}
-
-	.asset-footer .asset-footer-about-button {
-		padding-top: 5px;
-		padding-bottom: 6px;
-		padding-left: 20px;
-		padding-right: 17px;
 	}
 }
 
