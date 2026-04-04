@@ -1007,11 +1007,13 @@ body {
 /* Control spacing for each portfolio action row separately */
 .asset-portfolio-actions--add {
 	margin-top: var(--asset-portfolio-actions-add-margin-top, 20px);
+	margin-bottom: 5px;
 }
 
 .asset-portfolio-actions--show {
 	margin-top: var(--asset-portfolio-actions-show-margin-top, 20px);
-	margin-bottom: var(--asset-portfolio-actions-show-margin-bottom, 15px);
+	margin-bottom: 0px;
+
 }
 
 /* These used to fade portfolio action rows. Disabled by request (keep layout/placement unchanged). */
@@ -1501,6 +1503,7 @@ body {
 	justify-content: center;
 	flex-direction: column;
 	align-items: center;
+	text-align: center;
 	gap: 2px;
 }
 
@@ -1662,6 +1665,7 @@ body {
 	justify-content: center;
 	flex-direction: column;
 	align-items: center;
+	text-align: center;
 	gap: 2px;
 }
 
@@ -4072,6 +4076,7 @@ body {
 	justify-content: center;
 	flex-direction: column;
 	align-items: center;
+	text-align: center;
 }
 
 .myinv-summary-section .asset-money-wrap {
@@ -4090,10 +4095,7 @@ body {
 	justify-content: center;
 	flex-direction: column;
 	align-items: center;
-}
-
-.myinv-profit-row {
-	flex-direction: column;
+	text-align: center;
 	gap: 2px;
 }
 
@@ -4987,11 +4989,25 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		margin-right: 0;         /* <- edit profit block right margin */
 	}
 
+	.asset-profit-inline-wrap {
+		width: 170px;            /* <- edit profit numbers width */
+		max-width: 100%;
+	}
+
 	/* --- Portfolio action rows (under 750px) --- */
 	.asset-portfolio-actions {
 		margin-top: 20px;        /* <- edit actions row top margin */
 		margin-bottom: 0px;      /* <- edit actions row bottom margin */
 		gap: 8px;                /* <- edit actions row gap */
+	}
+
+	.asset-portfolio-actions--add {
+		margin-top: 12px;        /* <- edit "add more/hide add more" button top margin */
+	}
+
+	.asset-portfolio-actions--show {
+		margin-top: -2px;    
+		margin-bottom: 5px;    /* <- edit "show/hide investments" button top margin */
 	}
 
 	/* --- Typography: match My Investments sizing (under 750px) --- */

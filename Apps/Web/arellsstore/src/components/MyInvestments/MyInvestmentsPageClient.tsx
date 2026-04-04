@@ -129,6 +129,10 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [currentValueHeight, setCurrentValueHeight] = useState<number | null>(null);
   const [profitValueHeight, setProfitValueHeight] = useState<number | null>(null);
   const [profitValueHidden, setProfitValueHidden] = useState(false);
+  const profitBlockRef = useRef<HTMLDivElement>(null);
+  const [profitBlockHeight, setProfitBlockHeight] = useState<number | null>(null);
+  const profitBlockHeightRef = useRef<number | null>(null);
+  const profitBlockTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [loaderToggleShellWidth, setLoaderToggleShellWidth] = useState<number | null>(null);
   const lastFormattedVatopRef = useRef<string | null>(null);
   const lastFormattedVactRef = useRef<string | null>(null);
@@ -285,6 +289,7 @@ const MyInvestmentsPageClient: React.FC = () => {
         }
         toggleResizeTimerRef.current = window.setTimeout(() => {
           btn.classList.remove('is-resizing');
+          setToggleKnobLeftPx(null);
           toggleResizeTimerRef.current = null;
         }, 150);
       });
@@ -461,9 +466,11 @@ const MyInvestmentsPageClient: React.FC = () => {
       summaryValuesDidMountRef.current = true;
       return;
     }
-    if (summaryQuickFadeRef.current) return;
     setSummaryValuesHidden(true);
-    const t = window.setTimeout(() => setSummaryValuesHidden(false), 350);
+    const t = window.setTimeout(() => {
+      setSummaryTotalsSnapshot(null);
+      setSummaryValuesHidden(false);
+    }, 350);
     return () => window.clearTimeout(t);
   }, [selectedRangeDays]);
 
@@ -540,9 +547,14 @@ const MyInvestmentsPageClient: React.FC = () => {
       globalThis.clearTimeout(profitValueTimerRef.current);
       profitValueTimerRef.current = null;
     }
+    if (profitBlockTimerRef.current) {
+      globalThis.clearTimeout(profitBlockTimerRef.current);
+      profitBlockTimerRef.current = null;
+    }
     setPurchasedValueHeight(null);
     setCurrentValueHeight(null);
     setProfitValueHeight(null);
+    setProfitBlockHeight(null);
     lastFormattedVatopRef.current = null;
     lastFormattedVactRef.current = null;
     lastFormattedProfitRef.current = null;
@@ -669,6 +681,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     }
     if (lastFormattedVatopRef.current === key) return;
     lastFormattedVatopRef.current = key;
+    animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValueHeightRef, purchasedValueTimerRef);
   }, [animateNumberHeight, open, hasAny, summaryTotals.acVatop]);
 
   useLayoutEffect(() => {
@@ -687,6 +700,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     }
     if (lastFormattedVactRef.current === key) return;
     lastFormattedVactRef.current = key;
+    animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValueHeightRef, currentValueTimerRef);
   }, [animateNumberHeight, open, hasAny, summaryTotals.acVact]);
 
   useLayoutEffect(() => {
@@ -700,10 +714,13 @@ const MyInvestmentsPageClient: React.FC = () => {
       pendingProfitHeightRef.current = false;
       lastFormattedProfitRef.current = key;
       animateNumberHeight(profitValueRef, setProfitValueHeight, profitValueHeightRef, profitValueTimerRef);
+      animateNumberHeight(profitBlockRef, setProfitBlockHeight, profitBlockHeightRef, profitBlockTimerRef);
       return;
     }
     if (lastFormattedProfitRef.current === key) return;
     lastFormattedProfitRef.current = key;
+    animateNumberHeight(profitValueRef, setProfitValueHeight, profitValueHeightRef, profitValueTimerRef);
+    animateNumberHeight(profitBlockRef, setProfitBlockHeight, profitBlockHeightRef, profitBlockTimerRef);
   }, [animateNumberHeight, open, hasAny, totalProfit, profitLabel]);
 
   useEffect(() => {
@@ -874,12 +891,21 @@ const MyInvestmentsPageClient: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="myinv-profit-block myinv-accent-border">
+                    <div
+                      ref={profitBlockRef}
+                      className="myinv-profit-block myinv-accent-border"
+                      style={{
+                        height: profitBlockHeight != null ? `${profitBlockHeight}px` : 'auto',
+                        transition: profitBlockHeight != null ? 'height 2s ease' : undefined,
+                        overflow: profitBlockHeight != null ? 'hidden' : undefined,
+                      }}
+                    >
                       <div className="myinv-profit-summary myinv-profit-inner">
                         <div className="asset-metric-row asset-money-row myinv-profit-row">
                           <span className="myinv-metric-title">
                             {formatRangeLabel(selectedRangeDays)}{' '}
                             <span
+                              className="asset-profit-range-anim"
                               style={{
                                 opacity:
                                   (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
@@ -933,9 +959,14 @@ const MyInvestmentsPageClient: React.FC = () => {
                               disabled={!isEnabled || isActive}
                               onClick={() => {
                                 if (isActive) return;
-                                pulseSummaryValues();
+                                if (!summaryTotalsSnapshot) {
+                                  setSummaryTotalsSnapshot({ ...filteredTotals });
+                                }
                                 setProfitValueHidden(true);
                                 setSelectedRangeDays(range.days);
+                                if (range.days == null) {
+                                  window.setTimeout(() => setProfitValueHidden(false), 350);
+                                }
                               }}
                               className={`asset-range-button myinv-range-button${isActive ? ' is-active' : ''}`}
                             >
