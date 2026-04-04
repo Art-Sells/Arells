@@ -1369,6 +1369,8 @@ const VavityEthereum: React.FC = () => {
             setEmptyActionsExpanding(false);
             emptyActionsExpandTimerRef.current = null;
           }, 1000);
+          prevLiveCountRef.current = 0;
+          prevSummaryCountRef.current = 0;
           setIsClearingInvestments(false);
           setSummaryTotalsSnapshot(null);
           setSummaryRangePriceSnapshot(null);

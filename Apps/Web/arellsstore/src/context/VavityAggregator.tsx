@@ -138,6 +138,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               detail: { holdMs: 5000, expiresAt: sessionExpiresAt },
             })
           );
+          await new Promise((r) => globalThis.setTimeout(r, 1100));
         }
         const response = await axios.get(`/api/fetchVavityAggregator`, {
           params: {
