@@ -4981,7 +4981,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	/* --- Profit/loss block (under 750px) --- */
 	.asset-profit-block {
-		margin-top: 30px;        /* <- edit profit block top margin */
+		margin-top: 15px !important;       /* <- edit profit block top margin */
 		margin-bottom: 0px;      /* <- edit profit block bottom margin */
 		margin-left: 0;          /* <- edit profit block left margin */
 		margin-right: 0;         /* <- edit profit block right margin */
@@ -5018,6 +5018,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.asset-investments-header {
 		font-size: 23.5px !important;
 		letter-spacing: -2px !important;
+		margin-top: 10px;         /* <- edit "investments" title top margin */
 	}
 
 	.asset-portfolio-title-muted {
@@ -5029,6 +5030,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.asset-invest-form-heading .asset-metric-title--ethereum {
 		font-size: 23.5px !important;
 		letter-spacing: -2px !important;
+	}
+
+	.asset-invest-form-heading {
+		margin-top: 10px;        /* <- edit form heading top margin */
+		margin-bottom: -5.5px;   /* <- edit form heading bottom margin */
+		transform: translateY(0px); /* <- edit form heading Y translate */
 	}
 
 	.asset-invest-form-subnote {
