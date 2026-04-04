@@ -296,18 +296,16 @@ const EthereumPageClient: React.FC = () => {
             <span className="asset-footer-about-text">view my portfolio</span>
           </Link>
         )}
-        {!email && (
-          <Link
-            href="/"
-            className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show asset-view-more-assets asset-view-more-assets--footer asset-footer-viewmore"
-          >
-            <span className="asset-view-more-assets-text">view</span>
-            <span className="asset-footer-about-divider" aria-hidden="true" />
-            <span className="asset-view-more-assets-text">more</span>
-            <span className="asset-footer-about-divider" aria-hidden="true" />
-            <span className="asset-view-more-assets-text">assets</span>
-          </Link>
-        )}
+        <Link
+          href="/"
+          className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show asset-view-more-assets asset-view-more-assets--footer asset-footer-viewmore"
+        >
+          <span className="asset-view-more-assets-text">view</span>
+          <span className="asset-footer-about-divider" aria-hidden="true" />
+          <span className="asset-view-more-assets-text">more</span>
+          <span className="asset-footer-about-divider" aria-hidden="true" />
+          <span className="asset-view-more-assets-text">assets</span>
+        </Link>
         <Link
           className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show asset-footer-about-button"
           href="/about"

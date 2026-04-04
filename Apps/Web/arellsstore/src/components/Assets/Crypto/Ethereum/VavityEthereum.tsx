@@ -10,7 +10,7 @@ import { useUser } from '../../../../context/UserContext';
 import EthereumChart from './EthereumChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 
-const PREVIEW_SKIP_SESSION_DELETES = true;
+const PREVIEW_SKIP_SESSION_DELETES = false;
 
 const VavityEthereum: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
@@ -3791,7 +3791,7 @@ const VavityEthereum: React.FC = () => {
         }${summaryAnimating ? ' asset-portfolio-center--summary-animating' : ''}`}
         style={{ 
           marginBottom: '10px', 
-          paddingTop: '30px', 
+          paddingTop: '25px', 
           paddingBottom: '16px',
           paddingLeft: '20px',
           paddingRight: '20px',

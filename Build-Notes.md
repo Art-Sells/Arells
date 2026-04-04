@@ -7,20 +7,12 @@
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 
-### Optimize-UI/UX for mobile
-- Test everything........... (including inspect)
-- Make the section in assets holding all the sections maximum height dynamic and the sections inside them width 100% so they resize smoothly without major changes to the UI
-- - After Asset UI, test Toggle Animation and Resetting Investments with Inspect right scrolls...
-- - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes, the dollar sign in the my assets page... My investments page If no Email, If email is read and no investments exist inside the email json, If Investments exist inside email json
-- - if signed in.... the sign in to save investments button should dissapear... see how it looksyo
-- Remove "sign in" dynamic and "1 minute timer "to test in mobile...
-
-
 ### Sign In/Up
 - Title: Sign In to Save Investments
 - Integrate sign-in/up with google....
 - Creates json with the email inside /users inside arells/users/ that functions exactly like the session vavity, except it never deletes any unless specifically asked for by the user...
-- *remove the flag that stops the 1 minute and on page mount delete flags for sessions in all pages ...*
+- Test asset pages add investment/sign in to save investent section loader
+- - if signed in.... the sign in to save investments button should dissapear in my assets and the view my portfolio and view my investments in home should shoq... see how it looks
 
 ### Metatags/ Description (all pages.tsx (vavity inluded) (dont forget my investments page) & components)
 - Alter: Descriptions & BannerImages (make images for promotions with bordered section like the asset page below it wrapping: If investments never lost value (bold)), add same color scheme on top behind logos.
@@ -42,7 +34,7 @@
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 
 ### Test Online 
-- both desktop(multiple browsers)/mobile
+- both desktop(multiple browsers)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - look at Analytics
 
@@ -84,8 +76,8 @@ Users
 - Prepare for WACA transition (LTP folder)
 
 ## 1 mnth and beyond:
-- Fix long marketcap numbers....
-- (Sort)MarketCap/Volume/etc sorting (default by Marketcap always)
+- Fix long marketcap numbers and summary section (sometimes not saving the number info on state so it can height up after investment deletions, which causes a pop-up)....
+- (Sort)MarketCap/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust LTP based on feedback...
 - - If traction is good look at LTP folder post WACA
 - - increase CG API limit? (track)

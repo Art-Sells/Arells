@@ -33,7 +33,7 @@ type AssetSnapshot = {
   historyLastUpdated: number | null;
 };
 
-const PREVIEW_SKIP_SESSION_DELETES = true;
+const PREVIEW_SKIP_SESSION_DELETES = false;
 
 interface VavityaggregatorType {
   assets: Record<string, AssetSnapshot>;

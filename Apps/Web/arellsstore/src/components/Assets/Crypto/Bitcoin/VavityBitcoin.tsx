@@ -10,7 +10,7 @@ import { useUser } from '../../../../context/UserContext';
 import BitcoinChart from './BitcoinChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 
-const PREVIEW_SKIP_SESSION_DELETES = true;
+const PREVIEW_SKIP_SESSION_DELETES = false;
 
 const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
@@ -3788,7 +3788,7 @@ const VavityBitcoin: React.FC = () => {
         }${summaryAnimating ? ' asset-portfolio-center--summary-animating' : ''}`}
         style={{ 
           marginBottom: '10px', 
-          paddingTop: '30px', 
+          paddingTop: '25px', 
           paddingBottom: '16px',
           paddingLeft: '20px',
           paddingRight: '20px',

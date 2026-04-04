@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
-const PREVIEW_SKIP_SESSION_DELETES = true;
+const PREVIEW_SKIP_SESSION_DELETES = false;
 
 interface UserContextType {
   sessionId: string;
