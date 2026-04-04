@@ -2073,7 +2073,7 @@ const VavityEthereum: React.FC = () => {
 
   const formatCurrency = useCallback((value: number) => {
     const abs = Math.abs(value);
-    const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
+    const decimals = abs === 0 ? 2 : abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
     return value.toLocaleString('en-US', {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals
@@ -3427,7 +3427,7 @@ const VavityEthereum: React.FC = () => {
         >
           <div className="asset-submit-loader-ring">
             <svg className="asset-submit-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
-              <circle cx="30" cy="30" r="26" />
+              <circle cx="30" cy="30" r="24" />
             </svg>
           </div>
         </div>
@@ -4339,9 +4339,9 @@ const VavityEthereum: React.FC = () => {
                                       <span className="asset-money-wrap">
                                         <span className="asset-metric-symbol--ethereum">$</span>
                                         <span className="asset-metric-value">
-                                          {formatCurrency(
+                                          {renderDecimalSafe(formatCurrency(
                                             (isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0
-                                          )}
+                                          ))}
                                         </span>
                                       </span>
                                     </div>
@@ -4350,9 +4350,9 @@ const VavityEthereum: React.FC = () => {
                                       <span className="asset-money-wrap">
                                         <span className="asset-metric-symbol--ethereum">$</span>
                                         <span className="asset-metric-value">
-                                          {formatCurrency(
+                                          {renderDecimalSafe(formatCurrency(
                                             (isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0
-                                          )}
+                                          ))}
                                         </span>
                                       </span>
                                     </div>

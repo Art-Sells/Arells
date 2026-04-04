@@ -2493,7 +2493,7 @@ const VavityBitcoin: React.FC = () => {
 
   const formatCurrency = useCallback((value: number) => {
     const abs = Math.abs(value);
-    const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
+    const decimals = abs === 0 ? 2 : abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
     return value.toLocaleString('en-US', {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals
@@ -3421,7 +3421,7 @@ const VavityBitcoin: React.FC = () => {
         >
           <div className="asset-submit-loader-ring">
             <svg className="asset-submit-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
-              <circle cx="30" cy="30" r="26" />
+              <circle cx="30" cy="30" r="24" />
             </svg>
           </div>
         </div>
@@ -4330,7 +4330,7 @@ const VavityBitcoin: React.FC = () => {
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-symbol--bitcoin">$</span>
                                       <span className="asset-metric-value">
-                                        {formatCurrency((isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0)}
+                                        {renderDecimalSafe(formatCurrency((isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0))}
                                       </span>
                                     </span>
                                   </div>
@@ -4339,7 +4339,7 @@ const VavityBitcoin: React.FC = () => {
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-symbol--bitcoin">$</span>
                                       <span className="asset-metric-value">
-                                        {formatCurrency((isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0)}
+                                        {renderDecimalSafe(formatCurrency((isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0))}
                                       </span>
                                     </span>
                                   </div>
