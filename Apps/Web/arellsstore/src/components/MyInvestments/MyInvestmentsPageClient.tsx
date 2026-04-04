@@ -34,7 +34,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     fetchVavityAggregatorAll,
     getAsset,
   } = useVavity();
-  const forceSessionPreview = true;
+  const forceSessionPreview = false;
   const forceEmptyEmailPreview = false;
   const supportedAssets = useMemo(() => ['bitcoin', 'ethereum'], []);
   const sessionAssetsPresent = useMemo(() => {
@@ -141,7 +141,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   useEffect(() => {
     const shouldPoll = forceSessionPreview ? Boolean(sessionId) : Boolean(effectiveEmail);
     if (!shouldPoll) {
-      const stillWaiting = forceSessionPreview ? !sessionId : !effectiveEmail;
+      const stillWaiting = forceSessionPreview ? !sessionId : (isSignedIn && !effectiveEmail);
       if (!stillWaiting && !initialFetchDoneRef.current) {
         initialFetchDoneRef.current = true;
         setInitialDataReady(true);
@@ -1121,7 +1121,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsPresent.map((asset) => {
                         const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        const label = asset === 'bitcoin' ? 'BTC' : 'ETH';
                         return (
                           <Link
                             key={`more-${asset}`}
@@ -1129,7 +1129,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                             className={`myinv-asset-button myinv-asset-button--${asset}`}
                             aria-label={label}
                           >
-                            {label}
+                            <span className={`asset-title-badge asset-title-badge--${asset}`}>{label}</span>
                           </Link>
                         );
                       })}
@@ -1148,7 +1148,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsMissing.map((asset) => {
                         const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        const label = asset === 'bitcoin' ? 'BTC' : 'ETH';
                         return (
                           <Link
                             key={`missing-${asset}`}
@@ -1156,7 +1156,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                             className={`myinv-asset-button myinv-asset-button--${asset}`}
                             aria-label={label}
                           >
-                            {label}
+                            <span className={`asset-title-badge asset-title-badge--${asset}`}>{label}</span>
                           </Link>
                         );
                       })}

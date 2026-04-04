@@ -329,8 +329,8 @@ const Index = () => {
 
   const assetRows = useMemo(() => {
     const assets = [
-      { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin' },
-      { id: 'ethereum', label: 'Ethereum', href: '/ethereum' }
+      { id: 'bitcoin', label: 'BTC', href: '/bitcoin' },
+      { id: 'ethereum', label: 'ETH', href: '/ethereum' }
     ];
 
     return assets.map((asset) => {
@@ -459,7 +459,7 @@ const Index = () => {
                   <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
                     <div className="home-assets-cell home-assets-asset">
                       <span className={`home-asset-label home-asset-label-${row.id}`}>
-                        <span className="home-asset-name">{row.label}</span>
+                        <span className={`home-asset-name asset-title-badge asset-title-badge--${row.id}`}>{row.label}</span>
                       </span>
                     </div>
                     <div className="home-assets-cell" style={{ position: 'relative' }}>

@@ -3439,6 +3439,7 @@ const VavityEthereum: React.FC = () => {
         className="asset-panel asset-panel--ethereum asset-header-panel asset-section-slide"
         ref={headerPanelRef}
       >
+        <a className="asset-title-badge asset-title-badge--ethereum asset-title-badge--section" href="https://ethereum.org/" target="_blank" rel="noreferrer">ETH</a>
         <div ref={sectionHeaderRef} className={`asset-section-header${displayIsLiquidMode ? ' is-liquid' : ''}`}>
           <div ref={assetTitleRef} className="asset-header-title">Ethereum</div>
           <div
