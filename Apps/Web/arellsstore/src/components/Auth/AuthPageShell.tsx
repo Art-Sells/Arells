@@ -8,9 +8,11 @@ type AuthPageShellProps = {
   children: React.ReactNode;
   title: string;
   belowCard?: React.ReactNode;
+  /** Wider card + title bar for dashboards (e.g. growth metrics tables). */
+  wide?: boolean;
 };
 
-const AuthPageShell: React.FC<AuthPageShellProps> = ({ children, title, belowCard }) => {
+const AuthPageShell: React.FC<AuthPageShellProps> = ({ children, title, belowCard, wide }) => {
   const [slideIn, setSlideIn] = useState(false);
   useLayoutEffect(() => {
     setSlideIn(true);
@@ -34,7 +36,7 @@ const AuthPageShell: React.FC<AuthPageShellProps> = ({ children, title, belowCar
   }, []);
 
   return (
-    <div className="auth-page myinv-page myinv-page--accent">
+    <div className={`auth-page myinv-page myinv-page--accent${wide ? ' auth-page--wide' : ''}`}>
       <div className={`auth-page-stack${slideIn ? ' page-slide-in' : ''}`}>
         <div className="auth-title-bar">{title}</div>
         <div className="auth-card-wrap shadow-border-wrap">

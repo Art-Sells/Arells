@@ -24,17 +24,16 @@
 ### enviroments
 - Add to Amplify
 
-### Analytics
-- Build own analytics page to test for humans/bots that gets session/user-email from arellsusers/users or arellsusers/sessions
+### Metrics
+- Build own metrics page to test for humans/bots that gets session/user-email from arellsusers/users or arellsusers/sessions
 - - (current) session creations (browswer/unique IP addresses), retention graph....
 - - UniqueUsers/SessionDurations (more than 5 seconds = human)
-- - Scrolls/button-clicks(which-assets)/asset-events = human
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 
 ### Test Online 
 - both desktop(multiple browsers)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
-- look at Analytics
+- look at Metrics
 
 
 ## After Test
@@ -59,7 +58,6 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 
 ### Day After Launch:
 - Delete Arells Readme roadmap
-Users
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
 - check (sign in with google) https://console.cloud.google.com/auth/scopes?authuser=2&chat=true&project=arells-492319&supportedpurview=project 
@@ -74,7 +72,7 @@ Users
 - Prepare for WACA transition (LTP folder)
 
 ## 1 mnth and beyond:
-- Fix long marketcap numbers and summary section (sometimes not saving the number info on state so it can height up after investment deletions, which causes a pop-up)....
+- Fix long marketcap numbers and summary section (in asset pages sometimes not saving the number info on state so it can height up after investment deletions, which causes a pop-up, in my investments page it sometimes doesn't smoothly fade in and out numbers like in asset pages after button clicks..)....
 - (Sort)MarketCap/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust LTP based on feedback...
 - - If traction is good look at LTP folder post WACA
@@ -84,7 +82,7 @@ Users
 
 ### 3 mnths and beyond
 - Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you a agree to our terms of service)
-- Start process of building Featured/Sponsored section (with analytics, CTR, etc)... do not launch until at least 200k MAU
+- Start process of building Featured/Sponsored section (with metrics, CTR, etc)... do not launch until at least 200k MAU
 
 ### iOS & Android App (after 1-2 years?)
 - iOS App (night/dark mode automatic (website) setting that reads your settings)

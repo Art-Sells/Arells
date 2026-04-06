@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { UserProvider } from '../context/UserContext';
+import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
 import { AssetsProvider } from '../context/Assets/AssetsProvider';
 import FaviconSwitcher from '../components/FaviconSwitcher';
@@ -20,6 +21,7 @@ const RootLayout = ({ children }: LayoutProps) => {
         <FaviconSwitcher />
         <AssetsProvider>
           <UserProvider>
+            <AnalyticsBeacon />
             <VavityProvider>{children}</VavityProvider>
           </UserProvider>
         </AssetsProvider>

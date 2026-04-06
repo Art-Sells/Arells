@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      { source: '/analytics-internal', destination: '/metrics', permanent: true },
+    ];
+  },
   webpack: (config, { isServer }) => {
     config.experiments = {
       asyncWebAssembly: true,

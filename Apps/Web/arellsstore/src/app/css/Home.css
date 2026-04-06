@@ -6681,6 +6681,151 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	pointer-events: none;
 }
 
+.auth-page--wide .auth-title-bar,
+.auth-page--wide .auth-card-wrap {
+	width: min(920px, calc(100% - 20px));
+	max-width: min(920px, calc(100% - 20px));
+}
+
+.auth-page--wide .auth-card-wrap {
+	padding: 1px 20px 24px;
+}
+
+.auth-page--wide .auth-below-card-outer {
+	width: min(920px, calc(100% - 20px));
+	max-width: min(920px, calc(100% - 20px));
+}
+
+.metrics-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	width: 100%;
+	text-align: left;
+}
+
+.auth-page--wide .metrics-stack .myinv-summary-block {
+	width: 100%;
+	max-width: 100%;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.metrics-page-intro {
+	font-size: 13px;
+	line-height: 1.5;
+	color: rgba(15, 23, 42, 0.72);
+	margin: 0;
+}
+
+.metrics-page-intro code {
+	font-size: 12px;
+}
+
+.metrics-refresh-row {
+	margin: 0;
+}
+
+.metrics-refresh-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 18px;
+	font-weight: 700;
+	font-size: 13px;
+	letter-spacing: -0.2px;
+	border-radius: 12px;
+	border: 1px solid var(--myinv-accent-color);
+	color: var(--myinv-accent-color);
+	background: transparent;
+	cursor: pointer;
+	transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.metrics-refresh-btn:hover:not(:disabled),
+.metrics-refresh-btn:focus-visible:not(:disabled) {
+	transform: translateY(-2px);
+	outline: none;
+}
+
+.metrics-refresh-btn:disabled {
+	opacity: 0.45;
+	cursor: default;
+	transform: none;
+}
+
+.metrics-error {
+	color: #b00020;
+	font-size: 13px;
+	margin: 0;
+	font-weight: 700;
+}
+
+.metrics-panel-title {
+	font-size: 15px;
+	font-weight: 800;
+	letter-spacing: -0.4px;
+	margin: 0 0 10px;
+	color: var(--myinv-accent-color);
+}
+
+.metrics-panel .metrics-list {
+	margin: 0;
+	padding-left: 18px;
+	line-height: 1.65;
+	font-size: 13px;
+}
+
+.metrics-pre {
+	margin: 0;
+	padding: 12px;
+	border-radius: 10px;
+	background: rgba(15, 23, 42, 0.06);
+	font-size: 12px;
+	overflow: auto;
+	max-height: 260px;
+	line-height: 1.45;
+}
+
+.metrics-table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.metrics-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 12px;
+}
+
+.metrics-table th,
+.metrics-table td {
+	padding: 8px 6px;
+	text-align: left;
+	vertical-align: top;
+	border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.metrics-table th {
+	font-weight: 700;
+	color: rgba(15, 23, 42, 0.65);
+	white-space: nowrap;
+}
+
+.metrics-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.metrics-table-session {
+	word-break: break-all;
+}
+
+.metrics-table-path {
+	max-width: 140px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .auth-about-card.auth-card-inner {
 	width: 100%;
 	margin: 0;
