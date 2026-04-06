@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
@@ -133,12 +132,6 @@ const SignUpPageClient: React.FC = () => {
                   receive it.
                 </p>
               </div>
-              <Link
-                href="/signin"
-                className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button"
-              >
-                Sign in
-              </Link>
             </div>
           </div>
         </div>

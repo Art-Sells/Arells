@@ -7396,10 +7396,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin: var(--auth-verify-mismatch-msg-margin-top, -10px) 0 5px;
 }
 
-.auth-verify-sent.auth-verify-sent--verify-error .auth-message-slot + .auth-secondary-link {
-	margin-top: 0;
-}
-
 /*
  * E-mail address band: same width as primary actions (.auth-submit / .auth-secondary-link at 100% of card).
  * Sits outside .auth-verify-sent-copy so it is not limited to the 150px copy column.
@@ -7430,8 +7426,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	max-width: var(--auth-verify-sent-copy-max-width, min(100%, 252px));
 	margin-inline: auto;
 	box-sizing: border-box;
-	margin-bottom: 30px;
-	width: 150px;
+	margin-bottom: -10px;
+	width: 130px;
 	overflow-wrap: anywhere;
 }
 

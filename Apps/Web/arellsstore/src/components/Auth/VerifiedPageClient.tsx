@@ -97,12 +97,6 @@ const VerifiedPageClient: React.FC = () => {
         <AuthContentEntrance>
           <div className="auth-verify-sent auth-verify-sent--verify-error">
             <AuthFormMessage error={VERIFY_PAGE_ERROR} errorCode={VERIFY_PAGE_ERROR_CODE} />
-            <Link
-              href="/signin"
-              className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button"
-            >
-              Sign in
-            </Link>
           </div>
         </AuthContentEntrance>
       ) : null}

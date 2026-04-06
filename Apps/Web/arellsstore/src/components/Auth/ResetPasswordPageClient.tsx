@@ -147,9 +147,6 @@ const ResetPasswordPageClient: React.FC = () => {
           <AuthContentEntrance>
             <div className="auth-verify-sent">
               <p className="auth-verify-sent-title">Password reset successfully.</p>
-              <Link href="/signin" className="auth-submit asset-range-button myinv-range-button">
-                Sign in
-              </Link>
             </div>
           </AuthContentEntrance>
         ) : tokenStatus === 'valid' ? (
