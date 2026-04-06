@@ -11,6 +11,7 @@ import {
   signSessionEmail,
 } from '../../../lib/auth/session';
 import { normalizeEmail } from '../../../lib/auth/normalize';
+import { ensureUserVavityAggregateExists } from '../../../lib/vavity/ensureUserVavityAggregate';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -51,6 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       updatedAt: Date.now(),
     });
     await deletePendingVerification(token);
+    await ensureUserVavityAggregateExists(email);
 
     if (authSecretConfigured()) {
       const sessionToken = await signSessionEmail(email);

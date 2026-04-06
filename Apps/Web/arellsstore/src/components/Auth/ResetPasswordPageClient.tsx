@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
+import AuthContentEntrance from './AuthContentEntrance';
 import { isConfirmFieldAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
+import { validateAuthPassword } from '../../lib/auth/validateAuthPassword';
 
 const ResetPasswordPageClient: React.FC = () => {
   const params = useParams();
@@ -76,9 +78,10 @@ const ResetPasswordPageClient: React.FC = () => {
       setErrorCode('REQUIRED_PASSWORD');
       return;
     }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      setErrorCode('PASSWORD_SHORT');
+    const pwCheck = validateAuthPassword(password);
+    if (!pwCheck.ok) {
+      setError(pwCheck.error);
+      setErrorCode(pwCheck.code);
       return;
     }
     if (!passwordConfirm) {
@@ -132,71 +135,80 @@ const ResetPasswordPageClient: React.FC = () => {
       )}
       <AuthPageShell title="reset password">
         {tokenStatus === 'invalid' ? (
-          <div className="auth-verify-sent">
-            <AuthFormMessage error={tokenError || 'Invalid reset link.'} errorCode="BAD_TOKEN" />
-            <Link href="/forgot-password" className="auth-submit asset-range-button myinv-range-button">
-              Request a new link
-            </Link>
-          </div>
+          <AuthContentEntrance>
+            <div className="auth-verify-sent">
+              <AuthFormMessage error={tokenError || 'Invalid reset link.'} errorCode="BAD_TOKEN" />
+              <Link href="/forgot-password" className="auth-submit asset-range-button myinv-range-button">
+                Request a new link
+              </Link>
+            </div>
+          </AuthContentEntrance>
         ) : tokenStatus === 'valid' && done ? (
-          <div className="auth-verify-sent">
-            <p className="auth-verify-sent-title">Password reset successfully.</p>
-            <Link href="/signin" className="auth-submit asset-range-button myinv-range-button">
-              Sign in
-            </Link>
-          </div>
+          <AuthContentEntrance>
+            <div className="auth-verify-sent">
+              <p className="auth-verify-sent-title">Password reset successfully.</p>
+              <Link href="/signin" className="auth-submit asset-range-button myinv-range-button">
+                Sign in
+              </Link>
+            </div>
+          </AuthContentEntrance>
         ) : tokenStatus === 'valid' ? (
-          <form className="auth-form" onSubmit={onSubmit} noValidate>
-            <p className="auth-verify-sent-title" style={{ textAlign: 'center', marginBottom: 12 }}>
-              {tokenEmail}
-            </p>
-            <label className="auth-label" htmlFor="auth-reset-password">
-              Password
-            </label>
-            <input
-              id="auth-reset-password"
-              className="auth-input"
-              type="password"
-              autoComplete="new-password"
-              placeholder=" "
-              value={password}
-              onChange={(ev) => {
-                setPassword(ev.target.value);
-                setErrorCode((c) => {
-                  if (isPasswordFieldAuthError(c)) {
-                    setError(null);
-                    return null;
-                  }
-                  return c;
-                });
-              }}
-            />
-            <label className="auth-label" htmlFor="auth-reset-password2">
-              Verify password
-            </label>
-            <input
-              id="auth-reset-password2"
-              className="auth-input"
-              type="password"
-              autoComplete="new-password"
-              placeholder=" "
-              value={passwordConfirm}
-              onChange={(ev) => {
-                setPasswordConfirm(ev.target.value);
-                setErrorCode((c) => {
-                  if (isConfirmFieldAuthError(c)) {
-                    setError(null);
-                    return null;
-                  }
-                  return c;
-                });
-              }}
-            />
-            <AuthFormMessage error={error} errorCode={errorCode} />
-            <button type="submit" className="auth-submit asset-range-button myinv-range-button" disabled={submitting}>
-              {submitting ? 'Resetting…' : 'Reset'}
-            </button>
-          </form>
+          <AuthContentEntrance>
+            <form className="auth-form" onSubmit={onSubmit} noValidate>
+              <p
+                className="auth-verify-sent-title auth-verify-sent-title--reset-email"
+                style={{ textAlign: 'center', marginBottom: 12 }}
+              >
+                {tokenEmail}
+              </p>
+              <label className="auth-label" htmlFor="auth-reset-password">
+                Password
+              </label>
+              <input
+                id="auth-reset-password"
+                className="auth-input"
+                type="password"
+                autoComplete="new-password"
+                placeholder=" "
+                value={password}
+                onChange={(ev) => {
+                  setPassword(ev.target.value);
+                  setErrorCode((c) => {
+                    if (isPasswordFieldAuthError(c)) {
+                      setError(null);
+                      return null;
+                    }
+                    return c;
+                  });
+                }}
+              />
+              <label className="auth-label" htmlFor="auth-reset-password2">
+                Verify password
+              </label>
+              <input
+                id="auth-reset-password2"
+                className="auth-input"
+                type="password"
+                autoComplete="new-password"
+                placeholder=" "
+                value={passwordConfirm}
+                onChange={(ev) => {
+                  setPasswordConfirm(ev.target.value);
+                  setErrorCode((c) => {
+                    if (isConfirmFieldAuthError(c)) {
+                      setError(null);
+                      return null;
+                    }
+                    return c;
+                  });
+                }}
+              />
+              <AuthFormMessage error={error} errorCode={errorCode} />
+              <button type="submit" className="auth-submit asset-range-button myinv-range-button" disabled={submitting}>
+                {submitting ? 'Resetting…' : 'Reset'}
+              </button>
+            </form>
+          </AuthContentEntrance>
         ) : null}
       </AuthPageShell>
     </>

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import { normalizeEmail } from '../../../lib/auth/normalize';
+import { validateAuthPassword } from '../../../lib/auth/validateAuthPassword';
 import {
   deletePendingReset,
   getPendingReset,
@@ -43,8 +44,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (password !== passwordConfirm) {
     return res.status(400).json({ error: 'Passwords do not match.', code: 'PASSWORD_MISMATCH' });
   }
-  if (password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters.', code: 'PASSWORD_SHORT' });
+  const pw = validateAuthPassword(password);
+  if (!pw.ok) {
+    return res.status(400).json({ error: pw.error, code: pw.code });
   }
 
   try {

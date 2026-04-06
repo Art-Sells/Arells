@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import '../../app/css/Home.css';
 import '../../app/css/HomeLoaderOverrides.css';
 
@@ -12,9 +12,8 @@ type AuthPageShellProps = {
 
 const AuthPageShell: React.FC<AuthPageShellProps> = ({ children, title, belowCard }) => {
   const [slideIn, setSlideIn] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setSlideIn(true), 50);
-    return () => clearTimeout(t);
+  useLayoutEffect(() => {
+    setSlideIn(true);
   }, []);
 
   useEffect(() => {
@@ -36,18 +35,16 @@ const AuthPageShell: React.FC<AuthPageShellProps> = ({ children, title, belowCar
 
   return (
     <div className="auth-page myinv-page myinv-page--accent">
-      <div className={`auth-title-bar${slideIn ? ' page-slide-in' : ''}`}>{title}</div>
-      <div className={`auth-card-wrap shadow-border-wrap${slideIn ? ' page-slide-in' : ''}`}>
-        <span className="shadow-border" aria-hidden="true" />
-        <div className="auth-card-inner about-card auth-about-card">
-          <div className="auth-card-content">{children}</div>
+      <div className={`auth-page-stack${slideIn ? ' page-slide-in' : ''}`}>
+        <div className="auth-title-bar">{title}</div>
+        <div className="auth-card-wrap shadow-border-wrap">
+          <span className="shadow-border" aria-hidden="true" />
+          <div className="auth-card-inner about-card auth-about-card">
+            <div className="auth-card-content">{children}</div>
+          </div>
         </div>
+        {belowCard && <div className="auth-below-card-outer">{belowCard}</div>}
       </div>
-      {belowCard && (
-        <div className={`auth-below-card-outer${slideIn ? ' page-slide-in' : ''}`}>
-          {belowCard}
-        </div>
-      )}
     </div>
   );
 };

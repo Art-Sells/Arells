@@ -3416,6 +3416,12 @@ body {
 	isolation: isolate;
 	transition: transform 1s ease;
 	min-width: 350px;
+	/*
+	 * View My Investments CTA — vertical padding only (not synced to .home-asset-card height).
+	 * Override at max-width: 700px below; horizontal padding stays on .home-investments-slideup-button.
+	 */
+	--home-investments-cta-pad-top: 25px;
+	--home-investments-cta-pad-bottom: 25px;
 }
 
 .home-investments-slideup.is-visible {
@@ -3498,11 +3504,10 @@ body {
 	border-bottom-left-radius: 17px;
 	border-top-right-radius: 17px;
 	border-bottom-right-radius: 17px;
-	/* padding adjustments */
 	padding-left: 20px;
 	padding-right: 20px;
-	padding-top: 23px;  /* +10px */
-	padding-bottom: 25px; /* -3px */
+	padding-top: var(--home-investments-cta-pad-top, 25px);
+	padding-bottom: var(--home-investments-cta-pad-bottom, 25px);
 	position: relative;
 	isolation: isolate;
 	z-index: 0;
@@ -3512,6 +3517,13 @@ body {
 .home-investments-slideup-button:active {
 	transform: translateY(-2px);
 	box-shadow: none;
+}
+
+@media screen and (max-width: 700px) {
+	.home-investments-slideup {
+		--home-investments-cta-pad-top: 20px;
+		--home-investments-cta-pad-bottom: 20px;
+	}
 }
 
 .home-investments-slideup-button::before {
@@ -5131,7 +5143,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.asset-portfolio-actions--show {
-		margin-top: -2px;    
+		margin-top: 12px;    
 		margin-bottom: 5px;    /* <- edit "show/hide investments" button top margin */
 	}
 
@@ -6605,6 +6617,30 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	font-family: Arial, sans-serif;
 }
 
+/* Single slide-in for title + card + below-card; hide until .page-slide-in to avoid full-opacity flash */
+.auth-page-stack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.auth-page-stack:not(.page-slide-in) {
+	opacity: 0;
+	transform: translateY(40px);
+}
+
+.auth-page-stack.page-slide-in {
+	animation: pageSlideUp 4s ease both;
+	will-change: transform, opacity;
+}
+
+/* Secondary entrance when main content mounts after a loader (reset / verify) */
+.auth-content-slide-in {
+	animation: pageSlideUp 0.9s ease both;
+	will-change: transform, opacity;
+}
+
 /* Title sits above the card; negative margin-bottom pulls the card up so the title overlaps the top edge */
 .auth-title-bar {
 	width: 350px;
@@ -6665,20 +6701,79 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	text-align: left;
 }
 
+/* Forgot / sign-up: collapse then reveal — 1.5s height only; no opacity fade */
+.auth-form-collapse-wrap {
+	display: grid;
+	grid-template-rows: 1fr;
+	opacity: 1;
+	transition: grid-template-rows 1.5s ease;
+}
+
+.auth-form-collapse-wrap.is-collapsing {
+	grid-template-rows: 0fr;
+}
+
+.auth-form-collapse-inner {
+	min-height: 0;
+	overflow: visible;
+	opacity: 1;
+}
+
+/* Contain content only while the form height collapses (sign-up / verify exit) */
+.auth-form-collapse-wrap.is-collapsing .auth-form-collapse-inner {
+	overflow: hidden;
+}
+
+.auth-form-collapse-inner--inactive {
+	pointer-events: none;
+}
+
+.auth-success-reveal {
+	display: grid;
+	grid-template-rows: 0fr;
+	opacity: 1;
+	transition: grid-template-rows 1.5s ease;
+}
+
+.auth-success-reveal.is-open {
+	grid-template-rows: 1fr;
+}
+
+.auth-success-reveal-inner {
+	min-height: 0;
+	overflow: hidden;
+	opacity: 1;
+}
+
 .auth-label {
 	font-weight: 800;
 	font-size: 12px;
-	color: var(--myinv-label-color, #222);
+	/* Same as home page slogan (#descriptioner.home-slogan-text) */
+	color: gray;
 	letter-spacing: -0.3px;
 	text-align: center;
 	margin: 0 0 2px;
+	opacity: 0.8;
+}
+
+/* Sign-up “Confirm Password” row — edit numbers below (or set CSS variables on .auth-form) */
+.auth-label.auth-label--signup-verify-password {
+	margin-top: var(--auth-signup-verify-label-margin-top, 4px);
+	margin-bottom: var(--auth-signup-verify-label-margin-bottom, 2px);
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.auth-input.auth-input--signup-verify-password {
+	margin-bottom: var(--auth-signup-verify-input-margin-bottom, -5px);
 }
 
 .auth-input {
-	width: 100%;
+	width: 240px;
 	box-sizing: border-box;
 	padding: 13px 13px;
-	margin: 0 0 10px;
+	margin:0 auto;
+	margin-bottom:10px;
 	border-radius: 10px;
 	border: 1px solid color-mix(in srgb, var(--myinv-accent-color) 45%, rgba(0, 0, 0, 0.2));
 	background: color-mix(in srgb, var(--myinv-accent-color) 8%, #ffffff);
@@ -6691,6 +6786,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		background-color 0.5s ease,
 		box-shadow 0.5s ease;
 	text-align: center;
+}
+
+/* Forgot-password page only — margin below the reset-email field (other auth inputs use .auth-input alone) */
+.auth-input.auth-input--forgot-email {
+	margin-bottom: var(--auth-forgot-email-input-margin-bottom, -5px);
 }
 
 .auth-input:focus,
@@ -6743,6 +6843,15 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	letter-spacing: -1px !important;
 	border-color: var(--myinv-accent-color) !important;
 	text-transform: lowercase;
+}
+
+/* Sign-up page primary button only — edit fallbacks or set vars on the sign-up form wrapper */
+.auth-page .auth-submit.auth-submit--signup-page {
+	margin: var(--auth-signup-submit-margin-top, 0 auto);
+	width: var(--auth-signup-submit-width, 160px);
+	max-width: var(--auth-signup-submit-max-width, none);
+	padding-top: var(--auth-signup-submit-padding-block, 18px);
+	padding-bottom: var(--auth-signup-submit-padding-block, 18px);
 }
 
 .auth-secondary-link {
@@ -6809,6 +6918,35 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin-top: 0;
 }
 
+/*
+ * Password policy / length: animate real layout height (max-height) so the submit button stays
+ * below the copy. grid 0fr→1fr often keeps ~0 layout height while text still paints — overlap.
+ */
+.auth-message-slot.auth-message-slot--policy {
+	display: block;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.45s ease;
+	min-height: 0;
+	margin: 25px 0 10px;
+}
+
+.auth-message-slot.auth-message-slot--policy.auth-message-slot--policy-expanded {
+	max-height: 20rem;
+}
+
+.auth-message-slot.auth-message-slot--policy + .auth-submit,
+.auth-message-slot.auth-message-slot--policy + a.auth-submit {
+	margin-top: 0;
+}
+
+.auth-message-slot.auth-message-slot--policy .auth-message {
+	width: 150px;
+	max-width: 100%;
+	margin: 0 auto 10px;
+	box-sizing: border-box;
+}
+
 .auth-message--error,
 .auth-message--NO_ACCOUNT,
 .auth-message--WRONG_PASSWORD,
@@ -6817,19 +6955,82 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .auth-message--PASSWORD_MISMATCH,
 .auth-message--INVALID_EMAIL,
 .auth-message--PASSWORD_SHORT,
+.auth-message--PASSWORD_POLICY,
 .auth-message--REQUIRED_FIELD,
 .auth-message--REQUIRED_EMAIL,
 .auth-message--REQUIRED_PASSWORD,
 .auth-message--REQUIRED_CONFIRM,
 .auth-message--SAME_PASSWORD,
 .auth-message--BAD_TOKEN,
-.auth-message--EXPIRED {
+.auth-message--MISMATCH,
+.auth-message--EXPIRED,
+.auth-message--VERIFY_LINK {
 	color: var(--myinv-accent-color);
 }
 
 .auth-verify-sent {
 	text-align: center;
-	padding: 8px 4px 0;
+	padding: 0px 4px 0;
+}
+
+/*
+ * Verified success: View Portfolio spacing — margin-top on the CTA only (tune var).
+ * No top padding on the wrapper so this is the sole vertical control above the button.
+ */
+.auth-verify-sent.auth-verify-sent--verified-success {
+	--auth-verify-success-cta-margin-top: 5px;
+	padding: 0 4px 8px;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verify-success-cta {
+	margin-top: var(--auth-verify-success-cta-margin-top);
+}
+
+/*
+ * Verify page error state (single copy for all failure reasons).
+ * Tune: --auth-verify-mismatch-msg-margin-top on .auth-page or here.
+ */
+.auth-verify-sent.auth-verify-sent--verify-error .auth-message-slot {
+	margin: var(--auth-verify-mismatch-msg-margin-top, -10px) 0 5px;
+}
+
+.auth-verify-sent.auth-verify-sent--verify-error .auth-message-slot + .auth-secondary-link {
+	margin-top: 0;
+}
+
+/*
+ * E-mail address band: same width as primary actions (.auth-submit / .auth-secondary-link at 100% of card).
+ * Sits outside .auth-verify-sent-copy so it is not limited to the 150px copy column.
+ */
+.auth-verify-sent-email-row {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	margin: 0 0 13px;
+}
+
+.auth-verify-sent-email-line {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.auth-verify-sent-email-row .auth-verify-sent-email-accent,
+.auth-verify-sent-email-line .auth-verify-sent-email-accent {
+	display: inline-block;
+	width: 100%;
+	max-width: 100%;
+	vertical-align: top;
+}
+
+/* Title + body only (e.g. forgot-password success); link/button below stays full width of card */
+.auth-verify-sent-copy {
+	max-width: var(--auth-verify-sent-copy-max-width, min(100%, 252px));
+	margin-inline: auto;
+	box-sizing: border-box;
+	margin-bottom: 30px;
+	width: 150px;
+	overflow-wrap: anywhere;
 }
 
 .auth-verify-sent-title {
@@ -6840,11 +7041,50 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	color: var(--myinv-accent-color);
 }
 
+.auth-verify-sent-title.auth-verify-sent-title--black {
+	color: #111;
+}
+
+.auth-verify-sent-title.auth-verify-sent-title--signup-email-sent {
+	width: 200px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
+}
+
 .auth-verify-sent-sub {
 	font-weight: 700;
 	font-size: 12px;
-	margin: 0 0 16px;
+	margin: 0 0 13px;
 	color: var(--myinv-accent-color);
+}
+
+/* Body line only: match home slogan (#descriptioner.home-slogan-text) — not "Check your e-mail" */
+.auth-verify-sent-sub.auth-verify-sent-sub--forgot-sent {
+	color: gray;
+	font-weight: 200;
+	overflow-wrap: anywhere;
+}
+
+.auth-verify-sent-email-accent {
+	color: var(--myinv-accent-color);
+	font-weight: 700;
+	font-size: 15px;
+	overflow-wrap: anywhere;
+}
+
+/* Reset-password form: account email above fields (+5px over .auth-verify-sent-title 14px) */
+.auth-verify-sent-title.auth-verify-sent-title--reset-email {
+	font-size: 19px;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.auth-verify-sent-spam-emphasis {
+	font-weight: 800;
+	color: #000;
 }
 
 .auth-verified-block {
@@ -6878,16 +7118,55 @@ a.asset-action-button--save-signin {
 	justify-content: center;
 }
 
-.auth-forgot-link {
-	display: block;
-	margin: 0;
-	margin-top: 0px;
-	font-weight: 800;
-	font-size: 11px;
-	color: var(--myinv-accent-color);
-	text-decoration: underline;
+/* Same stops as myInvAccentCycle; SignInPageClient syncs this animation’s currentTime to :root on mount */
+@keyframes authForgotLinkAccentCycle {
+	0% {
+		color: #ff5aa0;
+		border-color: #ff5aa0;
+	}
+	25% {
+		color: #ffb300;
+		border-color: #ffb300;
+	}
+	50% {
+		color: #00dcb4;
+		border-color: #00dcb4;
+	}
+	75% {
+		color: #4aa3ff;
+		border-color: #4aa3ff;
+	}
+	100% {
+		color: #ff5aa0;
+		border-color: #ff5aa0;
+	}
+}
+
+.auth-page .auth-forgot-link:link,
+.auth-page .auth-forgot-link:visited {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	align-self: center;
+	margin: 0 auto;
+	padding: 5px;
+	width: 120px;
+	box-sizing: border-box;
+	font-weight: 200;
+	font-size: 10px;
 	letter-spacing: -0.2px;
 	text-align: center;
+	text-decoration: none;
+	border: 1px solid #ff5aa0;
+	border-radius: 5px;
+	background: transparent;
+	animation: authForgotLinkAccentCycle 15s linear infinite;
+}
+
+.auth-page .auth-forgot-link:hover,
+.auth-page .auth-forgot-link:focus-visible {
+	opacity: 0.88;
+	outline: none;
 }
 
 @media screen and (max-height: 600px) {

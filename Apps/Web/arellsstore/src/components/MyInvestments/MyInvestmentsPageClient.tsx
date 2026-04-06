@@ -740,7 +740,6 @@ const MyInvestmentsPageClient: React.FC = () => {
   }, [rangeLoading, selectedRangeDays]);
 
   const showLiquidityToggle = forceSessionPreview ? true : !!effectiveEmail;
-  const footnoteLabel = forceSessionPreview ? '' : effectiveEmail ? `Signed in as ${effectiveEmail}` : null;
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
@@ -848,7 +847,8 @@ const MyInvestmentsPageClient: React.FC = () => {
                                 }`}
                                 style={{
                                   opacity: (selectedRangeDays && rangeLoading) || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                                  transition:
+                                    toggleAnimating || toggleDragRef.current.active ? 'none' : undefined,
                                 }}
                               >
                               <span className="myinv-metric-symbol">$</span>
@@ -881,7 +881,8 @@ const MyInvestmentsPageClient: React.FC = () => {
                                 }`}
                                 style={{
                                   opacity: (selectedRangeDays && rangeLoading) || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                                  transition:
+                                    toggleAnimating || toggleDragRef.current.active ? 'none' : undefined,
                                 }}
                               >
                               <span className="myinv-metric-symbol">$</span>
@@ -919,7 +920,8 @@ const MyInvestmentsPageClient: React.FC = () => {
                               style={{
                                 opacity:
                                   (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                                transition:
+                                  toggleAnimating || toggleDragRef.current.active ? 'none' : undefined,
                               }}
                             >
                               {profitLabel}
@@ -941,7 +943,8 @@ const MyInvestmentsPageClient: React.FC = () => {
                               style={{
                                 opacity:
                                   (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                                transition:
+                                  toggleAnimating || toggleDragRef.current.active ? 'none' : undefined,
                               }}
                             >
                               <span className="myinv-metric-inline-symbol">{profitPrefix}</span>
@@ -996,8 +999,8 @@ const MyInvestmentsPageClient: React.FC = () => {
                           type="button"
                           ref={toggleBtnRef}
                           className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${
-                            toggleKnobLeftPx != null ? ' is-dragging' : ''
-                          }${toggleAnimating ? ' is-animating' : ''}`}
+                            toggleAnimating ? ' is-animating' : ''
+                          }`}
                           aria-pressed={displayIsLiquidMode}
                           aria-label="Toggle Liquid/Solid mode"
                           style={
@@ -1175,8 +1178,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {footnoteLabel && <div className={`myinv-footnote${slideIn ? ' page-slide-in' : ''}`}>{footnoteLabel}</div>}
           </>
         )}
         <div className={`myinv-about-wrap${slideIn ? ' page-slide-in' : ''}`}>

@@ -2,8 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import { EMAIL_RE, normalizeEmail } from '../../../lib/auth/normalize';
+import { validateAuthPassword } from '../../../lib/auth/validateAuthPassword';
 import { getUserAuthByEmail, putPendingVerification, putUserAuth } from '../../../lib/auth/s3UserAuth';
-import { resolveAppOrigin } from '../../../lib/auth/origin';
+import { resolveAppOrigin, resolveEmailLogoUrl } from '../../../lib/auth/origin';
 import { sendVerificationEmail } from '../../../lib/auth/sendVerificationEmail';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -23,14 +24,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (password !== passwordConfirm) {
     return res.status(400).json({ error: 'Passwords do not match.', code: 'PASSWORD_MISMATCH' });
   }
-  if (password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters.', code: 'PASSWORD_SHORT' });
+  const pw = validateAuthPassword(password);
+  if (!pw.ok) {
+    return res.status(400).json({ error: pw.error, code: pw.code });
   }
 
   try {
     const existing = await getUserAuthByEmail(email);
     if (existing?.verified) {
-      return res.status(409).json({ error: 'An account with this email already exists.', code: 'EMAIL_EXISTS' });
+      return res.status(409).json({ error: 'account email exists', code: 'EMAIL_EXISTS' });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
@@ -51,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const appOrigin = resolveAppOrigin(req.headers.origin, bodyOrigin);
     const verifyUrl = `${appOrigin}/verified/${token}`;
-    const logoUrl = `${appOrigin}/ArellsIcoIcon.png`;
+    const logoUrl = resolveEmailLogoUrl(appOrigin);
 
     const sendResult = await sendVerificationEmail({ to: email, verifyUrl, logoUrl });
 

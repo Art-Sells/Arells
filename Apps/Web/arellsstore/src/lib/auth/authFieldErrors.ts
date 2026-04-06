@@ -16,6 +16,7 @@ export function isPasswordFieldAuthError(code: string | null): boolean {
   return (
     code === 'WRONG_PASSWORD' ||
     code === 'PASSWORD_SHORT' ||
+    code === 'PASSWORD_POLICY' ||
     code === 'SAME_PASSWORD' ||
     code === 'REQUIRED_PASSWORD' ||
     code === 'PASSWORD_MISMATCH'

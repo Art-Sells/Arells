@@ -14,7 +14,7 @@ export default function HomeInvestmentsSlideUpCTA({
 }: Props) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [layout, setLayout] = useState<{ left: number; width: number; buttonHeight: number } | null>(null);
+  const [layout, setLayout] = useState<{ left: number; width: number } | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -34,14 +34,11 @@ export default function HomeInvestmentsSlideUpCTA({
 
     const measure = () => {
       const wrapper = document.querySelector<HTMLElement>('.home-assets-wrapper');
-      const assetButton = document.querySelector<HTMLElement>('.home-asset-card');
-      const assetRect = assetButton?.getBoundingClientRect() ?? null;
       if (wrapper) {
         const r = wrapper.getBoundingClientRect();
         setLayout({
           left: r.left + r.width / 2,
           width: r.width,
-          buttonHeight: assetRect?.height ?? 0,
         });
         return;
       }
@@ -51,7 +48,6 @@ export default function HomeInvestmentsSlideUpCTA({
         setLayout({
           left: r.left + r.width / 2,
           width: r.width,
-          buttonHeight: assetRect?.height ?? 0,
         });
         return;
       }
@@ -138,11 +134,7 @@ export default function HomeInvestmentsSlideUpCTA({
         <span className="shadow-border" aria-hidden="true" />
         <div className="home-investments-slideup-row">
           <div className="home-investments-slideup-index-spacer" aria-hidden="true" />
-          <Link
-            href={href}
-            className="home-investments-slideup-button"
-            style={layout?.buttonHeight ? { height: `${layout.buttonHeight}px` } : undefined}
-          >
+          <Link href={href} className="home-investments-slideup-button">
             <span className="home-investments-slideup-button-bg" aria-hidden="true" />
             <span className="home-investments-slideup-button-text">{label}</span>
           </Link>

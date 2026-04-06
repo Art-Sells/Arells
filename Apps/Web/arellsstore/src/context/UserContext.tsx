@@ -137,7 +137,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, [sessionId, pathname, isSignedIn]);
 
   useEffect(() => {
-    if (!sessionId || sessionBootstrapRef.current) return;
+    if (!sessionId) return;
+    if (authSessionLoading) return;
+    if (email) return;
+    if (sessionBootstrapRef.current) return;
     if (typeof window === 'undefined') return;
     sessionBootstrapRef.current = true;
     (async () => {
@@ -167,7 +170,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         // ignore bootstrap errors
       }
     })();
-  }, [sessionId]);
+  }, [sessionId, authSessionLoading, email]);
 
   const refreshEmailAggregator = useCallback(
     async (asset?: string) => {

@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomBytes } from 'crypto';
 import { EMAIL_RE, normalizeEmail } from '../../../lib/auth/normalize';
 import { getUserAuthByEmail, putPendingReset, putUserAuth } from '../../../lib/auth/s3UserAuth';
-import { resolveAppOrigin } from '../../../lib/auth/origin';
+import { resolveAppOrigin, resolveEmailLogoUrl } from '../../../lib/auth/origin';
 import { sendPasswordResetEmail } from '../../../lib/auth/sendPasswordResetEmail';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const appOrigin = resolveAppOrigin(req.headers.origin, bodyOrigin);
     const resetUrl = `${appOrigin}/reset-password/${token}`;
-    const logoUrl = `${appOrigin}/ArellsIcoIcon.png`;
+    const logoUrl = resolveEmailLogoUrl(appOrigin);
 
     await sendPasswordResetEmail({ to: email, resetUrl, logoUrl });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
@@ -10,6 +10,9 @@ import {
   isEmailRelatedAuthError,
   isPasswordFieldAuthError,
 } from '../../lib/auth/authFieldErrors';
+import { validateAuthPassword } from '../../lib/auth/validateAuthPassword';
+
+const COLLAPSE_MS = 1500;
 
 const SignUpPageClient: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,9 +20,31 @@ const SignUpPageClient: React.FC = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
-  const [phase, setPhase] = useState<'form' | 'loading' | 'sent'>('form');
-  const [fadeOut, setFadeOut] = useState(false);
+  const [phase, setPhase] = useState<'form' | 'exiting' | 'sent'>('form');
   const [sentTo, setSentTo] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [revealSuccess, setRevealSuccess] = useState(false);
+
+  useEffect(() => {
+    if (phase !== 'exiting') return;
+    const t = window.setTimeout(() => setPhase('sent'), COLLAPSE_MS);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'sent') {
+      setRevealSuccess(false);
+      return;
+    }
+    let innerRaf = 0;
+    const outerRaf = requestAnimationFrame(() => {
+      innerRaf = requestAnimationFrame(() => setRevealSuccess(true));
+    });
+    return () => {
+      cancelAnimationFrame(outerRaf);
+      if (innerRaf) cancelAnimationFrame(innerRaf);
+    };
+  }, [phase]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,9 +66,10 @@ const SignUpPageClient: React.FC = () => {
       setErrorCode('REQUIRED_PASSWORD');
       return;
     }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      setErrorCode('PASSWORD_SHORT');
+    const pwCheck = validateAuthPassword(password);
+    if (!pwCheck.ok) {
+      setError(pwCheck.error);
+      setErrorCode(pwCheck.code);
       return;
     }
     if (!passwordConfirm) {
@@ -56,8 +82,7 @@ const SignUpPageClient: React.FC = () => {
       setErrorCode('PASSWORD_MISMATCH');
       return;
     }
-    setPhase('loading');
-    setFadeOut(false);
+    setSubmitting(true);
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -77,45 +102,52 @@ const SignUpPageClient: React.FC = () => {
         setErrorCode(typeof data.code === 'string' ? data.code : null);
         return;
       }
-      window.setTimeout(() => setFadeOut(true), 800);
-      window.setTimeout(() => {
-        setPhase('sent');
-        setSentTo(typeof data.email === 'string' ? data.email : email);
-      }, 2800);
+      setSentTo(typeof data.email === 'string' ? data.email : email);
+      setPhase('exiting');
     } catch {
       setPhase('form');
       setError('Something went wrong. Try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  const formDisabled = phase === 'exiting';
+
   return (
-    <>
-      {phase === 'loading' && (
-        <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
-          <div className="loader-toggle-clone loader-toggle-clone--myinv">
-            <div className="myinv-toggle-shell myinv-accent-border">
-              <div className="asset-reality-toggle-row myinv-toggle-row">
-                <span className="asset-reality-toggle-label">Liquid</span>
-                <button type="button" className="asset-reality-toggle" aria-hidden="true" tabIndex={-1}>
-                  <span className="asset-reality-toggle-knob" aria-hidden="true" />
-                </button>
-                <span className="asset-reality-toggle-label">Solid</span>
+    <AuthPageShell title="sign up">
+      {phase === 'sent' ? (
+        <div className={`auth-success-reveal${revealSuccess ? ' is-open' : ''}`}>
+          <div className="auth-success-reveal-inner">
+            <div className="auth-verify-sent">
+              <p className="auth-verify-sent-title auth-verify-sent-title--black auth-verify-sent-title--signup-email-sent">
+                Verification e-mail sent
+              </p>
+              <p className="auth-verify-sent-email-row">
+                <span className="auth-verify-sent-email-accent">{sentTo}</span>
+              </p>
+              <div className="auth-verify-sent-copy">
+                <p className="auth-verify-sent-sub auth-verify-sent-sub--forgot-sent">
+                  Verify your e-mail before continuing. Check your{' '}
+                  <span className="auth-verify-sent-spam-emphasis">spam/junk</span> in case your inbox doesn&apos;t
+                  receive it.
+                </p>
               </div>
+              <Link
+                href="/signin"
+                className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button"
+              >
+                Sign in
+              </Link>
             </div>
           </div>
         </div>
-      )}
-      <AuthPageShell title="sign up">
-        {phase === 'sent' ? (
-          <div className="auth-verify-sent">
-            <p className="auth-verify-sent-title">Verification e-mail sent to {sentTo}</p>
-            <p className="auth-verify-sent-sub">Verify e-mail before continuing.</p>
-            <Link href="/signin" className="auth-submit asset-range-button myinv-range-button">
-              Back to sign in
-            </Link>
-          </div>
-        ) : phase === 'form' ? (
-          <>
+      ) : null}
+      {phase === 'form' || phase === 'exiting' ? (
+        <div className={`auth-form-collapse-wrap${phase === 'exiting' ? ' is-collapsing' : ''}`}>
+          <div
+            className={`auth-form-collapse-inner${phase === 'exiting' ? ' auth-form-collapse-inner--inactive' : ''}`}
+          >
             <form className="auth-form" onSubmit={onSubmit} noValidate>
               <label className="auth-label" htmlFor="auth-signup-email">
                 Email
@@ -127,6 +159,7 @@ const SignUpPageClient: React.FC = () => {
                 autoComplete="email"
                 placeholder=" "
                 value={email}
+                disabled={formDisabled}
                 onChange={(ev) => {
                   setEmail(ev.target.value);
                   setErrorCode((c) => {
@@ -148,6 +181,7 @@ const SignUpPageClient: React.FC = () => {
                 autoComplete="new-password"
                 placeholder=" "
                 value={password}
+                disabled={formDisabled}
                 onChange={(ev) => {
                   setPassword(ev.target.value);
                   setErrorCode((c) => {
@@ -159,16 +193,20 @@ const SignUpPageClient: React.FC = () => {
                   });
                 }}
               />
-              <label className="auth-label" htmlFor="auth-signup-password2">
-                Verify password
+              <label
+                className="auth-label auth-label--signup-verify-password"
+                htmlFor="auth-signup-password2"
+              >
+                Confirm Password
               </label>
               <input
                 id="auth-signup-password2"
-                className="auth-input"
+                className="auth-input auth-input--signup-verify-password"
                 type="password"
                 autoComplete="new-password"
                 placeholder=" "
                 value={passwordConfirm}
+                disabled={formDisabled}
                 onChange={(ev) => {
                   setPasswordConfirm(ev.target.value);
                   setErrorCode((c) => {
@@ -181,19 +219,18 @@ const SignUpPageClient: React.FC = () => {
                 }}
               />
               <AuthFormMessage error={error} errorCode={errorCode} />
-              <button type="submit" className="auth-submit auth-submit--accent asset-range-button myinv-range-button">
-                Sign up
+              <button
+                type="submit"
+                className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button"
+                disabled={submitting || formDisabled}
+              >
+                {submitting ? 'Signing up…' : 'Sign up'}
               </button>
             </form>
-            <div className="auth-below-card">
-              <Link href="/signin" className="auth-secondary-link asset-range-button myinv-range-button">
-                Sign in
-              </Link>
-            </div>
-          </>
-        ) : null}
-      </AuthPageShell>
-    </>
+          </div>
+        </div>
+      ) : null}
+    </AuthPageShell>
   );
 };
 

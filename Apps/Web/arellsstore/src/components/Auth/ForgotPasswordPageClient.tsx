@@ -1,19 +1,43 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError } from '../../lib/auth/authFieldErrors';
 
+const COLLAPSE_MS = 1500;
+
 const ForgotPasswordPageClient: React.FC = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
-  const [phase, setPhase] = useState<'form' | 'loading' | 'sent'>('form');
-  const [fadeOut, setFadeOut] = useState(false);
+  const [phase, setPhase] = useState<'form' | 'exiting' | 'sent'>('form');
   const [sentTo, setSentTo] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [revealSuccess, setRevealSuccess] = useState(false);
+
+  useEffect(() => {
+    if (phase !== 'exiting') return;
+    const t = window.setTimeout(() => setPhase('sent'), COLLAPSE_MS);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'sent') {
+      setRevealSuccess(false);
+      return;
+    }
+    let innerRaf = 0;
+    const outerRaf = requestAnimationFrame(() => {
+      innerRaf = requestAnimationFrame(() => setRevealSuccess(true));
+    });
+    return () => {
+      cancelAnimationFrame(outerRaf);
+      if (innerRaf) cancelAnimationFrame(innerRaf);
+    };
+  }, [phase]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +54,7 @@ const ForgotPasswordPageClient: React.FC = () => {
       setErrorCode('INVALID_EMAIL');
       return;
     }
-    setPhase('loading');
-    setFadeOut(false);
+    setSubmitting(true);
     try {
       const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
@@ -49,56 +72,60 @@ const ForgotPasswordPageClient: React.FC = () => {
         setErrorCode(typeof data.code === 'string' ? data.code : null);
         return;
       }
-      window.setTimeout(() => setFadeOut(true), 800);
-      window.setTimeout(() => {
-        setPhase('sent');
-        setSentTo(em);
-      }, 2800);
+      setSentTo(em);
+      setPhase('exiting');
     } catch {
       setPhase('form');
       setError('Something went wrong. Try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <>
-      {phase === 'loading' && (
-        <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
-          <div className="loader-toggle-clone loader-toggle-clone--myinv">
-            <div className="myinv-toggle-shell myinv-accent-border">
-              <div className="asset-reality-toggle-row myinv-toggle-row">
-                <span className="asset-reality-toggle-label">Liquid</span>
-                <button type="button" className="asset-reality-toggle" aria-hidden="true" tabIndex={-1}>
-                  <span className="asset-reality-toggle-knob" aria-hidden="true" />
-                </button>
-                <span className="asset-reality-toggle-label">Solid</span>
+    <AuthPageShell title="forgot password">
+      {phase === 'sent' ? (
+        <div className={`auth-success-reveal${revealSuccess ? ' is-open' : ''}`}>
+          <div className="auth-success-reveal-inner">
+            <div className="auth-verify-sent">
+              <p className="auth-verify-sent-title auth-verify-sent-title--black">Password reset sent</p>
+              <p className="auth-verify-sent-email-row">
+                <span className="auth-verify-sent-email-accent">{sentTo}</span>
+              </p>
+              <div className="auth-verify-sent-copy">
+                <p className="auth-verify-sent-sub auth-verify-sent-sub--forgot-sent">
+                  If we have an account for your email, you will receive it shortly. Check your{' '}
+                  <span className="auth-verify-sent-spam-emphasis">spam/junk</span> in case your inbox
+                  doesn&apos;t receive it.
+                </p>
               </div>
+              <Link
+                href="/signin"
+                className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button"
+              >
+                Sign in
+              </Link>
             </div>
           </div>
         </div>
-      )}
-      <AuthPageShell title="forgot password">
-        {phase === 'sent' ? (
-          <div className="auth-verify-sent">
-            <p className="auth-verify-sent-title">Password reset e-mail sent to {sentTo}</p>
-            <p className="auth-verify-sent-sub">Check your inbox to continue.</p>
-            <Link href="/signin" className="auth-submit asset-range-button myinv-range-button">
-              Back to sign in
-            </Link>
-          </div>
-        ) : phase === 'form' ? (
-          <>
+      ) : null}
+      {phase === 'form' || phase === 'exiting' ? (
+        <div className={`auth-form-collapse-wrap${phase === 'exiting' ? ' is-collapsing' : ''}`}>
+          <div
+            className={`auth-form-collapse-inner${phase === 'exiting' ? ' auth-form-collapse-inner--inactive' : ''}`}
+          >
             <form className="auth-form" onSubmit={onSubmit} noValidate>
               <label className="auth-label" htmlFor="auth-forgot-email">
                 Email
               </label>
               <input
                 id="auth-forgot-email"
-                className="auth-input"
+                className="auth-input auth-input--forgot-email"
                 type="email"
                 autoComplete="email"
                 placeholder=" "
                 value={email}
+                disabled={phase === 'exiting'}
                 onChange={(ev) => {
                   setEmail(ev.target.value);
                   setErrorCode((c) => {
@@ -111,19 +138,18 @@ const ForgotPasswordPageClient: React.FC = () => {
                 }}
               />
               <AuthFormMessage error={error} errorCode={errorCode} />
-              <button type="submit" className="auth-submit asset-range-button myinv-range-button">
-                Reset Password
+              <button
+                type="submit"
+                className="auth-submit asset-range-button myinv-range-button"
+                disabled={submitting || phase === 'exiting'}
+              >
+                {submitting ? 'Sending…' : 'Reset Password'}
               </button>
             </form>
-            <div className="auth-below-card">
-              <Link href="/signin" className="auth-secondary-link asset-range-button myinv-range-button">
-                Back to sign in
-              </Link>
-            </div>
-          </>
-        ) : null}
-      </AuthPageShell>
-    </>
+          </div>
+        </div>
+      ) : null}
+    </AuthPageShell>
   );
 };
 

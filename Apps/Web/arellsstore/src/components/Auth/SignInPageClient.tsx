@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
@@ -8,13 +8,46 @@ import AuthFormMessage from './AuthFormMessage';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
 
+function cssKeyframeName(a: Animation): string {
+  return (a as CSSAnimation).animationName ?? '';
+}
+
+/** Anchor + var(--myinv-accent-color) often stays black; keyframed color works. Match :root phase after SPA navigations. */
+function syncForgotLinkAccentPhase(linkEl: HTMLElement) {
+  const rootCycle = document.documentElement
+    .getAnimations?.()
+    .find((a) => cssKeyframeName(a) === 'myInvAccentCycle');
+  const linkCycle = linkEl.getAnimations?.().find((a) => cssKeyframeName(a) === 'authForgotLinkAccentCycle');
+  if (!rootCycle || !linkCycle) return;
+  const t = rootCycle.currentTime;
+  if (t == null) return;
+  try {
+    linkCycle.currentTime = t;
+  } catch {
+    /* ignore */
+  }
+}
+
 const SignInPageClient: React.FC = () => {
   const router = useRouter();
+  const forgotLinkRef = useRef<HTMLAnchorElement>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = forgotLinkRef.current;
+    if (!el) return;
+    const run = () => syncForgotLinkAccentPhase(el);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        run();
+        window.setTimeout(run, 0);
+      });
+    });
+  }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,7 +144,7 @@ const SignInPageClient: React.FC = () => {
             });
           }}
         />
-        <Link href="/forgot-password" className="auth-forgot-link">
+        <Link ref={forgotLinkRef} href="/forgot-password" className="auth-forgot-link">
           Forgot Password
         </Link>
         <AuthFormMessage error={error} errorCode={errorCode} />

@@ -1,22 +1,54 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
+import AuthContentEntrance from './AuthContentEntrance';
+
+/** Shown for every failure on this page (token missing, API error, network). */
+const VERIFY_PAGE_ERROR = 'This verification link is invalid or expired.';
+/** CSS hook for accent color; message text is always VERIFY_PAGE_ERROR. */
+const VERIFY_PAGE_ERROR_CODE = 'VERIFY_LINK';
 
 const VerifiedPageClient: React.FC = () => {
   const params = useParams();
   const token = typeof params?.token === 'string' ? params.token : '';
   const [status, setStatus] = useState<'idle' | 'ok' | 'err'>('idle');
-  const [message, setMessage] = useState<string | null>(null);
-  const [loaderFadeOut, setLoaderFadeOut] = useState(false);
+  const [revealOpen, setRevealOpen] = useState(false);
+  /** Set true when `?verifyPreview=success` — skips API; remove query when done styling. */
+  const verifyPreviewSuccessRef = useRef(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const q = new URLSearchParams(window.location.search).get('verifyPreview');
+    if (q === 'success') {
+      verifyPreviewSuccessRef.current = true;
+      setStatus('ok');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (status !== 'ok') {
+      setRevealOpen(false);
+      return;
+    }
+    setRevealOpen(false);
+    let innerRaf = 0;
+    const outerRaf = requestAnimationFrame(() => {
+      innerRaf = requestAnimationFrame(() => setRevealOpen(true));
+    });
+    return () => {
+      cancelAnimationFrame(outerRaf);
+      if (innerRaf) cancelAnimationFrame(innerRaf);
+    };
+  }, [status]);
+
+  useEffect(() => {
+    if (verifyPreviewSuccessRef.current) return;
     if (!token) {
       setStatus('err');
-      setMessage('Invalid verification link.');
       return;
     }
     let cancelled = false;
@@ -28,28 +60,15 @@ const VerifiedPageClient: React.FC = () => {
           credentials: 'include',
           body: JSON.stringify({ token }),
         });
-        const data = await res.json().catch(() => ({}));
+        await res.json().catch(() => undefined);
         if (cancelled) return;
         if (!res.ok) {
-          setLoaderFadeOut(true);
-          window.setTimeout(() => {
-            setStatus('err');
-            setMessage(typeof data.error === 'string' ? data.error : 'Verification failed.');
-          }, 2000);
+          setStatus('err');
           return;
         }
-        setLoaderFadeOut(true);
-        window.setTimeout(() => {
-          if (!cancelled) setStatus('ok');
-        }, 2000);
+        setStatus('ok');
       } catch {
-        if (!cancelled) {
-          setLoaderFadeOut(true);
-          window.setTimeout(() => {
-            setStatus('err');
-            setMessage('Something went wrong.');
-          }, 2000);
-        }
+        if (!cancelled) setStatus('err');
       }
     })();
     return () => {
@@ -58,40 +77,36 @@ const VerifiedPageClient: React.FC = () => {
   }, [token]);
 
   return (
-    <>
-      {status === 'idle' && (
-        <div className={`asset-loader-overlay myinv-loader-overlay${loaderFadeOut ? ' asset-loader-overlay-fade' : ''}`}>
-          <div className="loader-toggle-clone loader-toggle-clone--myinv">
-            <div className="myinv-toggle-shell myinv-accent-border">
-              <div className="asset-reality-toggle-row myinv-toggle-row">
-                <span className="asset-reality-toggle-label">Liquid</span>
-                <button type="button" className="asset-reality-toggle" aria-hidden="true" tabIndex={-1}>
-                  <span className="asset-reality-toggle-knob" aria-hidden="true" />
-                </button>
-                <span className="asset-reality-toggle-label">Solid</span>
+    <AuthPageShell title={status === 'ok' ? 'email verified' : 'verify email'}>
+      {status === 'ok' ? (
+        <AuthContentEntrance>
+          <div className={`auth-success-reveal${revealOpen ? ' is-open' : ''}`}>
+            <div className="auth-success-reveal-inner">
+              <div className="auth-verify-sent auth-verify-sent--verified-success">
+                <Link
+                  href="/my-investments"
+                  className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
+                >
+                  View Portfolio
+                </Link>
               </div>
             </div>
           </div>
-        </div>
-      )}
-      <AuthPageShell title="verify email">
-        {status === 'ok' ? (
-          <div className="auth-verified-block myinv-accent-border">
-            <p className="auth-verified-title">Email Verified</p>
-            <Link href="/my-investments" className="auth-submit asset-range-button myinv-range-button">
-              View Portfolio
+        </AuthContentEntrance>
+      ) : status === 'err' ? (
+        <AuthContentEntrance>
+          <div className="auth-verify-sent auth-verify-sent--verify-error">
+            <AuthFormMessage error={VERIFY_PAGE_ERROR} errorCode={VERIFY_PAGE_ERROR_CODE} />
+            <Link
+              href="/signin"
+              className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button"
+            >
+              Sign in
             </Link>
           </div>
-        ) : status === 'err' ? (
-          <div className="auth-verify-sent">
-            <AuthFormMessage error={message || 'Verification failed.'} errorCode={null} />
-            <Link href="/signin" className="auth-submit asset-range-button myinv-range-button">
-              Back to sign in
-            </Link>
-          </div>
-        ) : null}
-      </AuthPageShell>
-    </>
+        </AuthContentEntrance>
+      ) : null}
+    </AuthPageShell>
   );
 };
 
