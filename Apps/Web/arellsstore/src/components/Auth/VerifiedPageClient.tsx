@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
+import AuthFormMessage from './AuthFormMessage';
 
 const VerifiedPageClient: React.FC = () => {
   const params = useParams();
@@ -83,9 +84,7 @@ const VerifiedPageClient: React.FC = () => {
           </div>
         ) : status === 'err' ? (
           <div className="auth-verify-sent">
-            <p className="auth-message auth-message--error" role="alert">
-              {message || 'Verification failed.'}
-            </p>
+            <AuthFormMessage error={message || 'Verification failed.'} errorCode={null} />
             <Link href="/signin" className="auth-submit asset-range-button myinv-range-button">
               Back to sign in
             </Link>

@@ -3,6 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import AuthPageShell from './AuthPageShell';
+import AuthFormMessage from './AuthFormMessage';
+import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
+import {
+  isConfirmFieldAuthError,
+  isEmailRelatedAuthError,
+  isPasswordFieldAuthError,
+} from '../../lib/auth/authFieldErrors';
 
 const SignUpPageClient: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +25,32 @@ const SignUpPageClient: React.FC = () => {
     e.preventDefault();
     setError(null);
     setErrorCode(null);
+    const em = normalizeEmail(email);
+    if (!em) {
+      setError('Please enter your email.');
+      setErrorCode('REQUIRED_EMAIL');
+      return;
+    }
+    if (!EMAIL_RE.test(em)) {
+      setError('Email format is incorrect.');
+      setErrorCode('INVALID_EMAIL');
+      return;
+    }
+    if (!password) {
+      setError('Please enter a password.');
+      setErrorCode('REQUIRED_PASSWORD');
+      return;
+    }
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      setErrorCode('PASSWORD_SHORT');
+      return;
+    }
+    if (!passwordConfirm) {
+      setError('Please confirm your password.');
+      setErrorCode('REQUIRED_CONFIRM');
+      return;
+    }
     if (password !== passwordConfirm) {
       setError('Passwords do not match.');
       setErrorCode('PASSWORD_MISMATCH');
@@ -31,7 +64,7 @@ const SignUpPageClient: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          email,
+          email: em,
           password,
           passwordConfirm,
           origin: typeof window !== 'undefined' ? window.location.origin : undefined,
@@ -83,7 +116,7 @@ const SignUpPageClient: React.FC = () => {
           </div>
         ) : phase === 'form' ? (
           <>
-            <form className="auth-form" onSubmit={onSubmit}>
+            <form className="auth-form" onSubmit={onSubmit} noValidate>
               <label className="auth-label" htmlFor="auth-signup-email">
                 Email
               </label>
@@ -94,8 +127,16 @@ const SignUpPageClient: React.FC = () => {
                 autoComplete="email"
                 placeholder=" "
                 value={email}
-                onChange={(ev) => setEmail(ev.target.value)}
-                required
+                onChange={(ev) => {
+                  setEmail(ev.target.value);
+                  setErrorCode((c) => {
+                    if (isEmailRelatedAuthError(c)) {
+                      setError(null);
+                      return null;
+                    }
+                    return c;
+                  });
+                }}
               />
               <label className="auth-label" htmlFor="auth-signup-password">
                 Password
@@ -107,9 +148,16 @@ const SignUpPageClient: React.FC = () => {
                 autoComplete="new-password"
                 placeholder=" "
                 value={password}
-                onChange={(ev) => setPassword(ev.target.value)}
-                required
-                minLength={8}
+                onChange={(ev) => {
+                  setPassword(ev.target.value);
+                  setErrorCode((c) => {
+                    if (isPasswordFieldAuthError(c)) {
+                      setError(null);
+                      return null;
+                    }
+                    return c;
+                  });
+                }}
               />
               <label className="auth-label" htmlFor="auth-signup-password2">
                 Verify password
@@ -121,15 +169,18 @@ const SignUpPageClient: React.FC = () => {
                 autoComplete="new-password"
                 placeholder=" "
                 value={passwordConfirm}
-                onChange={(ev) => setPasswordConfirm(ev.target.value)}
-                required
-                minLength={8}
+                onChange={(ev) => {
+                  setPasswordConfirm(ev.target.value);
+                  setErrorCode((c) => {
+                    if (isConfirmFieldAuthError(c)) {
+                      setError(null);
+                      return null;
+                    }
+                    return c;
+                  });
+                }}
               />
-              {error && (
-                <p className={`auth-message auth-message--error auth-message--${errorCode || 'generic'}`} role="alert">
-                  {error}
-                </p>
-              )}
+              <AuthFormMessage error={error} errorCode={errorCode} />
               <button type="submit" className="auth-submit auth-submit--accent asset-range-button myinv-range-button">
                 Sign up
               </button>

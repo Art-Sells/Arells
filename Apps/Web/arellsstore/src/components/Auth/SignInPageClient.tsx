@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
+import AuthFormMessage from './AuthFormMessage';
+import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
+import { isEmailRelatedAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
 
 const SignInPageClient: React.FC = () => {
   const router = useRouter();
@@ -17,13 +20,29 @@ const SignInPageClient: React.FC = () => {
     e.preventDefault();
     setError(null);
     setErrorCode(null);
+    const em = normalizeEmail(email);
+    if (!em) {
+      setError('Please enter your email.');
+      setErrorCode('REQUIRED_EMAIL');
+      return;
+    }
+    if (!EMAIL_RE.test(em)) {
+      setError('Email format is incorrect.');
+      setErrorCode('INVALID_EMAIL');
+      return;
+    }
+    if (!password) {
+      setError('Please enter your password.');
+      setErrorCode('REQUIRED_PASSWORD');
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: em, password }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -49,7 +68,7 @@ const SignInPageClient: React.FC = () => {
         </Link>
       }
     >
-      <form className="auth-form" onSubmit={onSubmit}>
+      <form className="auth-form" onSubmit={onSubmit} noValidate>
         <label className="auth-label" htmlFor="auth-signin-email">
           Email
         </label>
@@ -60,8 +79,16 @@ const SignInPageClient: React.FC = () => {
           autoComplete="email"
           placeholder=" "
           value={email}
-          onChange={(ev) => setEmail(ev.target.value)}
-          required
+          onChange={(ev) => {
+            setEmail(ev.target.value);
+            setErrorCode((c) => {
+              if (isEmailRelatedAuthError(c)) {
+                setError(null);
+                return null;
+              }
+              return c;
+            });
+          }}
         />
         <label className="auth-label" htmlFor="auth-signin-password">
           Password
@@ -73,17 +100,21 @@ const SignInPageClient: React.FC = () => {
           autoComplete="current-password"
           placeholder=" "
           value={password}
-          onChange={(ev) => setPassword(ev.target.value)}
-          required
+          onChange={(ev) => {
+            setPassword(ev.target.value);
+            setErrorCode((c) => {
+              if (isPasswordFieldAuthError(c)) {
+                setError(null);
+                return null;
+              }
+              return c;
+            });
+          }}
         />
         <Link href="/forgot-password" className="auth-forgot-link">
           Forgot Password
         </Link>
-        {error && (
-          <p className={`auth-message auth-message--error auth-message--${errorCode || 'generic'}`} role="alert">
-            {error}
-          </p>
-        )}
+        <AuthFormMessage error={error} errorCode={errorCode} />
         <button type="submit" className="auth-submit asset-range-button myinv-range-button" disabled={submitting}>
           {submitting ? 'Signing in…' : 'Sign in'}
         </button>

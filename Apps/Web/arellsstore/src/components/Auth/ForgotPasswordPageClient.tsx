@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import AuthPageShell from './AuthPageShell';
+import AuthFormMessage from './AuthFormMessage';
+import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
+import { isEmailRelatedAuthError } from '../../lib/auth/authFieldErrors';
 
 const ForgotPasswordPageClient: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,6 +19,17 @@ const ForgotPasswordPageClient: React.FC = () => {
     e.preventDefault();
     setError(null);
     setErrorCode(null);
+    const em = normalizeEmail(email);
+    if (!em) {
+      setError('Please enter your email.');
+      setErrorCode('REQUIRED_EMAIL');
+      return;
+    }
+    if (!EMAIL_RE.test(em)) {
+      setError('Email format is incorrect.');
+      setErrorCode('INVALID_EMAIL');
+      return;
+    }
     setPhase('loading');
     setFadeOut(false);
     try {
@@ -24,7 +38,7 @@ const ForgotPasswordPageClient: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          email,
+          email: em,
           origin: typeof window !== 'undefined' ? window.location.origin : undefined,
         }),
       });
@@ -38,7 +52,7 @@ const ForgotPasswordPageClient: React.FC = () => {
       window.setTimeout(() => setFadeOut(true), 800);
       window.setTimeout(() => {
         setPhase('sent');
-        setSentTo(email);
+        setSentTo(em);
       }, 2800);
     } catch {
       setPhase('form');
@@ -74,7 +88,7 @@ const ForgotPasswordPageClient: React.FC = () => {
           </div>
         ) : phase === 'form' ? (
           <>
-            <form className="auth-form" onSubmit={onSubmit}>
+            <form className="auth-form" onSubmit={onSubmit} noValidate>
               <label className="auth-label" htmlFor="auth-forgot-email">
                 Email
               </label>
@@ -85,14 +99,18 @@ const ForgotPasswordPageClient: React.FC = () => {
                 autoComplete="email"
                 placeholder=" "
                 value={email}
-                onChange={(ev) => setEmail(ev.target.value)}
-                required
+                onChange={(ev) => {
+                  setEmail(ev.target.value);
+                  setErrorCode((c) => {
+                    if (isEmailRelatedAuthError(c)) {
+                      setError(null);
+                      return null;
+                    }
+                    return c;
+                  });
+                }}
               />
-              {error && (
-                <p className={`auth-message auth-message--error auth-message--${errorCode || 'generic'}`} role="alert">
-                  {error}
-                </p>
-              )}
+              <AuthFormMessage error={error} errorCode={errorCode} />
               <button type="submit" className="auth-submit asset-range-button myinv-range-button">
                 Reset Password
               </button>

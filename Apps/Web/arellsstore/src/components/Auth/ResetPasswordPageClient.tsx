@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
+import AuthFormMessage from './AuthFormMessage';
+import { isConfirmFieldAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
 
 const ResetPasswordPageClient: React.FC = () => {
   const params = useParams();
@@ -69,6 +71,21 @@ const ResetPasswordPageClient: React.FC = () => {
     e.preventDefault();
     setError(null);
     setErrorCode(null);
+    if (!password) {
+      setError('Please enter a password.');
+      setErrorCode('REQUIRED_PASSWORD');
+      return;
+    }
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      setErrorCode('PASSWORD_SHORT');
+      return;
+    }
+    if (!passwordConfirm) {
+      setError('Please confirm your password.');
+      setErrorCode('REQUIRED_CONFIRM');
+      return;
+    }
     if (password !== passwordConfirm) {
       setError('Passwords do not match.');
       setErrorCode('PASSWORD_MISMATCH');
@@ -116,9 +133,7 @@ const ResetPasswordPageClient: React.FC = () => {
       <AuthPageShell title="reset password">
         {tokenStatus === 'invalid' ? (
           <div className="auth-verify-sent">
-            <p className="auth-message auth-message--error auth-message--BAD_TOKEN" role="alert">
-              {tokenError || 'Invalid reset link.'}
-            </p>
+            <AuthFormMessage error={tokenError || 'Invalid reset link.'} errorCode="BAD_TOKEN" />
             <Link href="/forgot-password" className="auth-submit asset-range-button myinv-range-button">
               Request a new link
             </Link>
@@ -131,7 +146,7 @@ const ResetPasswordPageClient: React.FC = () => {
             </Link>
           </div>
         ) : tokenStatus === 'valid' ? (
-          <form className="auth-form" onSubmit={onSubmit}>
+          <form className="auth-form" onSubmit={onSubmit} noValidate>
             <p className="auth-verify-sent-title" style={{ textAlign: 'center', marginBottom: 12 }}>
               {tokenEmail}
             </p>
@@ -145,9 +160,16 @@ const ResetPasswordPageClient: React.FC = () => {
               autoComplete="new-password"
               placeholder=" "
               value={password}
-              onChange={(ev) => setPassword(ev.target.value)}
-              required
-              minLength={8}
+              onChange={(ev) => {
+                setPassword(ev.target.value);
+                setErrorCode((c) => {
+                  if (isPasswordFieldAuthError(c)) {
+                    setError(null);
+                    return null;
+                  }
+                  return c;
+                });
+              }}
             />
             <label className="auth-label" htmlFor="auth-reset-password2">
               Verify password
@@ -159,15 +181,18 @@ const ResetPasswordPageClient: React.FC = () => {
               autoComplete="new-password"
               placeholder=" "
               value={passwordConfirm}
-              onChange={(ev) => setPasswordConfirm(ev.target.value)}
-              required
-              minLength={8}
+              onChange={(ev) => {
+                setPasswordConfirm(ev.target.value);
+                setErrorCode((c) => {
+                  if (isConfirmFieldAuthError(c)) {
+                    setError(null);
+                    return null;
+                  }
+                  return c;
+                });
+              }}
             />
-            {error && (
-              <p className={`auth-message auth-message--error auth-message--${errorCode || 'generic'}`} role="alert">
-                {error}
-              </p>
-            )}
+            <AuthFormMessage error={error} errorCode={errorCode} />
             <button type="submit" className="auth-submit asset-range-button myinv-range-button" disabled={submitting}>
               {submitting ? 'Resetting…' : 'Reset'}
             </button>

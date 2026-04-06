@@ -6610,7 +6610,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	width: 350px;
 	max-width: calc(100% - 20px);
 	margin: 0 auto;
-	padding-top: 120px;
+	padding-top: 80px;
 	padding-bottom: 0;
 	margin-bottom: -7px;
 	position: relative;
@@ -6661,7 +6661,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: 10px;
+	gap: 0;
 	text-align: left;
 }
 
@@ -6671,12 +6671,14 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	color: var(--myinv-label-color, #222);
 	letter-spacing: -0.3px;
 	text-align: center;
+	margin: 0 0 2px;
 }
 
 .auth-input {
 	width: 100%;
 	box-sizing: border-box;
 	padding: 13px 13px;
+	margin: 0 0 10px;
 	border-radius: 10px;
 	border: 1px solid color-mix(in srgb, var(--myinv-accent-color) 45%, rgba(0, 0, 0, 0.2));
 	background: color-mix(in srgb, var(--myinv-accent-color) 8%, #ffffff);
@@ -6684,19 +6686,43 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	font-size: 13px;
 	font-weight: 700;
 	outline: none;
-	transition: border-color 0.25s ease, background-color 0.25s ease;
+	transition:
+		border-color 0.5s ease,
+		background-color 0.5s ease,
+		box-shadow 0.5s ease;
 	text-align: center;
 }
 
 .auth-input:focus,
-.auth-input:focus-visible,
-.auth-input:not(:placeholder-shown) {
+.auth-input:focus-visible {
 	border-color: color-mix(in srgb, var(--myinv-accent-color) 70%, #000);
 	background: color-mix(in srgb, var(--myinv-accent-color) 12%, #ffffff);
 }
 
+/* Filled: stronger fill, no visible border (wins over :focus when both apply) */
+.auth-input:not(:placeholder-shown),
+.auth-input:not([value='']) {
+	border-color: transparent;
+	background: color-mix(in srgb, var(--myinv-accent-color) 12%, #ffffff);
+}
+
+/* Autofill paint (Chrome/Safari) so it matches accent like typed values */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus,
+.auth-input:-webkit-autofill:active {
+	-webkit-text-fill-color: #111;
+	caret-color: #111;
+	border-color: transparent;
+	box-shadow: 0 0 0 1000px color-mix(in srgb, var(--myinv-accent-color) 12%, #ffffff) inset;
+	transition:
+		border-color 0.5s ease,
+		box-shadow 0.5s ease,
+		background-color 99999s ease-out;
+}
+
 .auth-submit {
-	margin-top: 8px;
+	margin-top: 0;
 	width: 100%;
 	justify-content: center;
 	text-decoration: none;
@@ -6706,6 +6732,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	padding-top: 18px;
 	padding-bottom: 18px;
 	font-weight: 800;
+	border-radius: 15px;
 }
 
 .auth-submit--accent.auth-submit--accent {
@@ -6729,6 +6756,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	padding-top: 18px;
 	padding-bottom: 18px;
 	font-weight: 800;
+	border-radius: 15px;
 }
 
 .auth-below-card {
@@ -6744,10 +6772,41 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 .auth-message {
-	margin: 4px 0 0;
+	margin: 20px 0 25px;
 	font-size: 12px;
 	font-weight: 800;
 	line-height: 1.35;
+	text-align: center;
+}
+
+/* Fixed-height band so the card does not jump when an error appears (forms only; message is optional inside) */
+.auth-message-slot {
+	width: 100%;
+	box-sizing: border-box;
+	margin: 25px 0 -15px;
+	min-height: calc(12px * 1.35 * 2);
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	text-align: center;
+}
+
+.auth-message-slot .auth-message {
+	margin: 0;
+	width: 100%;
+	opacity: 0;
+	transition: opacity 0.5s ease;
+	pointer-events: none;
+}
+
+.auth-message-slot .auth-message.auth-message--visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.auth-message-slot + .auth-submit,
+.auth-message-slot + a.auth-submit {
+	margin-top: 0;
 }
 
 .auth-message--error,
@@ -6758,6 +6817,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .auth-message--PASSWORD_MISMATCH,
 .auth-message--INVALID_EMAIL,
 .auth-message--PASSWORD_SHORT,
+.auth-message--REQUIRED_FIELD,
+.auth-message--REQUIRED_EMAIL,
+.auth-message--REQUIRED_PASSWORD,
+.auth-message--REQUIRED_CONFIRM,
 .auth-message--SAME_PASSWORD,
 .auth-message--BAD_TOKEN,
 .auth-message--EXPIRED {
@@ -6817,7 +6880,8 @@ a.asset-action-button--save-signin {
 
 .auth-forgot-link {
 	display: block;
-	margin-top: 6px;
+	margin: 0;
+	margin-top: 0px;
 	font-weight: 800;
 	font-size: 11px;
 	color: var(--myinv-accent-color);
