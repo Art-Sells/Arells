@@ -14,7 +14,7 @@ const PREVIEW_SKIP_SESSION_DELETES = false;
 
 const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
-  const { email, isSignedIn, sessionReady, openSignIn, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
+  const { email, isSignedIn, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [vavityData, setVavityData] = useState<any>(null);
   const prevVavityDataRef = useRef<any | null>(null);
   const clearingSnapshotRef = useRef<any | null>(null);
@@ -3865,17 +3865,16 @@ const VavityBitcoin: React.FC = () => {
                 <div
                   className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
                 >
-                  <button
-                    type="button"
+                  <Link
+                    href="/signin"
                     className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
                     style={{
                       opacity: emptySigninHiding ? 0 : 1,
                       transition: 'opacity 3s ease, transform 0.2s ease',
                     }}
-                    onClick={openSignIn}
                   >
-                  <span className="asset-save-signin-text">Sign In to Save Investments</span>
-                  </button>
+                    <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                  </Link>
                 </div>
               )}
             </div>
@@ -4189,13 +4188,9 @@ const VavityBitcoin: React.FC = () => {
                 <div ref={bottomActionsWrapRef}>
                 {investments.length > 0 && !isSignedIn && !email && (
                   <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
-                    <button
-                      type="button"
-                      className="asset-action-button asset-action-button--save-signin"
-                      onClick={openSignIn}
-                    >
+                    <Link href="/signin" className="asset-action-button asset-action-button--save-signin">
                       <span className="asset-save-signin-text">Sign In to Save Investments</span>
-                    </button>
+                    </Link>
                   </div>
                 )}
 

@@ -4759,7 +4759,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		padding-left: 10px;
 	}
 	.asset-title-badge {
-		border-radius: 7px;      /* <- edit badge border-radius under 750px */
+		border-radius: 900px;      /* <- edit badge border-radius under 750px */
 		letter-spacing: -1.3px;  /* <- edit badge letter-spacing under 750px */
 	}
 	.asset-title-badge--section {
@@ -4772,13 +4772,13 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		font-size: 9px;
 	}
 	.asset-title-badge--section.asset-title-badge--bitcoin {
-		padding-left: 10px;     /* <- edit BTC badge padding-left under 750px */
-		padding-right: 11px;  /* <- edit BTC badge padding-right under 750px */
+		padding-left: 15px;     /* <- edit BTC badge padding-left under 750px */
+		padding-right: 16px;  /* <- edit BTC badge padding-right under 750px */
 		letter-spacing: -1.3px; /* <- edit BTC badge letter-spacing under 750px */
 	}
 	.asset-title-badge--section.asset-title-badge--ethereum {
-		padding-left: 7px;     /* <- edit ETH badge padding-left under 750px */
-		padding-right: 8px;  /* <- edit ETH badge padding-right under 750px */
+		padding-left: 15px;     /* <- edit ETH badge padding-left under 750px */
+		padding-right: 16px;  /* <- edit ETH badge padding-right under 750px */
 		letter-spacing: -.5px; /* <- edit ETH badge letter-spacing under 750px */
 	}
 	.asset-price-chart-row--combined {
@@ -6597,10 +6597,238 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
   }
 
-  
-  
-  
+/* Auth (sign in / sign up / verified) — matches my-investments + about card width */
+.auth-page {
+	min-height: 100vh;
+	min-width: 370px;
+	padding-bottom: 60px;
+	font-family: Arial, sans-serif;
+}
 
-  
-  
-  
+/* Title sits above the card; negative margin-bottom pulls the card up so the title overlaps the top edge */
+.auth-title-bar {
+	width: 350px;
+	max-width: calc(100% - 20px);
+	margin: 0 auto;
+	padding-top: 120px;
+	padding-bottom: 0;
+	margin-bottom: -7px;
+	position: relative;
+	z-index: 4;
+	text-align: center;
+	font-weight: 800;
+	font-size: 30px;
+	letter-spacing: -1.8px;
+	color: var(--myinv-accent-color);
+}
+
+.auth-card-wrap {
+	width: 350px;
+	max-width: calc(100% - 20px);
+	margin: 0 auto;
+	padding: 1px 30px 20px;
+	box-sizing: border-box;
+	border-radius: 12px;
+	background: transparent;
+	position: relative;
+	isolation: isolate;
+	z-index: 2;
+}
+
+.auth-card-wrap::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 1);
+	border-radius: inherit;
+	z-index: -1;
+	pointer-events: none;
+}
+
+.auth-about-card.auth-card-inner {
+	width: 100%;
+	margin: 0;
+	padding: 0 12px 18px;
+	position: relative;
+}
+
+/* Extra top padding so form clears the overlapping title */
+.auth-card-content {
+	padding-top: 30px;
+}
+
+.auth-form {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 10px;
+	text-align: left;
+}
+
+.auth-label {
+	font-weight: 800;
+	font-size: 12px;
+	color: var(--myinv-label-color, #222);
+	letter-spacing: -0.3px;
+	text-align: center;
+}
+
+.auth-input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 13px 13px;
+	border-radius: 10px;
+	border: 1px solid color-mix(in srgb, var(--myinv-accent-color) 45%, rgba(0, 0, 0, 0.2));
+	background: color-mix(in srgb, var(--myinv-accent-color) 8%, #ffffff);
+	color: #111;
+	font-size: 13px;
+	font-weight: 700;
+	outline: none;
+	transition: border-color 0.25s ease, background-color 0.25s ease;
+	text-align: center;
+}
+
+.auth-input:focus,
+.auth-input:focus-visible,
+.auth-input:not(:placeholder-shown) {
+	border-color: color-mix(in srgb, var(--myinv-accent-color) 70%, #000);
+	background: color-mix(in srgb, var(--myinv-accent-color) 12%, #ffffff);
+}
+
+.auth-submit {
+	margin-top: 8px;
+	width: 100%;
+	justify-content: center;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding-top: 18px;
+	padding-bottom: 18px;
+	font-weight: 800;
+}
+
+.auth-submit--accent.auth-submit--accent {
+	background: var(--myinv-accent-color) !important;
+	color: #fff !important;
+	font-weight: 800 !important;
+	font-size: 20px !important;
+	letter-spacing: -1px !important;
+	border-color: var(--myinv-accent-color) !important;
+	text-transform: lowercase;
+}
+
+.auth-secondary-link {
+	margin-top: 4px;
+	width: 100%;
+	justify-content: center;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding-top: 18px;
+	padding-bottom: 18px;
+	font-weight: 800;
+}
+
+.auth-below-card {
+	margin-top: 20px;
+	text-align: center;
+}
+
+.auth-below-card-outer {
+	width: 350px;
+	max-width: calc(100% - 20px);
+	margin: 20px auto 0;
+	text-align: center;
+}
+
+.auth-message {
+	margin: 4px 0 0;
+	font-size: 12px;
+	font-weight: 800;
+	line-height: 1.35;
+}
+
+.auth-message--error,
+.auth-message--NO_ACCOUNT,
+.auth-message--WRONG_PASSWORD,
+.auth-message--NOT_VERIFIED,
+.auth-message--EMAIL_EXISTS,
+.auth-message--PASSWORD_MISMATCH,
+.auth-message--INVALID_EMAIL,
+.auth-message--PASSWORD_SHORT,
+.auth-message--SAME_PASSWORD,
+.auth-message--BAD_TOKEN,
+.auth-message--EXPIRED {
+	color: var(--myinv-accent-color);
+}
+
+.auth-verify-sent {
+	text-align: center;
+	padding: 8px 4px 0;
+}
+
+.auth-verify-sent-title {
+	font-weight: 800;
+	font-size: 14px;
+	margin: 0 0 10px;
+	line-height: 1.35;
+	color: var(--myinv-accent-color);
+}
+
+.auth-verify-sent-sub {
+	font-weight: 700;
+	font-size: 12px;
+	margin: 0 0 16px;
+	color: var(--myinv-accent-color);
+}
+
+.auth-verified-block {
+	padding: 22px 16px 20px;
+	border-radius: 12px;
+	text-align: center;
+	background: color-mix(in srgb, var(--myinv-accent-color) 6%, #fff);
+}
+
+.auth-verified-title {
+	font-weight: 800;
+	font-size: 20px;
+	letter-spacing: -1px;
+	margin: 0 0 18px;
+	color: var(--myinv-accent-color);
+}
+
+a.myinv-cta-button {
+	text-decoration: none;
+	color: inherit;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+a.asset-action-button--save-signin {
+	text-decoration: none;
+	color: inherit;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.auth-forgot-link {
+	display: block;
+	margin-top: 6px;
+	font-weight: 800;
+	font-size: 11px;
+	color: var(--myinv-accent-color);
+	text-decoration: underline;
+	letter-spacing: -0.2px;
+	text-align: center;
+}
+
+@media screen and (max-height: 600px) {
+	.auth-page .auth-title-bar {
+		padding-top: 60px;
+	}
+}
+

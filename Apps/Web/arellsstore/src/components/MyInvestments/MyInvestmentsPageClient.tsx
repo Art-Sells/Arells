@@ -17,7 +17,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const {
     isSignedIn,
     email,
-    openSignIn,
+    authSessionLoading,
     emailInvestments,
     emailTotals,
     emailTotalsLiquid,
@@ -141,7 +141,9 @@ const MyInvestmentsPageClient: React.FC = () => {
   useEffect(() => {
     const shouldPoll = forceSessionPreview ? Boolean(sessionId) : Boolean(effectiveEmail);
     if (!shouldPoll) {
-      const stillWaiting = forceSessionPreview ? !sessionId : (isSignedIn && !effectiveEmail);
+      const stillWaiting = forceSessionPreview
+        ? !sessionId
+        : authSessionLoading || (isSignedIn && !effectiveEmail);
       if (!stillWaiting && !initialFetchDoneRef.current) {
         initialFetchDoneRef.current = true;
         setInitialDataReady(true);
@@ -173,7 +175,15 @@ const MyInvestmentsPageClient: React.FC = () => {
       disposed = true;
       window.clearInterval(id);
     };
-  }, [forceSessionPreview, fetchVavityAggregatorAll, refreshEmailAggregator, sessionId, effectiveEmail]);
+  }, [
+    forceSessionPreview,
+    fetchVavityAggregatorAll,
+    refreshEmailAggregator,
+    sessionId,
+    effectiveEmail,
+    authSessionLoading,
+    isSignedIn,
+  ]);
 
   useEffect(() => {
     setOpen(false);
@@ -807,10 +817,10 @@ const MyInvestmentsPageClient: React.FC = () => {
               {!effectiveSignedIn ? (
                 <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-cta-row">
-                    <button type="button" className="myinv-cta-button" onClick={openSignIn}>
+                    <Link href="/signin" className="myinv-cta-button">
                       <span className="myinv-cta-button-bg" aria-hidden="true" />
                       <span className="myinv-cta-button-text">Sign In</span>
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ) : hasAny ? (

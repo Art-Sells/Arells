@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 import axios from 'axios';
+import { assertUserEmailMatchesSession } from '../../../lib/auth/requireUserApi';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
@@ -126,6 +127,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (!email || typeof email !== 'string') {
     return res.status(400).json({ error: 'email query parameter is required' });
   }
+
+  const allowed = await assertUserEmailMatchesSession(req, res, email);
+  if (!allowed) return;
 
   const key = `users/${normalizeEmailKey(email)}/VavityAggregate.json`;
 

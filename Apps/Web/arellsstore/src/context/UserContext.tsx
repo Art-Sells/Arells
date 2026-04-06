@@ -13,12 +13,8 @@ interface UserContextType {
 
   email: string;
   isSignedIn: boolean;
-  setEmail: (value: string) => void;
   signOut: () => void;
-
-  openSignIn: () => void;
-  closeSignIn: () => void;
-  signInOpen: boolean;
+  authSessionLoading: boolean;
 
   emailInvestments: any[];
   emailTotals: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number };
@@ -36,7 +32,8 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 const SESSION_KEY = 'arells_session_id';
-const EMAIL_KEY = 'arells_user_email';
+
+const fetchOpts: RequestInit = { credentials: 'include' };
 
 const generateSessionId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -50,8 +47,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [sessionReady, setSessionReady] = useState<boolean>(false);
 
   const [email, setEmailState] = useState<string>('');
-  const [signInOpen, setSignInOpen] = useState<boolean>(false);
-  const [signInDraft, setSignInDraft] = useState<string>('');
+  const [authSessionLoading, setAuthSessionLoading] = useState<boolean>(true);
   const [emailLoading, setEmailLoading] = useState<boolean>(false);
   const [emailInvestments, setEmailInvestments] = useState<any[]>([]);
   const [emailTotals, setEmailTotals] = useState<{ acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }>(
@@ -83,28 +79,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return next;
   }, [setSessionId]);
 
-  const setEmail = useCallback((value: string) => {
-    const next = (value || '').trim().toLowerCase();
-    setEmailState(next);
-    if (typeof window !== 'undefined') {
-      if (next) {
-        window.localStorage.setItem(EMAIL_KEY, next);
-      } else {
-        window.localStorage.removeItem(EMAIL_KEY);
-      }
-    }
-  }, []);
-
   const signOut = useCallback(() => {
-    setEmail('');
-    setSignInOpen(false);
-    setEmailInvestments([]);
-    setEmailTotals({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
-    setEmailTotalsLiquid({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
-  }, [setEmail]);
-
-  const openSignIn = useCallback(() => setSignInOpen(true), []);
-  const closeSignIn = useCallback(() => setSignInOpen(false), []);
+    void fetch('/api/auth/logout', { method: 'POST', ...fetchOpts }).finally(() => {
+      setEmailState('');
+      setEmailInvestments([]);
+      setEmailTotals({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+      setEmailTotalsLiquid({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+    });
+  }, []);
 
   const isSignedIn = Boolean(email);
   const pathname = usePathname();
@@ -119,30 +101,41 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       setSessionId(next);
     }
 
-    const storedEmail = window.localStorage.getItem(EMAIL_KEY);
-    if (storedEmail) {
-      setEmailState(storedEmail);
-    }
-
     const handleStorage = (event: StorageEvent) => {
       if (event.key === SESSION_KEY) {
         setSessionIdState(event.newValue ?? '');
-      }
-      if (event.key === EMAIL_KEY) {
-        setEmailState((event.newValue ?? '').trim().toLowerCase());
       }
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
   }, [setSessionId]);
 
-  // Guest sessions are TTL-controlled server-side; do not wipe them on every route change.
+  useEffect(() => {
+    let cancelled = false;
+    setAuthSessionLoading(true);
+    (async () => {
+      try {
+        const res = await fetch('/api/auth/session', fetchOpts);
+        const data = await res.json();
+        if (cancelled) return;
+        const next = typeof data?.email === 'string' ? data.email.trim().toLowerCase() : '';
+        setEmailState(next);
+      } catch {
+        if (!cancelled) setEmailState('');
+      } finally {
+        if (!cancelled) setAuthSessionLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
+
   useEffect(() => {
     if (!sessionId) return;
     setSessionReady(true);
   }, [sessionId, pathname, isSignedIn]);
 
-  // Ensure a guest session JSON exists on mount (no asset-specific filtering).
   useEffect(() => {
     if (!sessionId || sessionBootstrapRef.current) return;
     if (typeof window === 'undefined') return;
@@ -153,8 +146,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         const res = await fetch(`/api/fetchVavityAggregator?sessionId=${encodeURIComponent(sessionId)}${skipParam}`);
         const data = await res.json();
         const hasMeta =
-          typeof data?.createdAt === 'number' && Number.isFinite(data.createdAt) &&
-          typeof data?.expiresAt === 'number' && Number.isFinite(data.expiresAt);
+          typeof data?.createdAt === 'number' &&
+          Number.isFinite(data.createdAt) &&
+          typeof data?.expiresAt === 'number' &&
+          Number.isFinite(data.expiresAt);
         const hasInvestments = Array.isArray(data?.investments) && data.investments.length > 0;
         if (!hasMeta && !hasInvestments) {
           await fetch('/api/saveVavityAggregator', {
@@ -181,18 +176,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       try {
         const params = new URLSearchParams({ email });
         if (asset) params.set('asset', asset);
-      const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
+        const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`, fetchOpts);
+        if (res.status === 401 || res.status === 403) {
+          void fetch('/api/auth/logout', { method: 'POST', ...fetchOpts });
+          setEmailState('');
+          setEmailInvestments([]);
+          setEmailTotals({ acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 });
+          setEmailTotalsLiquid({ acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 });
+          return { investments: [], totals: { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 } };
+        }
         const data = await res.json();
-        // Only store full (unfiltered) payload in provider state; filtered callers can use return value.
         if (!asset) {
           setEmailInvestments(Array.isArray(data?.investments) ? data.investments : []);
-          setEmailTotals(
-            data?.totals || { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
-          );
+          setEmailTotals(data?.totals || { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 });
           setEmailTotalsLiquid(
-            data?.totalsLiquid ??
-              data?.totalsReality ??
-              { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
+            data?.totalsLiquid ?? data?.totalsReality ?? { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
           );
         }
         return data;
@@ -210,6 +208,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, newInvestments, asset }),
+        ...fetchOpts,
       });
       const data = await res.json();
       await refreshEmailAggregator();
@@ -225,6 +224,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, investments, asset }),
+        ...fetchOpts,
       });
       const data = await res.json();
       await refreshEmailAggregator();
@@ -245,13 +245,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     [emailInvestments, saveEmailInvestments]
   );
 
-  // Keep email state hydrated when email changes.
   useEffect(() => {
-    if (!email) return;
+    if (!email) {
+      emailBootstrapRef.current = null;
+      return;
+    }
     refreshEmailAggregator();
   }, [email, refreshEmailAggregator]);
 
-  // Ensure an email JSON exists on mount (all assets).
   useEffect(() => {
     if (!email) return;
     if (emailBootstrapRef.current === email) return;
@@ -259,7 +260,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     emailBootstrapRef.current = email;
     (async () => {
       try {
-        const res = await fetch(`/api/user/fetchUserVavityAggregator?email=${encodeURIComponent(email)}`);
+        const res = await fetch(`/api/user/fetchUserVavityAggregator?email=${encodeURIComponent(email)}`, fetchOpts);
         const data = await res.json();
         const hasInvestments = Array.isArray(data?.investments) && data.investments.length > 0;
         const totals = data?.totals;
@@ -274,6 +275,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, investments: [], asset: 'bitcoin' }),
+            ...fetchOpts,
           });
         }
       } catch {
@@ -281,11 +283,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }
     })();
   }, [email]);
-
-  useEffect(() => {
-    if (!signInOpen) return;
-    setSignInDraft(email || '');
-  }, [signInOpen, email]);
 
   const supportedAssets = useMemo(() => ['bitcoin', 'ethereum'], []);
 
@@ -306,10 +303,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return supportedAssets.filter((a) => set.has(a));
   }, [emailInvestments, supportedAssets]);
 
-  const assetsMissingInEmail = useMemo(() => supportedAssets.filter((a) => !assetsPresentInEmail.includes(a)), [
-    supportedAssets,
-    assetsPresentInEmail,
-  ]);
+  const assetsMissingInEmail = useMemo(
+    () => supportedAssets.filter((a) => !assetsPresentInEmail.includes(a)),
+    [supportedAssets, assetsPresentInEmail]
+  );
 
   return (
     <UserContext.Provider
@@ -321,12 +318,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
         email,
         isSignedIn,
-        setEmail,
         signOut,
-
-        openSignIn,
-        closeSignIn,
-        signInOpen,
+        authSessionLoading,
 
         emailInvestments,
         emailTotals,
@@ -342,44 +335,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-      {signInOpen && (
-        <div
-          className="arells-signin-overlay"
-          role="dialog"
-          aria-modal="true"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) closeSignIn();
-          }}
-        >
-          <div className="arells-signin-modal">
-            <div className="arells-signin-title">Sign in to Save Investments</div>
-            <div className="arells-signin-subtitle">Enter your email to save investments.</div>
-            <input
-              className="arells-signin-input"
-              value={signInDraft}
-              onChange={(e) => setSignInDraft(e.target.value)}
-              placeholder="email@example.com"
-              inputMode="email"
-              autoComplete="email"
-            />
-            <div className="arells-signin-actions">
-              <button type="button" className="arells-signin-cancel" onClick={closeSignIn}>
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="arells-signin-confirm"
-                onClick={() => {
-                  setEmail(signInDraft);
-                  closeSignIn();
-                }}
-              >
-                Sign In
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </UserContext.Provider>
   );
 };
