@@ -8,6 +8,7 @@
 
 
 ### Sign In/Up
+- *Check password reset page*
 - Test asset pages add investment/sign in to save investent section loader
 - - if signed in (test delete email/etc from json).... the sign in to save investments button should dissapear in my assets and the view my portfolio and view my investments in home should show... see how it looks
 - - test password reset and email verifications...

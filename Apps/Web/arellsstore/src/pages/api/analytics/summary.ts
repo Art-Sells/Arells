@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
-import type { AnalyticsSessionMeta } from '../../../lib/analytics/types';
-import { ANALYTICS_META_PREFIX, HUMAN_DURATION_MS } from '../../../lib/analytics/types';
+import { loadAllSessionMetasFromS3 } from '../../../lib/analytics/loadSessionMetasFromS3';
+import type { AnalyticsMetricsSummaryJson, AnalyticsSessionMeta } from '../../../lib/analytics/types';
+import { ANALYTICS_METRICS_AGGREGATE_KEY, HUMAN_DURATION_MS } from '../../../lib/analytics/types';
 
 const s3 = new AWS.S3();
 
@@ -11,62 +12,22 @@ function bucket(): string {
   return b;
 }
 
+function aggregateTtlMs(): number {
+  const raw = process.env.ANALYTICS_SUMMARY_AGGREGATE_TTL_MS;
+  if (raw === undefined || raw === '') return 8000;
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 0 ? n : 8000;
+}
+
+function aggregateDisabled(): boolean {
+  return process.env.ANALYTICS_SUMMARY_AGGREGATE_DISABLED === '1';
+}
+
 function dayKey(ts: number): string {
   return new Date(ts).toISOString().slice(0, 10);
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  if (!process.env.S3_BUCKET_NAME) {
-    return res.status(503).json({ error: 'S3 not configured' });
-  }
-
-  const metas: AnalyticsSessionMeta[] = [];
-  let token: string | undefined;
-
-  try {
-    do {
-      const out = await s3
-        .listObjectsV2({
-          Bucket: bucket(),
-          Prefix: ANALYTICS_META_PREFIX,
-          ContinuationToken: token,
-          MaxKeys: 500,
-        })
-        .promise();
-
-      const keys = (out.Contents || [])
-        .map((o) => o.Key)
-        .filter((k): k is string => Boolean(k && k.endsWith('.json')));
-
-      const batch = await Promise.all(
-        keys.map(async (key) => {
-          try {
-            const obj = await s3.getObject({ Bucket: bucket(), Key: key }).promise();
-            if (!obj.Body) return null;
-            return JSON.parse(obj.Body.toString()) as AnalyticsSessionMeta;
-          } catch {
-            return null;
-          }
-        })
-      );
-
-      for (const m of batch) {
-        if (m && typeof m.sessionId === 'string' && typeof m.firstSeenAt === 'number') {
-          metas.push(m);
-        }
-      }
-
-      token = out.IsTruncated ? out.NextContinuationToken : undefined;
-    } while (token);
-  } catch (e) {
-    console.error('[analytics] summary list', e);
-    return res.status(500).json({ error: 'Failed to list analytics data' });
-  }
-
+function buildSummaryFromMetas(metas: AnalyticsSessionMeta[]): AnalyticsMetricsSummaryJson {
   const uniqueIps = new Set<string>();
   let humanLikely = 0;
   let botLikely = 0;
@@ -106,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
   });
 
-  return res.status(200).json({
+  return {
     generatedAt: Date.now(),
     humanThresholdMs: HUMAN_DURATION_MS,
     totalSessions: metas.length,
@@ -117,5 +78,97 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     avgDurationMs: Math.round(totalDuration / n),
     byFirstSeenDay,
     recentSessions,
-  });
+  };
+}
+
+async function loadAllSessionMetas(): Promise<AnalyticsSessionMeta[]> {
+  return loadAllSessionMetasFromS3(s3, bucket());
+}
+
+async function tryReadFreshAggregate(ttlMs: number): Promise<AnalyticsMetricsSummaryJson | null> {
+  if (aggregateDisabled()) return null;
+  try {
+    const obj = await s3.getObject({ Bucket: bucket(), Key: ANALYTICS_METRICS_AGGREGATE_KEY }).promise();
+    if (!obj.Body) return null;
+    const parsed = JSON.parse(obj.Body.toString()) as AnalyticsMetricsSummaryJson;
+    if (
+      typeof parsed.generatedAt !== 'number' ||
+      typeof parsed.totalSessions !== 'number' ||
+      !Array.isArray(parsed.recentSessions)
+    ) {
+      return null;
+    }
+    if (Date.now() - parsed.generatedAt > ttlMs) return null;
+    return parsed;
+  } catch (e: unknown) {
+    const err = e as { code?: string; statusCode?: number };
+    if (err.code === 'NoSuchKey' || err.statusCode === 404) return null;
+    console.error('[analytics] aggregate getObject', e);
+    return null;
+  }
+}
+
+async function writeAggregate(payload: AnalyticsMetricsSummaryJson): Promise<void> {
+  if (aggregateDisabled()) return;
+  try {
+    await s3
+      .putObject({
+        Bucket: bucket(),
+        Key: ANALYTICS_METRICS_AGGREGATE_KEY,
+        Body: JSON.stringify(payload),
+        ContentType: 'application/json',
+      })
+      .promise();
+  } catch (e) {
+    console.error('[analytics] aggregate putObject', e);
+  }
+}
+
+/** Single-flight recompute per server instance to avoid duplicate full scans. */
+let recomputeInFlight: Promise<AnalyticsMetricsSummaryJson> | null = null;
+
+async function recomputeSummary(): Promise<AnalyticsMetricsSummaryJson> {
+  if (recomputeInFlight) return recomputeInFlight;
+
+  recomputeInFlight = (async () => {
+    const metas = await loadAllSessionMetas();
+    const payload = buildSummaryFromMetas(metas);
+    await writeAggregate(payload);
+    return payload;
+  })();
+
+  try {
+    return await recomputeInFlight;
+  } finally {
+    recomputeInFlight = null;
+  }
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!process.env.S3_BUCKET_NAME) {
+    return res.status(503).json({ error: 'S3 not configured' });
+  }
+
+  const ttlMs = aggregateTtlMs();
+  const skipCache =
+    req.query.nocache === '1' || req.query.nocache === 'true' || req.query.refresh === '1';
+
+  try {
+    if (!skipCache) {
+      const cached = await tryReadFreshAggregate(ttlMs);
+      if (cached) {
+        return res.status(200).json(cached);
+      }
+    }
+
+    const payload = await recomputeSummary();
+    return res.status(200).json(payload);
+  } catch (e) {
+    console.error('[analytics] summary', e);
+    return res.status(500).json({ error: 'Failed to build analytics summary' });
+  }
 }
