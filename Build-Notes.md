@@ -9,7 +9,7 @@
 
 ### Sign In/Up
 - Test asset pages add investment/sign in to save investent section loader
-- - if signed in.... the sign in to save investments button should dissapear in my assets and the view my portfolio and view my investments in home should show... see how it looks
+- - if signed in (test delete email/etc from json).... the sign in to save investments button should dissapear in my assets and the view my portfolio and view my investments in home should show... see how it looks
 - - test password reset and email verifications...
 
 ### Metatags/ Description (all pages.tsx (signin/signup/vavity inluded) (dont forget my investments page) & components)
