@@ -6,7 +6,8 @@ export function isEmailRelatedAuthError(code: string | null): boolean {
     code === 'EMAIL_EXISTS' ||
     code === 'NO_ACCOUNT' ||
     code === 'NOT_VERIFIED' ||
-    code === 'REQUIRED_EMAIL'
+    code === 'REQUIRED_EMAIL' ||
+    code === 'SIGN_IN_COMBO'
   );
 }
 
@@ -15,6 +16,7 @@ export function isPasswordFieldAuthError(code: string | null): boolean {
   if (!code) return false;
   return (
     code === 'WRONG_PASSWORD' ||
+    code === 'SIGN_IN_COMBO' ||
     code === 'PASSWORD_SHORT' ||
     code === 'PASSWORD_POLICY' ||
     code === 'SAME_PASSWORD' ||

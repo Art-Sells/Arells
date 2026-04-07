@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
+import AuthSuccessArellsMark from './AuthSuccessArellsMark';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import {
   isConfirmFieldAuthError,
@@ -112,22 +113,24 @@ const SignUpPageClient: React.FC = () => {
   };
 
   const formDisabled = phase === 'exiting';
+  const belowMark =
+    phase === 'exiting' || phase === 'sent' ? <AuthSuccessArellsMark /> : undefined;
 
   return (
-    <AuthPageShell title="sign up">
+    <AuthPageShell title="sign up" belowCard={belowMark}>
       {phase === 'sent' ? (
         <div className={`auth-success-reveal${revealSuccess ? ' is-open' : ''}`}>
           <div className="auth-success-reveal-inner">
             <div className="auth-verify-sent">
               <p className="auth-verify-sent-title auth-verify-sent-title--black auth-verify-sent-title--signup-email-sent">
-                Verification e-mail sent
+                Verification email sent
               </p>
               <p className="auth-verify-sent-email-row">
                 <span className="auth-verify-sent-email-accent">{sentTo}</span>
               </p>
               <div className="auth-verify-sent-copy">
                 <p className="auth-verify-sent-sub auth-verify-sent-sub--forgot-sent">
-                  Verify your e-mail before continuing. Check your{' '}
+                  Verify your email before continuing. Check your{' '}
                   <span className="auth-verify-sent-spam-emphasis">spam/junk</span> in case your inbox doesn&apos;t
                   receive it.
                 </p>

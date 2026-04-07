@@ -76,8 +76,10 @@ const VerifiedPageClient: React.FC = () => {
     };
   }, [token]);
 
+  const shellTitle = status === 'ok' ? 'email verified' : status === 'err' ? 'verify email' : '';
+
   return (
-    <AuthPageShell title={status === 'ok' ? 'email verified' : 'verify email'}>
+    <AuthPageShell title={shellTitle} crossfadeTitle>
       {status === 'ok' ? (
         <AuthContentEntrance>
           <div className={`auth-success-reveal${revealOpen ? ' is-open' : ''}`}>
@@ -97,6 +99,12 @@ const VerifiedPageClient: React.FC = () => {
         <AuthContentEntrance>
           <div className="auth-verify-sent auth-verify-sent--verify-error">
             <AuthFormMessage error={VERIFY_PAGE_ERROR} errorCode={VERIFY_PAGE_ERROR_CODE} />
+            <Link
+              href="/signin"
+              className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-error-cta"
+            >
+              Sign in
+            </Link>
           </div>
         </AuthContentEntrance>
       ) : null}

@@ -15,6 +15,8 @@ interface UserContextType {
   isSignedIn: boolean;
   signOut: () => void;
   authSessionLoading: boolean;
+  /** Re-read the auth cookie into `email` (e.g. immediately after login). */
+  refreshAuthSession: () => Promise<void>;
 
   emailInvestments: any[];
   emailTotals: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number };
@@ -110,13 +112,30 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, [setSessionId]);
 
+  const refreshAuthSession = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/session', {
+        ...fetchOpts,
+        cache: 'no-store',
+      });
+      const data = await res.json().catch(() => ({}));
+      const next = typeof data?.email === 'string' ? data.email.trim().toLowerCase() : '';
+      setEmailState(next);
+    } catch {
+      setEmailState('');
+    }
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     setAuthSessionLoading(true);
     (async () => {
       try {
-        const res = await fetch('/api/auth/session', fetchOpts);
-        const data = await res.json();
+        const res = await fetch('/api/auth/session', {
+          ...fetchOpts,
+          cache: 'no-store',
+        });
+        const data = await res.json().catch(() => ({}));
         if (cancelled) return;
         const next = typeof data?.email === 'string' ? data.email.trim().toLowerCase() : '';
         setEmailState(next);
@@ -180,12 +199,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         const params = new URLSearchParams({ email });
         if (asset) params.set('asset', asset);
         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`, fetchOpts);
-        if (res.status === 401 || res.status === 403) {
+        if (res.status === 401) {
           void fetch('/api/auth/logout', { method: 'POST', ...fetchOpts });
           setEmailState('');
           setEmailInvestments([]);
           setEmailTotals({ acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 });
           setEmailTotalsLiquid({ acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 });
+          return { investments: [], totals: { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 } };
+        }
+        if (res.status === 403) {
           return { investments: [], totals: { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 } };
         }
         const data = await res.json();
@@ -323,6 +345,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         isSignedIn,
         signOut,
         authSessionLoading,
+        refreshAuthSession,
 
         emailInvestments,
         emailTotals,

@@ -6,13 +6,6 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-
-### Sign In/Up
-- *Check password reset page*
-- Test asset pages add investment/sign in to save investent section loader
-- - if signed in (test delete email/etc from json).... the sign in to save investments button should dissapear in my assets and the view my portfolio and view my investments in home should show... see how it looks
-- - test password reset and email verifications...
-
 ### Metatags/ Description (all pages.tsx (signin/signup/vavity inluded) (dont forget my investments page) & components)
 - Alter: Descriptions & BannerImages (make images for promotions with bordered section like the asset page below it wrapping: If investments never lost value (bold)), add same color scheme on top behind logos.
 - - If investments never lost value (Bitcoin/Ethereum - If investments never lost value)
@@ -35,7 +28,6 @@
 - both desktop(multiple browsers)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - look at Metrics
-
 
 ## After Test
 - Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git and vavity.info(change this or alter it)

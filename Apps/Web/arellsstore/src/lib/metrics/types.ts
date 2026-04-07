@@ -31,6 +31,7 @@ export type MetricsGrowthKpis = {
 
 /** Totals for hero row (registered keys + active-in-range). */
 export type MetricsHeadlines = {
+  /** users/…/Auth.json with verified: true (not pending / unverified accounts) */
   registeredUserKeys: number;
   registeredSessionKeys: number;
   /** users + sessions (may double-count people) */

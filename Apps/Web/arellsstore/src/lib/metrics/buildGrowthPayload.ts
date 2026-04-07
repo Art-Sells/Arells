@@ -486,7 +486,7 @@ export async function buildGrowthPayload(
   view: MetricsView
 ): Promise<MetricsGrowthResponse> {
   const notes: string[] = [
-    'Sessions use analytics/session-meta (firstSeenAt–lastSeenAt). Signed-in users use users/*/Auth.json and users/*/VavityAggregate.json LastModified span as a proxy (not per-event logs).',
+    'Sessions use analytics/session-meta (firstSeenAt–lastSeenAt). “Signed up” S3 users are only users/*/Auth.json with verified: true; activity span still uses Auth + VavityAggregate LastModified (not per-event logs).',
     'When segment is “all”, combined = sessions + S3 users and may double-count the same person.',
     'Strict DAU/WAU/MAU require the activity span to cover every day/week/month in the selected range.',
   ];

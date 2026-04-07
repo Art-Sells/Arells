@@ -6658,6 +6658,54 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	color: var(--myinv-accent-color);
 }
 
+/* Crossfade titles (AuthPageShell crossfadeTitle): reserve line box while text is empty */
+.auth-title-bar--crossfade {
+	min-height: calc(30px * 1.12);
+}
+
+.auth-title-bar--crossfade .auth-title-layer {
+	display: block;
+	width: 100%;
+}
+
+.auth-title-bar--crossfade .auth-title-layer--placeholder {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.auth-title-bar--crossfade .auth-title-layer--out {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	pointer-events: none;
+	animation: authTitleBarFadeOut 0.45s ease forwards;
+}
+
+.auth-title-bar--crossfade .auth-title-layer--in,
+.auth-title-bar--crossfade .auth-title-layer--in-solo {
+	position: relative;
+	animation: authTitleBarFadeIn 0.45s ease forwards;
+}
+
+@keyframes authTitleBarFadeOut {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes authTitleBarFadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
 .auth-card-wrap {
 	width: 350px;
 	max-width: calc(100% - 20px);
@@ -7195,6 +7243,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin-bottom: var(--auth-forgot-email-input-margin-bottom, -5px);
 }
 
+/* Reset-password — Confirm Password field only (default .auth-input is 10px) */
+.auth-input.auth-input--reset-password-confirm {
+	margin-bottom: var(--auth-reset-confirm-password-input-margin-bottom, -7px);
+}
+
 .auth-input:focus,
 .auth-input:focus-visible {
 	border-color: color-mix(in srgb, var(--myinv-accent-color) 70%, #000);
@@ -7282,6 +7335,51 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	text-align: center;
 }
 
+.auth-success-arells-mark {
+	margin-top: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	animation: authSuccessArellsFadeIn 3s ease forwards;
+}
+
+.auth-success-arells-icon-wrap {
+	position: relative;
+	display: inline-flex;
+}
+
+/* +20px vs default 29×30 loader icon; beats .home-loader-icon-wrap from HomeLoaderOverrides */
+.auth-page .auth-success-arells-mark .home-loader-icon-wrap.auth-success-arells-icon-wrap {
+	width: 49px;
+	height: 50px;
+}
+
+.auth-page .auth-success-arells-mark .home-loader-icon-img,
+.auth-page .auth-success-arells-mark .home-loader-icon-wrap img {
+	width: 49px;
+	height: 50px;
+	max-width: 49px;
+}
+
+/*
+ * Solid accent mask; opacity of the whole mark comes from .auth-success-arells-mark + keyframes.
+ */
+.auth-page .auth-success-arells-mark .home-loader-icon-tint {
+	animation: none !important;
+	background: var(--myinv-accent-color);
+	opacity: 1;
+}
+
+@keyframes authSuccessArellsFadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 0.4;
+	}
+}
+
 .auth-message {
 	margin: 20px 0 25px;
 	font-size: 12px;
@@ -7350,6 +7448,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 .auth-message--error,
+.auth-message--SIGN_IN_COMBO,
 .auth-message--NO_ACCOUNT,
 .auth-message--WRONG_PASSWORD,
 .auth-message--NOT_VERIFIED,
@@ -7396,8 +7495,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin: var(--auth-verify-mismatch-msg-margin-top, -10px) 0 5px;
 }
 
+.auth-verify-sent.auth-verify-sent--verify-error .auth-verify-error-cta {
+	margin-top: 0px;
+}
+
 /*
- * E-mail address band: same width as primary actions (.auth-submit / .auth-secondary-link at 100% of card).
+ * Email address band: same width as primary actions (.auth-submit / .auth-secondary-link at 100% of card).
  * Sits outside .auth-verify-sent-copy so it is not limited to the 150px copy column.
  */
 .auth-verify-sent-email-row {
@@ -7421,14 +7524,20 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	vertical-align: top;
 }
 
-/* Title + body only (e.g. forgot-password success); link/button below stays full width of card */
+/* Title + body only (sign-up success, etc.); link/button below stays full width of card */
 .auth-verify-sent-copy {
 	max-width: var(--auth-verify-sent-copy-max-width, min(100%, 252px));
 	margin-inline: auto;
 	box-sizing: border-box;
 	margin-bottom: -10px;
-	width: 130px;
+	width: 200px;
 	overflow-wrap: anywhere;
+}
+
+/* Forgot-password success: wider copy block without changing sign-up */
+.auth-verify-sent-copy.auth-verify-sent-copy--forgot-password {
+	width: auto;
+	max-width: min(100%, 200px);
 }
 
 .auth-verify-sent-title {
@@ -7458,7 +7567,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	color: var(--myinv-accent-color);
 }
 
-/* Body line only: match home slogan (#descriptioner.home-slogan-text) — not "Check your e-mail" */
+/* Body line only: match home slogan (#descriptioner.home-slogan-text) — not "Check your email" */
 .auth-verify-sent-sub.auth-verify-sent-sub--forgot-sent {
 	color: gray;
 	font-weight: 200;
@@ -7472,12 +7581,75 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	overflow-wrap: anywhere;
 }
 
-/* Reset-password form: account email above fields (+5px over .auth-verify-sent-title 14px) */
-.auth-verify-sent-title.auth-verify-sent-title--reset-email {
-	font-size: 19px;
-	width: 100%;
-	max-width: 100%;
+/* Password / submit block: collapsed until token is valid, then grid-rows transition (see .is-open). */
+.auth-reset-fields-reveal {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 2s ease;
+}
+
+.auth-reset-fields-reveal.is-open {
+	grid-template-rows: 1fr;
+}
+
+.auth-reset-fields-reveal-inner {
+	min-height: 0;
+	overflow: hidden;
+	/* Match .auth-form so labels stretch full width and text-align:center reads correctly */
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.auth-reset-token-email--pending {
+	opacity: 1;
+}
+
+/*
+ * Reset-password form: account email (e.g. preview@arells.app).
+ * Width: block is 100% of the form; inner .auth-verify-sent-email-row is also 100% —
+ * no fixed px width (unlike .auth-verify-sent-title--signup-email-sent at 200px).
+ */
+.auth-reset-token-email {
+	width: 200px;
+	margin: 0 auto;
 	box-sizing: border-box;
+	text-align: center;
+	margin-bottom: var(--auth-reset-token-email-margin-bottom, 0);
+}
+
+/* Space under the email line before “Password” (overrides global .auth-verify-sent-email-row 13px for this page only) */
+.auth-reset-token-email .auth-verify-sent-email-row {
+	margin: 0 0 var(--auth-reset-token-email-row-margin-bottom, 25px);
+}
+
+/* Match “Verification email sent” title: black #111, 14px / 800 — not .auth-verify-sent-email-accent */
+.auth-reset-token-email .auth-verify-sent-email-accent {
+	color: #111;
+	font-weight: 800;
+	font-size: 14px;
+	line-height: 1.35;
+}
+
+/* Real address: fade from 0 when revealed (wrapper was only 0.55→1 before, so it never read as a true fade-in). */
+.auth-reset-token-email--revealed .auth-verify-sent-email-accent {
+	animation: auth-reset-email-fade-in 2s ease forwards;
+}
+
+@keyframes auth-reset-email-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.auth-reset-token-email--revealed .auth-verify-sent-email-accent {
+		animation: none;
+		opacity: 1;
+	}
 }
 
 .auth-verify-sent-spam-emphasis {

@@ -22,12 +22,12 @@ export async function sendVerificationEmail(opts: {
   const client = new SESClient({ region });
 
   const subject = 'Arells Email Verification';
-  const text = `Click this link to verify your e-mail:\n\n${opts.verifyUrl}\n`;
+  const text = `Click this link to verify your email:\n\n${opts.verifyUrl}\n`;
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${subject}</title></head><body style="font-family:Arial,sans-serif;background:#f6f6f6;padding:24px;">
   <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:24px;border:1px solid #e0e0e0;">
     <img src="${opts.logoUrl}" alt="Arells" width="50" height="50" style="display:block;width:50px;height:50px;margin-bottom:16px;" />
     <h1 style="font-size:18px;margin:0 0 12px;">Arells Email Verification</h1>
-    <p style="margin:0 0 16px;color:#333;">Click this link to verify your e-mail</p>
+    <p style="margin:0 0 16px;color:#333;">Click this link to verify your email</p>
     <p style="margin:0;"><a href="${opts.verifyUrl}" style="display:inline-block;padding:12px 20px;background:#222;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;">Verify email</a></p>
     <p style="margin:16px 0 0;font-size:12px;color:#666;">If you did not create an account, you can ignore this message.</p>
   </div></body></html>`;

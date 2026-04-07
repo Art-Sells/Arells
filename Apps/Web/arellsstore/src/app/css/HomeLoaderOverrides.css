@@ -103,3 +103,15 @@
 		color: #ff5aa0;
 	}
 }
+
+/* Auth success mark: loaded after rules above so size / no rainbow tint win */
+.auth-page .auth-success-arells-mark .home-loader-icon-wrap.auth-success-arells-icon-wrap {
+	width: 49px;
+	height: 50px;
+}
+
+.auth-page .auth-success-arells-mark .home-loader-icon-tint {
+	animation: none;
+	background: var(--myinv-accent-color);
+	opacity: 1;
+}

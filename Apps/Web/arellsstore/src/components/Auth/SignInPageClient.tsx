@@ -5,8 +5,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
+import { useUser } from '../../context/UserContext';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
+
+/** Single copy for any failed POST /api/auth/login on this page only (client validation unchanged). */
+const SIGN_IN_FAILED_MESSAGE = 'Wrong email/password combo.';
+const SIGN_IN_FAILED_CODE = 'SIGN_IN_COMBO';
 
 function cssKeyframeName(a: Animation): string {
   return (a as CSSAnimation).animationName ?? '';
@@ -30,6 +35,7 @@ function syncForgotLinkAccentPhase(linkEl: HTMLElement) {
 
 const SignInPageClient: React.FC = () => {
   const router = useRouter();
+  const { refreshAuthSession } = useUser();
   const forgotLinkRef = useRef<HTMLAnchorElement>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -79,10 +85,11 @@ const SignInPageClient: React.FC = () => {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(typeof data.error === 'string' ? data.error : 'Sign in failed.');
-        setErrorCode(typeof data.code === 'string' ? data.code : null);
+        setError(SIGN_IN_FAILED_MESSAGE);
+        setErrorCode(SIGN_IN_FAILED_CODE);
         return;
       }
+      await refreshAuthSession();
       router.push('/my-investments');
       router.refresh();
     } catch {

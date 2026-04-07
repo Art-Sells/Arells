@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
+import AuthSuccessArellsMark from './AuthSuccessArellsMark';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError } from '../../lib/auth/authFieldErrors';
 
@@ -81,8 +82,11 @@ const ForgotPasswordPageClient: React.FC = () => {
     }
   };
 
+  const belowMark =
+    phase === 'exiting' || phase === 'sent' ? <AuthSuccessArellsMark /> : undefined;
+
   return (
-    <AuthPageShell title="forgot password">
+    <AuthPageShell title="forgot password" belowCard={belowMark}>
       {phase === 'sent' ? (
         <div className={`auth-success-reveal${revealSuccess ? ' is-open' : ''}`}>
           <div className="auth-success-reveal-inner">
@@ -91,7 +95,7 @@ const ForgotPasswordPageClient: React.FC = () => {
               <p className="auth-verify-sent-email-row">
                 <span className="auth-verify-sent-email-accent">{sentTo}</span>
               </p>
-              <div className="auth-verify-sent-copy">
+              <div className="auth-verify-sent-copy auth-verify-sent-copy--forgot-password">
                 <p className="auth-verify-sent-sub auth-verify-sent-sub--forgot-sent">
                   If we have an account for your email, you will receive it shortly. Check your{' '}
                   <span className="auth-verify-sent-spam-emphasis">spam/junk</span> in case your inbox

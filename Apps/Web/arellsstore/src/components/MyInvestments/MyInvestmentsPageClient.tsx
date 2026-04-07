@@ -101,6 +101,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [rangePricesLiquid, setRangePricesLiquid] = useState<Record<string, number | null>>({});
   const [summaryValuesHidden, setSummaryValuesHidden] = useState(false);
   const summaryValuesDidMountRef = useRef(false);
+  const isLiquidModeDidMountRef = useRef(false);
   const [summaryQuickFade, setSummaryQuickFade] = useState(false);
   const summaryQuickFadeRef = useRef(false);
   const summaryQuickFadeTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
@@ -471,19 +472,6 @@ const MyInvestmentsPageClient: React.FC = () => {
     setRangeLoading(false);
   }, [getAsset, getNearestHistoricalPrice, selectedRangeDays, supportedAssets]);
 
-  useEffect(() => {
-    if (!summaryValuesDidMountRef.current) {
-      summaryValuesDidMountRef.current = true;
-      return;
-    }
-    setSummaryValuesHidden(true);
-    const t = window.setTimeout(() => {
-      setSummaryTotalsSnapshot(null);
-      setSummaryValuesHidden(false);
-    }, 350);
-    return () => window.clearTimeout(t);
-  }, [selectedRangeDays]);
-
   const filteredTotals = useMemo(() => {
     if (!selectedRangeDays) return displayTotals;
     if (!effectiveInvestments.length) return displayTotals;
@@ -583,6 +571,25 @@ const MyInvestmentsPageClient: React.FC = () => {
       }, 350);
     }, 350);
   }, [filteredTotals, summaryTotalsSnapshot]);
+
+  const pulseSummaryValuesRef = useRef(pulseSummaryValues);
+  pulseSummaryValuesRef.current = pulseSummaryValues;
+
+  useEffect(() => {
+    if (!summaryValuesDidMountRef.current) {
+      summaryValuesDidMountRef.current = true;
+      return;
+    }
+    pulseSummaryValuesRef.current();
+  }, [selectedRangeDays]);
+
+  useEffect(() => {
+    if (!isLiquidModeDidMountRef.current) {
+      isLiquidModeDidMountRef.current = true;
+      return;
+    }
+    pulseSummaryValuesRef.current();
+  }, [isLiquidMode]);
 
   const oldestInvestmentDate = useMemo(() => {
     if (effectiveInvestments.length === 0) return null;
@@ -749,7 +756,14 @@ const MyInvestmentsPageClient: React.FC = () => {
     if (!shell) return;
     const update = () => {
       const width = shell.getBoundingClientRect().width;
-      setLoaderToggleShellWidth((prev) => (Math.abs((prev ?? 0) - width) < 0.5 ? prev : width));
+      if (width < 8) return;
+      setLoaderToggleShellWidth((prev) => {
+        // While the full-screen loader is up, keep the clone width stable after the first
+        // measure — otherwise the real toggle reflows when portfolio data arrives and the
+        // overlay “line” jumps or vanishes before the fade completes.
+        if (showLoading && prev != null) return prev;
+        return Math.abs((prev ?? 0) - width) < 0.5 ? prev : width;
+      });
     };
     update();
     const raf = window.requestAnimationFrame(update);
@@ -764,7 +778,7 @@ const MyInvestmentsPageClient: React.FC = () => {
       window.removeEventListener('resize', update);
       if (ro) ro.disconnect();
     };
-  }, [showLiquidityToggle]);
+  }, [showLiquidityToggle, showLoading]);
 
   return (
     <>
@@ -813,7 +827,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                 <span />
               </div>
 
-              {!effectiveSignedIn ? (
+              {!effectiveSignedIn && !authSessionLoading ? (
                 <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-cta-row">
                     <Link href="/signin" className="myinv-cta-button">
@@ -822,7 +836,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                     </Link>
                   </div>
                 </div>
-              ) : hasAny ? (
+              ) : effectiveSignedIn && hasAny ? (
                 <>
                   <div className={`myinv-summary-block myinv-accent-border${slideIn ? ' page-slide-in' : ''}`}>
                     <div
@@ -972,14 +986,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                               disabled={!isEnabled || isActive}
                               onClick={() => {
                                 if (isActive) return;
-                                if (!summaryTotalsSnapshot) {
-                                  setSummaryTotalsSnapshot({ ...filteredTotals });
-                                }
-                                setProfitValueHidden(true);
                                 setSelectedRangeDays(range.days);
-                                if (range.days == null) {
-                                  window.setTimeout(() => setProfitValueHidden(false), 350);
-                                }
                               }}
                               className={`asset-range-button myinv-range-button${isActive ? ' is-active' : ''}`}
                             >
