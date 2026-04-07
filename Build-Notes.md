@@ -36,7 +36,7 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
-- - In notion:  
+- - In metrics:  
 - - Users
 - - - (current) number of sessions (unique users?) created/interacted/etc
 - - - Growth chart
@@ -65,7 +65,7 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - Prepare for WACA transition (LTP folder)
 
 ## 1 mnth and beyond:
-- Fix long marketcap numbers and summary section (in asset pages sometimes not saving the number info on state so it can height up after investment deletions, which causes a pop-up, in my investments page it sometimes doesn't smoothly fade in and out numbers like in asset pages after button clicks..)....
+- Fix long marketcap numbers and summary section (on first page min asset pages sometimes not saving the number info on state so it can height up after investment deletions, which causes a pop-up, in my investments page it sometimes doesn't smoothly fade in and out numbers like in asset pages after button clicks..)....
 - (Sort)MarketCap/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust LTP based on feedback...
 - - If traction is good look at LTP folder post WACA

@@ -4216,8 +4216,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	padding-top: 12px;
 	padding-bottom: 11px;
 	border-radius: 5px;
-	font-weight: 800;
-	letter-spacing: -2.6px;
+	font-weight: 200;
+	letter-spacing: normal;
 	text-decoration: none;
 	cursor: pointer;
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -4231,57 +4231,51 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 .home-asset-card .asset-title-badge {
 	border-radius: 5px;        /* <- edit home card badge border-radius */
-	letter-spacing: -1.3px;      /* <- edit home card badge letter-spacing */
 	padding: 10px 13px;         /* <- edit home card badge padding */
 	font-size: 11.5px !important;         /* <- edit home card badge font-size */
 }
 
 .home-asset-card .asset-title-badge--bitcoin {
-	padding-left: 10px;     /* <- edit home card BTC badge padding-left */
-	padding-right: 11.5px;  /* <- edit home card BTC badge padding-right */
-	letter-spacing: -2px; /* <- edit home card BTC badge letter-spacing */
+	padding-left: 10px;     /* <- edit home card BTC badge horizontal padding */
+	padding-right: 10px;
 }
 
 .home-asset-card .asset-title-badge--ethereum {
-	padding-left: 10px;     /* <- edit home card ETH badge padding-left */
-	padding-right: 11px;  /* <- edit home card ETH badge padding-right */
-	letter-spacing: -1px; /* <- edit home card ETH badge letter-spacing */
+	padding-left: 10px;     /* <- edit home card ETH badge horizontal padding */
+	padding-right: 10px;
 }
 
 .myinv-asset-button .asset-title-badge {
 	border-radius: 10px;       /* <- edit myinv badge border-radius */
-	letter-spacing: -1.3px;      /* <- edit myinv badge letter-spacing */
 	padding: 10px 15px;         /* <- edit myinv badge padding */
 }
 
 .myinv-asset-button .asset-title-badge--bitcoin {
-	padding-left: 10px;     /* <- edit myinv BTC badge padding-left */
-	padding-right: 11.5px;  /* <- edit myinv BTC badge padding-right */
-	letter-spacing: -1.3px; /* <- edit myinv BTC badge letter-spacing */
+	padding-left: 10px;     /* <- edit myinv BTC badge horizontal padding */
+	padding-right: 10px;
 }
 
 .myinv-asset-button .asset-title-badge--ethereum {
-	padding-left: 10px;     /* <- edit myinv ETH badge padding-left */
-	padding-right: 11.5px;  /* <- edit myinv ETH badge padding-right */
-	letter-spacing: -1.3px; /* <- edit myinv ETH badge letter-spacing */
+	padding-left: 10px;     /* <- edit myinv ETH badge horizontal padding */
+	padding-right: 10px;
 }
 
 .asset-title-badge--bitcoin {
 	background: rgba(248, 141, 0, 1);
-	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 60%) !important;
 }
 
 .asset-title-badge--ethereum {
 	background: rgba(107, 114, 168, 1);
-	color: color-mix(in srgb, rgba(107, 114, 168, 1) 18%, white 82%) !important;
+	color: color-mix(in srgb, rgba(107, 114, 168, 1) 18%, white 60%) !important;
 }
 
 .asset-page-content .asset-title-badge--bitcoin {
-	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 60%) !important;
 }
 
 .asset-page-content .asset-title-badge--ethereum {
-	color: color-mix(in srgb, rgba(107, 114, 168, 1) 18%, white 82%) !important;
+	color: color-mix(in srgb, rgba(107, 114, 168, 1) 18%, white 60%) !important;
 }
 
 .asset-header-panel {
@@ -4297,15 +4291,13 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 .asset-title-badge--section.asset-title-badge--bitcoin {
-	padding-left: 10px;     /* <- edit BTC badge padding-left over 750px */
-	padding-right: 11px;  /* <- edit BTC badge padding-right over 750px */
-	letter-spacing: -2.6px; /* <- edit BTC badge letter-spacing over 750px */
+	padding-left: 10px;     /* <- edit BTC badge horizontal padding over 750px */
+	padding-right: 10px;
 }
 
 .asset-title-badge--section.asset-title-badge--ethereum {
-	padding-left: 10px;     /* <- edit ETH badge padding-left over 750px */
-	padding-right: 11px;  /* <- edit ETH badge padding-right over 750px */
-	letter-spacing: -1.2px; /* <- edit ETH badge letter-spacing over 750px */
+	padding-left: 10px;     /* <- edit ETH badge horizontal padding over 750px */
+	padding-right: 10px;
 }
 
 .myinv-asset-icon {
@@ -4772,26 +4764,23 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 	.asset-title-badge {
 		border-radius: 900px;      /* <- edit badge border-radius under 750px */
-		letter-spacing: -1.3px;  /* <- edit badge letter-spacing under 750px */
 	}
 	.asset-title-badge--section {
 		left: 42px;
 		top: -16px;
 		padding-left: 13px;
-		padding-right: 14.5px;
+		padding-right: 13px;
 		padding-top: 9px;
 		padding-bottom: 8px;
 		font-size: 9px;
 	}
 	.asset-title-badge--section.asset-title-badge--bitcoin {
-		padding-left: 15px;     /* <- edit BTC badge padding-left under 750px */
-		padding-right: 16px;  /* <- edit BTC badge padding-right under 750px */
-		letter-spacing: -1.3px; /* <- edit BTC badge letter-spacing under 750px */
+		padding-left: 15px;     /* <- edit BTC badge horizontal padding under 750px */
+		padding-right: 15px;
 	}
 	.asset-title-badge--section.asset-title-badge--ethereum {
-		padding-left: 15px;     /* <- edit ETH badge padding-left under 750px */
-		padding-right: 16px;  /* <- edit ETH badge padding-right under 750px */
-		letter-spacing: -.5px; /* <- edit ETH badge letter-spacing under 750px */
+		padding-left: 15px;     /* <- edit ETH badge horizontal padding under 750px */
+		padding-right: 15px;
 	}
 	.asset-price-chart-row--combined {
 		width: 100%;
@@ -6583,7 +6572,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.home-asset-card .asset-title-badge {
 		font-size: 9.5px !important;              /* <- edit home card badge font-size under 700px */
-		letter-spacing: -1.3px;      /* <- edit home card badge letter-spacing under 700px */
 	}
 
 	.home-assets-percent .home-assets-number {
