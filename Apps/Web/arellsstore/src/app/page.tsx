@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: "if investments never lost value Connect your investments.",
+  description: "If investments never lost value.",
   robots: "noimageindex",
   icons: {
     icon: "/ArellsIcoIcon.png",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Arells",
-    description: "if investments never lost value Connect your investments.",
+    description: "If investments never lost value.",
     url: "https://arells.com",
     type: "website",
     images: [
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-    description: "if investments never lost value Connect your investments.",
+    description: "If investments never lost value.",
     card: "summary_large_image",
     images: [
       {

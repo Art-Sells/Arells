@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terminologies",
-  description: "Vavity terminologies: VAPA, Vatop, Vact, and calculation scenarios for autonomous price anchoring.",
+  description: "Learn about Vavity's terminologies.",
   keywords: "Vavity terminologies, VAPA, Vatop, Vact, price anchoring, asset pricing",
   authors: [{ name: "Vavity" }],
   creator: "Vavity",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Terminologies",
-    description: "Vavity terminologies: VAPA, Vatop, Vact, and calculation scenarios for autonomous price anchoring.",
+    description: "Learn about Vavity's terminologies.",
     url: "/vavity/terminologies",
     siteName: "Vavity",
     images: [
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Terminologies",
-    description: "Vavity terminologies: VAPA, Vatop, Vact, and calculation scenarios for autonomous price anchoring.",
+    description: "Learn about Vavity's terminologies.",
     images: ["https://vavity.s3.us-east-1.amazonaws.com/Banner.jpg"],
   },
   robots: {
@@ -53,7 +53,7 @@ export default function TerminologiesLayout({
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Terminologies",
-    description: "Vavity terminologies: VAPA, Vatop, Vact, and calculation scenarios for autonomous price anchoring.",
+    description: "Learn about Vavity's terminologies.",
     "url": "https://vavity.info/terminologies",
     "isPartOf": {
       "@type": "WebSite",

@@ -3,7 +3,7 @@ import ResetPasswordPageClient from '../../../components/Auth/ResetPasswordPageC
 
 export const metadata: Metadata = {
   title: 'Reset Password',
-  description: 'Set a new password for your Arells account.',
+  description: 'Set a new password for your account.',
   robots: 'noimageindex',
 };
 

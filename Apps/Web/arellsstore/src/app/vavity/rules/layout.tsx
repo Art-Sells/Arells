@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Rules",
-  description: "Learn how Vavity's autonomous financial system protects our investments from bear market losses. Discover autonomous protections and self-limiting systems.",
+  description: "Learn about Vavity's rules.",
   keywords: "Vavity rules, autonomous financial system, bear markets, financial protections, price anchoring",
   authors: [{ name: "Vavity" }],
   creator: "Vavity",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Rules",
-    description: "Learn how Vavity's autonomous financial system protects our investments from bear market losses. Discover autonomous protections and self-limiting systems.",
+    description: "Learn about Vavity's rules.",
     url: "/vavity/rules",
     siteName: "Vavity",
     images: [
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Rules",
-    description: "Learn how Vavity's autonomous financial system protects our investments from bear market losses. Discover autonomous protections and self-limiting systems.",
+    description: "Learn about Vavity's rules.",
     images: ["https://vavity.s3.us-east-1.amazonaws.com/Banner.jpg"],
   },
   robots: {
@@ -53,7 +53,7 @@ export default function RulesLayout({
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Rules",
-    description: "Learn how Vavity's autonomous financial system protects our investments from bear market losses. Discover autonomous protections and self-limiting systems.",
+    description: "Learn about Vavity's rules.",
     "url": "https://vavity.info/rules",
     "isPartOf": {
       "@type": "WebSite",

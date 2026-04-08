@@ -3,7 +3,7 @@ import MyInvestmentsPageClient from '../../components/MyInvestments/MyInvestment
 
 export const metadata: Metadata = {
   title: 'My Investments',
-  description: 'if investments never lost value.',
+  description: 'If investments never lost value.',
   robots: 'noimageindex',
 };
 

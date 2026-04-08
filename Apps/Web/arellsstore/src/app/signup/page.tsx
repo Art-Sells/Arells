@@ -3,7 +3,7 @@ import SignUpPageClient from '../../components/Auth/SignUpPageClient';
 
 export const metadata: Metadata = {
   title: 'Sign up',
-  description: 'Create an Arells account to save investments.',
+  description: 'Create an account to save investments.',
   robots: 'noimageindex',
 };
 

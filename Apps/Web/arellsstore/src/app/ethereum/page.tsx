@@ -3,7 +3,7 @@ import EthereumPageClient from '../../components/Assets/Crypto/Ethereum/Ethereum
 
 export const metadata: Metadata = {
   title: 'Ethereum',
-  description: 'if investments never lost value.',
+  description: 'If investments never lost value.',
   robots: 'noimageindex',
   icons: {
     icon: '/images/favicons/EthBadge.svg',
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Ethereum',
-    description: 'if investments never lost value.',
+    description: 'If investments never lost value.',
     url: 'https://arells.com/ethereum',
     type: 'website',
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: 'Arells',
-    description: 'if investments never lost value.',
+    description: 'If investments never lost value.',
     card: 'summary_large_image',
     images: [
       {

@@ -3,6 +3,7 @@ import MetricsPageClient from './MetricsPageClient';
 
 export const metadata: Metadata = {
   title: 'Growth Metrics',
+  description: 'Arells growth metrics',
   robots: { index: false, follow: false },
 };
 

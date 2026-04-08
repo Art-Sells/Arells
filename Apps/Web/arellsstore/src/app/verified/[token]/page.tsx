@@ -3,7 +3,7 @@ import VerifiedPageClient from '../../../components/Auth/VerifiedPageClient';
 
 export const metadata: Metadata = {
   title: 'Verify email',
-  description: 'Confirm your Arells account email.',
+  description: 'Confirm your account email.',
   robots: 'noimageindex',
 };
 

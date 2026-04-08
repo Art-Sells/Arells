@@ -3,7 +3,7 @@ import ForgotPasswordPageClient from '../../components/Auth/ForgotPasswordPageCl
 
 export const metadata: Metadata = {
   title: 'Forgot Password',
-  description: 'Request a password reset for your Arells account.',
+  description: 'Request a password reset for your account.',
   robots: 'noimageindex',
 };
 
