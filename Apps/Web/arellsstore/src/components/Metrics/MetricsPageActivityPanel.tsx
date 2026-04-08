@@ -108,18 +108,18 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
       ) : data ? (
         <div className="metrics-kpi-grid metrics-page-activity-kpis">
           <div className="metrics-kpi-card myinv-accent-border">
-            <div className="metrics-kpi-label metrics-growth-toolbar-tone">DAU</div>
-            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Daily Active Users</div>
+            <div className="metrics-kpi-label metrics-growth-toolbar-tone">DAUt</div>
+            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Daily Active User traffic</div>
             <div className="metrics-kpi-value">{data.dau.toLocaleString()}</div>
           </div>
           <div className="metrics-kpi-card myinv-accent-border">
-            <div className="metrics-kpi-label metrics-growth-toolbar-tone">WAU</div>
-            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Weekly Active Users</div>
+            <div className="metrics-kpi-label metrics-growth-toolbar-tone">WAUt</div>
+            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Weekly Active User traffic</div>
             <div className="metrics-kpi-value">{data.wau.toLocaleString()}</div>
           </div>
           <div className="metrics-kpi-card myinv-accent-border">
-            <div className="metrics-kpi-label metrics-growth-toolbar-tone">MAU</div>
-            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Monthly Active Users</div>
+            <div className="metrics-kpi-label metrics-growth-toolbar-tone">MAUt</div>
+            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Monthly Active User traffic</div>
             <div className="metrics-kpi-value">{data.mau.toLocaleString()}</div>
           </div>
         </div>

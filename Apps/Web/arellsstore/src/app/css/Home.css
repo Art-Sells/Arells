@@ -6785,6 +6785,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin-top: 4px;
 }
 
+/* DAUt / WAUt / MAUt: keep literal casing (lowercase t), unlike growth KPI labels which use uppercase. */
+.metrics-page-activity-kpis .metrics-kpi-label {
+	text-transform: none;
+}
+
 .metrics-growth-panel {
 	display: flex;
 	flex-direction: column;
@@ -6825,7 +6830,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	opacity: 1;
 }
 
-/* Same tone as .metrics-toolbar-label (Timeframe / Users) — words, +/−, %; digits use .metrics-growth-pct-body or .metrics-kpi-value-num */
+/* Same tone as .metrics-toolbar-label (Timeframe / user segment) — words, +/−, %; digits use .metrics-growth-pct-body or .metrics-kpi-value-num */
 .metrics-growth-panel .metrics-growth-toolbar-tone {
 	color: rgba(15, 23, 42, 0.45);
 }

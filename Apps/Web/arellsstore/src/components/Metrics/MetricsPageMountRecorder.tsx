@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useUser } from '../../context/UserContext';
 
 /**
- * Registers each visit to /metrics in S3 (see /api/metrics/page-mount) so DAU/WAU/MAU work without
+ * Registers each visit to /metrics in S3 (see /api/metrics/page-mount) so DAUt/WAUt/MAUt work without
  * NEXT_PUBLIC_ANALYTICS_ENABLED or session-meta path history.
  */
 export default function MetricsPageMountRecorder() {

@@ -193,13 +193,13 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const h = data?.headlines ?? EMPTY_HEADLINES;
 
   const primaryTitle =
-    segment === 'all' ? 'Users' : segment === 'signed_in' ? 'Signed Up Users' : 'Unique Users';
+    segment === 'all' ? 'User Traffic' : segment === 'signed_in' ? 'User Accounts' : 'User Visits';
   const timeframeHeading = rangeLabelHeading(range);
   const timeframeBeforeMetric = rangeLabelBeforeMetric(range);
   const primaryHeading = `${primaryTitle} ${timeframeHeading}`;
 
   /**
-   * Unique: distinct anonymous sessions that touched the selected range (aauSessionsAnonymous).
+   * Visits: distinct anonymous sessions that touched the selected range (aauSessionsAnonymous).
    * Chart hover still shows that bucket’s daily count (can be 0 on quiet days).
    */
   const basePrimary = useMemo(() => {
@@ -393,13 +393,13 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
                   </div>
                 </div>
                 <div className="metrics-toolbar-row">
-                  <span className="metrics-toolbar-label">Users</span>
+                  <span className="metrics-toolbar-label">{primaryTitle}</span>
                   <div className="metrics-toggle-group">
                     {(
                       [
                         ['all', 'All'],
-                        ['signed_in', 'Signed Up'],
-                        ['sessions', 'Unique'],
+                        ['signed_in', 'Accounts'],
+                        ['sessions', 'Visits'],
                       ] as const
                     ).map(([s, label]) => (
                       <button
