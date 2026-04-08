@@ -27,6 +27,7 @@
 ### Test Online 
 - both desktop(multiple browsers)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
+- Test with j4747477@outlook.com emal
 - look at Metrics
 
 ## After Test
@@ -43,7 +44,7 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - - - MAU Chart
 - - - Retention chart
 
-#### Update Links
+#### Update Links/Images/Descriptions
 - Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If investments never lost value
 
 ### After Launch
