@@ -38,13 +38,13 @@ function rangeLabelHeading(r: MetricsRange): string {
     case 'all':
       return 'All-time';
     case '1w':
-      return '1 week';
+      return '1 Week';
     case '1m':
-      return '1 month';
+      return '1 Month';
     case '3m':
-      return '3 months';
+      return '3 Months';
     case '1y':
-      return '1 year';
+      return '1 Year';
     default:
       return 'All-time';
   }
@@ -193,10 +193,14 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const h = data?.headlines ?? EMPTY_HEADLINES;
 
   const primaryTitle =
-    segment === 'all' ? 'User Traffic' : segment === 'signed_in' ? 'User Accounts' : 'User Visits';
+    segment === 'all'
+      ? 'New User Traffic'
+      : segment === 'signed_in'
+        ? 'New User Accounts'
+        : 'New User Visits';
   const timeframeHeading = rangeLabelHeading(range);
   const timeframeBeforeMetric = rangeLabelBeforeMetric(range);
-  const primaryHeading = `${primaryTitle} ${timeframeHeading}`;
+  const primaryHeading = `${timeframeHeading} ${primaryTitle}`;
 
   /**
    * Visits: distinct anonymous sessions that touched the selected range (aauSessionsAnonymous).
