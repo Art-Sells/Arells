@@ -6,7 +6,6 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-
 ### Metrics
 - Build own metrics page to test for humans/bots that gets session/user-email from arellsusers/users or arellsusers/sessions
 - - (current) session creations (browswer/unique IP addresses), retention graph....
