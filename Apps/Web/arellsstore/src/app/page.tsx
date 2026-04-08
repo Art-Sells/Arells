@@ -8,7 +8,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Arells",
   description: "If investments never lost value.",
-  robots: "noimageindex",
+  robots: { index: true, follow: true },
   icons: {
     icon: "/ArellsIcoIcon.png",
     shortcut: "/ArellsIcoIcon.png",

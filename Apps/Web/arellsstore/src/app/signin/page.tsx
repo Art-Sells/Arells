@@ -7,7 +7,7 @@ const generalBanner =
 export const metadata: Metadata = {
   title: 'Sign in',
   description: 'Sign in to save investments.',
-  robots: 'noimageindex',
+  robots: { index: true, follow: true },
   openGraph: {
     title: 'Sign in',
     description: 'Sign in to save investments.',

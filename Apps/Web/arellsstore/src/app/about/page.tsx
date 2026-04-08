@@ -7,7 +7,7 @@ const generalBanner =
 export const metadata: Metadata = {
   title: 'About',
   description: 'Arells is a belief that investments should never lose value.',
-  robots: 'noimageindex',
+  robots: { index: false, follow: true },
   openGraph: {
     title: 'About',
     description: 'Arells is a belief that investments should never lose value.',

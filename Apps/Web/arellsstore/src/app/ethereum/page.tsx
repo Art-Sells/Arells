@@ -4,7 +4,7 @@ import EthereumPageClient from '../../components/Assets/Crypto/Ethereum/Ethereum
 export const metadata: Metadata = {
   title: 'Ethereum',
   description: 'If investments never lost value.',
-  robots: 'noimageindex',
+  robots: { index: false, follow: true },
   icons: {
     icon: '/images/favicons/EthBadge.svg',
     shortcut: '/images/favicons/EthBadge.svg',

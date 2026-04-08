@@ -7,7 +7,7 @@ const generalBanner =
 export const metadata: Metadata = {
   title: 'Forgot Password',
   description: 'Request a password reset for your account.',
-  robots: 'noimageindex',
+  robots: { index: false, follow: true },
   openGraph: {
     title: 'Forgot Password',
     description: 'Request a password reset for your account.',

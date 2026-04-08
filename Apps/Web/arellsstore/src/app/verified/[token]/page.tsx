@@ -7,7 +7,7 @@ const generalBanner =
 export const metadata: Metadata = {
   title: 'Verify email',
   description: 'Confirm your account email.',
-  robots: 'noimageindex',
+  robots: { index: false, follow: true },
   openGraph: {
     title: 'Verify email',
     description: 'Confirm your account email.',

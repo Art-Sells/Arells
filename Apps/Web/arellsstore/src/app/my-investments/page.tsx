@@ -7,7 +7,7 @@ const myInvestmentsBanner =
 export const metadata: Metadata = {
   title: 'My Investments',
   description: 'If investments never lost value.',
-  robots: 'noimageindex',
+  robots: { index: false, follow: true },
   openGraph: {
     title: 'My Investments',
     description: 'If investments never lost value.',

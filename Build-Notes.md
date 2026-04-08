@@ -6,23 +6,15 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-### Metatags/ Description (all pages.tsx (signin/signup/vavity inluded) (dont forget my investments page) & components)
-- Alter: Descriptions & BannerImages (make images for promotions with bordered section like the asset page below it wrapping: If investments never lost value (bold)), add same color scheme on top behind logos.
-- - If investments never lost value (Bitcoin/Ethereum - If investments never lost value)
-- Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
-- - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
-- - Create a sitemap.xml: Helps Google discover all pages
-- - Add a robots.txt: Allows crawlers to access your site
-- - Build backlinks: Share your site to get it indexed faster
-
-### enviroments
-- Add to Amplify
 
 ### Metrics
 - Build own metrics page to test for humans/bots that gets session/user-email from arellsusers/users or arellsusers/sessions
 - - (current) session creations (browswer/unique IP addresses), retention graph....
 - - UniqueUsers/SessionDurations (more than 5 seconds = human)
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
+
+### enviroments
+- Add to Amplify
 
 ### Test Online 
 - both desktop(multiple browsers)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
@@ -43,6 +35,8 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - - - Growth chart
 - - - MAU Chart
 - - - Retention chart
+- Deploy to main
+- - Google Search Console: submit https://arells.com/sitemap.xml, then use URL inspection on /, /signin, /signup after deploy.
 
 #### Update Links/Images/Descriptions
 - Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If investments never lost value

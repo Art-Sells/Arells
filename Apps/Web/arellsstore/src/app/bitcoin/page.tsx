@@ -3,7 +3,7 @@ import BitcoinPageClient from '../../components/Assets/Crypto/Bitcoin/BitcoinPag
 export const metadata: Metadata = {
   title: "Bitcoin",
   description: "If investments never lost value.",
-  robots: "noimageindex",
+  robots: { index: false, follow: true },
   icons: {
     icon: "/images/favicons/BtcBadge.svg",
     shortcut: "/images/favicons/BtcBadge.svg",

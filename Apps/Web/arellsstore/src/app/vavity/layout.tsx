@@ -45,14 +45,11 @@ export const metadata: Metadata = {
     images: ["https://vavity.s3.us-east-1.amazonaws.com/Banner.jpg"],
   },
   robots: {
-    index: true,
+    index: false,
     follow: true,
     googleBot: {
-      index: true,
+      index: false,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
     },
   },
 };
