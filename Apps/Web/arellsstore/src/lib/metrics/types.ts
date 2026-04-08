@@ -16,14 +16,10 @@ export type MetricsGrowthSeriesPoint = {
 
 export type MetricsGrowthKpis = {
   wowPct: number | null;
+  /** Retention + weekly bucket: prior-week → last-week rolling rate minus the week before that (pp); drives trend arrow */
+  wowDeltaPct: number | null;
   momPct: number | null;
   yoyPct: number | null;
-  strictSessionDau: number;
-  strictSessionWau: number;
-  strictSessionMau: number;
-  strictUserDau: number;
-  strictUserWau: number;
-  strictUserMau: number;
   retentionCohortSize: number;
   retentionRetained: number;
   retentionRatePct: number | null;

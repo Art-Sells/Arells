@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import BitcoinChart from '../Assets/Crypto/Bitcoin/BitcoinChart';
+import MetricsStandaloneLineChart, { formatMetricsUtcBadgeLabel } from './MetricsStandaloneLineChart';
 
-export type MetricsChartHistoryPoint = { date: string; price: number };
+export type MetricsChartHistoryPoint = { date: string; price: number; utcLabel?: string };
 
 type AccentPack = {
   color: string;
@@ -89,12 +89,19 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
     [onPointHover]
   );
 
-  const [hoverUi, setHoverUi] = useState<{ x: Date; y: number } | null>(null);
+  const [hoverUi, setHoverUi] = useState<{ y: number; utcLabel: string } | null>(null);
 
   const onChartPoint = useCallback(
-    (point: { x: Date; y: number } | null) => {
-      setHoverUi(point);
-      handleHover(point);
+    (payload: { y: number; utcLabel: string } | null) => {
+      setHoverUi(payload);
+      handleHover(
+        payload
+          ? {
+              x: new Date(0),
+              y: payload.y,
+            }
+          : null
+      );
     },
     [handleHover]
   );
@@ -106,9 +113,9 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
     >
       {hoverUi != null && (
         <div className="asset-chart-date-badge asset-chart-date-badge--bitcoin metrics-chart-date-badge">
-          <span className="asset-metric-inline-title--bitcoin">Date:</span>{' '}
+          <span className="asset-metric-inline-title--bitcoin metrics-growth-toolbar-tone">Date:</span>{' '}
           <span className="asset-metric-inline-value">
-            {hoverUi.x.toLocaleDateString('en-US', { timeZone: 'UTC' })}
+            {formatMetricsUtcBadgeLabel(hoverUi.utcLabel)}
           </span>
         </div>
       )}
@@ -135,21 +142,20 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
           chartReady && !loading ? ' is-visible' : ''
         }${chartReady && !loading ? '' : ' is-disabled'}`}
       >
-        <BitcoinChart
-          history={history}
+        <MetricsStandaloneLineChart
+          points={history.map((h) => ({
+            date: h.date,
+            y: h.price,
+            utcLabel: h.utcLabel,
+          }))}
           color={accent.color}
-          activeColor={accent.activeColor}
           markerColor={accent.markerColor}
-          gridColor="transparent"
-          gridSpacing={30}
+          backgroundColor={accent.backgroundColor}
+          markerShadow={accent.markerShadow}
           height={CHART_HEIGHT}
           interactiveHeight={PANEL_HEIGHT}
           canvasOffsetTop={TOP_PAD}
-          backgroundColor={accent.backgroundColor}
-          markerShadow={accent.markerShadow}
-          animateOn={false}
-          animationDurationMs={0}
-          onPointHover={(point) => onChartPoint(point)}
+          onPointHover={onChartPoint}
         />
       </div>
     </div>
@@ -162,7 +168,7 @@ export function seriesToChartHistory(
   view: 'growth' | 'retention'
 ): MetricsChartHistoryPoint[] {
   return series.map((p) => {
-    const y =
+    const rawY =
       view === 'retention'
         ? p.retentionPct ?? 0
         : segment === 'sessions'
@@ -170,14 +176,16 @@ export function seriesToChartHistory(
           : segment === 'signed_in'
             ? p.signedInUsers
             : p.combined;
+    const y = view === 'growth' ? Math.max(0, rawY) : rawY;
     let dateIso: string;
+    const utcLabel = p.label;
     if (p.label.startsWith('W ')) {
-      dateIso = `${p.label.slice(2).trim()}T12:00:00.000Z`;
+      dateIso = `${p.label.slice(2).trim()}T00:00:00.000Z`;
     } else if (p.label.includes('T')) {
       dateIso = p.label;
     } else {
-      dateIso = `${p.label}T12:00:00.000Z`;
+      dateIso = `${p.label}T00:00:00.000Z`;
     }
-    return { date: dateIso, price: y };
+    return { date: dateIso, price: y, utcLabel };
   });
 }

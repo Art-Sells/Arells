@@ -25,20 +25,46 @@ const EMPTY_HEADLINES: MetricsHeadlines = {
   growthPct: null,
 };
 
-function formatPct(n: number | null | undefined): string {
-  if (n == null || Number.isNaN(n)) return '—';
-  return `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
+/** Split KPI % into gray sign + dark body (for toolbar-tone + / − and digits). */
+function splitKpiPctParts(n: number | null | undefined): { sign: string; body: string } {
+  if (n == null || Number.isNaN(n)) return { sign: '+', body: '0.00' };
+  if (n >= 0) return { sign: '+', body: n.toFixed(2) };
+  return { sign: '-', body: Math.abs(n).toFixed(2) };
 }
 
-function formatUpdatedAt(ts: number): string {
-  try {
-    return new Date(ts).toLocaleTimeString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  } catch {
-    return '';
+/** Sentence-style label for headings (e.g. row 1). */
+function rangeLabelHeading(r: MetricsRange): string {
+  switch (r) {
+    case 'all':
+      return 'All-time';
+    case '1w':
+      return '1 week';
+    case '1m':
+      return '1 month';
+    case '3m':
+      return '3 months';
+    case '1y':
+      return '1 year';
+    default:
+      return 'All-time';
+  }
+}
+
+/** Label before Growth / Retention (row 3); only “all-time” caps the A. */
+function rangeLabelBeforeMetric(r: MetricsRange): string {
+  switch (r) {
+    case 'all':
+      return 'All-time';
+    case '1w':
+      return '1 week';
+    case '1m':
+      return '1 month';
+    case '3m':
+      return '3 months';
+    case '1y':
+      return '1 year';
+    default:
+      return 'All-time';
   }
 }
 
@@ -51,11 +77,9 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const [range, setRange] = useState<MetricsRange>('all');
   const [segment, setSegment] = useState<MetricsSegment>('all');
   const [apiKey, setApiKey] = useState(initialApiKey);
-  const [keyInput, setKeyInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<MetricsGrowthResponse | null>(null);
-  const [silentBusy, setSilentBusy] = useState(false);
   const [hoverPoint, setHoverPoint] = useState<{ x: Date; y: number } | null>(null);
   const alive = useRef(true);
 
@@ -75,23 +99,12 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
     }
   }, [initialApiKey]);
 
-  const persistKey = useCallback((k: string) => {
-    setApiKey(k);
-    try {
-      if (k) sessionStorage.setItem(STORAGE_KEY, k);
-      else sessionStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
   const load = useCallback(
     async (opts?: { silent?: boolean; force?: boolean; keyOverride?: string }) => {
       const silent = opts?.silent === true;
       const force = opts?.force === true;
       const key = opts?.keyOverride ?? apiKey;
-      if (silent) setSilentBusy(true);
-      else {
+      if (!silent) {
         setLoading(true);
         setError(null);
       }
@@ -107,7 +120,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
         const json = (await res.json().catch(() => ({}))) as MetricsGrowthResponse & { error?: string };
         if (!alive.current) return;
         if (res.status === 401) {
-          setError('Metrics API key required. Set METRICS_API_SECRET on the server, then enter the same value below.');
+          setError('Metrics API key required (server METRICS_API_SECRET).');
           setData(null);
           return;
         }
@@ -131,8 +144,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
         }
       } finally {
         if (!alive.current) return;
-        if (silent) setSilentBusy(false);
-        else setLoading(false);
+        if (!silent) setLoading(false);
       }
     },
     [apiKey, range, segment, view]
@@ -181,288 +193,270 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const h = data?.headlines ?? EMPTY_HEADLINES;
 
   const primaryTitle =
-    segment === 'all' ? 'All Users' : segment === 'signed_in' ? 'Signed up Users' : 'All Sessions';
-  const aauTitle =
-    segment === 'all'
-      ? 'All Active Users (AAU):'
-      : segment === 'signed_in'
-        ? 'Signed up Active Users (AAU):'
-        : 'Active Sessions (AAU):';
+    segment === 'all' ? 'Users' : segment === 'signed_in' ? 'Signed Up Users' : 'Unique Users';
+  const timeframeHeading = rangeLabelHeading(range);
+  const timeframeBeforeMetric = rangeLabelBeforeMetric(range);
+  const primaryHeading = `${primaryTitle} ${timeframeHeading}`;
 
-  const basePrimary =
-    segment === 'all' ? h.registeredCombined : segment === 'signed_in' ? h.registeredUserKeys : h.registeredSessionKeys;
-
-  const aauValue =
-    segment === 'all' ? h.aauCombined : segment === 'signed_in' ? h.aauUsers : h.aauSessionsAnonymous;
+  /**
+   * Unique: distinct anonymous sessions that touched the selected range (aauSessionsAnonymous).
+   * Chart hover still shows that bucket’s daily count (can be 0 on quiet days).
+   */
+  const basePrimary = useMemo(() => {
+    if (segment === 'all') return h.registeredCombined;
+    if (segment === 'signed_in') return h.registeredUserKeys;
+    return h.aauSessionsAnonymous;
+  }, [segment, h]);
 
   const displayPrimaryStr = useMemo(() => {
-    if (hoverPoint) {
-      if (view === 'retention') return hoverPoint.y.toFixed(1);
-      return Math.round(hoverPoint.y).toLocaleString();
+    if (hoverPoint && view === 'growth') {
+      // Chart hover uses pixel→value math; spline interpolation can yield tiny negatives → Math.round → -0 → "-0" in UI.
+      const n = Math.max(0, Math.round(hoverPoint.y));
+      return n.toLocaleString();
     }
     return basePrimary.toLocaleString();
   }, [hoverPoint, view, basePrimary]);
 
-  const aauDisplayStr = aauValue.toLocaleString();
-
   const headerReady = !loading && data != null;
   const growthPct = h.growthPct;
+  const retentionPct = data?.kpis.retentionRatePct ?? null;
+
+  /** Headline growth %; fall back to WoW/MoM/YoY KPIs when series is too short for computeWowMom headline. */
+  const effectiveGrowthPct = useMemo(() => {
+    if (growthPct != null && !Number.isNaN(growthPct)) return growthPct;
+    const k = data?.kpis;
+    if (!k) return null;
+    return k.wowPct ?? k.momPct ?? k.yoyPct ?? null;
+  }, [growthPct, data?.kpis]);
+
+  const thirdRowPct = useMemo(() => {
+    if (view === 'retention') {
+      if (hoverPoint) return Math.max(0, hoverPoint.y);
+      return retentionPct ?? 0;
+    }
+    if (effectiveGrowthPct != null && !Number.isNaN(effectiveGrowthPct)) return effectiveGrowthPct;
+    return 0;
+  }, [view, hoverPoint, retentionPct, effectiveGrowthPct]);
+
+  const thirdRowPctStr = useMemo(() => {
+    if (!headerReady) return null;
+    const r = thirdRowPct ?? 0;
+    if (Number.isNaN(r)) return '0.00';
+    if (view === 'retention') {
+      return Math.max(0, r).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      });
+    }
+    return Math.abs(r).toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+    });
+  }, [headerReady, thirdRowPct, view]);
+
+  /** Growth headline row: gray ±, dark digits (retention uses thirdRowPctStr only). */
+  const thirdRowGrowthSignBody = useMemo(() => {
+    if (!headerReady || view !== 'growth') return null;
+    const r = thirdRowPct ?? 0;
+    if (Number.isNaN(r)) return { sign: '+', body: '0.00' };
+    const sign = r >= 0 ? '+' : '-';
+    const body = Math.abs(r).toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+    });
+    return { sign, body };
+  }, [headerReady, view, thirdRowPct]);
+
+  const kpiMetricWord = view === 'growth' ? 'Growth' : 'Retention';
+
+  const kpiPctParts = useMemo(() => {
+    if (!data) return null;
+    return {
+      wow: splitKpiPctParts(data.kpis.wowPct),
+      mom: splitKpiPctParts(data.kpis.momPct),
+    };
+  }, [data]);
 
   return (
     <div className="metrics-growth-panel">
-      <div className="metrics-toolbar">
-        <div className="metrics-toolbar-row">
-          <span className="metrics-toolbar-label">Mode</span>
-          <div className="metrics-toggle-group">
-            <button
-              type="button"
-              className={`metrics-toggle-btn${view === 'growth' ? ' is-active' : ''}`}
-              onClick={() => setView('growth')}
-            >
-              Growth
-            </button>
-            <button
-              type="button"
-              className={`metrics-toggle-btn${view === 'retention' ? ' is-active' : ''}`}
-              onClick={() => setView('retention')}
-            >
-              Retention
-            </button>
-          </div>
-        </div>
-        <div className="metrics-toolbar-row">
-          <span className="metrics-toolbar-label">Range</span>
-          <div className="metrics-toggle-group">
-            {(
-              [
-                ['all', 'All'],
-                ['1w', '1W'],
-                ['1m', '1M'],
-                ['3m', '3M'],
-                ['1y', '1Y'],
-              ] as const
-            ).map(([r, label]) => (
-              <button
-                key={r}
-                type="button"
-                className={`metrics-toggle-btn${range === r ? ' is-active' : ''}`}
-                onClick={() => setRange(r)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="metrics-toolbar-row">
-          <span className="metrics-toolbar-label">Segment</span>
-          <div className="metrics-toggle-group">
-            {(
-              [
-                ['all', 'All'],
-                ['signed_in', 'Signed up'],
-                ['sessions', 'Sessions'],
-              ] as const
-            ).map(([s, label]) => (
-              <button
-                key={s}
-                type="button"
-                className={`metrics-toggle-btn${segment === s ? ' is-active' : ''}`}
-                onClick={() => setSegment(s)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="metrics-toolbar-row metrics-key-row">
-          <label className="metrics-key-label">
-            API key
-            <input
-              className="metrics-key-input"
-              type="password"
-              autoComplete="off"
-              placeholder={apiKey ? '••••••••' : 'METRICS_API_SECRET'}
-              value={keyInput}
-              onChange={(e) => setKeyInput(e.target.value)}
-            />
-          </label>
-          <button
-            type="button"
-            className="metrics-refresh-btn metrics-key-save"
-            onClick={() => {
-              const k = keyInput.trim();
-              persistKey(k);
-              void load({ force: true, keyOverride: k });
-            }}
-          >
-            Save key
-          </button>
-          <button
-            type="button"
-            className="metrics-refresh-btn"
-            onClick={() => void load({ force: true })}
-            disabled={loading}
-          >
-            {loading ? 'Loading…' : 'Refresh'}
-          </button>
+      {error && <p className="metrics-error">{error}</p>}
+
+      <div className="metrics-growth-outer myinv-summary-block myinv-accent-border">
+        <div className="metrics-growth-outer-column">
           {data && (
-            <span className="metrics-last-updated">
-              {formatUpdatedAt(data.generatedAt)}
-              {silentBusy ? ' · refreshing…' : ''}
-            </span>
+            <div className="metrics-growth-tier metrics-growth-tier--top myinv-summary-block myinv-accent-border">
+              <div className="metrics-growth-tier-inner">
+                <div className="metrics-price-chart-row">
+                  <div className="metrics-price-panel-inner">
+                    <div className="asset-metric-row">
+                      <span className="asset-metric-title--bitcoin metrics-growth-toolbar-tone">{primaryHeading}:</span>
+                      <span className="asset-metric-value-wrap">
+                        {!headerReady && (
+                          <span className="asset-number-loader metrics-number-loader--accent asset-number-loader--overlay" />
+                        )}
+                        <span className={`asset-metric-value asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}>
+                          {displayPrimaryStr}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="asset-metric-row">
+                      <span className="asset-metric-value-wrap">
+                        {!headerReady && (
+                          <span className="asset-number-loader metrics-number-loader--accent metrics-number-loader--narrow asset-number-loader--overlay" />
+                        )}
+                        <span
+                          className="asset-metric-inline-title--bitcoin metrics-growth-toolbar-tone"
+                          style={{ marginRight: 6 }}
+                        >
+                          {timeframeBeforeMetric} {view === 'growth' ? 'Growth' : 'Retention'}:
+                        </span>
+                        <span
+                          className={`asset-metric-value asset-percentage-value asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}
+                        >
+                          {!headerReady ? (
+                            '\u00a0'
+                          ) : view === 'retention' ? (
+                            <span className="metrics-growth-pct-body">{thirdRowPctStr ?? '\u00a0'}</span>
+                          ) : thirdRowGrowthSignBody ? (
+                            <>
+                              <span className="metrics-growth-toolbar-tone">{thirdRowGrowthSignBody.sign}</span>
+                              <span className="metrics-growth-pct-body">{thirdRowGrowthSignBody.body}</span>
+                            </>
+                          ) : (
+                            '\u00a0'
+                          )}
+                        </span>
+                        {headerReady && thirdRowPctStr != null ? (
+                          <span className="asset-metric-symbol--bitcoin asset-metric-percent-symbol--bitcoin metrics-growth-toolbar-tone asset-mount-fade-2s is-visible">
+                            %
+                          </span>
+                        ) : null}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="metrics-chart-column">
+                    <MetricsGrowthChart
+                      history={chartHistoryForChart}
+                      loading={loading}
+                      onPointHover={setHoverPoint}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="metrics-growth-tier metrics-growth-tier--middle myinv-summary-block myinv-accent-border">
+            <div className="metrics-growth-tier-inner">
+              <div className="metrics-toolbar">
+                <div className="metrics-toolbar-row">
+                  <span className="metrics-toolbar-label">Metrics</span>
+                  <div className="metrics-toggle-group">
+                    <button
+                      type="button"
+                      className={`metrics-toggle-btn${view === 'growth' ? ' is-active' : ''}`}
+                      onClick={() => setView('growth')}
+                    >
+                      Growth
+                    </button>
+                    <button
+                      type="button"
+                      className={`metrics-toggle-btn${view === 'retention' ? ' is-active' : ''}`}
+                      onClick={() => setView('retention')}
+                    >
+                      Retention
+                    </button>
+                  </div>
+                </div>
+                <div className="metrics-toolbar-row">
+                  <span className="metrics-toolbar-label">Timeframe</span>
+                  <div className="metrics-toggle-group">
+                    {(
+                      [
+                        ['all', 'All'],
+                        ['1w', '1W'],
+                        ['1m', '1M'],
+                        ['3m', '3M'],
+                        ['1y', '1Y'],
+                      ] as const
+                    ).map(([r, label]) => (
+                      <button
+                        key={r}
+                        type="button"
+                        className={`metrics-toggle-btn${range === r ? ' is-active' : ''}`}
+                        onClick={() => setRange(r)}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="metrics-toolbar-row">
+                  <span className="metrics-toolbar-label">Users</span>
+                  <div className="metrics-toggle-group">
+                    {(
+                      [
+                        ['all', 'All'],
+                        ['signed_in', 'Signed Up'],
+                        ['sessions', 'Unique'],
+                      ] as const
+                    ).map(([s, label]) => (
+                      <button
+                        key={s}
+                        type="button"
+                        className={`metrics-toggle-btn${segment === s ? ' is-active' : ''}`}
+                        onClick={() => setSegment(s)}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {data && (
+            <div className="metrics-growth-tier metrics-growth-tier--bottom myinv-summary-block myinv-accent-border">
+              <div className="metrics-growth-tier-inner">
+                <div className="metrics-kpi-grid metrics-kpi-grid--two">
+                  <div className="metrics-kpi-card myinv-accent-border">
+                    <div className="metrics-kpi-label metrics-growth-toolbar-tone">WoW {kpiMetricWord}</div>
+                    <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">
+                      {`Week over Week ${kpiMetricWord.toLowerCase()}`}
+                    </div>
+                    <div className="metrics-kpi-value">
+                      {kpiPctParts ? (
+                        <>
+                          <span className="metrics-growth-toolbar-tone">{kpiPctParts.wow.sign}</span>
+                          <span className="metrics-kpi-value-num">{kpiPctParts.wow.body}</span>
+                          <span className="metrics-growth-toolbar-tone">%</span>
+                        </>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="metrics-kpi-card myinv-accent-border">
+                    <div className="metrics-kpi-label metrics-growth-toolbar-tone">MoM {kpiMetricWord}</div>
+                    <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">
+                      {`Month over Month ${kpiMetricWord.toLowerCase()}`}
+                    </div>
+                    <div className="metrics-kpi-value">
+                      {kpiPctParts ? (
+                        <>
+                          <span className="metrics-growth-toolbar-tone">{kpiPctParts.mom.sign}</span>
+                          <span className="metrics-kpi-value-num">{kpiPctParts.mom.body}</span>
+                          <span className="metrics-growth-toolbar-tone">%</span>
+                        </>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>
-
-      {error && <p className="metrics-error">{error}</p>}
-
-      {data && (
-        <>
-          <div className="metrics-chart-wrap myinv-summary-block myinv-accent-border">
-            <p className="metrics-bucket-hint" style={{ marginTop: 0 }}>
-              {view === 'growth' ? 'Activity' : 'Retention'} · bucket <strong>{data.bucket}</strong> · UTC{' '}
-              {new Date(data.rangeStart).toISOString().slice(0, 10)} →{' '}
-              {new Date(data.rangeEnd).toISOString().slice(0, 10)}
-            </p>
-
-            <div className="metrics-price-chart-row">
-              <div className="metrics-price-panel-inner">
-                <div className="asset-metric-row">
-                  <span className="asset-metric-title--bitcoin">{primaryTitle}:</span>
-                  <span className="asset-metric-value-wrap">
-                    {!headerReady && (
-                      <span className="asset-number-loader metrics-number-loader--accent asset-number-loader--overlay" />
-                    )}
-                    <span className={`asset-metric-value asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}>
-                      {displayPrimaryStr}
-                    </span>
-                  </span>
-                </div>
-                <div className="asset-metric-row">
-                  <span className="asset-metric-title--bitcoin">{aauTitle}</span>
-                  <span className="asset-metric-value-wrap">
-                    {!headerReady && (
-                      <span className="asset-number-loader metrics-number-loader--accent metrics-number-loader--wide asset-number-loader--overlay" />
-                    )}
-                    <span className={`asset-metric-value asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}>
-                      {aauDisplayStr}
-                    </span>
-                  </span>
-                </div>
-                <div className="asset-metric-row">
-                  <span className="asset-metric-value-wrap">
-                    {!headerReady && (
-                      <span className="asset-number-loader metrics-number-loader--accent metrics-number-loader--narrow asset-number-loader--overlay" />
-                    )}
-                    {headerReady && growthPct != null ? (
-                      growthPct >= 0 ? (
-                        <span
-                          className="asset-metric-trend-icon asset-metric-trend-icon--bitcoin asset-mount-fade-2s is-visible"
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        <span
-                          className="asset-metric-trend-icon asset-metric-trend-icon--down asset-metric-trend-icon--bitcoin asset-mount-fade-2s is-visible"
-                          aria-hidden="true"
-                        />
-                      )
-                    ) : null}
-                    <span className="asset-metric-inline-title--bitcoin" style={{ marginRight: 6 }}>
-                      {h.growthLabel ? `${h.growthLabel} ` : 'Growth '}
-                    </span>
-                    <span className={`asset-metric-value asset-percentage-value asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}>
-                      {headerReady && growthPct != null
-                        ? Math.abs(growthPct).toLocaleString(undefined, {
-                            maximumFractionDigits: 1,
-                            minimumFractionDigits: 0,
-                          })
-                        : headerReady
-                          ? '—'
-                          : '\u00A0'}
-                    </span>
-                    <span
-                      className={`asset-metric-symbol--bitcoin asset-metric-percent-symbol--bitcoin asset-mount-fade-2s${
-                        headerReady && growthPct != null ? ' is-visible' : ''
-                      }`}
-                    >
-                      %
-                    </span>
-                  </span>
-                </div>
-              </div>
-
-              <div className="metrics-chart-column">
-                <MetricsGrowthChart
-                  history={chartHistoryForChart}
-                  loading={loading}
-                  onPointHover={setHoverPoint}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="metrics-kpi-grid">
-            <div className="metrics-kpi-card myinv-accent-border">
-              <div className="metrics-kpi-label">WoW</div>
-              <div className="metrics-kpi-value">{formatPct(data.kpis.wowPct)}</div>
-            </div>
-            <div className="metrics-kpi-card myinv-accent-border">
-              <div className="metrics-kpi-label">MoM</div>
-              <div className="metrics-kpi-value">{formatPct(data.kpis.momPct)}</div>
-            </div>
-            <div className="metrics-kpi-card myinv-accent-border">
-              <div className="metrics-kpi-label">YoY</div>
-              <div className="metrics-kpi-value">{formatPct(data.kpis.yoyPct)}</div>
-            </div>
-            <div className="metrics-kpi-card myinv-accent-border">
-              <div className="metrics-kpi-label">Retention (½→½)</div>
-              <div className="metrics-kpi-value">
-                {data.kpis.retentionRatePct == null ? '—' : `${data.kpis.retentionRatePct.toFixed(1)}%`}
-              </div>
-              <div className="metrics-kpi-sub">
-                {data.kpis.retentionRetained} / {data.kpis.retentionCohortSize} cohort
-              </div>
-            </div>
-          </div>
-
-          <div className="metrics-kpi-grid metrics-kpi-grid--strict">
-            <div className="metrics-kpi-card myinv-accent-border">
-              <div className="metrics-kpi-label">Strict session DAU</div>
-              <div className="metrics-kpi-value">{data.kpis.strictSessionDau}</div>
-            </div>
-            <div className="metrics-kpi-card myinv-accent-border">
-              <div className="metrics-kpi-label">Strict session WAU</div>
-              <div className="metrics-kpi-value">{data.kpis.strictSessionWau}</div>
-            </div>
-            <div className="metrics-kpi-card myinv-accent-border">
-              <div className="metrics-kpi-label">Strict session MAU</div>
-              <div className="metrics-kpi-value">{data.kpis.strictSessionMau}</div>
-            </div>
-            {segment !== 'sessions' && (
-              <>
-                <div className="metrics-kpi-card myinv-accent-border">
-                  <div className="metrics-kpi-label">Strict user DAU (S3 span)</div>
-                  <div className="metrics-kpi-value">{data.kpis.strictUserDau}</div>
-                </div>
-                <div className="metrics-kpi-card myinv-accent-border">
-                  <div className="metrics-kpi-label">Strict user WAU</div>
-                  <div className="metrics-kpi-value">{data.kpis.strictUserWau}</div>
-                </div>
-                <div className="metrics-kpi-card myinv-accent-border">
-                  <div className="metrics-kpi-label">Strict user MAU</div>
-                  <div className="metrics-kpi-value">{data.kpis.strictUserMau}</div>
-                </div>
-              </>
-            )}
-          </div>
-
-          <ul className="metrics-notes">
-            {data.notes.map((n) => (
-              <li key={n.slice(0, 48)}>{n}</li>
-            ))}
-          </ul>
-        </>
-      )}
     </div>
   );
 }

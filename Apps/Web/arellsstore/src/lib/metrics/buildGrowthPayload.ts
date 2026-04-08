@@ -2,6 +2,7 @@ import type AWS from 'aws-sdk';
 import { loadAllSessionMetasFromS3 } from '../analytics/loadSessionMetasFromS3';
 import type { AnalyticsSessionMeta } from '../analytics/types';
 import { countSessionAggregateKeys } from './countSessionKeysInS3';
+import { listSessionAggregatesFromS3, type SessionAggregateRow } from './listSessionAggregatesFromS3';
 import { listUserS3Touches, type UserTouchMap } from './listUserS3Touches';
 import type {
   MetricsGrowthKpis,
@@ -14,6 +15,28 @@ import type {
 } from './types';
 
 const DAY_MS = 86_400_000;
+
+/** UTC midnight of first day included in metrics; rolling windows never start before this. */
+function getMetricsEpochStartMs(): number {
+  const raw = typeof process !== 'undefined' ? process.env.METRICS_EPOCH_START_UTC?.trim() : '';
+  if (raw) {
+    const parsed = Date.parse(`${raw}T00:00:00.000Z`);
+    if (!Number.isNaN(parsed)) return parsed;
+  }
+  return Date.UTC(2026, 3, 1);
+}
+
+function clampRangeToMetricsEpoch(start: number, end: number): { start: number; end: number } {
+  const epochStart = getMetricsEpochStartMs();
+  if (end < epochStart) {
+    return { start: end, end };
+  }
+  const s = Math.max(start, epochStart);
+  if (s > end) {
+    return { start: end, end };
+  }
+  return { start: s, end };
+}
 
 function isoDayKey(ts: number): string {
   return new Date(ts).toISOString().slice(0, 10);
@@ -45,6 +68,20 @@ function sessionTouchesUtcDay(firstSeen: number, lastSeen: number, dayKey: strin
   return firstSeen <= d1 && lastSeen >= d0;
 }
 
+function sessionOverlapsUtcRange(m: AnalyticsSessionMeta, rStart: number, rEnd: number): boolean {
+  return m.lastSeenAt >= rStart && m.firstSeenAt <= rEnd;
+}
+
+function userOverlapsUtcRange(
+  ut: { authMs?: number; vavityMs?: number },
+  rStart: number,
+  rEnd: number
+): boolean {
+  const span = userSpanMs(ut);
+  if (!span) return false;
+  return span.max >= rStart && span.min <= rEnd;
+}
+
 function filterMetas(metas: AnalyticsSessionMeta[], segment: MetricsSegment): AnalyticsSessionMeta[] {
   if (segment === 'sessions') return metas.filter((m) => !m.userHash);
   if (segment === 'signed_in') return metas.filter((m) => Boolean(m.userHash));
@@ -64,28 +101,25 @@ function userTouchesUtcDay(ut: { authMs?: number; vavityMs?: number }, dayKey: s
   return sessionTouchesUtcDay(span.min, span.max, dayKey);
 }
 
-function countUsersActiveOnDay(touchMap: UserTouchMap, dayKey: string): number {
+/** Users whose first S3 touch is on or before end of this UTC calendar day (series does not drop when idle). */
+function countUsersCumulativeThroughUtcDayEnd(touchMap: UserTouchMap, dayKey: string): number {
+  const endMs = Date.parse(`${dayKey}T23:59:59.999Z`);
+  if (Number.isNaN(endMs)) return 0;
   let n = 0;
   for (const [, ut] of touchMap) {
-    if (userTouchesUtcDay(ut, dayKey)) n += 1;
+    const span = userSpanMs(ut);
+    if (span && span.min <= endMs) n += 1;
   }
   return n;
 }
 
-function strictSessionDau(m: AnalyticsSessionMeta, rangeStart: number, rangeEnd: number): boolean {
-  const days = eachUtcDay(rangeStart, rangeEnd);
-  if (!days.length) return false;
-  return days.every((d) => sessionTouchesUtcDay(m.firstSeenAt, m.lastSeenAt, d));
-}
-
-function strictSessionWau(m: AnalyticsSessionMeta, rangeStart: number, rangeEnd: number): boolean {
-  const weeks = weekBucketsUtcSimple(rangeStart, rangeEnd);
-  return weeks.every(({ wStart, wEnd }) => m.lastSeenAt >= wStart && m.firstSeenAt <= wEnd);
-}
-
-function strictSessionMau(m: AnalyticsSessionMeta, rangeStart: number, rangeEnd: number): boolean {
-  const months = monthBucketsUtc(rangeStart, rangeEnd);
-  return months.every(({ mStart, mEnd }) => m.lastSeenAt >= mStart && m.firstSeenAt <= mEnd);
+function countUsersCumulativeThroughMs(touchMap: UserTouchMap, endMsInclusive: number): number {
+  let n = 0;
+  for (const [, ut] of touchMap) {
+    const span = userSpanMs(ut);
+    if (span && span.min <= endMsInclusive) n += 1;
+  }
+  return n;
 }
 
 /** Monday 00:00 UTC of the week containing `ts`. */
@@ -114,49 +148,6 @@ function weekBucketsUtcSimple(
   return out;
 }
 
-function monthBucketsUtc(
-  rangeStart: number,
-  rangeEnd: number
-): Array<{ label: string; mStart: number; mEnd: number }> {
-  const out: Array<{ label: string; mStart: number; mEnd: number }> = [];
-  let y = new Date(rangeStart).getUTCFullYear();
-  let mo = new Date(rangeStart).getUTCMonth();
-  const endT = rangeEnd;
-  for (let guard = 0; guard < 2400; guard++) {
-    const mStart = Date.UTC(y, mo, 1);
-    const mEnd = Date.UTC(y, mo + 1, 1) - 1;
-    if (mEnd >= rangeStart && mStart <= endT) {
-      out.push({ label: `${y}-${String(mo + 1).padStart(2, '0')}`, mStart, mEnd });
-    }
-    if (mStart > endT) break;
-    mo += 1;
-    if (mo > 11) {
-      mo = 0;
-      y += 1;
-    }
-  }
-  return out;
-}
-
-function strictUserSpanCovers(
-  ut: { authMs?: number; vavityMs?: number },
-  rangeStart: number,
-  rangeEnd: number,
-  mode: 'dau' | 'wau' | 'mau'
-): boolean {
-  const span = userSpanMs(ut);
-  if (!span) return false;
-  if (mode === 'dau') {
-    return eachUtcDay(rangeStart, rangeEnd).every((d) => sessionTouchesUtcDay(span.min, span.max, d));
-  }
-  if (mode === 'wau') {
-    return weekBucketsUtcSimple(rangeStart, rangeEnd).every(
-      ({ wStart, wEnd }) => span.max >= wStart && span.min <= wEnd
-    );
-  }
-  return monthBucketsUtc(rangeStart, rangeEnd).every(({ mStart, mEnd }) => span.max >= mStart && span.min <= mEnd);
-}
-
 function spanOverlapsRange(startMs: number, endMs: number, rangeStart: number, rangeEnd: number): boolean {
   return endMs >= rangeStart && startMs <= rangeEnd;
 }
@@ -175,6 +166,232 @@ function countAauSessionsAnalytic(
   return set.size;
 }
 
+/** Anonymous browsing: analytics/session-meta (no userHash) plus sessions/{id}/VavityAggregate when meta file is missing. */
+function countAnonymousBrowsingInRange(
+  metas: AnalyticsSessionMeta[],
+  aggregates: SessionAggregateRow[],
+  rangeStart: number,
+  rangeEnd: number
+): number {
+  const metaById = new Map(metas.map((m) => [m.sessionId, m]));
+  const counted = new Set<string>();
+  for (const m of filterMetas(metas, 'sessions')) {
+    if (spanOverlapsRange(m.firstSeenAt, m.lastSeenAt, rangeStart, rangeEnd)) counted.add(m.sessionId);
+  }
+  for (const { sessionId, lastModifiedMs } of aggregates) {
+    if (counted.has(sessionId)) continue;
+    if (metaById.has(sessionId)) continue;
+    if (spanOverlapsRange(lastModifiedMs, lastModifiedMs, rangeStart, rangeEnd)) counted.add(sessionId);
+  }
+  return counted.size;
+}
+
+/** All sessions overlapping range, including VavityAggregate-only rows (no session-meta). */
+function countAllSessionsInRangeWithS3Orphans(
+  metas: AnalyticsSessionMeta[],
+  aggregates: SessionAggregateRow[],
+  rangeStart: number,
+  rangeEnd: number
+): number {
+  const metaById = new Map(metas.map((m) => [m.sessionId, m]));
+  const counted = new Set<string>();
+  for (const m of metas) {
+    if (spanOverlapsRange(m.firstSeenAt, m.lastSeenAt, rangeStart, rangeEnd)) counted.add(m.sessionId);
+  }
+  for (const { sessionId, lastModifiedMs } of aggregates) {
+    if (counted.has(sessionId)) continue;
+    if (metaById.has(sessionId)) continue;
+    if (spanOverlapsRange(lastModifiedMs, lastModifiedMs, rangeStart, rangeEnd)) counted.add(sessionId);
+  }
+  return counted.size;
+}
+
+function applyS3OrphanBrowsingToDailySeries(
+  series: MetricsGrowthSeriesPoint[],
+  segment: MetricsSegment,
+  metas: AnalyticsSessionMeta[],
+  aggregates: SessionAggregateRow[],
+  rangeStart: number,
+  rangeEnd: number
+): MetricsGrowthSeriesPoint[] {
+  if (segment === 'signed_in' || !series.length) return series;
+  const metaById = new Map(metas.map((m) => [m.sessionId, m]));
+  const orphanByDay = new Map<string, Set<string>>();
+  const daySet = new Set(series.map((p) => p.label));
+
+  for (const row of aggregates) {
+    if (metaById.has(row.sessionId)) continue;
+    if (!spanOverlapsRange(row.lastModifiedMs, row.lastModifiedMs, rangeStart, rangeEnd)) continue;
+    const dk = isoDayKey(row.lastModifiedMs);
+    if (!daySet.has(dk)) continue;
+    let s = orphanByDay.get(dk);
+    if (!s) {
+      s = new Set();
+      orphanByDay.set(dk, s);
+    }
+    s.add(row.sessionId);
+  }
+
+  return series.map((p) => {
+    const n = orphanByDay.get(p.label)?.size ?? 0;
+    if (n === 0) return p;
+    const sessions = p.sessions + n;
+    return { ...p, sessions, combined: sessions + p.signedInUsers };
+  });
+}
+
+/**
+ * Minimal session-meta for sessions/{id}/VavityAggregate when analytics JSON is missing.
+ * Span runs through rangeEnd so retention isn’t 0 just because S3 only gives one timestamp.
+ */
+function mergeSessionMetasWithAggregateFallback(
+  metas: AnalyticsSessionMeta[],
+  aggregates: SessionAggregateRow[],
+  rangeStart: number,
+  rangeEnd: number
+): AnalyticsSessionMeta[] {
+  const ids = new Set(metas.map((m) => m.sessionId));
+  const extra: AnalyticsSessionMeta[] = [];
+  for (const row of aggregates) {
+    if (ids.has(row.sessionId)) continue;
+    const ts = row.lastModifiedMs;
+    // If LastModified is after the window, clamping ts to rangeEnd collapses first/last to one instant
+    // so the session never touches earlier days → empty cohort / 0% retention. Span the full window instead.
+    const t0 =
+      ts > rangeEnd
+        ? rangeStart
+        : Math.min(Math.max(ts, rangeStart), rangeEnd);
+    extra.push({
+      sessionId: row.sessionId,
+      firstSeenAt: t0,
+      lastSeenAt: rangeEnd,
+      lastIp: '',
+      userAgent: '',
+      heartbeatCount: 0,
+      pageviewCount: 0,
+      paths: [],
+      userHash: null,
+    });
+  }
+  return metas.concat(extra);
+}
+
+/**
+ * S3 only exposes one or two LastModified timestamps per user; when min === max the user “exists” on a
+ * single UTC day and retention falls to 0. For retention view only, extend through rangeEnd (same idea as
+ * aggregate-only sessions) so the chart reflects presence in the selected window.
+ */
+function widenSingleInstantUserTouchesForRetention(
+  touchMap: UserTouchMap,
+  rangeStart: number,
+  rangeEnd: number
+): UserTouchMap {
+  const out = new Map<string, { authMs?: number; vavityMs?: number }>();
+  for (const [k, ut] of touchMap) {
+    const span = userSpanMs(ut);
+    if (!span) continue;
+    if (span.min === span.max) {
+      const t0 = Math.min(Math.max(span.min, rangeStart), rangeEnd);
+      out.set(k, { authMs: t0, vavityMs: rangeEnd });
+    } else {
+      out.set(k, { ...ut });
+    }
+  }
+  return out;
+}
+
+function cohortOnUtcDay(
+  metas: AnalyticsSessionMeta[],
+  touchMap: UserTouchMap,
+  segment: MetricsSegment,
+  dayKey: string
+): { cohortSessions: Set<string>; cohortUsers: Set<string> } {
+  const cohortSessions = new Set<string>();
+  const cohortUsers = new Set<string>();
+  if (segment !== 'signed_in') {
+    /* Same anonymous session set as “Unique”; signed-in activity is represented by S3 user keys only (avoids a dead signed-in session id in “All” cohort). */
+    const metaForSessions = filterMetas(metas, 'sessions');
+    for (const m of metaForSessions) {
+      if (sessionTouchesUtcDay(m.firstSeenAt, m.lastSeenAt, dayKey)) {
+        cohortSessions.add(m.sessionId);
+      }
+    }
+  }
+  if (segment !== 'sessions') {
+    for (const [ek, ut] of touchMap) {
+      if (userTouchesUtcDay(ut, dayKey)) cohortUsers.add(ek);
+    }
+  }
+  return { cohortSessions, cohortUsers };
+}
+
+function cohortOnUtcWeek(
+  metas: AnalyticsSessionMeta[],
+  touchMap: UserTouchMap,
+  segment: MetricsSegment,
+  w: { wStart: number; wEnd: number }
+): { cohortSessions: Set<string>; cohortUsers: Set<string> } {
+  const cohortSessions = new Set<string>();
+  const cohortUsers = new Set<string>();
+  if (segment !== 'signed_in') {
+    const metaForSessions = filterMetas(metas, 'sessions');
+    for (const m of metaForSessions) {
+      if (sessionOverlapsUtcRange(m, w.wStart, w.wEnd)) cohortSessions.add(m.sessionId);
+    }
+  }
+  if (segment !== 'sessions') {
+    for (const [ek, ut] of touchMap) {
+      const span = userSpanMs(ut);
+      if (span && span.max >= w.wStart && span.min <= w.wEnd) cohortUsers.add(ek);
+    }
+  }
+  return { cohortSessions, cohortUsers };
+}
+
+function cohortTotal(
+  segment: MetricsSegment,
+  cohortSessions: Set<string>,
+  cohortUsers: Set<string>
+): number {
+  if (segment === 'sessions') return cohortSessions.size;
+  if (segment === 'signed_in') return cohortUsers.size;
+  return cohortSessions.size + cohortUsers.size;
+}
+
+function applyS3OrphanBrowsingToWeeklySeries(
+  series: MetricsGrowthSeriesPoint[],
+  segment: MetricsSegment,
+  metas: AnalyticsSessionMeta[],
+  aggregates: SessionAggregateRow[],
+  rangeStart: number,
+  rangeEnd: number
+): MetricsGrowthSeriesPoint[] {
+  if (segment === 'signed_in' || !series.length) return series;
+  const metaById = new Map(metas.map((m) => [m.sessionId, m]));
+  const weeks = weekBucketsUtcSimple(rangeStart, rangeEnd);
+  const byLabel = new Map<string, Set<string>>();
+
+  for (const row of aggregates) {
+    if (metaById.has(row.sessionId)) continue;
+    if (!spanOverlapsRange(row.lastModifiedMs, row.lastModifiedMs, rangeStart, rangeEnd)) continue;
+    const wk = weeks.find((w) => row.lastModifiedMs >= w.wStart && row.lastModifiedMs <= w.wEnd);
+    if (!wk) continue;
+    let s = byLabel.get(wk.label);
+    if (!s) {
+      s = new Set();
+      byLabel.set(wk.label, s);
+    }
+    s.add(row.sessionId);
+  }
+
+  return series.map((p) => {
+    const n = byLabel.get(p.label)?.size ?? 0;
+    if (n === 0) return p;
+    const sessions = p.sessions + n;
+    return { ...p, sessions, combined: sessions + p.signedInUsers };
+  });
+}
+
 function countAauUsersS3(touchMap: UserTouchMap, rangeStart: number, rangeEnd: number): number {
   let n = 0;
   for (const [, ut] of touchMap) {
@@ -184,45 +401,16 @@ function countAauUsersS3(touchMap: UserTouchMap, rangeStart: number, rangeEnd: n
   return n;
 }
 
-function countStrictUsers(touchMap: UserTouchMap, rangeStart: number, rangeEnd: number, mode: 'dau' | 'wau' | 'mau'): number {
-  let n = 0;
-  for (const [, ut] of touchMap) {
-    if (strictUserSpanCovers(ut, rangeStart, rangeEnd, mode)) n += 1;
-  }
-  return n;
-}
-
-function countStrictSessions(metas: AnalyticsSessionMeta[], rangeStart: number, rangeEnd: number, mode: 'dau' | 'wau' | 'mau'): number {
-  let n = 0;
-  for (const m of metas) {
-    if (mode === 'dau' && strictSessionDau(m, rangeStart, rangeEnd)) n += 1;
-    else if (mode === 'wau' && strictSessionWau(m, rangeStart, rangeEnd)) n += 1;
-    else if (mode === 'mau' && strictSessionMau(m, rangeStart, rangeEnd)) n += 1;
-  }
-  return n;
-}
-
-function computeRangeBounds(
-  range: MetricsRange,
-  metas: AnalyticsSessionMeta[],
-  touchMap: UserTouchMap
-): { start: number; end: number } {
+function computeRangeBounds(range: MetricsRange): { start: number; end: number } {
   const end = Date.now();
-  if (range === '1w') return { start: end - 7 * DAY_MS, end };
-  if (range === '1m') return { start: end - 30 * DAY_MS, end };
-  if (range === '3m') return { start: end - 90 * DAY_MS, end };
-  if (range === '1y') return { start: end - 365 * DAY_MS, end };
+  if (range === '1w') return clampRangeToMetricsEpoch(end - 7 * DAY_MS, end);
+  if (range === '1m') return clampRangeToMetricsEpoch(end - 30 * DAY_MS, end);
+  if (range === '3m') return clampRangeToMetricsEpoch(end - 90 * DAY_MS, end);
+  if (range === '1y') return clampRangeToMetricsEpoch(end - 365 * DAY_MS, end);
 
-  let minT = end;
-  for (const m of metas) {
-    minT = Math.min(minT, m.firstSeenAt);
-  }
-  for (const [, ut] of touchMap) {
-    const span = userSpanMs(ut);
-    if (span) minT = Math.min(minT, span.min);
-  }
-  if (minT >= end) minT = end - DAY_MS;
-  return { start: minT, end };
+  // "All" = full metrics window from launch epoch through now — same x-axis origin as clamped 1W/1M/3M/1Y,
+  // not the first data timestamp (which made All start on e.g. Apr 6 while presets started Apr 2).
+  return clampRangeToMetricsEpoch(getMetricsEpochStartMs(), end);
 }
 
 function buildGrowthSeriesDaily(
@@ -249,7 +437,7 @@ function buildGrowthSeriesDaily(
     }
     let signedInUsers = 0;
     if (segment !== 'sessions') {
-      signedInUsers = countUsersActiveOnDay(touchMap, d);
+      signedInUsers = countUsersCumulativeThroughUtcDayEnd(touchMap, d);
     }
     const combined = sessions + signedInUsers;
     return { label: d, key: d, sessions, signedInUsers, combined };
@@ -280,10 +468,7 @@ function buildGrowthSeriesWeekly(
     }
     let signedInUsers = 0;
     if (segment !== 'sessions') {
-      for (const [, ut] of touchMap) {
-        const span = userSpanMs(ut);
-        if (span && span.max >= wStart && span.min <= wEnd) signedInUsers += 1;
-      }
+      signedInUsers = countUsersCumulativeThroughMs(touchMap, wEnd);
     }
     return { label, key: label, sessions, signedInUsers, combined: sessions + signedInUsers };
   });
@@ -295,7 +480,7 @@ function sumSeriesTail(series: MetricsGrowthSeriesPoint[], n: number, field: 'se
 }
 
 function pctChange(current: number, previous: number): number | null {
-  if (previous === 0) return current === 0 ? 0 : null;
+  if (previous === 0) return current === 0 ? 0 : 100;
   return ((current - previous) / previous) * 100;
 }
 
@@ -306,6 +491,24 @@ function computeWowMom(
 ): { wow: number | null; mom: number | null; yoy: number | null } {
   const field: 'sessions' | 'signedInUsers' | 'combined' =
     segment === 'sessions' ? 'sessions' : segment === 'signed_in' ? 'signedInUsers' : 'combined';
+
+  // Daily signed-in series is cumulative user count → compare level vs N days ago, not sums of daily DAU.
+  if (bucket === 'day' && segment === 'signed_in') {
+    const last = series.length - 1;
+    if (last < 0) return { wow: null, mom: null, yoy: null };
+    const cur = series[last].signedInUsers ?? 0;
+    if (last >= 7) {
+      const wow = pctChange(cur, series[last - 7].signedInUsers ?? 0);
+      const mom = last >= 30 ? pctChange(cur, series[last - 30].signedInUsers ?? 0) : null;
+      const yoy = last >= 365 ? pctChange(cur, series[last - 365].signedInUsers ?? 0) : null;
+      return { wow, mom, yoy };
+    }
+    if (last >= 1) {
+      const wow = pctChange(cur, series[0].signedInUsers ?? 0);
+      return { wow, mom: null, yoy: null };
+    }
+    return { wow: null, mom: null, yoy: null };
+  }
 
   if (bucket === 'day' && series.length >= 14) {
     const last7 = sumSeriesTail(series, 7, field);
@@ -318,6 +521,12 @@ function computeWowMom(
     const prev365 = sumSeriesTail(series.slice(0, -365), 365, field);
     const yoy = series.length >= 730 ? pctChange(last365, prev365) : null;
     return { wow, mom, yoy };
+  }
+  // Fewer than 14 days: compare last day vs first day in range (still shows launch → now movement).
+  if (bucket === 'day' && series.length >= 2 && series.length < 14) {
+    const first = series[0][field] ?? 0;
+    const last = series[series.length - 1][field] ?? 0;
+    return { wow: pctChange(last, first), mom: null, yoy: null };
   }
   if (bucket === 'week' && series.length >= 2) {
     const last = series[series.length - 1][field] || 0;
@@ -381,6 +590,113 @@ function userRetentionHalves(touchMap: UserTouchMap, rangeStart: number, rangeEn
   return { cohort: cohort.size, retained, rate };
 }
 
+/** % of entities active in [cStart,cEnd] who are also active in [nStart,nEnd] (inclusive UTC ranges). */
+function rollingBlockPairRate(
+  metas: AnalyticsSessionMeta[],
+  touchMap: UserTouchMap,
+  segment: MetricsSegment,
+  cStart: number,
+  cEnd: number,
+  nStart: number,
+  nEnd: number
+): number | null {
+  const metaById = new Map(metas.map((m) => [m.sessionId, m]));
+  const metaSessionsOnly = filterMetas(metas, 'sessions');
+
+  if (segment === 'sessions') {
+    const cohort = new Set<string>();
+    for (const m of metaSessionsOnly) {
+      if (sessionOverlapsUtcRange(m, cStart, cEnd)) cohort.add(m.sessionId);
+    }
+    if (cohort.size === 0) return null;
+    let ret = 0;
+    for (const sid of cohort) {
+      const m = metaById.get(sid);
+      if (m && sessionOverlapsUtcRange(m, nStart, nEnd)) ret += 1;
+    }
+    return (ret / cohort.size) * 100;
+  }
+
+  if (segment === 'signed_in') {
+    const cohort = new Set<string>();
+    for (const [ek, ut] of touchMap) {
+      if (userOverlapsUtcRange(ut, cStart, cEnd)) cohort.add(ek);
+    }
+    if (cohort.size === 0) return null;
+    let ret = 0;
+    for (const ek of cohort) {
+      const ut = touchMap.get(ek);
+      if (ut && userOverlapsUtcRange(ut, nStart, nEnd)) ret += 1;
+    }
+    return (ret / cohort.size) * 100;
+  }
+
+  const cohortS = new Set<string>();
+  for (const m of metaSessionsOnly) {
+    if (sessionOverlapsUtcRange(m, cStart, cEnd)) cohortS.add(m.sessionId);
+  }
+  const cohortU = new Set<string>();
+  for (const [ek, ut] of touchMap) {
+    if (userOverlapsUtcRange(ut, cStart, cEnd)) cohortU.add(ek);
+  }
+  const cohortN = cohortS.size + cohortU.size;
+  if (cohortN === 0) return null;
+  let retS = 0;
+  for (const sid of cohortS) {
+    const m = metaById.get(sid);
+    if (m && sessionOverlapsUtcRange(m, nStart, nEnd)) retS += 1;
+  }
+  let retU = 0;
+  for (const ek of cohortU) {
+    const ut = touchMap.get(ek);
+    if (ut && userOverlapsUtcRange(ut, nStart, nEnd)) retU += 1;
+  }
+  return ((retS + retU) / cohortN) * 100;
+}
+
+function rollingNdayBlockRetention(
+  metas: AnalyticsSessionMeta[],
+  touchMap: UserTouchMap,
+  segment: MetricsSegment,
+  anchorEndMs: number,
+  n: number
+): number | null {
+  const bEnd = endOfUtcDay(anchorEndMs);
+  const bStart = startOfUtcDay(anchorEndMs) - (n - 1) * DAY_MS;
+  const aEnd = bStart - 1;
+  const aStart = bStart - n * DAY_MS;
+  if (aStart < getMetricsEpochStartMs()) return null;
+  return rollingBlockPairRate(metas, touchMap, segment, aStart, aEnd, bStart, bEnd);
+}
+
+function clampRetentionRatePct(x: number | null): number | null {
+  if (x == null || Number.isNaN(x)) return null;
+  return Math.min(100, Math.max(0, x));
+}
+
+/**
+ * WoW/MoM/YoY for retention = rolling return rates in [0,100] (never relative % change of the chart curve).
+ * WoW: prior N days actives → latest N days; same for 30d / 365d. wowDeltaPct = WoW vs same metric anchored 7d earlier.
+ */
+function computeRollingRetentionKpis(
+  metas: AnalyticsSessionMeta[],
+  touchMap: UserTouchMap,
+  segment: MetricsSegment,
+  rangeEnd: number
+): { wowPct: number | null; momPct: number | null; yoyPct: number | null; wowDeltaPct: number | null } {
+  const wowRaw = rollingNdayBlockRetention(metas, touchMap, segment, rangeEnd, 7);
+  const wowPrevRaw = rollingNdayBlockRetention(metas, touchMap, segment, rangeEnd - 7 * DAY_MS, 7);
+  const momRaw = rollingNdayBlockRetention(metas, touchMap, segment, rangeEnd, 30);
+  const yoyRaw = rollingNdayBlockRetention(metas, touchMap, segment, rangeEnd, 365);
+  const wowDeltaRaw = wowRaw != null && wowPrevRaw != null ? wowRaw - wowPrevRaw : null;
+  return {
+    wowPct: clampRetentionRatePct(wowRaw),
+    momPct: clampRetentionRatePct(momRaw),
+    yoyPct: clampRetentionRatePct(yoyRaw),
+    wowDeltaPct: wowDeltaRaw == null || Number.isNaN(wowDeltaRaw) ? null : wowDeltaRaw,
+  };
+}
+
 function buildRetentionSeries(
   metas: AnalyticsSessionMeta[],
   touchMap: UserTouchMap,
@@ -391,18 +707,55 @@ function buildRetentionSeries(
 ): MetricsGrowthSeriesPoint[] {
   if (bucket === 'day') {
     const days = eachUtcDay(rangeStart, rangeEnd);
-    if (days.length < 2) return [];
-    const cohortSessions = new Set<string>();
-    const cohortUsers = new Set<string>();
-    const d0 = days[0];
-    for (const m of metas) {
-      if (sessionTouchesUtcDay(m.firstSeenAt, m.lastSeenAt, d0)) cohortSessions.add(m.sessionId);
-    }
-    for (const [ek, ut] of touchMap) {
-      if (userTouchesUtcDay(ut, d0)) cohortUsers.add(ek);
+    if (days.length === 0) return [];
+
+    let cohortSessions = new Set<string>();
+    let cohortUsers = new Set<string>();
+    let d0Idx = -1;
+    for (let i = 0; i < days.length; i += 1) {
+      const { cohortSessions: cs, cohortUsers: cu } = cohortOnUtcDay(
+        metas,
+        touchMap,
+        segment,
+        days[i]
+      );
+      if (cohortTotal(segment, cs, cu) > 0) {
+        d0Idx = i;
+        cohortSessions = cs;
+        cohortUsers = cu;
+        break;
+      }
     }
 
-    return days.map((d) => {
+    if (d0Idx < 0) {
+      return days.map((d) => ({
+        label: d,
+        key: d,
+        sessions: 0,
+        signedInUsers: 0,
+        combined: 0,
+        retentionPct: null,
+      }));
+    }
+
+    const cohortN =
+      segment === 'sessions'
+        ? cohortSessions.size
+        : segment === 'signed_in'
+          ? cohortUsers.size
+          : cohortSessions.size + cohortUsers.size;
+
+    return days.map((d, idx) => {
+      if (idx < d0Idx) {
+        return {
+          label: d,
+          key: d,
+          sessions: 0,
+          signedInUsers: 0,
+          combined: 0,
+          retentionPct: null,
+        };
+      }
       let sessRet = 0;
       for (const sid of cohortSessions) {
         const m = metas.find((x) => x.sessionId === sid);
@@ -413,15 +766,9 @@ function buildRetentionSeries(
         const ut = touchMap.get(ek);
         if (ut && userTouchesUtcDay(ut, d)) userRet += 1;
       }
-      const cohortN =
-        segment === 'sessions'
-          ? cohortSessions.size
-          : segment === 'signed_in'
-            ? cohortUsers.size
-            : cohortSessions.size + cohortUsers.size;
       const retN =
         segment === 'sessions' ? sessRet : segment === 'signed_in' ? userRet : sessRet + userRet;
-      const retentionPct = cohortN === 0 ? null : (retN / cohortN) * 100;
+      const retentionPct = clampRetentionRatePct(cohortN === 0 ? null : (retN / cohortN) * 100);
       return {
         label: d,
         key: d,
@@ -434,23 +781,54 @@ function buildRetentionSeries(
   }
 
   const weeks = weekBucketsUtcSimple(rangeStart, rangeEnd);
-  if (weeks.length < 2) return [];
-  const w0 = weeks[0];
-  const cohortSessions = new Set<string>();
-  const cohortUsers = new Set<string>();
-  for (const m of metas) {
-    if (m.lastSeenAt >= w0.wStart && m.firstSeenAt <= w0.wEnd) cohortSessions.add(m.sessionId);
-  }
-  for (const [ek, ut] of touchMap) {
-    const span = userSpanMs(ut);
-    if (span && span.max >= w0.wStart && span.min <= w0.wEnd) cohortUsers.add(ek);
+  if (weeks.length === 0) return [];
+
+  let cohortSessions = new Set<string>();
+  let cohortUsers = new Set<string>();
+  let w0Idx = -1;
+  for (let i = 0; i < weeks.length; i += 1) {
+    const { cohortSessions: cs, cohortUsers: cu } = cohortOnUtcWeek(metas, touchMap, segment, weeks[i]);
+    if (cohortTotal(segment, cs, cu) > 0) {
+      w0Idx = i;
+      cohortSessions = cs;
+      cohortUsers = cu;
+      break;
+    }
   }
 
-  return weeks.map(({ label, wStart, wEnd }) => {
+  if (w0Idx < 0) {
+    return weeks.map(({ label, wStart, wEnd }) => ({
+      label,
+      key: label,
+      sessions: 0,
+      signedInUsers: 0,
+      combined: 0,
+      retentionPct: null,
+    }));
+  }
+
+  const cohortN =
+    segment === 'sessions'
+      ? cohortSessions.size
+      : segment === 'signed_in'
+        ? cohortUsers.size
+        : cohortSessions.size + cohortUsers.size;
+
+  return weeks.map(({ label, wStart, wEnd }, idx) => {
+    if (idx < w0Idx) {
+      return {
+        label,
+        key: label,
+        sessions: 0,
+        signedInUsers: 0,
+        combined: 0,
+        retentionPct: null,
+      };
+    }
     let sessRet = 0;
     for (const sid of cohortSessions) {
       const m = metas.find((x) => x.sessionId === sid);
-      if (m && m.lastSeenAt >= wStart && m.firstSeenAt <= wEnd) sessRet += 1;
+      if (m && sessionOverlapsUtcRange(m, wStart, wEnd)) sessRet += 1;
     }
     let userRet = 0;
     for (const ek of cohortUsers) {
@@ -458,21 +836,52 @@ function buildRetentionSeries(
       const span = ut ? userSpanMs(ut) : null;
       if (span && span.max >= wStart && span.min <= wEnd) userRet += 1;
     }
-    const cohortN =
-      segment === 'sessions'
-        ? cohortSessions.size
-        : segment === 'signed_in'
-          ? cohortUsers.size
-          : cohortSessions.size + cohortUsers.size;
     const retN =
       segment === 'sessions' ? sessRet : segment === 'signed_in' ? userRet : sessRet + userRet;
-    const retentionPct = cohortN === 0 ? null : (retN / cohortN) * 100;
+    const retentionPct = clampRetentionRatePct(cohortN === 0 ? null : (retN / cohortN) * 100);
     return {
       label,
       key: label,
       sessions: sessRet,
       signedInUsers: userRet,
       combined: retN,
+      retentionPct,
+    };
+  });
+}
+
+function averageNullableRates(a: number | null, b: number | null): number | null {
+  if (a != null && b != null) return (a + b) / 2;
+  if (a != null) return a;
+  if (b != null) return b;
+  return null;
+}
+
+/** Retention “all” = arithmetic mean of Unique (sessions) and Signed-up series per bucket. */
+function mergeRetentionAllAsAverageOfSegments(
+  sess: MetricsGrowthSeriesPoint[],
+  signed: MetricsGrowthSeriesPoint[]
+): MetricsGrowthSeriesPoint[] {
+  if (sess.length !== signed.length || sess.length === 0) return sess;
+  return sess.map((p, i) => {
+    const q = signed[i];
+    const rawPct = averageNullableRates(
+      p.retentionPct == null || Number.isNaN(p.retentionPct) ? null : p.retentionPct,
+      q.retentionPct == null || Number.isNaN(q.retentionPct) ? null : q.retentionPct
+    );
+    const retentionPct = rawPct == null ? null : clampRetentionRatePct(rawPct);
+    const cA = p.retentionPct == null ? null : p.combined;
+    const cB = q.retentionPct == null ? null : q.combined;
+    let combined = 0;
+    if (cA != null && cB != null) combined = (cA + cB) / 2;
+    else if (cA != null) combined = cA;
+    else if (cB != null) combined = cB;
+    return {
+      label: p.label,
+      key: p.key,
+      sessions: p.sessions,
+      signedInUsers: q.signedInUsers,
+      combined,
       retentionPct,
     };
   });
@@ -486,24 +895,38 @@ export async function buildGrowthPayload(
   view: MetricsView
 ): Promise<MetricsGrowthResponse> {
   const notes: string[] = [
-    'Sessions use analytics/session-meta (firstSeenAt–lastSeenAt). “Signed up” S3 users are only users/*/Auth.json with verified: true; activity span still uses Auth + VavityAggregate LastModified (not per-event logs).',
-    'When segment is “all”, combined = sessions + S3 users and may double-count the same person.',
-    'Strict DAU/WAU/MAU require the activity span to cover every day/week/month in the selected range.',
+    'Unique (anonymous session) counts use analytics/session-meta when present; otherwise sessions/{id}/VavityAggregate.json (S3 LastModified for range + chart day). Enable NEXT_PUBLIC_ANALYTICS_ENABLED=1 for full session-meta.',
+    '“Signed up” S3 users are users/*/Auth.json with verified: true; activity span uses Auth + VavityAggregate LastModified.',
+    'When segment is “all”, each retention % is the average of the Unique and Signed-up retention series for that bucket; WoW/MoM/YoY retention are averages of those segment KPIs. Headline “Users” may still double-count the same person vs segment totals.',
+    'Retention uses the same UTC day/week bucket list as growth. Cohort = who was active on the first bucket in that list that has any activity (leading quiet buckets show null retention). Each later point is % of that cohort still active in that bucket. S3-only sessions use span through range end; LastModified after the window is treated as active across the window. Verified users with a single S3 timestamp are stretched to range end for retention only. Headline % = last chart point with defined retention.',
+    'WoW/MoM/YoY retention KPIs use rolling 7 / 30 / 365 UTC-day windows (earlier block → following block). Growth KPIs use week/month/year-over-week on the chart series. Session activity uses firstSeen–lastSeen (includes heartbeats).',
   ];
 
-  const [metasAll, touchMap, registeredSessionKeys] = await Promise.all([
+  const [metasAll, touchMap, registeredSessionKeys, sessionAggregates] = await Promise.all([
     loadAllSessionMetasFromS3(s3, bucket),
     listUserS3Touches(s3, bucket),
     countSessionAggregateKeys(s3, bucket),
+    listSessionAggregatesFromS3(s3, bucket),
   ]);
 
   const registeredUserKeys = touchMap.size;
   const registeredCombined = registeredUserKeys + registeredSessionKeys;
 
-  const { start: rangeStart, end: rangeEnd } = computeRangeBounds(range, metasAll, touchMap);
+  const { start: rangeStart, end: rangeEnd } = computeRangeBounds(range);
+  const metasForRetention = mergeSessionMetasWithAggregateFallback(
+    metasAll,
+    sessionAggregates,
+    rangeStart,
+    rangeEnd
+  );
 
-  const aauSessionsAnonymous = countAauSessionsAnalytic(metasAll, rangeStart, rangeEnd, 'sessions');
-  const aauSessionsAny = countAauSessionsAnalytic(metasAll, rangeStart, rangeEnd, 'all');
+  const touchMapForRetention =
+    view === 'retention'
+      ? widenSingleInstantUserTouchesForRetention(touchMap, rangeStart, rangeEnd)
+      : touchMap;
+
+  const aauSessionsAnonymous = countAnonymousBrowsingInRange(metasAll, sessionAggregates, rangeStart, rangeEnd);
+  const aauSessionsAny = countAllSessionsInRangeWithS3Orphans(metasAll, sessionAggregates, rangeStart, rangeEnd);
   const aauSignedInSessions = countAauSessionsAnalytic(metasAll, rangeStart, rangeEnd, 'signed_in');
   const aauUsers = countAauUsersS3(touchMap, rangeStart, rangeEnd);
   const aauCombined = aauSessionsAny + aauUsers;
@@ -511,36 +934,108 @@ export async function buildGrowthPayload(
   const useWeekBuckets = spanDays > 120;
   const bucketType: 'day' | 'week' = useWeekBuckets ? 'week' : 'day';
 
-  const metasForStrictSessions = filterMetas(metasAll, segment === 'all' ? 'all' : segment);
-
   let series: MetricsGrowthSeriesPoint[];
   if (view === 'retention') {
-    series = buildRetentionSeries(metasAll, touchMap, segment, rangeStart, rangeEnd, bucketType);
+    if (segment === 'all') {
+      const sSeries = buildRetentionSeries(
+        metasForRetention,
+        touchMapForRetention,
+        'sessions',
+        rangeStart,
+        rangeEnd,
+        bucketType
+      );
+      const uSeries = buildRetentionSeries(
+        metasForRetention,
+        touchMapForRetention,
+        'signed_in',
+        rangeStart,
+        rangeEnd,
+        bucketType
+      );
+      series = mergeRetentionAllAsAverageOfSegments(sSeries, uSeries);
+    } else {
+      series = buildRetentionSeries(
+        metasForRetention,
+        touchMapForRetention,
+        segment,
+        rangeStart,
+        rangeEnd,
+        bucketType
+      );
+    }
   } else if (bucketType === 'week') {
     series = buildGrowthSeriesWeekly(metasAll, touchMap, segment, rangeStart, rangeEnd);
+    series = applyS3OrphanBrowsingToWeeklySeries(
+      series,
+      segment,
+      metasAll,
+      sessionAggregates,
+      rangeStart,
+      rangeEnd
+    );
   } else {
     series = buildGrowthSeriesDaily(metasAll, touchMap, segment, rangeStart, rangeEnd);
+    series = applyS3OrphanBrowsingToDailySeries(
+      series,
+      segment,
+      metasAll,
+      sessionAggregates,
+      rangeStart,
+      rangeEnd
+    );
   }
 
-  const { wow, mom, yoy } = computeWowMom(series, bucketType, segment);
+  let wow: number | null = null;
+  let mom: number | null = null;
+  let yoy: number | null = null;
+  let wowDeltaPct: number | null = null;
 
-  const strictSessionDau = countStrictSessions(metasForStrictSessions, rangeStart, rangeEnd, 'dau');
-  const strictSessionWau = countStrictSessions(metasForStrictSessions, rangeStart, rangeEnd, 'wau');
-  const strictSessionMau = countStrictSessions(metasForStrictSessions, rangeStart, rangeEnd, 'mau');
-
-  const strictUserDau =
-    segment === 'sessions' ? 0 : countStrictUsers(touchMap, rangeStart, rangeEnd, 'dau');
-  const strictUserWau =
-    segment === 'sessions' ? 0 : countStrictUsers(touchMap, rangeStart, rangeEnd, 'wau');
-  const strictUserMau =
-    segment === 'sessions' ? 0 : countStrictUsers(touchMap, rangeStart, rangeEnd, 'mau');
+  if (view === 'retention') {
+    if (segment === 'all') {
+      const rS = computeRollingRetentionKpis(
+        metasForRetention,
+        touchMapForRetention,
+        'sessions',
+        rangeEnd
+      );
+      const rU = computeRollingRetentionKpis(
+        metasForRetention,
+        touchMapForRetention,
+        'signed_in',
+        rangeEnd
+      );
+      wow = clampRetentionRatePct(averageNullableRates(rS.wowPct, rU.wowPct));
+      mom = clampRetentionRatePct(averageNullableRates(rS.momPct, rU.momPct));
+      yoy = clampRetentionRatePct(averageNullableRates(rS.yoyPct, rU.yoyPct));
+      wowDeltaPct = averageNullableRates(rS.wowDeltaPct, rU.wowDeltaPct);
+    } else {
+      const r = computeRollingRetentionKpis(
+        metasForRetention,
+        touchMapForRetention,
+        segment,
+        rangeEnd
+      );
+      wow = r.wowPct;
+      mom = r.momPct;
+      yoy = r.yoyPct;
+      wowDeltaPct = r.wowDeltaPct;
+    }
+  } else {
+    const r = computeWowMom(series, bucketType, segment);
+    wow = r.wow;
+    mom = r.mom;
+    yoy = r.yoy;
+  }
 
   const sr = sessionRetentionHalves(
-    segment === 'signed_in' ? metasAll.filter((m) => m.userHash) : segment === 'sessions' ? filterMetas(metasAll, 'sessions') : metasAll,
+    segment === 'signed_in'
+      ? metasForRetention.filter((m) => m.userHash)
+      : filterMetas(metasForRetention, 'sessions'),
     rangeStart,
     rangeEnd
   );
-  const ur = userRetentionHalves(touchMap, rangeStart, rangeEnd);
+  const ur = userRetentionHalves(touchMapForRetention, rangeStart, rangeEnd);
 
   let retentionCohortSize = 0;
   let retentionRetained = 0;
@@ -554,22 +1049,39 @@ export async function buildGrowthPayload(
     retentionRetained = ur.retained;
     retentionRatePct = ur.rate;
   } else {
-    retentionCohortSize = sr.cohort + ur.cohort;
-    retentionRetained = sr.retained + ur.retained;
-    retentionRatePct =
-      retentionCohortSize === 0 ? null : (retentionRetained / retentionCohortSize) * 100;
+    retentionCohortSize = Math.round((sr.cohort + ur.cohort) / 2);
+    retentionRetained = Math.round((sr.retained + ur.retained) / 2);
+    retentionRatePct = clampRetentionRatePct(averageNullableRates(sr.rate, ur.rate));
+  }
+
+  if (view === 'retention' && series.length > 0) {
+    let firstIdx = -1;
+    for (let i = 0; i < series.length; i += 1) {
+      if (series[i].retentionPct != null) {
+        firstIdx = i;
+        break;
+      }
+    }
+    let lastIdx = series.length - 1;
+    while (lastIdx >= 0 && series[lastIdx].retentionPct == null) lastIdx -= 1;
+    if (firstIdx >= 0 && lastIdx >= firstIdx) {
+      const anchor = series[firstIdx];
+      const endPt = series[lastIdx];
+      retentionCohortSize = anchor.combined;
+      retentionRetained = endPt.combined;
+      retentionRatePct = endPt.retentionPct ?? null;
+    }
+  }
+
+  if (view === 'retention') {
+    retentionRatePct = clampRetentionRatePct(retentionRatePct);
   }
 
   const kpis: MetricsGrowthKpis = {
     wowPct: wow,
+    wowDeltaPct,
     momPct: mom,
     yoyPct: yoy,
-    strictSessionDau,
-    strictSessionWau,
-    strictSessionMau,
-    strictUserDau,
-    strictUserWau,
-    strictUserMau,
     retentionCohortSize,
     retentionRetained,
     retentionRatePct,
@@ -577,7 +1089,22 @@ export async function buildGrowthPayload(
 
   let growthLabel: MetricsHeadlines['growthLabel'] = null;
   let growthPct: number | null = null;
-  if (wow != null) {
+  if (view === 'retention') {
+    if (wow != null) {
+      growthLabel = 'WoW';
+      growthPct = wow;
+    } else if (mom != null) {
+      growthLabel = 'MoM';
+      growthPct = mom;
+    } else if (yoy != null) {
+      growthLabel = 'YoY';
+      growthPct = yoy;
+    } else if (retentionRatePct != null) {
+      growthPct = retentionRatePct;
+    } else {
+      growthPct = 0;
+    }
+  } else if (wow != null) {
     growthLabel = 'WoW';
     growthPct = wow;
   } else if (mom != null) {
@@ -586,6 +1113,8 @@ export async function buildGrowthPayload(
   } else if (yoy != null) {
     growthLabel = 'YoY';
     growthPct = yoy;
+  } else {
+    growthPct = 0;
   }
 
   const headlines: MetricsHeadlines = {

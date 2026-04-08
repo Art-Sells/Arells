@@ -6766,10 +6766,79 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	font-size: 12px;
 }
 
+.metrics-activity-section {
+	width: 100%;
+}
+
+.metrics-page-activity-intro {
+	font-size: 12px;
+	line-height: 1.45;
+	margin: 0 0 12px;
+	max-width: 720px;
+}
+
+.metrics-page-activity-intro code {
+	font-size: 11px;
+}
+
+.metrics-page-activity-kpis {
+	margin-top: 4px;
+}
+
 .metrics-growth-panel {
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
+}
+
+.metrics-growth-outer {
+	width: 100%;
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+.metrics-growth-outer-column {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 12px;
+	box-sizing: border-box;
+}
+
+.metrics-growth-tier {
+	width: 100%;
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+.metrics-growth-tier-inner {
+	padding: 14px 12px 16px;
+	box-sizing: border-box;
+}
+
+.metrics-kpi-grid--two {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Auth/metrics shell is not .asset-page; without this, .asset-mount-fade-2s stays opacity:0 */
+.metrics-growth-panel .asset-mount-fade-2s {
+	opacity: 1;
+}
+
+/* Same tone as .metrics-toolbar-label (Timeframe / Users) — words, +/−, %; digits use .metrics-growth-pct-body or .metrics-kpi-value-num */
+.metrics-growth-panel .metrics-growth-toolbar-tone {
+	color: rgba(15, 23, 42, 0.45);
+}
+
+.metrics-growth-panel .metrics-growth-pct-body {
+	color: rgba(15, 23, 42, 0.9);
+}
+
+.metrics-price-panel-inner .asset-metric-row {
+	border: none;
+	box-shadow: none;
+	padding-bottom: 0;
+	margin: 0;
 }
 
 .metrics-toolbar {
@@ -6865,7 +6934,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	width: min(260px, 100%);
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 4px;
 	padding: 8px 0 4px;
 	box-sizing: border-box;
 }
@@ -6892,10 +6961,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	gap: 10px;
 }
 
-.metrics-kpi-grid--strict {
-	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-}
-
 .metrics-kpi-card {
 	padding: 12px 10px;
 	border-radius: 12px;
@@ -6909,7 +6974,15 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	color: rgba(15, 23, 42, 0.45);
-	margin-bottom: 4px;
+	margin-bottom: 2px;
+}
+
+.metrics-kpi-sublabel {
+	font-size: 9px;
+	font-weight: 600;
+	line-height: 1.25;
+	color: rgba(15, 23, 42, 0.38);
+	margin-bottom: 6px;
 }
 
 .metrics-kpi-value {

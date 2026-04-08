@@ -1,4 +1,5 @@
 import type { AnalyticsBeaconType, AnalyticsSessionMeta } from './types';
+import { normalizeAnalyticsPath } from './pathUtils';
 
 const MAX_PATHS = 30;
 
@@ -19,6 +20,30 @@ export function mergeSessionMeta(
   if (type === 'pageview') pageviewCount += 1;
 
   const paths = [...(prev?.paths ?? [])];
+  let pageMountDayKeys = [...(prev?.pageMountDayKeys ?? [])];
+  let pathMountDayKeys: Record<string, string[]> | undefined =
+    prev?.pathMountDayKeys && Object.keys(prev.pathMountDayKeys).length
+      ? { ...prev.pathMountDayKeys }
+      : undefined;
+
+  if (type === 'open' || type === 'pageview') {
+    const dayKey = new Date(now).toISOString().slice(0, 10);
+    if (!pageMountDayKeys.includes(dayKey)) {
+      pageMountDayKeys.push(dayKey);
+      if (pageMountDayKeys.length > 400) pageMountDayKeys = pageMountDayKeys.slice(-400);
+    }
+    const norm = normalizeAnalyticsPath(path);
+    if (norm) {
+      const next = pathMountDayKeys ? { ...pathMountDayKeys } : {};
+      const arr = [...(next[norm] ?? [])];
+      if (!arr.includes(dayKey)) {
+        arr.push(dayKey);
+        if (arr.length > 400) arr.splice(0, arr.length - 400);
+        next[norm] = arr;
+      }
+      pathMountDayKeys = Object.keys(next).length ? next : undefined;
+    }
+  }
   if (type === 'pageview' && path) {
     if (paths[paths.length - 1] !== path) {
       paths.push(path);
@@ -41,6 +66,8 @@ export function mergeSessionMeta(
     heartbeatCount,
     pageviewCount,
     paths,
+    pageMountDayKeys: pageMountDayKeys.length ? pageMountDayKeys : undefined,
+    pathMountDayKeys,
     userHash: userHash ?? prev?.userHash ?? null,
     lastPath: path ?? prev?.lastPath,
   };

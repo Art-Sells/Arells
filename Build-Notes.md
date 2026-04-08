@@ -7,10 +7,11 @@
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 ### Metrics
-- Build own metrics page to test for humans/bots that gets session/user-email from arellsusers/users or arellsusers/sessions
-- - (current) session creations (browswer/unique IP addresses), retention graph....
-- - UniqueUsers/SessionDurations (more than 5 seconds = human)
-- - save/update .json info every second to ext Dsk (then every day save/update cold)
+- add about at the bottom and home page icon between title
+- Build meta page banner with the title looking lik this:
+arells 
+     Growth (A) Metrics
+     (A) button takes us to home page
 
 ### enviroments
 - Add to Amplify
@@ -28,28 +29,28 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
+- Remove console.logs (leave conosle.errors/warns) from all files...
+- Delete Arells Readme roadmap
+- *Deploy to main and Test Entire structure with DMs and private public links on twitter/etc*
 - - In metrics:  
 - - Users
 - - - (current) number of sessions (unique users?) created/interacted/etc
 - - - Growth chart
 - - - MAU Chart
 - - - Retention chart
-- Deploy to main
 - - Google Search Console: submit https://arells.com/sitemap.xml, then use URL inspection on /, /signin, /signup after deploy.
 
 #### Update Links/Images/Descriptions
 - Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If investments never lost value
 
-### After Launch
-- - Review notes on phone
+### Launch
+- Review notes on phone and launch
 
 ### Day After Launch:
-- Delete Arells Readme roadmap
-- Remove console.logs from all files...
-- Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
 - check (sign in with google) https://console.cloud.google.com/auth/scopes?authuser=2&chat=true&project=arells-492319&supportedpurview=project 
 - - info@arells.com
 - Prepare to launch new assets (components/api-pointers/css-styles (match similar colors (make sure you're 1-2 points out of the hex, not exact colors)))basically and duplicate and change asset names and colors...
+- Contine resolving Metrics Page UI
 - Contact CSC (TAX)
 
 ## 2 days after launch
