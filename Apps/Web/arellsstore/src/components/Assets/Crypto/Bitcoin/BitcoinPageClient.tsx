@@ -9,9 +9,6 @@ import { useUser } from '../../../../context/UserContext';
 const BitcoinPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
-  const [sessionClearPending, setSessionClearPending] = useState(false);
-  const [clearCheckInFlight, setClearCheckInFlight] = useState(false);
-  const [loaderScheduleKey, setLoaderScheduleKey] = useState(0);
   const [sessionResetActive, setSessionResetActive] = useState(false);
   const [sessionResetFade, setSessionResetFade] = useState(false);
   const [sessionResetKey, setSessionResetKey] = useState(0);
@@ -20,7 +17,6 @@ const BitcoinPageClient: React.FC = () => {
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
   const sessionResetTimersRef = useRef<number[]>([]);
-  const loaderHideAtRef = useRef<number | null>(null);
   const forceSessionResetPreview = false;
   const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;
   const showSessionResetFade = sessionResetFade && !forceSessionResetPreview;
@@ -126,78 +122,14 @@ const BitcoinPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loaderHideAtRef.current = Date.now() + 2000;
-    setLoaderScheduleKey((prev) => prev + 1);
-  }, []);
-
-
-  useEffect(() => {
-    if (!showLoading || sessionClearPending || clearCheckInFlight) return;
-    const hideAt = loaderHideAtRef.current ?? Date.now() + 2000;
-    const remaining = Math.max(0, hideAt - Date.now());
-    const fadeDelayMs = Math.max(0, remaining - 1000);
-    const fadeTimer = fadeOut ? null : setTimeout(() => setFadeOut(true), fadeDelayMs);
+    const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
     const hideTimer = setTimeout(() => {
       setLoading(false);
       setFadeOut(false);
-    }, remaining);
-
+    }, 2000);
     return () => {
-      if (fadeTimer) clearTimeout(fadeTimer);
+      clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
-    };
-  }, [fadeOut, showLoading, sessionClearPending, clearCheckInFlight, loaderScheduleKey]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const pending = Boolean((window as any).__vavitySessionClearingPending);
-    if (pending) {
-      setSessionClearPending(true);
-      setFadeOut(false);
-      setLoading(true);
-    }
-    const pendingHandler = () => {
-      setSessionClearPending(true);
-      setFadeOut(false);
-      setLoading(true);
-    };
-    const readyHandler = (event: Event) => {
-      const detail = (event as CustomEvent).detail as { holdMs?: number; pendingAt?: number } | undefined;
-      const holdMs = detail?.holdMs ?? 2000;
-      const remaining = Math.max(0, holdMs);
-      const nextHideAt = Date.now() + remaining;
-      loaderHideAtRef.current = loaderHideAtRef.current
-        ? Math.max(loaderHideAtRef.current, nextHideAt)
-        : nextHideAt;
-      setSessionClearPending(false);
-      setFadeOut(false);
-      setLoading(true);
-      setLoaderScheduleKey((prev) => prev + 1);
-    };
-    const checkStartHandler = () => {
-      setClearCheckInFlight(true);
-      if (!loaderHideAtRef.current) {
-        loaderHideAtRef.current = Date.now() + 2000;
-      }
-      setFadeOut(false);
-      setLoading(true);
-    };
-    const checkEndHandler = (event: Event) => {
-      const detail = (event as CustomEvent).detail as { hasInvestments?: boolean } | undefined;
-      setClearCheckInFlight(false);
-      if (detail?.hasInvestments === false) {
-        setLoaderScheduleKey((prev) => prev + 1);
-      }
-    };
-    window.addEventListener('vavity:session-clearing-pending', pendingHandler as EventListener);
-    window.addEventListener('vavity:session-clearing-ready', readyHandler as EventListener);
-    window.addEventListener('vavity:session-clear-check-start', checkStartHandler as EventListener);
-    window.addEventListener('vavity:session-clear-check-end', checkEndHandler as EventListener);
-    return () => {
-      window.removeEventListener('vavity:session-clearing-pending', pendingHandler as EventListener);
-      window.removeEventListener('vavity:session-clearing-ready', readyHandler as EventListener);
-      window.removeEventListener('vavity:session-clear-check-start', checkStartHandler as EventListener);
-      window.removeEventListener('vavity:session-clear-check-end', checkEndHandler as EventListener);
     };
   }, []);
 

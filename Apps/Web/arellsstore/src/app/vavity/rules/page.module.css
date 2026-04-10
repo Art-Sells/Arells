@@ -46,6 +46,16 @@
   z-index: 1;
 }
 
+/* Foreground only: main background (::before/::after + #000) stays full opacity */
+.contentMountFade {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.contentMountFadeVisible {
+  opacity: 1;
+}
+
 .contentWrapper {
   padding: 0;
   margin-bottom: 0;
@@ -296,76 +306,4 @@ h2.sectionTitle.longTitle {
 .githubIconLink:active {
   outline: none;
   border: 1px solid #404040;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-width: 370px;
-  height: 100%;
-  background-color: #000000;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  z-index: 9999;
-  padding-top: 300px;
-  opacity: 1;
-  transition: opacity 1s ease-in-out;
-}
-
-.modalClosing {
-  opacity: 0;
-}
-
-@media (max-height: 600px) {
-  .modal {
-    padding-top: 80px;
-  }
-}
-
-.modalContent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 60px;
-}
-
-.modalIcon {
-  width: 40px !important;
-  height: auto !important;
-  opacity: 0;
-  animation: fadeInIcon 0.5s ease-in-out forwards;
-}
-
-.modalIconClosing {
-  animation: fadeOutIcon 0.5s ease-in-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInIcon {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOutIcon {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
 }

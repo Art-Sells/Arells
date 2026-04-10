@@ -6,9 +6,7 @@ import { useEffect, useState } from 'react'
 import styles from './page.module.css'
 
 export default function Rules() {
-  const [showModal, setShowModal] = useState(true)
-  const [isClosing, setIsClosing] = useState(false)
-  const [iconClosing, setIconClosing] = useState(false)
+  const [contentFadeIn, setContentFadeIn] = useState(false)
 
   useEffect(() => {
     const bg = '#000000';
@@ -34,41 +32,25 @@ export default function Rules() {
   }, [])
 
   useEffect(() => {
-    const iconFadeOutTimer = setTimeout(() => {
-      setIconClosing(true)
-    }, 500)
-
-    const fadeOutTimer = setTimeout(() => {
-      setIsClosing(true)
-    }, 1000)
-
-    const closeTimer = setTimeout(() => {
-      setShowModal(false)
-    }, 2000)
-
+    let cancelled = false
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!cancelled) setContentFadeIn(true)
+      })
+    })
     return () => {
-      clearTimeout(iconFadeOutTimer)
-      clearTimeout(fadeOutTimer)
-      clearTimeout(closeTimer)
+      cancelled = true
+      cancelAnimationFrame(id)
     }
   }, [])
 
   return (
     <main className={styles.main}>
-      {showModal && (
-        <div className={`${styles.modal} ${isClosing ? styles.modalClosing : ''}`}>
-          <div className={styles.modalContent}>
-            <Image
-              src="/images/vavity/Vavity-Icon-Ivory.png"
-              alt="Vavity Icon"
-              width={40}
-              height={40}
-              className={`${styles.modalIcon} ${iconClosing ? styles.modalIconClosing : ''}`}
-            />
-          </div>
-        </div>
-      )}
-      <div className={styles.container}>
+      <div
+        className={`${styles.container} ${styles.contentMountFade}${
+          contentFadeIn ? ` ${styles.contentMountFadeVisible}` : ''
+        }`}
+      >
         <div className={styles.backLinkWrapper}>
           <Link href="/vavity" className={styles.backLink}>
             <Image

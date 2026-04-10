@@ -1106,7 +1106,6 @@ body {
 /* Top asset section (title+slogan + price/controls + chart) fixed sizing */
 .asset-page-content > .asset-header-panel {
 	width: 665px;
-	min-height: 600px;
 	height: auto;
 	margin-left: auto;
 	margin-right: auto;
@@ -6760,6 +6759,36 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	background: var(--page-accent-tint);
 }
 
+/* Centered floating watermark (does not tint page background) */
+.growth-metrics-under-construction-float {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100;
+	pointer-events: none;
+}
+
+.growth-metrics-under-construction-inner {
+	margin: 0;
+	padding: 0;
+	font-size: 15px;
+	font-weight: 200;
+	letter-spacing: -0.4px;
+	line-height: 1.2;
+	text-align: center;
+	white-space: nowrap;
+	opacity: 1;
+	/* Same source as .growth-metrics-title-bar / home button: :root myInvAccentCycle */
+	color: var(--myinv-accent-color);
+}
+
+.growth-metrics-under-construction-word {
+	display: inline-block;
+	color: inherit;
+}
+
 .growth-metrics-page__stack {
 	display: flex;
 	flex-direction: column;
@@ -6893,13 +6922,13 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	display: block;
 }
 
-/* Match .asset-page-content main column width (not 920px). */
+/* Match .asset-page-content main column width (not 920px). Horizontal inset lives on .growth-metrics-card-inner only so it lines up with the outline (avoids “heavier” left visual from stacked padding + abspos layers). */
 .growth-metrics-card-wrap {
 	width: min(700px, calc(100% - 20px));
 	max-width: min(700px, calc(100% - 20px));
 	min-width: 350px;
 	margin: 0 auto;
-	padding: 1px 20px 24px;
+	padding: 1px 0 24px;
 	box-sizing: border-box;
 	border-radius: 12px;
 	background: transparent;
@@ -6935,11 +6964,41 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	z-index: 1;
 }
 
+/* Measured max-height slide (same idea as .myinv-slide / .asset-slide-panel on my-investments). */
+.growth-metrics-card-slide {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.home-assets-card-slide {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.home-assets-slide-inner {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* Bitcoin/Ethereum only: measured slide for price / range / chart (see useAssetPriceChartMountSlide). */
+.asset-asset-price-chart-mount-slide {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.asset-asset-price-chart-mount-slide-inner {
+	width: 100%;
+	box-sizing: border-box;
+}
+
 .growth-metrics-card-inner {
 	width: 100%;
+	max-width: 100%;
 	margin: 0;
-	padding: 0 12px 18px;
+	padding: 0 32px 18px;
 	position: relative;
+	box-sizing: border-box;
+	overflow-x: hidden;
 }
 
 .growth-metrics-card-content {
@@ -7044,7 +7103,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	flex-direction: column;
 	gap: 20px;
 	width: 100%;
+	max-width: 100%;
 	text-align: left;
+	box-sizing: border-box;
 }
 
 /* Fill metrics card inner; outer card already matches .asset-page-content width. */
@@ -7056,11 +7117,58 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	box-sizing: border-box;
 }
 
+/* Outer growth frame: equal padding on all sides (inside the border) so content sits centered in the card. */
+.growth-metrics-panels .metrics-growth-outer.myinv-summary-block {
+	padding: 12px;
+	box-sizing: border-box;
+}
+
+.growth-metrics-panels .metrics-growth-outer-column {
+	padding-left: 0;
+	padding-right: 0;
+	min-width: 0;
+}
+
+.growth-metrics-panels .metrics-growth-tier.myinv-summary-block,
+.growth-metrics-panels .metrics-growth-toolbar-wrap.myinv-summary-block {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.growth-metrics-panels .metrics-growth-tier-inner {
+	padding: 12px;
+	min-width: 0;
+	box-sizing: border-box;
+}
+
 @media (max-width: 750px) {
+	/* Match asset page main column / header panel width (see .asset-header-panel 340px, .myinv-shell min(340px, …)). */
+	.growth-metrics-card-wrap {
+		width: min(340px, calc(100% - 20px));
+		max-width: min(340px, calc(100% - 20px));
+		min-width: 0;
+		padding: 1px 0 20px;
+		box-sizing: border-box;
+	}
+
+	.growth-metrics-card-inner {
+		padding: 0 20px 16px;
+		box-sizing: border-box;
+	}
+
 	.growth-metrics-title-bar {
+		width: min(340px, calc(100% - 20px));
+		max-width: min(340px, calc(100% - 20px));
+		min-width: 0;
 		font-size: 25px;
 		letter-spacing: -1px;
 		margin-bottom: -16px;
+	}
+
+	.growth-metrics-below {
+		width: min(340px, calc(100% - 20px));
+		max-width: min(340px, calc(100% - 20px));
+		min-width: 0;
 	}
 
 	.growth-metrics-title-wordmark {
@@ -7093,6 +7201,89 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.growth-metrics-home-button-icon {
 		width: calc(17px * 30 / 35);
 		height: calc(17px * 30 / 35);
+	}
+
+	/*
+	 * Inside the main metrics card: match asset-page bordered children under 750px
+	 * (.asset-market-controls / .asset-invest-form-box padding 10px; .myinv-summary-block padding-top 0;
+	 * .asset-price-panel 10px; stacked sections ~10–12px gap).
+	 */
+	.growth-metrics-panels {
+		gap: 12px;
+	}
+
+	.growth-metrics-panels .metrics-growth-outer-column {
+		padding: 0;
+		gap: 10px;
+	}
+
+	.growth-metrics-panels .metrics-growth-panel {
+		gap: 10px;
+	}
+
+	.growth-metrics-panels .metrics-growth-tier-inner {
+		padding: 10px;
+		box-sizing: border-box;
+	}
+
+	/* Outer frame: uniform 10px inset inside border (matches tier-inner 10px). Tier/toolbar shells stay flush. */
+	.growth-metrics-panels .metrics-growth-outer.myinv-summary-block {
+		margin-bottom: 0;
+		padding: 10px;
+		box-sizing: border-box;
+	}
+
+	.growth-metrics-panels .metrics-growth-tier.myinv-summary-block,
+	.growth-metrics-panels .metrics-growth-toolbar-wrap.myinv-summary-block {
+		margin-bottom: 0;
+		padding: 0;
+	}
+
+	/* Activity block has no inner shell — match .myinv-summary-block under 750px (padding-top 0). */
+	.growth-metrics-panels .metrics-activity-section.myinv-summary-block {
+		margin-bottom: 0;
+		padding: 10px;
+		padding-top: 0;
+		box-sizing: border-box;
+	}
+
+	.growth-metrics-panels .metrics-growth-toolbar-inner {
+		padding: 10px;
+		gap: 10px;
+	}
+
+	.growth-metrics-panels .metrics-toolbar-block-inner {
+		padding: 10px;
+		box-sizing: border-box;
+	}
+
+	.growth-metrics-panels .metrics-growth-chart-shell-inner {
+		padding: 0;
+		box-sizing: border-box;
+		height: 200px;
+		min-height: 200px;
+	}
+
+	.growth-metrics-panels .metrics-growth-chart-shell {
+		min-height: 0;
+	}
+
+	.growth-metrics-panels .metrics-chart-wrap-panel {
+		width: 100%;
+	}
+
+	.growth-metrics-panels .metrics-growth-headlines.metrics-price-panel-inner {
+		padding: 10px;
+		box-sizing: border-box;
+	}
+
+	.growth-metrics-panels .metrics-kpi-card {
+		padding: 10px 8px;
+		box-sizing: border-box;
+	}
+
+	.growth-metrics-card-content {
+		padding-top: 20px;
 	}
 }
 
@@ -7170,8 +7361,18 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	box-sizing: border-box;
 }
 
-/* WoW/MoM + DAUt/WAUt/MAUt: one full-width card per row, centered copy (all viewports). */
-.metrics-growth-panel .metrics-kpi-grid--two,
+/* WoW / MoM: two columns side by side, centered copy. */
+.metrics-growth-panel .metrics-kpi-grid--two {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	width: 100%;
+	max-width: 100%;
+	justify-items: stretch;
+	box-sizing: border-box;
+}
+
+/* DAUt / WAUt / MAUt: full-width stacked cards, centered copy. */
 .metrics-page-activity-kpis.metrics-kpi-grid {
 	grid-template-columns: 1fr;
 	width: 100%;
@@ -7343,6 +7544,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 /* Growth + chart + toolbar: desktop grid (≥751px), mobile stack (headlines → chart → toolbar). */
 .metrics-growth-main-row {
 	width: 100%;
+	max-width: 100%;
+	min-width: 0;
 	box-sizing: border-box;
 }
 
@@ -7350,7 +7553,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.metrics-growth-main-row--with-chart {
 		display: grid;
 		grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
-		grid-template-rows: auto 1fr;
+		/* Both rows content-sized from the left column so the chart shell height matches headlines + toolbar */
+		grid-template-rows: auto auto;
 		gap: 16px;
 		align-items: start;
 	}
@@ -7382,6 +7586,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		grid-row: 1 / span 2;
 		min-width: 0;
 		align-self: stretch;
+		height: 100%;
 	}
 
 	.metrics-growth-main-row:not(.metrics-growth-main-row--with-chart) {
@@ -7433,17 +7638,45 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	overflow: hidden;
 	box-sizing: border-box;
 	--myinv-asset-border-opacity: 0.35;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	min-width: 0;
 }
 
 .metrics-growth-chart-shell-inner {
-	padding: 10px 10px 6px;
+	flex: 1 1 auto;
+	min-height: 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	padding: 0;
 	box-sizing: border-box;
 	border-radius: inherit;
 }
 
 .metrics-growth-toolbar-inner {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 	padding: 12px 12px 14px;
 	box-sizing: border-box;
+}
+
+.metrics-toolbar-block {
+	width: 100%;
+	max-width: 100%;
+	border-radius: 12px;
+	box-sizing: border-box;
+	position: relative;
+	isolation: isolate;
+	--myinv-asset-border-opacity: 0.3;
+}
+
+.metrics-toolbar-block-inner {
+	padding: 12px 12px 14px;
+	box-sizing: border-box;
+	border-radius: inherit;
 }
 
 .metrics-growth-toolbar-wrap {
@@ -7468,13 +7701,29 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .metrics-growth-headlines.metrics-price-panel-inner {
 	width: 100%;
 	max-width: 100%;
+	padding: 8px;
+	box-sizing: border-box;
 }
 
 .metrics-chart-wrap-panel {
-	border-radius: 14px;
+	/* Match .metrics-growth-chart-shell (12px) so grid/plot align with the bordered card */
+	border-radius: 12px;
 	overflow: hidden;
 	position: relative;
 	background: transparent;
+	flex: 1 1 auto;
+	min-height: 0;
+	min-width: 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+}
+
+@media (min-width: 751px) {
+	.growth-metrics-panels .metrics-growth-chart-shell-inner {
+		min-height: 240px;
+	}
 }
 
 .metrics-chart-date-badge {

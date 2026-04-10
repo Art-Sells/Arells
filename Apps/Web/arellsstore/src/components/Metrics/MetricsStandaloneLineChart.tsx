@@ -88,14 +88,21 @@ export default function MetricsStandaloneLineChart({
       .sort((a, b) => a.x.getTime() - b.x.getTime());
   }, [points]);
 
+  /** Equal padding above/below the data band so the series sits vertically centered in the plot. */
   const yRange = useMemo(() => {
     if (!dataPoints.length) return { min: 0, max: 1 };
     const values = dataPoints.map((p) => p.y);
-    const max = Math.max(...values, 0);
-    const minY = Math.min(...values, 0);
-    const span = Math.max(max - minY, max * 0.05, 1);
-    const pad = height < 250 ? span * 0.5 : span * 2;
-    return { min: Math.min(0, minY - pad * 0.1), max: max + pad };
+    const minY = Math.min(...values);
+    const maxY = Math.max(...values);
+    const rawSpan = maxY - minY;
+    const baseline = Math.max(Math.abs(maxY), Math.abs(minY), 1);
+    const span =
+      rawSpan > 1e-9
+        ? Math.max(rawSpan, baseline * 0.08, 1)
+        : Math.max(baseline * 0.18, 1);
+    const padRatio = height < 280 ? 0.52 : 0.58;
+    const pad = span * padRatio;
+    return { min: minY - pad, max: maxY + pad };
   }, [dataPoints, height]);
 
   const xRange = useMemo(() => {
@@ -120,7 +127,7 @@ export default function MetricsStandaloneLineChart({
           borderWidth: LINE_WIDTH,
           borderCapStyle: 'round' as const,
           borderJoinStyle: 'miter' as const,
-          clip: 12,
+          clip: false as const,
         },
       ],
     }),
@@ -133,7 +140,7 @@ export default function MetricsStandaloneLineChart({
       maintainAspectRatio: false,
       layout: { padding: 0, autoPadding: false },
       animation: { duration: 0 },
-      interaction: { mode: 'nearest' as const, intersect: false },
+      interaction: { mode: 'nearest' as const, axis: 'x' as const, intersect: false },
       plugins: { legend: { display: false }, tooltip: { enabled: false } },
       scales: {
         x: {
@@ -242,14 +249,21 @@ export default function MetricsStandaloneLineChart({
     (clientX: number, clientY: number, target: HTMLDivElement) => {
       const chart = chartRef.current as any;
       const canvas: HTMLCanvasElement | undefined = chart?.canvas;
-      const rect = (canvas ?? target).getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+      const panelRect = target.getBoundingClientRect();
+      const px = clientX - panelRect.left;
+      const py = clientY - panelRect.top;
+      if (px < 0 || py < 0 || px > panelRect.width || py > panelRect.height) {
         updateMarker(null, null);
         return;
       }
-      const resolved = resolveAtPixelX(x);
+      if (!canvas) {
+        updateMarker(null, null);
+        return;
+      }
+      const canvasRect = canvas.getBoundingClientRect();
+      const xOnCanvas = clientX - canvasRect.left;
+      const xClamped = Math.min(Math.max(xOnCanvas, 0), canvasRect.width);
+      const resolved = resolveAtPixelX(xClamped);
       if (resolved) {
         updateMarker(resolved.pixel, { y: resolved.y, utcLabel: resolved.utcLabel });
       } else {
@@ -271,17 +285,25 @@ export default function MetricsStandaloneLineChart({
     return () => ro.disconnect();
   }, []);
 
+  const fillPlotBand =
+    canvasOffsetTop === 0 && Math.abs(height - interactiveHeight) <= 1;
+
   return (
     <div
       style={{
-        height: interactiveHeight,
+        height: fillPlotBand ? ('100%' as const) : interactiveHeight,
+        flex: fillPlotBand ? '1 1 auto' : undefined,
+        minHeight: fillPlotBand ? 0 : undefined,
         position: 'relative',
         overflow: 'hidden',
-        borderRadius: 14,
+        borderRadius: 12,
+        display: fillPlotBand ? 'flex' : undefined,
+        flexDirection: fillPlotBand ? 'column' : undefined,
       }}
       onMouseMove={(e) => handlePointer(e.clientX, e.clientY, e.currentTarget)}
       onMouseLeave={() => updateMarker(null, null)}
       onMouseDown={(e) => handlePointer(e.clientX, e.clientY, e.currentTarget)}
+      onClick={(e) => handlePointer(e.clientX, e.clientY, e.currentTarget)}
       onTouchMove={(e) => {
         const touch = e.touches?.[0];
         if (touch) handlePointer(touch.clientX, touch.clientY, e.currentTarget as HTMLDivElement);
@@ -292,7 +314,13 @@ export default function MetricsStandaloneLineChart({
         if (touch) handlePointer(touch.clientX, touch.clientY, e.currentTarget as HTMLDivElement);
       }}
     >
-      <div style={{ height, position: 'relative', marginTop: canvasOffsetTop }}>
+      <div
+        style={
+          fillPlotBand
+            ? { flex: 1, minHeight: 0, position: 'relative' }
+            : { height, position: 'relative', marginTop: canvasOffsetTop }
+        }
+      >
         <Line ref={chartRef as any} data={chartData} options={options as any} />
       </div>
       <div

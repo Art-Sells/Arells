@@ -41,6 +41,9 @@ const Index = () => {
   const homeLogoRef = useRef<HTMLImageElement | null>(null);
   const [homeAssetsLayout, setHomeAssetsLayout] = useState<{ left: number; width: number } | null>(null);
   const homeAssetsWrapRef = useRef<HTMLDivElement | null>(null);
+  const homeAssetsSlideInnerRef = useRef<HTMLDivElement | null>(null);
+  const [homeAssetsPanelOpen, setHomeAssetsPanelOpen] = useState(false);
+  const [homeAssetsPanelMaxHeight, setHomeAssetsPanelMaxHeight] = useState(0);
   const [toggleTrack, setToggleTrack] = useState<{ minLeft: number; maxLeft: number; mid: number } | null>(null);
   const toggleDragRef = useRef<{
     active: boolean;
@@ -262,6 +265,41 @@ const Index = () => {
     };
   }, [updateHomeLogoShift]);
 
+  /* Measured max-height open (same pattern as growth metrics main card). */
+  useEffect(() => {
+    let raf = 0;
+    let raf2 = 0;
+    raf = window.requestAnimationFrame(() => {
+      const h = homeAssetsSlideInnerRef.current?.scrollHeight ?? 0;
+      const next = Math.max(0, h + 24);
+      setHomeAssetsPanelMaxHeight(next);
+      raf2 = window.requestAnimationFrame(() => setHomeAssetsPanelOpen(true));
+    });
+    return () => {
+      if (raf) window.cancelAnimationFrame(raf);
+      if (raf2) window.cancelAnimationFrame(raf2);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const node = homeAssetsSlideInnerRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    let raf = 0;
+    const measure = () => {
+      raf = window.requestAnimationFrame(() => {
+        const next = Math.max(0, node.scrollHeight + 24);
+        setHomeAssetsPanelMaxHeight((prev) => (prev === next ? prev : next));
+      });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
+
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
     const wrapper = homeAssetsWrapRef.current;
@@ -446,9 +484,17 @@ const Index = () => {
 
       <div ref={homeAssetsWrapRef} className="home-assets-wrapper shadow-border-wrap page-slide-down">
         <span className="shadow-border" aria-hidden="true" />
-        <div className="home-assets-list">
-          <div className="home-assets-table-shell myinv-accent-border">
-          <div className="home-assets-rows-shell">
+        <div
+          className={`asset-slide-panel home-assets-card-slide${homeAssetsPanelOpen ? ' is-open' : ''}`}
+          style={{
+            maxHeight: homeAssetsPanelOpen ? `${homeAssetsPanelMaxHeight}px` : '0px',
+            transition: 'max-height 8s ease',
+          }}
+        >
+          <div ref={homeAssetsSlideInnerRef} className="home-assets-slide-inner">
+            <div className="home-assets-list">
+              <div className="home-assets-table-shell myinv-accent-border">
+                <div className="home-assets-rows-shell">
             {sortedRows.map((row) => {
               const displayPrice = displayIsLiquidMode ? row.liquidPrice : row.solidPrice;
               const change1w = displayIsLiquidMode ? row.liquidChange1w : row.solidChange1w;
@@ -538,7 +584,9 @@ const Index = () => {
                 </div>
               );
             })}
-          </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

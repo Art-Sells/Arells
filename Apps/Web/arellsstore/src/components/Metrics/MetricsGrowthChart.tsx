@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import MetricsStandaloneLineChart, { formatMetricsUtcBadgeLabel } from './MetricsStandaloneLineChart';
 
 export type MetricsChartHistoryPoint = { date: string; price: number; utcLabel?: string };
@@ -69,13 +69,13 @@ type Props = {
   onPointHover?: (point: { x: Date; y: number } | null) => void;
 };
 
-const CHART_HEIGHT = 200;
-const PANEL_HEIGHT = 300;
-const TOP_PAD = 8;
+const PLOT_FALLBACK_H = 200;
 
 export default function MetricsGrowthChart({ history, loading, onPointHover }: Props) {
   const [accent, setAccent] = useState<AccentPack>(() => packFromRgbTri(null));
   const [chartReady, setChartReady] = useState(false);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const [plotPx, setPlotPx] = useState(PLOT_FALLBACK_H);
 
   useLayoutEffect(() => {
     setAccent(packFromRgbTri(readAccentRgbTri()));
@@ -86,6 +86,21 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
       setAccent(packFromRgbTri(readAccentRgbTri()));
     }, 600);
     return () => window.clearInterval(id);
+  }, []);
+
+  useLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const apply = () => {
+      const h = Math.max(1, Math.round(el.getBoundingClientRect().height));
+      setPlotPx((prev) => (prev === h ? prev : h));
+    };
+    apply();
+    const ro = new ResizeObserver(() => {
+      requestAnimationFrame(apply);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   useEffect(() => {
@@ -123,8 +138,16 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
 
   return (
     <div
+      ref={wrapRef}
       className="metrics-chart-wrap-panel"
-      style={{ position: 'relative', height: `${PANEL_HEIGHT}px`, padding: 0 }}
+      style={{
+        position: 'relative',
+        padding: 0,
+        flex: '1 1 auto',
+        minHeight: 0,
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
     >
       {hoverUi != null && (
         <div className="asset-chart-date-badge asset-chart-date-badge--bitcoin metrics-chart-date-badge">
@@ -141,37 +164,48 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
         </div>
       </div>
       <div
-        aria-hidden="true"
-        className="metrics-chart-bg-grid"
-        style={{
-          position: 'absolute',
-          inset: 1,
-          borderRadius: 14,
-          pointerEvents: 'none',
-          zIndex: 0,
-          backgroundImage: accent.gridCss,
-        }}
-      />
-      <div
         className={`asset-chart-fade asset-chart-interactive metrics-chart-interactive${
           chartReady && !loading ? ' is-visible' : ''
         }${chartReady && !loading ? '' : ' is-disabled'}`}
+        style={{
+          position: 'relative',
+          flex: '1 1 auto',
+          minHeight: 0,
+          borderRadius: 12,
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
-        <MetricsStandaloneLineChart
-          points={history.map((h) => ({
-            date: h.date,
-            y: h.price,
-            utcLabel: h.utcLabel,
-          }))}
-          color={accent.color}
-          markerColor={accent.markerColor}
-          backgroundColor={accent.backgroundColor}
-          markerShadow={accent.markerShadow}
-          height={CHART_HEIGHT}
-          interactiveHeight={PANEL_HEIGHT}
-          canvasOffsetTop={TOP_PAD}
-          onPointHover={onChartPoint}
+        <div
+          aria-hidden="true"
+          className="metrics-chart-bg-grid"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 12,
+            pointerEvents: 'none',
+            zIndex: 0,
+            backgroundImage: accent.gridCss,
+          }}
         />
+        <div style={{ position: 'relative', zIndex: 1, flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          <MetricsStandaloneLineChart
+            points={history.map((h) => ({
+              date: h.date,
+              y: h.price,
+              utcLabel: h.utcLabel,
+            }))}
+            color={accent.color}
+            markerColor={accent.markerColor}
+            backgroundColor={accent.backgroundColor}
+            markerShadow={accent.markerShadow}
+            height={plotPx}
+            interactiveHeight={plotPx}
+            canvasOffsetTop={0}
+            onPointHover={onChartPoint}
+          />
+        </div>
       </div>
     </div>
   );

@@ -9,6 +9,13 @@ import { useVavity } from '../../../../context/VavityAggregator';
 import { useUser } from '../../../../context/UserContext';
 import EthereumChart from './EthereumChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
+import {
+  ASSET_PRICE_CHART_MOUNT_SLIDE_MS,
+  ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS,
+  ASSET_SUMMARY_PAUSE_BEFORE_EXPAND_MS,
+  ASSET_SUMMARY_START_BEFORE_CHART_SLIDE_END_MS,
+  useAssetPriceChartMountSlide,
+} from '../../useAssetPriceChartMountSlide';
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
@@ -29,8 +36,6 @@ const VavityEthereum: React.FC = () => {
   const submitLoaderUnmountTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [submitLoaderMounted, setSubmitLoaderMounted] = useState(false);
   const [submitLoaderVisible, setSubmitLoaderVisible] = useState(false);
-  const sessionMountSubmitLoaderRef = useRef(false);
-  const sessionMountSubmitLoaderTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const forceSubmitLoader = false;
   const showSubmitLoader =
     forceSubmitLoader || ((submitLoading || submitLoaderHold) && submitTargetRef.current !== 'addMore');
@@ -163,6 +168,7 @@ const VavityEthereum: React.FC = () => {
     pendingDeleteInvestments.length > 0 || deletingInvestments.length > 0 || closingInvestments.length > 0;
   const [collapsedInvestments, setCollapsedInvestments] = useState<string[]>([]);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [summaryInvestmentsExpandStarted, setSummaryInvestmentsExpandStarted] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
   const summaryAnimatingRef = useRef(false);
   const [summaryAnimatingCooldown, setSummaryAnimatingCooldown] = useState(false);
@@ -229,6 +235,7 @@ const VavityEthereum: React.FC = () => {
   const deleteActionTimersRef = useRef<Record<string, number>>({});
   const deleteCleanupTimersRef = useRef<Record<string, number>>({});
   const deleteLockRef = useRef(false);
+  const toggleDisabledByDeleteRef = useRef(false);
   const [deleteLocked, setDeleteLocked] = useState(false);
   const investmentIdCounterRef = useRef(0);
   const investmentOrderRef = useRef<Map<string, number>>(new Map());
@@ -267,6 +274,9 @@ const VavityEthereum: React.FC = () => {
   const submitResetPendingRef = useRef(false);
   const profitInlineAnimRef = useRef<HTMLSpanElement | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
+  const assetPriceChartMountSlide = useAssetPriceChartMountSlide(24, ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS);
+  const assetPageMountAtRef = useRef(Date.now());
+  const openInvestmentsDeferTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
   const sectionHeaderRef = useRef<HTMLDivElement | null>(null);
   const assetTitleRef = useRef<HTMLDivElement | null>(null);
@@ -591,6 +601,10 @@ const VavityEthereum: React.FC = () => {
       if (profitValueTimerRef.current) {
         globalThis.clearTimeout(profitValueTimerRef.current);
         profitValueTimerRef.current = null;
+      }
+      if (openInvestmentsDeferTimerRef.current) {
+        globalThis.clearTimeout(openInvestmentsDeferTimerRef.current);
+        openInvestmentsDeferTimerRef.current = null;
       }
     };
   }, []);
@@ -947,32 +961,6 @@ const VavityEthereum: React.FC = () => {
   }, [fetchVavityAggregator, sessionId, sessionReady, isSignedIn, email, deleteInFlight, isClearingInvestments]);
 
   useEffect(() => {
-    if (!vavityData) return;
-    if (sessionMountSubmitLoaderRef.current) return;
-    sessionMountSubmitLoaderRef.current = true;
-    const hasInvestments = Array.isArray(vavityData?.investments) && vavityData.investments.length > 0;
-    if (!hasInvestments) return;
-    if (isMutatingRef.current || submitLoading || submitLoaderHold || submitPhase !== 'idle') return;
-    setSubmitLoaderHold(true);
-    if (sessionMountSubmitLoaderTimerRef.current) {
-      globalThis.clearTimeout(sessionMountSubmitLoaderTimerRef.current);
-    }
-    sessionMountSubmitLoaderTimerRef.current = globalThis.setTimeout(() => {
-      sessionMountSubmitLoaderTimerRef.current = null;
-      setSubmitLoaderHold(false);
-    }, 3000);
-  }, [vavityData, submitLoading, submitLoaderHold, submitPhase]);
-
-  useEffect(() => {
-    return () => {
-      if (sessionMountSubmitLoaderTimerRef.current) {
-        globalThis.clearTimeout(sessionMountSubmitLoaderTimerRef.current);
-        sessionMountSubmitLoaderTimerRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
       const params = new URLSearchParams(window.location.search);
@@ -1161,7 +1149,9 @@ const VavityEthereum: React.FC = () => {
   const showInvestmentsHeader = investments.length > 0;
   const shouldFetchInitialData = isSignedIn ? Boolean(email) : Boolean(sessionReady && sessionId && fetchVavityAggregator);
   const showInitialFetchLoader = shouldFetchInitialData && !initialFetchDone;
-  const showAssetLoader = showSubmitLoader || showInitialFetchLoader;
+  const showInitialFetchLoaderOverlay =
+    showInitialFetchLoader && summaryInvestmentsExpandStarted;
+  const showAssetLoader = showSubmitLoader || showInitialFetchLoaderOverlay;
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
     setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
@@ -1192,20 +1182,38 @@ const VavityEthereum: React.FC = () => {
   }, []);
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
   const openInvestmentsSection = useCallback(() => {
-    setInvestmentsWholeHeight(0);
-    setSummaryAnimating(true);
-    summaryAnimatingRef.current = true;
-    setSummaryOpen(true);
-    requestAnimationFrame(() => {
+    const run = () => {
+      openInvestmentsDeferTimerRef.current = null;
+      setSummaryInvestmentsExpandStarted(true);
+      setInvestmentsWholeHeight(0);
+      setSummaryAnimating(true);
+      summaryAnimatingRef.current = true;
+      setSummaryOpen(true);
       requestAnimationFrame(() => {
-        const whole = investmentsWholeContentRef.current;
-        if (whole) {
-          const h = whole.scrollHeight + 24;
-          setInvestmentsWholeHeight(h);
-        }
-        followWholePanelHeightDeltaFor(5000);
+        requestAnimationFrame(() => {
+          const whole = investmentsWholeContentRef.current;
+          if (whole) {
+            const h = whole.scrollHeight + 24;
+            setInvestmentsWholeHeight(h);
+          }
+          followWholePanelHeightDeltaFor(5000);
+        });
       });
-    });
+    };
+    const elapsed = Date.now() - assetPageMountAtRef.current;
+    const chartAlignedDelayMs =
+      ASSET_PRICE_CHART_MOUNT_SLIDE_MS - ASSET_SUMMARY_START_BEFORE_CHART_SLIDE_END_MS;
+    const requiredDelayFromMountMs = Math.max(chartAlignedDelayMs, ASSET_SUMMARY_PAUSE_BEFORE_EXPAND_MS);
+    const waitMs = Math.max(0, requiredDelayFromMountMs - elapsed);
+    if (openInvestmentsDeferTimerRef.current) {
+      globalThis.clearTimeout(openInvestmentsDeferTimerRef.current);
+      openInvestmentsDeferTimerRef.current = null;
+    }
+    if (waitMs <= 0) {
+      run();
+    } else {
+      openInvestmentsDeferTimerRef.current = globalThis.setTimeout(run, waitMs);
+    }
   }, [followWholePanelHeightDeltaFor]);
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptyActionsMountPhase('done');
@@ -1443,6 +1451,12 @@ const VavityEthereum: React.FC = () => {
     prevHasInvestmentsUIRef.current = hasInvestmentsUI;
   }, [hasInvestmentsUI, showEmptyAddForm, triggerEmptyButtonsExpand]);
 
+  useEffect(() => {
+    if (!hasInvestmentsUI && !isClearingInvestments) {
+      setSummaryInvestmentsExpandStarted(false);
+    }
+  }, [hasInvestmentsUI, isClearingInvestments]);
+
   useLayoutEffect(() => {
     if (!summaryOpen || isClearingInvestments) {
       setSummaryAnimating(false);
@@ -1495,6 +1509,7 @@ const VavityEthereum: React.FC = () => {
     if (summaryAnimating) return;
     if (!toggleReenableOnSummaryExpandRef.current) return;
     toggleReenableOnSummaryExpandRef.current = false;
+    toggleDisabledByDeleteRef.current = false;
     setToggleDisabled(false);
     setToggleKnobHidden(false);
   }, [summaryAnimating]);
@@ -1534,12 +1549,23 @@ const VavityEthereum: React.FC = () => {
       toggleReenableTimerRef.current = globalThis.setTimeout(() => {
         toggleReenableTimerRef.current = null;
         toggleReenableOnSummaryExpandRef.current = false;
+        toggleDisabledByDeleteRef.current = false;
         setToggleDisabled(false);
         setToggleKnobHidden(false);
       }, 2000);
     }
     prevSummaryHeightRef.current = summaryHeight;
   }, [summaryHeight]);
+
+  useEffect(() => {
+    if (deleteInFlight) return;
+    if (!toggleDisabledByDeleteRef.current) return;
+    if (submitLoading) return;
+    if (toggleReenableOnSummaryExpandRef.current) return;
+    toggleDisabledByDeleteRef.current = false;
+    setToggleDisabled(false);
+    setToggleKnobHidden(false);
+  }, [deleteInFlight, submitLoading, summaryAnimating]);
 
   useEffect(() => {
     if (submitLoading) return;
@@ -1557,7 +1583,7 @@ const VavityEthereum: React.FC = () => {
         submitLoaderHeightHoldTimerRef.current = null;
       }
       setSubmitLoaderHold(false);
-    }, 6000);
+    }, 3000);
   }, [submitLoading, summaryAnimating]);
 
   // Measure the full "investments view" section as ONE: summary panel + bottom actions (+ list).
@@ -2804,6 +2830,7 @@ const VavityEthereum: React.FC = () => {
       if (target === 'addMore') {
         setAddMoreOpen(false);
         setShowAddMoreForm(false);
+        toggleDisabledByDeleteRef.current = false;
         setToggleDisabled(false);
         setToggleKnobHidden(false);
         if (showMoreDisableTimerRef.current) {
@@ -3448,6 +3475,8 @@ const VavityEthereum: React.FC = () => {
             if investments never lost value
           </div>
         </div>
+        <div {...assetPriceChartMountSlide.slidePanelProps}>
+          <div ref={assetPriceChartMountSlide.measureRef} className="asset-asset-price-chart-mount-slide-inner">
         <div
           className="asset-panel asset-panel--ethereum asset-price-chart-row asset-price-chart-row--combined"
           style={{ overflow: 'visible' }}
@@ -3655,6 +3684,8 @@ const VavityEthereum: React.FC = () => {
         </div>
               </div>
             </div>
+          </div>
+        </div>
 
           <div className="asset-panel asset-panel--ethereum asset-reality-toggle-shell">
             <div className="asset-reality-toggle-row asset-reality-toggle-row--ethereum">
@@ -4400,6 +4431,13 @@ const VavityEthereum: React.FC = () => {
                                           pendingDeleteInvestments.includes(investmentId)
                                         )
                                           return;
+                                        if (toggleReenableTimerRef.current) {
+                                          globalThis.clearTimeout(toggleReenableTimerRef.current);
+                                          toggleReenableTimerRef.current = null;
+                                        }
+                                        toggleDisabledByDeleteRef.current = true;
+                                        setToggleDisabled(true);
+                                        setToggleKnobHidden(true);
                                         deleteLockRef.current = true;
                                         setDeleteLocked(true);
                                         setDeleteGhosts((prev) => {
