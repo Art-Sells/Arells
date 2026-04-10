@@ -488,7 +488,7 @@ const Index = () => {
           className={`asset-slide-panel home-assets-card-slide${homeAssetsPanelOpen ? ' is-open' : ''}`}
           style={{
             maxHeight: homeAssetsPanelOpen ? `${homeAssetsPanelMaxHeight}px` : '0px',
-            transition: 'max-height 5s linear',
+            transition: 'max-height 3.5s linear',
           }}
         >
           <div ref={homeAssetsSlideInnerRef} className="home-assets-slide-inner">
