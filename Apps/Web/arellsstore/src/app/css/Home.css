@@ -135,6 +135,10 @@ body {
 	box-sizing: border-box;
 }
 
+.about-page .about-card {
+	padding-top: 15px;
+}
+
 .about-card::before {
 	content: none;
 }
@@ -145,6 +149,10 @@ body {
 	left: 50%;
 	transform: translate(-50%, -90%);
 	z-index: 2;
+}
+
+.about-page .about-icon-wrap {
+	transform: translate(-50%, calc(-90% - 15px));
 }
 
 .about-icon-button {
@@ -199,6 +207,16 @@ body {
 	background: url("/images/Arells-Icon.png") no-repeat center / contain;
 }
 
+.about-page .about-icon-button {
+	width: 41px;
+	height: 41px;
+}
+
+.about-page .about-icon {
+	width: 27px;
+	height: 27px;
+}
+
 .about-content {
 	display: flex;
 	flex-direction: column;
@@ -251,18 +269,18 @@ body {
 }
 
 .about-text--outer { 
-	width: 180px;
+	width: 130px;
 	margin: 0 auto;
-	font-size: 16px;
+	font-size: 13px;
 	margin-bottom: 25px;
 	margin-top: 10px;
 	color: black;
 	letter-spacing: -.7px;
  }
 .about-text--mid { 
-	width: 150px;
+	width: 130px;
 	margin: 0 auto;
-	font-size: 13px;
+	font-size: 12px;
 	margin-bottom: 25px;
 	margin-top: 20px;
 	color: black;
@@ -6636,7 +6654,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin: 0 auto;
 	padding-top: 80px;
 	padding-bottom: 0;
-	margin-bottom: -7px;
+	margin-bottom: -13px;
 	position: relative;
 	z-index: 4;
 	text-align: center;
@@ -6732,7 +6750,296 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	max-width: min(920px, calc(100% - 20px));
 }
 
-.metrics-stack {
+/* Growth metrics page — standalone layout (no auth- / myinv- / about- / shadow-border- classes on the shell) */
+.growth-metrics-page {
+	--myinv-label-color: #222;
+	min-height: 100vh;
+	min-width: 370px;
+	padding-bottom: 60px;
+	font-family: Arial, sans-serif;
+	background: var(--page-accent-tint);
+}
+
+.growth-metrics-page__stack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.growth-metrics-page__stack:not(.growth-metrics-page__stack--in) {
+	opacity: 0;
+	transform: translateY(40px);
+}
+
+.growth-metrics-page__stack.growth-metrics-page__stack--in {
+	animation: pageSlideUp 4s ease both;
+	will-change: transform, opacity;
+}
+
+.growth-metrics-title-bar {
+	width: min(700px, calc(100% - 20px));
+	max-width: min(700px, calc(100% - 20px));
+	min-width: 350px;
+	margin: 0 auto;
+	padding-top: 50px;
+	padding-bottom: 0;
+	margin-bottom: -13px;
+	position: relative;
+	z-index: 4;
+	text-align: center;
+	font-weight: 800;
+	font-size: 30px;
+	letter-spacing: -1.8px;
+	color: var(--myinv-accent-color);
+}
+
+.growth-metrics-title-cluster {
+	position: relative;
+	display: inline-block;
+	text-align: left;
+}
+
+.growth-metrics-title-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: flex-start;
+	gap: 0px;
+}
+
+.growth-metrics-title-wordmark {
+	position: absolute;
+	left: 0;
+	top: 0;
+	transform: translateX(30px);
+	width: 35px;
+	height: auto;
+	aspect-ratio: 70 / 23;
+	object-fit: contain;
+	object-position: left top;
+	display: block;
+	margin-top: -4px;
+	margin-left: -7px;
+	z-index: 10;
+}
+
+.growth-metrics-title-word--growth {
+	line-height: 1;
+	margin-bottom: 2px;
+	margin-right: -1px; /* <- edit “Growth” margin-right over 750px (home button sits after this word) */
+	transform: translateY(2px);
+}
+
+.growth-metrics-title-word {
+	white-space: nowrap;
+}
+
+.growth-metrics-title-word--metrics {
+	line-height: 1;
+	margin-left: -2px;
+	margin-bottom: 2px;
+	transform: translateY(2px);
+}
+
+.growth-metrics-home-button {
+	width: auto;
+	height: auto;
+	padding: 10px;
+	box-sizing: border-box;
+	flex-shrink: 0;
+	border-radius: 5px;
+	background: rgba(255, 255, 255, 0.4) !important;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	outline: none;
+	box-shadow: none !important;
+	text-decoration: none;
+	color: inherit !important;
+	border: none !important;
+	position: relative;
+	margin-bottom: 2px;
+}
+
+.growth-metrics-home-button:focus,
+.growth-metrics-home-button:focus-visible,
+.growth-metrics-home-button:active,
+.growth-metrics-home-button:visited {
+	outline: none;
+	box-shadow: none;
+	background: rgba(255, 255, 255, 0.95) !important;
+	color: inherit !important;
+}
+
+.growth-metrics-home-button::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	padding: 1px;
+	border-radius: inherit;
+	background: var(--myinv-accent-color);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	pointer-events: none;
+}
+
+.growth-metrics-home-button-icon {
+	width: 17px;
+	height: 17px;
+	background: url("/images/Arells-Icon.png") no-repeat center / contain;
+	display: block;
+}
+
+/* Match .asset-page-content main column width (not 920px). */
+.growth-metrics-card-wrap {
+	width: min(700px, calc(100% - 20px));
+	max-width: min(700px, calc(100% - 20px));
+	min-width: 350px;
+	margin: 0 auto;
+	padding: 1px 20px 24px;
+	box-sizing: border-box;
+	border-radius: 12px;
+	background: transparent;
+	position: relative;
+	isolation: isolate;
+	z-index: 2;
+}
+
+.growth-metrics-card-wrap::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 1);
+	border-radius: inherit;
+	z-index: -1;
+	pointer-events: none;
+}
+
+.growth-metrics-card-wrap > .growth-metrics-card-outline {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	border: 1px solid var(--myinv-accent-color);
+	background: transparent;
+	opacity: var(--myinv-asset-border-opacity, 0.3);
+	box-sizing: border-box;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.growth-metrics-card-wrap > :not(.growth-metrics-card-outline) {
+	position: relative;
+	z-index: 1;
+}
+
+.growth-metrics-card-inner {
+	width: 100%;
+	margin: 0;
+	padding: 0 12px 18px;
+	position: relative;
+}
+
+.growth-metrics-card-content {
+	padding-top: 30px;
+}
+
+.growth-metrics-below {
+	width: min(700px, calc(100% - 20px));
+	max-width: min(700px, calc(100% - 20px));
+	min-width: 350px;
+	margin: 20px auto 0;
+	text-align: center;
+}
+
+.growth-metrics-about-row {
+	margin-top: calc(var(--myinv-about-gap, 50px) - 40px);
+	margin-bottom: -30px;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	min-width: 350px;
+}
+
+.growth-metrics-about-row--in {
+	animation: pageSlideUp 4s ease both;
+	animation-delay: 1.2s;
+	will-change: transform, opacity;
+}
+
+.growth-metrics-about-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	box-sizing: border-box;
+	width: 60px;
+	background: transparent !important;
+	border: none;
+	box-shadow: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	border-radius: 10px;
+	padding-top: 9px;
+	padding-bottom: 10px;
+	position: relative;
+	isolation: isolate;
+	z-index: 0;
+	color: var(--myinv-accent-color);
+}
+
+.growth-metrics-about-button:hover,
+.growth-metrics-about-button:active {
+	transform: translateY(-2px);
+	box-shadow: none;
+}
+
+.growth-metrics-about-button::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	padding: 1px;
+	border-radius: inherit;
+	background: var(--myinv-accent-color);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.growth-metrics-about-button-bg {
+	position: absolute;
+	inset: 1px;
+	border-radius: inherit;
+	background: transparent;
+	opacity: 0;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.growth-metrics-about-button-text {
+	font-family: Arial, sans-serif;
+	font-weight: 200;
+	letter-spacing: 0px;
+	font-size: 12px;
+	color: currentColor;
+	opacity: 1;
+	transition: none;
+	position: relative;
+	z-index: 3;
+}
+
+.growth-metrics-about-button:hover .growth-metrics-about-button-text,
+.growth-metrics-about-button:active .growth-metrics-about-button-text {
+	opacity: 1;
+}
+
+.growth-metrics-panels {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
@@ -6740,11 +7047,53 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	text-align: left;
 }
 
-.auth-page--wide .metrics-stack .myinv-summary-block {
+/* Fill metrics card inner; outer card already matches .asset-page-content width. */
+.growth-metrics-panels .myinv-summary-block {
 	width: 100%;
 	max-width: 100%;
 	margin-left: 0;
 	margin-right: 0;
+	box-sizing: border-box;
+}
+
+@media (max-width: 750px) {
+	.growth-metrics-title-bar {
+		font-size: 25px;
+		letter-spacing: -1px;
+		margin-bottom: -16px;
+	}
+
+	.growth-metrics-title-wordmark {
+		width: 30px;
+		margin-left: -10px;
+		margin-top: -5px;
+		transform: translate(30px, -3px);
+	}
+
+	.growth-metrics-title-word--growth {
+		margin-right: -1px;
+		margin-bottom: 3px;
+		transform: translateX(2px);
+		transform: translateY(-2.8px);
+	}
+
+	.growth-metrics-title-word--metrics {
+		margin-left: -2px;
+		margin-bottom: 3px;
+		transform: translateY(-2.8px);
+	}
+
+	/* Match wordmark scale 35px → 30px (factor 30/35) on button + icon */
+	.growth-metrics-home-button {
+		padding: calc(10px * 30 / 35);
+		border-radius: 5px;
+		transform: translateY(-5px);
+	}
+
+	.growth-metrics-home-button-icon {
+		width: calc(17px * 30 / 35);
+		height: calc(17px * 30 / 35);
+	}
 }
 
 .metrics-section-title {
@@ -6821,8 +7170,39 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	box-sizing: border-box;
 }
 
-.metrics-kpi-grid--two {
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+/* WoW/MoM + DAUt/WAUt/MAUt: one full-width card per row, centered copy (all viewports). */
+.metrics-growth-panel .metrics-kpi-grid--two,
+.metrics-page-activity-kpis.metrics-kpi-grid {
+	grid-template-columns: 1fr;
+	width: 100%;
+	max-width: 100%;
+	justify-items: stretch;
+	box-sizing: border-box;
+}
+
+.metrics-growth-panel .metrics-kpi-grid--two .metrics-kpi-card,
+.metrics-page-activity-kpis .metrics-kpi-card {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.metrics-growth-panel .metrics-kpi-card .metrics-kpi-label,
+.metrics-growth-panel .metrics-kpi-card .metrics-kpi-sublabel,
+.metrics-page-activity-kpis .metrics-kpi-card .metrics-kpi-label,
+.metrics-page-activity-kpis .metrics-kpi-card .metrics-kpi-sublabel {
+	text-align: center;
+}
+
+.metrics-growth-panel .metrics-kpi-card .metrics-kpi-value,
+.metrics-page-activity-kpis .metrics-kpi-card .metrics-kpi-value {
+	display: flex;
+	justify-content: center;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 2px;
+	text-align: center;
 }
 
 /* Auth/metrics shell is not .asset-page; without this, .asset-mount-fade-2s stays opacity:0 */
@@ -6859,6 +7239,29 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	gap: 8px 12px;
 }
 
+.metrics-growth-toolbar-wrap .metrics-toolbar-row {
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: 10px;
+	width: 100%;
+}
+
+/* Same typography as “All-time New User Traffic:” (.asset-metric-title--bitcoin) */
+.metrics-growth-toolbar-wrap .metrics-toolbar-section-title {
+	display: block;
+	width: 100%;
+	text-align: center;
+	margin: 0;
+	text-transform: none;
+	letter-spacing: inherit;
+}
+
+.metrics-growth-toolbar-wrap .metrics-toggle-group {
+	justify-content: center;
+}
+
 .metrics-toolbar-label {
 	font-size: 11px;
 	font-weight: 800;
@@ -6877,7 +7280,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .metrics-toggle-btn {
 	padding: 8px 12px;
 	font-size: 12px;
-	font-weight: 700;
+	font-weight: 400;
 	border-radius: 10px;
 	border: 1px solid color-mix(in srgb, var(--myinv-accent-color) 35%, rgba(0, 0, 0, 0.15));
 	background: rgba(255, 255, 255, 0.9);
@@ -6889,7 +7292,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		color 0.2s ease;
 }
 
-.metrics-toggle-btn:hover {
+.metrics-toggle-btn:hover:not(:disabled) {
 	border-color: var(--myinv-accent-color);
 	color: var(--myinv-accent-color);
 }
@@ -6898,6 +7301,16 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	background: color-mix(in srgb, var(--myinv-accent-color) 12%, #fff);
 	border-color: var(--myinv-accent-color);
 	color: var(--myinv-accent-color);
+}
+
+.metrics-toggle-btn:disabled.is-active {
+	cursor: default;
+	opacity: 1;
+}
+
+.metrics-toggle-btn:disabled:not(.is-active) {
+	opacity: 0.4;
+	cursor: not-allowed;
 }
 
 .metrics-key-row {
@@ -6927,12 +7340,120 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin-right: 4px;
 }
 
-.metrics-price-chart-row {
-	display: flex;
-	align-items: flex-start;
-	gap: 16px;
-	flex-wrap: wrap;
+/* Growth + chart + toolbar: desktop grid (≥751px), mobile stack (headlines → chart → toolbar). */
+.metrics-growth-main-row {
 	width: 100%;
+	box-sizing: border-box;
+}
+
+@media (min-width: 751px) {
+	.metrics-growth-main-row--with-chart {
+		display: grid;
+		grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+		grid-template-rows: auto 1fr;
+		gap: 16px;
+		align-items: start;
+	}
+
+	.metrics-growth-main-row--with-chart .metrics-growth-headlines {
+		grid-column: 1;
+		grid-row: 1;
+		text-align: center;
+	}
+
+	.metrics-growth-main-row--with-chart .metrics-growth-headlines .asset-metric-row {
+		justify-content: center;
+		flex-wrap: wrap;
+		text-align: center;
+	}
+
+	.metrics-growth-main-row--with-chart .metrics-growth-toolbar-wrap {
+		grid-column: 1;
+		grid-row: 2;
+		width: 100%;
+		max-width: 100%;
+		margin-left: 0;
+		margin-right: 0;
+		box-sizing: border-box;
+	}
+
+	.metrics-growth-main-row--with-chart .metrics-growth-chart-shell {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		min-width: 0;
+		align-self: stretch;
+	}
+
+	.metrics-growth-main-row:not(.metrics-growth-main-row--with-chart) {
+		display: block;
+	}
+
+	.metrics-growth-main-row:not(.metrics-growth-main-row--with-chart) .metrics-growth-toolbar-wrap {
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 750px) {
+	.metrics-growth-main-row {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 14px;
+	}
+
+	.metrics-growth-main-row .metrics-growth-headlines {
+		order: 1;
+		width: 100%;
+		text-align: center;
+	}
+
+	.metrics-growth-main-row .metrics-growth-headlines .asset-metric-row {
+		justify-content: center;
+		flex-wrap: wrap;
+		text-align: center;
+	}
+
+	.metrics-growth-main-row .metrics-growth-chart-shell {
+		order: 2;
+		width: 100%;
+	}
+
+	.metrics-growth-main-row .metrics-growth-toolbar-wrap {
+		order: 3;
+		width: 100%;
+		max-width: 100%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+.metrics-growth-chart-shell {
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.72);
+	overflow: hidden;
+	box-sizing: border-box;
+	--myinv-asset-border-opacity: 0.35;
+}
+
+.metrics-growth-chart-shell-inner {
+	padding: 10px 10px 6px;
+	box-sizing: border-box;
+	border-radius: inherit;
+}
+
+.metrics-growth-toolbar-inner {
+	padding: 12px 12px 14px;
+	box-sizing: border-box;
+}
+
+.metrics-growth-toolbar-wrap {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.metrics-growth-main-row .metrics-growth-toolbar-wrap,
+.metrics-growth-main-row .metrics-growth-chart-shell {
+	margin-bottom: 0;
 }
 
 .metrics-price-panel-inner {
@@ -6944,9 +7465,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	box-sizing: border-box;
 }
 
-.metrics-chart-column {
-	flex: 1 1 280px;
-	min-width: 0;
+.metrics-growth-headlines.metrics-price-panel-inner {
+	width: 100%;
+	max-width: 100%;
 }
 
 .metrics-chart-wrap-panel {

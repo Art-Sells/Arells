@@ -10,6 +10,7 @@ import type {
   MetricsGrowthSeriesPoint,
   MetricsHeadlines,
   MetricsRange,
+  MetricsRangePresetsAvailable,
   MetricsSegment,
   MetricsView,
 } from './types';
@@ -242,7 +243,7 @@ function applyS3OrphanBrowsingToDailySeries(
 
 /**
  * Minimal session-meta for sessions/{id}/VavityAggregate when analytics JSON is missing.
- * Span runs through rangeEnd so retention isn’t 0 just because S3 only gives one timestamp.
+ * Span runs through rangeEnd so growth/orphan session counts aren’t 0 when S3 only gives one timestamp.
  */
 function mergeSessionMetasWithAggregateFallback(
   metas: AnalyticsSessionMeta[],
@@ -300,62 +301,21 @@ function widenSingleInstantUserTouchesForRetention(
   return out;
 }
 
-function cohortOnUtcDay(
-  metas: AnalyticsSessionMeta[],
-  touchMap: UserTouchMap,
-  segment: MetricsSegment,
-  dayKey: string
-): { cohortSessions: Set<string>; cohortUsers: Set<string> } {
-  const cohortSessions = new Set<string>();
+function cohortUsersOnUtcDay(touchMap: UserTouchMap, dayKey: string): Set<string> {
   const cohortUsers = new Set<string>();
-  if (segment !== 'signed_in') {
-    /* Same anonymous session set as “Unique”; signed-in activity is represented by S3 user keys only (avoids a dead signed-in session id in “All” cohort). */
-    const metaForSessions = filterMetas(metas, 'sessions');
-    for (const m of metaForSessions) {
-      if (sessionTouchesUtcDay(m.firstSeenAt, m.lastSeenAt, dayKey)) {
-        cohortSessions.add(m.sessionId);
-      }
-    }
+  for (const [ek, ut] of touchMap) {
+    if (userTouchesUtcDay(ut, dayKey)) cohortUsers.add(ek);
   }
-  if (segment !== 'sessions') {
-    for (const [ek, ut] of touchMap) {
-      if (userTouchesUtcDay(ut, dayKey)) cohortUsers.add(ek);
-    }
-  }
-  return { cohortSessions, cohortUsers };
+  return cohortUsers;
 }
 
-function cohortOnUtcWeek(
-  metas: AnalyticsSessionMeta[],
-  touchMap: UserTouchMap,
-  segment: MetricsSegment,
-  w: { wStart: number; wEnd: number }
-): { cohortSessions: Set<string>; cohortUsers: Set<string> } {
-  const cohortSessions = new Set<string>();
+function cohortUsersOnUtcWeek(touchMap: UserTouchMap, w: { wStart: number; wEnd: number }): Set<string> {
   const cohortUsers = new Set<string>();
-  if (segment !== 'signed_in') {
-    const metaForSessions = filterMetas(metas, 'sessions');
-    for (const m of metaForSessions) {
-      if (sessionOverlapsUtcRange(m, w.wStart, w.wEnd)) cohortSessions.add(m.sessionId);
-    }
+  for (const [ek, ut] of touchMap) {
+    const span = userSpanMs(ut);
+    if (span && span.max >= w.wStart && span.min <= w.wEnd) cohortUsers.add(ek);
   }
-  if (segment !== 'sessions') {
-    for (const [ek, ut] of touchMap) {
-      const span = userSpanMs(ut);
-      if (span && span.max >= w.wStart && span.min <= w.wEnd) cohortUsers.add(ek);
-    }
-  }
-  return { cohortSessions, cohortUsers };
-}
-
-function cohortTotal(
-  segment: MetricsSegment,
-  cohortSessions: Set<string>,
-  cohortUsers: Set<string>
-): number {
-  if (segment === 'sessions') return cohortSessions.size;
-  if (segment === 'signed_in') return cohortUsers.size;
-  return cohortSessions.size + cohortUsers.size;
+  return cohortUsers;
 }
 
 function applyS3OrphanBrowsingToWeeklySeries(
@@ -411,6 +371,32 @@ function computeRangeBounds(range: MetricsRange): { start: number; end: number }
   // "All" = full metrics window from launch epoch through now — same x-axis origin as clamped 1W/1M/3M/1Y,
   // not the first data timestamp (which made All start on e.g. Apr 6 while presets started Apr 2).
   return clampRangeToMetricsEpoch(getMetricsEpochStartMs(), end);
+}
+
+const PRESET_MIN_SPAN: Record<Exclude<MetricsRange, 'all'>, number> = {
+  '1w': 7 * DAY_MS,
+  '1m': 30 * DAY_MS,
+  '3m': 90 * DAY_MS,
+  '1y': 365 * DAY_MS,
+};
+
+function computeRangePresetsAvailable(): {
+  metricsEpochStartMs: number;
+  rangePresetsAvailable: MetricsRangePresetsAvailable;
+} {
+  const metricsEpochStartMs = getMetricsEpochStartMs();
+  const rangePresetsAvailable: MetricsRangePresetsAvailable = {
+    '1w': false,
+    '1m': false,
+    '3m': false,
+    '1y': false,
+  };
+  (['1w', '1m', '3m', '1y'] as const).forEach((preset) => {
+    const { start, end } = computeRangeBounds(preset);
+    const span = end - start;
+    rangePresetsAvailable[preset] = span > 0 && span >= PRESET_MIN_SPAN[preset] * 0.985;
+  });
+  return { metricsEpochStartMs, rangePresetsAvailable };
 }
 
 function buildGrowthSeriesDaily(
@@ -697,10 +683,12 @@ function computeRollingRetentionKpis(
   };
 }
 
+/**
+ * Retention: verified S3 accounts only (UserTouchMap — Auth + VavityAggregate LM span).
+ * No session IDs. `sessions` on each point is 0; `signedInUsers` / `combined` = retained cohort count.
+ */
 function buildRetentionSeries(
-  metas: AnalyticsSessionMeta[],
   touchMap: UserTouchMap,
-  segment: MetricsSegment,
   rangeStart: number,
   rangeEnd: number,
   bucket: 'day' | 'week'
@@ -709,19 +697,12 @@ function buildRetentionSeries(
     const days = eachUtcDay(rangeStart, rangeEnd);
     if (days.length === 0) return [];
 
-    let cohortSessions = new Set<string>();
     let cohortUsers = new Set<string>();
     let d0Idx = -1;
     for (let i = 0; i < days.length; i += 1) {
-      const { cohortSessions: cs, cohortUsers: cu } = cohortOnUtcDay(
-        metas,
-        touchMap,
-        segment,
-        days[i]
-      );
-      if (cohortTotal(segment, cs, cu) > 0) {
+      const cu = cohortUsersOnUtcDay(touchMap, days[i]);
+      if (cu.size > 0) {
         d0Idx = i;
-        cohortSessions = cs;
         cohortUsers = cu;
         break;
       }
@@ -738,12 +719,7 @@ function buildRetentionSeries(
       }));
     }
 
-    const cohortN =
-      segment === 'sessions'
-        ? cohortSessions.size
-        : segment === 'signed_in'
-          ? cohortUsers.size
-          : cohortSessions.size + cohortUsers.size;
+    const cohortN = cohortUsers.size;
 
     return days.map((d, idx) => {
       if (idx < d0Idx) {
@@ -756,25 +732,18 @@ function buildRetentionSeries(
           retentionPct: null,
         };
       }
-      let sessRet = 0;
-      for (const sid of cohortSessions) {
-        const m = metas.find((x) => x.sessionId === sid);
-        if (m && sessionTouchesUtcDay(m.firstSeenAt, m.lastSeenAt, d)) sessRet += 1;
-      }
       let userRet = 0;
       for (const ek of cohortUsers) {
         const ut = touchMap.get(ek);
         if (ut && userTouchesUtcDay(ut, d)) userRet += 1;
       }
-      const retN =
-        segment === 'sessions' ? sessRet : segment === 'signed_in' ? userRet : sessRet + userRet;
-      const retentionPct = clampRetentionRatePct(cohortN === 0 ? null : (retN / cohortN) * 100);
+      const retentionPct = clampRetentionRatePct(cohortN === 0 ? null : (userRet / cohortN) * 100);
       return {
         label: d,
         key: d,
-        sessions: sessRet,
+        sessions: 0,
         signedInUsers: userRet,
-        combined: retN,
+        combined: userRet,
         retentionPct,
       };
     });
@@ -783,21 +752,19 @@ function buildRetentionSeries(
   const weeks = weekBucketsUtcSimple(rangeStart, rangeEnd);
   if (weeks.length === 0) return [];
 
-  let cohortSessions = new Set<string>();
   let cohortUsers = new Set<string>();
   let w0Idx = -1;
   for (let i = 0; i < weeks.length; i += 1) {
-    const { cohortSessions: cs, cohortUsers: cu } = cohortOnUtcWeek(metas, touchMap, segment, weeks[i]);
-    if (cohortTotal(segment, cs, cu) > 0) {
+    const cu = cohortUsersOnUtcWeek(touchMap, weeks[i]);
+    if (cu.size > 0) {
       w0Idx = i;
-      cohortSessions = cs;
       cohortUsers = cu;
       break;
     }
   }
 
   if (w0Idx < 0) {
-    return weeks.map(({ label, wStart, wEnd }) => ({
+    return weeks.map(({ label }) => ({
       label,
       key: label,
       sessions: 0,
@@ -807,12 +774,7 @@ function buildRetentionSeries(
     }));
   }
 
-  const cohortN =
-    segment === 'sessions'
-      ? cohortSessions.size
-      : segment === 'signed_in'
-        ? cohortUsers.size
-        : cohortSessions.size + cohortUsers.size;
+  const cohortN = cohortUsers.size;
 
   return weeks.map(({ label, wStart, wEnd }, idx) => {
     if (idx < w0Idx) {
@@ -825,26 +787,19 @@ function buildRetentionSeries(
         retentionPct: null,
       };
     }
-    let sessRet = 0;
-    for (const sid of cohortSessions) {
-      const m = metas.find((x) => x.sessionId === sid);
-      if (m && sessionOverlapsUtcRange(m, wStart, wEnd)) sessRet += 1;
-    }
     let userRet = 0;
     for (const ek of cohortUsers) {
       const ut = touchMap.get(ek);
       const span = ut ? userSpanMs(ut) : null;
       if (span && span.max >= wStart && span.min <= wEnd) userRet += 1;
     }
-    const retN =
-      segment === 'sessions' ? sessRet : segment === 'signed_in' ? userRet : sessRet + userRet;
-    const retentionPct = clampRetentionRatePct(cohortN === 0 ? null : (retN / cohortN) * 100);
+    const retentionPct = clampRetentionRatePct(cohortN === 0 ? null : (userRet / cohortN) * 100);
     return {
       label,
       key: label,
-      sessions: sessRet,
+      sessions: 0,
       signedInUsers: userRet,
-      combined: retN,
+      combined: userRet,
       retentionPct,
     };
   });
@@ -857,36 +812,6 @@ function averageNullableRates(a: number | null, b: number | null): number | null
   return null;
 }
 
-/** Retention “all” = arithmetic mean of Unique (sessions) and Signed-up series per bucket. */
-function mergeRetentionAllAsAverageOfSegments(
-  sess: MetricsGrowthSeriesPoint[],
-  signed: MetricsGrowthSeriesPoint[]
-): MetricsGrowthSeriesPoint[] {
-  if (sess.length !== signed.length || sess.length === 0) return sess;
-  return sess.map((p, i) => {
-    const q = signed[i];
-    const rawPct = averageNullableRates(
-      p.retentionPct == null || Number.isNaN(p.retentionPct) ? null : p.retentionPct,
-      q.retentionPct == null || Number.isNaN(q.retentionPct) ? null : q.retentionPct
-    );
-    const retentionPct = rawPct == null ? null : clampRetentionRatePct(rawPct);
-    const cA = p.retentionPct == null ? null : p.combined;
-    const cB = q.retentionPct == null ? null : q.combined;
-    let combined = 0;
-    if (cA != null && cB != null) combined = (cA + cB) / 2;
-    else if (cA != null) combined = cA;
-    else if (cB != null) combined = cB;
-    return {
-      label: p.label,
-      key: p.key,
-      sessions: p.sessions,
-      signedInUsers: q.signedInUsers,
-      combined,
-      retentionPct,
-    };
-  });
-}
-
 export async function buildGrowthPayload(
   s3: AWS.S3,
   bucket: string,
@@ -897,9 +822,9 @@ export async function buildGrowthPayload(
   const notes: string[] = [
     'Unique (anonymous session) counts use analytics/session-meta when present; otherwise sessions/{id}/VavityAggregate.json (S3 LastModified for range + chart day). Enable NEXT_PUBLIC_ANALYTICS_ENABLED=1 for full session-meta.',
     '“Signed up” S3 users are users/*/Auth.json with verified: true; activity span uses Auth + VavityAggregate LastModified.',
-    'When segment is “all”, each retention % is the average of the Unique and Signed-up retention series for that bucket; WoW/MoM/YoY retention are averages of those segment KPIs. Headline “Users” may still double-count the same person vs segment totals.',
-    'Retention uses the same UTC day/week bucket list as growth. Cohort = who was active on the first bucket in that list that has any activity (leading quiet buckets show null retention). Each later point is % of that cohort still active in that bucket. S3-only sessions use span through range end; LastModified after the window is treated as active across the window. Verified users with a single S3 timestamp are stretched to range end for retention only. Headline % = last chart point with defined retention.',
-    'WoW/MoM/YoY retention KPIs use rolling 7 / 30 / 365 UTC-day windows (earlier block → following block). Growth KPIs use week/month/year-over-week on the chart series. Session activity uses firstSeen–lastSeen (includes heartbeats).',
+    'Retention view is verified S3 accounts only (same user keys as Signed up). Anonymous sessions are not part of cohort or retained counts; segment toggles do not change retention math.',
+    'Retention uses the same UTC day/week bucket list as growth. Cohort = accounts active on the first bucket in that list that has any activity (leading quiet buckets show null retention). Each later point is % of that cohort still active in that bucket. Verified users with a single S3 timestamp are stretched to range end for retention only. Headline % = last chart point with defined retention.',
+    'WoW/MoM/YoY retention KPIs use rolling 7 / 30 / 365 UTC-day windows on account return rates (earlier block → following block). Growth KPIs use week/month/year-over-week on the chart series. Growth session activity uses firstSeen–lastSeen (includes heartbeats).',
   ];
 
   const [metasAll, touchMap, registeredSessionKeys, sessionAggregates] = await Promise.all([
@@ -913,12 +838,10 @@ export async function buildGrowthPayload(
   const registeredCombined = registeredUserKeys + registeredSessionKeys;
 
   const { start: rangeStart, end: rangeEnd } = computeRangeBounds(range);
-  const metasForRetention = mergeSessionMetasWithAggregateFallback(
-    metasAll,
-    sessionAggregates,
-    rangeStart,
-    rangeEnd
-  );
+  const metasMergedForSessions =
+    view === 'retention'
+      ? metasAll
+      : mergeSessionMetasWithAggregateFallback(metasAll, sessionAggregates, rangeStart, rangeEnd);
 
   const touchMapForRetention =
     view === 'retention'
@@ -936,34 +859,7 @@ export async function buildGrowthPayload(
 
   let series: MetricsGrowthSeriesPoint[];
   if (view === 'retention') {
-    if (segment === 'all') {
-      const sSeries = buildRetentionSeries(
-        metasForRetention,
-        touchMapForRetention,
-        'sessions',
-        rangeStart,
-        rangeEnd,
-        bucketType
-      );
-      const uSeries = buildRetentionSeries(
-        metasForRetention,
-        touchMapForRetention,
-        'signed_in',
-        rangeStart,
-        rangeEnd,
-        bucketType
-      );
-      series = mergeRetentionAllAsAverageOfSegments(sSeries, uSeries);
-    } else {
-      series = buildRetentionSeries(
-        metasForRetention,
-        touchMapForRetention,
-        segment,
-        rangeStart,
-        rangeEnd,
-        bucketType
-      );
-    }
+    series = buildRetentionSeries(touchMapForRetention, rangeStart, rangeEnd, bucketType);
   } else if (bucketType === 'week') {
     series = buildGrowthSeriesWeekly(metasAll, touchMap, segment, rangeStart, rangeEnd);
     series = applyS3OrphanBrowsingToWeeklySeries(
@@ -992,35 +888,11 @@ export async function buildGrowthPayload(
   let wowDeltaPct: number | null = null;
 
   if (view === 'retention') {
-    if (segment === 'all') {
-      const rS = computeRollingRetentionKpis(
-        metasForRetention,
-        touchMapForRetention,
-        'sessions',
-        rangeEnd
-      );
-      const rU = computeRollingRetentionKpis(
-        metasForRetention,
-        touchMapForRetention,
-        'signed_in',
-        rangeEnd
-      );
-      wow = clampRetentionRatePct(averageNullableRates(rS.wowPct, rU.wowPct));
-      mom = clampRetentionRatePct(averageNullableRates(rS.momPct, rU.momPct));
-      yoy = clampRetentionRatePct(averageNullableRates(rS.yoyPct, rU.yoyPct));
-      wowDeltaPct = averageNullableRates(rS.wowDeltaPct, rU.wowDeltaPct);
-    } else {
-      const r = computeRollingRetentionKpis(
-        metasForRetention,
-        touchMapForRetention,
-        segment,
-        rangeEnd
-      );
-      wow = r.wowPct;
-      mom = r.momPct;
-      yoy = r.yoyPct;
-      wowDeltaPct = r.wowDeltaPct;
-    }
+    const r = computeRollingRetentionKpis(metasAll, touchMapForRetention, 'signed_in', rangeEnd);
+    wow = r.wowPct;
+    mom = r.momPct;
+    yoy = r.yoyPct;
+    wowDeltaPct = r.wowDeltaPct;
   } else {
     const r = computeWowMom(series, bucketType, segment);
     wow = r.wow;
@@ -1028,30 +900,37 @@ export async function buildGrowthPayload(
     yoy = r.yoy;
   }
 
-  const sr = sessionRetentionHalves(
-    segment === 'signed_in'
-      ? metasForRetention.filter((m) => m.userHash)
-      : filterMetas(metasForRetention, 'sessions'),
-    rangeStart,
-    rangeEnd
-  );
-  const ur = userRetentionHalves(touchMapForRetention, rangeStart, rangeEnd);
+  const urForHeadline = userRetentionHalves(touchMapForRetention, rangeStart, rangeEnd);
 
   let retentionCohortSize = 0;
   let retentionRetained = 0;
   let retentionRatePct: number | null = null;
-  if (segment === 'sessions') {
-    retentionCohortSize = sr.cohort;
-    retentionRetained = sr.retained;
-    retentionRatePct = sr.rate;
-  } else if (segment === 'signed_in') {
-    retentionCohortSize = ur.cohort;
-    retentionRetained = ur.retained;
-    retentionRatePct = ur.rate;
+  if (view === 'retention') {
+    retentionCohortSize = urForHeadline.cohort;
+    retentionRetained = urForHeadline.retained;
+    retentionRatePct = urForHeadline.rate;
   } else {
-    retentionCohortSize = Math.round((sr.cohort + ur.cohort) / 2);
-    retentionRetained = Math.round((sr.retained + ur.retained) / 2);
-    retentionRatePct = clampRetentionRatePct(averageNullableRates(sr.rate, ur.rate));
+    const sr = sessionRetentionHalves(
+      segment === 'signed_in'
+        ? metasMergedForSessions.filter((m) => m.userHash)
+        : filterMetas(metasMergedForSessions, 'sessions'),
+      rangeStart,
+      rangeEnd
+    );
+    const ur = userRetentionHalves(touchMap, rangeStart, rangeEnd);
+    if (segment === 'sessions') {
+      retentionCohortSize = sr.cohort;
+      retentionRetained = sr.retained;
+      retentionRatePct = sr.rate;
+    } else if (segment === 'signed_in') {
+      retentionCohortSize = ur.cohort;
+      retentionRetained = ur.retained;
+      retentionRatePct = ur.rate;
+    } else {
+      retentionCohortSize = Math.round((sr.cohort + ur.cohort) / 2);
+      retentionRetained = Math.round((sr.retained + ur.retained) / 2);
+      retentionRatePct = clampRetentionRatePct(averageNullableRates(sr.rate, ur.rate));
+    }
   }
 
   if (view === 'retention' && series.length > 0) {
@@ -1129,6 +1008,8 @@ export async function buildGrowthPayload(
     growthPct,
   };
 
+  const { metricsEpochStartMs, rangePresetsAvailable } = computeRangePresetsAvailable();
+
   return {
     generatedAt: Date.now(),
     range,
@@ -1141,5 +1022,7 @@ export async function buildGrowthPayload(
     kpis,
     headlines,
     notes,
+    metricsEpochStartMs,
+    rangePresetsAvailable,
   };
 }

@@ -6,13 +6,6 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-### Metrics
-- add about at the bottom and home page icon between title
-- Build meta page banner with the title looking lik this:
-arells 
-     Growth (A) Metrics
-     (A) button takes us to home page
-
 ### enviroments
 - Add to Amplify
 

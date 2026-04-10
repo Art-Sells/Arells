@@ -44,6 +44,14 @@ export type MetricsHeadlines = {
   growthPct: number | null;
 };
 
+/** Whether each fixed window has enough history (vs metrics epoch) to be meaningful. `all` is always available. */
+export type MetricsRangePresetsAvailable = {
+  '1w': boolean;
+  '1m': boolean;
+  '3m': boolean;
+  '1y': boolean;
+};
+
 export type MetricsGrowthResponse = {
   generatedAt: number;
   range: MetricsRange;
@@ -57,4 +65,8 @@ export type MetricsGrowthResponse = {
   headlines: MetricsHeadlines;
   /** Human-readable caveats */
   notes: string[];
+  /** UTC ms start of metrics window (same as server clamp); for client range UI. */
+  metricsEpochStartMs: number;
+  /** Preset ranges with span ≥ intended window after epoch clamp (else false). */
+  rangePresetsAvailable: MetricsRangePresetsAvailable;
 };

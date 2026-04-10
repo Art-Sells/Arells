@@ -71,7 +71,10 @@ async function tryReadGrowthCache(
       typeof parsed.generatedAt !== 'number' ||
       !Array.isArray(parsed.series) ||
       !parsed.headlines ||
-      typeof parsed.headlines.registeredCombined !== 'number'
+      typeof parsed.headlines.registeredCombined !== 'number' ||
+      typeof parsed.metricsEpochStartMs !== 'number' ||
+      !parsed.rangePresetsAvailable ||
+      typeof parsed.rangePresetsAvailable['1w'] !== 'boolean'
     ) {
       return null;
     }

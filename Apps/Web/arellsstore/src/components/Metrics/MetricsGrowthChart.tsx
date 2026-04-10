@@ -15,14 +15,23 @@ type AccentPack = {
   gridCss: string;
 };
 
-function parseRgb(cssColor: string): { r: number; g: number; b: number } | null {
-  const m = cssColor.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
-  if (!m) return null;
-  return { r: Number(m[1]), g: Number(m[2]), b: Number(m[3]) };
+/** Resolves theme accent for Chart.js (canvas) + inline styles — avoid formats Chart/canvas can't use. */
+function parseCssColorToRgb(cssColor: string): { r: number; g: number; b: number } | null {
+  const s = cssColor.trim();
+  if (!s) return null;
+  const rgb = s.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if (rgb) return { r: Number(rgb[1]), g: Number(rgb[2]), b: Number(rgb[3]) };
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s);
+  if (hex) {
+    let h = hex[1];
+    if (h.length === 3) h = [...h].map((c) => c + c).join('');
+    const n = parseInt(h, 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  return null;
 }
 
-function packFromRgb(rgb: string): AccentPack {
-  const p = parseRgb(rgb);
+function packFromRgbTri(p: { r: number; g: number; b: number } | null): AccentPack {
   const r = p?.r ?? 248;
   const g = p?.g ?? 141;
   const b = p?.b ?? 0;
@@ -37,15 +46,21 @@ function packFromRgb(rgb: string): AccentPack {
   };
 }
 
-function readTitleBarRgb(): string {
-  if (typeof document === 'undefined') return 'rgb(248, 141, 0)';
-  const el = document.querySelector('.auth-title-bar');
-  if (el) {
-    const c = getComputedStyle(el).color;
-    if (c && c !== 'rgba(0, 0, 0, 0)') return c;
+/** Prefer --myinv-accent-color (hex on :root); title bar computed color can be oklch/color() and break naive rgb() parsing. */
+function readAccentRgbTri(): { r: number; g: number; b: number } | null {
+  if (typeof document === 'undefined') return null;
+  const rootStyle = getComputedStyle(document.documentElement);
+  const fromVar = parseCssColorToRgb(rootStyle.getPropertyValue('--myinv-accent-color'));
+  if (fromVar) return fromVar;
+  const selectors = ['.growth-metrics-title-bar', '.auth-title-bar'];
+  for (const sel of selectors) {
+    const el = document.querySelector(sel);
+    if (el) {
+      const parsed = parseCssColorToRgb(getComputedStyle(el).color);
+      if (parsed) return parsed;
+    }
   }
-  const root = getComputedStyle(document.documentElement).color;
-  return root || 'rgb(248, 141, 0)';
+  return parseCssColorToRgb(rootStyle.color);
 }
 
 type Props = {
@@ -59,16 +74,16 @@ const PANEL_HEIGHT = 300;
 const TOP_PAD = 8;
 
 export default function MetricsGrowthChart({ history, loading, onPointHover }: Props) {
-  const [accent, setAccent] = useState<AccentPack>(() => packFromRgb('rgb(248, 141, 0)'));
+  const [accent, setAccent] = useState<AccentPack>(() => packFromRgbTri(null));
   const [chartReady, setChartReady] = useState(false);
 
   useLayoutEffect(() => {
-    setAccent(packFromRgb(readTitleBarRgb()));
+    setAccent(packFromRgbTri(readAccentRgbTri()));
   }, []);
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setAccent(packFromRgb(readTitleBarRgb()));
+      setAccent(packFromRgbTri(readAccentRgbTri()));
     }, 600);
     return () => window.clearInterval(id);
   }, []);

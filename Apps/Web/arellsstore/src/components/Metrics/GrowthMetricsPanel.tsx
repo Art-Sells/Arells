@@ -5,9 +5,17 @@ import type {
   MetricsGrowthResponse,
   MetricsHeadlines,
   MetricsRange,
+  MetricsRangePresetsAvailable,
   MetricsSegment,
   MetricsView,
 } from '../../lib/metrics/types';
+
+const ALL_RANGE_PRESETS_TRUE: MetricsRangePresetsAvailable = {
+  '1w': true,
+  '1m': true,
+  '3m': true,
+  '1y': true,
+};
 import MetricsGrowthChart, { seriesToChartHistory } from './MetricsGrowthChart';
 
 const STORAGE_KEY = 'metrics_api_key';
@@ -82,6 +90,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const [data, setData] = useState<MetricsGrowthResponse | null>(null);
   const [hoverPoint, setHoverPoint] = useState<{ x: Date; y: number } | null>(null);
   const alive = useRef(true);
+  const prevViewRef = useRef<MetricsView>('growth');
 
   useEffect(() => {
     alive.current = true;
@@ -167,6 +176,22 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
     setHoverPoint(null);
   }, [data?.generatedAt, segment, range, view]);
 
+  useEffect(() => {
+    if (view === 'retention') {
+      setSegment('signed_in');
+    } else if (prevViewRef.current === 'retention' && view === 'growth') {
+      setSegment('all');
+    }
+    prevViewRef.current = view;
+  }, [view]);
+
+  const rangePresetsAvailable = data?.rangePresetsAvailable ?? ALL_RANGE_PRESETS_TRUE;
+
+  useEffect(() => {
+    if (!data?.rangePresetsAvailable || range === 'all') return;
+    if (!data.rangePresetsAvailable[range]) setRange('all');
+  }, [data?.generatedAt, data?.rangePresetsAvailable, range]);
+
   const chartHistoryForChart = useMemo(() => {
     if (!data?.series?.length) {
       const t = new Date().toISOString();
@@ -193,24 +218,30 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const h = data?.headlines ?? EMPTY_HEADLINES;
 
   const primaryTitle =
-    segment === 'all'
-      ? 'New User Traffic'
-      : segment === 'signed_in'
-        ? 'New User Accounts'
-        : 'New User Visits';
+    view === 'retention'
+      ? 'User Accounts'
+      : segment === 'all'
+        ? 'New User Traffic'
+        : segment === 'signed_in'
+          ? 'New User Accounts'
+          : 'New User Visits';
   const timeframeHeading = rangeLabelHeading(range);
+  /** Retention + all-time: match product copy (“All-Time … Accounts”). */
+  const primaryTimeframeHeading =
+    view === 'retention' && range === 'all' ? 'All-Time' : timeframeHeading;
   const timeframeBeforeMetric = rangeLabelBeforeMetric(range);
-  const primaryHeading = `${timeframeHeading} ${primaryTitle}`;
+  const primaryHeading = `${primaryTimeframeHeading} ${primaryTitle}`;
 
   /**
    * Visits: distinct anonymous sessions that touched the selected range (aauSessionsAnonymous).
    * Chart hover still shows that bucket’s daily count (can be 0 on quiet days).
    */
   const basePrimary = useMemo(() => {
+    if (view === 'retention') return h.registeredUserKeys;
     if (segment === 'all') return h.registeredCombined;
     if (segment === 'signed_in') return h.registeredUserKeys;
     return h.aauSessionsAnonymous;
-  }, [segment, h]);
+  }, [segment, h, view]);
 
   const displayPrimaryStr = useMemo(() => {
     if (hoverPoint && view === 'growth') {
@@ -287,13 +318,13 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
 
       <div className="metrics-growth-outer myinv-summary-block myinv-accent-border">
         <div className="metrics-growth-outer-column">
-          {data && (
-            <div className="metrics-growth-tier metrics-growth-tier--top myinv-summary-block myinv-accent-border">
-              <div className="metrics-growth-tier-inner">
-                <div className="metrics-price-chart-row">
-                  <div className="metrics-price-panel-inner">
+          <div className="metrics-growth-tier metrics-growth-tier--top myinv-summary-block myinv-accent-border">
+            <div className="metrics-growth-tier-inner">
+              <div className={`metrics-growth-main-row${data ? ' metrics-growth-main-row--with-chart' : ''}`}>
+                {data ? (
+                  <div className="metrics-price-panel-inner metrics-growth-headlines">
                     <div className="asset-metric-row">
-                      <span className="asset-metric-title--bitcoin metrics-growth-toolbar-tone">{primaryHeading}:</span>
+                      <span className="asset-metric-title--bitcoin">{primaryHeading}:</span>
                       <span className="asset-metric-value-wrap">
                         {!headerReady && (
                           <span className="asset-number-loader metrics-number-loader--accent asset-number-loader--overlay" />
@@ -338,83 +369,113 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
                       </span>
                     </div>
                   </div>
+                ) : null}
 
-                  <div className="metrics-chart-column">
-                    <MetricsGrowthChart
-                      history={chartHistoryForChart}
-                      loading={loading}
-                      onPointHover={setHoverPoint}
-                    />
+                {data ? (
+                  <div className="metrics-growth-chart-shell myinv-accent-border">
+                    <div className="metrics-growth-chart-shell-inner">
+                      <MetricsGrowthChart
+                        history={chartHistoryForChart}
+                        loading={loading}
+                        onPointHover={setHoverPoint}
+                      />
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          )}
+                ) : null}
 
-          <div className="metrics-growth-tier metrics-growth-tier--middle myinv-summary-block myinv-accent-border">
-            <div className="metrics-growth-tier-inner">
-              <div className="metrics-toolbar">
-                <div className="metrics-toolbar-row">
-                  <span className="metrics-toolbar-label">Metrics</span>
-                  <div className="metrics-toggle-group">
-                    <button
-                      type="button"
-                      className={`metrics-toggle-btn${view === 'growth' ? ' is-active' : ''}`}
-                      onClick={() => setView('growth')}
-                    >
-                      Growth
-                    </button>
-                    <button
-                      type="button"
-                      className={`metrics-toggle-btn${view === 'retention' ? ' is-active' : ''}`}
-                      onClick={() => setView('retention')}
-                    >
-                      Retention
-                    </button>
-                  </div>
-                </div>
-                <div className="metrics-toolbar-row">
-                  <span className="metrics-toolbar-label">Timeframe</span>
-                  <div className="metrics-toggle-group">
-                    {(
-                      [
-                        ['all', 'All'],
-                        ['1w', '1W'],
-                        ['1m', '1M'],
-                        ['3m', '3M'],
-                        ['1y', '1Y'],
-                      ] as const
-                    ).map(([r, label]) => (
-                      <button
-                        key={r}
-                        type="button"
-                        className={`metrics-toggle-btn${range === r ? ' is-active' : ''}`}
-                        onClick={() => setRange(r)}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="metrics-toolbar-row">
-                  <span className="metrics-toolbar-label">{primaryTitle}</span>
-                  <div className="metrics-toggle-group">
-                    {(
-                      [
-                        ['all', 'All'],
-                        ['signed_in', 'Accounts'],
-                        ['sessions', 'Visits'],
-                      ] as const
-                    ).map(([s, label]) => (
-                      <button
-                        key={s}
-                        type="button"
-                        className={`metrics-toggle-btn${segment === s ? ' is-active' : ''}`}
-                        onClick={() => setSegment(s)}
-                      >
-                        {label}
-                      </button>
-                    ))}
+                <div className="metrics-growth-toolbar-wrap myinv-summary-block myinv-accent-border">
+                  <div className="metrics-growth-toolbar-inner">
+                    <div className="metrics-toolbar">
+                      <div className="metrics-toolbar-row">
+                        <span className="asset-metric-title--bitcoin metrics-toolbar-section-title">Metrics</span>
+                        <div className="metrics-toggle-group">
+                          <button
+                            type="button"
+                            className={`metrics-toggle-btn${view === 'growth' ? ' is-active' : ''}`}
+                            disabled={view === 'growth'}
+                            onClick={() => setView('growth')}
+                          >
+                            Growth
+                          </button>
+                          <button
+                            type="button"
+                            className={`metrics-toggle-btn${view === 'retention' ? ' is-active' : ''}`}
+                            disabled={view === 'retention'}
+                            onClick={() => setView('retention')}
+                          >
+                            Retention
+                          </button>
+                        </div>
+                      </div>
+                      <div className="metrics-toolbar-row">
+                        <span className="asset-metric-title--bitcoin metrics-toolbar-section-title">Timeframe</span>
+                        <div className="metrics-toggle-group">
+                          {(
+                            [
+                              ['all', 'All'],
+                              ['1w', '1W'],
+                              ['1m', '1M'],
+                              ['3m', '3M'],
+                              ['1y', '1Y'],
+                            ] as const
+                          ).map(([r, label]) => {
+                            const presetOk = r === 'all' || rangePresetsAvailable[r];
+                            const isCurrent = range === r;
+                            return (
+                              <button
+                                key={r}
+                                type="button"
+                                className={`metrics-toggle-btn${isCurrent ? ' is-active' : ''}`}
+                                disabled={isCurrent || !presetOk}
+                                title={!presetOk ? 'Not enough history for this window yet' : undefined}
+                                onClick={() => {
+                                  if (!presetOk || isCurrent) return;
+                                  setRange(r);
+                                }}
+                              >
+                                {label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      {view !== 'retention' ? (
+                        <div className="metrics-toolbar-row">
+                          <span className="asset-metric-title--bitcoin metrics-toolbar-section-title">
+                            {segment === 'all'
+                              ? 'New User Traffic'
+                              : segment === 'signed_in'
+                                ? 'New User Accounts'
+                                : 'New User Visits'}
+                          </span>
+                          <div className="metrics-toggle-group">
+                            {(
+                              [
+                                ['all', 'All'],
+                                ['signed_in', 'Accounts'],
+                                ['sessions', 'Visits'],
+                              ] as const
+                            ).map(([s, label]) => {
+                              const isCurrent = segment === s;
+                              return (
+                                <button
+                                  key={s}
+                                  type="button"
+                                  className={`metrics-toggle-btn${isCurrent ? ' is-active' : ''}`}
+                                  disabled={isCurrent}
+                                  onClick={() => {
+                                    if (isCurrent) return;
+                                    setSegment(s);
+                                  }}
+                                >
+                                  {label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               </div>

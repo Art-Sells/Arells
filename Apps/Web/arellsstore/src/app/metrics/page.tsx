@@ -1,25 +1,25 @@
 import type { Metadata } from 'next';
 import MetricsPageClient from './MetricsPageClient';
 
-const generalBanner =
-  'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/ArellsGeneralBanner.jpg';
+const metricsOgImage =
+  'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/GrowthMetricsBanner.jpg';
 
 export const metadata: Metadata = {
-  title: 'Growth Metrics',
-  description: 'Arells growth metrics',
+  title: 'Arells Growth Metrics',
+  description: 'Growth and retention metrics for Arells',
   robots: { index: false, follow: true },
   openGraph: {
-    title: 'Growth Metrics',
-    description: 'Arells growth metrics',
+    title: 'Arells Growth Metrics',
+    description: 'Growth and retention metrics for Arells',
     url: 'https://arells.com/metrics',
     type: 'website',
-    images: [{ url: generalBanner }],
+    images: [{ url: metricsOgImage }],
   },
   twitter: {
-    title: 'Growth Metrics',
-    description: 'Arells growth metrics',
+    title: 'Arells Growth Metrics',
+    description: 'Growth and retention metrics for Arells',
     card: 'summary_large_image',
-    images: [{ url: generalBanner }],
+    images: [{ url: metricsOgImage }],
   },
 };
 
