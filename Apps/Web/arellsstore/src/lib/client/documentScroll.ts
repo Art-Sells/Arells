@@ -43,8 +43,6 @@ export function scrollDocumentToBottom(behavior: ScrollBehavior = 'auto'): void 
   scrollDocumentToY(getMaxScrollY(), behavior);
 }
 
-const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
-
 let bottomScrollRafId: number | null = null;
 
 export function cancelDocumentBottomScrollAnimation(): void {
@@ -56,7 +54,7 @@ export function cancelDocumentBottomScrollAnimation(): void {
 }
 
 /**
- * Smooth scroll from current position toward document bottom over `durationMs`.
+ * Scroll from current position toward document bottom over `durationMs` (linear; no easing).
  * Re-reads max scroll each frame so a slightly late layout shift still ends at the true bottom.
  */
 export function scrollDocumentToBottomOverMs(
@@ -84,8 +82,7 @@ export function scrollDocumentToBottomOverMs(
       bottomScrollRafId = null;
       return;
     }
-    const eased = easeOutCubic(u);
-    const target = start + (maxY - start) * eased;
+    const target = start + (maxY - start) * u;
     scrollDocumentToY(target, 'auto');
     bottomScrollRafId = requestAnimationFrame(tick);
   };
