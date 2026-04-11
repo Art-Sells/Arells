@@ -1,7 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 
-const s3 = new AWS.S3();
+const s3 = new AWS.S3({
+  region: process.env.WS_REGION,
+  accessKeyId: process.env.WS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
+});
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 const ETH_VAPA_KEY = 'vavity/ethereumVAPA.json';
 

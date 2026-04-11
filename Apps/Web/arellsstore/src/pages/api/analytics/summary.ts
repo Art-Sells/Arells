@@ -4,7 +4,11 @@ import { loadAllSessionMetasFromS3 } from '../../../lib/analytics/loadSessionMet
 import type { AnalyticsMetricsSummaryJson, AnalyticsSessionMeta } from '../../../lib/analytics/types';
 import { ANALYTICS_METRICS_AGGREGATE_KEY, HUMAN_DURATION_MS } from '../../../lib/analytics/types';
 
-const s3 = new AWS.S3();
+const s3 = new AWS.S3({
+  region: process.env.WS_REGION,
+  accessKeyId: process.env.WS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
+});
 
 function bucket(): string {
   const b = process.env.S3_BUCKET_NAME;
