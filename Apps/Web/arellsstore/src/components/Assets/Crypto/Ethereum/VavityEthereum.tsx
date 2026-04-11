@@ -18,6 +18,7 @@ import {
 } from '../../useAssetPriceChartMountSlide';
 import {
   ASSET_PAGE_SCROLL_BOTTOM_MS,
+  cancelDocumentBottomScrollAnimation,
   runAfterDocumentHeightStable,
   runAfterMaxHeightTransitionEnd,
   scrollDocumentToBottomOverMs,
@@ -350,6 +351,7 @@ const VavityEthereum: React.FC = () => {
   const cancelPendingScrollToBottom = useCallback(() => {
     pendingScrollLayoutCancelRef.current?.();
     pendingScrollLayoutCancelRef.current = null;
+    cancelDocumentBottomScrollAnimation();
   }, []);
 
   const scrollToBottomAfterDocumentStable = useCallback(() => {
