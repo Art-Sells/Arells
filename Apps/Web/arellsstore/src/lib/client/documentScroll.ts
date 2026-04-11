@@ -39,3 +39,14 @@ export function scrollDocumentToY(top: number, behavior: ScrollBehavior = 'auto'
 export function scrollDocumentToBottom(behavior: ScrollBehavior = 'auto'): void {
   scrollDocumentToY(getMaxScrollY(), behavior);
 }
+
+/**
+ * Skip frame-by-frame scroll followers on mobile: they fight touch scrolling and iOS momentum (visible jitter).
+ * Matches asset layout breakpoint (750) and coarse pointers (phones, most tablets).
+ */
+export function skipAssetPageScrollFollowRaf(): boolean {
+  if (typeof window === 'undefined') return false;
+  const coarse = window.matchMedia?.('(pointer: coarse)')?.matches === true;
+  const narrow = window.matchMedia?.('(max-width: 749px)')?.matches === true;
+  return coarse || narrow;
+}

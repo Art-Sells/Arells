@@ -22,6 +22,7 @@ import {
   getVisualViewportHeight,
   scrollDocumentToBottom,
   scrollDocumentToY,
+  skipAssetPageScrollFollowRaf,
 } from '../../../../lib/client/documentScroll';
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
@@ -362,6 +363,7 @@ const VavityBitcoin: React.FC = () => {
   const summaryTransitionStopTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const followScrollFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
+    if (skipAssetPageScrollFollowRaf()) return;
     followScrollUntilRef.current = Date.now() + ms;
     if (followScrollRafRef.current) {
       window.cancelAnimationFrame(followScrollRafRef.current);
@@ -382,6 +384,7 @@ const VavityBitcoin: React.FC = () => {
   // instead of snapping to the document bottom (which causes the final "pop").
   const followBottomActionsFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
+    if (skipAssetPageScrollFollowRaf()) return;
     const until = Date.now() + ms;
     if (followScrollRafRef.current) {
       window.cancelAnimationFrame(followScrollRafRef.current);
@@ -413,6 +416,7 @@ const VavityBitcoin: React.FC = () => {
   // Ease toward the bottom each frame, so the scroll "follows" the height animation instead of snapping.
   const followScrollForEased = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
+    if (skipAssetPageScrollFollowRaf()) return;
     followScrollUntilRef.current = Date.now() + ms;
     if (followScrollRafRef.current) {
       window.cancelAnimationFrame(followScrollRafRef.current);
@@ -438,6 +442,7 @@ const VavityBitcoin: React.FC = () => {
   // (Sign In / Show Investments) move up smoothly instead of clamping/popping at the end.
   const followScrollHeightDeltaFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
+    if (skipAssetPageScrollFollowRaf()) return;
     const until = Date.now() + ms;
     if (followScrollRafRef.current) {
       window.cancelAnimationFrame(followScrollRafRef.current);
@@ -469,6 +474,7 @@ const VavityBitcoin: React.FC = () => {
   // Follow the add-form panel height delta directly during submit collapse.
   const followAddFormHeightDeltaFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
+    if (skipAssetPageScrollFollowRaf()) return;
     const until = Date.now() + ms;
     if (addFormScrollRafRef.current) {
       window.cancelAnimationFrame(addFormScrollRafRef.current);
@@ -496,6 +502,7 @@ const VavityBitcoin: React.FC = () => {
 
   const followSummaryHeightDeltaFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
+    if (skipAssetPageScrollFollowRaf()) return;
     const until = Date.now() + ms;
     if (summaryScrollRafRef.current) {
       window.cancelAnimationFrame(summaryScrollRafRef.current);
@@ -523,6 +530,7 @@ const VavityBitcoin: React.FC = () => {
 
   const followWholePanelHeightDeltaFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
+    if (skipAssetPageScrollFollowRaf()) return;
     const until = Date.now() + ms;
     if (summaryScrollRafRef.current) {
       window.cancelAnimationFrame(summaryScrollRafRef.current);
@@ -623,6 +631,7 @@ const VavityBitcoin: React.FC = () => {
   // This prevents the "last minute scroll up" after submit when some panels collapse/unmount.
   const followScrollHeightDeltaForDownOnly = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
+    if (skipAssetPageScrollFollowRaf()) return;
     const until = Date.now() + ms;
     if (followScrollRafRef.current) {
       window.cancelAnimationFrame(followScrollRafRef.current);
