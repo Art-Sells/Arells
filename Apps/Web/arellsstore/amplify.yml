@@ -14,15 +14,12 @@ applications:
             - curl -sSf https://get.volta.sh | bash
             - export VOLTA_HOME="$HOME/.volta"
             - export PATH="$VOLTA_HOME/bin:$PATH"
-            - volta install node@20.11.1
+            - volta install node@20.20.1
             - volta install yarn@1.22.22
             - node -v && yarn -v
 
             - echo "📦 Installing dependencies..."
             - yarn install --frozen-lockfile
-
-            - echo "🛠️ Compiling Hardhat contracts..."
-            - npx hardhat compile
 
         build:
           commands:
