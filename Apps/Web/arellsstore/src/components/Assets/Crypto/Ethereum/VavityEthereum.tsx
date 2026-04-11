@@ -20,8 +20,6 @@ import {
   getMaxScrollY,
   getScrollY,
   getVisualViewportHeight,
-  installUserScrollGestureListeners,
-  isUserDrivenScrollLocked,
   scrollDocumentToBottom,
   scrollDocumentToY,
 } from '../../../../lib/client/documentScroll';
@@ -370,10 +368,6 @@ const VavityEthereum: React.FC = () => {
       followScrollRafRef.current = null;
     }
     const tick = () => {
-      if (isUserDrivenScrollLocked()) {
-        followScrollRafRef.current = null;
-        return;
-      }
       if (Date.now() >= followScrollUntilRef.current) {
         followScrollRafRef.current = null;
         return;
@@ -394,10 +388,6 @@ const VavityEthereum: React.FC = () => {
       followScrollRafRef.current = null;
     }
     const tick = () => {
-      if (isUserDrivenScrollLocked()) {
-        followScrollRafRef.current = null;
-        return;
-      }
       if (Date.now() >= until) {
         followScrollRafRef.current = null;
         return;
@@ -429,10 +419,6 @@ const VavityEthereum: React.FC = () => {
       followScrollRafRef.current = null;
     }
     const tick = () => {
-      if (isUserDrivenScrollLocked()) {
-        followScrollRafRef.current = null;
-        return;
-      }
       if (Date.now() >= followScrollUntilRef.current) {
         followScrollRafRef.current = null;
         return;
@@ -459,10 +445,6 @@ const VavityEthereum: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
-      if (isUserDrivenScrollLocked()) {
-        followScrollRafRef.current = null;
-        return;
-      }
       if (Date.now() >= until) {
         followScrollRafRef.current = null;
         return;
@@ -494,10 +476,6 @@ const VavityEthereum: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
-      if (isUserDrivenScrollLocked()) {
-        addFormScrollRafRef.current = null;
-        return;
-      }
       if (Date.now() >= until) {
         addFormScrollRafRef.current = null;
         return;
@@ -525,10 +503,6 @@ const VavityEthereum: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
-      if (isUserDrivenScrollLocked()) {
-        summaryScrollRafRef.current = null;
-        return;
-      }
       if (Date.now() >= until) {
         summaryScrollRafRef.current = null;
         return;
@@ -556,10 +530,6 @@ const VavityEthereum: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
-      if (isUserDrivenScrollLocked()) {
-        summaryScrollRafRef.current = null;
-        return;
-      }
       if (Date.now() >= until) {
         summaryScrollRafRef.current = null;
         return;
@@ -658,10 +628,6 @@ const VavityEthereum: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
-      if (isUserDrivenScrollLocked()) {
-        followScrollRafRef.current = null;
-        return;
-      }
       if (Date.now() >= until) {
         followScrollRafRef.current = null;
         return;
@@ -690,8 +656,6 @@ const VavityEthereum: React.FC = () => {
       }
     };
   }, []);
-
-  useEffect(() => installUserScrollGestureListeners(), []);
 
   const clearPulseTimers = useCallback(() => {
     pulseTimersRef.current.forEach((t) => globalThis.clearTimeout(t));

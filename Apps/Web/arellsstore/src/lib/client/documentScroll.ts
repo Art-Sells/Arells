@@ -1,6 +1,5 @@
 /**
- * Document scroll helpers for asset pages: clamped targets, visual viewport height,
- * and a short lock while the user touch/wheel-scrolls so RAF followers don't fight the browser.
+ * Document scroll helpers for asset pages: clamped targets and visual viewport height.
  */
 
 export function getVisualViewportHeight(): number {
@@ -39,27 +38,4 @@ export function scrollDocumentToY(top: number, behavior: ScrollBehavior = 'auto'
 
 export function scrollDocumentToBottom(behavior: ScrollBehavior = 'auto'): void {
   scrollDocumentToY(getMaxScrollY(), behavior);
-}
-
-const USER_SCROLL_LOCK_MS = 480;
-let userDrivenScrollLockUntil = 0;
-
-export function markUserDrivenScroll(): void {
-  userDrivenScrollLockUntil = Date.now() + USER_SCROLL_LOCK_MS;
-}
-
-export function isUserDrivenScrollLocked(): boolean {
-  return Date.now() < userDrivenScrollLockUntil;
-}
-
-export function installUserScrollGestureListeners(): () => void {
-  if (typeof window === 'undefined') return () => {};
-  const onWheel = () => markUserDrivenScroll();
-  const onTouchMove = () => markUserDrivenScroll();
-  window.addEventListener('wheel', onWheel, { passive: true });
-  window.addEventListener('touchmove', onTouchMove, { passive: true });
-  return () => {
-    window.removeEventListener('wheel', onWheel);
-    window.removeEventListener('touchmove', onTouchMove);
-  };
 }

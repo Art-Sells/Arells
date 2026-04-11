@@ -13,15 +13,21 @@ const resolveFavicon = (pathname: string) => {
   return DEFAULT_FAVICON;
 };
 
-const ensureLink = (rel: string, type?: string) => {
-  let link = document.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`);
-  if (!link) {
-    link = document.createElement('link');
-    link.rel = rel;
+/** Update every matching link (Next may emit several); add one if the head has none yet. */
+const syncRel = (rel: string, href: string, type?: string) => {
+  const list = document.querySelectorAll<HTMLLinkElement>(`link[rel="${rel}"]`);
+  if (list.length === 0) {
+    const link = document.createElement('link');
+    link.setAttribute('rel', rel);
+    if (type) link.type = type;
+    link.href = href;
     document.head.appendChild(link);
+    return;
   }
-  if (type) link.type = type;
-  return link;
+  list.forEach((el) => {
+    if (type) el.type = type;
+    el.href = href;
+  });
 };
 
 export default function FaviconSwitcher() {
@@ -32,9 +38,9 @@ export default function FaviconSwitcher() {
     const href = resolveFavicon(pathname || '/');
     const type = href.endsWith('.svg') ? 'image/svg+xml' : 'image/png';
 
-    ensureLink('icon', type).href = href;
-    ensureLink('shortcut icon', type).href = href;
-    ensureLink('apple-touch-icon').href = href;
+    syncRel('icon', href, type);
+    syncRel('shortcut icon', href, type);
+    syncRel('apple-touch-icon', href);
   }, [pathname]);
 
   return null;

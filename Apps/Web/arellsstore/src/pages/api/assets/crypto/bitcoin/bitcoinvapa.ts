@@ -16,8 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json(result);
   } catch (error: unknown) {
     logApiRouteError('bitcoinvapa', error);
-    return res
-      .status(500)
-      .json(withOptionalApiDebug({ error: 'Failed to fetch bitcoin VAPA' }, error));
+    const message =
+      error instanceof Error && error.message
+        ? error.message
+        : 'Failed to fetch bitcoin VAPA';
+    return res.status(500).json(withOptionalApiDebug({ error: message }, error));
   }
 }

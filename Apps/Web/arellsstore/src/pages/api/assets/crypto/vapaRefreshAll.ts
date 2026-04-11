@@ -27,8 +27,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json(results);
   } catch (error: unknown) {
     logApiRouteError('vapaRefreshAll', error);
-    return res
-      .status(500)
-      .json(withOptionalApiDebug({ error: 'Failed to refresh assets' }, error));
+    const message =
+      error instanceof Error && error.message
+        ? error.message
+        : 'Failed to refresh assets';
+    return res.status(500).json(withOptionalApiDebug({ error: message }, error));
   }
 }
