@@ -1,11 +1,7 @@
-import AWS from 'aws-sdk';
 import { normalizeEmail, normalizeEmailKey } from './normalize';
+import { getServerS3 } from '../server/awsS3';
 
-const s3 = new AWS.S3({
-  region: process.env.WS_REGION,
-  accessKeyId: process.env.WS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
-});
+const s3 = getServerS3();
 
 function bucket(): string {
   const b = process.env.S3_BUCKET_NAME;

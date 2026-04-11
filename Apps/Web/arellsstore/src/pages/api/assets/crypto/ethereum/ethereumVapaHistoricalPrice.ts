@@ -1,12 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import AWS from 'aws-sdk';
+import { getServerS3 } from '../../../../../lib/server/awsS3';
 import { s3BucketNameOrThrow } from '../../../../../lib/server/s3Bucket';
 
-const s3 = new AWS.S3({
-  region: process.env.WS_REGION,
-  accessKeyId: process.env.WS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
-});
+const s3 = getServerS3();
 const ETH_VAPA_KEY = 'vavity/ethereumVAPA.json';
 
 const normalizeToIsoDay = (value: string) => {

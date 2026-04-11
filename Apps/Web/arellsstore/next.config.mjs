@@ -17,19 +17,41 @@ const nextConfig = {
       type: 'webassembly/async',
     });
 
-    // Server-only: Amplify often omits custom env from the API Lambda at runtime, but the bucket name is present
-    // during `next build`. Inlining `S3_BUCKET_NAME` avoids any NEXT_PUBLIC_* hack; client bundles do not use this plugin.
+    // Server-only: Amplify often omits custom env from the API Lambda at runtime. Values present during `next build`
+    // are inlined so S3 and credentials match local behavior. Client bundles do not use this block.
     if (isServer) {
+      const defs = {};
+
       const bucket =
         process.env.S3_BUCKET_NAME?.trim() ||
         process.env.AWS_S3_BUCKET?.trim() ||
         process.env.S3_BUCKET?.trim();
       if (bucket) {
-        config.plugins.push(
-          new webpack.DefinePlugin({
-            'process.env.S3_BUCKET_NAME': JSON.stringify(bucket),
-          })
-        );
+        defs['process.env.S3_BUCKET_NAME'] = JSON.stringify(bucket);
+      }
+
+      const region =
+        process.env.WS_REGION?.trim() ||
+        process.env.AWS_REGION?.trim() ||
+        process.env.AWS_DEFAULT_REGION?.trim();
+      if (region) {
+        defs['process.env.WS_REGION'] = JSON.stringify(region);
+      }
+
+      const accessKeyId =
+        process.env.WS_ACCESS_KEY_ID?.trim() || process.env.AWS_ACCESS_KEY_ID?.trim();
+      if (accessKeyId) {
+        defs['process.env.WS_ACCESS_KEY_ID'] = JSON.stringify(accessKeyId);
+      }
+
+      const secretAccessKey =
+        process.env.WS_SECRET_ACCESS_KEY?.trim() || process.env.AWS_SECRET_ACCESS_KEY?.trim();
+      if (secretAccessKey) {
+        defs['process.env.WS_SECRET_ACCESS_KEY'] = JSON.stringify(secretAccessKey);
+      }
+
+      if (Object.keys(defs).length > 0) {
+        config.plugins.push(new webpack.DefinePlugin(defs));
       }
     }
 

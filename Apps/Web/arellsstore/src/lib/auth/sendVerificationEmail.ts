@@ -18,13 +18,20 @@ export async function sendVerificationEmail(opts: {
   }
   const from = sesFormattedFrom('Verify Arells', fromAddr);
 
-  const region = process.env.WS_REGION || process.env.WS_DEFAULT_REGION || 'us-east-1';
+  const region =
+    process.env.WS_REGION?.trim() ||
+    process.env.AWS_REGION?.trim() ||
+    process.env.WS_DEFAULT_REGION?.trim() ||
+    'us-east-1';
+  const accessKeyId =
+    process.env.WS_ACCESS_KEY_ID?.trim() || process.env.AWS_ACCESS_KEY_ID?.trim() || '';
+  const secretAccessKey =
+    process.env.WS_SECRET_ACCESS_KEY?.trim() || process.env.AWS_SECRET_ACCESS_KEY?.trim() || '';
   const client = new SESClient({
     region,
-    credentials: {
-      accessKeyId: process.env.WS_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.WS_SECRET_ACCESS_KEY!,
-    },
+    ...(accessKeyId && secretAccessKey
+      ? { credentials: { accessKeyId, secretAccessKey } }
+      : {}),
   });
 
   const subject = 'Arells Email Verification';

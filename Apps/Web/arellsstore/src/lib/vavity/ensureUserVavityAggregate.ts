@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk';
+import { getServerS3 } from '../server/awsS3';
 
 const emptyTotals = { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
 
@@ -13,11 +13,7 @@ export async function ensureUserVavityAggregateExists(email: string): Promise<vo
   if (!bucket) return;
 
   const key = `users/${normalizeEmailKey(email)}/VavityAggregate.json`;
-  const s3 = new AWS.S3({
-    region: process.env.WS_REGION,
-    accessKeyId: process.env.WS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
-  });
+  const s3 = getServerS3();
 
   try {
     await s3.headObject({ Bucket: bucket, Key: key }).promise();

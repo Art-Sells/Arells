@@ -1,14 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import AWS from 'aws-sdk';
 import { loadAllSessionMetasFromS3 } from '../../../lib/analytics/loadSessionMetasFromS3';
 import type { AnalyticsMetricsSummaryJson, AnalyticsSessionMeta } from '../../../lib/analytics/types';
 import { ANALYTICS_METRICS_AGGREGATE_KEY, HUMAN_DURATION_MS } from '../../../lib/analytics/types';
+import { getServerS3 } from '../../../lib/server/awsS3';
 
-const s3 = new AWS.S3({
-  region: process.env.WS_REGION,
-  accessKeyId: process.env.WS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
-});
+const s3 = getServerS3();
 
 function bucket(): string {
   const b = process.env.S3_BUCKET_NAME;
