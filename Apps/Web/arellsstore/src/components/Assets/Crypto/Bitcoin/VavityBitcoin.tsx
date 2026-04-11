@@ -16,6 +16,15 @@ import {
   ASSET_SUMMARY_START_BEFORE_CHART_SLIDE_END_MS,
   useAssetPriceChartMountSlide,
 } from '../../useAssetPriceChartMountSlide';
+import {
+  getMaxScrollY,
+  getScrollY,
+  getVisualViewportHeight,
+  installUserScrollGestureListeners,
+  isUserDrivenScrollLocked,
+  scrollDocumentToBottom,
+  scrollDocumentToY,
+} from '../../../../lib/client/documentScroll';
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
@@ -340,9 +349,9 @@ const VavityBitcoin: React.FC = () => {
   const scrollToBottom = useCallback((delayMs = 500) => {
     if (typeof window === 'undefined') return;
     setTimeout(() => {
-      const maxScroll =
-        document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
-      window.scrollTo({ top: maxScroll, behavior: 'smooth' });
+      const narrow =
+        window.innerWidth < 750 || window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+      scrollDocumentToBottom(narrow ? 'auto' : 'smooth');
     }, delayMs);
   }, []);
 
@@ -361,13 +370,15 @@ const VavityBitcoin: React.FC = () => {
       followScrollRafRef.current = null;
     }
     const tick = () => {
+      if (isUserDrivenScrollLocked()) {
+        followScrollRafRef.current = null;
+        return;
+      }
       if (Date.now() >= followScrollUntilRef.current) {
         followScrollRafRef.current = null;
         return;
       }
-      const maxScroll =
-        document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
-      window.scrollTo({ top: maxScroll, behavior: 'auto' });
+      scrollDocumentToY(getMaxScrollY(), 'auto');
       followScrollRafRef.current = window.requestAnimationFrame(tick);
     };
     tick();
@@ -383,6 +394,10 @@ const VavityBitcoin: React.FC = () => {
       followScrollRafRef.current = null;
     }
     const tick = () => {
+      if (isUserDrivenScrollLocked()) {
+        followScrollRafRef.current = null;
+        return;
+      }
       if (Date.now() >= until) {
         followScrollRafRef.current = null;
         return;
@@ -391,14 +406,13 @@ const VavityBitcoin: React.FC = () => {
       if (el) {
         const r = el.getBoundingClientRect();
         const inset = 20;
-        const dy = r.bottom - (window.innerHeight - inset);
+        const vh = getVisualViewportHeight();
+        const dy = r.bottom - (vh - inset);
         if (Math.abs(dy) > 0.5) {
-          const scroller = document.scrollingElement ?? document.documentElement;
-          const h = scroller?.scrollHeight ?? 0;
-          const maxScroll = Math.max(0, h - window.innerHeight);
-          const current = scroller?.scrollTop ?? window.scrollY;
+          const maxScroll = getMaxScrollY();
+          const current = getScrollY();
           const next = Math.min(maxScroll, Math.max(0, current + dy * 0.45));
-          window.scrollTo({ top: next, behavior: 'auto' });
+          scrollDocumentToY(next, 'auto');
         }
       }
       followScrollRafRef.current = window.requestAnimationFrame(tick);
@@ -415,16 +429,19 @@ const VavityBitcoin: React.FC = () => {
       followScrollRafRef.current = null;
     }
     const tick = () => {
+      if (isUserDrivenScrollLocked()) {
+        followScrollRafRef.current = null;
+        return;
+      }
       if (Date.now() >= followScrollUntilRef.current) {
         followScrollRafRef.current = null;
         return;
       }
-      const maxScroll =
-        document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
-      const current = window.scrollY;
+      const maxScroll = getMaxScrollY();
+      const current = getScrollY();
       const delta = maxScroll - current;
       const next = Math.abs(delta) < 1 ? maxScroll : current + delta * 0.35;
-      window.scrollTo({ top: next, behavior: 'auto' });
+      scrollDocumentToY(next, 'auto');
       followScrollRafRef.current = window.requestAnimationFrame(tick);
     };
     tick();
@@ -442,19 +459,23 @@ const VavityBitcoin: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
+      if (isUserDrivenScrollLocked()) {
+        followScrollRafRef.current = null;
+        return;
+      }
       if (Date.now() >= until) {
         followScrollRafRef.current = null;
         return;
       }
       const scroller = document.scrollingElement ?? document.documentElement;
       const h = scroller?.scrollHeight ?? 0;
-      const maxScroll = Math.max(0, h - window.innerHeight);
-      const current = scroller?.scrollTop ?? window.scrollY;
+      const maxScroll = getMaxScrollY();
+      const current = getScrollY();
       if (prevH != null) {
         const deltaH = h - prevH;
         if (deltaH !== 0) {
           const next = Math.min(maxScroll, Math.max(0, current + deltaH));
-          window.scrollTo({ top: next, behavior: 'auto' });
+          scrollDocumentToY(next, 'auto');
         }
       }
       prevH = h;
@@ -473,6 +494,10 @@ const VavityBitcoin: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
+      if (isUserDrivenScrollLocked()) {
+        addFormScrollRafRef.current = null;
+        return;
+      }
       if (Date.now() >= until) {
         addFormScrollRafRef.current = null;
         return;
@@ -500,6 +525,10 @@ const VavityBitcoin: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
+      if (isUserDrivenScrollLocked()) {
+        summaryScrollRafRef.current = null;
+        return;
+      }
       if (Date.now() >= until) {
         summaryScrollRafRef.current = null;
         return;
@@ -527,6 +556,10 @@ const VavityBitcoin: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
+      if (isUserDrivenScrollLocked()) {
+        summaryScrollRafRef.current = null;
+        return;
+      }
       if (Date.now() >= until) {
         summaryScrollRafRef.current = null;
         return;
@@ -627,19 +660,23 @@ const VavityBitcoin: React.FC = () => {
     }
     let prevH: number | null = null;
     const tick = () => {
+      if (isUserDrivenScrollLocked()) {
+        followScrollRafRef.current = null;
+        return;
+      }
       if (Date.now() >= until) {
         followScrollRafRef.current = null;
         return;
       }
       const scroller = document.scrollingElement ?? document.documentElement;
       const h = scroller?.scrollHeight ?? 0;
-      const maxScroll = Math.max(0, h - window.innerHeight);
-      const current = scroller?.scrollTop ?? window.scrollY;
+      const maxScroll = getMaxScrollY();
+      const current = getScrollY();
       if (prevH != null) {
         const deltaH = h - prevH;
         if (deltaH > 0) {
           const next = Math.min(maxScroll, Math.max(0, current + deltaH));
-          window.scrollTo({ top: next, behavior: 'auto' });
+          scrollDocumentToY(next, 'auto');
         }
       }
       prevH = h;
@@ -655,6 +692,8 @@ const VavityBitcoin: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => installUserScrollGestureListeners(), []);
 
   const clearPulseTimers = useCallback(() => {
     pulseTimersRef.current.forEach((t) => globalThis.clearTimeout(t));

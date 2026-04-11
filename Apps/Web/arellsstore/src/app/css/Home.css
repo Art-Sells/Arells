@@ -618,6 +618,7 @@ body {
 
 .asset-page {
 	min-height: 100vh;
+	min-height: 100dvh;
 	min-width: 370px;
 	/* Let per-asset and global app background show through (also fixes overscroll edge cases). */
 	background: transparent;
