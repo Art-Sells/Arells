@@ -1,6 +1,9 @@
 /**
- * Document scroll helpers for asset pages: clamped targets and visual viewport height.
+ * Document scroll helpers for asset pages: clamped targets, visual viewport height,
+ * and timed scroll-to-bottom after layout / transitions settle.
  */
+
+export const ASSET_PAGE_SCROLL_BOTTOM_MS = 2000;
 
 export function getVisualViewportHeight(): number {
   if (typeof window === 'undefined') return 0;
@@ -40,13 +43,138 @@ export function scrollDocumentToBottom(behavior: ScrollBehavior = 'auto'): void 
   scrollDocumentToY(getMaxScrollY(), behavior);
 }
 
+const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
+
 /**
- * Skip frame-by-frame scroll followers on mobile: they fight touch scrolling and iOS momentum (visible jitter).
- * Matches asset layout breakpoint (750) and coarse pointers (phones, most tablets).
+ * Smooth scroll from current position toward document bottom over `durationMs`.
+ * Re-reads max scroll each frame so a slightly late layout shift still ends at the true bottom.
  */
-export function skipAssetPageScrollFollowRaf(): boolean {
-  if (typeof window === 'undefined') return false;
-  const coarse = window.matchMedia?.('(pointer: coarse)')?.matches === true;
-  const narrow = window.matchMedia?.('(max-width: 749px)')?.matches === true;
-  return coarse || narrow;
+export function scrollDocumentToBottomOverMs(
+  durationMs: number,
+  opts?: { respectReducedMotion?: boolean }
+): () => void {
+  let rafId: number | null = null;
+  const cancel = () => {
+    if (rafId != null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  };
+  if (typeof window === 'undefined') return cancel;
+  if (
+    opts?.respectReducedMotion !== false &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+  ) {
+    scrollDocumentToBottom('auto');
+    return cancel;
+  }
+  const t0 = performance.now();
+  const start = getScrollY();
+  const tick = (now: number) => {
+    const maxY = getMaxScrollY();
+    const elapsed = now - t0;
+    const u = Math.min(1, elapsed / durationMs);
+    if (u >= 1) {
+      scrollDocumentToY(maxY, 'auto');
+      rafId = null;
+      return;
+    }
+    const eased = easeOutCubic(u);
+    const target = start + (maxY - start) * eased;
+    scrollDocumentToY(target, 'auto');
+    rafId = requestAnimationFrame(tick);
+  };
+  rafId = requestAnimationFrame(tick);
+  return cancel;
+}
+
+/** When `document` scroll height stops changing for `stableMs`, or after `timeoutMs`. */
+export function runAfterDocumentHeightStable(
+  callback: () => void,
+  options?: { stableMs?: number; timeoutMs?: number }
+): () => void {
+  const stableMs = options?.stableMs ?? 100;
+  const timeoutMs = options?.timeoutMs ?? 6000;
+  let rafId: number | null = null;
+  let cancelled = false;
+  const deadline = performance.now() + timeoutMs;
+  let lastH = -1;
+  let stableSince: number | null = null;
+
+  const cancel = () => {
+    cancelled = true;
+    if (rafId != null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  };
+
+  const loop = () => {
+    if (cancelled) return;
+    const h = getDocumentScrollHeight();
+    if (h !== lastH) {
+      lastH = h;
+      stableSince = null;
+    } else {
+      const now = performance.now();
+      if (stableSince == null) stableSince = now;
+      else if (now - stableSince >= stableMs) {
+        cancel();
+        callback();
+        return;
+      }
+    }
+    if (performance.now() >= deadline) {
+      cancel();
+      callback();
+      return;
+    }
+    rafId = requestAnimationFrame(loop);
+  };
+  rafId = requestAnimationFrame(loop);
+  return cancel;
+}
+
+/**
+ * After `max-height` transition completes on `element`, or `timeoutMs` (no transition / reduced motion).
+ */
+export function runAfterMaxHeightTransitionEnd(
+  element: Element | null | undefined,
+  callback: () => void,
+  options?: { timeoutMs?: number }
+): () => void {
+  const timeoutMs = options?.timeoutMs ?? 4000;
+  let done = false;
+  let timer: ReturnType<typeof globalThis.setTimeout> | null = null;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    if (timer != null) {
+      globalThis.clearTimeout(timer);
+      timer = null;
+    }
+    if (element) {
+      element.removeEventListener('transitionend', onEnd as EventListener);
+    }
+    callback();
+  };
+  const onEnd = (e: Event) => {
+    const te = e as TransitionEvent;
+    if (te.target !== element) return;
+    if (te.propertyName !== 'max-height') return;
+    finish();
+  };
+
+  if (!element || typeof window === 'undefined') {
+    return runAfterDocumentHeightStable(callback, { stableMs: 120, timeoutMs: timeoutMs });
+  }
+
+  element.addEventListener('transitionend', onEnd as EventListener);
+  timer = globalThis.setTimeout(finish, timeoutMs);
+  return () => {
+    if (done) return;
+    done = true;
+    if (timer != null) globalThis.clearTimeout(timer);
+    element.removeEventListener('transitionend', onEnd as EventListener);
+  };
 }

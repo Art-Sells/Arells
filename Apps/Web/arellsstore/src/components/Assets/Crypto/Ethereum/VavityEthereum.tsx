@@ -17,12 +17,10 @@ import {
   useAssetPriceChartMountSlide,
 } from '../../useAssetPriceChartMountSlide';
 import {
-  getMaxScrollY,
-  getScrollY,
-  getVisualViewportHeight,
-  scrollDocumentToBottom,
-  scrollDocumentToY,
-  skipAssetPageScrollFollowRaf,
+  ASSET_PAGE_SCROLL_BOTTOM_MS,
+  runAfterDocumentHeightStable,
+  runAfterMaxHeightTransitionEnd,
+  scrollDocumentToBottomOverMs,
 } from '../../../../lib/client/documentScroll';
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
@@ -325,6 +323,7 @@ const VavityEthereum: React.FC = () => {
   const [investmentsListHeight, setInvestmentsListHeight] = useState<number>(0);
   const [investmentsListHeaderHeight, setInvestmentsListHeaderHeight] = useState<number>(0);
   const investmentsListWrapRef = useRef<HTMLDivElement | null>(null);
+  const investmentsListOuterRef = useRef<HTMLDivElement | null>(null);
   const [investmentsListBorderHeight, setInvestmentsListBorderHeight] = useState<number>(0);
   const emptyActionsRef = useRef<HTMLDivElement | null>(null);
   const emptyActionsMeasureRef = useRef<HTMLDivElement | null>(null);
@@ -346,252 +345,42 @@ const VavityEthereum: React.FC = () => {
   const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartExtraPanelHeight + chartTopPadding + chartBottomPadding;
   const chartCanvasHeight = chartHeightAdjusted;
   const forceChartLoader = false;
-  const scrollToBottom = useCallback((delayMs = 500) => {
-    if (typeof window === 'undefined') return;
-    setTimeout(() => {
-      const narrow =
-        window.innerWidth < 750 || window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-      scrollDocumentToBottom(narrow ? 'auto' : 'smooth');
-    }, delayMs);
+
+  const pendingScrollLayoutCancelRef = useRef<(() => void) | null>(null);
+  const cancelPendingScrollToBottom = useCallback(() => {
+    pendingScrollLayoutCancelRef.current?.();
+    pendingScrollLayoutCancelRef.current = null;
   }, []);
 
-  const followScrollUntilRef = useRef<number>(0);
-  const followScrollRafRef = useRef<number | null>(null);
-  const addFormScrollRafRef = useRef<number | null>(null);
-  const summaryScrollRafRef = useRef<number | null>(null);
-  const summaryTransitionActiveRef = useRef(false);
-  const summaryTransitionStopTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
-  const followScrollFor = useCallback((ms: number) => {
-    if (typeof window === 'undefined') return;
-    if (skipAssetPageScrollFollowRaf()) return;
-    followScrollUntilRef.current = Date.now() + ms;
-    if (followScrollRafRef.current) {
-      window.cancelAnimationFrame(followScrollRafRef.current);
-      followScrollRafRef.current = null;
-    }
-    const tick = () => {
-      if (Date.now() >= followScrollUntilRef.current) {
-        followScrollRafRef.current = null;
-        return;
-      }
-      scrollDocumentToY(getMaxScrollY(), 'auto');
-      followScrollRafRef.current = window.requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
+  const scrollToBottomAfterDocumentStable = useCallback(() => {
+    cancelPendingScrollToBottom();
+    pendingScrollLayoutCancelRef.current = runAfterDocumentHeightStable(
+      () => {
+        pendingScrollLayoutCancelRef.current = null;
+        scrollDocumentToBottomOverMs(ASSET_PAGE_SCROLL_BOTTOM_MS);
+      },
+      { stableMs: 100, timeoutMs: 5500 }
+    );
+  }, [cancelPendingScrollToBottom]);
 
-  // Smoothly follow the bottom-actions wrapper (Sign In + Show/Hide) during submit collapse,
-  // instead of snapping to the document bottom (which causes the final "pop").
-  const followBottomActionsFor = useCallback((ms: number) => {
-    if (typeof window === 'undefined') return;
-    if (skipAssetPageScrollFollowRaf()) return;
-    const until = Date.now() + ms;
-    if (followScrollRafRef.current) {
-      window.cancelAnimationFrame(followScrollRafRef.current);
-      followScrollRafRef.current = null;
-    }
-    const tick = () => {
-      if (Date.now() >= until) {
-        followScrollRafRef.current = null;
-        return;
-      }
-      const el = bottomActionsWrapRef.current;
-      if (el) {
-        const r = el.getBoundingClientRect();
-        const inset = 20;
-        const vh = getVisualViewportHeight();
-        const dy = r.bottom - (vh - inset);
-        if (Math.abs(dy) > 0.5) {
-          const maxScroll = getMaxScrollY();
-          const current = getScrollY();
-          const next = Math.min(maxScroll, Math.max(0, current + dy * 0.45));
-          scrollDocumentToY(next, 'auto');
-        }
-      }
-      followScrollRafRef.current = window.requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
-
-  // Ease toward the bottom each frame, so the scroll "follows" the height animation instead of snapping.
-  const followScrollForEased = useCallback((ms: number) => {
-    if (typeof window === 'undefined') return;
-    if (skipAssetPageScrollFollowRaf()) return;
-    followScrollUntilRef.current = Date.now() + ms;
-    if (followScrollRafRef.current) {
-      window.cancelAnimationFrame(followScrollRafRef.current);
-      followScrollRafRef.current = null;
-    }
-    const tick = () => {
-      if (Date.now() >= followScrollUntilRef.current) {
-        followScrollRafRef.current = null;
-        return;
-      }
-      const maxScroll = getMaxScrollY();
-      const current = getScrollY();
-      const delta = maxScroll - current;
-      const next = Math.abs(delta) < 1 ? maxScroll : current + delta * 0.35;
-      scrollDocumentToY(next, 'auto');
-      followScrollRafRef.current = window.requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
-
-
-  // Follow the page height change frame-by-frame during collapse, so the bottom sections
-  // (Sign In / Show Investments) move up smoothly instead of clamping/popping at the end.
-  const followScrollHeightDeltaFor = useCallback((ms: number) => {
-    if (typeof window === 'undefined') return;
-    if (skipAssetPageScrollFollowRaf()) return;
-    const until = Date.now() + ms;
-    if (followScrollRafRef.current) {
-      window.cancelAnimationFrame(followScrollRafRef.current);
-      followScrollRafRef.current = null;
-    }
-    let prevH: number | null = null;
-    const tick = () => {
-      if (Date.now() >= until) {
-        followScrollRafRef.current = null;
-        return;
-      }
-      const scroller = document.scrollingElement ?? document.documentElement;
-      const h = scroller?.scrollHeight ?? 0;
-      const maxScroll = getMaxScrollY();
-      const current = getScrollY();
-      if (prevH != null) {
-        const deltaH = h - prevH;
-        if (deltaH !== 0) {
-          const next = Math.min(maxScroll, Math.max(0, current + deltaH));
-          scrollDocumentToY(next, 'auto');
-        }
-      }
-      prevH = h;
-      followScrollRafRef.current = window.requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
-
-  // Follow the add-form panel height delta directly during submit collapse.
-  const followAddFormHeightDeltaFor = useCallback((ms: number) => {
-    if (typeof window === 'undefined') return;
-    const until = Date.now() + ms;
-    if (addFormScrollRafRef.current) {
-      window.cancelAnimationFrame(addFormScrollRafRef.current);
-      addFormScrollRafRef.current = null;
-    }
-    let prevH: number | null = null;
-    const tick = () => {
-      if (Date.now() >= until) {
-        addFormScrollRafRef.current = null;
-        return;
-      }
-      const node = addFormSlidePanelRef.current;
-      const h = node ? node.getBoundingClientRect().height : 0;
-      if (prevH != null) {
-        const delta = prevH - h;
-        if (delta > 0.5) {
-          window.scrollBy({ top: delta, left: 0, behavior: 'auto' });
-        }
-      }
-      prevH = h;
-      addFormScrollRafRef.current = window.requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
-
-  const followSummaryHeightDeltaFor = useCallback((ms: number) => {
-    if (typeof window === 'undefined') return;
-    if (skipAssetPageScrollFollowRaf()) return;
-    const until = Date.now() + ms;
-    if (summaryScrollRafRef.current) {
-      window.cancelAnimationFrame(summaryScrollRafRef.current);
-      summaryScrollRafRef.current = null;
-    }
-    let prevH: number | null = null;
-    const tick = () => {
-      if (Date.now() >= until) {
-        summaryScrollRafRef.current = null;
-        return;
-      }
-      const node = summaryContentRef.current;
-      const h = node ? node.getBoundingClientRect().height : 0;
-      if (prevH != null) {
-        const delta = prevH - h;
-        if (delta > 0.5) {
-          window.scrollBy({ top: delta, left: 0, behavior: 'auto' });
-        }
-      }
-      prevH = h;
-      summaryScrollRafRef.current = window.requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
-
-  const followWholePanelHeightDeltaFor = useCallback((ms: number) => {
-    if (typeof window === 'undefined') return;
-    if (skipAssetPageScrollFollowRaf()) return;
-    const until = Date.now() + ms;
-    if (summaryScrollRafRef.current) {
-      window.cancelAnimationFrame(summaryScrollRafRef.current);
-      summaryScrollRafRef.current = null;
-    }
-    let prevH: number | null = null;
-    const tick = () => {
-      if (Date.now() >= until) {
-        summaryScrollRafRef.current = null;
-        return;
-      }
-      const node = investmentsWholePanelRef.current;
-      const h = node ? node.getBoundingClientRect().height : 0;
-      if (prevH != null) {
-        const delta = h - prevH;
-        if (Math.abs(delta) > 0.1) {
-          window.scrollBy({ top: delta, left: 0, behavior: 'auto' });
-        }
-      }
-      prevH = h;
-      summaryScrollRafRef.current = window.requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
-
-  const startSummaryTransitionFollow = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    if (summaryTransitionActiveRef.current) return;
-    summaryTransitionActiveRef.current = true;
-    followWholePanelHeightDeltaFor(3500);
-    if (summaryTransitionStopTimerRef.current) {
-      globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
-      summaryTransitionStopTimerRef.current = null;
-    }
-    summaryTransitionStopTimerRef.current = globalThis.setTimeout(() => {
-      summaryTransitionActiveRef.current = false;
-      summaryTransitionStopTimerRef.current = null;
-    }, 3500);
-  }, [followWholePanelHeightDeltaFor]);
-
-  const stopSummaryTransitionFollow = useCallback(() => {
-    summaryTransitionActiveRef.current = false;
-    if (summaryTransitionStopTimerRef.current) {
-      globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
-      summaryTransitionStopTimerRef.current = null;
-    }
-  }, []);
+  const scrollToBottomAfterMaxHeightOn = useCallback(
+    (el: Element | null | undefined, timeoutMs = 4000) => {
+      cancelPendingScrollToBottom();
+      pendingScrollLayoutCancelRef.current = runAfterMaxHeightTransitionEnd(
+        el,
+        () => {
+          pendingScrollLayoutCancelRef.current = null;
+          scrollDocumentToBottomOverMs(ASSET_PAGE_SCROLL_BOTTOM_MS);
+        },
+        { timeoutMs }
+      );
+    },
+    [cancelPendingScrollToBottom]
+  );
 
   useEffect(() => {
     return () => {
-      if (addFormScrollRafRef.current) {
-        window.cancelAnimationFrame(addFormScrollRafRef.current);
-        addFormScrollRafRef.current = null;
-      }
-      if (summaryScrollRafRef.current) {
-        window.cancelAnimationFrame(summaryScrollRafRef.current);
-        summaryScrollRafRef.current = null;
-      }
-      if (summaryTransitionStopTimerRef.current) {
-        globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
-        summaryTransitionStopTimerRef.current = null;
-      }
+      cancelPendingScrollToBottom();
       if (showMoreDisableTimerRef.current) {
         globalThis.clearTimeout(showMoreDisableTimerRef.current);
         showMoreDisableTimerRef.current = null;
@@ -621,49 +410,10 @@ const VavityEthereum: React.FC = () => {
 
   useEffect(() => {
     if (!summaryAnimating) return;
-    requestAnimationFrame(() => followWholePanelHeightDeltaFor(5000));
-  }, [followWholePanelHeightDeltaFor, summaryAnimating]);
-
-  // Like followScrollHeightDeltaFor, but never scroll upward.
-  // This prevents the "last minute scroll up" after submit when some panels collapse/unmount.
-  const followScrollHeightDeltaForDownOnly = useCallback((ms: number) => {
-    if (typeof window === 'undefined') return;
-    if (skipAssetPageScrollFollowRaf()) return;
-    const until = Date.now() + ms;
-    if (followScrollRafRef.current) {
-      window.cancelAnimationFrame(followScrollRafRef.current);
-      followScrollRafRef.current = null;
-    }
-    let prevH: number | null = null;
-    const tick = () => {
-      if (Date.now() >= until) {
-        followScrollRafRef.current = null;
-        return;
-      }
-      const scroller = document.scrollingElement ?? document.documentElement;
-      const h = scroller?.scrollHeight ?? 0;
-      const maxScroll = getMaxScrollY();
-      const current = getScrollY();
-      if (prevH != null) {
-        const deltaH = h - prevH;
-        if (deltaH > 0) {
-          const next = Math.min(maxScroll, Math.max(0, current + deltaH));
-          scrollDocumentToY(next, 'auto');
-        }
-      }
-      prevH = h;
-      followScrollRafRef.current = window.requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (followScrollRafRef.current) {
-        window.cancelAnimationFrame(followScrollRafRef.current);
-      }
-    };
-  }, []);
+    requestAnimationFrame(() => {
+      scrollToBottomAfterMaxHeightOn(investmentsWholePanelRef.current, 4000);
+    });
+  }, [scrollToBottomAfterMaxHeightOn, summaryAnimating]);
 
   const clearPulseTimers = useCallback(() => {
     pulseTimersRef.current.forEach((t) => globalThis.clearTimeout(t));
@@ -1065,7 +815,7 @@ const VavityEthereum: React.FC = () => {
       submitTargetRef.current = 'addMore';
       setShowAddMoreForm(true);
       setTimeout(() => setAddMoreOpen(true), 0);
-      followScrollHeightDeltaFor(2000);
+      requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
     } else {
       submitTargetRef.current = 'add';
       setShowEmptyAddForm(true);
@@ -1077,9 +827,9 @@ const VavityEthereum: React.FC = () => {
         setAddFormPanelHeight((prev) => (prev === next ? prev : next));
         requestAnimationFrame(() => setAddFormOpen(true));
       });
-      followScrollHeightDeltaFor(2000);
+      requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
     }
-  }, [previewSubmit, vavityData, isClearingInvestments, followScrollHeightDeltaFor]);
+  }, [previewSubmit, vavityData, isClearingInvestments, scrollToBottomAfterDocumentStable]);
 
   // Chart should not "reload" when Liquid/Solid display swaps; only gate initial readiness on having any data.
   useEffect(() => {
@@ -1207,7 +957,7 @@ const VavityEthereum: React.FC = () => {
             const h = whole.scrollHeight + 24;
             setInvestmentsWholeHeight(h);
           }
-          followWholePanelHeightDeltaFor(5000);
+          scrollToBottomAfterMaxHeightOn(investmentsWholePanelRef.current, 4000);
         });
       });
     };
@@ -1225,7 +975,7 @@ const VavityEthereum: React.FC = () => {
     } else {
       openInvestmentsDeferTimerRef.current = globalThis.setTimeout(run, waitMs);
     }
-  }, [followWholePanelHeightDeltaFor]);
+  }, [scrollToBottomAfterMaxHeightOn]);
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptyActionsMountPhase('done');
     setEmptySigninGone(false);
@@ -1242,7 +992,9 @@ const VavityEthereum: React.FC = () => {
       setEmptyActionsExpanding(false);
       emptyActionsExpandTimerRef.current = null;
     }, 1000);
-    followWholePanelHeightDeltaFor(1200);
+    requestAnimationFrame(() => {
+      scrollToBottomAfterMaxHeightOn(emptyActionsRef.current, 4000);
+    });
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setEmptyAddFadeIn(true);
@@ -1250,7 +1002,7 @@ const VavityEthereum: React.FC = () => {
         setEmptyAddHiding(false);
       });
     });
-  }, [followWholePanelHeightDeltaFor]);
+  }, [scrollToBottomAfterMaxHeightOn]);
   useEffect(() => {
     if (!emptyActionsHoldRef.current) return;
     if (investments.length > 0 && !isSubmitCollapsing) {
@@ -2809,9 +2561,9 @@ const VavityEthereum: React.FC = () => {
     });
     requestAnimationFrame(() => {
       if (isAddMore) {
-        followScrollHeightDeltaFor(2000);
+        scrollToBottomAfterMaxHeightOn(panelRef, 2500);
       } else {
-        followSummaryHeightDeltaFor(2000);
+        scrollToBottomAfterMaxHeightOn(addFormPanelRef.current, 2500);
       }
     });
     if (isAddMore) {
@@ -2921,6 +2673,7 @@ const VavityEthereum: React.FC = () => {
     addMoreFormBoxRef,
     openInvestmentsSection,
     pulseSummaryValues,
+    scrollToBottomAfterMaxHeightOn,
     setIsSubmitCollapsing,
     setHideEmptyActionsOnSubmit,
     setAddFormSubmitAnimating,
@@ -3900,10 +3653,10 @@ const VavityEthereum: React.FC = () => {
                         setAddFormPanelHeight((prev) => (prev === next ? prev : next));
                         requestAnimationFrame(() => setAddFormOpen(true));
                       });
-                      followScrollHeightDeltaFor(2000);
-                    }}
-                  >
-                    Add Investments
+                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
+                  }}
+                >
+                  Add Investments
                   </button>
                 </div>
                 {!isSignedIn && !email && (
@@ -4159,12 +3912,12 @@ const VavityEthereum: React.FC = () => {
                         return;
                       }
                       setSubmitPhase('idle');
-                      setShowAddMoreForm(true);
-                      setTimeout(() => setAddMoreOpen(true), 0);
-                      followScrollHeightDeltaFor(2000);
-                    }}
-                  >
-                    {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
+                    setShowAddMoreForm(true);
+                    setTimeout(() => setAddMoreOpen(true), 0);
+                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
+                  }}
+                >
+                  {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
                   </button>
                 </div>
                 {showAddMoreForm && (
@@ -4262,7 +4015,9 @@ const VavityEthereum: React.FC = () => {
                         }
                         setShowInvestmentsList(true);
                         setTimeout(() => setInvestmentsListOpen(true), 0);
-                        followScrollHeightDeltaFor(2000);
+                        requestAnimationFrame(() =>
+                          scrollToBottomAfterMaxHeightOn(investmentsListOuterRef.current, 2500)
+                        );
                       }}
                     >
                       {investmentsListOpen ? 'Hide investments' : 'Show investments'}
@@ -4271,6 +4026,7 @@ const VavityEthereum: React.FC = () => {
 
                   {showInvestmentsList && (
                     <div
+                      ref={investmentsListOuterRef}
                       style={{
                         maxHeight: investmentsSectionMaxHeight,
                         transition: 'max-height 2s ease',
@@ -4506,9 +4262,9 @@ const VavityEthereum: React.FC = () => {
                             type="button"
                             className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show"
                             onClick={() => {
-                              setVisibleInvestments((prev) => prev + 3);
-                              followScrollHeightDeltaFor(2000);
-                            }}
+                            setVisibleInvestments((prev) => prev + 3);
+                            requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
+                          }}
                           >
                             Show 3 More
                           </button>
