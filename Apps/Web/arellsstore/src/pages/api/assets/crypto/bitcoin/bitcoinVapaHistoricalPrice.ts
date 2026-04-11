@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
+import { s3BucketNameOrThrow } from '../../../../../lib/server/s3Bucket';
 
 const s3 = new AWS.S3({
   region: process.env.WS_REGION,
   accessKeyId: process.env.WS_ACCESS_KEY_ID,
   secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
 });
-const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 const BITCOIN_VAPA_KEY = 'vavity/bitcoinVAPA.json';
 
 const normalizeToIsoDay = (value: string) => {
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const mode = modeRaw === 'liquid' || modeRaw === 'real' ? 'liquid' : 'solid';
 
   try {
-    const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
+    const data = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: BITCOIN_VAPA_KEY }).promise();
     const json = JSON.parse(data.Body!.toString());
     const rawHistory =
       mode === 'liquid'

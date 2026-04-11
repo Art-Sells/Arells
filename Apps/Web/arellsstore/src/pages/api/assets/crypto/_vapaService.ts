@@ -1,12 +1,12 @@
 import AWS from 'aws-sdk';
 import axios from 'axios';
+import { s3BucketNameOrThrow } from '../../../../lib/server/s3Bucket';
 
 const s3 = new AWS.S3({
   region: process.env.WS_REGION,
   accessKeyId: process.env.WS_ACCESS_KEY_ID,
   secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
 });
-const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
 const HISTORY_REFRESH_MS = 60 * 60 * 1000;
 
@@ -115,7 +115,7 @@ export async function refreshVapa(config: VapaAssetConfig) {
   let fileExists = false;
 
   try {
-    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: config.s3Key }).promise();
+    const response = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: config.s3Key }).promise();
     if (response.Body) {
       const data = JSON.parse(response.Body.toString());
       storedVAPA = data.vapa || 0;
@@ -244,7 +244,7 @@ export async function refreshVapa(config: VapaAssetConfig) {
   if (shouldWrite) {
     await s3
       .putObject({
-        Bucket: BUCKET_NAME,
+        Bucket: s3BucketNameOrThrow(),
         Key: config.s3Key,
         Body: JSON.stringify({
           vapa: newVAPA,

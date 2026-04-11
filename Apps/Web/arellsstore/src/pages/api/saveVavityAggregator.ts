@@ -2,13 +2,13 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import { logApiRouteError, withOptionalApiDebug } from '../../lib/server/apiErrorDebug';
+import { s3BucketNameOrThrow } from '../../lib/server/s3Bucket';
 
 const s3 = new AWS.S3({
   region: process.env.WS_REGION,
   accessKeyId: process.env.WS_ACCESS_KEY_ID,
   secretAccessKey: process.env.WS_SECRET_ACCESS_KEY,
 });
-const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 const SESSION_TTL_MS = (() => {
   const raw = process.env.VAPAGG_SESSION_TTL_MS;
   if (raw) {
@@ -69,7 +69,7 @@ const loadVapaData = async (
 }> => {
   const key = VAPA_KEYS[asset] || VAPA_KEYS.bitcoin;
   try {
-    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+    const response = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
     const data = response.Body ? JSON.parse(response.Body.toString()) : {};
     return {
       vapa: typeof data.vapa === 'number' ? data.vapa : 0,
@@ -167,7 +167,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // Fetch existing data from S3
     let existingData: any = {};
     try {
-      const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+      const data = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
       existingData = JSON.parse(data.Body!.toString());
     } catch (err: any) {
       if (err.code === 'NoSuchKey') {
@@ -285,7 +285,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // Save the updated data back to S3
     await s3
       .putObject({
-        Bucket: BUCKET_NAME,
+        Bucket: s3BucketNameOrThrow(),
         Key: key,
         Body: JSON.stringify(newData),
         ContentType: 'application/json',

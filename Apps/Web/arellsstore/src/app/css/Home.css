@@ -4430,7 +4430,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:link,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:visited {
 	box-sizing: border-box;
-	background: rgba(248, 141, 0, 0.18) !important;
+	/* Opaque fill matching former rgba(248, 141, 0, 0.18) over white */
+	background: rgb(254, 234, 209) !important;
+	background: color-mix(in srgb, rgb(248, 141, 0) 18%, white) !important;
 	border: 1px solid rgba(248, 141, 0, 0.9);
 	color: var(--asset-line-color) !important;
 }
@@ -4438,7 +4440,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:link,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:visited {
 	box-sizing: border-box;
-	background: rgba(107, 114, 168, 0.18) !important;
+	/* Opaque fill matching former rgba(107, 114, 168, 0.18) over white */
+	background: rgb(228, 230, 239) !important;
+	background: color-mix(in srgb, rgb(107, 114, 168) 18%, white) !important;
 	border: 1px solid rgba(107, 114, 168, 0.9);
 	color: var(--asset-line-color) !important;
 }
