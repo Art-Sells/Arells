@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import { logFetchApiFailure } from '../lib/client/logClientApiError';
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
@@ -166,7 +167,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       try {
         const skipParam = PREVIEW_SKIP_SESSION_DELETES ? '&skipExpiry=1' : '';
         const res = await fetch(`/api/fetchVavityAggregator?sessionId=${encodeURIComponent(sessionId)}${skipParam}`);
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          logFetchApiFailure('UserContext bootstrap GET fetchVavityAggregator', res.status, data);
+          return;
+        }
         const hasMeta =
           typeof data?.createdAt === 'number' &&
           Number.isFinite(data.createdAt) &&
@@ -174,7 +179,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           Number.isFinite(data.expiresAt);
         const hasInvestments = Array.isArray(data?.investments) && data.investments.length > 0;
         if (!hasMeta && !hasInvestments) {
-          await fetch('/api/saveVavityAggregator', {
+          const saveRes = await fetch('/api/saveVavityAggregator', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -184,6 +189,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
               ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: true } : {}),
             }),
           });
+          const saveBody = await saveRes.json().catch(() => null);
+          if (!saveRes.ok) {
+            logFetchApiFailure('UserContext bootstrap POST saveVavityAggregator', saveRes.status, saveBody);
+          }
         }
       } catch {
         // ignore bootstrap errors

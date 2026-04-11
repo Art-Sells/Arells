@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { logClientApiError } from '../../lib/client/logClientApiError';
 
 type AssetState = {
   vapa: number;
@@ -40,7 +41,7 @@ export const AssetsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
         setAssets(next);
       } catch (err) {
-        console.warn('[AssetsProvider] refresh failed', err);
+        logClientApiError('AssetsProvider vapaRefreshAll', err);
       }
     },
     []
