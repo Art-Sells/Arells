@@ -281,8 +281,8 @@ body {
 	width: 130px;
 	margin: 0 auto;
 	font-size: 13px;
-	margin-bottom: 30px;
-	margin-top: 17px;
+	margin-bottom: 35px;
+	margin-top: 25px;
 	color: black;
 	letter-spacing: -.7px;
  }
@@ -290,8 +290,8 @@ body {
 	width: 130px;
 	margin: 0 auto;
 	font-size: 12px;
-	margin-bottom: 25px;
-	margin-top: 20px;
+	margin-bottom: 30px;
+	margin-top: 25px;
 	color: black;
 	letter-spacing: -.5px;
  }
@@ -4430,9 +4430,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:link,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:visited {
 	box-sizing: border-box;
-	/* Opaque fill matching former rgba(248, 141, 0, 0.18) over white */
-	background: rgb(254, 234, 209) !important;
-	background: color-mix(in srgb, rgb(248, 141, 0) 18%, white) !important;
+	/* 18% asset hue over page canvas (BitcoinPageClient rgb(255, 247, 236)), not white */
+	background: rgb(254, 228, 194) !important;
+	background: color-mix(in srgb, rgb(248, 141, 0) 18%, rgb(255, 247, 236)) !important;
 	border: 1px solid rgba(248, 141, 0, 0.9);
 	color: var(--asset-line-color) !important;
 }
@@ -4440,9 +4440,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:link,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:visited {
 	box-sizing: border-box;
-	/* Opaque fill matching former rgba(107, 114, 168, 0.18) over white */
-	background: rgb(228, 230, 239) !important;
-	background: color-mix(in srgb, rgb(107, 114, 168) 18%, white) !important;
+	/* 18% asset hue over page canvas (EthereumPageClient rgb(244, 246, 255)), not white */
+	background: rgb(219, 222, 239) !important;
+	background: color-mix(in srgb, rgb(107, 114, 168) 18%, rgb(244, 246, 255)) !important;
 	border: 1px solid rgba(107, 114, 168, 0.9);
 	color: var(--asset-line-color) !important;
 }
@@ -5345,10 +5345,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		font-size: 10.5px !important;
 	}
 
-	/* Date picker trigger + text input inside forms */
+	/* Date picker + amount field: 16px min so iOS Safari does not zoom on focus */
 	.asset-invest-form-controls .asset-date-trigger,
 	.asset-invest-form-controls .asset-invest-input {
-		font-size: 10.5px !important;
+		font-size: 16px !important;
 	}
 
 	/* Group 3 — $ symbols → match myinv-metric-symbol (14px) */
@@ -6712,7 +6712,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	  
-	}	
+  }
 
   @media screen and (max-width: 700px) {
 	.home-assets-1w {
@@ -8248,6 +8248,18 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		border-color 0.5s ease,
 		box-shadow 0.5s ease,
 		background-color 99999s ease-out;
+}
+
+/* iOS Safari: avoid auto-zoom on focus (inputs need computed font-size ≥ 16px). */
+@media (max-width: 750px) {
+	.auth-input {
+		font-size: 16px;
+	}
+
+	.asset-invest-input,
+	.asset-date-trigger {
+		font-size: 16px;
+	}
 }
 
 .auth-submit {
