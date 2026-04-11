@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { logApiRouteError, withOptionalApiDebug } from '../../../../lib/server/apiErrorDebug';
 import { refreshVapa, VapaAssetConfig } from './_vapaService';
 
 const assets: VapaAssetConfig[] = [
@@ -24,8 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       results[asset.id] = await refreshVapa(asset);
     }
     return res.status(200).json(results);
-  } catch (error: any) {
-    console.error('[vapaRefreshAll] error', error);
-    return res.status(500).json({ error: 'Failed to refresh assets' });
+  } catch (error: unknown) {
+    logApiRouteError('vapaRefreshAll', error);
+    return res
+      .status(500)
+      .json(withOptionalApiDebug({ error: 'Failed to refresh assets' }, error));
   }
 }

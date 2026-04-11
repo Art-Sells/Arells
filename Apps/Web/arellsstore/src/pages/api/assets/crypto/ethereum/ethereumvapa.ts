@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { logApiRouteError, withOptionalApiDebug } from '../../../../../lib/server/apiErrorDebug';
 import { refreshVapa } from '../_vapaService';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -13,8 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       historyUrl: 'https://pro-api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=max',
     });
     return res.status(200).json(result);
-  } catch (error: any) {
-    console.error('[ethereumvapa] failed', error);
-    return res.status(500).json({ error: 'Failed to fetch ethereum VAPA' });
+  } catch (error: unknown) {
+    logApiRouteError('ethereumvapa', error);
+    return res
+      .status(500)
+      .json(withOptionalApiDebug({ error: 'Failed to fetch ethereum VAPA' }, error));
   }
 }

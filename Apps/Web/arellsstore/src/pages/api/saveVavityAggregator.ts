@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 import axios from 'axios';
+import { logApiRouteError, withOptionalApiDebug } from '../../lib/server/apiErrorDebug';
 
 const s3 = new AWS.S3({
   region: process.env.WS_REGION,
@@ -293,9 +294,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .promise();
 
     return res.status(200).json({ message: 'Data saved successfully', data: newData });
-  } catch (error) {
-    console.error('❌ Error during processing:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+  } catch (error: unknown) {
+    logApiRouteError('saveVavityAggregator', error);
+    return res.status(500).json(withOptionalApiDebug({ error: 'Internal Server Error' }, error));
   }
 };
 

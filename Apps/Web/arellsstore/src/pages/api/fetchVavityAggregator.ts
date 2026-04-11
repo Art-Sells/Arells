@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 import axios from 'axios';
+import { logApiRouteError, withOptionalApiDebug } from '../../lib/server/apiErrorDebug';
 
 const s3 = new AWS.S3({
   region: process.env.WS_REGION,
@@ -316,9 +317,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     return res.status(200).json(newData);
-  } catch (error: any) {
+  } catch (error: unknown) {
     // If the file doesn't exist, return empty data structure (this is normal for new users)
-    if (error.code === 'NoSuchKey' || error.statusCode === 404) {
+    const awsLike = error as { code?: string; statusCode?: number };
+    if (awsLike.code === 'NoSuchKey' || awsLike.statusCode === 404) {
       // Don't log - this is expected behavior for new users
       return res.status(200).json({
         investments: [],
@@ -337,9 +339,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
     
-    const errorMessage = error.message || 'Could not fetch user data';
-    console.error('Error fetching data:', errorMessage);
-    return res.status(500).json({ error: errorMessage });
+    const errorMessage =
+      error instanceof Error ? error.message : (error as { message?: string })?.message || 'Could not fetch user data';
+    logApiRouteError('fetchVavityAggregator', error);
+    return res.status(500).json(withOptionalApiDebug({ error: errorMessage }, error));
   }
 };
 
