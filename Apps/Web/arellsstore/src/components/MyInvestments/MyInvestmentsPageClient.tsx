@@ -1141,15 +1141,23 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsPresent.map((asset) => {
                         const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const label = asset === 'bitcoin' ? 'BTC' : 'ETH';
+                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
                         return (
                           <Link
                             key={`more-${asset}`}
                             href={href}
-                            className={`myinv-asset-button myinv-asset-button--${asset}`}
+                            className={`myinv-asset-home-card home-asset-${asset}`}
                             aria-label={label}
                           >
-                            <span className={`asset-title-badge asset-title-badge--${asset}`}>{label}</span>
+                            <div className="home-assets-cell home-assets-asset">
+                              <span className={`home-asset-label home-asset-label-${asset}`}>
+                                <span
+                                  className={`home-asset-name asset-action-button asset-action-button--${asset} asset-action-button--home-asset-chip`}
+                                >
+                                  {label}
+                                </span>
+                              </span>
+                            </div>
                           </Link>
                         );
                       })}
@@ -1168,15 +1176,23 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsMissing.map((asset) => {
                         const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const label = asset === 'bitcoin' ? 'BTC' : 'ETH';
+                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
                         return (
                           <Link
                             key={`missing-${asset}`}
                             href={href}
-                            className={`myinv-asset-button myinv-asset-button--${asset}`}
+                            className={`myinv-asset-home-card home-asset-${asset}`}
                             aria-label={label}
                           >
-                            <span className={`asset-title-badge asset-title-badge--${asset}`}>{label}</span>
+                            <div className="home-assets-cell home-assets-asset">
+                              <span className={`home-asset-label home-asset-label-${asset}`}>
+                                <span
+                                  className={`home-asset-name asset-action-button asset-action-button--${asset} asset-action-button--home-asset-chip`}
+                                >
+                                  {label}
+                                </span>
+                              </span>
+                            </div>
                           </Link>
                         );
                       })}
