@@ -707,6 +707,8 @@ body {
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
 	--asset-save-signin-margin-top: 14px;
 	--asset-save-signin-margin-bottom: 18px;
+	/* Date-range + BTC pill: same brown/gold as headings/metrics (`*` rule); not chart orange 248,141,0 */
+	--asset-range-button-label-color: var(--asset-line-color);
 }
 
 .asset-page--ethereum .asset-header-slogan,
@@ -741,6 +743,7 @@ body {
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
 	--asset-save-signin-margin-top: 14px;
 	--asset-save-signin-margin-bottom: 18px;
+	--asset-range-button-label-color: var(--asset-line-color);
 }
 
 .asset-page--bitcoin .asset-page-content,
@@ -752,6 +755,37 @@ body {
 .asset-page--ethereum .asset-footer,
 .asset-page--ethereum .asset-footer * {
 	color: var(--asset-unified-text-color) !important;
+}
+
+/* Title pill link + label: same hue as date-range row (`--asset-range-button-label-color` = `--asset-line-color`). Higher specificity than `.asset-title-badge--bitcoin`; -webkit fill for link rendering. */
+.asset-page--bitcoin .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:link,
+.asset-page--bitcoin .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:visited,
+.asset-page--bitcoin .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:hover,
+.asset-page--bitcoin .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:active,
+.asset-page--bitcoin .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:focus-visible {
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(209, 142, 55)) !important;
+}
+
+.asset-page--ethereum .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:link,
+.asset-page--ethereum .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:visited,
+.asset-page--ethereum .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:hover,
+.asset-page--ethereum .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:active,
+.asset-page--ethereum .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:focus-visible {
+	color: var(--asset-range-button-label-color, rgb(107, 114, 168)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(107, 114, 168)) !important;
+}
+
+.asset-page--bitcoin .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin .asset-title-badge-label {
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(209, 142, 55)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--ethereum .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum .asset-title-badge-label {
+	color: var(--asset-range-button-label-color, rgb(107, 114, 168)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(107, 114, 168)) !important;
+	opacity: 0.5;
 }
 
 .asset-page--bitcoin .asset-header-title,
@@ -2675,7 +2709,7 @@ a.asset-action-button--myinv-asset-link {
 .asset-range-button--bitcoin.is-active {
 	border: 1px solid transparent;
 	background: rgba(248, 141, 0, 0.18);
-	color: rgba(248, 141, 0, 0.95);
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55));
 	opacity: 0.6;
 	pointer-events: none;
 	cursor: default;
@@ -2685,18 +2719,18 @@ a.asset-action-button--myinv-asset-link {
 .asset-range-button--bitcoin:not(.is-active):not(:disabled) {
 	border-color: rgba(248, 141, 0, 0.9);
 	background: rgba(248, 141, 0, 0.18);
-	color: rgba(248, 141, 0, 0.95);
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55));
 }
 
 .asset-range-button--bitcoin:disabled {
 	background: rgba(248, 141, 0, 0.18);
-	color: rgba(248, 141, 0, 0.95);
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55));
 }
 
 .asset-range-button--ethereum.is-active {
 	border: 1px solid transparent;
 	background: rgba(107, 114, 168, 0.18);
-	color: rgba(107, 114, 168, 0.95);
+	color: var(--asset-range-button-label-color, rgb(107, 114, 168));
 	opacity: 0.6;
 	pointer-events: none;
 	cursor: default;
@@ -2706,12 +2740,12 @@ a.asset-action-button--myinv-asset-link {
 .asset-range-button--ethereum:not(.is-active):not(:disabled) {
 	border-color: rgba(107, 114, 168, 0.9);
 	background: rgba(107, 114, 168, 0.18);
-	color: rgba(107, 114, 168, 0.95);
+	color: var(--asset-range-button-label-color, rgb(107, 114, 168));
 }
 
 .asset-range-button--ethereum:disabled {
 	background: rgba(107, 114, 168, 0.18);
-	color: rgba(107, 114, 168, 0.95);
+	color: var(--asset-range-button-label-color, rgb(107, 114, 168));
 }
 
 .asset-range-button:disabled,
@@ -4371,9 +4405,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 .asset-title-badge {
 	display: inline-block;
-	padding-top: 10px;
-	padding-bottom: 11px;
-	border-radius: 200px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	border-radius: 7px;
 	font-weight: 400;
 	letter-spacing: normal;
 	text-decoration: none;
@@ -4397,54 +4431,50 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	color: rgba(107, 114, 168, 0.95) !important;
 }
 
-.asset-page-content .asset-title-badge--bitcoin {
-	color: var(--asset-line-color) !important;
-}
-
-.asset-page-content .asset-title-badge--ethereum {
-	color: var(--asset-line-color) !important;
-}
-
 .asset-header-panel {
 	position: relative;
 }
 
 .asset-title-badge--section {
 	position: absolute;
-	top: -16.8px;
+	top: -19px;
 	left: 68px;
 	z-index: 5;
 	font-size: 10px;
 }
 
 .asset-title-badge--section.asset-title-badge--bitcoin {
-	padding-left: 20px;     /* <- edit BTC badge horizontal padding over 750px */
-	padding-right: 20px;
+	padding-left: 12px;     /* <- edit BTC badge horizontal padding over 750px */
+	padding-right: 12px;
 }
 
 .asset-title-badge--section.asset-title-badge--ethereum {
-	padding-left: 20px;     /* <- edit ETH badge horizontal padding over 750px */
-	padding-right: 20px;
+	padding-left: 12px;     /* <- edit ETH badge horizontal padding over 750px */
+	padding-right: 12px;
 }
 
 .asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:link,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:visited {
+.asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:visited,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:hover,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:active,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--bitcoin:focus-visible {
 	box-sizing: border-box;
-	/* 18% asset hue over page canvas (BitcoinPageClient rgb(255, 247, 236)), not white */
-	background: rgb(254, 228, 194) !important;
-	background: color-mix(in srgb, rgb(248, 141, 0) 18%, rgb(255, 247, 236)) !important;
-	border: 1px solid rgba(248, 141, 0, 0.9);
-	color: var(--asset-line-color) !important;
+	/* Match `.asset-panel--bitcoin`: rgba(248,141,0,0.06) over canvas rgb(255, 247, 236); border 0.3 */
+	background: rgb(255, 241, 222) !important;
+	background: color-mix(in srgb, rgb(248, 141, 0) 6%, rgb(255, 247, 236)) !important;
+	border: 1px solid rgba(248, 141, 0, 0.3);
 }
 
 .asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:link,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:visited {
+.asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:visited,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:hover,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:active,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--ethereum:focus-visible {
 	box-sizing: border-box;
-	/* 18% asset hue over page canvas (EthereumPageClient rgb(244, 246, 255)), not white */
-	background: rgb(219, 222, 239) !important;
-	background: color-mix(in srgb, rgb(107, 114, 168) 18%, rgb(244, 246, 255)) !important;
-	border: 1px solid rgba(107, 114, 168, 0.9);
-	color: var(--asset-line-color) !important;
+	/* Match `.asset-panel--ethereum`: rgba(107,114,168,0.07) over canvas rgb(244, 246, 255); border 0.3 */
+	background: rgb(234, 237, 249) !important;
+	background: color-mix(in srgb, rgb(107, 114, 168) 7%, rgb(244, 246, 255)) !important;
+	border: 1px solid rgba(107, 114, 168, 0.3);
 }
 
 .myinv-asset-icon {

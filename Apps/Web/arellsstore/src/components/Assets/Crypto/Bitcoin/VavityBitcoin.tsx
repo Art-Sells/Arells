@@ -3223,7 +3223,14 @@ const VavityBitcoin: React.FC = () => {
         className="asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide"
         ref={headerPanelRef}
       >
-        <a className="asset-title-badge asset-title-badge--bitcoin asset-title-badge--section" href="https://bitcoin.org/en/" target="_blank" rel="noreferrer">BTC</a>
+        <a
+          className="asset-title-badge asset-title-badge--bitcoin asset-title-badge--section"
+          href="https://bitcoin.org/en/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span className="asset-title-badge-label">BTC</span>
+        </a>
         <div ref={sectionHeaderRef} className={`asset-section-header${displayIsLiquidMode ? ' is-liquid' : ''}`}>
           <div ref={assetTitleRef} className="asset-header-title">Bitcoin</div>
           <div
