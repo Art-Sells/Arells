@@ -4346,10 +4346,6 @@ a.asset-action-button--myinv-asset-link {
 	min-width: 350px;
 }
 
-.myinv-about-wrap.page-slide-in {
-	animation-delay: 1.2s;
-}
-
 .home-assets-about-wrap {
 	width: min(920px, 90%);
 	min-width: 350px;

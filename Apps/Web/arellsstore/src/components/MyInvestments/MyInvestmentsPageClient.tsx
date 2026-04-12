@@ -1203,7 +1203,8 @@ const MyInvestmentsPageClient: React.FC = () => {
             )}
           </>
         )}
-        <div className={`myinv-about-wrap${slideIn ? ' page-slide-in' : ''}`}>
+        {/* No page-slide-in: that animation’s backwards fill (opacity 0) flashed when slideIn turned on. */}
+        <div className="myinv-about-wrap">
           <Link className="myinv-about-button" href="/about">
             <span className="myinv-about-button-bg" aria-hidden="true" />
             <span className="myinv-about-button-text">about</span>
