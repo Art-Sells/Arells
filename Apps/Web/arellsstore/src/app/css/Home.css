@@ -3000,11 +3000,11 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .asset-page-content .asset-header-slogan {
-	animation-name: pageSlideUp;
+	animation-name: pageSlideUpAssetSlogan;
 	animation-duration: 1s;
 	animation-delay: 2s;
 	animation-timing-function: ease;
-	animation-fill-mode: backwards;
+	animation-fill-mode: both;
 }
 
 .asset-page-content > .asset-panel:nth-of-type(2) {
@@ -3204,6 +3204,30 @@ a.asset-action-button--myinv-asset-link {
 	}
 	100% {
 		transform: translateY(0);
+	}
+}
+
+/* Asset header slogan: end at same translateY as `.asset-header-slogan` so `animation-fill-mode: backwards`
+   does not snap from keyframe translateY(0) back to rule translateY(4px) when the animation finishes. */
+@keyframes pageSlideUpAssetSlogan {
+	0% {
+		transform: translateY(40px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(4px);
+		opacity: 1;
+	}
+}
+
+@keyframes pageSlideUpAssetSloganMobile {
+	0% {
+		transform: translateY(40px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(2.3px);
+		opacity: 1;
 	}
 }
 
@@ -4989,6 +5013,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		font-size: 7px;
 		margin-right: 33.5px;
 		transform: translateY(2.3px);
+	}
+
+	.asset-page-content .asset-header-slogan {
+		animation-name: pageSlideUpAssetSloganMobile;
 	}
 
 	.myinv-slogan {
@@ -8248,10 +8276,9 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	font-size: 13px;
 	font-weight: 700;
 	outline: none;
-	transition:
-		border-color 0.5s ease,
-		background-color 0.5s ease,
-		box-shadow 0.5s ease;
+	/* No transition on border/background: `:root` animates `--myinv-accent-color` (myInvAccentCycle).
+	   A 0.5s transition here made inputs lag behind the title and page tint, which use the same variable. */
+	transition: box-shadow 0.5s ease;
 	text-align: center;
 }
 
