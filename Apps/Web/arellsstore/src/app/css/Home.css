@@ -3884,7 +3884,7 @@ a.asset-action-button--myinv-asset-link {
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
 	margin: 0 auto 12px;
-	padding-top: var(--myinv-title-offset, 45px);
+	padding-top: var(--myinv-title-offset, 0px);
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
@@ -3899,8 +3899,8 @@ a.asset-action-button--myinv-asset-link {
 	text-align: left;
 	margin-left: 80px;
 	white-space: nowrap;
-	top: 0;
-	transform: translateX(0);
+	top: 45px;
+	transform: translateY(0);
 	transition: transform 1s ease;
 	z-index: 3;
 }
@@ -5067,12 +5067,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		width: min(340px, calc(100% - 20px));
 	}
 
-	.myinv-header-outside {
-		--myinv-title-offset: 41.5px;
-	}
-
 	.myinv-header-outside .myinv-title {
 		margin-left: 50px;
+		top: 41.5px;
+		
 	}
 
 	.myinv-slogan-layer .myinv-slogan {
