@@ -11,6 +11,7 @@ import {
   isPasswordFieldAuthError,
 } from '../../lib/auth/authFieldErrors';
 import { validateAuthPassword } from '../../lib/auth/validateAuthPassword';
+import { AUTH_COLLAPSE_SCROLL_TOP_MS, scrollDocumentToTopOverMs } from '../../lib/client/documentScroll';
 
 const COLLAPSE_MS = 1500;
 
@@ -29,6 +30,11 @@ const SignUpPageClient: React.FC = () => {
     if (phase !== 'exiting') return;
     const t = window.setTimeout(() => setPhase('sent'), COLLAPSE_MS);
     return () => window.clearTimeout(t);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'exiting') return;
+    return scrollDocumentToTopOverMs(AUTH_COLLAPSE_SCROLL_TOP_MS);
   }, [phase]);
 
   useEffect(() => {

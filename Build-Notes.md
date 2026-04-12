@@ -10,6 +10,7 @@
 - Add to Amplify
 
 ### Test Online 
+- *Clean up Mobile UI*
 - both desktop(multiple browsers)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - Test with j4747477@outlook.com emal

@@ -6,6 +6,7 @@ import AuthFormMessage from './AuthFormMessage';
 import AuthSuccessArellsMark from './AuthSuccessArellsMark';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError } from '../../lib/auth/authFieldErrors';
+import { AUTH_COLLAPSE_SCROLL_TOP_MS, scrollDocumentToTopOverMs } from '../../lib/client/documentScroll';
 
 const COLLAPSE_MS = 1500;
 
@@ -22,6 +23,11 @@ const ForgotPasswordPageClient: React.FC = () => {
     if (phase !== 'exiting') return;
     const t = window.setTimeout(() => setPhase('sent'), COLLAPSE_MS);
     return () => window.clearTimeout(t);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'exiting') return;
+    return scrollDocumentToTopOverMs(AUTH_COLLAPSE_SCROLL_TOP_MS);
   }, [phase]);
 
   useEffect(() => {

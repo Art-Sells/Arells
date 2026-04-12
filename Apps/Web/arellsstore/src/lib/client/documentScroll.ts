@@ -43,7 +43,19 @@ export function scrollDocumentToBottom(behavior: ScrollBehavior = 'auto'): void 
   scrollDocumentToY(getMaxScrollY(), behavior);
 }
 
+/** Auth form collapse: scroll document to top in parallel with max-height animation. */
+export const AUTH_COLLAPSE_SCROLL_TOP_MS = 500;
+
 let bottomScrollRafId: number | null = null;
+let topScrollRafId: number | null = null;
+
+export function cancelDocumentTopScrollAnimation(): void {
+  if (typeof window === 'undefined') return;
+  if (topScrollRafId != null) {
+    cancelAnimationFrame(topScrollRafId);
+    topScrollRafId = null;
+  }
+}
 
 export function cancelDocumentBottomScrollAnimation(): void {
   if (typeof window === 'undefined') return;
@@ -87,6 +99,45 @@ export function scrollDocumentToBottomOverMs(
     bottomScrollRafId = requestAnimationFrame(tick);
   };
   bottomScrollRafId = requestAnimationFrame(tick);
+  return cancel;
+}
+
+/**
+ * Scroll from current position toward document top (y=0) over `durationMs` (linear).
+ */
+export function scrollDocumentToTopOverMs(
+  durationMs: number,
+  opts?: { respectReducedMotion?: boolean }
+): () => void {
+  cancelDocumentTopScrollAnimation();
+  const cancel = () => cancelDocumentTopScrollAnimation();
+  if (typeof window === 'undefined') return cancel;
+  if (
+    opts?.respectReducedMotion !== false &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+  ) {
+    scrollDocumentToY(0, 'auto');
+    return cancel;
+  }
+  const t0 = performance.now();
+  const start = getScrollY();
+  if (start <= 0) {
+    scrollDocumentToY(0, 'auto');
+    return cancel;
+  }
+  const tick = (now: number) => {
+    const elapsed = now - t0;
+    const u = Math.min(1, elapsed / durationMs);
+    if (u >= 1) {
+      scrollDocumentToY(0, 'auto');
+      topScrollRafId = null;
+      return;
+    }
+    const target = start * (1 - u);
+    scrollDocumentToY(target, 'auto');
+    topScrollRafId = requestAnimationFrame(tick);
+  };
+  topScrollRafId = requestAnimationFrame(tick);
   return cancel;
 }
 

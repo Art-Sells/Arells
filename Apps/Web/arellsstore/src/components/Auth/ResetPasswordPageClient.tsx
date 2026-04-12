@@ -8,6 +8,7 @@ import AuthFormMessage from './AuthFormMessage';
 import AuthContentEntrance from './AuthContentEntrance';
 import { isConfirmFieldAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
 import { validateAuthPassword } from '../../lib/auth/validateAuthPassword';
+import { AUTH_COLLAPSE_SCROLL_TOP_MS, scrollDocumentToTopOverMs } from '../../lib/client/documentScroll';
 
 const COLLAPSE_MS = 1500;
 
@@ -53,6 +54,11 @@ const ResetPasswordPageClient: React.FC = () => {
     if (successPhase !== 'exiting') return;
     const t = window.setTimeout(() => setSuccessPhase('sent'), COLLAPSE_MS);
     return () => window.clearTimeout(t);
+  }, [successPhase]);
+
+  useEffect(() => {
+    if (successPhase !== 'exiting') return;
+    return scrollDocumentToTopOverMs(AUTH_COLLAPSE_SCROLL_TOP_MS);
   }, [successPhase]);
 
   useEffect(() => {
