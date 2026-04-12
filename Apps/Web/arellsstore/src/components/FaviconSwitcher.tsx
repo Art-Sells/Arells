@@ -1,17 +1,27 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 const DEFAULT_FAVICON = '/ArellsIcoIcon.png';
 const BITCOIN_FAVICON = '/images/favicons/BtcBadge.svg';
 const ETHEREUM_FAVICON = '/images/favicons/EthBadge.svg';
+const VAVITY_FAVICON = '/images/vavity/favicon.png';
 
+/**
+ * Keep tab icon in sync on SPA navigations (Next head can retain the previous route’s links).
+ * — `/vavity` and all nested routes use the Vavity favicon (matches `app/vavity/layout.tsx`).
+ * — Asset roots use badge icons; everything else uses Arells.
+ */
 const resolveFavicon = (pathname: string) => {
-  if (pathname.startsWith('/bitcoin')) return BITCOIN_FAVICON;
-  if (pathname.startsWith('/ethereum')) return ETHEREUM_FAVICON;
+  const seg = pathname.split('/').filter(Boolean)[0];
+  if (seg === 'vavity') return VAVITY_FAVICON;
+  if (seg === 'bitcoin') return BITCOIN_FAVICON;
+  if (seg === 'ethereum') return ETHEREUM_FAVICON;
   return DEFAULT_FAVICON;
 };
+
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 /** Update every matching link (Next may emit several); add one if the head has none yet. */
 const syncRel = (rel: string, href: string, type?: string) => {
@@ -33,7 +43,7 @@ const syncRel = (rel: string, href: string, type?: string) => {
 export default function FaviconSwitcher() {
   const pathname = usePathname();
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (typeof document === 'undefined') return;
     const href = resolveFavicon(pathname || '/');
     const type = href.endsWith('.svg') ? 'image/svg+xml' : 'image/png';

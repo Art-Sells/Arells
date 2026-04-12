@@ -36,16 +36,12 @@ const VavityEthereum: React.FC = () => {
   const [initialFetchDone, setInitialFetchDone] = useState(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const submitTargetRef = useRef<'add' | 'addMore'>('add');
-  const [submitLoaderHold, setSubmitLoaderHold] = useState(false);
-  const submitLoaderAwaitingSummaryRef = useRef(false);
-  const submitLoaderHeightHoldTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
-  const submitLoaderFallbackTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const submitLoaderUnmountTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [submitLoaderMounted, setSubmitLoaderMounted] = useState(false);
   const [submitLoaderVisible, setSubmitLoaderVisible] = useState(false);
   const forceSubmitLoader = false;
   const showSubmitLoader =
-    forceSubmitLoader || ((submitLoading || submitLoaderHold) && submitTargetRef.current !== 'addMore');
+    forceSubmitLoader || (submitLoading && submitTargetRef.current !== 'addMore');
   const [submitPhase, setSubmitPhase] = useState<'idle' | 'submitting' | 'submitted'>('idle');
   const [submitPanelMaxHeight, setSubmitPanelMaxHeight] = useState<number | null>(null);
   const [previewSubmit, setPreviewSubmit] = useState(false);
@@ -175,7 +171,6 @@ const VavityEthereum: React.FC = () => {
     pendingDeleteInvestments.length > 0 || deletingInvestments.length > 0 || closingInvestments.length > 0;
   const [collapsedInvestments, setCollapsedInvestments] = useState<string[]>([]);
   const [summaryOpen, setSummaryOpen] = useState(false);
-  const [summaryInvestmentsExpandStarted, setSummaryInvestmentsExpandStarted] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
   const summaryAnimatingRef = useRef(false);
   const [summaryAnimatingCooldown, setSummaryAnimatingCooldown] = useState(false);
@@ -469,14 +464,6 @@ const VavityEthereum: React.FC = () => {
       if (submitLoaderUnmountTimerRef.current) {
         globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
         submitLoaderUnmountTimerRef.current = null;
-      }
-      if (submitLoaderHeightHoldTimerRef.current) {
-        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
-        submitLoaderHeightHoldTimerRef.current = null;
-      }
-      if (submitLoaderFallbackTimerRef.current) {
-        globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
-        submitLoaderFallbackTimerRef.current = null;
       }
       if (clearingHeightRafRef.current != null) {
         window.cancelAnimationFrame(clearingHeightRafRef.current);
@@ -912,9 +899,6 @@ const VavityEthereum: React.FC = () => {
   const showInvestmentsHeader = investments.length > 0;
   const shouldFetchInitialData = isSignedIn ? Boolean(email) : Boolean(sessionReady && sessionId && fetchVavityAggregator);
   const showInitialFetchLoader = shouldFetchInitialData && !initialFetchDone;
-  const showInitialFetchLoaderOverlay =
-    showInitialFetchLoader && summaryInvestmentsExpandStarted;
-  const showAssetLoader = showSubmitLoader || showInitialFetchLoaderOverlay;
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
     setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
@@ -947,7 +931,6 @@ const VavityEthereum: React.FC = () => {
   const openInvestmentsSection = useCallback(() => {
     const run = () => {
       openInvestmentsDeferTimerRef.current = null;
-      setSummaryInvestmentsExpandStarted(true);
       setInvestmentsWholeHeight(0);
       setSummaryAnimating(true);
       summaryAnimatingRef.current = true;
@@ -1216,12 +1199,6 @@ const VavityEthereum: React.FC = () => {
     prevHasInvestmentsUIRef.current = hasInvestmentsUI;
   }, [hasInvestmentsUI, showEmptyAddForm, triggerEmptyButtonsExpand]);
 
-  useEffect(() => {
-    if (!hasInvestmentsUI && !isClearingInvestments) {
-      setSummaryInvestmentsExpandStarted(false);
-    }
-  }, [hasInvestmentsUI, isClearingInvestments]);
-
   useLayoutEffect(() => {
     if (!summaryOpen || isClearingInvestments) {
       setSummaryAnimating(false);
@@ -1331,25 +1308,6 @@ const VavityEthereum: React.FC = () => {
     setToggleDisabled(false);
     setToggleKnobHidden(false);
   }, [deleteInFlight, submitLoading, summaryAnimating]);
-
-  useEffect(() => {
-    if (submitLoading) return;
-    if (!submitLoaderAwaitingSummaryRef.current) return;
-    if (summaryAnimating) return;
-    if (submitLoaderFallbackTimerRef.current) {
-      globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
-      submitLoaderFallbackTimerRef.current = null;
-    }
-    submitLoaderFallbackTimerRef.current = globalThis.setTimeout(() => {
-      submitLoaderFallbackTimerRef.current = null;
-      submitLoaderAwaitingSummaryRef.current = false;
-      if (submitLoaderHeightHoldTimerRef.current) {
-        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
-        submitLoaderHeightHoldTimerRef.current = null;
-      }
-      setSubmitLoaderHold(false);
-    }, 3000);
-  }, [submitLoading, summaryAnimating]);
 
   // Measure the full "investments view" section as ONE: summary panel + bottom actions (+ list).
   useEffect(() => {
@@ -2623,21 +2581,6 @@ const VavityEthereum: React.FC = () => {
         setAddFormSubmitMaxHeight(null);
         setAddFormOuterSubmitMaxHeight(null);
         setAddFormSubmitCollapsing(false);
-        if (submitLoaderAwaitingSummaryRef.current && submitTargetRef.current !== 'addMore') {
-          if (submitLoaderHeightHoldTimerRef.current) {
-            globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
-            submitLoaderHeightHoldTimerRef.current = null;
-          }
-          submitLoaderHeightHoldTimerRef.current = globalThis.setTimeout(() => {
-            submitLoaderHeightHoldTimerRef.current = null;
-            submitLoaderAwaitingSummaryRef.current = false;
-            if (submitLoaderFallbackTimerRef.current) {
-              globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
-              submitLoaderFallbackTimerRef.current = null;
-            }
-            setSubmitLoaderHold(false);
-          }, 2500);
-        }
       }
       if (typeof document !== 'undefined') {
         document.body.style.overflowAnchor = prevBodyOverflowAnchor;
@@ -2713,18 +2656,6 @@ const VavityEthereum: React.FC = () => {
     // Mark which panel is currently being submitted from, so we can collapse that panel smoothly.
     submitTargetRef.current = showAddMoreForm ? 'addMore' : 'add';
     const isAddMoreSubmit = submitTargetRef.current === 'addMore';
-    if (!isAddMoreSubmit) {
-      setSubmitLoaderHold(true);
-      submitLoaderAwaitingSummaryRef.current = true;
-      if (submitLoaderHeightHoldTimerRef.current) {
-        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
-        submitLoaderHeightHoldTimerRef.current = null;
-      }
-      if (submitLoaderFallbackTimerRef.current) {
-        globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
-        submitLoaderFallbackTimerRef.current = null;
-      }
-    }
     if (toggleReenableTimerRef.current) {
       globalThis.clearTimeout(toggleReenableTimerRef.current);
       toggleReenableTimerRef.current = null;
@@ -3148,7 +3079,7 @@ const VavityEthereum: React.FC = () => {
   }, [investmentsListOpen, showInvestmentsList]);
 
   useEffect(() => {
-    if (showAssetLoader) {
+    if (showSubmitLoader) {
       if (submitLoaderUnmountTimerRef.current) {
         globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
         submitLoaderUnmountTimerRef.current = null;
@@ -3168,7 +3099,7 @@ const VavityEthereum: React.FC = () => {
       submitLoaderUnmountTimerRef.current = null;
       setSubmitLoaderMounted(false);
     }, 1000);
-  }, [showAssetLoader]);
+  }, [showSubmitLoader]);
 
   useEffect(() => {
     const node = emptyActionsMeasureRef.current;

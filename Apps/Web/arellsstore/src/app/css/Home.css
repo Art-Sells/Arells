@@ -329,7 +329,7 @@ body {
 	letter-spacing: -.5px;
  }
 .about-text--inner { 
-	width: 120px;
+	width: 125px;
 	margin: 0 auto;
 	font-size: 12px;
 	margin-top: 20px;
@@ -350,6 +350,7 @@ body {
 	justify-content: center;
 	margin-top: 50px;
 	margin-bottom: 50px;
+	width: 130px;
 }
 
 .about-cta-button:active,
