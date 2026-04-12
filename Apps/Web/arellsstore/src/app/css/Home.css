@@ -5375,10 +5375,21 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		font-size: 10.5px !important;
 	}
 
-	/* Date picker + amount field: 16px min so iOS Safari does not zoom on focus */
+	/* iOS Safari: focused control needs computed font-size ≥ 16px (no zoom). */
 	.asset-invest-form-controls .asset-date-trigger,
 	.asset-invest-form-controls .asset-invest-input {
 		font-size: 16px !important;
+	}
+
+	/* Date trigger: 16px on the <button> satisfies iOS; label + icon explicitly 12px (scale on button is unreliable in WebKit). */
+	.asset-invest-form-controls .asset-date-trigger .asset-date-value,
+	.asset-invest-form-controls .asset-date-trigger .asset-date-value.is-placeholder {
+		font-size: 12px !important;
+	}
+
+	.asset-invest-form-controls .asset-date-trigger .asset-date-icon svg {
+		width: 13.5px;
+		height: 13.5px;
 	}
 
 	/* Group 3 — $ symbols → match myinv-metric-symbol (14px) */
@@ -8286,10 +8297,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		font-size: 16px;
 	}
 
-	.asset-invest-input,
-	.asset-date-trigger {
-		font-size: 16px;
-	}
+	/* Asset invest amount + date: 16px + scale handled under `.asset-invest-form-controls` above. */
 }
 
 .auth-submit {

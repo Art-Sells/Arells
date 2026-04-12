@@ -3,7 +3,7 @@
  * and timed scroll-to-bottom after layout / transitions settle.
  */
 
-export const ASSET_PAGE_SCROLL_BOTTOM_MS = 2000;
+export const ASSET_PAGE_SCROLL_BOTTOM_MS = 500;
 
 export function getVisualViewportHeight(): number {
   if (typeof window === 'undefined') return 0;
