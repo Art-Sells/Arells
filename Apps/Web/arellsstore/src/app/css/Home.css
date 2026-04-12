@@ -350,7 +350,10 @@ body {
 	justify-content: center;
 	margin-top: 50px;
 	margin-bottom: 50px;
-	width: 130px;
+	width: 120px;
+}
+.about-section--cta .about-cta-button {
+	padding: 15px 0px;
 }
 
 .about-cta-button:active,
