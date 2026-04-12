@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import VerifiedPageClient from '../../../components/Auth/VerifiedPageClient';
 
 const generalBanner =
-  'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/ArellsGeneralBanner.jpg';
+  'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/ArellsGeneralBannerOfficial.jpg';
 
 export const metadata: Metadata = {
   title: 'Verify email',

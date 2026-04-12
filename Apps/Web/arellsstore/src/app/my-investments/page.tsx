@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import MyInvestmentsPageClient from '../../components/MyInvestments/MyInvestmentsPageClient';
 
 const myInvestmentsBanner =
-  'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/ArellsMyInvestmentsBanner.jpg';
+  'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/MyInvestmentsBanner.jpg';
 
 export const metadata: Metadata = {
   title: 'My Investments',
