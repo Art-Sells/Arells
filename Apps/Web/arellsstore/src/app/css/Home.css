@@ -657,7 +657,7 @@ body {
 	color: #222;
 	font-size: 27px;
 	margin-left: 67px;
-	transform: translateY(6px);
+	transform: translateY(7px);
 	transition: transform 1s ease;
 	opacity: 1;
 	letter-spacing: -1px;
@@ -669,7 +669,7 @@ body {
 	font-size: 8px;
 	font-weight: 200;
 	margin-top: 20px;
-	transform: translateY(3px);
+	transform: translateY(4px);
 	margin-bottom: 0px;
 	margin-right: 40px;
 	transition: opacity 1.5s ease, visibility 0s linear 0s;
@@ -1175,7 +1175,7 @@ body {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-top: 10px;    /* <- edit title/slogan section margin-top over 750px */
+	margin-top: 11px;    /* <- edit title/slogan section margin-top over 750px */
 }
 
 
@@ -3863,7 +3863,7 @@ a.asset-action-button--myinv-asset-link {
 	text-align: left;
 	margin-left: 80px;
 	white-space: nowrap;
-	top: var(--myinv-title-offset, 47px);
+	top: var(--myinv-title-offset, 45px);
 	transform: translateX(0);
 	transition: transform 1s ease;
 	z-index: 3;
@@ -3889,7 +3889,7 @@ a.asset-action-button--myinv-asset-link {
 	margin-top: 0;
 	margin-right: 80px;
 	position: relative;
-	top: var(--myinv-slogan-offset, 15.5px);
+	top: var(--myinv-slogan-offset, 12px);
 }
 
 .myinv-header-outside.is-liquid .myinv-title {
@@ -4978,17 +4978,17 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		height: 32px !important;
 	}
 	.asset-section-header {
-		margin-top: -0px;    /* <- edit title/slogan section margin-top under 750px */
+		margin-top: 1px;    /* <- edit title/slogan section margin-top under 750px */
 	}
 	.asset-header-title {
 		font-size: 17px;
 		margin-left: 32px;
-		transform: translateY(8px);
+		transform: translateY(9px);
 	}
 	.asset-header-slogan {
 		font-size: 7px;
 		margin-right: 33.5px;
-		transform: translateY(1.3px);
+		transform: translateY(2.3px);
 	}
 
 	.myinv-slogan {
@@ -5022,7 +5022,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}
 
 	.myinv-header-outside {
-		--myinv-title-offset: 42px;
+		--myinv-title-offset: 41.5px;
 	}
 
 	.myinv-header-outside .myinv-title {
@@ -5031,6 +5031,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.myinv-slogan-layer .myinv-slogan {
 		margin-right: 50px;
+		top: var(--myinv-slogan-offset, 13px);
 	}
 
 	.myinv-panel-title--add {
@@ -6001,12 +6002,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		  margin-top: 30px;
 		  width: 70px;	
 		  height: 23px;
-		  transform: translateY(var(--home-logo-offset, 10px));
+		  transform: translateY(var(--home-logo-offset, 11px));
 		  -webkit-animation-name: animatetop;
 		  -webkit-animation-duration: 1.00s;
 		  animation-name: animatetop;
 		  animation-duration: 1.00s;
-		  margin-bottom: -31.5px;
+		  margin-bottom: -33px;
 		}
 		/* Add Animation */
 		@-webkit-keyframes animatetop {
@@ -6022,7 +6023,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	  
 		#descriptioner-wrapper {
-			margin-top: 3px;
+			margin-top: 4px;
 			margin-right: 0;
 			font-size: 8px;
 			font-weight: 200;
@@ -6043,7 +6044,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 			align-items: center;
 			box-sizing: border-box;
 			justify-content: space-between;
-			transform: translateX(10px);
+			transform: translate(10px, 1px);
 		}
 
 		.home-slogan-layer {
@@ -6058,7 +6059,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 			box-sizing: border-box;
 			align-items: center;
 			justify-content: flex-end;
-			transform: translateX(10px);
+			transform: translate(10px, 1px);
 			position: relative;
 			z-index: 1;
 			--home-slogan-offset: 0px;
@@ -6644,7 +6645,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 			padding-top: 0px;
 		}
 		#word-logoo {
-			margin-top: 40px;
+			margin-top: 41px;
 		}  
 
 	.asset-session-reset-overlay {
@@ -6681,11 +6682,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	  #word-logoo {
 		  width: 60px;	
 		  height: 20px;
-		  margin-bottom: -28px;
+		  margin-bottom: -30px;
 	  }  
 	  
 	  #descriptioner-wrapper {
 		font-size: 7.3px;
+		margin-top: 4px;
 		margin-bottom: -21.8px;
 	  }
 
@@ -6832,7 +6834,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin: 0 auto;
 	padding-top: 80px;
 	padding-bottom: 0;
-	margin-bottom: -13px;
+	margin-bottom: -8px;
 	position: relative;
 	z-index: 4;
 	text-align: center;
@@ -6990,7 +6992,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	max-width: min(700px, calc(100% - 20px));
 	min-width: 350px;
 	margin: 0 auto;
-	padding-top: 50px;
+	padding-top: 51px;
 	padding-bottom: 0;
 	margin-bottom: -13px;
 	position: relative;
@@ -7036,7 +7038,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	line-height: 1;
 	margin-bottom: 2px;
 	margin-right: -1px; /* <- edit “Growth” margin-right over 750px (home button sits after this word) */
-	transform: translateY(2px);
+	transform: translateY(3px);
 }
 
 .growth-metrics-title-word {
@@ -7047,7 +7049,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	line-height: 1;
 	margin-left: -2px;
 	margin-bottom: 2px;
-	transform: translateY(2px);
+	transform: translateY(3px);
 }
 
 .growth-metrics-home-button {
@@ -7361,13 +7363,13 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		margin-right: -1px;
 		margin-bottom: 3px;
 		transform: translateX(2px);
-		transform: translateY(-2.8px);
+		transform: translateY(-1.8px);
 	}
 
 	.growth-metrics-title-word--metrics {
 		margin-left: -2px;
 		margin-bottom: 3px;
-		transform: translateY(-2.8px);
+		transform: translateY(-1.8px);
 	}
 
 	/* Match wordmark scale 35px → 30px (factor 30/35) on button + icon */
