@@ -104,15 +104,23 @@ const AboutPageClient = () => {
           </div>
           <div className={`about-content${aboutSlideIn ? ' page-slide-in' : ''}`}>
             <div className="about-section about-section--outer myinv-accent-border">
-              <p className="about-text about-text--outer">Arells is a belief that investments should never lose value.</p>
-              <div className="about-section about-section--mid myinv-accent-border">
-                <p className="about-text about-text--mid">
-                  This belief is powered by a ledger that shows how your investments would look if they never lost value.
+              <div className="about-section about-section--lead myinv-accent-border">
+                <p className="about-text about-text--outer">
+                  Arells is a belief that investments should never lose value.
                 </p>
-                <div className="about-section about-section--inner myinv-accent-border">
-                  <p className="about-text about-text--inner">
-                    This ledger is powered by a new psychological and technological invention called Vavity.
+              </div>
+              <div className="about-section about-section--mid myinv-accent-border">
+                <div className="about-section about-section--mid-body myinv-accent-border">
+                  <p className="about-text about-text--mid">
+                    This belief is powered by a ledger that shows how your investments would look if they never lost value.
                   </p>
+                </div>
+                <div className="about-section about-section--inner myinv-accent-border">
+                  <div className="about-section about-section--inner-body myinv-accent-border">
+                    <p className="about-text about-text--inner">
+                      This ledger is powered by a new psychological and technological invention called Vavity.
+                    </p>
+                  </div>
                   <div className="about-section about-section--cta myinv-accent-border">
                     <button
                       type="button"

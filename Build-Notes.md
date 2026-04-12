@@ -6,12 +6,10 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-### enviroments
-- Add to Amplify
 
 ### Test Online 
 - *Clean up Mobile UI my-investments title on mobile is higher than on desktop*
-- both desktop(multiple browsers)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
+- both desktop(multiple browsers (private for new sessions))/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - Test with j4747477@outlook.com emal
 - look at Metrics
