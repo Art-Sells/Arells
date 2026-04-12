@@ -18,7 +18,7 @@ const nextConfig = {
     });
 
     // Server-only: Amplify often omits custom env from the API Lambda at runtime. Values present during `next build`
-    // are inlined so S3, credentials, and SES From addresses match local behavior. Client bundles do not use this block.
+    // are inlined so S3, credentials, SES From addresses, and AUTH_JWT_SECRET match local behavior. Client bundles do not use this block.
     if (isServer) {
       const defs = {};
 
@@ -57,6 +57,11 @@ const nextConfig = {
       const passwordResetFrom = process.env.PASSWORD_RESET_FROM?.trim();
       if (passwordResetFrom) {
         defs['process.env.PASSWORD_RESET_FROM'] = JSON.stringify(passwordResetFrom);
+      }
+
+      const authJwtSecret = process.env.AUTH_JWT_SECRET?.trim();
+      if (authJwtSecret && authJwtSecret.length >= 16) {
+        defs['process.env.AUTH_JWT_SECRET'] = JSON.stringify(authJwtSecret);
       }
 
       if (Object.keys(defs).length > 0) {

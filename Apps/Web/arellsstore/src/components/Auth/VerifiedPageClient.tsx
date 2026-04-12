@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthContentEntrance from './AuthContentEntrance';
@@ -15,7 +15,6 @@ const VERIFY_PAGE_ERROR_CODE = 'VERIFY_LINK';
 
 const VerifiedPageClient: React.FC = () => {
   const params = useParams();
-  const router = useRouter();
   const { refreshAuthSession } = useUser();
   const token = typeof params?.token === 'string' ? params.token : '';
   const [status, setStatus] = useState<'idle' | 'ok' | 'err'>('idle');
@@ -70,7 +69,6 @@ const VerifiedPageClient: React.FC = () => {
           return;
         }
         await refreshAuthSession();
-        if (cancelled) return;
         setStatus('ok');
       } catch {
         if (!cancelled) setStatus('err');
@@ -79,7 +77,7 @@ const VerifiedPageClient: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [token, refreshAuthSession]);
+  }, [token]);
 
   const shellTitle = status === 'ok' ? 'email verified' : status === 'err' ? 'verify email' : '';
 
@@ -93,12 +91,6 @@ const VerifiedPageClient: React.FC = () => {
                 <Link
                   href="/my-investments"
                   className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    await refreshAuthSession();
-                    router.push('/my-investments');
-                    router.refresh();
-                  }}
                 >
                   View Portfolio
                 </Link>
