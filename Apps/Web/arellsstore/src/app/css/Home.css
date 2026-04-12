@@ -224,6 +224,15 @@ body {
 .about-page .about-icon {
 	width: 27px;
 	height: 27px;
+	background: var(--myinv-accent-color);
+	-webkit-mask-image: url("/images/Arells-Icon.png");
+	mask-image: url("/images/Arells-Icon.png");
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
 }
 
 .about-content {
@@ -242,6 +251,10 @@ body {
 .about-text {
 	font-weight: 800;
 	margin: 0;
+	opacity: 0.9;
+	line-height: 2;
+	letter-spacing: 0px;
+	color: var(--myinv-accent-color);
 }
 
 .about-section {
@@ -283,7 +296,6 @@ body {
 	font-size: 13px;
 	margin-bottom: 35px;
 	margin-top: 25px;
-	color: black;
 	letter-spacing: -.7px;
  }
 .about-text--mid { 
@@ -292,7 +304,6 @@ body {
 	font-size: 12px;
 	margin-bottom: 30px;
 	margin-top: 25px;
-	color: black;
 	letter-spacing: -.5px;
  }
 .about-text--inner { 
@@ -301,7 +312,6 @@ body {
 	font-size: 12px;
 	margin-top: 20px;
 	margin-bottom: 30px;
-	color: black;
 	letter-spacing: -.35px;
 }
 
