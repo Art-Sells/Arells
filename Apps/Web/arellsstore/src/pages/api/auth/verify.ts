@@ -42,6 +42,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     if (auth.verified) {
       await deletePendingVerification(token);
+      if (authSecretConfigured()) {
+        const sessionToken = await signSessionEmail(email);
+        if (sessionToken) {
+          res.setHeader('Set-Cookie', buildSessionCookie(sessionToken, 14 * 24 * 60 * 60));
+        }
+      }
       return res.status(200).json({ ok: true, email, alreadyVerified: true });
     }
 

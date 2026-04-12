@@ -3820,8 +3820,9 @@ a.asset-action-button--myinv-asset-link {
 /* My Investments page */
 .myinv-page {
 	min-height: 100vh;
+	min-height: 100dvh;
 	min-width: 370px;
-	padding-top: 0px;
+	padding-top: env(safe-area-inset-top, 0px);
 	margin-top: -20px;
 	padding-bottom: 60px;
 	font-family: Arial, sans-serif;
@@ -3836,7 +3837,7 @@ a.asset-action-button--myinv-asset-link {
 	display: flex;
 	align-items: safe center;
 	justify-content: center;
-	padding-top: var(--myinv-guest-offset, 3vh);
+	padding-top: calc(env(safe-area-inset-top, 0px) + var(--myinv-guest-offset, 3vh));
 	flex-direction: column;
 }
 
@@ -3883,6 +3884,7 @@ a.asset-action-button--myinv-asset-link {
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
 	margin: 0 auto 12px;
+	padding-top: var(--myinv-title-offset, 45px);
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
@@ -3897,7 +3899,7 @@ a.asset-action-button--myinv-asset-link {
 	text-align: left;
 	margin-left: 80px;
 	white-space: nowrap;
-	top: var(--myinv-title-offset, 45px);
+	top: 0;
 	transform: translateX(0);
 	transition: transform 1s ease;
 	z-index: 3;
@@ -4953,6 +4955,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 @media (max-width: 750px) {
+	/* Match desktop narrow-window text metrics: iOS otherwise boosts body text and shifts the title vs icons. */
+	.myinv-page {
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
 	.myinv-title {
 		font-size: 20px;
 	}

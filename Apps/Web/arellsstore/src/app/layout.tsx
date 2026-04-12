@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { ReactNode } from 'react';
 import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     shortcut: '/ArellsIcoIcon.png',
     apple: '/ArellsIcoIcon.png',
   },
+};
+
+/** Lets `env(safe-area-inset-*)` reflect notch / home indicator on phones (e.g. My Investments header). */
+export const viewport: Viewport = {
+  viewportFit: 'cover',
 };
 
 type LayoutProps = {
