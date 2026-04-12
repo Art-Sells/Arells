@@ -219,7 +219,10 @@ const EthereumPageClient: React.FC = () => {
 
       <Ethereum key={`session-reset-${sessionResetKeyValue}`} />
 
-      <footer className="asset-footer">
+      <footer
+        className={`asset-footer${sessionResetActive ? ' asset-footer--session-reset-hidden' : ''}`}
+        aria-hidden={sessionResetActive ? true : undefined}
+      >
         {!!email && (
           <Link
             href="/my-investments"

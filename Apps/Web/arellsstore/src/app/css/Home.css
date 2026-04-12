@@ -5866,8 +5866,14 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	margin-top: 20px;
 	margin-bottom: 15px;
 	min-width: 350px;
+	opacity: 1;
+	transition: opacity 0.4s ease;
 }
 
+.asset-footer--session-reset-hidden {
+	opacity: 0;
+	pointer-events: none;
+}
 
 .asset-footer-viewmore {
 	margin-bottom: 0;
@@ -8306,6 +8312,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .auth-input:focus-visible {
 	border-color: color-mix(in srgb, var(--myinv-accent-color) 70%, #000);
 	background: color-mix(in srgb, var(--myinv-accent-color) 12%, #ffffff);
+	color: #111;
 }
 
 /* Filled: stronger fill, no visible border (wins over :focus when both apply) */
@@ -8313,6 +8320,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .auth-input:not([value='']) {
 	border-color: transparent;
 	background: color-mix(in srgb, var(--myinv-accent-color) 12%, #ffffff);
+}
+
+/* After leaving the field: value text matches title accent (still #111 while focused for contrast) */
+.auth-input:not(:placeholder-shown):not(:focus):not(:focus-visible),
+.auth-input:not([value='']):not(:focus):not(:focus-visible) {
+	color: var(--myinv-accent-color);
 }
 
 /* Autofill paint (Chrome/Safari) so it matches accent like typed values */
@@ -8328,6 +8341,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		border-color 0.5s ease,
 		box-shadow 0.5s ease,
 		background-color 99999s ease-out;
+}
+
+.auth-input:-webkit-autofill:not(:focus):not(:focus-visible) {
+	-webkit-text-fill-color: var(--myinv-accent-color);
+	caret-color: var(--myinv-accent-color);
 }
 
 /* iOS Safari: avoid auto-zoom on focus (inputs need computed font-size ≥ 16px). */
