@@ -5141,7 +5141,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.myinv-header-inner .myinv-title {
 		font-size: 20px;
 		margin-left: 50px;
-		margin-bottom: -34px;
+		margin-bottom: -33px;
+	}
+
+	.myinv-descriptioner-wrapper {
+		margin-top: 4px;
+		margin-bottom: 6px;
 	}
 
 	.myinv-header-inner.is-liquid .myinv-title {
@@ -5218,12 +5223,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.asset-page-content .asset-header-slogan {
 		animation-name: pageSlideUpAssetSloganMobile;
-	}
-
-	.myinv-descriptioner-wrapper {
-		margin-top: 4px;
-		margin-bottom: 6px;
-		font-size: 7.3px;
 	}
 
 	.myinv-descriptioner {
