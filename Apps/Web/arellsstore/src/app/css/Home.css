@@ -4005,7 +4005,7 @@ a.asset-action-button--myinv-asset-link {
 	margin-left: 80px;
 	/* Same idea as home `#word-logoo`: top inset + negative margin-bottom pulls slogan row up. */
 	margin-top: 20px;
-	margin-bottom: -34px;
+	margin-bottom: -34.5px;
 	white-space: nowrap;
 	top: 0;
 	transition: transform 1s ease;
@@ -4033,7 +4033,7 @@ a.asset-action-button--myinv-asset-link {
 
 /* Match `.myinv-metric-title` (Purchased Value / Current Value) */
 .myinv-descriptioner {
-	letter-spacing: -0.6px;
+	letter-spacing: 0px;
 	margin: 0 80px 0 0;
 	padding: 0;
 	opacity: 1;
@@ -5061,7 +5061,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .myinv-metric-title {
 	font-weight: 400;
 	font-size: 12px;
-	letter-spacing: -0.6px;
+	letter-spacing: -.3px;
 	color: var(--myinv-label-color, #222);
 	opacity: 1;
 	display: block;
@@ -5132,11 +5132,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.myinv-header-inner .myinv-title {
 		font-size: 20px;
 		margin-left: 50px;
-		margin-bottom: -35px;
+		margin-bottom: -36px;
 	}
 
 	.myinv-slogan-layer {
-		margin-bottom: 12px;
+		margin-bottom: 13px;
 	}
 
 
@@ -5544,7 +5544,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	/* --- Typography: match My Investments sizing (under 750px) --- */
 
-	/* Group 2 — Metric word titles → match myinv-metric-title (10.5px, -0.6px) */
+	/* Group 2 — Metric word titles → match myinv-metric-title (10.5px, 0 letter-spacing) */
 	.asset-portfolio-summary-box .asset-metric-title--bitcoin,
 	.asset-portfolio-summary-box .asset-metric-title--ethereum,
 	.asset-portfolio-summary-box .asset-metric-inline-title--bitcoin,
