@@ -4005,7 +4005,7 @@ a.asset-action-button--myinv-asset-link {
 	margin-left: 80px;
 	/* Same idea as home `#word-logoo`: top inset + negative margin-bottom pulls slogan row up. */
 	margin-top: 20px;
-	margin-bottom: -34.5px;
+	margin-bottom: -33px;
 	white-space: nowrap;
 	top: 0;
 	transition: transform 1s ease;
@@ -4034,13 +4034,13 @@ a.asset-action-button--myinv-asset-link {
 /* Match `.myinv-metric-title` (Purchased Value / Current Value) */
 .myinv-descriptioner {
 	letter-spacing: 0px;
-	margin: 0 80px 0 0;
+	margin: 0 90px 0 0;
 	padding: 0;
 	opacity: 1;
 	color: var(--myinv-label-color, #222);
 	word-spacing: 0px;
 	display: inline-block;
-	font-size: 12px;
+	font-size: 9px;
 	font-weight: 200;
 	max-width: 520px;
 	text-align: right;
@@ -4060,7 +4060,7 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .myinv-header-inner.is-liquid .myinv-title {
-	transform: translateX( 180px);
+	transform: translateX( 197px);
 }
 
 .myinv-wrapper {
@@ -4104,7 +4104,7 @@ a.asset-action-button--myinv-asset-link {
 
 .myinv-title {
 	font-weight: 800;
-	font-size: 25px;
+	font-size: 20px;
 	letter-spacing: -2px;
 	color: #222;
 }
