@@ -221,6 +221,20 @@ const MyInvestmentsPageClient: React.FC = () => {
     };
   }, []);
 
+  /* Summary metrics use temporary fixed heights + overflow:hidden; that can under-report wrapper
+   * scrollHeight until the animation clears. Re-sync shell max-height when those states change. */
+  useLayoutEffect(() => {
+    if (!open) return;
+    const node = myinvWrapperRef.current;
+    if (!node) return;
+    const tick = () => {
+      const next = Math.max(0, node.scrollHeight + 24);
+      setShellMaxHeight((prev) => (prev === next ? prev : next));
+    };
+    tick();
+    requestAnimationFrame(tick);
+  }, [open, purchasedValueHeight, currentValueHeight, profitValueHeight, profitBlockHeight]);
+
   useEffect(() => {
     if (!open) return;
     setSlideIn(true);

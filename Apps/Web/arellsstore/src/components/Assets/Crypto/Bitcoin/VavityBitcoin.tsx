@@ -1336,9 +1336,14 @@ const VavityBitcoin: React.FC = () => {
     let raf = 0;
     const measure = () => {
       raf = window.requestAnimationFrame(() => {
-        if (summaryAnimatingRef.current) return;
         const next = node.scrollHeight + 24;
-        setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
+        setInvestmentsWholeHeight((prev) => {
+          if (next === prev) return prev;
+          /* Opening animation used to skip all updates here for ~3s; inner growth (Add more, big numbers)
+           * then never raised max-height and the outer panel clipped. Allow increases; avoid shrinking mid-open. */
+          if (summaryAnimatingRef.current && next < prev) return prev;
+          return next;
+        });
       });
     };
     measure();

@@ -1321,9 +1321,12 @@ const VavityEthereum: React.FC = () => {
     let raf = 0;
     const measure = () => {
       raf = window.requestAnimationFrame(() => {
-        if (summaryAnimatingRef.current) return;
         const next = node.scrollHeight + 24;
-        setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
+        setInvestmentsWholeHeight((prev) => {
+          if (next === prev) return prev;
+          if (summaryAnimatingRef.current && next < prev) return prev;
+          return next;
+        });
       });
     };
     measure();
