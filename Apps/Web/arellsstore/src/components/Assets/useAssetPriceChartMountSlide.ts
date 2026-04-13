@@ -9,12 +9,15 @@ export const ASSET_PRICE_CHART_MOUNT_SLIDE_MS = ASSET_PRICE_CHART_MOUNT_SLIDE_SE
 
 /**
  * Investments/summary panel begins expanding this many ms before the price/chart mount slide ends
- * (so the last portion of both animations run together). Kept ≤ slide length (same 70% overlap ratio as the former 10s / 7s pairing).
+ * (so the last portion of both animations run together). With the default 5s chart slide, 3000ms = start at 2s = last 3s in sync.
  */
-export const ASSET_SUMMARY_START_BEFORE_CHART_SLIDE_END_MS = 3500;
+export const ASSET_SUMMARY_START_BEFORE_CHART_SLIDE_END_MS = 3000;
 
-/** Wait this long after page mount before the investments/summary max-height expand may start (ms). */
-export const ASSET_SUMMARY_PAUSE_BEFORE_EXPAND_MS = 4000;
+/**
+ * Minimum time after mount before the summary may open, if chart timing alone would be earlier.
+ * Must be ≤ (slide ms − start-before-end) so it does not override the “last 3s with chart” alignment.
+ */
+export const ASSET_SUMMARY_PAUSE_BEFORE_EXPAND_MS = 2000;
 
 /**
  * Mount-only measured max-height animation for the asset page block directly under the title/slogan:
