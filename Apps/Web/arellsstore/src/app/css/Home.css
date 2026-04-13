@@ -3912,12 +3912,23 @@ a.asset-action-button--myinv-asset-link {
 	--myinv-label-color: #222;
 }
 
+/* Guest: no min-height: 100dvh — page height follows content only (signed-in still uses full viewport
+   min-height on .myinv-page). Avoids tying layout to viewport height / flex “stage” size. */
 .myinv-page--guest {
+	min-height: auto;
 	display: flex;
 	align-items: safe center;
-	justify-content: center;
-	padding-top: calc(env(safe-area-inset-top, 0px) + var(--myinv-guest-offset, 3vh));
+	justify-content: flex-start;
+	padding-top: calc(
+		env(safe-area-inset-top, 0px) + var(--myinv-guest-top-pad, 100px)
+	);
 	flex-direction: column;
+}
+
+@media (max-height: 500px) {
+	.myinv-page--guest {
+		--myinv-guest-top-pad: 24px;
+	}
 }
 
 .myinv-slide {
@@ -5192,7 +5203,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.myinv-header-outside .myinv-title {
 		margin-left: 50px;
-		top: 43px;
+		top: 42px;
 		
 	}
 
