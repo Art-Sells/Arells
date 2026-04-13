@@ -807,13 +807,17 @@ const MyInvestmentsPageClient: React.FC = () => {
       <div className={`myinv-page myinv-page--accent${effectiveSignedIn ? '' : ' myinv-page--guest'}`}>
         <div
           ref={headerRef}
-          className={`myinv-header-outside${slideIn ? ' page-slide-in' : ''}${displayIsLiquidMode ? ' is-liquid' : ''}`}
+          className={`myinv-header-inner${slideIn ? ' page-slide-in' : ''}${displayIsLiquidMode ? ' is-liquid' : ''}`}
         >
           <div ref={titleRef} className="myinv-title">my investments</div>
         </div>
         <div className={`myinv-slogan-layer${slideIn ? ' page-slide-in' : ''}`}>
-          <div className={`myinv-slogan asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}>
-            if they never lost value
+          <div className="myinv-descriptioner-wrapper">
+            <p
+              className={`myinv-descriptioner myinv-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
+            >
+              if they never lost value
+            </p>
           </div>
         </div>
         <div className="myinv-shell shadow-border-wrap">
