@@ -8,9 +8,9 @@
 
 
 ### Test Online 
-- *Clean up Mobile UI my-investments title on mobile is higher than on desktop*
+- *delete all e-mails and sessions and srart all over again testing everything...*
 - both desktop(multiple browsers (private for new sessions))/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
-- Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
+- Test with big and small numbers, all deletions, etc (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - Test with j4747477@outlook.com emial
 - look at Metrics
 
@@ -23,13 +23,8 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - Remove typos from Arells/Vavity readmes, and UI
 - Remove console.logs (leave conosle.errors/warns) from all files...
 - Delete Arells Readme roadmap
-- *Deploy to main and Test Entire structure with DMs and private public links on twitter/discord/text-message*
-- - In metrics:  
-- - Users
-- - - (current) number of sessions (unique users?) created/interacted/etc
-- - - Growth chart
-- - - MAU Chart
-- - - Retention chart
+- *Deploy to main,delete all e-mails and sessions and srart all over again testing everything (1 minute sessions/private for new sessions)... with DMs and private public links on twitter/discord/text-message*
+- Look at metrics again...
 - - Google Search Console: submit https://arells.com/sitemap.xml, then use URL inspection on /, /signin, /signup after deploy.
 
 #### Update Links/Images/Descriptions
