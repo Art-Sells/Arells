@@ -3911,6 +3911,7 @@ a.asset-action-button--myinv-asset-link {
 
 /* My Investments page */
 .myinv-page {
+	margin-top: -30px;
 	min-width: 370px;
 	padding-bottom: 60px;
 	font-family: Arial, sans-serif;
@@ -3980,6 +3981,7 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .myinv-header-inner {
+	--myinv-title-translate-y: 32px;
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
 	margin: 0 auto;
@@ -4003,7 +4005,7 @@ a.asset-action-button--myinv-asset-link {
 	margin-left: 80px;
 	/* Same as home `#word-logoo`: top inset in the header row; without this the title hugs the top. */
 	margin-top: 20px;
-	margin-bottom: -32.5px;
+	transform: translateY(var(--myinv-title-translate-y));
 	white-space: nowrap;
 	top: 0;
 	transition: transform 1s ease;
@@ -4067,7 +4069,8 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .myinv-header-inner.is-liquid .myinv-title {
-	transform: translateX(var(--myinv-title-shift, 0px));
+	transform: translateX(var(--myinv-title-shift, 0px))
+		translateY(var(--myinv-title-translate-y));
 	text-align: center;
 }
 
@@ -5134,8 +5137,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		text-size-adjust: 100%;
 	}
 
+	.myinv-header-inner {
+		--myinv-title-translate-y: 32.5px;
+	}
+
 	.myinv-header-inner .myinv-title {
-		margin-bottom: -32px;
 		font-size: 20px;
 	}
 
