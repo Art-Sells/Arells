@@ -4005,7 +4005,7 @@ a.asset-action-button--myinv-asset-link {
 	margin-left: 80px;
 	/* Same idea as home `#word-logoo`: top inset + negative margin-bottom pulls slogan row up. */
 	margin-top: 20px;
-	margin-bottom: -33px;
+	margin-bottom: -31.5px;
 	white-space: nowrap;
 	top: 0;
 	transition: transform 1s ease;
@@ -4015,8 +4015,9 @@ a.asset-action-button--myinv-asset-link {
 .myinv-slogan-layer {
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
-	margin: 0 auto 2px;
+	margin: 0 auto;
 	display: flex;
+	margin-bottom: 7px;
 	animation-name: pageSlideUp;
 	animation-duration: 1s;
 	animation-delay: 2s;
@@ -4029,16 +4030,6 @@ a.asset-action-button--myinv-asset-link {
 }
 
 /* Mirrors home `#descriptioner-wrapper` → `#descriptioner.home-slogan-text` */
-.myinv-descriptioner-wrapper {
-	margin-top: 4px;
-	margin-right: 0;
-	font-size: 8px;
-	font-weight: 200;
-	padding-bottom: 5px;
-	margin-left: auto;
-	text-align: right;
-	margin-bottom: 2px;
-}
 
 /* Match `.myinv-metric-title` (Purchased Value / Current Value) */
 .myinv-descriptioner {
@@ -4050,7 +4041,7 @@ a.asset-action-button--myinv-asset-link {
 	word-spacing: 0px;
 	display: inline-block;
 	font-size: 12px;
-	font-weight: 400;
+	font-weight: 200;
 	max-width: 520px;
 	text-align: right;
 	position: relative;
@@ -5144,10 +5135,10 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		margin-bottom: -33px;
 	}
 
-	.myinv-descriptioner-wrapper {
-		margin-top: 4px;
-		margin-bottom: 6px;
+	.myinv-slogan-layer {
+		margin-bottom: 10px;
 	}
+
 
 	.myinv-header-inner.is-liquid .myinv-title {
 		transform: translateX(54.5px);

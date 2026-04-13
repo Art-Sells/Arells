@@ -101,7 +101,6 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [rangePricesLiquid, setRangePricesLiquid] = useState<Record<string, number | null>>({});
   const [summaryValuesHidden, setSummaryValuesHidden] = useState(false);
   const summaryValuesDidMountRef = useRef(false);
-  const isLiquidModeDidMountRef = useRef(false);
   const [summaryQuickFade, setSummaryQuickFade] = useState(false);
   const summaryQuickFadeRef = useRef(false);
   const summaryQuickFadeTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
@@ -596,14 +595,6 @@ const MyInvestmentsPageClient: React.FC = () => {
     }
     pulseSummaryValuesRef.current();
   }, [selectedRangeDays]);
-
-  useEffect(() => {
-    if (!isLiquidModeDidMountRef.current) {
-      isLiquidModeDidMountRef.current = true;
-      return;
-    }
-    pulseSummaryValuesRef.current();
-  }, [isLiquidMode]);
 
   const oldestInvestmentDate = useMemo(() => {
     if (effectiveInvestments.length === 0) return null;
