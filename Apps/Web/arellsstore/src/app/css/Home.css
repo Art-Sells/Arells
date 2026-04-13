@@ -3278,6 +3278,19 @@ a.asset-action-button--myinv-asset-link {
 	}
 }
 
+/* My Investments header: match `.home-header-inner` translate(10px, 1px) after slide-in (generic
+   `pageSlideUp` ends at translateY(0) and would wipe the offset). */
+@keyframes pageSlideUpMyinvHeaderOutside {
+	0% {
+		transform: translate(10px, calc(1px + 40px));
+		opacity: 0;
+	}
+	100% {
+		transform: translate(10px, 1px);
+		opacity: 1;
+	}
+}
+
 /* Asset header slogan: end at same translateY as `.asset-header-slogan` so `animation-fill-mode: backwards`
    does not snap from keyframe translateY(0) back to rule translateY(4px) when the animation finishes. */
 @keyframes pageSlideUpAssetSlogan {
@@ -3898,11 +3911,7 @@ a.asset-action-button--myinv-asset-link {
 
 /* My Investments page */
 .myinv-page {
-	min-height: 100vh;
-	min-height: 100dvh;
 	min-width: 370px;
-	padding-top: env(safe-area-inset-top, 0px);
-	margin-top: -20px;
 	padding-bottom: 60px;
 	font-family: Arial, sans-serif;
 	background: var(--page-accent-tint);
@@ -3973,8 +3982,7 @@ a.asset-action-button--myinv-asset-link {
 .myinv-header-outside {
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
-	margin: 0 auto 12px;
-	padding-top: var(--myinv-title-offset, 0px);
+	margin: 0 auto;
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
@@ -3984,13 +3992,20 @@ a.asset-action-button--myinv-asset-link {
 	z-index: 3;
 }
 
+.myinv-header-outside.page-slide-in {
+	animation: pageSlideUpMyinvHeaderOutside 4s ease both;
+	will-change: transform, opacity;
+}
+
 .myinv-header-outside .myinv-title {
 	position: relative;
 	text-align: left;
 	margin-left: 80px;
+	/* Same as home `#word-logoo`: top inset in the header row; without this the title hugs the top. */
+	margin-top: 20px;
+	margin-bottom: -32px;
 	white-space: nowrap;
-	top: 46px;
-	transform: translateY(0);
+	top: 0;
 	transition: transform 1s ease;
 	z-index: 3;
 }
@@ -5088,6 +5103,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 }
 
+
+
 @media (max-width: 750px) {
 	/* Match desktop narrow-window text metrics: iOS otherwise boosts body text and shifts the title vs icons. */
 	.myinv-page {
@@ -5095,7 +5112,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		text-size-adjust: 100%;
 	}
 
-	.myinv-title {
+	.myinv-header-outside .myinv-title {
+		margin-bottom: -28.5px;
 		font-size: 20px;
 	}
 
@@ -5203,8 +5221,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.myinv-header-outside .myinv-title {
 		margin-left: 50px;
-		top: 42px;
-		
 	}
 
 	.myinv-slogan-layer .myinv-slogan {

@@ -23,7 +23,7 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - Remove typos from Arells/Vavity readmes, and UI
 - Remove console.logs (leave conosle.errors/warns) from all files...
 - Delete Arells Readme roadmap
-- *Deploy to main and Test Entire structure with DMs and private public links on twitter/etc*
+- *Deploy to main and Test Entire structure with DMs and private public links on twitter/discord/text-message*
 - - In metrics:  
 - - Users
 - - - (current) number of sessions (unique users?) created/interacted/etc
