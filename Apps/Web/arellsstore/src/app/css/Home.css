@@ -1697,6 +1697,8 @@ a.asset-action-button--myinv-asset-link {
 
 .asset-money-wrap > span:first-child {
 	margin-right: 1px;           /* <- edit gap between $/+$/-$ and number */
+	/* `overflow-wrap: anywhere` on parent can break between `-` and `$` in `-$`; keep sign+currency on one line */
+	white-space: nowrap;
 }
 
 .asset-money-decimal {
