@@ -4069,8 +4069,7 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .myinv-header-inner.is-liquid .myinv-title {
-	transform: translateX(var(--myinv-title-shift, 0px));
-	text-align: center;
+	transform: translateX( 180px);
 }
 
 .myinv-wrapper {
@@ -4362,7 +4361,10 @@ a.asset-action-button--myinv-asset-link {
 
 .myinv-range-button:disabled {
 	opacity: 0.25;
-	border: none;
+	/* Match `.asset-range-button:disabled`: keep 1px border (transparent) so active vs inactive
+	   chips don’t change outer size when selection moves — `border: none` was shrinking the
+	   selected button and reflowing the wrapped row. */
+	border: 1px solid transparent;
 	background: var(--myinv-accent-color) !important;
 	color: var(--myinv-accent-color);
 }
@@ -5139,7 +5141,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	.myinv-header-inner .myinv-title {
 		font-size: 20px;
 		margin-left: 50px;
-		margin-bottom: -32.5px;
+		margin-bottom: -33.5px;
+	}
+
+	.myinv-header-inner.is-liquid .myinv-title {
+		transform: translateX(54.5px);
 	}
 
 	.home-asset-card .asset-action-button--home-asset-chip,
