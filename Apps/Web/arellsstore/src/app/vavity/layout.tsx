@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { vavityFaviconUrl } from "../../lib/faviconUrls";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -16,11 +17,9 @@ export const metadata: Metadata = {
     canonical: "/vavity",
   },
   icons: {
-    icon: [
-      { url: '/images/vavity/favicon.png', type: 'image/png' },
-    ],
-    shortcut: '/images/vavity/favicon.png',
-    apple: '/images/vavity/favicon.png',
+    icon: [{ url: vavityFaviconUrl, type: 'image/png' }],
+    shortcut: vavityFaviconUrl,
+    apple: vavityFaviconUrl,
   },
   openGraph: {
     title: "Vavity - Virtual Autonomous Volatility Immunizing Tethering Yielder",

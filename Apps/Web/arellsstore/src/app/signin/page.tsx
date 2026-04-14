@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import SignInPageClient from '../../components/Auth/SignInPageClient';
+import { arellsIcoIconUrl } from '../../lib/faviconUrls';
 
 const generalBanner =
   'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/ArellsGeneralBannerOfficial.jpg';
@@ -9,9 +10,9 @@ export const metadata: Metadata = {
   description: 'Sign in to save investments.',
   robots: { index: true, follow: true },
   icons: {
-    icon: '/ArellsIcoIcon.png',
-    shortcut: '/ArellsIcoIcon.png',
-    apple: '/ArellsIcoIcon.png',
+    icon: arellsIcoIconUrl,
+    shortcut: arellsIcoIconUrl,
+    apple: arellsIcoIconUrl,
   },
   openGraph: {
     title: 'Sign in',
