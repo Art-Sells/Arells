@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/images/favicons/BtcBadge.svg",
     shortcut: "/images/favicons/BtcBadge.svg",
-    apple: "/images/favicons/BtcBadge.svg"
+    apple: "/ArellsIcoIcon.png",
   },
   openGraph: {
     title: "Bitcoin",

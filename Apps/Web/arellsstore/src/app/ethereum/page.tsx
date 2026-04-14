@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   icons: {
     icon: '/images/favicons/EthBadge.svg',
     shortcut: '/images/favicons/EthBadge.svg',
-    apple: '/images/favicons/EthBadge.svg'
+    /* iOS: use Arells PNG for touch / bookmarks; SVG badge stays on desktop tab via `icon`. */
+    apple: '/ArellsIcoIcon.png',
   },
   openGraph: {
     title: 'Ethereum',

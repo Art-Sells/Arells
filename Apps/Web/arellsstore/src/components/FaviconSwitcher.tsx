@@ -12,6 +12,10 @@ const VAVITY_FAVICON = '/images/vavity/favicon.png';
  * Keep tab icon in sync on SPA navigations (Next head can retain the previous route’s links).
  * — `/vavity` and all nested routes use the Vavity favicon (matches `app/vavity/layout.tsx`).
  * — Asset roots use badge icons; everything else uses Arells.
+ *
+ * iOS Safari often ignores or mishandles SVG `apple-touch-icon` and may fall back to unrelated
+ * icons (e.g. after visiting external asset links). Always use the Arells PNG for
+ * `apple-touch-icon`; keep SVG/PNG badges on `icon` / `shortcut icon` only.
  */
 const resolveFavicon = (pathname: string) => {
   const seg = pathname.split('/').filter(Boolean)[0];
@@ -50,7 +54,7 @@ export default function FaviconSwitcher() {
 
     syncRel('icon', href, type);
     syncRel('shortcut icon', href, type);
-    syncRel('apple-touch-icon', href);
+    syncRel('apple-touch-icon', DEFAULT_FAVICON);
   }, [pathname]);
 
   return null;
