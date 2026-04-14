@@ -4,9 +4,8 @@ import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
 import { AssetsProvider } from '../context/Assets/AssetsProvider';
-import FaviconSwitcher from '../components/FaviconSwitcher';
 
-/** Default tab icon; `/bitcoin` and `/ethereum` override via their own `metadata.icons`. */
+/** Default tab icon site-wide; `/vavity/*` overrides in `app/vavity/layout.tsx`. */
 export const metadata: Metadata = {
   icons: {
     icon: '/ArellsIcoIcon.png',
@@ -29,7 +28,6 @@ const RootLayout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
       <body>
-        <FaviconSwitcher />
         <AssetsProvider>
           <UserProvider>
             <AnalyticsBeacon />

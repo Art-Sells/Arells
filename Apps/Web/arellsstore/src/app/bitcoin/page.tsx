@@ -4,11 +4,6 @@ export const metadata: Metadata = {
   title: "Bitcoin",
   description: "If investments never lost value.",
   robots: { index: false, follow: true },
-  icons: {
-    icon: "/images/favicons/BtcBadge.svg",
-    shortcut: "/images/favicons/BtcBadge.svg",
-    apple: "/ArellsIcoIcon.png",
-  },
   openGraph: {
     title: "Bitcoin",
     description: "If investments never lost value.",
