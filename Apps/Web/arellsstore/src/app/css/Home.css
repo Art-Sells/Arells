@@ -3072,12 +3072,14 @@ a.asset-action-button--myinv-asset-link {
 	animation-fill-mode: both;
 }
 
+/* `backwards` only: during delay use first keyframe; after animation end use normal CSS opacity
+   so `.is-hidden` can fade like home / my investments (`forwards` locked opacity:1 and blocked that). */
 .asset-page-content .asset-header-slogan {
 	animation-name: pageSlideUpAssetSlogan;
 	animation-duration: 1s;
 	animation-delay: 2s;
 	animation-timing-function: ease;
-	animation-fill-mode: both;
+	animation-fill-mode: backwards;
 }
 
 .asset-page-content > .asset-panel:nth-of-type(2) {
@@ -5214,6 +5216,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.asset-page-content .asset-header-slogan {
 		animation-name: pageSlideUpAssetSloganMobile;
+		animation-fill-mode: backwards;
 	}
 
 	.myinv-descriptioner {
