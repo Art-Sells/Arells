@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Bitcoin from './bitcoin';
-import '../../../../app/css/Home.css';
 import { useUser } from '../../../../context/UserContext';
 
 const BitcoinPageClient: React.FC = () => {

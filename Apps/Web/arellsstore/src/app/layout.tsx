@@ -1,18 +1,19 @@
 import type { Metadata, Viewport } from 'next';
 import { ReactNode } from 'react';
+import './css/Home.css';
+import './css/HomeLoaderOverrides.css';
 import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
 import { AssetsProvider } from '../context/Assets/AssetsProvider';
-import { faviconUrl } from '../lib/faviconUrl';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 
 /** Default tab icon; `/bitcoin`, `/ethereum`, `/vavity` override via their own `metadata.icons`. */
 export const metadata: Metadata = {
   metadataBase: getSiteMetadataBase(),
   icons: {
-    icon: faviconUrl('/ArellsIcoIcon.png'),
-    shortcut: faviconUrl('/ArellsIcoIcon.png'),
+    icon: '/ArellsIcoIcon.png',
+    shortcut: '/ArellsIcoIcon.png',
   },
 };
 

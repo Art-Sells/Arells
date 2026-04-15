@@ -1,7 +1,6 @@
 "use client";
 
 import type { ImageLoaderProps } from 'next/image';
-import '../app/css/Home.css';
 import { useMemo, useState, useEffect, useCallback, useLayoutEffect, useRef } from 'react';
 import Image from 'next/image';
 import React from 'react';

@@ -1433,8 +1433,8 @@ body {
 	text-decoration: none;
 	font-size: 12px;
 	font-weight: 400;
-	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
-		transform 0.5s ease;
+	/* No transition on background/color/border: avoids production FOUC easing from base #202020 into accents. */
+	transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .asset-action-button:visited {
@@ -2708,8 +2708,7 @@ a.asset-action-button--myinv-asset-link {
 	font-weight: 400;
 	line-height: 1.1;
 	box-sizing: border-box;
-	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
-		transform 0.5s ease;
+	transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .asset-range-button.asset-portfolio-icon-button {
@@ -3242,7 +3241,8 @@ a.asset-action-button--myinv-asset-link {
 	text-align: center;
 	color: var(--myinv-accent-color);
 	opacity: 0.5;
-	transition: color 0.35s ease, opacity 0.35s ease;
+	/* Opacity only: color tracks cycling --myinv-accent-color; transitioning color lags on load. */
+	transition: opacity 0.35s ease;
 	font-size: 13px;
 }
 
@@ -4775,6 +4775,16 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	color: var(--myinv-accent-color);
 }
 
+/* Anchor + CSS var() color often paints black in WebKit; match asset-title-badge / auth patterns. */
+a.myinv-about-button:link,
+a.myinv-about-button:visited,
+a.myinv-about-button:hover,
+a.myinv-about-button:active,
+a.myinv-about-button:focus-visible {
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+}
+
 .myinv-about-button:active {
 	transform: translateY(-2px);
 	box-shadow: none;
@@ -4817,7 +4827,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	font-weight: 200;
 	letter-spacing: 0px;
 	font-size: 12px;
-	color: currentColor;
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
 	opacity: 1;
 	transition: none;
 	position: relative;
@@ -7460,6 +7471,15 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	color: var(--myinv-accent-color);
 }
 
+a.growth-metrics-about-button:link,
+a.growth-metrics-about-button:visited,
+a.growth-metrics-about-button:hover,
+a.growth-metrics-about-button:active,
+a.growth-metrics-about-button:focus-visible {
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+}
+
 .growth-metrics-about-button:active {
 	transform: translateY(-2px);
 	box-shadow: none;
@@ -7502,7 +7522,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	font-weight: 200;
 	letter-spacing: 0px;
 	font-size: 12px;
-	color: currentColor;
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
 	opacity: 1;
 	transition: none;
 	position: relative;

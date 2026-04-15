@@ -8,7 +8,7 @@
 
 
 ### Test Online 
-- *check favicons switcher on mobile when linking to other pages/assets*
+- *check favicons on mobile (TTL?)*
 - *delete all e-mails and sessions and srart all over again testing everything...*
 - both desktop(multiple browsers (private for new sessions))/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
 - Test with big and small numbers, all deletions, etc (with all links /, /bitcoin, /ethereum, /about, /vavity ) on socials (DM's/etc)

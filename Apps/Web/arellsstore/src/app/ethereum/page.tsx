@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { faviconUrl } from '../../lib/faviconUrl';
 import EthereumPageClient from '../../components/Assets/Crypto/Ethereum/EthereumPageClient';
 
 export const metadata: Metadata = {
@@ -10,8 +9,8 @@ export const metadata: Metadata = {
     canonical: '/ethereum',
   },
   icons: {
-    icon: faviconUrl('/images/favicons/EthBadge.svg'),
-    shortcut: faviconUrl('/images/favicons/EthBadge.svg'),
+    icon: '/images/favicons/EthBadge.svg',
+    shortcut: '/images/favicons/EthBadge.svg',
   },
   openGraph: {
     title: 'Ethereum',

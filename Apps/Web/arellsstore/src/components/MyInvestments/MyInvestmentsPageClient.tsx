@@ -2,8 +2,6 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import '../../app/css/Home.css';
-import '../../app/css/HomeLoaderOverrides.css';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 

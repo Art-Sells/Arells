@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import '../../app/css/Home.css';
-import '../../app/css/HomeLoaderOverrides.css';
 import GrowthMetricsPanel from '../../components/Metrics/GrowthMetricsPanel';
 import MetricsPageActivityPanel from '../../components/Metrics/MetricsPageActivityPanel';
 import MetricsPageMountRecorder from '../../components/Metrics/MetricsPageMountRecorder';

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { faviconUrl } from '../../../lib/faviconUrl';
 import VerifiedPageClient from '../../../components/Auth/VerifiedPageClient';
 
 const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
@@ -16,8 +15,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: path,
     },
     icons: {
-      icon: faviconUrl('/ArellsIcoIcon.png'),
-      shortcut: faviconUrl('/ArellsIcoIcon.png'),
+      icon: '/ArellsIcoIcon.png',
+      shortcut: '/ArellsIcoIcon.png',
     },
     openGraph: {
       title: 'Verify email',

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { faviconUrl } from '../../lib/faviconUrl';
 import BitcoinPageClient from '../../components/Assets/Crypto/Bitcoin/BitcoinPageClient';
 export const metadata: Metadata = {
   title: "Bitcoin",
@@ -9,8 +8,8 @@ export const metadata: Metadata = {
     canonical: '/bitcoin',
   },
   icons: {
-    icon: faviconUrl('/images/favicons/BtcBadge.svg'),
-    shortcut: faviconUrl('/images/favicons/BtcBadge.svg'),
+    icon: "/images/favicons/BtcBadge.svg",
+    shortcut: "/images/favicons/BtcBadge.svg",
   },
   openGraph: {
     title: "Bitcoin",

@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Ethereum from './ethereum';
-import '../../../../app/css/Home.css';
 import { useUser } from '../../../../context/UserContext';
 
 const EthereumPageClient: React.FC = () => {

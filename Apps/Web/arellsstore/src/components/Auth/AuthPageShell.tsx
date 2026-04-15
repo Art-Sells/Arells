@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import '../../app/css/Home.css';
-import '../../app/css/HomeLoaderOverrides.css';
 
 const AUTH_TITLE_CROSSFADE_MS = 480;
 
