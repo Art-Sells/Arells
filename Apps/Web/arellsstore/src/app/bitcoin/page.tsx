@@ -8,14 +8,13 @@ export const metadata: Metadata = {
     canonical: '/bitcoin',
   },
   icons: {
-    /* SVG first for capable desktops; ICO/PNG follow so Android Chrome can skip SVG and still hit same-origin icons. */
+    /* Next emits `shortcut icon` links BEFORE `icon`; pointing shortcut at /favicon.ico forced the global Arells tab icon here. */
+    shortcut: '/images/favicons/BtcBadge.svg',
     icon: [
       { url: '/images/favicons/BtcBadge.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', sizes: 'any' },
       { url: '/ArellsIcoIcon.png', type: 'image/png', sizes: '192x192' },
     ],
-    apple: [{ url: '/ArellsIcoIcon.png', sizes: '180x180', type: 'image/png' }],
-    shortcut: '/favicon.ico',
+    apple: [{ url: '/images/favicons/BtcBadge.svg', type: 'image/svg+xml', sizes: '180x180' }],
   },
   openGraph: {
     title: "Bitcoin",
