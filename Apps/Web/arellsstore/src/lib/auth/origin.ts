@@ -43,12 +43,12 @@ export function resolveAppOrigin(reqOriginHeader: string | undefined, bodyOrigin
 }
 
 /** Public PNG; used in HTML emails so images load even when appOrigin is *.amplifyapp.com (no asset there). */
-const DEFAULT_EMAIL_LOGO_URL = 'https://arells.com/ArellsIcoIcon.png';
+const DEFAULT_EMAIL_LOGO_URL = 'https://arells.com/favicon.ico';
 
 /**
  * Absolute URL for the logo <img> in SES HTML. Mail apps fetch this URL — it must be https and reachable
  * (not localhost). Verification links still use `appOrigin`; the logo is independent so Amplify/preview
- * deploys don’t point at a host that 404s `/ArellsIcoIcon.png`.
+ * deploys don’t point at a host that 404s `/favicon.ico`.
  *
  * Override with AUTH_EMAIL_LOGO_URL (https, or http localhost for tests).
  */

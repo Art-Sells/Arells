@@ -4,15 +4,14 @@
 import Index from '../components/Index';
 import React from 'react';
 import type { Metadata } from 'next';
-import { arellsIcoIconUrl } from '../lib/faviconUrls';
 
 export const metadata: Metadata = {
   title: "Arells",
   description: "If investments never lost value.",
   robots: { index: true, follow: true },
   icons: {
-    icon: [{ url: arellsIcoIconUrl, type: 'image/png', sizes: '32x32' }],
-    apple: [{ url: arellsIcoIconUrl, sizes: '180x180', type: 'image/png' }],
+    icon: '/favicon.ico',
+    apple: '/favicon.ico',
   },
   openGraph: {
     title: "Arells",

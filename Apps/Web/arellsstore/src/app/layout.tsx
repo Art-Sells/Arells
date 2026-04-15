@@ -4,13 +4,12 @@ import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
 import { AssetsProvider } from '../context/Assets/AssetsProvider';
-import { arellsIcoIconUrl } from '../lib/faviconUrls';
 
-/** Default tab icon site-wide; `/vavity/*` overrides in `app/vavity/layout.tsx`. */
+/** Default tab icon: `public/favicon.ico`. `/vavity/*` overrides in `app/vavity/layout.tsx`. */
 export const metadata: Metadata = {
   icons: {
-    icon: [{ url: arellsIcoIconUrl, type: 'image/png', sizes: '32x32' }],
-    apple: [{ url: arellsIcoIconUrl, sizes: '180x180', type: 'image/png' }],
+    icon: '/favicon.ico',
+    apple: '/favicon.ico',
   },
 };
 
