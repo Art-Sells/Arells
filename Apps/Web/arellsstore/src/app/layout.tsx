@@ -4,12 +4,14 @@ import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
 import { AssetsProvider } from '../context/Assets/AssetsProvider';
+import FaviconSwitcher from '../components/FaviconSwitcher';
 
-/** Default tab icon: `public/favicon.ico`. `/vavity/*` overrides in `app/vavity/layout.tsx`. */
+/** Default tab icon; `/bitcoin` and `/ethereum` override via their own `metadata.icons`. */
 export const metadata: Metadata = {
   icons: {
-    icon: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/ArellsIcoIcon.png',
+    shortcut: '/ArellsIcoIcon.png',
+    apple: '/ArellsIcoIcon.png',
   },
 };
 
@@ -27,6 +29,7 @@ const RootLayout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
       <body>
+        <FaviconSwitcher />
         <AssetsProvider>
           <UserProvider>
             <AnalyticsBeacon />

@@ -16,7 +16,10 @@ export const metadata: Metadata = {
     canonical: "/vavity",
   },
   icons: {
-    icon: '/images/vavity/favicon.png',
+    icon: [
+      { url: '/images/vavity/favicon.png', type: 'image/png' },
+    ],
+    shortcut: '/images/vavity/favicon.png',
     apple: '/images/vavity/favicon.png',
   },
   openGraph: {
