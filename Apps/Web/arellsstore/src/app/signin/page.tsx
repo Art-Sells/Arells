@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { faviconUrl } from '../../lib/faviconUrl';
 import SignInPageClient from '../../components/Auth/SignInPageClient';
 
 const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
@@ -11,8 +12,8 @@ export const metadata: Metadata = {
     canonical: '/signin',
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
+    icon: faviconUrl('/ArellsIcoIcon.png'),
+    shortcut: faviconUrl('/ArellsIcoIcon.png'),
   },
   openGraph: {
     title: 'Sign in',

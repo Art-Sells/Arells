@@ -4,14 +4,15 @@ import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
 import { AssetsProvider } from '../context/Assets/AssetsProvider';
+import { faviconUrl } from '../lib/faviconUrl';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 
 /** Default tab icon; `/bitcoin`, `/ethereum`, `/vavity` override via their own `metadata.icons`. */
 export const metadata: Metadata = {
   metadataBase: getSiteMetadataBase(),
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
+    icon: faviconUrl('/ArellsIcoIcon.png'),
+    shortcut: faviconUrl('/ArellsIcoIcon.png'),
   },
 };
 

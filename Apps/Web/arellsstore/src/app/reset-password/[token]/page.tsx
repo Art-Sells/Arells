@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { faviconUrl } from '../../../lib/faviconUrl';
 import ResetPasswordPageClient from '../../../components/Auth/ResetPasswordPageClient';
 
 const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
@@ -15,8 +16,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: path,
     },
     icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
+      icon: faviconUrl('/ArellsIcoIcon.png'),
+      shortcut: faviconUrl('/ArellsIcoIcon.png'),
     },
     openGraph: {
       title: 'Reset Password',

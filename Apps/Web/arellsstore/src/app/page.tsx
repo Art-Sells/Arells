@@ -4,6 +4,7 @@
 import Index from '../components/Index';
 import React from 'react';
 import type { Metadata } from 'next';
+import { faviconUrl } from '../lib/faviconUrl';
 
 export const metadata: Metadata = {
   title: "Arells",
@@ -13,8 +14,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: faviconUrl('/ArellsIcoIcon.png'),
+    shortcut: faviconUrl('/ArellsIcoIcon.png'),
   },
   openGraph: {
     title: "Arells",
