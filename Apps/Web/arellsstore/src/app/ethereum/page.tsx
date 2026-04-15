@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     shortcut: u('/images/favicons/EthBadge.svg'),
     icon: [
       { url: u('/images/favicons/EthBadge.svg'), type: 'image/svg+xml' },
-      { url: u('/ArellsIcoIcon.png'), type: 'image/png', sizes: '192x192' },
+      { url: u('/ArellsIcon.png'), type: 'image/png', sizes: '192x192' },
     ],
     apple: [{ url: u('/images/favicons/EthBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
   },

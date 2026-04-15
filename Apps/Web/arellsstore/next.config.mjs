@@ -12,7 +12,7 @@ const nextConfig = {
         headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, must-revalidate' }],
       },
       {
-        source: '/ArellsIcoIcon.png',
+        source: '/ArellsIcon.png',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, must-revalidate' }],
       },
     ];
