@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: "Vavity",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/vavity/VavityBanner.jpg",
+        url: "/images/vavity/Banner.jpg",
         width: 1200,
         height: 1200,
         alt: "Rules",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Rules",
     description: "Learn about Vavity's rules.",
-    images: ["https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/vavity/VavityBanner.jpg"],
+    images: ["/images/vavity/Banner.jpg"],
   },
   robots: {
     index: false,

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import SignInPageClient from '../../components/Auth/SignInPageClient';
 
-const generalBanner =
-  'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/ArellsGeneralBannerOfficial.jpg';
+const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
 
 export const metadata: Metadata = {
   title: 'Sign in',

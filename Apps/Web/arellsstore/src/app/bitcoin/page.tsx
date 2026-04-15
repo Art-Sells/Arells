@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/assets/crypto/Bitcoin/ArellsBTCBanner.jpg"
+        url: "/images/banners/assets/crypto/Bitcoin/ArellsBTCBanner.jpg",
       }
     ]
   },
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/assets/crypto/Bitcoin/ArellsBTCBanner.jpg"
+        url: "/images/banners/assets/crypto/Bitcoin/ArellsBTCBanner.jpg",
       }
     ]
   }

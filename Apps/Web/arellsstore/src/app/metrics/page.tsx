@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import MetricsPageClient from './MetricsPageClient';
 
-const metricsOgImage =
-  'https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/GrowthMetricsBanner.jpg';
+const metricsOgImage = '/images/banners/GrowthMetricsBanner.jpg';
 
 export const metadata: Metadata = {
   title: 'Arells Growth Metrics',

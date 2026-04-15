@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     siteName: "Vavity",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/vavity/VavityBanner.jpg",
+        url: "/images/vavity/Banner.jpg",
         width: 1200,
         height: 1200,
         alt: "Vavity - An autonomous pricing system that anchors asset prices before they fall.",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Vavity - Virtual Autonomous Volatility Immunizing Tethering Yielder",
     description: "An autonomous pricing system that anchors asset prices before they fall.",
-    images: ["https://arellsimages.s3.us-west-1.amazonaws.com/images%26banners/vavity/VavityBanner.jpg"],
+    images: ["/images/vavity/Banner.jpg"],
   },
   robots: {
     index: false,
