@@ -9,15 +9,17 @@ export const metadata: Metadata = {
   title: "Arells",
   description: "If investments never lost value.",
   robots: { index: true, follow: true },
+  alternates: {
+    canonical: '/',
+  },
   icons: {
     icon: "/ArellsIcoIcon.png",
     shortcut: "/ArellsIcoIcon.png",
-    apple: "/ArellsIcoIcon.png"
   },
   openGraph: {
     title: "Arells",
     description: "If investments never lost value.",
-    url: "https://arells.com",
+    url: "/",
     type: "website",
     images: [
       {

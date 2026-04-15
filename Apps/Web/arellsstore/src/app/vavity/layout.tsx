@@ -16,11 +16,8 @@ export const metadata: Metadata = {
     canonical: "/vavity",
   },
   icons: {
-    icon: [
-      { url: '/images/vavity/favicon.png', type: 'image/png' },
-    ],
+    icon: [{ url: '/images/vavity/favicon.png', type: 'image/png' }],
     shortcut: '/images/vavity/favicon.png',
-    apple: '/images/vavity/favicon.png',
   },
   openGraph: {
     title: "Vavity - Virtual Autonomous Volatility Immunizing Tethering Yielder",

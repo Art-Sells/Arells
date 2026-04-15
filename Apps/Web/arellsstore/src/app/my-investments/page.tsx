@@ -8,10 +8,13 @@ export const metadata: Metadata = {
   title: 'My Investments',
   description: 'If investments never lost value.',
   robots: { index: false, follow: true },
+  alternates: {
+    canonical: '/my-investments',
+  },
   openGraph: {
     title: 'My Investments',
     description: 'If investments never lost value.',
-    url: 'https://arells.com/my-investments',
+    url: '/my-investments',
     type: 'website',
     images: [{ url: myInvestmentsBanner }],
   },

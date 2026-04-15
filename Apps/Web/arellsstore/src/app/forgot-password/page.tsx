@@ -8,10 +8,13 @@ export const metadata: Metadata = {
   title: 'Forgot Password',
   description: 'Request a password reset for your account.',
   robots: { index: false, follow: true },
+  alternates: {
+    canonical: '/forgot-password',
+  },
   openGraph: {
     title: 'Forgot Password',
     description: 'Request a password reset for your account.',
-    url: 'https://arells.com/forgot-password',
+    url: '/forgot-password',
     type: 'website',
     images: [{ url: generalBanner }],
   },

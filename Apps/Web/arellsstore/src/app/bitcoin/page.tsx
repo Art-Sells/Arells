@@ -4,15 +4,17 @@ export const metadata: Metadata = {
   title: "Bitcoin",
   description: "If investments never lost value.",
   robots: { index: false, follow: true },
+  alternates: {
+    canonical: '/bitcoin',
+  },
   icons: {
     icon: "/images/favicons/BtcBadge.svg",
     shortcut: "/images/favicons/BtcBadge.svg",
-    apple: "/ArellsIcoIcon.png",
   },
   openGraph: {
     title: "Bitcoin",
     description: "If investments never lost value.",
-    url: "https://arells.com/bitcoin",
+    url: "/bitcoin",
     type: "website",
     images: [
       {

@@ -8,10 +8,13 @@ export const metadata: Metadata = {
   title: 'Arells Growth Metrics',
   description: 'Growth and retention metrics for Arells',
   robots: { index: false, follow: true },
+  alternates: {
+    canonical: '/metrics',
+  },
   openGraph: {
     title: 'Arells Growth Metrics',
     description: 'Growth and retention metrics for Arells',
-    url: 'https://arells.com/metrics',
+    url: '/metrics',
     type: 'website',
     images: [{ url: metricsOgImage }],
   },
