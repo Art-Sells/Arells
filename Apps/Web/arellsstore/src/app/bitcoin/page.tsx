@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import BitcoinPageClient from '../../components/Assets/Crypto/Bitcoin/BitcoinPageClient';
+import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
+
 export const metadata: Metadata = {
   title: "Bitcoin",
   description: "If investments never lost value.",
@@ -9,12 +11,12 @@ export const metadata: Metadata = {
   },
   icons: {
     /* Next emits `shortcut icon` links BEFORE `icon`; pointing shortcut at /favicon.ico forced the global Arells tab icon here. */
-    shortcut: '/images/favicons/BtcBadge.svg',
+    shortcut: u('/images/favicons/BtcBadge.svg'),
     icon: [
-      { url: '/images/favicons/BtcBadge.svg', type: 'image/svg+xml' },
-      { url: '/ArellsIcoIcon.png', type: 'image/png', sizes: '192x192' },
+      { url: u('/images/favicons/BtcBadge.svg'), type: 'image/svg+xml' },
+      { url: u('/ArellsIcoIcon.png'), type: 'image/png', sizes: '192x192' },
     ],
-    apple: [{ url: '/images/favicons/BtcBadge.svg', type: 'image/svg+xml', sizes: '180x180' }],
+    apple: [{ url: u('/images/favicons/BtcBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
   },
   openGraph: {
     title: "Bitcoin",

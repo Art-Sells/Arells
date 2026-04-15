@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import EthereumPageClient from '../../components/Assets/Crypto/Ethereum/EthereumPageClient';
+import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
 
 export const metadata: Metadata = {
   title: 'Ethereum',
@@ -9,12 +10,12 @@ export const metadata: Metadata = {
     canonical: '/ethereum',
   },
   icons: {
-    shortcut: '/images/favicons/EthBadge.svg',
+    shortcut: u('/images/favicons/EthBadge.svg'),
     icon: [
-      { url: '/images/favicons/EthBadge.svg', type: 'image/svg+xml' },
-      { url: '/ArellsIcoIcon.png', type: 'image/png', sizes: '192x192' },
+      { url: u('/images/favicons/EthBadge.svg'), type: 'image/svg+xml' },
+      { url: u('/ArellsIcoIcon.png'), type: 'image/png', sizes: '192x192' },
     ],
-    apple: [{ url: '/images/favicons/EthBadge.svg', type: 'image/svg+xml', sizes: '180x180' }],
+    apple: [{ url: u('/images/favicons/EthBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
   },
   openGraph: {
     title: 'Ethereum',

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { iconAssetUrl as u } from "../../lib/iconAssetUrl";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -16,12 +17,12 @@ export const metadata: Metadata = {
     canonical: "/vavity",
   },
   icons: {
-    shortcut: '/images/vavity/favicon.png',
+    shortcut: u('/images/vavity/favicon.png'),
     icon: [
-      { url: '/images/vavity/favicon.png', type: 'image/png', sizes: '192x192' },
-      { url: '/images/vavity/favicon.png', type: 'image/png', sizes: '512x512' },
+      { url: u('/images/vavity/favicon.png'), type: 'image/png', sizes: '192x192' },
+      { url: u('/images/vavity/favicon.png'), type: 'image/png', sizes: '512x512' },
     ],
-    apple: [{ url: '/images/vavity/favicon.png', sizes: '180x180', type: 'image/png' }],
+    apple: [{ url: u('/images/vavity/favicon.png'), sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
     title: "Vavity - Virtual Autonomous Volatility Immunizing Tethering Yielder",

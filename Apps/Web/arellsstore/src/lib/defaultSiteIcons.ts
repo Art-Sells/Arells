@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+import { iconAssetUrl } from './iconAssetUrl';
+
+const u = iconAssetUrl;
 
 /**
  * Default tab / PWA icons. ICO + sized PNG + apple-touch gives Android Chrome and Safari
@@ -6,10 +9,10 @@ import type { Metadata } from 'next';
  */
 export const defaultSiteIcons: Metadata['icons'] = {
   icon: [
-    { url: '/favicon.ico', sizes: 'any' },
-    { url: '/ArellsIcoIcon.png', type: 'image/png', sizes: '192x192' },
-    { url: '/ArellsIcoIcon.png', type: 'image/png', sizes: '512x512' },
+    { url: u('/favicon.ico'), sizes: 'any' },
+    { url: u('/ArellsIcoIcon.png'), type: 'image/png', sizes: '192x192' },
+    { url: u('/ArellsIcoIcon.png'), type: 'image/png', sizes: '512x512' },
   ],
-  apple: [{ url: '/ArellsIcoIcon.png', sizes: '180x180', type: 'image/png' }],
-  shortcut: '/favicon.ico',
+  apple: [{ url: u('/ArellsIcoIcon.png'), sizes: '180x180', type: 'image/png' }],
+  shortcut: u('/favicon.ico'),
 };
