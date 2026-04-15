@@ -9,9 +9,8 @@ import { arellsIcoIconUrl } from '../lib/faviconUrls';
 /** Default tab icon site-wide; `/vavity/*` overrides in `app/vavity/layout.tsx`. */
 export const metadata: Metadata = {
   icons: {
-    icon: arellsIcoIconUrl,
-    shortcut: arellsIcoIconUrl,
-    apple: arellsIcoIconUrl,
+    icon: [{ url: arellsIcoIconUrl, type: 'image/png', sizes: '32x32' }],
+    apple: [{ url: arellsIcoIconUrl, sizes: '180x180', type: 'image/png' }],
   },
 };
 

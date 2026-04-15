@@ -10,9 +10,8 @@ export const metadata: Metadata = {
   description: 'Sign in to save investments.',
   robots: { index: true, follow: true },
   icons: {
-    icon: arellsIcoIconUrl,
-    shortcut: arellsIcoIconUrl,
-    apple: arellsIcoIconUrl,
+    icon: [{ url: arellsIcoIconUrl, type: 'image/png', sizes: '32x32' }],
+    apple: [{ url: arellsIcoIconUrl, sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
     title: 'Sign in',

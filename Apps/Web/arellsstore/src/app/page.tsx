@@ -11,9 +11,8 @@ export const metadata: Metadata = {
   description: "If investments never lost value.",
   robots: { index: true, follow: true },
   icons: {
-    icon: arellsIcoIconUrl,
-    shortcut: arellsIcoIconUrl,
-    apple: arellsIcoIconUrl,
+    icon: [{ url: arellsIcoIconUrl, type: 'image/png', sizes: '32x32' }],
+    apple: [{ url: arellsIcoIconUrl, sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
     title: "Arells",

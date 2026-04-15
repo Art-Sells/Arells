@@ -5,6 +5,14 @@ const nextConfig = {
       { source: '/analytics-internal', destination: '/metrics', permanent: true },
     ];
   },
+  /**
+   * Mobile browsers often request /favicon.ico by convention. If it 404s, some (esp. mobile
+   * Chrome) show no tab icon even when <link rel="icon" href="/ArellsIcoIcon.png"> exists.
+   * Serve the same PNG at both paths (bytes are PNG; browsers sniff type fine).
+   */
+  async rewrites() {
+    return [{ source: '/favicon.ico', destination: '/ArellsIcoIcon.png' }];
+  },
   webpack: (config, { isServer, webpack }) => {
     config.experiments = {
       asyncWebAssembly: true,
