@@ -10,8 +10,8 @@ import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 export const metadata: Metadata = {
   metadataBase: getSiteMetadataBase(),
   icons: {
-    icon: '/ArellsIcoIcon.png',
-    shortcut: '/ArellsIcoIcon.png',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
   },
 };
 

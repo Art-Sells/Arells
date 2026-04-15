@@ -11,8 +11,8 @@ export const metadata: Metadata = {
     canonical: '/signin',
   },
   icons: {
-    icon: '/ArellsIcoIcon.png',
-    shortcut: '/ArellsIcoIcon.png',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
   },
   openGraph: {
     title: 'Sign in',

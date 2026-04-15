@@ -13,8 +13,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: "/ArellsIcoIcon.png",
-    shortcut: "/ArellsIcoIcon.png",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
   },
   openGraph: {
     title: "Arells",

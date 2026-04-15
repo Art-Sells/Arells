@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: path,
     },
     icons: {
-      icon: '/ArellsIcoIcon.png',
-      shortcut: '/ArellsIcoIcon.png',
+      icon: '/favicon.ico',
+      shortcut: '/favicon.ico',
     },
     openGraph: {
       title: 'Verify email',
