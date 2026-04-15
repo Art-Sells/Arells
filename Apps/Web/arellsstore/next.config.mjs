@@ -5,6 +5,18 @@ const nextConfig = {
       { source: '/analytics-internal', destination: '/metrics', permanent: true },
     ];
   },
+  async headers() {
+    return [
+      {
+        source: '/favicon.ico',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, must-revalidate' }],
+      },
+      {
+        source: '/ArellsIcoIcon.png',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, must-revalidate' }],
+      },
+    ];
+  },
   webpack: (config, { isServer, webpack }) => {
     config.experiments = {
       asyncWebAssembly: true,

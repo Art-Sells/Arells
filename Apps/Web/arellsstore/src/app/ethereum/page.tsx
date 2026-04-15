@@ -9,8 +9,13 @@ export const metadata: Metadata = {
     canonical: '/ethereum',
   },
   icons: {
-    icon: '/images/favicons/EthBadge.svg',
-    shortcut: '/images/favicons/EthBadge.svg',
+    icon: [
+      { url: '/images/favicons/EthBadge.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/ArellsIcoIcon.png', type: 'image/png', sizes: '192x192' },
+    ],
+    apple: [{ url: '/ArellsIcoIcon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: '/favicon.ico',
   },
   openGraph: {
     title: 'Ethereum',

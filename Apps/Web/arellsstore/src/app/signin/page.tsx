@@ -10,10 +10,6 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/signin',
   },
-  icons: {
-    icon: '/ArellsIcoIcon.png',
-    shortcut: '/ArellsIcoIcon.png',
-  },
   openGraph: {
     title: 'Sign in',
     description: 'Sign in to save investments.',

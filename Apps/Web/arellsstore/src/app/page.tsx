@@ -12,10 +12,6 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
-  icons: {
-    icon: "/ArellsIcoIcon.png",
-    shortcut: "/ArellsIcoIcon.png",
-  },
   openGraph: {
     title: "Arells",
     description: "If investments never lost value.",

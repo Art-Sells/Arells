@@ -6,15 +6,13 @@ import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
 import { AssetsProvider } from '../context/Assets/AssetsProvider';
+import { defaultSiteIcons } from '../lib/defaultSiteIcons';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 
-/** Default tab icon; `/bitcoin`, `/ethereum`, `/vavity` override via their own `metadata.icons`. */
+/** Default tab icons; `/bitcoin`, `/ethereum`, `/vavity` override via their own `metadata.icons`. */
 export const metadata: Metadata = {
   metadataBase: getSiteMetadataBase(),
-  icons: {
-    icon: '/ArellsIcoIcon.png',
-    shortcut: '/ArellsIcoIcon.png',
-  },
+  icons: defaultSiteIcons,
 };
 
 /** Lets `env(safe-area-inset-*)` reflect notch / home indicator on phones (e.g. My Investments header). */

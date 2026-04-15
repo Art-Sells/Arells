@@ -8,8 +8,14 @@ export const metadata: Metadata = {
     canonical: '/bitcoin',
   },
   icons: {
-    icon: "/images/favicons/BtcBadge.svg",
-    shortcut: "/images/favicons/BtcBadge.svg",
+    /* SVG first for capable desktops; ICO/PNG follow so Android Chrome can skip SVG and still hit same-origin icons. */
+    icon: [
+      { url: '/images/favicons/BtcBadge.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/ArellsIcoIcon.png', type: 'image/png', sizes: '192x192' },
+    ],
+    apple: [{ url: '/ArellsIcoIcon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: '/favicon.ico',
   },
   openGraph: {
     title: "Bitcoin",

@@ -14,10 +14,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: {
       canonical: path,
     },
-    icons: {
-      icon: '/ArellsIcoIcon.png',
-      shortcut: '/ArellsIcoIcon.png',
-    },
     openGraph: {
       title: 'Reset Password',
       description: 'Set a new password for your account.',
