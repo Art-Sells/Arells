@@ -23,13 +23,13 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
 - Remove console.logs (leave conosle.errors/warns) from all files...
-- Delete Arells Readme roadmap
 - *Deploy to main, delete all e-mails and sessions and srart all over again testing everything (1 minute sessions/private for new sessions)... with DMs and private public links on twitter/discord/text-message*
 - Look at metrics again...
 - - Google Search Console: submit https://arells.com/sitemap.xml, then use URL inspection on /, /signin, /signup after deploy.
 
 #### Update Links/Images/Descriptions
 - Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If investments never lost value
+- Delete ArellsImages from s3
 
 ### Launch
 - Review notes on phone and launch
