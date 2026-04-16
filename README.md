@@ -10,10 +10,10 @@ Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 
 _______________________________________________________________________
 
-## Core Beliefs:
+## Core Beleifs:
 
-1. The love of money is the root to all evil.
-2. Empowering investors more than itself.
-3. Investors should never lose money selling assets.
+1. Investments should never lose value.
+2. Empower investors more than itself.
+3. The love of money is the root to all evil.
 
 - This will keep Arells away from selfish ambition and towards creating inventions that will help empower investors everywhere.
