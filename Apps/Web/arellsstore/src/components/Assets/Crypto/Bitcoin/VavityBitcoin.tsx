@@ -37,12 +37,7 @@ const VavityBitcoin: React.FC = () => {
   const [initialFetchDone, setInitialFetchDone] = useState(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const submitTargetRef = useRef<'add' | 'addMore'>('add');
-  const submitLoaderUnmountTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
-  const [submitLoaderMounted, setSubmitLoaderMounted] = useState(false);
-  const [submitLoaderVisible, setSubmitLoaderVisible] = useState(false);
-  const forceSubmitLoader = false;
-  const showSubmitLoader =
-    forceSubmitLoader || (submitLoading && submitTargetRef.current !== 'addMore');
+  
   const [submitPhase, setSubmitPhase] = useState<'idle' | 'submitting' | 'submitted'>('idle');
   const [submitPanelMaxHeight, setSubmitPanelMaxHeight] = useState<number | null>(null);
   const [previewSubmit, setPreviewSubmit] = useState(false);
@@ -462,10 +457,6 @@ const VavityBitcoin: React.FC = () => {
         globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
         emptyActionsExpandTimerRef.current = null;
       }
-      if (submitLoaderUnmountTimerRef.current) {
-        globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
-        submitLoaderUnmountTimerRef.current = null;
-      }
       if (clearingHeightRafRef.current != null) {
         window.cancelAnimationFrame(clearingHeightRafRef.current);
         clearingHeightRafRef.current = null;
@@ -765,20 +756,13 @@ const VavityBitcoin: React.FC = () => {
         }
         if (!hasInvestments) return;
         if (typeof window !== 'undefined') {
-          (window as any).__vavitySessionClearingPending = true;
-          (window as any).__vavitySessionClearingPendingAt = pendingAt;
-          window.dispatchEvent(new CustomEvent('vavity:session-clearing-pending', { detail: { pendingAt } }));
-        }
-        if (typeof window !== 'undefined') {
           const holdMs = 4000;
-          (window as any).__vavitySessionClearingPending = false;
-          (window as any).__vavitySessionClearingPendingAt = pendingAt;
-          (window as any).__vavitySessionClearingHoldMs = holdMs;
           window.dispatchEvent(
-            new CustomEvent('vavity:session-clearing-ready', {
-              detail: { holdMs, pendingAt },
+            new CustomEvent('vavity:session-expired', {
+              detail: { holdMs },
             }),
           );
+          await new Promise((r) => globalThis.setTimeout(r, 600));
         }
         await saveVavityAggregator(sessionId, [], 'bitcoin');
         const cleared = await fetchVavityAggregator(sessionId, 'bitcoin');
@@ -3075,29 +3059,6 @@ const VavityBitcoin: React.FC = () => {
   }, [investmentsListOpen, showInvestmentsList]);
 
   useEffect(() => {
-    if (showSubmitLoader) {
-      if (submitLoaderUnmountTimerRef.current) {
-        globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
-        submitLoaderUnmountTimerRef.current = null;
-      }
-      setSubmitLoaderMounted(true);
-      const raf = window.requestAnimationFrame(() => {
-        setSubmitLoaderVisible(true);
-      });
-      return () => window.cancelAnimationFrame(raf);
-    }
-    setSubmitLoaderVisible(false);
-    if (submitLoaderUnmountTimerRef.current) {
-      globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
-      submitLoaderUnmountTimerRef.current = null;
-    }
-    submitLoaderUnmountTimerRef.current = globalThis.setTimeout(() => {
-      submitLoaderUnmountTimerRef.current = null;
-      setSubmitLoaderMounted(false);
-    }, 1000);
-  }, [showSubmitLoader]);
-
-  useEffect(() => {
     const node = emptyActionsMeasureRef.current;
     if (!node || typeof ResizeObserver === 'undefined') {
       const next = node?.scrollHeight ?? 0;
@@ -3141,19 +3102,6 @@ const VavityBitcoin: React.FC = () => {
 
   return (
     <>
-      {submitLoaderMounted && (
-        <div
-          className={`asset-submit-loader-overlay asset-submit-loader-overlay--bitcoin${
-            submitLoaderVisible ? ' is-visible' : ''
-          }`}
-        >
-          <div className="asset-submit-loader-ring">
-            <svg className="asset-submit-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
-              <circle cx="30" cy="30" r="24" />
-            </svg>
-          </div>
-        </div>
-      )}
       <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
       <div
         className="asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide"

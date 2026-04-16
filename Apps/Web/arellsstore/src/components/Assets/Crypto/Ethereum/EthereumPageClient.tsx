@@ -9,6 +9,7 @@ const EthereumPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [sessionResetActive, setSessionResetActive] = useState(false);
+  const [sessionResetFooterHidden, setSessionResetFooterHidden] = useState(false);
   const [sessionResetFade, setSessionResetFade] = useState(false);
   const [sessionResetKey, setSessionResetKey] = useState(0);
   const [sessionResetVisible, setSessionResetVisible] = useState(false);
@@ -144,24 +145,31 @@ const EthereumPageClient: React.FC = () => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    const footerFadeDuration = 500;
     const resetHandler = (event: Event) => {
       const detail = (event as CustomEvent).detail as { holdMs?: number } | undefined;
       const holdMs = Math.max(5000, detail?.holdMs ?? 5000);
       const fadeOutDuration = 2000;
-      setSessionResetVisible(false);
-      setSessionResetActive(true);
-      setSessionResetFade(false);
-      setSessionResetKey((prev) => prev + 1);
       sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
       sessionResetTimersRef.current = [];
+      setSessionResetFooterHidden(true);
+      setSessionResetVisible(false);
+      setSessionResetFade(false);
       sessionResetTimersRef.current.push(
-        window.setTimeout(() => setSessionResetFade(true), holdMs)
+        window.setTimeout(() => {
+          setSessionResetActive(true);
+          setSessionResetKey((prev) => prev + 1);
+        }, footerFadeDuration)
+      );
+      sessionResetTimersRef.current.push(
+        window.setTimeout(() => setSessionResetFade(true), footerFadeDuration + holdMs)
       );
       sessionResetTimersRef.current.push(
         window.setTimeout(() => {
           setSessionResetActive(false);
+          setSessionResetFooterHidden(false);
           setSessionResetFade(false);
-        }, holdMs + fadeOutDuration)
+        }, footerFadeDuration + holdMs + fadeOutDuration)
       );
     };
     window.addEventListener('vavity:session-expired', resetHandler as EventListener);
@@ -219,8 +227,8 @@ const EthereumPageClient: React.FC = () => {
       <Ethereum key={`session-reset-${sessionResetKeyValue}`} />
 
       <footer
-        className={`asset-footer${sessionResetActive ? ' asset-footer--session-reset-hidden' : ''}`}
-        aria-hidden={sessionResetActive ? true : undefined}
+        className={`asset-footer${sessionResetFooterHidden ? ' asset-footer--session-reset-hidden' : ''}`}
+        aria-hidden={sessionResetFooterHidden ? true : undefined}
       >
         {!!email && (
           <Link

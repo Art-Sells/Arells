@@ -8,7 +8,6 @@
 
 
 ### Test Online 
-- *check favicons on mobile (TTL?)*
 - *delete all e-mails and sessions and srart all over again testing everything...*
 - both desktop(multiple PRIVATE browsers ONLY)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
 - Test with big and small numbers, all deletions, etc (with all links /, /bitcoin, /ethereum, /about, /vavity ) on socials (DM's/etc)
@@ -48,7 +47,10 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - Prepare for WACA transition (LTP folder)
 
 ## 1 mnth and beyond:
-- Fix long marketcap numbers and summary section (my-inventory date-buttons/toggle always triggers resizing of purchased/current value sections regardless of the size of the numbers , while the date-buttons/toggle in asset pages don’t… investigate)....
+- Fix
+- - long marketcap numbers
+- - summary section my-inventory date-buttons/toggle always triggers resizing of purchased/current value sections regardless of the size of the numbers , while the date-buttons/toggle in asset pages don’t… investigate....
+- - favicons on mobile (TTL?)
 - (Sort)MarketCap/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust LTP (contact us for larger Re') based on feedback...
 - - If traction is good look at LTP folder post WACA
