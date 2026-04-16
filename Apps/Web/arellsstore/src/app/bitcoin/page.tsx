@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     canonical: '/bitcoin',
   },
   icons: {
-    /* Next emits `shortcut icon` links BEFORE `icon`; pointing shortcut at /favicon.ico forced the global Arells tab icon here. */
+    /* Next emits `shortcut icon` links BEFORE `icon`; pointing shortcut at /ArellsFavicon.ico forced the global Arells tab icon here. */
     shortcut: u('/images/favicons/BtcBadge.svg'),
     icon: [
       { url: u('/images/favicons/BtcBadge.svg'), type: 'image/svg+xml' },
