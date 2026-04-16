@@ -10,7 +10,7 @@ Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 
 _______________________________________________________________________
 
-## Core Beleifs:
+## Triad Beliefs:
 
 1. Investments should never lose value.
 2. Empower investors more than itself.
