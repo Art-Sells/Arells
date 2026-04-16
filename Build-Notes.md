@@ -7,27 +7,10 @@
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 
-### Test Online 
-- *delete all e-mails and sessions and srart all over again testing everything...*
-- both desktop(multiple PRIVATE browsers ONLY)/mobile sessions(page mount, 1 minute delete, my investments page (delete sessions to try again and again)) and email
-- Test with big and small numbers, all deletions, etc (with all links /, /bitcoin, /ethereum, /about, /vavity ) on socials (DM's/etc)
-- Test with j4747477@outlook.com emial
-- look at Metrics
-
-## After Test
-- Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git and vavity.info(change this or alter it)
-Vavity Architecture:
-Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
-
 ## Final Test
-- Remove typos from Arells/Vavity readmes, and UI
-- Remove console.logs (leave conosle.errors/warns) from all files...
-- *Deploy to main, delete all e-mails and sessions and srart all over again testing everything (1 minute sessions/private for new sessions)... with DMs and private public links on twitter/discord/text-message*
+- *Deploy to main, delete all e-mails and sessions and start all over again testing everything (1 minute sessions/private for new sessions)... with DMs and private public links on twitter/discord/text-message*
 - Look at metrics again...
 - - Google Search Console: submit https://arells.com/sitemap.xml, then use URL inspection on /, /signin, /signup after deploy.
-
-#### Update Links/Images/Descriptions
-- Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If investments never lost value
 - Delete ArellsImages from s3
 
 ### Launch
@@ -36,20 +19,21 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 ### Day After Launch:
 - check (sign in with google) https://console.cloud.google.com/auth/scopes?authuser=2&chat=true&project=arells-492319&supportedpurview=project 
 - - info@arells.com
+- - sign in with google (xx is already an email etc etc, link?, can they sign in normally using gmail/email through normal sign in process? investigate)
 - Prepare to launch new assets (components/api-pointers/css-styles (match similar colors (make sure you're 1-2 points out of the hex, not exact colors)))basically and duplicate and change asset names and colors...
-- Contine resolving Metrics Page UI
+- Continue resolving Metrics Page UI
 - Contact CSC (TAX)
 
 ## 2 days after launch
 - Start tracking after 2 days (numbers)
-- After Week 1, if things look good, X-prsnl
+- After Week 1, if things look good, X-personal
 - - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
 - Prepare for WACA transition (LTP folder)
 
-## 1 mnth and beyond:
+## 1 month and beyond:
 - Fix
 - - long marketcap numbers
-- - summary section my-inventory date-buttons/toggle always triggers resizing of purchased/current value sections regardless of the size of the numbers , while the date-buttons/toggle in asset pages don’t… investigate....
+- - summary section (double check this issue on web/mobile before implementing, might have been resolved?) my-investments date-buttons/toggle always triggers resizing of purchased/current value sections regardless of the size of the numbers , while the date-buttons/toggle in asset pages don’t… investigate....
 - - favicons on mobile (TTL?)
 - (Sort)MarketCap/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust LTP (contact us for larger Re') based on feedback...
@@ -58,8 +42,8 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - - Compare Retention rate (in bear markets WoM only (percentages)) : Projections (with current trajectory) with/without (WoW percentage comparisons)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
 
-### 3 mnths and beyond
-- Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you a agree to our terms of service)
+### 3 months and beyond
+- Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)
 - Start process of building Featured/Sponsored section (with metrics, CTR, etc)... do not launch until at least 200k MAU
 
 ### iOS & Android App (after 1-2 years?)

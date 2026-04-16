@@ -4362,7 +4362,7 @@ a.asset-action-button--myinv-asset-link {
 }
 
 body.has-home-investments-cta .home-assets-about-wrap {
-	margin-bottom: var(--home-assets-about-bottom-gap, 130px);
+	margin-bottom: var(--home-assets-about-bottom-gap, 145px);
 }
 
 .home-assets-about-wrap.page-slide-in {
