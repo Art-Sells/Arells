@@ -43,7 +43,7 @@ export function resolveAppOrigin(reqOriginHeader: string | undefined, bodyOrigin
 }
 
 /** Public PNG; used in HTML emails so images load even when appOrigin is *.amplifyapp.com (no asset there). */
-const DEFAULT_EMAIL_LOGO_URL = 'https://arells.com/ArellsIcon.png';
+const DEFAULT_EMAIL_LOGO_URL = `${process.env.NEXT_PUBLIC_IMAGE_URL}/ArellsIcon.png`;
 
 /**
  * Absolute URL for the logo <img> in SES HTML. Mail apps fetch this URL — it must be https and reachable
