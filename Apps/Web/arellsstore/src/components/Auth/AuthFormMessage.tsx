@@ -13,7 +13,7 @@ const FADE_MS = 500;
 const POLICY_EXPAND_MS = 450;
 
 function isPolicyCode(code: string | null): boolean {
-  return code === 'PASSWORD_POLICY' || code === 'PASSWORD_SHORT';
+  return code === 'PASSWORD_POLICY' || code === 'PASSWORD_SHORT' || code === 'SAME_PASSWORD';
 }
 
 /**
