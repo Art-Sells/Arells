@@ -7,24 +7,6 @@ A belief that investments should never lose value.
 This belief uses a ledger that shows how investments would look if they never lost value. 
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
-_______________________________________________________________________
-
-## Roadmap
-
-- **Oct 2022 - Nov 2022**
-  - [X] Official Website *[[Complete]](https://arells.com)*----*arells.com* 
-
-- **Oct 2022 - Mar 2023**
-   - [X] Infrastructure *[[Dissolved into Arells]](https://github.com/Ecare-Exchange/infrastructure)*
-
-- **Mar 2023 - May 2023**
-  - [X] Concept *[[Complete]](https://arells.com/concept)*----*arells.com/concept*
- 
-- **May 2023 - Dec 2023**
-  - [X] Arells 0.9 *[[Complete]](https://arells.com)*
-
-- **May 2024 - TBD**
-  - [ ] Arells 1.0 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
 
 _______________________________________________________________________
 
