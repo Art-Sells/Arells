@@ -8,10 +8,1048 @@
 
 
 ## Final Test
-- *Deploy to main, delete all e-mails and sessions and start all over again testing everything (1 minute sessions/private for new sessions)... with DMs and private public links on twitter/discord/text-message*
+### Sessions
+
+#### (private-web): Chrome (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+
+#### (private-web): Safari (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+#### (private-web): Edge (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+#### (private-web): Brave (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+#### (private-mobile): Safari (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+#### (private-mobile): Chrome (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - 1 Minute & reload
+-
+
+### Account
+
+#### (private-web): Chrome (j4747477@outlook.com) (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - - View My Investments
+- - - - Horizontal (half)
+- - - - - View My Investments
+- - - - Vertical
+- - - - - View My Investments
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Verify
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Change Password
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+- - - My Investments
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+#### (private-web): Safari (j6767677@outlook.com) (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - - View My Investments
+- - - - Horizontal (half)
+- - - - - View My Investments
+- - - - Vertical
+- - - - - View My Investments
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Verify
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Change Password
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+- - - My Investments
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+#### (private-web): Edge (jeremy@arells.com) (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - - View My Investments
+- - - - Horizontal (half)
+- - - - - View My Investments
+- - - - Vertical
+- - - - - View My Investments
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Verify
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Change Password
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+- - - My Investments
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+#### (private-web): Brave (jeyakatsa@gmail.com) (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - - View My Investments
+- - - - Horizontal (half)
+- - - - - View My Investments
+- - - - Vertical
+- - - - - View My Investments
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Verify
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Change Password
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+- - - My Investments
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+
+
+
+
+
+#### (private-mobile): Chrome (info@gmail.com) (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - - View My Investments
+- - - - Horizontal (half)
+- - - - - View My Investments
+- - - - Vertical
+- - - - - View My Investments
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Verify
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Change Password
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+- - - My Investments
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+#### (private-mobile): Safari (jeyakatsa@gmail.com) (toggle/buttons)
+
+- - - Main Page
+- - - - Horizontal (full)
+- - - - - View My Investments
+- - - - Horizontal (half)
+- - - - - View My Investments
+- - - - Vertical
+- - - - - View My Investments
+
+- - - About 
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignUp
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Verify
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - SignIn
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - ForgotPassword
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Change Password
+- - - - Horizontal (full)
+- - - - Horizontal (half)
+- - - - Vertical
+
+- - - Bitcoin
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+
+- - - Ethereum
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+- - - My Investments
+-
+- - - - Horizontal (full)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Horizontal (half)
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+- - - - Vertical
+- - - - - Add Investments
+- - - - - Add More Investments/Hide Add More Investments
+- - - - - Show Investments/Hide Investments
+- - - - - View My Investments
+-
+
+
+
+#### (link test)
+- Test with DMs and private public links on twitter/discord/text-message*
 - Look at metrics again...
-- - Google Search Console: submit https://arells.com/sitemap.xml, then use URL inspection on /, /signin, /signup after deploy.
-- Delete ArellsImages from s3
+
 
 ### Launch
 - Review notes on phone and launch
@@ -34,7 +1072,8 @@
 - Fix
 - - long marketcap numbers
 - - summary section (double check this issue on web/mobile before implementing, might have been resolved?) my-investments date-buttons/toggle always triggers resizing of purchased/current value sections regardless of the size of the numbers , while the date-buttons/toggle in asset pages don’t… investigate....
-- - favicons on mobile (TTL?)
+- - favicons on mobile (TTL?) remove all fall back icons?
+- - Research to see if can delete ArellsImages from s3
 - (Sort)MarketCap/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust LTP (contact us for larger Re') based on feedback...
 - - If traction is good look at LTP folder post WACA
