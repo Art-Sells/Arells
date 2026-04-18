@@ -1098,6 +1098,9 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
             clearInvestmentsAnimTimerRef.current = null;
             return;
           }
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('vavity:session-reset-empty-actions-collapse-started'));
+          }
           // Ensure empty buttons animate in (height down 1s) after clearing.
           setEmptySigninHiding(true);
           setEmptySigninGone(false);

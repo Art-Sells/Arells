@@ -19,6 +19,13 @@ const BitcoinPageClient: React.FC = () => {
   /** Survives `<Bitcoin key={sessionResetKey} />` remounts so session-clear-on-mount runs once per page visit. */
   const sessionMountClearGuardRef = useRef(false);
   const sessionResetTimersRef = useRef<number[]>([]);
+  /** True from `vavity:session-expired` until reset overlay fully dismissed (gates collapse-started listener). */
+  const sessionResetCycleActiveRef = useRef(false);
+  const lastSessionResetHoldMsRef = useRef(5000);
+  const sessionResetGenerationRef = useRef(0);
+  const sessionResetFallbackTimerRef = useRef<number | null>(null);
+  /** Prevents double-scheduling fade/dismiss if collapse-started fires twice for the same reset generation. */
+  const sessionResetCollapseScheduledGenRef = useRef(0);
   const forceSessionResetPreview = false;
   const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;
   const showSessionResetFade = sessionResetFade && !forceSessionResetPreview;
@@ -148,37 +155,91 @@ const BitcoinPageClient: React.FC = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const footerFadeDuration = 500;
+    const fadeOutDuration = 2000;
+    const SESSION_RESET_FALLBACK_MS = 30_000;
+
+    const clearFallbackTimer = () => {
+      if (sessionResetFallbackTimerRef.current != null) {
+        window.clearTimeout(sessionResetFallbackTimerRef.current);
+        sessionResetFallbackTimerRef.current = null;
+      }
+    };
+
+    const completeDismiss = () => {
+      setSessionResetActive(false);
+      setSessionResetFooterHidden(false);
+      setSessionResetFade(false);
+      sessionResetCycleActiveRef.current = false;
+    };
+
     const resetHandler = (event: Event) => {
       const detail = (event as CustomEvent).detail as { holdMs?: number } | undefined;
       const holdMs = Math.max(5000, detail?.holdMs ?? 5000);
-      const fadeOutDuration = 2000;
+      lastSessionResetHoldMsRef.current = holdMs;
+      sessionResetGenerationRef.current += 1;
+      const generation = sessionResetGenerationRef.current;
+      sessionResetCycleActiveRef.current = true;
       sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
       sessionResetTimersRef.current = [];
+      clearFallbackTimer();
       setSessionResetFooterHidden(true);
       setSessionResetVisible(false);
       setSessionResetFade(false);
       sessionResetTimersRef.current.push(
         window.setTimeout(() => {
+          if (generation !== sessionResetGenerationRef.current) return;
           setSessionResetActive(true);
           setSessionResetKey((prev) => prev + 1);
         }, footerFadeDuration)
       );
+      sessionResetFallbackTimerRef.current = window.setTimeout(() => {
+        sessionResetFallbackTimerRef.current = null;
+        if (generation !== sessionResetGenerationRef.current) return;
+        if (!sessionResetCycleActiveRef.current) return;
+        setSessionResetFade(true);
+        const dismissTimer = window.setTimeout(() => {
+          if (generation !== sessionResetGenerationRef.current) return;
+          completeDismiss();
+        }, fadeOutDuration);
+        sessionResetTimersRef.current.push(dismissTimer);
+      }, SESSION_RESET_FALLBACK_MS);
+    };
+
+    const emptyActionsCollapseHandler = () => {
+      if (!sessionResetCycleActiveRef.current) return;
+      const generation = sessionResetGenerationRef.current;
+      if (sessionResetCollapseScheduledGenRef.current === generation) return;
+      sessionResetCollapseScheduledGenRef.current = generation;
+      const holdMs = lastSessionResetHoldMsRef.current;
+      clearFallbackTimer();
       sessionResetTimersRef.current.push(
-        window.setTimeout(() => setSessionResetFade(true), footerFadeDuration + holdMs)
+        window.setTimeout(() => {
+          if (generation !== sessionResetGenerationRef.current) return;
+          setSessionResetFade(true);
+        }, holdMs)
       );
       sessionResetTimersRef.current.push(
         window.setTimeout(() => {
-          setSessionResetActive(false);
-          setSessionResetFooterHidden(false);
-          setSessionResetFade(false);
-        }, footerFadeDuration + holdMs + fadeOutDuration)
+          if (generation !== sessionResetGenerationRef.current) return;
+          completeDismiss();
+        }, holdMs + fadeOutDuration)
       );
     };
+
     window.addEventListener('vavity:session-expired', resetHandler as EventListener);
+    window.addEventListener(
+      'vavity:session-reset-empty-actions-collapse-started',
+      emptyActionsCollapseHandler as EventListener
+    );
     return () => {
       window.removeEventListener('vavity:session-expired', resetHandler as EventListener);
+      window.removeEventListener(
+        'vavity:session-reset-empty-actions-collapse-started',
+        emptyActionsCollapseHandler as EventListener
+      );
       sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
       sessionResetTimersRef.current = [];
+      clearFallbackTimer();
     };
   }, []);
 
