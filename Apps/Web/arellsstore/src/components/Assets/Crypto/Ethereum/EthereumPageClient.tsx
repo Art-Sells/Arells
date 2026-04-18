@@ -5,6 +5,11 @@ import Link from 'next/link';
 import Ethereum from './ethereum';
 import { useUser } from '../../../../context/UserContext';
 
+/** Session reset overlay timeline from fade-in start: fade in, hold, fade out. */
+const SESSION_RESET_MODAL_FADE_IN_MS = 2000;
+const SESSION_RESET_MODAL_HOLD_MS = 2000;
+const SESSION_RESET_MODAL_FADE_OUT_MS = 2000;
+
 const EthereumPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
@@ -21,10 +26,9 @@ const EthereumPageClient: React.FC = () => {
   const sessionResetTimersRef = useRef<number[]>([]);
   /** True from `vavity:session-expired` until reset overlay fully dismissed (gates collapse-started listener). */
   const sessionResetCycleActiveRef = useRef(false);
-  const lastSessionResetHoldMsRef = useRef(5000);
   const sessionResetGenerationRef = useRef(0);
   const sessionResetFallbackTimerRef = useRef<number | null>(null);
-  /** Prevents double-scheduling fade/dismiss if collapse-started fires twice for the same reset generation. */
+  /** Prevents double clear of the fallback timer if collapse-started fires twice for the same reset generation. */
   const sessionResetCollapseScheduledGenRef = useRef(0);
   const forceSessionResetPreview = false;
   const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;
@@ -152,35 +156,53 @@ const EthereumPageClient: React.FC = () => {
     return () => window.clearTimeout(timer);
   }, [showSessionResetOverlay]);
 
+  const clearSessionResetFallbackTimer = useCallback(() => {
+    if (sessionResetFallbackTimerRef.current != null) {
+      window.clearTimeout(sessionResetFallbackTimerRef.current);
+      sessionResetFallbackTimerRef.current = null;
+    }
+  }, []);
+
+  const completeSessionResetDismiss = useCallback(() => {
+    clearSessionResetFallbackTimer();
+    setSessionResetActive(false);
+    setSessionResetFooterHidden(false);
+    setSessionResetFade(false);
+    sessionResetCycleActiveRef.current = false;
+  }, [clearSessionResetFallbackTimer]);
+
+  useEffect(() => {
+    if (!sessionResetVisible || !sessionResetCycleActiveRef.current || forceSessionResetPreview) return;
+    const generation = sessionResetGenerationRef.current;
+    const fadeOutStartDelay =
+      SESSION_RESET_MODAL_FADE_IN_MS + SESSION_RESET_MODAL_HOLD_MS;
+    const dismissDelay = fadeOutStartDelay + SESSION_RESET_MODAL_FADE_OUT_MS;
+    const fadeOutTimer = window.setTimeout(() => {
+      if (generation !== sessionResetGenerationRef.current) return;
+      setSessionResetFade(true);
+    }, fadeOutStartDelay);
+    const dismissTimer = window.setTimeout(() => {
+      if (generation !== sessionResetGenerationRef.current) return;
+      completeSessionResetDismiss();
+    }, dismissDelay);
+    return () => {
+      window.clearTimeout(fadeOutTimer);
+      window.clearTimeout(dismissTimer);
+    };
+  }, [sessionResetVisible, forceSessionResetPreview, completeSessionResetDismiss]);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const footerFadeDuration = 500;
-    const fadeOutDuration = 2000;
     const SESSION_RESET_FALLBACK_MS = 30_000;
 
-    const clearFallbackTimer = () => {
-      if (sessionResetFallbackTimerRef.current != null) {
-        window.clearTimeout(sessionResetFallbackTimerRef.current);
-        sessionResetFallbackTimerRef.current = null;
-      }
-    };
-
-    const completeDismiss = () => {
-      setSessionResetActive(false);
-      setSessionResetFooterHidden(false);
-      setSessionResetFade(false);
-      sessionResetCycleActiveRef.current = false;
-    };
-
     const resetHandler = (_event: Event) => {
-      const holdMs = 1000;
-      lastSessionResetHoldMsRef.current = holdMs;
       sessionResetGenerationRef.current += 1;
       const generation = sessionResetGenerationRef.current;
       sessionResetCycleActiveRef.current = true;
       sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
       sessionResetTimersRef.current = [];
-      clearFallbackTimer();
+      clearSessionResetFallbackTimer();
       setSessionResetFooterHidden(true);
       setSessionResetVisible(false);
       setSessionResetFade(false);
@@ -198,8 +220,8 @@ const EthereumPageClient: React.FC = () => {
         setSessionResetFade(true);
         const dismissTimer = window.setTimeout(() => {
           if (generation !== sessionResetGenerationRef.current) return;
-          completeDismiss();
-        }, fadeOutDuration);
+          completeSessionResetDismiss();
+        }, SESSION_RESET_MODAL_FADE_OUT_MS);
         sessionResetTimersRef.current.push(dismissTimer);
       }, SESSION_RESET_FALLBACK_MS);
     };
@@ -209,20 +231,7 @@ const EthereumPageClient: React.FC = () => {
       const generation = sessionResetGenerationRef.current;
       if (sessionResetCollapseScheduledGenRef.current === generation) return;
       sessionResetCollapseScheduledGenRef.current = generation;
-      const holdMs = lastSessionResetHoldMsRef.current;
-      clearFallbackTimer();
-      sessionResetTimersRef.current.push(
-        window.setTimeout(() => {
-          if (generation !== sessionResetGenerationRef.current) return;
-          setSessionResetFade(true);
-        }, holdMs)
-      );
-      sessionResetTimersRef.current.push(
-        window.setTimeout(() => {
-          if (generation !== sessionResetGenerationRef.current) return;
-          completeDismiss();
-        }, holdMs + fadeOutDuration)
-      );
+      clearSessionResetFallbackTimer();
     };
 
     window.addEventListener('vavity:session-expired', resetHandler as EventListener);
@@ -238,9 +247,9 @@ const EthereumPageClient: React.FC = () => {
       );
       sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
       sessionResetTimersRef.current = [];
-      clearFallbackTimer();
+      clearSessionResetFallbackTimer();
     };
-  }, []);
+  }, [clearSessionResetFallbackTimer, completeSessionResetDismiss]);
 
   return (
     <div className="asset-page asset-page--ethereum" ref={pageRef}>

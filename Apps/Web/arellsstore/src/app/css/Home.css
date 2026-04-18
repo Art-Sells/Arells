@@ -5843,7 +5843,7 @@ a.myinv-about-button:focus-visible {
 .asset-session-reset-overlay {
 	padding-top: max(0px, calc(40vh));
 	opacity: 0;
-	transition: opacity 1s ease;
+	transition: opacity 2s ease;
 }
 
 .asset-session-reset-overlay.is-visible {
