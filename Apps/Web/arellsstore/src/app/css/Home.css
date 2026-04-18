@@ -1593,6 +1593,14 @@ a.asset-action-button--myinv-asset-link {
 	border-color: rgba(107, 114, 168, 0.3);
 }
 
+/* Field labels in the invest controls panel — match 16px inputs / date trigger (all viewports). */
+.asset-invest-form-controls .asset-metric-title--bitcoin,
+.asset-invest-form-controls .asset-metric-title--ethereum,
+.asset-invest-form-controls .asset-invest-form-metric-title {
+	font-size: 16px;
+	letter-spacing: 0;
+}
+
 .asset-invest-form-row {
 	justify-content: center;
 	margin-bottom: -10px;
@@ -1795,7 +1803,7 @@ a.asset-action-button--myinv-asset-link {
 	border: 1px solid rgba(0, 0, 0, 0.25);
 	background: transparent;
 	color: inherit;
-	font-size: 12px;
+	font-size: 16px;
 	font-weight: 800;
 	outline: none;
 	transition: background-color 0.5s ease;
@@ -1873,7 +1881,7 @@ a.asset-action-button--myinv-asset-link {
 	/* Match Add more / Hide add more Investments button framework + typography */
 	/* +2px vertical padding (Submit) */
 	padding: 14px 25px !important; /* same as `.asset-action-button--invest-add` */
-	font-size: 12px !important; /* same as base `.asset-action-button` */
+	font-size: 16px !important; /* match invest form control typography */
 	font-weight: 400 !important; /* same as base `.asset-action-button` */
 	border-radius: 6px; /* same as base `.asset-action-button` */
 	margin-top: 30px;
@@ -1904,7 +1912,7 @@ a.asset-action-button--myinv-asset-link {
 	box-sizing: border-box;
 	font-family: Arial, sans-serif;
 	transition: background-color 0.5s ease;
-	font-size: 12px;
+	font-size: 16px;
 	line-height: 1.2;
 }
 
@@ -1955,6 +1963,12 @@ a.asset-action-button--myinv-asset-link {
 	color: var(--asset-line-color);
 	opacity: 0.75;
 	font-weight: 200;
+}
+
+/* Invest form: displayed date matches 16px trigger (all viewports). */
+.asset-invest-form-controls .asset-date-trigger .asset-date-value,
+.asset-invest-form-controls .asset-date-trigger .asset-date-value.is-placeholder {
+	font-size: 16px;
 }
 
 .asset-date-icon {
@@ -3810,7 +3824,7 @@ a.asset-action-button--myinv-asset-link {
 	border-radius: 10px;
 	border: 1px solid rgba(0, 0, 0, 0.12);
 	padding: 12px 12px;
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 600;
 	color: #222;
 	outline: none;
@@ -5540,16 +5554,12 @@ a.myinv-about-button:focus-visible {
 		font-size: 10.5px !important;
 	}
 
-	/* iOS Safari: focused control needs computed font-size ≥ 16px (no zoom). */
-	.asset-invest-form-controls .asset-date-trigger,
-	.asset-invest-form-controls .asset-invest-input {
+	/* Invest controls: keep labels at 16px (Group 2 above sets smaller titles on other panels). */
+	.asset-invest-form-controls .asset-metric-title--bitcoin,
+	.asset-invest-form-controls .asset-metric-title--ethereum,
+	.asset-invest-form-controls .asset-invest-form-metric-title {
 		font-size: 16px !important;
-	}
-
-	/* Date trigger: 16px on the <button> satisfies iOS; label + icon explicitly 12px (scale on button is unreliable in WebKit). */
-	.asset-invest-form-controls .asset-date-trigger .asset-date-value,
-	.asset-invest-form-controls .asset-date-trigger .asset-date-value.is-placeholder {
-		font-size: 12px !important;
+		letter-spacing: 0 !important;
 	}
 
 	.asset-invest-form-controls .asset-date-trigger .asset-date-icon svg {
@@ -7910,7 +7920,7 @@ a.growth-metrics-about-button:focus-visible {
 	padding: 8px 10px;
 	border-radius: 8px;
 	border: 1px solid rgba(15, 23, 42, 0.15);
-	font-size: 13px;
+	font-size: 16px;
 	min-width: min(220px, 100%);
 	box-sizing: border-box;
 }
@@ -8448,7 +8458,7 @@ a.growth-metrics-about-button:focus-visible {
 	border: 1px solid color-mix(in srgb, var(--myinv-accent-color) 45%, rgba(0, 0, 0, 0.2));
 	background: color-mix(in srgb, var(--myinv-accent-color) 8%, #ffffff);
 	color: #111;
-	font-size: 13px;
+	font-size: 16px;
 	font-weight: 700;
 	outline: none;
 	/* No transition on border/background: `:root` animates `--myinv-accent-color` (myInvAccentCycle).
@@ -8462,7 +8472,7 @@ a.growth-metrics-about-button:focus-visible {
 	margin-bottom: var(--auth-forgot-email-input-margin-bottom, -5px);
 }
 
-/* Reset-password — Confirm Password field only (default .auth-input is 10px) */
+/* Reset-password — Confirm Password field only */
 .auth-input.auth-input--reset-password-confirm {
 	margin-bottom: var(--auth-reset-confirm-password-input-margin-bottom, -7px);
 }
@@ -8507,14 +8517,7 @@ a.growth-metrics-about-button:focus-visible {
 	caret-color: var(--myinv-accent-color);
 }
 
-/* iOS Safari: avoid auto-zoom on focus (inputs need computed font-size ≥ 16px). */
-@media (max-width: 750px) {
-	.auth-input {
-		font-size: 16px;
-	}
-
-	/* Asset invest amount + date: 16px + scale handled under `.asset-invest-form-controls` above. */
-}
+/* `.auth-input` uses 16px globally so iOS Safari does not zoom on focus. */
 
 .auth-submit {
 	margin-top: 0;
