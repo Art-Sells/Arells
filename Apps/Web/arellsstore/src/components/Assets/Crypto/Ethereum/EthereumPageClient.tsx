@@ -7,7 +7,7 @@ import { useUser } from '../../../../context/UserContext';
 
 /** Session reset overlay timeline from fade-in start: fade in, hold, fade out. */
 const SESSION_RESET_MODAL_FADE_IN_MS = 2000;
-const SESSION_RESET_MODAL_HOLD_MS = 2000;
+const SESSION_RESET_MODAL_HOLD_MS = 4000;
 const SESSION_RESET_MODAL_FADE_OUT_MS = 2000;
 
 const EthereumPageClient: React.FC = () => {

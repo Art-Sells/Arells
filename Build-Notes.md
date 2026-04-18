@@ -10,50 +10,6 @@
 ## Final Test
 ### Sessions
 
-#### (private-mobile): Safari (toggle/buttons)
-
-- - - Bitcoin
--
-- - - - Horizontal (full)
-- - - - - Add Investments
-- - - - - Add More Investments/Hide Add More Investments
-- - - - - Show Investments/Hide Investments
-- - - - - 1 Minute & reload
--
-- - - - Horizontal (half)
-- - - - - Add Investments
-- - - - - Add More Investments/Hide Add More Investments
-- - - - - Show Investments/Hide Investments
-- - - - - 1 Minute & reload
--
-- - - - Vertical
-- - - - - Add Investments
-- - - - - Add More Investments/Hide Add More Investments
-- - - - - Show Investments/Hide Investments
-- - - - - 1 Minute & reload
--
-
-- - - Ethereum
--
-- - - - Horizontal (full)
-- - - - - Add Investments
-- - - - - Add More Investments/Hide Add More Investments
-- - - - - Show Investments/Hide Investments
-- - - - - 1 Minute & reload
--
-- - - - Horizontal (half)
-- - - - - Add Investments
-- - - - - Add More Investments/Hide Add More Investments
-- - - - - Show Investments/Hide Investments
-- - - - - 1 Minute & reload
--
-- - - - Vertical
-- - - - - Add Investments
-- - - - - Add More Investments/Hide Add More Investments
-- - - - - Show Investments/Hide Investments
-- - - - - 1 Minute & reload
--
-
 #### (private-mobile): Chrome (toggle/buttons)
 
 - - - Main Page
@@ -688,7 +644,7 @@
 - Fix
 - - Sometimes when i click the toggle, and i hover out and then release the hold (on desktop), the clicker sometimes thinks I still havenn't releaded the hold so when i hover over the toggle it still thinks I'm clicked... its not only after i click agian does the toggle clicker release
 - - long marketcap numbers
-- - summary section (double check this issue on web/mobile before implementing, might have been resolved?) my-investments date-buttons/toggle always triggers resizing of purchased/current value sections regardless of the size of the numbers , while the date-buttons/toggle in asset pages don’t… investigate....
+- - summary section (double check this issue on web/mobile before implementing, might have been resolved?) my-investments+asset pages date-buttons/toggle always triggers resizing of purchased/current value sections regardless of the size of the numbers , while the date-buttons/toggle in asset pages don’t… investigate....
 - - favicons on mobile (TTL?) remove all fall back icons?
 - - Research to see if can delete ArellsImages from s3
 - (Sort)MarketCap/etc sorting (default by Marketcap always)
