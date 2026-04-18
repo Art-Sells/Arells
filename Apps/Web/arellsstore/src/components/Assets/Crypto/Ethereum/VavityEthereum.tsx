@@ -26,7 +26,11 @@ import {
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
-const VavityEthereum: React.FC = () => {
+type VavityEthereumProps = {
+  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
+};
+
+const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardRef }) => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
   const { email, isSignedIn, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [vavityData, setVavityData] = useState<any>(null);
@@ -266,7 +270,6 @@ const VavityEthereum: React.FC = () => {
   const addMoreFormPanelRef = useRef<HTMLDivElement | null>(null);
   const addFormBoxRef = useRef<HTMLDivElement | null>(null);
   const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
-  const clearedSessionOnMountRef = useRef(false);
   const submitCollapseTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const submitResetPendingRef = useRef(false);
   const profitInlineAnimRef = useRef<HTMLSpanElement | null>(null);
@@ -716,8 +719,8 @@ const VavityEthereum: React.FC = () => {
     if (PREVIEW_SKIP_SESSION_DELETES) return;
     if (!sessionReady || !sessionId) return;
     if (isSignedIn || email) return;
-    if (clearedSessionOnMountRef.current) return;
-    clearedSessionOnMountRef.current = true;
+    if (sessionMountClearGuardRef.current) return;
+    sessionMountClearGuardRef.current = true;
     (async () => {
       try {
         const pendingAt = Date.now();
@@ -761,7 +764,7 @@ const VavityEthereum: React.FC = () => {
         // ignore
       }
     })();
-  }, [sessionReady, sessionId, isSignedIn, email, saveVavityAggregator, fetchVavityAggregator]);
+  }, [sessionReady, sessionId, isSignedIn, email, saveVavityAggregator, fetchVavityAggregator, sessionMountClearGuardRef]);
 
   useEffect(() => {
     prevVavityDataRef.current = vavityData;

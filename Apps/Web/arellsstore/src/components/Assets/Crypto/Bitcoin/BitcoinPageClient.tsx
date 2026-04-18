@@ -16,6 +16,8 @@ const BitcoinPageClient: React.FC = () => {
   const { email } = useUser();
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
+  /** Survives `<Bitcoin key={sessionResetKey} />` remounts so session-clear-on-mount runs once per page visit. */
+  const sessionMountClearGuardRef = useRef(false);
   const sessionResetTimersRef = useRef<number[]>([]);
   const forceSessionResetPreview = false;
   const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;
@@ -224,7 +226,7 @@ const BitcoinPageClient: React.FC = () => {
         </div>
       )}
 
-      <Bitcoin key={`session-reset-${sessionResetKeyValue}`} />
+      <Bitcoin key={`session-reset-${sessionResetKeyValue}`} sessionMountClearGuardRef={sessionMountClearGuardRef} />
 
       <footer
         className={`asset-footer${sessionResetFooterHidden ? ' asset-footer--session-reset-hidden' : ''}`}

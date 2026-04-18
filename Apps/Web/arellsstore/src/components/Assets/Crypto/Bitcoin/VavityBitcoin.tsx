@@ -26,13 +26,16 @@ import {
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
-const VavityBitcoin: React.FC = () => {
+type VavityBitcoinProps = {
+  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
+};
+
+const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef }) => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
   const { email, isSignedIn, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [vavityData, setVavityData] = useState<any>(null);
   const prevVavityDataRef = useRef<any | null>(null);
   const clearingSnapshotRef = useRef<any | null>(null);
-  const clearedSessionOnMountRef = useRef(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [initialFetchDone, setInitialFetchDone] = useState(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
@@ -726,8 +729,8 @@ const VavityBitcoin: React.FC = () => {
     if (PREVIEW_SKIP_SESSION_DELETES) return;
     if (!sessionReady || !sessionId) return;
     if (isSignedIn || email) return;
-    if (clearedSessionOnMountRef.current) return;
-    clearedSessionOnMountRef.current = true;
+    if (sessionMountClearGuardRef.current) return;
+    sessionMountClearGuardRef.current = true;
     (async () => {
       try {
         const pendingAt = Date.now();
@@ -771,7 +774,7 @@ const VavityBitcoin: React.FC = () => {
         // ignore
       }
     })();
-  }, [sessionReady, sessionId, isSignedIn, email, saveVavityAggregator, fetchVavityAggregator]);
+  }, [sessionReady, sessionId, isSignedIn, email, saveVavityAggregator, fetchVavityAggregator, sessionMountClearGuardRef]);
 
   useEffect(() => {
     prevVavityDataRef.current = vavityData;
