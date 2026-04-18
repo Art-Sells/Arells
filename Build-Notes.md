@@ -10,32 +10,8 @@
 ## Final Test
 ### Sessions
 
-#### (private-web): Brave (toggle/buttons)
+#### (private-web): Edge (toggle/buttons)
 
-- - - Main Page
-- - - - Horizontal (full)
-- - - - Horizontal (half)
-- - - - Vertical
-
-- - - About 
-- - - - Horizontal (full)
-- - - - Horizontal (half)
-- - - - Vertical
-
-- - - SignUp
-- - - - Horizontal (full)
-- - - - Horizontal (half)
-- - - - Vertical
-
-- - - SignIn
-- - - - Horizontal (full)
-- - - - Horizontal (half)
-- - - - Vertical
-
-- - - ForgotPassword
-- - - - Horizontal (full)
-- - - - Horizontal (half)
-- - - - Vertical
 
 - - - Bitcoin
 -

@@ -172,9 +172,8 @@ const EthereumPageClient: React.FC = () => {
       sessionResetCycleActiveRef.current = false;
     };
 
-    const resetHandler = (event: Event) => {
-      const detail = (event as CustomEvent).detail as { holdMs?: number } | undefined;
-      const holdMs = Math.max(5000, detail?.holdMs ?? 5000);
+    const resetHandler = (_event: Event) => {
+      const holdMs = 1000;
       lastSessionResetHoldMsRef.current = holdMs;
       sessionResetGenerationRef.current += 1;
       const generation = sessionResetGenerationRef.current;
