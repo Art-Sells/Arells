@@ -41,7 +41,7 @@ export async function sendVerificationEmail(opts: {
     <img src="${opts.logoUrl}" alt="Arells" width="50" height="50" style="display:block;width:50px;height:50px;margin-bottom:16px;" />
     <h1 style="font-size:18px;margin:0 0 12px;">Arells Email Verification</h1>
     <p style="margin:0 0 16px;color:#333;">Click this link to verify your email</p>
-    <p style="margin:0;"><a href="${opts.verifyUrl}" style="display:inline-block;padding:12px 20px;background:#222;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;">Verify email</a></p>
+    <p style="margin:0;"><a href="${opts.verifyUrl}" style="display:inline-block;padding:12px 20px;background:#222;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;border:1px solid #fff;">Verify email</a></p>
     <p style="margin:16px 0 0;font-size:12px;color:#666;">If you did not create an account, you can ignore this message.</p>
   </div></body></html>`;
 
