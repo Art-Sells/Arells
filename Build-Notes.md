@@ -9,10 +9,6 @@
 
 ## Final Test
 
-
-### Account
-
-
 #### (link test)
 - Test with DMs and private public links on twitter/discord/text-message*
 - Look at metrics again...

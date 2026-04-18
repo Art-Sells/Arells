@@ -4,6 +4,7 @@ import {
   metricsActivityTargetPath,
   type MetricsPageActivityPayload,
 } from '../../../lib/metrics/metricsPageMounts';
+import { computeMetricsRegisteredCombined } from '../../../lib/metrics/registeredCombinedCount';
 import { getServerS3 } from '../../../lib/server/awsS3';
 
 const s3 = getServerS3();
@@ -25,7 +26,7 @@ function metricsAuthorized(req: NextApiRequest): boolean {
 
 function cacheKey(pagePath: string): string {
   const safe = encodeURIComponent(pagePath.replace(/\//g, '_'));
-  return `analytics/metrics-page-activity-v3/${safe}.json`;
+  return `analytics/metrics-page-activity-v4/${safe}.json`;
 }
 
 function cacheTtlMs(): number {
@@ -76,11 +77,20 @@ const inflight = new Map<string, Promise<MetricsPageActivityPayload>>();
 
 async function buildPayload(pagePath: string): Promise<MetricsPageActivityPayload> {
   const now = Date.now();
-  const counts = await aggregateMetricsPageMounts(s3, bucket(), now);
+  const [counts, registeredCombined] = await Promise.all([
+    aggregateMetricsPageMounts(s3, bucket(), now),
+    computeMetricsRegisteredCombined(s3, bucket()),
+  ]);
+  const cap = Math.max(0, registeredCombined);
   return {
     generatedAt: now,
     pagePath,
-    ...counts,
+    dau: Math.min(counts.dau, cap),
+    wau: Math.min(counts.wau, cap),
+    mau: Math.min(counts.mau, cap),
+    utcToday: counts.utcToday,
+    wauRollingDays: counts.wauRollingDays,
+    mauMonthStart: counts.mauMonthStart,
   };
 }
 
