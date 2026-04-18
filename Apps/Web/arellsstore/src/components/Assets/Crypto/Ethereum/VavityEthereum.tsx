@@ -3808,6 +3808,13 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                         setAddMoreOpen(false);
                         return;
                       }
+                      if (investmentsListOpen) {
+                        triggerShowPulse();
+                        setInvestmentsListOpen(false);
+                        setTimeout(() => {
+                          setVisibleInvestments(3);
+                        }, 2000);
+                      }
                       setSubmitPhase('idle');
                     setShowAddMoreForm(true);
                     setTimeout(() => setAddMoreOpen(true), 0);
