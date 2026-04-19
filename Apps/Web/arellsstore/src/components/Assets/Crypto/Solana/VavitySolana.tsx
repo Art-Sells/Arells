@@ -93,7 +93,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
   // Global background (used for overscroll beyond the page)
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const bg = 'rgba(1, 248, 164, 0.06)';
+    const bg = 'rgba(0, 208, 168, 0.06)';
     const prev = document.documentElement.style.getPropertyValue('--app-bg');
     document.documentElement.style.setProperty('--app-bg', bg);
     return () => {
@@ -3307,7 +3307,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
                   pointerEvents: 'none',
                   zIndex: 0,
                   backgroundImage:
-                    'repeating-linear-gradient(to right, rgba(1, 248, 164, 0.1) 0px, rgba(1, 248, 164, 0.1) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(1, 248, 164, 0.1) 0px, rgba(1, 248, 164, 0.1) 1px, transparent 1px, transparent 30px)',
+                    'repeating-linear-gradient(to right, rgba(0, 208, 168, 0.1) 0px, rgba(0, 208, 168, 0.1) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(0, 208, 168, 0.1) 0px, rgba(0, 208, 168, 0.1) 1px, transparent 1px, transparent 30px)',
                 }}
               />
               <div
@@ -3317,16 +3317,16 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
               >
             <SolanaChart
               history={chartHistoryForLine || []}
-                  color="rgba(1, 248, 164, 0.5)"
-                  activeColor="rgba(1, 248, 164, 0.6)"
-                  markerColor="rgba(1, 248, 164, 1)"
+                  color="rgba(0, 208, 168, 0.5)"
+                  activeColor="rgba(0, 208, 168, 0.6)"
+                  markerColor="rgba(0, 208, 168, 1)"
                   gridColor="transparent"
                   gridSpacing={30}
                   height={chartCanvasHeight}
                   interactiveHeight={chartPanelHeight}
                   canvasOffsetTop={chartTopPadding}
-                  backgroundColor="rgba(1, 248, 164, 0.14)"
-                  markerShadow="-5px 0 14px rgba(1, 248, 164, 0.26), 0 7px 10px rgba(219, 32, 254, 0.12)"
+                  backgroundColor="rgba(0, 208, 168, 0.16)"
+                  markerShadow="-5px 0 14px rgba(0, 208, 168, 0.26), 0 7px 10px rgba(0, 208, 168, 0.18)"
                   animateOn={false}
                   animateDelayMs={0}
                   animationDurationMs={toggleKnobLeftPx != null || toggleAnimating ? 0 : 1000}
@@ -4016,8 +4016,8 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
                                 <div
                                   className="asset-delete-loader-spinner"
                                   style={{
-                                    borderColor: 'rgba(1, 248, 164, 0.2)',
-                                    borderTopColor: 'rgba(1, 248, 164, 0.5)',
+                                    borderColor: 'rgba(0, 208, 168, 0.2)',
+                                    borderTopColor: 'rgba(0, 208, 168, 0.5)',
                                   }}
                                 />
                               </div>

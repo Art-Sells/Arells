@@ -1,4 +1,4 @@
-/* Auto-derived Solana asset rules (Ethereum mirror + teal palette). */
+/* Solana asset rules (Ethereum mirror + darker teal palette). */
 #overlayy .home-investments-slideup-button,
 #overlayy .myinv-home-button,
 #overlayy .asset-home-button,
@@ -8,29 +8,29 @@
 	box-shadow: none !important;
 }
 #overlayy .home-asset-solana {
-	--asset-line-color: rgb(1, 198, 166);
+	--asset-line-color: rgb(0, 173, 144);
 }
 .asset-page--solana {
 	background: transparent;
 }
 .asset-page--solana .asset-header-slogan,
 .asset-page--solana .asset-home-font-title {
-	color: var(--asset-slogan-color, rgb(0, 112, 104));
+	color: var(--asset-slogan-color, rgb(0, 94, 88));
 	opacity: 1;
 }
 .asset-page--solana .asset-investments-header {
-	color: var(--asset-slogan-color, rgb(0, 112, 104));
+	color: var(--asset-slogan-color, rgb(0, 94, 88));
 	opacity: 1;
 	margin-bottom: -12.5px;
 }
 .asset-page--solana {
-	--asset-slogan-color: rgb(0, 112, 104);
-	--asset-line-color: rgb(1, 198, 166);
+	--asset-slogan-color: rgb(0, 94, 88);
+	--asset-line-color: rgb(0, 173, 144);
 	--asset-unified-text-color: var(--asset-line-color);
 	/* Match chart hover-dot color (SolanaChart markerColor) */
-	--asset-hover-dot-color: rgba(1, 248, 164, 1);
+	--asset-hover-dot-color: rgba(0, 208, 168, 1);
 	/* Match chart line color (SolanaChart color) */
-	--asset-chart-line-color: rgba(1, 248, 164, 0.5);
+	--asset-chart-line-color: rgba(0, 208, 168, 0.5);
 	/* Match chart line thickness (SolanaChart borderWidth) */
 	--asset-chart-line-width: 6.5px;
 	/* Portfolio spacing tweaks (reduce gap between summary/add-more and Sign In/Show actions) */
@@ -60,12 +60,12 @@
 .asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:hover,
 .asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:active,
 .asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:focus-visible {
-	color: var(--asset-range-button-label-color, rgb(1, 198, 166)) !important;
-	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(1, 198, 166)) !important;
+	color: var(--asset-range-button-label-color, rgb(0, 173, 144)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(0, 173, 144)) !important;
 }
 .asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana .asset-title-badge-label {
-	color: var(--asset-range-button-label-color, rgb(1, 198, 166)) !important;
-	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(1, 198, 166)) !important;
+	color: var(--asset-range-button-label-color, rgb(0, 173, 144)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(0, 173, 144)) !important;
 	opacity: 0.5;
 }
 .asset-page--bitcoin .asset-header-title,
@@ -90,20 +90,20 @@
 	border: none !important;
 }
 .asset-portfolio-summary-box--solana {
-	border: 1px solid rgba(1, 248, 164, 0.3);
+	border: 1px solid rgba(0, 208, 168, 0.3);
 }
 .asset-home-button--solana {
 	border: none;
 	box-shadow: none;
 }
 .asset-profit-summary--solana {
-	background: rgba(1, 248, 164, 0.07);
-	border: 1px solid rgba(1, 248, 164, 0.3);
+	background: rgba(0, 208, 168, 0.06);
+	border: 1px solid rgba(0, 208, 168, 0.3);
 }
 .asset-header-asset-icon--solana {
 }
 .asset-page--solana .asset-home-button {
-	border-color: rgba(1, 248, 164, 0.8);
+	border-color: rgba(0, 208, 168, 0.8);
 }
 .asset-page-content--solana .asset-header-panel {
 	padding-top: 5px;
@@ -112,7 +112,7 @@
 	padding-left: 0px;
   }
 .asset-metric-trend-icon--solana {
-	color: var(--asset-slogan-color, rgb(0, 112, 104));
+	color: var(--asset-slogan-color, rgb(0, 94, 88));
 	opacity: 1;
 }
 .asset-home-font-label--solana {
@@ -153,15 +153,15 @@
 	box-shadow: none !important;
 }
 .asset-action-button--solana {
-	border-color: rgba(1, 248, 164, 0.9);
-	background: rgba(1, 248, 164, 0.18);
-	color: rgba(1, 248, 164, 0.95);
+	border-color: rgba(0, 208, 168, 0.9);
+	background: rgba(0, 208, 168, 0.18);
+	color: rgba(0, 208, 168, 0.95);
 }a.asset-action-button--solana:link,
 a.asset-action-button--solana:visited {
-	color: rgba(1, 248, 164, 0.95) !important;
+	color: rgba(0, 208, 168, 0.95) !important;
 }a.asset-action-button--myinv-asset-link.asset-action-button--solana:link,
 a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
-	color: rgb(1, 198, 166) !important;
+	color: rgb(0, 173, 144) !important;
 }
 .home-asset-card .asset-action-button--home-asset-chip.asset-action-button--solana {
 	color: var(--asset-line-color) !important;
@@ -173,7 +173,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	border-radius: 6px;
 }
 .asset-invest-form-box--solana {
-	border: 1px solid rgba(1, 248, 164, 0.3);
+	border: 1px solid rgba(0, 208, 168, 0.3);
 }
 .asset-invest-form-heading .asset-metric-title--bitcoin,
 .asset-invest-form-heading .asset-metric-title--solana {
@@ -182,10 +182,10 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	opacity: 0.45;
 }
 .asset-invest-form-body--solana {
-	border-color: rgba(1, 248, 164, 0.3);
+	border-color: rgba(0, 208, 168, 0.3);
 }
 .asset-invest-form-metrics-panel--solana {
-	border-color: rgba(1, 248, 164, 0.3);
+	border-color: rgba(0, 208, 168, 0.3);
 }
 .asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
 .asset-invest-form-metrics-panel .asset-metric-symbol--solana,
@@ -198,14 +198,14 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
 .asset-invest-form-controls--solana {
-	border-color: rgba(1, 248, 164, 0.3);
+	border-color: rgba(0, 208, 168, 0.3);
 }
 .asset-number-loader--solana {
 	width: 80px;
-	background: rgba(1, 248, 164, 0.1);
+	background: rgba(0, 208, 168, 0.1);
 }
 .asset-number-loader--solana::after {
-	background: rgba(1, 248, 164, 0.5);
+	background: rgba(0, 208, 168, 0.5);
 }
 .asset-number-loader--solana.asset-number-loader--wide {
 	width: 140px;
@@ -214,46 +214,46 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	width: 55px;
 }
 .home-asset-solana .asset-number-loader--card {
-	background: rgba(1, 248, 164, 0.1);
+	background: rgba(0, 208, 168, 0.1);
 }
 .home-asset-solana .asset-number-loader--card::after {
-	background: rgba(1, 248, 164, 0.3);
+	background: rgba(0, 208, 168, 0.3);
 }
 .asset-invest-input--solana {
 	/* Match button border opacity */
-	border-color: rgba(1, 248, 164, 0.0);
-	background: rgba(1, 248, 164, 0.16);
+	border-color: rgba(0, 208, 168, 0.0);
+	background: rgba(0, 208, 168, 0.14);
 }
 .asset-invest-input--solana:focus,
 .asset-invest-input--solana:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(1, 248, 164, 0.3);
+	border-color: rgba(0, 208, 168, 0.3);
 }
 .asset-date-picker--solana .asset-date-trigger {
-	border-color: rgba(1, 248, 164, 0.0);
-	background: rgba(1, 248, 164, 0.16);
+	border-color: rgba(0, 208, 168, 0.0);
+	background: rgba(0, 208, 168, 0.14);
 }
 .asset-date-picker--solana .asset-date-trigger.is-open,
 .asset-date-picker--solana .asset-date-trigger:focus,
 .asset-date-picker--solana .asset-date-trigger:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(1, 248, 164, 0.3);
+	border-color: rgba(0, 208, 168, 0.3);
 }
 .asset-date-popover--solana {
 	background: rgba(242, 243, 250, 0.9);
 }
 .asset-date-popover--solana .asset-date-day:hover {
-	background: rgba(1, 248, 164, 0.16);
+	background: rgba(0, 208, 168, 0.14);
 }
 .asset-date-popover--solana .asset-date-day.is-selected {
-	background: rgba(1, 248, 164, 0.2);
+	background: rgba(0, 208, 168, 0.18);
 }
 .asset-date-popover--solana .asset-date-nav:hover,
 .asset-date-popover--solana .asset-date-nav:active,
 .asset-date-popover--solana .asset-date-nav:focus {
-	background: rgba(1, 248, 164, 0.16);
+	background: rgba(0, 208, 168, 0.14);
 }
 .asset-date-popover--solana .asset-date-day:focus {
 	outline: none;
@@ -272,11 +272,11 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
 .asset-page--solana .asset-page-content .asset-action-button--save-signin {
-	background: rgba(1, 248, 164, 1);
+	background: rgba(0, 208, 168, 1);
 	box-shadow: none !important;
-	border-color: rgba(1, 248, 164, 1);
+	border-color: rgba(0, 208, 168, 1);
 	/* brighter "same hue" tint of the background */
-	color: color-mix(in srgb, rgba(1, 248, 164, 1) 18%, white 82%) !important;
+	color: color-mix(in srgb, rgba(0, 208, 168, 1) 18%, white 82%) !important;
 }
 @media (hover: hover) and (pointer: fine) {
 	.asset-page--bitcoin .asset-page-content .asset-action-button--save-signin:hover {
@@ -290,13 +290,13 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 }
 .asset-page--solana .asset-range-button.asset-portfolio-icon-button {
-	background: rgba(1, 248, 164, 0.0) !important;
+	background: rgba(0, 208, 168, 0.0) !important;
 }
 .asset-page--solana .asset-range-button.asset-portfolio-icon-button {
-	border-color: rgba(1, 248, 164, 0.2) !important;
+	border-color: rgba(0, 208, 168, 0.2) !important;
 }
 .asset-page--solana .asset-range-button.asset-portfolio-icon-button:active {
-	border-color: rgba(1, 248, 164, 0.3) !important;
+	border-color: rgba(0, 208, 168, 0.3) !important;
 }
 @media (hover: hover) and (pointer: fine) {
 	.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button:hover {
@@ -304,7 +304,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 
 	.asset-page--solana .asset-range-button.asset-portfolio-icon-button:hover {
-		border-color: rgba(1, 248, 164, 0.3) !important;
+		border-color: rgba(0, 208, 168, 0.3) !important;
 	}
 
 	.asset-range-button.asset-portfolio-icon-button:hover .asset-portfolio-icon-text {
@@ -317,28 +317,28 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 }
 .asset-range-button--solana.is-active {
 	border: 1px solid transparent;
-	background: rgba(1, 248, 164, 0.18);
-	color: var(--asset-range-button-label-color, rgb(1, 198, 166));
+	background: rgba(0, 208, 168, 0.18);
+	color: var(--asset-range-button-label-color, rgb(0, 173, 144));
 	opacity: 0.6;
 	pointer-events: none;
 	cursor: default;
 	transform: none;
 }
 .asset-range-button--solana:not(.is-active):not(:disabled) {
-	border-color: rgba(1, 248, 164, 0.9);
-	background: rgba(1, 248, 164, 0.18);
-	color: var(--asset-range-button-label-color, rgb(1, 198, 166));
+	border-color: rgba(0, 208, 168, 0.9);
+	background: rgba(0, 208, 168, 0.18);
+	color: var(--asset-range-button-label-color, rgb(0, 173, 144));
 }
 .asset-range-button--solana:disabled {
-	background: rgba(1, 248, 164, 0.18);
-	color: var(--asset-range-button-label-color, rgb(1, 198, 166));
+	background: rgba(0, 208, 168, 0.18);
+	color: var(--asset-range-button-label-color, rgb(0, 173, 144));
 }
 .asset-investments-list .asset-panel--bitcoin,
 .asset-investments-list .asset-panel--solana {
 	background: transparent !important;
 }
 .asset-investments-wrap--solana {
-	border-color: rgba(1, 248, 164, 0.3);
+	border-color: rgba(0, 208, 168, 0.3);
 }
 .asset-investments-wrap .asset-metric-symbol--bitcoin,
 .asset-investments-wrap .asset-metric-symbol--solana,
@@ -358,7 +358,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 .asset-metric-title--solana,
 .asset-metric-inline-title--solana {
 	margin-top: 0px;
-	color: var(--asset-slogan-color, rgb(0, 112, 104));
+	color: var(--asset-slogan-color, rgb(0, 94, 88));
 	opacity: 1;
 	font-size: 12px;
 	font-weight: 200;
@@ -366,7 +366,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 .asset-metric-symbol--solana,
 .asset-metric-inline-symbol--solana {
 	margin-top: 0px;
-	color: var(--asset-slogan-color, rgb(0, 112, 104));
+	color: var(--asset-slogan-color, rgb(0, 94, 88));
 	opacity: 1;
 
 }
@@ -375,17 +375,17 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	background: transparent !important;
 }
 .myinv-page .myinv-asset-home-card.home-asset-solana {
-	background: rgba(1, 248, 164, 0.07);
-	border: 1px solid rgba(1, 248, 164, 0.28);
-	--asset-line-color: rgb(1, 198, 166);
+	background: rgba(0, 208, 168, 0.06);
+	border: 1px solid rgba(0, 208, 168, 0.26);
+	--asset-line-color: rgb(0, 173, 144);
 }
 .myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--bitcoin,
 .myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--solana {
 	color: var(--asset-line-color) !important;
 }
 .asset-title-badge--solana {
-	background: rgba(1, 248, 164, 1);
-	color: rgba(1, 248, 164, 0.95) !important;
+	background: rgba(0, 208, 168, 1);
+	color: rgba(0, 208, 168, 0.95) !important;
 }
 .asset-title-badge--section.asset-title-badge--solana {
 	padding-left: 12px;     /* <- edit ETH badge horizontal padding over 750px */
@@ -397,15 +397,15 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:active,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:focus-visible {
 	box-sizing: border-box;
-	/* Match `.asset-panel--solana`: rgba(107,114,168,0.07) over canvas rgb(244, 246, 255); border 0.3 */
-	background: rgb(234, 237, 249) !important;
-	background: color-mix(in srgb, rgb(1, 198, 166) 7%, rgb(244, 246, 255)) !important;
-	border: 1px solid rgba(1, 248, 164, 0.3);
+	/* Match `.asset-panel--solana`: rgba(0,208,168,0.06) over canvas rgb(235, 249, 244); border 0.3 */
+	background: rgb(232, 246, 242) !important;
+	background: color-mix(in srgb, rgb(0, 173, 144) 6%, rgb(235, 249, 244)) !important;
+	border: 1px solid rgba(0, 208, 168, 0.3);
 }
 .myinv-edit-card--solana {
-	background: rgba(1, 248, 164, 0.08);
-	border-color: rgba(1, 248, 164, 0.35);
-	color: rgba(1, 248, 164, 0.95);
+	background: rgba(0, 208, 168, 0.05);
+	border-color: rgba(0, 208, 168, 0.3);
+	color: rgba(0, 208, 168, 0.9);
 }
 @media (max-width: 750px) {
 	/* Match desktop narrow-window text metrics: iOS otherwise boosts body text and shifts the title vs icons. */
@@ -949,15 +949,15 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	background: transparent !important;
 }
 .asset-panel--solana {
-	background: rgba(1, 248, 164, 0.07);
-	border: 1px solid rgba(1, 248, 164, 0.3);
+	background: rgba(0, 208, 168, 0.06);
+	border: 1px solid rgba(0, 208, 168, 0.3);
 }
 .asset-portfolio-center.asset-panel--bitcoin,
 .asset-portfolio-center.asset-panel--solana {
 	background: transparent !important;
 }
 .asset-price-panel--solana {
-	border: 1px solid rgba(1, 248, 164, 0.3);
+	border: 1px solid rgba(0, 208, 168, 0.3);
 	border-radius: 14px;
 }
 .asset-market-controls.asset-panel--bitcoin,
@@ -1017,8 +1017,8 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	box-shadow: none !important;
 }
 .asset-page--solana .asset-footer-about {
-	border-color: rgba(1, 248, 164, 0.45);
-	color: rgba(1, 248, 164, 0.9);
+	border-color: rgba(0, 208, 168, 0.35);
+	color: rgba(0, 208, 168, 0.75);
 }
 .asset-loader-toggle-shell--bitcoin,
 .asset-loader-toggle-shell--solana {
@@ -1029,34 +1029,34 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	background: rgb(255, 255, 255);
 }
 .asset-loader-ring--solana .asset-loader-spinner circle {
-	stroke: rgba(1, 248, 164, 1);
+	stroke: rgba(0, 208, 168, 1);
 	animation: assetLoaderStrokeSolana 3s ease forwards;
 }
 .asset-footer-about-button.asset-action-button--solana {
-	color: rgba(1, 248, 164, 0.95);
-	border-color: rgba(1, 248, 164, 0.9);
-	background: rgba(1, 248, 164, 0.18);
-	--asset-footer-about-divider-color: rgba(1, 248, 164, 0.9);
+	color: rgba(0, 208, 168, 0.95);
+	border-color: rgba(0, 208, 168, 0.9);
+	background: rgba(0, 208, 168, 0.18);
+	--asset-footer-about-divider-color: rgba(0, 208, 168, 0.9);
 }
 .asset-view-more-assets--footer.asset-action-button--solana {
-	--asset-footer-about-divider-color: rgba(1, 248, 164, 0.9);
+	--asset-footer-about-divider-color: rgba(0, 208, 168, 0.9);
 }
 .asset-chart-grid-shimmer--solana .asset-chart-grid-shimmer-thin {
 	background-image:
-		repeating-linear-gradient(to right, rgba(1, 248, 164, 0.25) 0px, rgba(1, 248, 164, 0.25) 1px, transparent 1px, transparent 30px),
-		repeating-linear-gradient(to bottom, rgba(1, 248, 164, 0.25) 0px, rgba(1, 248, 164, 0.25) 1px, transparent 1px, transparent 30px);
+		repeating-linear-gradient(to right, rgba(0, 208, 168, 0.25) 0px, rgba(0, 208, 168, 0.25) 1px, transparent 1px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(0, 208, 168, 0.25) 0px, rgba(0, 208, 168, 0.25) 1px, transparent 1px, transparent 30px);
 }
 .asset-chart-grid-shimmer--solana .asset-chart-grid-shimmer-thick {
 	background-image:
-		repeating-linear-gradient(to right, rgba(1, 248, 164, 0.2) 0px, rgba(1, 248, 164, 0.2) 2px, transparent 2px, transparent 30px),
-		repeating-linear-gradient(to bottom, rgba(1, 248, 164, 0.2) 0px, rgba(1, 248, 164, 0.2) 2px, transparent 2px, transparent 30px);
+		repeating-linear-gradient(to right, rgba(0, 208, 168, 0.2) 0px, rgba(0, 208, 168, 0.2) 2px, transparent 2px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(0, 208, 168, 0.2) 0px, rgba(0, 208, 168, 0.2) 2px, transparent 2px, transparent 30px);
 }
 .home-asset-solana {
-				background: rgba(1, 248, 164, 0.07);
-				border: 1px solid rgba(1, 248, 164, 0.28);
+				background: rgba(0, 208, 168, 0.06);
+				border: 1px solid rgba(0, 208, 168, 0.26);
 			}
 .home-asset-solana .home-assets-cell + .home-assets-cell {
-				border-left: 5px solid rgba(1, 248, 164, 0.1);
+				border-left: 5px solid rgba(0, 208, 168, 0.1);
 				margin-left: -6.5px;
 				margin-right: 6.5px;
 				border-top-left-radius: 5px;

@@ -114,7 +114,7 @@ const SolanaPageClient: React.FC = () => {
   // Set global background immediately for overscroll beyond the asset page.
   useEffect(() => {
     // Use an opaque tint so overscroll can never blend back to browser white.
-    const bg = 'rgb(238, 252, 248)';
+    const bg = 'rgb(235, 249, 244)';
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
     const prevBody = document.body.style.getPropertyValue('--app-bg');
     const prevHtmlBg = document.documentElement.style.backgroundColor;
@@ -284,7 +284,7 @@ const SolanaPageClient: React.FC = () => {
               <div className="asset-session-reset-spinner" aria-hidden="true">
                 <div
                   className="asset-delete-loader-spinner"
-                  style={{ borderColor: 'rgba(1, 248, 164, 0.2)', borderTopColor: 'rgba(1, 248, 164, 0.5)' }}
+                  style={{ borderColor: 'rgba(0, 208, 168, 0.2)', borderTopColor: 'rgba(0, 208, 168, 0.5)' }}
                 />
               </div>
             </div>
