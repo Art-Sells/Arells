@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import axios from 'axios';
 import { assertUserEmailMatchesSession } from '../../../lib/auth/requireUserApi';
+import { loadCurrentAssetSpotPrice } from '../../../lib/server/assetSpotPrice';
 import { getServerS3 } from '../../../lib/server/awsS3';
 import { s3BucketNameOrThrow } from '../../../lib/server/s3Bucket';
 
@@ -8,6 +8,7 @@ const s3 = getServerS3();
 const VAPA_KEYS: Record<string, string> = {
   bitcoin: 'vavity/bitcoinVAPA.json',
   ethereum: 'vavity/ethereumVAPA.json',
+  solana: 'vavity/solanaVAPA.json',
 };
 
 const normalizeEmailKey = (raw: string) => encodeURIComponent(raw.trim().toLowerCase());
@@ -61,23 +62,7 @@ const loadVapaData = async (asset: string): Promise<{
   }
 };
 
-const loadCurrentPrice = async (asset: string): Promise<number | null> => {
-  const url =
-    asset === 'ethereum'
-      ? '/api/assets/crypto/ethereum/ethereumPrice'
-      : '/api/assets/crypto/bitcoin/bitcoinPrice';
-  try {
-    const response = await axios
-      .get(`http://localhost:3000${url}`, { timeout: 5000 })
-      .catch(() => axios.get(url, { timeout: 5000 }));
-    const payload = response.data || {};
-    const priceObj = asset === 'ethereum' ? payload.ethereum : payload.bitcoin;
-    const price = priceObj?.usd;
-    return typeof price === 'number' ? price : null;
-  } catch {
-    return null;
-  }
-};
+const loadCurrentPrice = loadCurrentAssetSpotPrice;
 
 const calculateTotals = (investments: any[]) => {
   return investments.reduce(

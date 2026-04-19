@@ -15,6 +15,12 @@ const assets: VapaAssetConfig[] = [
     priceUrl: 'https://pro-api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd&include_market_cap=true',
     historyUrl: 'https://pro-api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=max',
   },
+  {
+    id: 'solana',
+    s3Key: 'vavity/solanaVAPA.json',
+    priceUrl: 'https://pro-api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd&include_market_cap=true',
+    historyUrl: 'https://pro-api.coingecko.com/api/v3/coins/solana/market_chart?vs_currency=usd&days=max',
+  },
 ];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

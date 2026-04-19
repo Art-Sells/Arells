@@ -34,7 +34,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   } = useVavity();
   const forceSessionPreview = false;
   const forceEmptyEmailPreview = false;
-  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum'], []);
+  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'solana'], []);
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
       (sessionInvestments || []).map((inv: any) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
@@ -52,7 +52,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const effectiveAssetsMissing = forceSessionPreview
     ? sessionAssetsMissing
     : forceEmptyEmailPreview
-      ? ['bitcoin', 'ethereum']
+      ? ['bitcoin', 'ethereum', 'solana']
       : assetsMissingInEmail;
 
   const [open, setOpen] = useState(false);
@@ -1147,8 +1147,10 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <span className="myinv-asset-border" aria-hidden="true" />
                     <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsPresent.map((asset) => {
-                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        const href =
+                          asset === 'bitcoin' ? '/bitcoin' : asset === 'ethereum' ? '/ethereum' : '/solana';
+                        const label =
+                          asset === 'bitcoin' ? 'Bitcoin' : asset === 'ethereum' ? 'Ethereum' : 'Solana';
                         return (
                           <Link
                             key={`more-${asset}`}
@@ -1182,8 +1184,10 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <span className="myinv-asset-border" aria-hidden="true" />
                     <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsMissing.map((asset) => {
-                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        const href =
+                          asset === 'bitcoin' ? '/bitcoin' : asset === 'ethereum' ? '/ethereum' : '/solana';
+                        const label =
+                          asset === 'bitcoin' ? 'Bitcoin' : asset === 'ethereum' ? 'Ethereum' : 'Solana';
                         return (
                           <Link
                             key={`missing-${asset}`}

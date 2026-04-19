@@ -24,7 +24,8 @@
 #overlayy .asset-home-button,
 #overlayy .home-asset-card,
 #overlayy .home-asset-bitcoin,
-#overlayy .home-asset-ethereum {
+#overlayy .home-asset-ethereum,
+#overlayy .home-asset-solana {
 	box-shadow: none !important;
 }
 
@@ -39,13 +40,17 @@
 	box-shadow: none !important;
 }
 
-/* Match .asset-page--bitcoin / .asset-page--ethereum --asset-line-color (date range label hue) */
+/* Match .asset-page--bitcoin / .asset-page--ethereum / .asset-page--solana --asset-line-color (date range label hue) */
 #overlayy .home-asset-bitcoin {
 	--asset-line-color: rgb(209, 142, 55);
 }
 
 #overlayy .home-asset-ethereum {
 	--asset-line-color: rgb(107, 114, 168);
+}
+
+#overlayy .home-asset-solana {
+	--asset-line-color: rgb(1, 198, 166);
 }
 
 html,

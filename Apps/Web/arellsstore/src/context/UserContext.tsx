@@ -318,7 +318,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, [email]);
 
-  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum'], []);
+  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'solana'], []);
 
   const hasEmailInvestmentsForAsset = useCallback(
     (assetId: string) => {

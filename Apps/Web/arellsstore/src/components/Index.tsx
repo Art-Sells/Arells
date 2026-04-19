@@ -360,7 +360,8 @@ const Index = () => {
   const assetRows = useMemo(() => {
     const assets = [
       { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin' },
-      { id: 'ethereum', label: 'Ethereum', href: '/ethereum' }
+      { id: 'ethereum', label: 'Ethereum', href: '/ethereum' },
+      { id: 'solana', label: 'Solana', href: '/solana' },
     ];
 
     return assets.map((asset) => {
