@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSessionFromRequest } from '../../../lib/auth/session';
 import { hashEmailForAnalytics } from '../../../lib/analytics/userHash';
 import { allowAnalyticsIp } from '../../../lib/analytics/ipRateLimit';
+import { isLikelyAutomatedClient, userAgentFromHeaders } from '../../../lib/analytics/isLikelyAutomatedClient';
 import { METRICS_PAGE_MOUNTS_PREFIX } from '../../../lib/metrics/metricsPageMounts';
 import { getServerS3 } from '../../../lib/server/awsS3';
 
@@ -48,6 +49,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const ip = getClientIp(req);
   if (!allowAnalyticsIp(ip)) {
     return res.status(429).json({ error: 'Too many requests' });
+  }
+
+  if (isLikelyAutomatedClient(userAgentFromHeaders(req.headers))) {
+    return res.status(204).end();
   }
 
   const body = req.body || {};

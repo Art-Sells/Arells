@@ -5,6 +5,7 @@ import { mergeSessionMeta } from '../../../lib/analytics/mergeMeta';
 import { allowAnalyticsIp } from '../../../lib/analytics/ipRateLimit';
 import { hashEmailForAnalytics } from '../../../lib/analytics/userHash';
 import { getSessionFromRequest } from '../../../lib/auth/session';
+import { isLikelyAutomatedClient, userAgentFromHeaders } from '../../../lib/analytics/isLikelyAutomatedClient';
 import { getServerS3 } from '../../../lib/server/awsS3';
 
 const s3 = getServerS3();
@@ -48,6 +49,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(429).json({ error: 'Too many requests' });
   }
 
+  const ua = userAgentFromHeaders(req.headers);
+  if (isLikelyAutomatedClient(ua)) {
+    return res.status(204).end();
+  }
+
   const body = req.body || {};
   const sessionId = typeof body.sessionId === 'string' ? body.sessionId.trim() : '';
   const typeRaw = typeof body.type === 'string' ? body.type.toLowerCase() : '';
@@ -62,7 +68,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid type' });
   }
 
-  const ua = typeof req.headers['user-agent'] === 'string' ? req.headers['user-agent'] : '';
   const now = Date.now();
 
   const auth = await getSessionFromRequest(req);
