@@ -1,0 +1,17 @@
+# Arells
+
+> Arells is a belief that investments should never lose value. Public product pages explain Bitcoin, Ethereum, and Solana in that framing.
+
+## Canonical URLs (production)
+
+- https://arells.com/
+- https://arells.com/bitcoin
+- https://arells.com/ethereum
+- https://arells.com/solana
+- https://arells.com/about
+- https://arells.com/vavity
+
+## Machine-readable discovery
+
+- Sitemap: https://arells.com/sitemap.xml
+- Robots: https://arells.com/robots.txt

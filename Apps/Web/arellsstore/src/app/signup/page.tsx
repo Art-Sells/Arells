@@ -6,7 +6,7 @@ const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
 export const metadata: Metadata = {
   title: 'Sign up',
   description: 'Create an account to save investments.',
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: true },
   alternates: {
     canonical: '/signup',
   },

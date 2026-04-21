@@ -5,7 +5,7 @@ import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
 export const metadata: Metadata = {
   title: 'Ethereum',
   description: 'If investments never lost value.',
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
   alternates: {
     canonical: '/ethereum',
   },

@@ -25,10 +25,41 @@ type LayoutProps = {
   children: ReactNode;
 };
 
+/** Sitewide structured data for search + generative engines (paired with per-route `metadata` + sitemap). */
+function siteJsonLd(origin: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': `${origin}/#organization`,
+        name: 'Arells',
+        url: origin,
+        logo: `${origin}/ArellsIcon.png`,
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${origin}/#website`,
+        name: 'Arells',
+        url: origin,
+        description: 'If investments never lost value.',
+        inLanguage: 'en-US',
+        publisher: { '@id': `${origin}/#organization` },
+      },
+    ],
+  };
+}
+
 const RootLayout = ({ children }: LayoutProps) => {
+  const origin = getSiteMetadataBase().origin;
   return (
     <html lang="en">
       <body>
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger -- JSON-LD requires raw script injection
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(origin)) }}
+        />
         <AssetsProvider>
           <UserProvider>
             <AnalyticsBeacon />
