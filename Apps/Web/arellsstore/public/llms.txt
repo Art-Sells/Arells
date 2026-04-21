@@ -1,6 +1,6 @@
 # Arells
 
-> Arells is a belief that investments should never lose value. Public product pages explain Bitcoin, Ethereum, and Solana in that framing.
+> Arells shows how assets would look if investments never lost value. 
 
 ## Canonical URLs (production)
 
