@@ -73,12 +73,12 @@
 	color: var(--asset-line-color);
 	opacity: 1;
 }
-.asset-page--bitcoin .asset-metric-value,
-.asset-page--bitcoin .asset-metric-inline-value,
-.asset-page--bitcoin .asset-metric-number,
-.asset-page--solana .asset-metric-value,
-.asset-page--solana .asset-metric-inline-value,
-.asset-page--solana .asset-metric-number {
+.asset-page--bitcoin .asset-metric-value:not(.asset-mount-fade-2s),
+.asset-page--bitcoin .asset-metric-inline-value:not(.asset-mount-fade-2s),
+.asset-page--bitcoin .asset-metric-number:not(.asset-mount-fade-2s),
+.asset-page--solana .asset-metric-value:not(.asset-mount-fade-2s),
+.asset-page--solana .asset-metric-inline-value:not(.asset-mount-fade-2s),
+.asset-page--solana .asset-metric-number:not(.asset-mount-fade-2s) {
 	color: var(--asset-line-color);
 	opacity: 1;
 }
@@ -90,7 +90,7 @@
 	border: none !important;
 }
 .asset-portfolio-summary-box--solana {
-	border: 1px solid rgba(0, 208, 168, 0.3);
+	border: 1px solid rgba(0, 208, 168, 0.6);
 }
 .asset-home-button--solana {
 	border: none;
@@ -98,7 +98,7 @@
 }
 .asset-profit-summary--solana {
 	background: rgba(0, 208, 168, 0.06);
-	border: 1px solid rgba(0, 208, 168, 0.3);
+	border: 1px solid rgba(0, 208, 168, 0.6);
 }
 .asset-header-asset-icon--solana {
 }
@@ -111,7 +111,7 @@
 	padding-bottom: 15px;
 	padding-left: 0px;
   }
-.asset-metric-trend-icon--solana {
+.asset-metric-trend-icon--solana:not(.asset-mount-fade-2s) {
 	color: var(--asset-slogan-color, rgb(0, 94, 88));
 	opacity: 1;
 }
@@ -130,7 +130,7 @@
 	color: rgb(105, 105, 105);
 	opacity: 1;
 }
-.asset-metric-symbol--solana {
+.asset-metric-symbol--solana:not(.asset-mount-fade-2s) {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
@@ -260,6 +260,15 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 }
 .asset-loader-toggle-shell--solana .asset-reality-toggle--loader::before {
 	animation: assetLoaderToggleLineSolana 3s ease forwards;
+}
+
+@keyframes assetLoaderToggleLineSolana {
+	from {
+		background: rgba(196, 196, 196, 0.9);
+	}
+	to {
+		background: var(--asset-chart-line-color, rgba(0, 208, 168, 0.5));
+	}
 }
 .asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
 .asset-portfolio-summary-box .asset-metric-symbol--solana,
@@ -397,10 +406,10 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:active,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:focus-visible {
 	box-sizing: border-box;
-	/* Match `.asset-panel--solana`: rgba(0,208,168,0.06) over canvas rgb(235, 249, 244); border 0.3 */
+	/* Match `.asset-panel--solana`: rgba(0,208,168,0.06) over canvas rgb(235, 249, 244); border 0.6 */
 	background: rgb(232, 246, 242) !important;
 	background: color-mix(in srgb, rgb(0, 173, 144) 6%, rgb(235, 249, 244)) !important;
-	border: 1px solid rgba(0, 208, 168, 0.3);
+	border: 1px solid rgba(0, 208, 168, 0.6);
 }
 .myinv-edit-card--solana {
 	background: rgba(0, 208, 168, 0.05);
@@ -688,7 +697,8 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 
 	.asset-reality-toggle-shell {
-		width: 93%;
+		width: 100%;
+		max-width: 100%;
 		box-sizing: border-box;
 		transform: none;
 		margin-top: 10px;
@@ -950,14 +960,14 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 }
 .asset-panel--solana {
 	background: rgba(0, 208, 168, 0.06);
-	border: 1px solid rgba(0, 208, 168, 0.3);
+	border: 1px solid rgba(0, 208, 168, 0.6);
 }
 .asset-portfolio-center.asset-panel--bitcoin,
 .asset-portfolio-center.asset-panel--solana {
 	background: transparent !important;
 }
 .asset-price-panel--solana {
-	border: 1px solid rgba(0, 208, 168, 0.3);
+	border: 1px solid rgba(0, 208, 168, 0.6);
 	border-radius: 14px;
 }
 .asset-market-controls.asset-panel--bitcoin,
@@ -1025,6 +1035,24 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	--asset-loader-toggle-shell-width: 154px;
 	--asset-loader-toggle-width: 154px;
 }
+
+@media (min-width: 751px) {
+	.asset-loader-toggle-shell--bitcoin,
+	.asset-loader-toggle-shell--solana {
+		--asset-loader-toggle-shell-width: 350px;
+		--asset-loader-toggle-width: 350px;
+	}
+
+	.asset-reality-toggle-shell--loader .asset-reality-toggle--loader {
+		width: 350px;
+	}
+
+	.asset-reality-toggle-shell--loader .asset-reality-toggle--loader::before {
+		left: 0;
+		right: 0;
+	}
+}
+
 .asset-loader-overlay--solana {
 	background: rgb(255, 255, 255);
 }
@@ -1053,7 +1081,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 }
 .home-asset-solana {
 				background: rgba(0, 208, 168, 0.06);
-				border: 1px solid rgba(0, 208, 168, 0.26);
+				border: 1px solid rgba(0, 208, 168, 0.6);
 			}
 .home-asset-solana .home-assets-cell + .home-assets-cell {
 				border-left: 5px solid rgba(0, 208, 168, 0.1);

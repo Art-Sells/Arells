@@ -3493,88 +3493,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
           ...(!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : {}),
         }}
       >
-        {!hasInvestmentsUI && !showInitialFetchLoader ? (
-          <>
-            <div
-              ref={emptyActionsRef}
-              className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
-              style={
-                hideEmptyActionsOnSubmit
-                  ? { display: 'none' }
-                  : emptyActionsMountPhase === 'hidden'
-                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 3s ease' }
-                    : emptyActionsMountPhase === 'revealing'
-                      ? { maxHeight: `${emptyActionsHeight || 200}px`, overflow: 'hidden', transition: 'max-height 3s ease' }
-                      : undefined
-              }
-            >
-                <div
-                  className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
-                >
-                  <button
-                    className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
-                    disabled={showEmptyAddForm || emptyAddHiding}
-                    style={{
-                      ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
-                    }}
-                    onClick={() => {
-                      if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
-                      clearEmptyButtonsSequenceTimers();
-                      if (clearInvestmentsAnimTimerRef.current) {
-                        globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
-                        clearInvestmentsAnimTimerRef.current = null;
-                      }
-
-                      // 1) Collapse Sign In first
-                      setEmptySigninHiding(true);
-                      setEmptySigninGone(false);
-
-                      // 2) After it's done, collapse Add Investments
-                      setEmptyAddHiding(false);
-                      setEmptyAddGone(false);
-
-                      emptyButtonsSequenceTimersRef.current.push(
-                        globalThis.setTimeout(() => {
-                          setEmptyAddHiding(true);
-                        }, 500)
-                      );
-
-                      // 3) Start opening the add form immediately (do NOT wait for Sign In to finish collapsing).
-                      setShowEmptyAddForm(true);
-                      setShowAddForm(true);
-                      setSubmitPhase('idle');
-                      // Pre-measure panel height before opening so the max-height animation matches "Add more investments".
-                      requestAnimationFrame(() => {
-                        const h = addFormBoxRef.current?.scrollHeight ?? 0;
-                        const next = Math.max(0, h + 24);
-                        setAddFormPanelHeight((prev) => (prev === next ? prev : next));
-                        requestAnimationFrame(() => setAddFormOpen(true));
-                      });
-                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
-                  }}
-                >
-                  Add Investments
-                  </button>
-                </div>
-                {!isSignedIn && !email && (
-                  <div
-                    className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
-                  >
-                    <Link
-                      href="/signin"
-                      className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
-                      style={{
-                        opacity: emptySigninHiding ? 0 : 1,
-                        transition: 'opacity 3s ease, transform 0.2s ease',
-                      }}
-                    >
-                      <span className="asset-save-signin-text">Sign In to Save Investments</span>
-                    </Link>
-                  </div>
-                )}
-            </div>
-          </>
-        ) : (
+        {!hasInvestmentsUI ? null : (
           <>
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation
                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
@@ -3797,33 +3716,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                 })}
               </div>
             </div>
-                <div className="asset-portfolio-actions asset-portfolio-actions--add">
-                  <button
-                    className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-add${
-                      addMorePulse ? ' asset-action-button--pulse' : ''
-                    }`}
-                    onClick={() => {
-                      triggerAddMorePulse();
-                      if (addMoreOpen) {
-                        setAddMoreOpen(false);
-                        return;
-                      }
-                      if (investmentsListOpen) {
-                        triggerShowPulse();
-                        setInvestmentsListOpen(false);
-                        setTimeout(() => {
-                          setVisibleInvestments(3);
-                        }, 2000);
-                      }
-                      setSubmitPhase('idle');
-                    setShowAddMoreForm(true);
-                    setTimeout(() => setAddMoreOpen(true), 0);
-                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
-                  }}
-                >
-                  {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
-                  </button>
-                </div>
                 {showAddMoreForm && (
                 <div
                   ref={addMoreFormPanelRef}
@@ -3891,14 +3783,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
 
                 {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
                 <div ref={bottomActionsWrapRef}>
-                  {investments.length > 0 && !isSignedIn && !email && (
-                    <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
-                      <Link href="/signin" className="asset-action-button asset-action-button--save-signin">
-                        <span className="asset-save-signin-text">Sign In to Save Investments</span>
-                      </Link>
-                    </div>
-                  )}
-
                   <div
                     ref={showActionsRef}
                     className={`asset-portfolio-actions asset-portfolio-actions--show${investmentsListOpen ? ' is-open' : ''}`}
