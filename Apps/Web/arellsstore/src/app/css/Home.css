@@ -241,7 +241,7 @@ body {
 }
 
 .about-content {
-	--about-lead-copy-width: 120px;
+	--about-lead-copy-width: 115px;
 	--about-lead-copy-line-height: 1.1;
 	display: flex;
 	flex-direction: column;
