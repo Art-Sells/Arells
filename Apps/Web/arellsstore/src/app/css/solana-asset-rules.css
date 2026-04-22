@@ -976,6 +976,9 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 .asset-portfolio-center.asset-panel--solana {
 	background: transparent !important;
 }
+.asset-reality-toggle-shell.asset-panel--solana {
+	background: transparent !important;
+}
 .asset-price-panel--solana {
 	border: 1px solid rgba(0, 208, 168, 0.6);
 	border-radius: 14px;
@@ -1056,11 +1059,6 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	.asset-reality-toggle-shell--loader .asset-reality-toggle--loader {
 		width: 350px;
 	}
-
-	.asset-reality-toggle-shell--loader .asset-reality-toggle--loader::before {
-		left: 0;
-		right: 0;
-	}
 }
 
 .asset-loader-overlay--solana {
@@ -1094,7 +1092,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 				border: 1px solid rgba(0, 208, 168, 0.6);
 			}
 .home-asset-solana .home-assets-cell + .home-assets-cell {
-				border-left: 5px solid rgba(0, 208, 168, 0.1);
+				border-left: 5px solid rgba(0, 208, 168, 0.16);
 				margin-left: -6.5px;
 				margin-right: 6.5px;
 				border-top-left-radius: 5px;

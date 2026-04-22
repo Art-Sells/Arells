@@ -5667,6 +5667,12 @@ a.myinv-about-button:focus-visible {
 	background: transparent !important;
 }
 
+/* Toggle-shell panel: match neighbor portfolio-center (bordered with no fill). */
+.asset-reality-toggle-shell.asset-panel--bitcoin,
+.asset-reality-toggle-shell.asset-panel--ethereum {
+	background: transparent !important;
+}
+
 .asset-price-panel--bitcoin {
 	border: 1px solid rgba(248, 141, 0, 0.3);
 	border-radius: 14px;
@@ -5841,11 +5847,6 @@ a.myinv-about-button:focus-visible {
 
 	.asset-reality-toggle-shell--loader .asset-reality-toggle--loader {
 		width: 350px;
-	}
-
-	.asset-reality-toggle-shell--loader .asset-reality-toggle--loader::before {
-		left: 0;
-		right: 0;
 	}
 }
 

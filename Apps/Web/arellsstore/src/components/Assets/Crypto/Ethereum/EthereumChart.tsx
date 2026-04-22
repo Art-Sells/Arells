@@ -145,9 +145,10 @@ const EthereumChart: React.FC<Props> = ({
           pointHitRadius: 20,
           // When the 24h range collapses to 2 points, keep the segment perfectly straight.
           tension: dataPoints.length < 3 ? 0 : 0.25,
+          cubicInterpolationMode: 'monotone' as const,
           borderWidth: chartLineWidth,
           borderCapStyle: 'round' as const,
-          borderJoinStyle: 'miter' as const,
+          borderJoinStyle: 'round' as const,
           clip: 12,
         },
       ],
@@ -212,6 +213,23 @@ const EthereumChart: React.FC<Props> = ({
 
       if (!e0 || !e1 || typeof e0.x !== 'number' || typeof e1.x !== 'number') {
         return fallbackLinear();
+      }
+
+      // Snap to the nearest data point when within a small threshold so the marker reaches
+      // peaks/troughs even when the user's X is slightly off (the smoothed bezier dips
+      // between points and would otherwise park the marker below a sharp spike's tip).
+      const SNAP_THRESHOLD_PX = 8;
+      const d0 = Math.abs(xTargetPx - e0.x);
+      const d1 = Math.abs(xTargetPx - e1.x);
+      if (d0 <= SNAP_THRESHOLD_PX || d1 <= SNAP_THRESHOLD_PX) {
+        const snapIdx = d0 <= d1 ? segIdx : segIdx + 1;
+        const snapEl = d0 <= d1 ? e0 : e1;
+        const src = sorted[Math.min(snapIdx, sorted.length - 1)] ?? sorted[sorted.length - 1];
+        return {
+          point: { x: src.x, y: src.y },
+          idx: Math.min(snapIdx, sorted.length - 1),
+          pixel: { x: snapEl.x, y: snapEl.y },
+        };
       }
 
       // For 2-point (or effectively 2-point) lines, enforce straight-line marker behavior.
