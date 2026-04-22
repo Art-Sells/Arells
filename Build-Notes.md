@@ -22,10 +22,9 @@
 - - sign in with google (xx is already an email etc etc, link?, can they sign in normally using gmail/email through normal sign in process? investigate)
 - Check CSC (TAX)
 - Fix
-- - Eth card under 400 px (or so, margin bottom changes?)
+- - XRP Circle on first jump line (price doesn't match line)
 - - Sometimes when i click the toggle, and i hover out and then release the hold (on desktop), the clicker sometimes thinks I still havenn't releaded the hold so when i hover over the toggle it still thinks I'm clicked... its not only after i click agian does the toggle clicker release
 - - long marketcap numbers
-- - summary section (double check this issue on web/mobile before implementing, might have been resolved?) my-investments+asset pages date-buttons/toggle always triggers resizing of purchased/current value sections regardless of the size of the numbers , while the date-buttons/toggle in asset pages don’t… investigate....
 - - favicons on mobile (TTL?) remove all fall back icons?
 - - Research to see if can delete ArellsImages from s3
 - (Sort)MarketCap/etc sorting (default by Marketcap always)

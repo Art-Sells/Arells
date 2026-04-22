@@ -96,7 +96,7 @@
 	border: none !important;
 }
 .asset-portfolio-summary-box--xrp {
-	border: 1px solid rgba(30, 41, 59, 0.3);
+	border: 1px solid rgba(30, 41, 59, 0.25);
 }
 .asset-home-button--xrp {
 	border: none;
@@ -104,7 +104,7 @@
 }
 .asset-profit-summary--xrp {
 	background: rgba(30, 41, 59, 0.06);
-	border: 1px solid rgba(30, 41, 59, 0.3);
+	border: 1px solid rgba(30, 41, 59, 0.25);
 }
 .asset-header-asset-icon--xrp {
 }
@@ -183,7 +183,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	border-radius: 6px;
 }
 .asset-invest-form-box--xrp {
-	border: 1px solid rgba(30, 41, 59, 0.3);
+	border: 1px solid rgba(30, 41, 59, 0.25);
 }
 .asset-invest-form-heading .asset-metric-title--bitcoin,
 .asset-invest-form-heading .asset-metric-title--xrp {
@@ -192,10 +192,10 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	opacity: 0.45;
 }
 .asset-invest-form-body--xrp {
-	border-color: rgba(30, 41, 59, 0.3);
+	border-color: rgba(30, 41, 59, 0.25);
 }
 .asset-invest-form-metrics-panel--xrp {
-	border-color: rgba(30, 41, 59, 0.3);
+	border-color: rgba(30, 41, 59, 0.25);
 }
 .asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
 .asset-invest-form-metrics-panel .asset-metric-symbol--xrp,
@@ -208,7 +208,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
 .asset-invest-form-controls--xrp {
-	border-color: rgba(30, 41, 59, 0.3);
+	border-color: rgba(30, 41, 59, 0.25);
 }
 .asset-number-loader--xrp {
 	width: 80px;
@@ -238,7 +238,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 .asset-invest-input--xrp:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(30, 41, 59, 0.3);
+	border-color: rgba(30, 41, 59, 0.25);
 }
 .asset-date-picker--xrp .asset-date-trigger {
 	border-color: rgba(30, 41, 59, 0.0);
@@ -249,7 +249,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 .asset-date-picker--xrp .asset-date-trigger:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(30, 41, 59, 0.3);
+	border-color: rgba(30, 41, 59, 0.25);
 }
 .asset-date-popover--xrp {
 	background: rgba(242, 243, 250, 0.9);
@@ -312,10 +312,10 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	background: rgba(30, 41, 59, 0.0) !important;
 }
 .asset-page--xrp .asset-range-button.asset-portfolio-icon-button {
-	border-color: rgba(30, 41, 59, 0.2) !important;
+	border-color: rgba(30, 41, 59, 0.15) !important;
 }
 .asset-page--xrp .asset-range-button.asset-portfolio-icon-button:active {
-	border-color: rgba(30, 41, 59, 0.3) !important;
+	border-color: rgba(30, 41, 59, 0.25) !important;
 }
 @media (hover: hover) and (pointer: fine) {
 	.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button:hover {
@@ -323,7 +323,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	}
 
 	.asset-page--xrp .asset-range-button.asset-portfolio-icon-button:hover {
-		border-color: rgba(30, 41, 59, 0.3) !important;
+		border-color: rgba(30, 41, 59, 0.25) !important;
 	}
 
 	.asset-range-button.asset-portfolio-icon-button:hover .asset-portfolio-icon-text {
@@ -357,7 +357,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	background: transparent !important;
 }
 .asset-investments-wrap--xrp {
-	border-color: rgba(30, 41, 59, 0.3);
+	border-color: rgba(30, 41, 59, 0.25);
 }
 .asset-investments-wrap .asset-metric-symbol--bitcoin,
 .asset-investments-wrap .asset-metric-symbol--xrp,
@@ -395,7 +395,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 }
 .myinv-page .myinv-asset-home-card.home-asset-xrp {
 	background: rgba(30, 41, 59, 0.06);
-	border: 1px solid rgba(30, 41, 59, 0.28);
+	border: 1px solid rgba(30, 41, 59, 0.23);
 	--asset-line-color: rgb(30, 41, 59);
 }
 .myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--bitcoin,
@@ -416,14 +416,14 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:active,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:focus-visible {
 	box-sizing: border-box;
-	/* Match `.asset-panel--xrp`: rgba(30,41,59,0.06) over canvas #ffffff; border 0.3 */
+	/* Match `.asset-panel--xrp`: rgba(30,41,59,0.06) over canvas #ffffff; border 0.25 */
 	background: #ffffff !important;
 	background: color-mix(in srgb, rgb(30, 41, 59) 6%, #ffffff) !important;
-	border: 1px solid rgba(30, 41, 59, 0.3);
+	border: 1px solid rgba(30, 41, 59, 0.25);
 }
 .myinv-edit-card--xrp {
 	background: rgba(30, 41, 59, 0.05);
-	border-color: rgba(30, 41, 59, 0.3);
+	border-color: rgba(30, 41, 59, 0.25);
 	color: rgba(30, 41, 59, 0.9);
 }
 @media (max-width: 750px) {
@@ -970,7 +970,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 }
 .asset-panel--xrp {
 	background: rgba(30, 41, 59, 0.06);
-	border: 1px solid rgba(30, 41, 59, 0.3);
+	border: 1px solid rgba(30, 41, 59, 0.25);
 }
 .asset-portfolio-center.asset-panel--bitcoin,
 .asset-portfolio-center.asset-panel--xrp {
@@ -980,7 +980,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	background: transparent !important;
 }
 .asset-price-panel--xrp {
-	border: 1px solid rgba(30, 41, 59, 0.3);
+	border: 1px solid rgba(30, 41, 59, 0.25);
 	border-radius: 14px;
 }
 .asset-market-controls.asset-panel--bitcoin,
@@ -1040,7 +1040,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	box-shadow: none !important;
 }
 .asset-page--xrp .asset-footer-about {
-	border-color: rgba(30, 41, 59, 0.35);
+	border-color: rgba(30, 41, 59, 0.3);
 	color: rgba(30, 41, 59, 0.75);
 }
 .asset-loader-toggle-shell--bitcoin,
@@ -1097,7 +1097,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 }
 .home-asset-xrp {
 				background: rgba(30, 41, 59, 0.06);
-				border: 1px solid rgba(30, 41, 59, 0.28);
+				border: 1px solid rgba(30, 41, 59, 0.23);
 			}
 .home-asset-xrp .home-assets-cell + .home-assets-cell {
 				border-left: 5px solid rgba(30, 41, 59, 0.07);

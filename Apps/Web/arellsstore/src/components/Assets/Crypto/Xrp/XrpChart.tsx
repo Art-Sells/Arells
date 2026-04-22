@@ -156,7 +156,8 @@ const XrpChart: React.FC<Props> = ({
           cubicInterpolationMode: 'monotone' as const,
           borderWidth: chartLineWidth,
           borderCapStyle: 'round' as const,
-          borderJoinStyle: 'round' as const,
+          /* Bevel reduces round-join outer bulge at sharp peaks (XRP’s first spike is steepest in px). */
+          borderJoinStyle: 'bevel' as const,
           clip: 12,
         },
       ],
