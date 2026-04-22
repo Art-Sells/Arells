@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/images/banners/ArellsGeneralBannerOfficial.jpg',
+        url: '/images/banners/assets/crypto/XRP/ArellsXRPBanner.jpg',
       },
     ],
   },
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: [
       {
-        url: '/images/banners/ArellsGeneralBannerOfficial.jpg',
+        url: '/images/banners/assets/crypto/XRP/ArellsXRPBanner.jpg',
       },
     ],
   },
