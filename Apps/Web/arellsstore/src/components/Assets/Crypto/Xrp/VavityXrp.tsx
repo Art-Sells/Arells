@@ -3317,8 +3317,8 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
               >
             <XrpChart
               history={chartHistoryForLine || []}
-                  color="rgba(30, 41, 59, 0.5)"
-                  activeColor="rgba(30, 41, 59, 0.6)"
+                  color="rgba(30, 41, 59, 0.3)"
+                  activeColor="rgba(30, 41, 59, 0.4)"
                   markerColor="rgba(30, 41, 59, 1)"
                   gridColor="transparent"
                   gridSpacing={30}

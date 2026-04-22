@@ -29,7 +29,7 @@
 	/* Match chart hover-dot color (XrpChart markerColor) */
 	--asset-hover-dot-color: rgba(30, 41, 59, 1);
 	/* Match chart line color (XrpChart color) */
-	--asset-chart-line-color: rgba(30, 41, 59, 0.5);
+	--asset-chart-line-color: rgba(30, 41, 59, 0.3);
 	/* Match chart line thickness (XrpChart borderWidth) */
 	--asset-chart-line-width: 6.5px;
 	/* Portfolio spacing tweaks (reduce gap between summary/add-more and Sign In/Show actions) */
@@ -175,6 +175,12 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 }
 .home-asset-card .asset-action-button--home-asset-chip.asset-action-button--xrp {
 	color: var(--asset-line-color) !important;
+	border-color: rgba(30, 41, 59, 0.4);
+	background: rgba(30, 41, 59, 0.08);
+}
+.asset-page--xrp .asset-action-button:not(.asset-action-button--save-signin) {
+	border-color: rgba(30, 41, 59, 0.4);
+	background: rgba(30, 41, 59, 0.08);
 }
 .asset-page--bitcoin .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
 .asset-page--xrp .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
@@ -277,7 +283,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 		background: rgba(196, 196, 196, 0.9);
 	}
 	to {
-		background: var(--asset-chart-line-color, rgba(30, 41, 59, 0.5));
+		background: var(--asset-chart-line-color, rgba(30, 41, 59, 0.3));
 	}
 }
 .asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
@@ -312,10 +318,10 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	background: rgba(30, 41, 59, 0.0) !important;
 }
 .asset-page--xrp .asset-range-button.asset-portfolio-icon-button {
-	border-color: rgba(30, 41, 59, 0.15) !important;
+	border-color: rgba(30, 41, 59, 0.4) !important;
 }
 .asset-page--xrp .asset-range-button.asset-portfolio-icon-button:active {
-	border-color: rgba(30, 41, 59, 0.25) !important;
+	border-color: rgba(30, 41, 59, 0.4) !important;
 }
 @media (hover: hover) and (pointer: fine) {
 	.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button:hover {
@@ -323,7 +329,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	}
 
 	.asset-page--xrp .asset-range-button.asset-portfolio-icon-button:hover {
-		border-color: rgba(30, 41, 59, 0.25) !important;
+		border-color: rgba(30, 41, 59, 0.4) !important;
 	}
 
 	.asset-range-button.asset-portfolio-icon-button:hover .asset-portfolio-icon-text {
@@ -334,22 +340,22 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 		transform: translateY(-5px);
 	}
 }
-.asset-range-button--xrp.is-active {
+.asset-page--xrp .asset-range-button--xrp.is-active {
 	border: 1px solid transparent;
-	background: rgba(30, 41, 59, 0.18);
+	background: rgba(30, 41, 59, 0.08);
 	color: var(--asset-range-button-label-color, rgb(30, 41, 59));
 	opacity: 0.6;
 	pointer-events: none;
 	cursor: default;
 	transform: none;
 }
-.asset-range-button--xrp:not(.is-active):not(:disabled) {
-	border-color: rgba(30, 41, 59, 0.9);
-	background: rgba(30, 41, 59, 0.18);
+.asset-page--xrp .asset-range-button--xrp:not(.is-active):not(:disabled) {
+	border-color: rgba(30, 41, 59, 0.4);
+	background: rgba(30, 41, 59, 0.08);
 	color: var(--asset-range-button-label-color, rgb(30, 41, 59));
 }
-.asset-range-button--xrp:disabled {
-	background: rgba(30, 41, 59, 0.18);
+.asset-page--xrp .asset-range-button--xrp:disabled {
+	background: rgba(30, 41, 59, 0.08);
 	color: var(--asset-range-button-label-color, rgb(30, 41, 59));
 }
 .asset-investments-list .asset-panel--bitcoin,
@@ -1078,8 +1084,8 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 }
 .asset-footer-about-button.asset-action-button--xrp {
 	color: rgba(30, 41, 59, 0.95);
-	border-color: rgba(30, 41, 59, 0.9);
-	background: rgba(30, 41, 59, 0.18);
+	border-color: rgba(30, 41, 59, 0.4);
+	background: rgba(30, 41, 59, 0.08);
 	--asset-footer-about-divider-color: rgba(30, 41, 59, 0.9);
 }
 .asset-view-more-assets--footer.asset-action-button--xrp {
