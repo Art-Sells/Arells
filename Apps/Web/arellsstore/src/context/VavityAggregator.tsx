@@ -71,7 +71,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     acVact: 0,
     acVactTaa: 0,
   });
-  const assetIds = useMemo(() => ['bitcoin', 'ethereum', 'solana'], []);
+  const assetIds = useMemo(() => ['bitcoin', 'ethereum', 'xrp', 'solana'], []);
   const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
   const sessionExpiryTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const lastSessionAssetRef = useRef<string>('bitcoin');

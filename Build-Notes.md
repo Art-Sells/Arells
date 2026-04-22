@@ -10,8 +10,8 @@
 ### Day After Launch:
 - Prepare to launch new assets (components/api-pointers/llms.txt/sitemaps/css-styles/etc (match similar colors (make sure you're 1-2 points out of the hex, not exact colors)))basically and duplicate and change asset names and colors...
 
-## 2 weeks after launch
-- If things look good, X-personal
+## 3-4 weeks after launch
+- If things look good (weekly assets compounding?, prepare for when to launch add investments/sign in section)
 - - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
 - Continue resolving Metrics Page UI
 - Prepare for WACA transition (LTP folder)

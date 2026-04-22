@@ -3,6 +3,7 @@ import axios from 'axios';
 const ASSET_PRICE: Record<string, { path: string; responseKey: string }> = {
   bitcoin: { path: '/api/assets/crypto/bitcoin/bitcoinPrice', responseKey: 'bitcoin' },
   ethereum: { path: '/api/assets/crypto/ethereum/ethereumPrice', responseKey: 'ethereum' },
+  xrp: { path: '/api/assets/crypto/xrp/xrpPrice', responseKey: 'ripple' },
   solana: { path: '/api/assets/crypto/solana/solanaPrice', responseKey: 'solana' },
 };
 

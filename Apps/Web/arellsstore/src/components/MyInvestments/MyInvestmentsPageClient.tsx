@@ -34,7 +34,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   } = useVavity();
   const forceSessionPreview = false;
   const forceEmptyEmailPreview = false;
-  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'solana'], []);
+  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'xrp', 'solana'], []);
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
       (sessionInvestments || []).map((inv: any) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
@@ -52,7 +52,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const effectiveAssetsMissing = forceSessionPreview
     ? sessionAssetsMissing
     : forceEmptyEmailPreview
-      ? ['bitcoin', 'ethereum', 'solana']
+      ? ['bitcoin', 'ethereum', 'xrp', 'solana']
       : assetsMissingInEmail;
 
   const [open, setOpen] = useState(false);
@@ -1148,9 +1148,21 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsPresent.map((asset) => {
                         const href =
-                          asset === 'bitcoin' ? '/bitcoin' : asset === 'ethereum' ? '/ethereum' : '/solana';
+                          asset === 'bitcoin'
+                            ? '/bitcoin'
+                            : asset === 'ethereum'
+                              ? '/ethereum'
+                              : asset === 'xrp'
+                                ? '/xrp'
+                                : '/solana';
                         const label =
-                          asset === 'bitcoin' ? 'Bitcoin' : asset === 'ethereum' ? 'Ethereum' : 'Solana';
+                          asset === 'bitcoin'
+                            ? 'Bitcoin'
+                            : asset === 'ethereum'
+                              ? 'Ethereum'
+                              : asset === 'xrp'
+                                ? 'XRP'
+                                : 'Solana';
                         return (
                           <Link
                             key={`more-${asset}`}
@@ -1185,9 +1197,21 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
                       {effectiveAssetsMissing.map((asset) => {
                         const href =
-                          asset === 'bitcoin' ? '/bitcoin' : asset === 'ethereum' ? '/ethereum' : '/solana';
+                          asset === 'bitcoin'
+                            ? '/bitcoin'
+                            : asset === 'ethereum'
+                              ? '/ethereum'
+                              : asset === 'xrp'
+                                ? '/xrp'
+                                : '/solana';
                         const label =
-                          asset === 'bitcoin' ? 'Bitcoin' : asset === 'ethereum' ? 'Ethereum' : 'Solana';
+                          asset === 'bitcoin'
+                            ? 'Bitcoin'
+                            : asset === 'ethereum'
+                              ? 'Ethereum'
+                              : asset === 'xrp'
+                                ? 'XRP'
+                                : 'Solana';
                         return (
                           <Link
                             key={`missing-${asset}`}

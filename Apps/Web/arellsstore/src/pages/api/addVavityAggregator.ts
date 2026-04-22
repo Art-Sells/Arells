@@ -16,6 +16,7 @@ const SESSION_TTL_MS = (() => {
 const VAPA_KEYS: Record<string, string> = {
   bitcoin: 'vavity/bitcoinVAPA.json',
   ethereum: 'vavity/ethereumVAPA.json',
+  xrp: 'vavity/xrpVAPA.json',
   solana: 'vavity/solanaVAPA.json',
 };
 

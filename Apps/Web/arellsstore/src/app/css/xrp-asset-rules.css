@@ -1,36 +1,36 @@
-/* Solana asset rules (Ethereum mirror + darker teal palette). */
+/* XRP asset rules — slate accent, white surfaces (no Ripple blue). */
 #overlayy .home-investments-slideup-button,
 #overlayy .myinv-home-button,
 #overlayy .asset-home-button,
 #overlayy .home-asset-card,
 #overlayy .home-asset-bitcoin,
-#overlayy .home-asset-solana {
+#overlayy .home-asset-xrp {
 	box-shadow: none !important;
 }
-#overlayy .home-asset-solana {
-	--asset-line-color: rgb(0, 173, 144);
+#overlayy .home-asset-xrp {
+	--asset-line-color: rgb(30, 41, 59);
 }
-.asset-page--solana {
+.asset-page--xrp {
 	background: transparent;
 }
-.asset-page--solana .asset-header-slogan,
-.asset-page--solana .asset-home-font-title {
-	color: var(--asset-slogan-color, rgb(0, 94, 88));
+.asset-page--xrp .asset-header-slogan,
+.asset-page--xrp .asset-home-font-title {
+	color: var(--asset-slogan-color, rgb(15, 23, 42));
 }
-.asset-page--solana .asset-investments-header {
-	color: var(--asset-slogan-color, rgb(0, 94, 88));
+.asset-page--xrp .asset-investments-header {
+	color: var(--asset-slogan-color, rgb(15, 23, 42));
 	opacity: 1;
 	margin-bottom: -12.5px;
 }
-.asset-page--solana {
-	--asset-slogan-color: rgb(0, 94, 88);
-	--asset-line-color: rgb(0, 173, 144);
+.asset-page--xrp {
+	--asset-slogan-color: rgb(15, 23, 42);
+	--asset-line-color: rgb(30, 41, 59);
 	--asset-unified-text-color: var(--asset-line-color);
-	/* Match chart hover-dot color (SolanaChart markerColor) */
-	--asset-hover-dot-color: rgba(0, 208, 168, 1);
-	/* Match chart line color (SolanaChart color) */
-	--asset-chart-line-color: rgba(0, 208, 168, 0.5);
-	/* Match chart line thickness (SolanaChart borderWidth) */
+	/* Match chart hover-dot color (XrpChart markerColor) */
+	--asset-hover-dot-color: rgba(30, 41, 59, 1);
+	/* Match chart line color (XrpChart color) */
+	--asset-chart-line-color: rgba(30, 41, 59, 0.5);
+	/* Match chart line thickness (XrpChart borderWidth) */
 	--asset-chart-line-width: 6.5px;
 	/* Portfolio spacing tweaks (reduce gap between summary/add-more and Sign In/Show actions) */
 	--asset-portfolio-summary-padding-bottom: 10px;
@@ -48,254 +48,254 @@
 .asset-page--bitcoin .asset-page-content *,
 .asset-page--bitcoin .asset-footer,
 .asset-page--bitcoin .asset-footer *,
-.asset-page--solana .asset-page-content,
-.asset-page--solana .asset-page-content *,
-.asset-page--solana .asset-footer,
-.asset-page--solana .asset-footer * {
+.asset-page--xrp .asset-page-content,
+.asset-page--xrp .asset-page-content *,
+.asset-page--xrp .asset-footer,
+.asset-page--xrp .asset-footer * {
 	color: var(--asset-unified-text-color) !important;
 }
-.asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:link,
-.asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:visited,
-.asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:hover,
-.asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:active,
-.asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana:focus-visible {
-	color: var(--asset-range-button-label-color, rgb(0, 173, 144)) !important;
-	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(0, 173, 144)) !important;
+.asset-page--xrp .asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:link,
+.asset-page--xrp .asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:visited,
+.asset-page--xrp .asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:hover,
+.asset-page--xrp .asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:active,
+.asset-page--xrp .asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:focus-visible {
+	color: var(--asset-range-button-label-color, rgb(30, 41, 59)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(30, 41, 59)) !important;
 }
-.asset-page--solana .asset-page-content a.asset-title-badge--section.asset-title-badge--solana .asset-title-badge-label {
-	color: var(--asset-range-button-label-color, rgb(0, 173, 144)) !important;
-	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(0, 173, 144)) !important;
+.asset-page--xrp .asset-page-content a.asset-title-badge--section.asset-title-badge--xrp .asset-title-badge-label {
+	color: var(--asset-range-button-label-color, rgb(30, 41, 59)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(30, 41, 59)) !important;
 	opacity: 0.5;
 }
 .asset-page--bitcoin .asset-header-title,
-.asset-page--solana .asset-header-title {
+.asset-page--xrp .asset-header-title {
 	color: var(--asset-line-color);
 	opacity: 1;
 }
 .asset-page--bitcoin .asset-metric-value,
 .asset-page--bitcoin .asset-metric-inline-value,
 .asset-page--bitcoin .asset-metric-number,
-.asset-page--solana .asset-metric-value,
-.asset-page--solana .asset-metric-inline-value,
-.asset-page--solana .asset-metric-number {
+.asset-page--xrp .asset-metric-value,
+.asset-page--xrp .asset-metric-inline-value,
+.asset-page--xrp .asset-metric-number {
 	color: var(--asset-line-color);
 }
 .asset-page--bitcoin .asset-metric-value:not(.asset-mount-fade-2s),
 .asset-page--bitcoin .asset-metric-inline-value:not(.asset-mount-fade-2s),
 .asset-page--bitcoin .asset-metric-number:not(.asset-mount-fade-2s),
-.asset-page--solana .asset-metric-value:not(.asset-mount-fade-2s),
-.asset-page--solana .asset-metric-inline-value:not(.asset-mount-fade-2s),
-.asset-page--solana .asset-metric-number:not(.asset-mount-fade-2s) {
+.asset-page--xrp .asset-metric-value:not(.asset-mount-fade-2s),
+.asset-page--xrp .asset-metric-inline-value:not(.asset-mount-fade-2s),
+.asset-page--xrp .asset-metric-number:not(.asset-mount-fade-2s) {
 	opacity: 1;
 }
 .asset-portfolio-summary-box--signin {
 	padding-top: 0px;
 	padding-bottom: 0px;
 	margin-bottom: 0px;
-	/* Remove the section outline for the Sign-in CTA (overrides --bitcoin/--solana border) */
+	/* Remove the section outline for the Sign-in CTA (overrides --bitcoin/--xrp border) */
 	border: none !important;
 }
-.asset-portfolio-summary-box--solana {
-	border: 1px solid rgba(0, 208, 168, 0.6);
+.asset-portfolio-summary-box--xrp {
+	border: 1px solid rgba(30, 41, 59, 0.3);
 }
-.asset-home-button--solana {
+.asset-home-button--xrp {
 	border: none;
 	box-shadow: none;
 }
-.asset-profit-summary--solana {
-	background: rgba(0, 208, 168, 0.06);
-	border: 1px solid rgba(0, 208, 168, 0.6);
+.asset-profit-summary--xrp {
+	background: rgba(30, 41, 59, 0.06);
+	border: 1px solid rgba(30, 41, 59, 0.3);
 }
-.asset-header-asset-icon--solana {
+.asset-header-asset-icon--xrp {
 }
-.asset-page--solana .asset-home-button {
-	border-color: rgba(0, 208, 168, 0.8);
+.asset-page--xrp .asset-home-button {
+	border-color: rgba(30, 41, 59, 0.8);
 }
-.asset-page-content--solana .asset-header-panel {
+.asset-page-content--xrp .asset-header-panel {
 	padding-top: 5px;
 	padding-right: 20px;   /* <- edit this */
 	padding-bottom: 15px;
 	padding-left: 0px;
   }
-.asset-metric-trend-icon--solana {
-	color: var(--asset-slogan-color, rgb(0, 94, 88));
+.asset-metric-trend-icon--xrp {
+	color: var(--asset-slogan-color, rgb(15, 23, 42));
 }
-.asset-metric-trend-icon--solana:not(.asset-mount-fade-2s) {
+.asset-metric-trend-icon--xrp:not(.asset-mount-fade-2s) {
 	opacity: 1;
 }
-.asset-home-font-label--solana {
+.asset-home-font-label--xrp {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
 }
-.asset-metric-title--solana {
+.asset-metric-title--xrp {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
 }
-.asset-metric-inline-title--solana {
+.asset-metric-inline-title--xrp {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
 }
-.asset-metric-symbol--solana {
+.asset-metric-symbol--xrp {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	margin-right: -2px;
 }
-.asset-metric-symbol--solana:not(.asset-mount-fade-2s) {
+.asset-metric-symbol--xrp:not(.asset-mount-fade-2s) {
 	opacity: 1;
 }
-.asset-metric-percent-symbol--solana {
+.asset-metric-percent-symbol--xrp {
 	margin-left: -1px;
 }
-.asset-metric-inline-symbol--solana {
+.asset-metric-inline-symbol--xrp {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
-	/* Match Purchased/Current $ spacing (asset-metric-symbol--solana uses -2px) */
+	/* Match Purchased/Current $ spacing (asset-metric-symbol--xrp uses -2px) */
 	margin-right: -2px;
 }
 .asset-page--bitcoin .asset-action-button,
-.asset-page--solana .asset-action-button,
+.asset-page--xrp .asset-action-button,
 .asset-page--bitcoin .asset-action-button:hover,
-.asset-page--solana .asset-action-button:hover {
+.asset-page--xrp .asset-action-button:hover {
 	box-shadow: none !important;
 }
-.asset-action-button--solana {
-	border-color: rgba(0, 208, 168, 0.9);
-	background: rgba(0, 208, 168, 0.18);
-	color: rgba(0, 208, 168, 0.95);
-}a.asset-action-button--solana:link,
-a.asset-action-button--solana:visited {
-	color: rgba(0, 208, 168, 0.95) !important;
-}a.asset-action-button--myinv-asset-link.asset-action-button--solana:link,
-a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
-	color: rgb(0, 173, 144) !important;
+.asset-action-button--xrp {
+	border-color: rgba(30, 41, 59, 0.9);
+	background: rgba(30, 41, 59, 0.18);
+	color: rgba(30, 41, 59, 0.95);
+}a.asset-action-button--xrp:link,
+a.asset-action-button--xrp:visited {
+	color: rgba(30, 41, 59, 0.95) !important;
+}a.asset-action-button--myinv-asset-link.asset-action-button--xrp:link,
+a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
+	color: rgb(30, 41, 59) !important;
 }
-.home-asset-card .asset-action-button--home-asset-chip.asset-action-button--solana {
+.home-asset-card .asset-action-button--home-asset-chip.asset-action-button--xrp {
 	color: var(--asset-line-color) !important;
 }
 .asset-page--bitcoin .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
-.asset-page--solana .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
+.asset-page--xrp .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
 .asset-page--bitcoin .asset-page-content .asset-action-button--invest-show,
-.asset-page--solana .asset-page-content .asset-action-button--invest-show {
+.asset-page--xrp .asset-page-content .asset-action-button--invest-show {
 	border-radius: 6px;
 }
-.asset-invest-form-box--solana {
-	border: 1px solid rgba(0, 208, 168, 0.3);
+.asset-invest-form-box--xrp {
+	border: 1px solid rgba(30, 41, 59, 0.3);
 }
 .asset-invest-form-heading .asset-metric-title--bitcoin,
-.asset-invest-form-heading .asset-metric-title--solana {
+.asset-invest-form-heading .asset-metric-title--xrp {
 	font-size: 28px;
 	letter-spacing: -2px;
 	opacity: 0.45;
 }
-.asset-invest-form-body--solana {
-	border-color: rgba(0, 208, 168, 0.3);
+.asset-invest-form-body--xrp {
+	border-color: rgba(30, 41, 59, 0.3);
 }
-.asset-invest-form-metrics-panel--solana {
-	border-color: rgba(0, 208, 168, 0.3);
+.asset-invest-form-metrics-panel--xrp {
+	border-color: rgba(30, 41, 59, 0.3);
 }
 .asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
-.asset-invest-form-metrics-panel .asset-metric-symbol--solana,
+.asset-invest-form-metrics-panel .asset-metric-symbol--xrp,
 .asset-invest-form-metrics-panel .asset-metric-inline-symbol--bitcoin,
-.asset-invest-form-metrics-panel .asset-metric-inline-symbol--solana {
+.asset-invest-form-metrics-panel .asset-metric-inline-symbol--xrp {
 	font-size: 19px;
 	font-weight: 800;
 	vertical-align: 2.7px;       /* <- edit symbol Y offset */
 	opacity: 0.7;
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
-.asset-invest-form-controls--solana {
-	border-color: rgba(0, 208, 168, 0.3);
+.asset-invest-form-controls--xrp {
+	border-color: rgba(30, 41, 59, 0.3);
 }
-.asset-number-loader--solana {
+.asset-number-loader--xrp {
 	width: 80px;
-	background: rgba(0, 208, 168, 0.1);
+	background: rgba(30, 41, 59, 0.1);
 }
-.asset-number-loader--solana::after {
-	background: rgba(0, 208, 168, 0.5);
+.asset-number-loader--xrp::after {
+	background: rgba(30, 41, 59, 0.5);
 }
-.asset-number-loader--solana.asset-number-loader--wide {
+.asset-number-loader--xrp.asset-number-loader--wide {
 	width: 140px;
 }
-.asset-number-loader--solana.asset-number-loader--narrow {
+.asset-number-loader--xrp.asset-number-loader--narrow {
 	width: 55px;
 }
-.home-asset-solana .asset-number-loader--card {
-	background: rgba(0, 208, 168, 0.1);
+.home-asset-xrp .asset-number-loader--card {
+	background: rgba(30, 41, 59, 0.1);
 }
-.home-asset-solana .asset-number-loader--card::after {
-	background: rgba(0, 208, 168, 0.3);
+.home-asset-xrp .asset-number-loader--card::after {
+	background: rgba(30, 41, 59, 0.3);
 }
-.asset-invest-input--solana {
+.asset-invest-input--xrp {
 	/* Match button border opacity */
-	border-color: rgba(0, 208, 168, 0.0);
-	background: rgba(0, 208, 168, 0.14);
+	border-color: rgba(30, 41, 59, 0.0);
+	background: rgba(30, 41, 59, 0.14);
 }
-.asset-invest-input--solana:focus,
-.asset-invest-input--solana:focus-visible {
+.asset-invest-input--xrp:focus,
+.asset-invest-input--xrp:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(0, 208, 168, 0.3);
+	border-color: rgba(30, 41, 59, 0.3);
 }
-.asset-date-picker--solana .asset-date-trigger {
-	border-color: rgba(0, 208, 168, 0.0);
-	background: rgba(0, 208, 168, 0.14);
+.asset-date-picker--xrp .asset-date-trigger {
+	border-color: rgba(30, 41, 59, 0.0);
+	background: rgba(30, 41, 59, 0.14);
 }
-.asset-date-picker--solana .asset-date-trigger.is-open,
-.asset-date-picker--solana .asset-date-trigger:focus,
-.asset-date-picker--solana .asset-date-trigger:focus-visible {
+.asset-date-picker--xrp .asset-date-trigger.is-open,
+.asset-date-picker--xrp .asset-date-trigger:focus,
+.asset-date-picker--xrp .asset-date-trigger:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(0, 208, 168, 0.3);
+	border-color: rgba(30, 41, 59, 0.3);
 }
-.asset-date-popover--solana {
+.asset-date-popover--xrp {
 	background: rgba(242, 243, 250, 0.9);
 }
-.asset-date-popover--solana .asset-date-day:hover {
-	background: rgba(0, 208, 168, 0.14);
+.asset-date-popover--xrp .asset-date-day:hover {
+	background: rgba(30, 41, 59, 0.14);
 }
-.asset-date-popover--solana .asset-date-day.is-selected {
-	background: rgba(0, 208, 168, 0.18);
+.asset-date-popover--xrp .asset-date-day.is-selected {
+	background: rgba(30, 41, 59, 0.18);
 }
-.asset-date-popover--solana .asset-date-nav:hover,
-.asset-date-popover--solana .asset-date-nav:active,
-.asset-date-popover--solana .asset-date-nav:focus {
-	background: rgba(0, 208, 168, 0.14);
+.asset-date-popover--xrp .asset-date-nav:hover,
+.asset-date-popover--xrp .asset-date-nav:active,
+.asset-date-popover--xrp .asset-date-nav:focus {
+	background: rgba(30, 41, 59, 0.14);
 }
-.asset-date-popover--solana .asset-date-day:focus {
+.asset-date-popover--xrp .asset-date-day:focus {
 	outline: none;
 }
-.asset-loader-toggle-shell--solana .asset-reality-toggle--loader::before {
-	animation: assetLoaderToggleLineSolana 3s ease forwards;
+.asset-loader-toggle-shell--xrp .asset-reality-toggle--loader::before {
+	animation: assetLoaderToggleLineXrp 3s ease forwards;
 }
 
-@keyframes assetLoaderToggleLineSolana {
+@keyframes assetLoaderToggleLineXrp {
 	from {
 		background: rgba(196, 196, 196, 0.9);
 	}
 	to {
-		background: var(--asset-chart-line-color, rgba(0, 208, 168, 0.5));
+		background: var(--asset-chart-line-color, rgba(30, 41, 59, 0.5));
 	}
 }
 .asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
-.asset-portfolio-summary-box .asset-metric-symbol--solana,
+.asset-portfolio-summary-box .asset-metric-symbol--xrp,
 .asset-portfolio-summary-box .asset-metric-inline-symbol--bitcoin,
-.asset-portfolio-summary-box .asset-metric-inline-symbol--solana {
+.asset-portfolio-summary-box .asset-metric-inline-symbol--xrp {
 	font-size: 19px;
 	font-weight: 800;
 	vertical-align: 2.7px;       /* <- edit symbol Y offset */
 	opacity: 0.7;
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
-.asset-page--solana .asset-page-content .asset-action-button--save-signin {
-	background: rgba(0, 208, 168, 1);
+.asset-page--xrp .asset-page-content .asset-action-button--save-signin {
+	background: rgba(30, 41, 59, 1);
 	box-shadow: none !important;
-	border-color: rgba(0, 208, 168, 1);
+	border-color: rgba(30, 41, 59, 1);
 	/* brighter "same hue" tint of the background */
-	color: color-mix(in srgb, rgba(0, 208, 168, 1) 18%, white 82%) !important;
+	color: color-mix(in srgb, rgba(30, 41, 59, 1) 18%, white 82%) !important;
 }
 @media (hover: hover) and (pointer: fine) {
 	.asset-page--bitcoin .asset-page-content .asset-action-button--save-signin:hover {
@@ -303,27 +303,27 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 		transform: translateY(-4px);
 }
 
-.asset-page--solana .asset-page-content .asset-action-button--save-signin:hover {
+.asset-page--xrp .asset-page-content .asset-action-button--save-signin:hover {
 	box-shadow: none !important;
 	transform: translateY(-4px);
 	}
 }
-.asset-page--solana .asset-range-button.asset-portfolio-icon-button {
-	background: rgba(0, 208, 168, 0.0) !important;
+.asset-page--xrp .asset-range-button.asset-portfolio-icon-button {
+	background: rgba(30, 41, 59, 0.0) !important;
 }
-.asset-page--solana .asset-range-button.asset-portfolio-icon-button {
-	border-color: rgba(0, 208, 168, 0.2) !important;
+.asset-page--xrp .asset-range-button.asset-portfolio-icon-button {
+	border-color: rgba(30, 41, 59, 0.2) !important;
 }
-.asset-page--solana .asset-range-button.asset-portfolio-icon-button:active {
-	border-color: rgba(0, 208, 168, 0.3) !important;
+.asset-page--xrp .asset-range-button.asset-portfolio-icon-button:active {
+	border-color: rgba(30, 41, 59, 0.3) !important;
 }
 @media (hover: hover) and (pointer: fine) {
 	.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button:hover {
 		border-color: rgba(248, 141, 0, 0.3) !important;
 	}
 
-	.asset-page--solana .asset-range-button.asset-portfolio-icon-button:hover {
-		border-color: rgba(0, 208, 168, 0.3) !important;
+	.asset-page--xrp .asset-range-button.asset-portfolio-icon-button:hover {
+		border-color: rgba(30, 41, 59, 0.3) !important;
 	}
 
 	.asset-range-button.asset-portfolio-icon-button:hover .asset-portfolio-icon-text {
@@ -334,97 +334,97 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 		transform: translateY(-5px);
 	}
 }
-.asset-range-button--solana.is-active {
+.asset-range-button--xrp.is-active {
 	border: 1px solid transparent;
-	background: rgba(0, 208, 168, 0.18);
-	color: var(--asset-range-button-label-color, rgb(0, 173, 144));
+	background: rgba(30, 41, 59, 0.18);
+	color: var(--asset-range-button-label-color, rgb(30, 41, 59));
 	opacity: 0.6;
 	pointer-events: none;
 	cursor: default;
 	transform: none;
 }
-.asset-range-button--solana:not(.is-active):not(:disabled) {
-	border-color: rgba(0, 208, 168, 0.9);
-	background: rgba(0, 208, 168, 0.18);
-	color: var(--asset-range-button-label-color, rgb(0, 173, 144));
+.asset-range-button--xrp:not(.is-active):not(:disabled) {
+	border-color: rgba(30, 41, 59, 0.9);
+	background: rgba(30, 41, 59, 0.18);
+	color: var(--asset-range-button-label-color, rgb(30, 41, 59));
 }
-.asset-range-button--solana:disabled {
-	background: rgba(0, 208, 168, 0.18);
-	color: var(--asset-range-button-label-color, rgb(0, 173, 144));
+.asset-range-button--xrp:disabled {
+	background: rgba(30, 41, 59, 0.18);
+	color: var(--asset-range-button-label-color, rgb(30, 41, 59));
 }
 .asset-investments-list .asset-panel--bitcoin,
-.asset-investments-list .asset-panel--solana {
+.asset-investments-list .asset-panel--xrp {
 	background: transparent !important;
 }
-.asset-investments-wrap--solana {
-	border-color: rgba(0, 208, 168, 0.3);
+.asset-investments-wrap--xrp {
+	border-color: rgba(30, 41, 59, 0.3);
 }
 .asset-investments-wrap .asset-metric-symbol--bitcoin,
-.asset-investments-wrap .asset-metric-symbol--solana,
+.asset-investments-wrap .asset-metric-symbol--xrp,
 .asset-investments-wrap .asset-metric-inline-symbol--bitcoin,
-.asset-investments-wrap .asset-metric-inline-symbol--solana {
+.asset-investments-wrap .asset-metric-inline-symbol--xrp {
 	font-size: 19px;
 	font-weight: 800;
 	vertical-align: 2.7px;       /* <- edit symbol Y offset */
 	opacity: 0.7;
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
-.asset-slide-panel--clearing-solana {
+.asset-slide-panel--clearing-xrp {
 	background: transparent;
 	box-shadow: none;
 }
-.asset-home-font-label--solana,
-.asset-metric-title--solana,
-.asset-metric-inline-title--solana {
+.asset-home-font-label--xrp,
+.asset-metric-title--xrp,
+.asset-metric-inline-title--xrp {
 	margin-top: 0px;
-	color: var(--asset-slogan-color, rgb(0, 94, 88));
+	color: var(--asset-slogan-color, rgb(15, 23, 42));
 	opacity: 1;
 	font-size: 12px;
 	font-weight: 200;
 }
-.asset-metric-symbol--solana,
-.asset-metric-inline-symbol--solana {
+.asset-metric-symbol--xrp,
+.asset-metric-inline-symbol--xrp {
 	margin-top: 0px;
-	color: var(--asset-slogan-color, rgb(0, 94, 88));
+	color: var(--asset-slogan-color, rgb(15, 23, 42));
 	opacity: 1;
 
 }
 .asset-price-chart-row--combined.asset-panel--bitcoin,
-.asset-price-chart-row--combined.asset-panel--solana {
+.asset-price-chart-row--combined.asset-panel--xrp {
 	background: transparent !important;
 }
-.myinv-page .myinv-asset-home-card.home-asset-solana {
-	background: rgba(0, 208, 168, 0.06);
-	border: 1px solid rgba(0, 208, 168, 0.26);
-	--asset-line-color: rgb(0, 173, 144);
+.myinv-page .myinv-asset-home-card.home-asset-xrp {
+	background: rgba(30, 41, 59, 0.06);
+	border: 1px solid rgba(30, 41, 59, 0.28);
+	--asset-line-color: rgb(30, 41, 59);
 }
 .myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--bitcoin,
-.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--solana {
+.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--xrp {
 	color: var(--asset-line-color) !important;
 }
-.asset-title-badge--solana {
-	background: rgba(0, 208, 168, 1);
-	color: rgba(0, 208, 168, 0.95) !important;
+.asset-title-badge--xrp {
+	background: rgba(30, 41, 59, 1);
+	color: rgba(30, 41, 59, 0.95) !important;
 }
-.asset-title-badge--section.asset-title-badge--solana {
+.asset-title-badge--section.asset-title-badge--xrp {
 	padding-left: 12px;     /* <- edit ETH badge horizontal padding over 750px */
 	padding-right: 12px;
 }
-.asset-page-content a.asset-title-badge--section.asset-title-badge--solana:link,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--solana:visited,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--solana:hover,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--solana:active,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--solana:focus-visible {
+.asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:link,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:visited,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:hover,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:active,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--xrp:focus-visible {
 	box-sizing: border-box;
-	/* Match `.asset-panel--solana`: rgba(0,208,168,0.06) over canvas rgb(235, 249, 244); border 0.6 */
-	background: rgb(232, 246, 242) !important;
-	background: color-mix(in srgb, rgb(0, 173, 144) 6%, rgb(235, 249, 244)) !important;
-	border: 1px solid rgba(0, 208, 168, 0.6);
+	/* Match `.asset-panel--xrp`: rgba(30,41,59,0.06) over canvas #ffffff; border 0.3 */
+	background: #ffffff !important;
+	background: color-mix(in srgb, rgb(30, 41, 59) 6%, #ffffff) !important;
+	border: 1px solid rgba(30, 41, 59, 0.3);
 }
-.myinv-edit-card--solana {
-	background: rgba(0, 208, 168, 0.05);
-	border-color: rgba(0, 208, 168, 0.3);
-	color: rgba(0, 208, 168, 0.9);
+.myinv-edit-card--xrp {
+	background: rgba(30, 41, 59, 0.05);
+	border-color: rgba(30, 41, 59, 0.3);
+	color: rgba(30, 41, 59, 0.9);
 }
 @media (max-width: 750px) {
 	/* Match desktop narrow-window text metrics: iOS otherwise boosts body text and shifts the title vs icons. */
@@ -460,7 +460,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 		padding-bottom: 0px;
 		padding-left: 10px;
 	}
-	.asset-page-content--solana .asset-header-panel {
+	.asset-page-content--xrp .asset-header-panel {
 		padding-top: 6px;
 		padding-right: 10px;   /* <- edit this */
 		padding-bottom: 0px;
@@ -481,7 +481,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 		padding-left: 14px;     /* <- edit BTC badge horizontal padding under 750px */
 		padding-right: 14px;
 	}
-	.asset-title-badge--section.asset-title-badge--solana {
+	.asset-title-badge--section.asset-title-badge--xrp {
 		padding-left: 14px;     /* <- edit ETH badge horizontal padding under 750px */
 		padding-right: 14px;
 	}
@@ -632,17 +632,17 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 
 	.asset-price-panel .asset-metric-title--bitcoin,
-	.asset-price-panel .asset-metric-title--solana,
+	.asset-price-panel .asset-metric-title--xrp,
 	.asset-market-controls .asset-metric-inline-title--bitcoin,
-	.asset-market-controls .asset-metric-inline-title--solana {
+	.asset-market-controls .asset-metric-inline-title--xrp {
 		font-size: 10.3px;
 	}
 
 	.asset-price-panel .asset-metric-value,
 	.asset-price-panel .asset-metric-symbol--bitcoin,
-	.asset-price-panel .asset-metric-symbol--solana,
+	.asset-price-panel .asset-metric-symbol--xrp,
 	.asset-price-panel .asset-metric-percent-symbol--bitcoin,
-	.asset-price-panel .asset-metric-percent-symbol--solana,
+	.asset-price-panel .asset-metric-percent-symbol--xrp,
 	.asset-market-controls .asset-market-status-value {
 		font-size: 10.8px;
 	}
@@ -651,7 +651,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 		margin-left: -1.5px;
 	}
 
-	.asset-price-panel .asset-metric-percent-symbol--solana {
+	.asset-price-panel .asset-metric-percent-symbol--xrp {
 		margin-left: -2px;
 	}
 
@@ -691,7 +691,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 
 	.asset-chart-date-badge .asset-metric-inline-title--bitcoin,
-	.asset-chart-date-badge .asset-metric-inline-title--solana {
+	.asset-chart-date-badge .asset-metric-inline-title--xrp {
 		font-size: 10.3px;
 	}
 
@@ -852,18 +852,18 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 
 	/* Group 2 — Metric word titles → match myinv-metric-title (10.5px, 0 letter-spacing) */
 	.asset-portfolio-summary-box .asset-metric-title--bitcoin,
-	.asset-portfolio-summary-box .asset-metric-title--solana,
+	.asset-portfolio-summary-box .asset-metric-title--xrp,
 	.asset-portfolio-summary-box .asset-metric-inline-title--bitcoin,
-	.asset-portfolio-summary-box .asset-metric-inline-title--solana,
+	.asset-portfolio-summary-box .asset-metric-inline-title--xrp,
 	.asset-invest-form-metrics-panel .asset-metric-title--bitcoin,
-	.asset-invest-form-metrics-panel .asset-metric-title--solana,
+	.asset-invest-form-metrics-panel .asset-metric-title--xrp,
 	.asset-invest-form-controls .asset-metric-title--bitcoin,
-	.asset-invest-form-controls .asset-metric-title--solana,
+	.asset-invest-form-controls .asset-metric-title--xrp,
 	.asset-invest-form-metric-title,
 	.asset-investments-wrap .asset-metric-title--bitcoin,
-	.asset-investments-wrap .asset-metric-title--solana,
+	.asset-investments-wrap .asset-metric-title--xrp,
 	.asset-investments-wrap .asset-metric-inline-title--bitcoin,
-	.asset-investments-wrap .asset-metric-inline-title--solana {
+	.asset-investments-wrap .asset-metric-inline-title--xrp {
 		font-size: 10.5px !important;
 	}
 
@@ -881,7 +881,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 
 	.asset-invest-form-heading .asset-metric-title--bitcoin,
-	.asset-invest-form-heading .asset-metric-title--solana {
+	.asset-invest-form-heading .asset-metric-title--xrp {
 		font-size: 23.5px !important;
 		letter-spacing: -2px !important;
 	}
@@ -908,17 +908,17 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 
 	/* Group 3 — $ symbols → match myinv-metric-symbol (14px) */
 	.asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
-	.asset-portfolio-summary-box .asset-metric-symbol--solana,
+	.asset-portfolio-summary-box .asset-metric-symbol--xrp,
 	.asset-portfolio-summary-box .asset-metric-inline-symbol--bitcoin,
-	.asset-portfolio-summary-box .asset-metric-inline-symbol--solana,
+	.asset-portfolio-summary-box .asset-metric-inline-symbol--xrp,
 	.asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
-	.asset-invest-form-metrics-panel .asset-metric-symbol--solana,
+	.asset-invest-form-metrics-panel .asset-metric-symbol--xrp,
 	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--bitcoin,
-	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--solana,
+	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--xrp,
 	.asset-investments-wrap .asset-metric-symbol--bitcoin,
-	.asset-investments-wrap .asset-metric-symbol--solana,
+	.asset-investments-wrap .asset-metric-symbol--xrp,
 	.asset-investments-wrap .asset-metric-inline-symbol--bitcoin,
-	.asset-investments-wrap .asset-metric-inline-symbol--solana {
+	.asset-investments-wrap .asset-metric-inline-symbol--xrp {
 		font-size: 14px !important;
 	}
 
@@ -965,23 +965,23 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 
 }
 .asset-profit-block.asset-panel--bitcoin,
-.asset-profit-block.asset-panel--solana {
+.asset-profit-block.asset-panel--xrp {
 	background: transparent !important;
 }
-.asset-panel--solana {
-	background: rgba(0, 208, 168, 0.06);
-	border: 1px solid rgba(0, 208, 168, 0.6);
+.asset-panel--xrp {
+	background: rgba(30, 41, 59, 0.06);
+	border: 1px solid rgba(30, 41, 59, 0.3);
 }
 .asset-portfolio-center.asset-panel--bitcoin,
-.asset-portfolio-center.asset-panel--solana {
+.asset-portfolio-center.asset-panel--xrp {
 	background: transparent !important;
 }
-.asset-price-panel--solana {
-	border: 1px solid rgba(0, 208, 168, 0.6);
+.asset-price-panel--xrp {
+	border: 1px solid rgba(30, 41, 59, 0.3);
 	border-radius: 14px;
 }
 .asset-market-controls.asset-panel--bitcoin,
-.asset-market-controls.asset-panel--solana {
+.asset-market-controls.asset-panel--xrp {
 	background: transparent;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -990,32 +990,32 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	transform: translateY(-4px);
 	}
 
-	.asset-page--solana .asset-page-content .asset-action-button--add-investments:hover {
+	.asset-page--xrp .asset-page-content .asset-action-button--add-investments:hover {
 		box-shadow: none !important;
 		transform: translateY(-4px);
 	}
 }
-.asset-page--solana .asset-page-content .asset-action-button--add-investments {
+.asset-page--xrp .asset-page-content .asset-action-button--add-investments {
 	box-shadow: none !important;
 }
-.asset-page--solana .asset-page-content .asset-action-button--invest-submit {
+.asset-page--xrp .asset-page-content .asset-action-button--invest-submit {
 	box-shadow: none !important;
 }
-.asset-page--solana .asset-page-content .asset-action-button--invest-submit:hover {
+.asset-page--xrp .asset-page-content .asset-action-button--invest-submit:hover {
 	box-shadow: none !important;
 }
 .asset-page-content .asset-home-icon,
 .asset-page-content .asset-home-icon--bitcoin,
-.asset-page-content .asset-home-icon--solana,
+.asset-page-content .asset-home-icon--xrp,
 .asset-page-content .asset-header-asset-icon,
 .asset-page-content .asset-header-asset-icon--bitcoin,
-.asset-page-content .asset-header-asset-icon--solana {
+.asset-page-content .asset-header-asset-icon--xrp {
 	filter: none !important;
 }
 .asset-page--bitcoin .asset-page-content button,
 .asset-page--bitcoin .asset-page-content .asset-action-button,
-.asset-page--solana .asset-page-content button,
-.asset-page--solana .asset-page-content .asset-action-button {
+.asset-page--xrp .asset-page-content button,
+.asset-page--xrp .asset-page-content .asset-action-button {
 	box-shadow: none !important;
 }
 .asset-page--bitcoin .asset-page-content button:hover,
@@ -1026,29 +1026,29 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 .asset-page--bitcoin .asset-page-content .asset-action-button:active,
 .asset-page--bitcoin .asset-page-content .asset-action-button:focus,
 .asset-page--bitcoin .asset-page-content .asset-action-button:focus-visible,
-.asset-page--solana .asset-page-content button:hover,
-.asset-page--solana .asset-page-content button:active,
-.asset-page--solana .asset-page-content button:focus,
-.asset-page--solana .asset-page-content button:focus-visible,
-.asset-page--solana .asset-page-content .asset-action-button:hover,
-.asset-page--solana .asset-page-content .asset-action-button:active,
-.asset-page--solana .asset-page-content .asset-action-button:focus,
-.asset-page--solana .asset-page-content .asset-action-button:focus-visible {
+.asset-page--xrp .asset-page-content button:hover,
+.asset-page--xrp .asset-page-content button:active,
+.asset-page--xrp .asset-page-content button:focus,
+.asset-page--xrp .asset-page-content button:focus-visible,
+.asset-page--xrp .asset-page-content .asset-action-button:hover,
+.asset-page--xrp .asset-page-content .asset-action-button:active,
+.asset-page--xrp .asset-page-content .asset-action-button:focus,
+.asset-page--xrp .asset-page-content .asset-action-button:focus-visible {
 	box-shadow: none !important;
 }
-.asset-page--solana .asset-footer-about {
-	border-color: rgba(0, 208, 168, 0.35);
-	color: rgba(0, 208, 168, 0.75);
+.asset-page--xrp .asset-footer-about {
+	border-color: rgba(30, 41, 59, 0.35);
+	color: rgba(30, 41, 59, 0.75);
 }
 .asset-loader-toggle-shell--bitcoin,
-.asset-loader-toggle-shell--solana {
+.asset-loader-toggle-shell--xrp {
 	--asset-loader-toggle-shell-width: 154px;
 	--asset-loader-toggle-width: 154px;
 }
 
 @media (min-width: 751px) {
 	.asset-loader-toggle-shell--bitcoin,
-	.asset-loader-toggle-shell--solana {
+	.asset-loader-toggle-shell--xrp {
 		--asset-loader-toggle-shell-width: 350px;
 		--asset-loader-toggle-width: 350px;
 	}
@@ -1063,44 +1063,52 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 }
 
-.asset-loader-overlay--solana {
+.asset-loader-overlay--xrp {
 	background: rgb(255, 255, 255);
 }
-.asset-loader-ring--solana .asset-loader-spinner circle {
-	stroke: rgba(0, 208, 168, 1);
-	animation: assetLoaderStrokeSolana 3s ease forwards;
+.asset-loader-ring--xrp .asset-loader-spinner circle {
+	stroke: rgba(30, 41, 59, 1);
+	animation: assetLoaderStrokeXrp 3s ease forwards;
 }
-.asset-footer-about-button.asset-action-button--solana {
-	color: rgba(0, 208, 168, 0.95);
-	border-color: rgba(0, 208, 168, 0.9);
-	background: rgba(0, 208, 168, 0.18);
-	--asset-footer-about-divider-color: rgba(0, 208, 168, 0.9);
+@keyframes assetLoaderStrokeXrp {
+	from {
+		stroke: rgba(196, 196, 196, 0.9);
+	}
+	to {
+		stroke: rgba(30, 41, 59, 1);
+	}
 }
-.asset-view-more-assets--footer.asset-action-button--solana {
-	--asset-footer-about-divider-color: rgba(0, 208, 168, 0.9);
+.asset-footer-about-button.asset-action-button--xrp {
+	color: rgba(30, 41, 59, 0.95);
+	border-color: rgba(30, 41, 59, 0.9);
+	background: rgba(30, 41, 59, 0.18);
+	--asset-footer-about-divider-color: rgba(30, 41, 59, 0.9);
 }
-.asset-chart-grid-shimmer--solana .asset-chart-grid-shimmer-thin {
+.asset-view-more-assets--footer.asset-action-button--xrp {
+	--asset-footer-about-divider-color: rgba(30, 41, 59, 0.9);
+}
+.asset-chart-grid-shimmer--xrp .asset-chart-grid-shimmer-thin {
 	background-image:
-		repeating-linear-gradient(to right, rgba(0, 208, 168, 0.25) 0px, rgba(0, 208, 168, 0.25) 1px, transparent 1px, transparent 30px),
-		repeating-linear-gradient(to bottom, rgba(0, 208, 168, 0.25) 0px, rgba(0, 208, 168, 0.25) 1px, transparent 1px, transparent 30px);
+		repeating-linear-gradient(to right, rgba(30, 41, 59, 0.25) 0px, rgba(30, 41, 59, 0.25) 1px, transparent 1px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(30, 41, 59, 0.25) 0px, rgba(30, 41, 59, 0.25) 1px, transparent 1px, transparent 30px);
 }
-.asset-chart-grid-shimmer--solana .asset-chart-grid-shimmer-thick {
+.asset-chart-grid-shimmer--xrp .asset-chart-grid-shimmer-thick {
 	background-image:
-		repeating-linear-gradient(to right, rgba(0, 208, 168, 0.2) 0px, rgba(0, 208, 168, 0.2) 2px, transparent 2px, transparent 30px),
-		repeating-linear-gradient(to bottom, rgba(0, 208, 168, 0.2) 0px, rgba(0, 208, 168, 0.2) 2px, transparent 2px, transparent 30px);
+		repeating-linear-gradient(to right, rgba(30, 41, 59, 0.2) 0px, rgba(30, 41, 59, 0.2) 2px, transparent 2px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(30, 41, 59, 0.2) 0px, rgba(30, 41, 59, 0.2) 2px, transparent 2px, transparent 30px);
 }
-.home-asset-solana {
-				background: rgba(0, 208, 168, 0.06);
-				border: 1px solid rgba(0, 208, 168, 0.6);
+.home-asset-xrp {
+				background: rgba(30, 41, 59, 0.06);
+				border: 1px solid rgba(30, 41, 59, 0.28);
 			}
-.home-asset-solana .home-assets-cell + .home-assets-cell {
-				border-left: 5px solid rgba(0, 208, 168, 0.1);
+.home-asset-xrp .home-assets-cell + .home-assets-cell {
+				border-left: 5px solid rgba(30, 41, 59, 0.1);
 				margin-left: -6.5px;
 				margin-right: 6.5px;
 				border-top-left-radius: 5px;
 				border-bottom-left-radius: 5px;
 			}
-.home-asset-label-solana .home-asset-name {
+.home-asset-label-xrp .home-asset-name {
 				font-size: 12.5px;
 			}
 @media screen and (max-width: 700px) {
@@ -1174,7 +1182,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 
 	.home-asset-label-bitcoin .home-asset-name,
-	.home-asset-label-solana .home-asset-name {
+	.home-asset-label-xrp .home-asset-name {
 		font-size: 10.5px;
 	}
 

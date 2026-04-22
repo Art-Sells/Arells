@@ -25,6 +25,7 @@
 #overlayy .home-asset-card,
 #overlayy .home-asset-bitcoin,
 #overlayy .home-asset-ethereum,
+#overlayy .home-asset-xrp,
 #overlayy .home-asset-solana {
 	box-shadow: none !important;
 }
@@ -47,6 +48,10 @@
 
 #overlayy .home-asset-ethereum {
 	--asset-line-color: rgb(107, 114, 168);
+}
+
+#overlayy .home-asset-xrp {
+	--asset-line-color: rgb(30, 41, 59);
 }
 
 #overlayy .home-asset-solana {
@@ -2308,11 +2313,6 @@ a.asset-action-button--myinv-asset-link {
 	/* 350px track + line on crypto asset pages (matches loader line below). */
 	.asset-page-content .asset-reality-toggle {
 		width: 350px;
-	}
-
-	.asset-page-content .asset-reality-toggle::before {
-		left: 0;
-		right: 0;
 	}
 }
 

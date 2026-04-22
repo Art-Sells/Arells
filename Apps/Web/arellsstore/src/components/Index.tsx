@@ -361,6 +361,7 @@ const Index = () => {
     const assets = [
       { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin' },
       { id: 'ethereum', label: 'Ethereum', href: '/ethereum' },
+      { id: 'xrp', label: 'XRP', href: '/xrp' },
       { id: 'solana', label: 'Solana', href: '/solana' },
     ];
 

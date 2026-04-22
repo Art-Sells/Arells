@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { ReactNode } from 'react';
 import './css/Home.css';
+import './css/xrp-asset-rules.css';
 import './css/solana-asset-rules.css';
 import './css/HomeLoaderOverrides.css';
 import { UserProvider } from '../context/UserContext';

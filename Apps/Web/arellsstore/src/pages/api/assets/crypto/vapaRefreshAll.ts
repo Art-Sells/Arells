@@ -16,6 +16,12 @@ const assets: VapaAssetConfig[] = [
     historyUrl: 'https://pro-api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=max',
   },
   {
+    id: 'xrp',
+    s3Key: 'vavity/xrpVAPA.json',
+    priceUrl: 'https://pro-api.coingecko.com/api/v3/simple/price?ids=ripple&vs_currencies=usd&include_market_cap=true',
+    historyUrl: 'https://pro-api.coingecko.com/api/v3/coins/ripple/market_chart?vs_currency=usd&days=max',
+  },
+  {
     id: 'solana',
     s3Key: 'vavity/solanaVAPA.json',
     priceUrl: 'https://pro-api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd&include_market_cap=true',
