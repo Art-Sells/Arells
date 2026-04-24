@@ -258,7 +258,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	border-color: rgba(30, 41, 59, 0.3);
 }
 .asset-date-popover--xrp {
-	background: rgba(238, 240, 245, 0.9);
+	background: rgba(255, 255, 255, 0.97);
 }
 .asset-date-popover--xrp .asset-date-day:hover {
 	background: rgba(30, 41, 59, 0.14);
@@ -407,6 +407,10 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 .myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--bitcoin,
 .myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--xrp {
 	color: var(--asset-line-color) !important;
+}
+.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--xrp {
+	border-color: rgba(30, 41, 59, 0.4);
+	background: rgba(30, 41, 59, 0.08);
 }
 .asset-title-badge--xrp {
 	background: rgba(30, 41, 59, 1);

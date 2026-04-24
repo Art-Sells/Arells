@@ -399,7 +399,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 }
 .myinv-page .myinv-asset-home-card.home-asset-solana {
 	background: rgba(0, 208, 168, 0.06);
-	border: 1px solid rgba(0, 208, 168, 0.26);
+	border: 1px solid rgba(0, 208, 168, 0.6);
 	--asset-line-color: rgb(0, 173, 144);
 }
 .myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--bitcoin,

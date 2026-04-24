@@ -101,7 +101,7 @@ export default function CustomDatePicker({ value, onChange, className, placehold
         } as React.CSSProperties;
       case 'solana':
         return {
-          '--asset-line-color': 'rgb(0, 173, 144)',
+          '--asset-line-color': 'rgb(0, 145, 120)',
           '--asset-slogan-color': 'rgb(0, 94, 88)',
           '--asset-border-color': 'rgba(0, 208, 168, 0.45)',
         } as React.CSSProperties;
