@@ -3126,7 +3126,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
           <div
             className={`asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}
           >
-            investments should never lose value
+            should never lose value
           </div>
         </div>
         <div {...assetPriceChartMountSlide.slidePanelProps}>

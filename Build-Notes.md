@@ -6,6 +6,8 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
+-*update sitemap and indexing after main submission*
+
 
 ### Day After Launch:
 - Prepare to launch new assets (components/api-pointers/llms.txt/sitemaps/css-styles/etc (match similar colors (make sure you're 1-2 points out of the hex, not exact colors)))basically and duplicate and change asset names and colors...
