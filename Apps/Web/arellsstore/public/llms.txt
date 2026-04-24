@@ -1,6 +1,6 @@
 # Arells
 
-> Arells shows how assets would look if investments never lost value. 
+> Arells is a belief that investments should never lose value. 
 
 ## Canonical URLs (production)
 

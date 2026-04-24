@@ -4,7 +4,7 @@ import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
 
 export const metadata: Metadata = {
   title: 'XRP',
-  description: 'If investments never lost value.',
+  description: 'Investments should never lose value.',
   robots: { index: true, follow: true },
   alternates: {
     canonical: '/xrp',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'XRP',
-    description: 'If investments never lost value.',
+    description: 'Investments should never lose value.',
     url: '/xrp',
     type: 'website',
     images: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: 'XRP',
-    description: 'If investments never lost value.',
+    description: 'Investments should never lose value.',
     card: 'summary_large_image',
     images: [
       {

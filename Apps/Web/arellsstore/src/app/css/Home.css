@@ -293,6 +293,12 @@ body {
 	box-sizing: border-box;
 }
 
+.about-section--mid-body {
+	padding: 16px 14px;
+	margin-bottom: 12px;
+	box-sizing: border-box;
+}
+
 .about-section--inner-body {
 	padding: 16px 14px;
 	margin-bottom: 12px;
@@ -300,6 +306,14 @@ body {
 	margin-right: auto;
 	width: 210px;
 	box-sizing: border-box;
+}
+
+.about-section--mid {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	padding-left: 12px;
+	padding-right: 12px;
+	background: transparent;
 }
 
 .about-section--inner {
@@ -317,6 +331,14 @@ body {
 	margin-bottom: 50px;
 	margin-top: 50px;
 	letter-spacing: -.7px;
+ }
+.about-text--mid { 
+	width: 130px;
+	margin: 0 auto;
+	font-size: 12px;
+	margin-bottom: 25px;
+	margin-top: 25px;
+	letter-spacing: -.5px;
  }
 .about-text--inner { 
 	width: var(--about-lead-copy-width);
@@ -677,8 +699,8 @@ body {
 	--asset-portfolio-actions-show-margin-bottom: 10px;
 	--asset-portfolio-actions-signin-margin-top: -5px;
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
-	--asset-save-signin-margin-top: 14px;
-	--asset-save-signin-margin-bottom: 18px;
+	--asset-save-signin-margin-top: 20px;
+	--asset-save-signin-margin-bottom: 14px;
 	/* Date-range + BTC pill: same brown/gold as headings/metrics (`*` rule); not chart orange 248,141,0 */
 	--asset-range-button-label-color: var(--asset-line-color);
 }
@@ -713,8 +735,8 @@ body {
 	--asset-portfolio-actions-show-margin-bottom: 10px;
 	--asset-portfolio-actions-signin-margin-top: -5px;
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
-	--asset-save-signin-margin-top: 14px;
-	--asset-save-signin-margin-bottom: 18px;
+	--asset-save-signin-margin-top: 20px;
+	--asset-save-signin-margin-bottom: 14px;
 	--asset-range-button-label-color: var(--asset-line-color);
 }
 
@@ -1054,17 +1076,7 @@ body {
 
 }
 
-/* Hide empty-state + add-more + standalone sign-in CTAs on crypto asset pages (keep --measure for layout refs). */
-.asset-page .asset-empty-actions:not(.asset-empty-actions--measure),
-.asset-page .asset-portfolio-actions--add,
-.asset-page .asset-portfolio-actions--signin {
-	display: none !important;
-}
 
-/* Hide bordered portfolio panel when it only wrapped the empty CTAs (no investments slide panel). */
-.asset-page .asset-portfolio-center.asset-panel:not(:has(.asset-slide-panel)) {
-	display: none !important;
-}
 
 /* These used to fade portfolio action rows. Disabled by request (keep layout/placement unchanged). */
 
@@ -2159,17 +2171,17 @@ a.asset-action-button--myinv-asset-link {
 	transition: opacity 1s ease, transform 0.2s ease !important;
 }
 
-/* Asset pages: "Sign In to Save Investments" CTA (same framework as Add Investments, but smaller text + full accent fill) */
+/* Asset pages: "Sign In" CTA (full accent fill) */
 .asset-action-button--save-signin {
 	width: 97%;
 	box-sizing: border-box;
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: var(--asset-save-signin-margin-top, 20px);
-	margin-bottom: var(--asset-save-signin-margin-bottom, 40px);
+	margin-top: var(--asset-save-signin-margin-top, 0px);
+	margin-bottom: var(--asset-save-signin-margin-bottom, 20px);
 	font-weight: 800;
-	font-size: 15px; /* Add Investments is 25px */
+	font-size: 25px;
 	letter-spacing: -.5px;
 	padding-top: 20px;
 	padding-bottom: 20px;
@@ -2270,6 +2282,9 @@ a.asset-action-button--myinv-asset-link {
 	transition: opacity 0.2s ease;
 	color: #fff !important;
 }
+.asset-page .asset-page-content .asset-action-button--save-signin .asset-save-signin-text {
+	color: #fff !important;
+}
 
 /* Liquid/Solid toggle (asset pages, under chart) */
 .asset-reality-toggle-row {
@@ -2291,7 +2306,7 @@ a.asset-action-button--myinv-asset-link {
 	width: 100%;
 	max-width: 100%;
 	box-sizing: border-box;
-	margin: var(--asset-reality-toggle-row-margin-top, 20px) 0 var(--asset-reality-toggle-shell-margin-bottom, 10px);
+	margin: var(--asset-reality-toggle-row-margin-top, 20px) 0 var(--asset-reality-toggle-shell-margin-bottom, 20px);
 	padding-bottom: 15px;
 	padding-top: 15px;
 	/* Keep the toggle content centered */
@@ -3762,7 +3777,7 @@ a.asset-action-button--myinv-asset-link {
 	font-family: Arial, sans-serif;
 	font-weight: 800;
 	letter-spacing: -.6px;
-	/* Match the Home slogan ("if investments never lost value") */
+	/* Match the Home slogan ("investments should never lose value") */
 	font-size: 14px;
 	color: #000;
 	opacity: .5;
@@ -5411,13 +5426,13 @@ a.myinv-about-button:focus-visible {
 	}
 
 	.asset-action-button--save-signin {
-		margin-top: 0px; /* <- edit signin button top spacing */
-		margin-bottom: 13px;
-		padding-top: 20px;    /* <- edit signin button top spacing */
-		padding-bottom: 21px;    /* <- edit signin button bottom spacing */
-		padding-left: 10px;    /* <- edit signin button left spacing */
+		margin-top: 5px;
+		margin-bottom: 5px;
+		padding-top: 20px;
+		padding-bottom: 21px;
+		padding-left: 10px;
 		padding-right: 10px; 
-		font-size: 12px;   /* <- edit signin button right spacing */
+		font-size: 20px;
 		letter-spacing: 0px;
 	}
 

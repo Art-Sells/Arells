@@ -40,8 +40,8 @@
 	--asset-portfolio-actions-show-margin-bottom: 10px;
 	--asset-portfolio-actions-signin-margin-top: -5px;
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
-	--asset-save-signin-margin-top: 14px;
-	--asset-save-signin-margin-bottom: 18px;
+	--asset-save-signin-margin-top: 5px;
+	--asset-save-signin-margin-bottom: 15px;
 	--asset-range-button-label-color: var(--asset-line-color);
 }
 .asset-page--bitcoin .asset-page-content,
@@ -244,7 +244,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 .asset-invest-input--xrp:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(30, 41, 59, 0.25);
+	border-color: rgba(30, 41, 59, 0.3);
 }
 .asset-date-picker--xrp .asset-date-trigger {
 	border-color: rgba(30, 41, 59, 0.0);
@@ -255,10 +255,10 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 .asset-date-picker--xrp .asset-date-trigger:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(30, 41, 59, 0.25);
+	border-color: rgba(30, 41, 59, 0.3);
 }
 .asset-date-popover--xrp {
-	background: rgba(242, 243, 250, 0.9);
+	background: rgba(238, 240, 245, 0.9);
 }
 .asset-date-popover--xrp .asset-date-day:hover {
 	background: rgba(30, 41, 59, 0.14);
@@ -748,13 +748,13 @@ a.asset-action-button--myinv-asset-link.asset-action-button--xrp:visited {
 	}
 
 	.asset-action-button--save-signin {
-		margin-top: 0px; /* <- edit signin button top spacing */
-		margin-bottom: 13px;
-		padding-top: 20px;    /* <- edit signin button top spacing */
-		padding-bottom: 21px;    /* <- edit signin button bottom spacing */
-		padding-left: 10px;    /* <- edit signin button left spacing */
+		margin-top: 5px;
+		margin-bottom: 5px;
+		padding-top: 20px;
+		padding-bottom: 21px;
+		padding-left: 10px;
 		padding-right: 10px; 
-		font-size: 12px;   /* <- edit signin button right spacing */
+		font-size: 20px;
 		letter-spacing: 0px;
 	}
 

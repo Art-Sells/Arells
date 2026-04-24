@@ -25,7 +25,7 @@
 .asset-page--solana {
 	--asset-slogan-color: rgb(0, 94, 88);
 	--asset-line-color: rgb(0, 173, 144);
-	--asset-unified-text-color: var(--asset-line-color);
+	--asset-unified-text-color: rgb(0, 145, 120);
 	/* Match chart hover-dot color (SolanaChart markerColor) */
 	--asset-hover-dot-color: rgba(0, 208, 168, 1);
 	/* Match chart line color (SolanaChart color) */
@@ -40,8 +40,8 @@
 	--asset-portfolio-actions-show-margin-bottom: 10px;
 	--asset-portfolio-actions-signin-margin-top: -5px;
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
-	--asset-save-signin-margin-top: 14px;
-	--asset-save-signin-margin-bottom: 18px;
+	--asset-save-signin-margin-top: 5px;
+	--asset-save-signin-margin-bottom: 15px;
 	--asset-range-button-label-color: var(--asset-line-color);
 }
 .asset-page--bitcoin .asset-page-content,
@@ -252,7 +252,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	border-color: rgba(0, 208, 168, 0.3);
 }
 .asset-date-popover--solana {
-	background: rgba(242, 243, 250, 0.9);
+	background: rgba(232, 250, 245, 0.9);
 }
 .asset-date-popover--solana .asset-date-day:hover {
 	background: rgba(0, 208, 168, 0.14);
@@ -381,6 +381,10 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	opacity: 1;
 	font-size: 12px;
 	font-weight: 200;
+}
+.asset-page--solana .asset-page-content .asset-metric-symbol--solana,
+.asset-page--solana .asset-page-content .asset-metric-inline-symbol--solana {
+	color: rgb(0, 173, 144) !important;
 }
 .asset-metric-symbol--solana,
 .asset-metric-inline-symbol--solana {
@@ -742,13 +746,13 @@ a.asset-action-button--myinv-asset-link.asset-action-button--solana:visited {
 	}
 
 	.asset-action-button--save-signin {
-		margin-top: 0px; /* <- edit signin button top spacing */
-		margin-bottom: 13px;
-		padding-top: 20px;    /* <- edit signin button top spacing */
-		padding-bottom: 21px;    /* <- edit signin button bottom spacing */
-		padding-left: 10px;    /* <- edit signin button left spacing */
+		margin-top: 5px;
+		margin-bottom: 5px;
+		padding-top: 20px;
+		padding-bottom: 21px;
+		padding-left: 10px;
 		padding-right: 10px; 
-		font-size: 12px;   /* <- edit signin button right spacing */
+		font-size: 20px;
 		letter-spacing: 0px;
 	}
 

@@ -4,7 +4,7 @@ import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
 
 export const metadata: Metadata = {
   title: 'Ethereum',
-  description: 'If investments never lost value.',
+  description: 'Investments should never lose value.',
   robots: { index: true, follow: true },
   alternates: {
     canonical: '/ethereum',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Ethereum',
-    description: 'If investments never lost value.',
+    description: 'Investments should never lose value.',
     url: '/ethereum',
     type: 'website',
     images: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: 'Ethereum',
-    description: 'If investments never lost value.',
+    description: 'Investments should never lose value.',
     card: 'summary_large_image',
     images: [
       {

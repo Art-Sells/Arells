@@ -2980,7 +2980,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                   <span className="asset-metric-title--bitcoin">Date purchased</span>
                 </div>
                 <div className="asset-invest-form-field-control">
-                  <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" />
+                  <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" asset="bitcoin" />
                 </div>
               </div>
 
@@ -3126,7 +3126,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
           <div
             className={`asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}
           >
-            if investments never lost value
+            investments should never lose value
           </div>
         </div>
         <div {...assetPriceChartMountSlide.slidePanelProps}>
@@ -3489,7 +3489,82 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
           ...(!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : {}),
         }}
       >
-        {!hasInvestmentsUI ? null : (
+        {!hasInvestmentsUI && !showInitialFetchLoader ? (
+          <>
+            <div
+              ref={emptyActionsRef}
+              className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
+              style={
+                hideEmptyActionsOnSubmit
+                  ? { display: 'none' }
+                  : emptyActionsMountPhase === 'hidden'
+                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 3s ease' }
+                    : emptyActionsMountPhase === 'revealing'
+                      ? { maxHeight: `${emptyActionsHeight || 200}px`, overflow: 'hidden', transition: 'max-height 3s ease' }
+                      : undefined
+              }
+            >
+              {(isSignedIn || email) && (
+              <div
+                className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
+              >
+                <button
+                  className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
+                  disabled={showEmptyAddForm || emptyAddHiding}
+                  style={{
+                    ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
+                  }}
+                  onClick={() => {
+                    if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
+                    clearEmptyButtonsSequenceTimers();
+                    if (clearInvestmentsAnimTimerRef.current) {
+                      globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
+                      clearInvestmentsAnimTimerRef.current = null;
+                    }
+                    setEmptySigninHiding(true);
+                    setEmptySigninGone(false);
+                    setEmptyAddHiding(false);
+                    setEmptyAddGone(false);
+                    emptyButtonsSequenceTimersRef.current.push(
+                      globalThis.setTimeout(() => {
+                        setEmptyAddHiding(true);
+                      }, 500)
+                    );
+                    setShowEmptyAddForm(true);
+                    setShowAddForm(true);
+                    setSubmitPhase('idle');
+                    requestAnimationFrame(() => {
+                      const h = addFormBoxRef.current?.scrollHeight ?? 0;
+                      const next = Math.max(0, h + 24);
+                      setAddFormPanelHeight((prev) => (prev === next ? prev : next));
+                      requestAnimationFrame(() => setAddFormOpen(true));
+                    });
+                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
+                  }}
+                >
+                  Add Investments
+                </button>
+              </div>
+              )}
+              {!isSignedIn && !email && (
+                <div
+                  className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
+                >
+                  <Link
+                    href="/signin"
+                    className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
+                    style={{
+                      opacity: emptySigninHiding ? 0 : 1,
+                      transition: 'opacity 3s ease, transform 0.2s ease',
+                    }}
+                  >
+                    <span className="asset-save-signin-text">Sign In</span>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
           <>
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation
                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
@@ -3713,6 +3788,33 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                 })}
               </div>
           </div>
+              <div className="asset-portfolio-actions asset-portfolio-actions--add">
+                <button
+                  className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-add${
+                    addMorePulse ? ' asset-action-button--pulse' : ''
+                  }`}
+                  onClick={() => {
+                    triggerAddMorePulse();
+                    if (addMoreOpen) {
+                      setAddMoreOpen(false);
+                      return;
+                    }
+                    if (investmentsListOpen) {
+                      triggerShowPulse();
+                      setInvestmentsListOpen(false);
+                      setTimeout(() => {
+                        setVisibleInvestments(3);
+                      }, 2000);
+                    }
+                    setSubmitPhase('idle');
+                    setShowAddMoreForm(true);
+                    setTimeout(() => setAddMoreOpen(true), 0);
+                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
+                  }}
+                >
+                  {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
+                </button>
+              </div>
               {showAddMoreForm && (
                 <div
                   ref={addMoreFormPanelRef}
@@ -3742,6 +3844,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                         'asset-action-button asset-action-button--bitcoin'
                       )}
         <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
+          {(isSignedIn || email) && (
           <div className="asset-empty-addinvest">
             <button
               className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
@@ -3752,6 +3855,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
               Add Investments
             </button>
           </div>
+          )}
           {!isSignedIn && !email && (
             <div className="asset-empty-signin">
               <button
@@ -3760,7 +3864,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                 disabled
                 tabIndex={-1}
               >
-                    <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                    <span className="asset-save-signin-text">Sign In</span>
               </button>
             </div>
           )}
@@ -3776,6 +3880,13 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
 
                 {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
                 <div ref={bottomActionsWrapRef}>
+                {investments.length > 0 && !isSignedIn && !email && (
+                  <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
+                    <Link href="/signin" className="asset-action-button asset-action-button--save-signin">
+                      <span className="asset-save-signin-text">Sign In</span>
+                    </Link>
+                  </div>
+                )}
                 <div
                   ref={showActionsRef}
                   className={`asset-portfolio-actions asset-portfolio-actions--show${investmentsListOpen ? ' is-open' : ''}`}

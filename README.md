@@ -4,7 +4,7 @@
 
 A belief that investments should never lose value. 
 
-This belief uses a ledger that shows how investments would look if they never lost value. 
+This belief uses a ledger that shows investments never losing value. 
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 

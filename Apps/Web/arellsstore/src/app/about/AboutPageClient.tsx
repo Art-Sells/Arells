@@ -107,20 +107,27 @@ const AboutPageClient = () => {
                   Arells is a belief that investments should never lose value.
                 </p>
               </div>
-              <div className="about-section about-section--inner myinv-accent-border">
-                <div className="about-section about-section--inner-body myinv-accent-border">
-                  <p className="about-text about-text--inner">
-                    Arells is powered by a new psychological and technological invention called Vavity.
+              <div className="about-section about-section--mid myinv-accent-border">
+                <div className="about-section about-section--mid-body myinv-accent-border">
+                  <p className="about-text about-text--mid">
+                    This belief is powered by a ledger that shows investments never losing value.
                   </p>
                 </div>
-                <div className="about-section about-section--cta myinv-accent-border">
-                  <button
-                    type="button"
-                    onClick={() => window.open('/vavity', '_blank')}
-                    className="asset-range-button myinv-range-button about-cta-button"
-                  >
-                    Learn more
-                  </button>
+                <div className="about-section about-section--inner myinv-accent-border">
+                  <div className="about-section about-section--inner-body myinv-accent-border">
+                    <p className="about-text about-text--inner">
+                      This ledger is powered by a new psychological and technological invention called Vavity.
+                    </p>
+                  </div>
+                  <div className="about-section about-section--cta myinv-accent-border">
+                    <button
+                      type="button"
+                      onClick={() => window.open('/vavity', '_blank')}
+                      className="asset-range-button myinv-range-button about-cta-button"
+                    >
+                      Learn more
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

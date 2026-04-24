@@ -471,7 +471,7 @@ const Index = () => {
             className={`home-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
             style={{ letterSpacing: '0px', marginLeft: '0px' }}
           >
-            if investments never lost value
+            investments should never lose value
           </p>
         </div>
       </div>
@@ -589,7 +589,7 @@ const Index = () => {
         </div>
       </div>
       <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
-        <div className="home-assets-footer-text">New assets added weekly</div>
+        <div className="home-assets-footer-text">A new asset added weekly</div>
       </div>
       <div
         className="home-toggle-footer"

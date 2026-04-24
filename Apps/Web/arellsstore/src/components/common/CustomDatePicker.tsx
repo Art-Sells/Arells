@@ -3,11 +3,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+type AssetTheme = 'bitcoin' | 'ethereum' | 'solana' | 'xrp';
+
 type Props = {
   value: string; // YYYY-MM-DD or ''
   onChange: (nextIso: string) => void;
   className?: string;
   placeholder?: string;
+  asset?: AssetTheme;
 };
 
 function clampDateToYmd(d: Date) {
@@ -64,7 +67,7 @@ const MONTHS = [
   'December',
 ] as const;
 
-export default function CustomDatePicker({ value, onChange, className, placeholder = 'Select date' }: Props) {
+export default function CustomDatePicker({ value, onChange, className, placeholder = 'Select date', asset }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -82,36 +85,39 @@ export default function CustomDatePicker({ value, onChange, className, placehold
   const [open, setOpen] = useState(false);
   const [renderPopover, setRenderPopover] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
-  const [theme, setTheme] = useState<'bitcoin' | 'ethereum'>('bitcoin');
+  const theme: AssetTheme = asset ?? 'bitcoin';
   const [viewYear, setViewYear] = useState(initialMonth.getFullYear());
   const [viewMonth, setViewMonth] = useState(initialMonth.getMonth());
   const [activeIso, setActiveIso] = useState<string>(value || '');
   const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
 
-  useEffect(() => {
-    // Ensure the trigger is themed correctly immediately (even before opening),
-    // since the popover is portaled and we rely on injected CSS variables.
-    const root = rootRef.current;
-    const isEth = !!root?.closest('.asset-page--ethereum');
-    setTheme(isEth ? 'ethereum' : 'bitcoin');
-  }, []);
-
-  const themeVars = useMemo(() => {
-    // Must be set on the popover itself since it is portaled to document.body
-    // and won't inherit CSS variables from `.asset-page--bitcoin/ethereum`.
-    return theme === 'ethereum'
-      ? ({
+  const themeVars = useMemo((): React.CSSProperties => {
+    switch (theme) {
+      case 'ethereum':
+        return {
           '--asset-line-color': 'rgb(107, 114, 168)',
           '--asset-slogan-color': 'rgb(82, 87, 131)',
-          // Match the asset amount input border tint
           '--asset-border-color': 'rgba(107, 114, 168, 0.45)',
-        } as React.CSSProperties)
-      : ({
+        } as React.CSSProperties;
+      case 'solana':
+        return {
+          '--asset-line-color': 'rgb(0, 173, 144)',
+          '--asset-slogan-color': 'rgb(0, 94, 88)',
+          '--asset-border-color': 'rgba(0, 208, 168, 0.45)',
+        } as React.CSSProperties;
+      case 'xrp':
+        return {
+          '--asset-line-color': 'rgb(30, 41, 59)',
+          '--asset-slogan-color': 'rgb(15, 23, 42)',
+          '--asset-border-color': 'rgba(30, 41, 59, 0.45)',
+        } as React.CSSProperties;
+      default:
+        return {
           '--asset-line-color': 'rgb(209, 142, 55)',
           '--asset-slogan-color': 'rgb(172, 97, 0)',
-          // Match the asset amount input border tint
           '--asset-border-color': 'rgba(248, 141, 0, 0.45)',
-        } as React.CSSProperties);
+        } as React.CSSProperties;
+    }
   }, [theme]);
 
   const startClose = useCallback(() => {
@@ -132,12 +138,8 @@ export default function CustomDatePicker({ value, onChange, className, placehold
       window.clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
     }
-    const root = rootRef.current;
-    const isEth = !!root?.closest('.asset-page--ethereum');
-    setTheme(isEth ? 'ethereum' : 'bitcoin');
     setRenderPopover(true);
     setOpen(true);
-    // Next frame to ensure transition runs from opacity 0 -> 1
     requestAnimationFrame(() => setPopoverVisible(true));
   }, []);
 
