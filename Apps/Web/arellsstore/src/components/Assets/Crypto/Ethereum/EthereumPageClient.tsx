@@ -325,6 +325,7 @@ const EthereumPageClient: React.FC = () => {
         >
           <span className="asset-footer-about-text">about</span>
         </Link>
+        <div className="asset-footer-share-sentence">share this<br />if you believe<br />Ethereum<br />should never<br />lose value</div>
       </footer>
     </div>
   );

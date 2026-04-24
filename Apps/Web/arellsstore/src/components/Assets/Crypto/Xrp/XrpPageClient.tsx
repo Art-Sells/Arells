@@ -325,6 +325,7 @@ const XrpPageClient: React.FC = () => {
         >
           <span className="asset-footer-about-text">about</span>
         </Link>
+        <div className="asset-footer-share-sentence">share this<br />if you believe<br />XRP<br />should never<br />lose value</div>
       </footer>
     </div>
   );
