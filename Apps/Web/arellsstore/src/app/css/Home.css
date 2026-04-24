@@ -5456,9 +5456,13 @@ a.myinv-about-button:focus-visible {
 	.asset-footer-share-sentence {
 		font-size: 25px !important;
 		letter-spacing: 0px;
+		line-height: 8;
 		width: 300px !important;
 		min-width: 300px !important;
 		max-width: 300px !important;
+	}
+	.asset-footer-share-sentence-asset {
+		line-height: var(--asset-footer-share-sentence-asset-line-height, 1.7) !important;
 	}
 
 	.asset-action-button--add-investments {
@@ -6135,7 +6139,7 @@ a.myinv-about-button:focus-visible {
 	font-size: 25px;
 	font-weight: 800;
 	letter-spacing: -1.3px;
-	line-height: 1.25;
+	line-height: .9;
 	text-align: center;
 	margin-top: 20px;
 	opacity: 0.3 !important;
@@ -6146,6 +6150,11 @@ a.myinv-about-button:focus-visible {
 	flex: 0 0 auto;
 	box-sizing: border-box;
 	margin-bottom: 30px;
+}
+
+.asset-footer-share-sentence-asset {
+	line-height: var(--asset-footer-share-sentence-asset-line-height, 2);
+	display: inline-block;
 }
 
 .asset-footer-about-logo {
