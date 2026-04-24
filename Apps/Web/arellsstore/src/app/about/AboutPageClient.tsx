@@ -110,7 +110,7 @@ const AboutPageClient = () => {
               <div className="about-section about-section--mid myinv-accent-border">
                 <div className="about-section about-section--mid-body myinv-accent-border">
                   <p className="about-text about-text--mid">
-                    This belief is powered by a ledger that shows investments never losing value.
+                    This belief is powered by a ledger that shows your investments never losing value.
                   </p>
                 </div>
                 <div className="about-section about-section--inner myinv-accent-border">
@@ -128,6 +128,18 @@ const AboutPageClient = () => {
                       Learn more
                     </button>
                   </div>
+                </div>
+                <div className="about-section about-section--mid-body myinv-accent-border">
+                  <p className="about-text about-text--mid">
+                    If you&apos;ve signed up, started building your portfolio, and shared this with friends/family,
+                    congratulations. Your investments never losing value is now closer to becoming a reality.
+                  </p>
+                </div>
+                <div className="about-section about-section--mid-body myinv-accent-border">
+                  <p className="about-text about-text--mid">
+                    If you believe your investments should never lose value and haven&apos;t yet signed up or shared
+                    this, the time is now.
+                  </p>
                 </div>
               </div>
             </div>

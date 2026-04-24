@@ -299,6 +299,21 @@ body {
 	box-sizing: border-box;
 }
 
+/* Same top gap as between stacked mid-body blocks (follows Vavity + Learn more). */
+.about-content .about-section--inner + .about-section--mid-body {
+	margin-top: 12px;
+}
+
+/* Learn more: large default margins only made sense before extra copy below; keep rhythm with mid-body stack. */
+.about-content .about-section--cta .about-cta-button {
+	margin-top: 18px;
+	margin-bottom: 18px;
+}
+
+.about-content .about-section--mid > .about-section--mid-body:last-child {
+	margin-bottom: 0;
+}
+
 .about-section--inner-body {
 	padding: 16px 14px;
 	margin-bottom: 12px;
@@ -5408,12 +5423,14 @@ a.myinv-about-button:focus-visible {
 	}
 
 	.asset-reality-toggle-shell {
-		width: 100%;
-		max-width: 100%;
+		width: 93%;
+		max-width: none;
 		box-sizing: border-box;
 		transform: none;
 		margin-top: 10px;
 		margin-bottom: 13px; /* <- edit toggle right */
+		margin-left: auto;
+		margin-right: auto;
 		border-radius: 10px;
 	}
 
