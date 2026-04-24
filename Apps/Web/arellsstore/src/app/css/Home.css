@@ -699,8 +699,8 @@ body {
 	--asset-portfolio-actions-show-margin-bottom: 10px;
 	--asset-portfolio-actions-signin-margin-top: -5px;
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
-	--asset-save-signin-margin-top: 20px;
-	--asset-save-signin-margin-bottom: 14px;
+	--asset-save-signin-margin-top: 5px;
+	--asset-save-signin-margin-bottom: 15px;
 	/* Date-range + BTC pill: same brown/gold as headings/metrics (`*` rule); not chart orange 248,141,0 */
 	--asset-range-button-label-color: var(--asset-line-color);
 }
@@ -735,8 +735,8 @@ body {
 	--asset-portfolio-actions-show-margin-bottom: 10px;
 	--asset-portfolio-actions-signin-margin-top: -5px;
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
-	--asset-save-signin-margin-top: 20px;
-	--asset-save-signin-margin-bottom: 14px;
+	--asset-save-signin-margin-top: 5px;
+	--asset-save-signin-margin-bottom: 15px;
 	--asset-range-button-label-color: var(--asset-line-color);
 }
 
