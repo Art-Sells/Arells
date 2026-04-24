@@ -1145,7 +1145,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                 <div className="myinv-panel-section myinv-accent-border">
                   <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
                     <span className="myinv-asset-border" aria-hidden="true" />
-                    <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
+                    <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}${effectiveAssetsPresent.length > 2 ? ' is-many' : ''}`}>
                       {effectiveAssetsPresent.map((asset) => {
                         const href =
                           asset === 'bitcoin'
@@ -1194,7 +1194,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                 <div className="myinv-panel-section myinv-accent-border">
                   <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
                     <span className="myinv-asset-border" aria-hidden="true" />
-                    <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
+                    <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}${effectiveAssetsMissing.length > 2 ? ' is-many' : ''}`}>
                       {effectiveAssetsMissing.map((asset) => {
                         const href =
                           asset === 'bitcoin'

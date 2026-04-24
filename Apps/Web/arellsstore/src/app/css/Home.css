@@ -4440,6 +4440,23 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	justify-items: stretch;
 }
 
+@media (min-width: 751px) {
+	.myinv-asset-options.is-many {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+	.myinv-asset-options.is-many > :nth-child(4):last-child {
+		grid-column: 2 / 3;
+	}
+}
+
+@media (max-width: 750px) {
+	.myinv-asset-options.is-many > :last-child:nth-child(odd) {
+		grid-column: 1 / -1;
+		justify-self: center;
+		width: 50%;
+	}
+}
+
 /* My Investments: home-style asset row card (outer link). No .home-asset-card — avoids global home grid/padding/margins. */
 .myinv-page .myinv-asset-home-card {
 	display: flex;
