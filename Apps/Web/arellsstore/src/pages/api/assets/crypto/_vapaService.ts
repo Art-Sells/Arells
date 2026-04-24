@@ -8,6 +8,7 @@ const HISTORY_REFRESH_MS = 60 * 60 * 1000;
 
 export type VapaAssetConfig = {
   id: string;
+  coingeckoId?: string;
   s3Key: string;
   priceUrl: string;
   historyUrl: string;
@@ -154,7 +155,7 @@ export async function refreshVapa(config: VapaAssetConfig) {
       timeout: 5000,
       headers: COINGECKO_API_KEY ? { 'x-cg-pro-api-key': COINGECKO_API_KEY } : undefined
     });
-    const assetData = currentPriceResponse.data?.[config.id];
+    const assetData = currentPriceResponse.data?.[config.coingeckoId ?? config.id];
     const val = assetData?.usd;
     if (typeof val === 'number') currentPrice = val;
     const capVal = assetData?.usd_market_cap;

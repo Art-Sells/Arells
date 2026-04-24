@@ -9,6 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const result = await refreshVapa({
       id: 'xrp',
+      coingeckoId: 'ripple',
       s3Key: 'vavity/xrpVAPA.json',
       priceUrl: 'https://pro-api.coingecko.com/api/v3/simple/price?ids=ripple&vs_currencies=usd&include_market_cap=true',
       historyUrl: 'https://pro-api.coingecko.com/api/v3/coins/ripple/market_chart?vs_currency=usd&days=max',
