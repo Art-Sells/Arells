@@ -3,7 +3,7 @@ import XrpPageClient from '../../components/Assets/Crypto/Xrp/XrpPageClient';
 import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
 
 export const metadata: Metadata = {
-  title: 'XRP',
+  title: 'XRP should never lose value',
   description: 'Investments should never lose value.',
   robots: { index: true, follow: true },
   alternates: {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     apple: [{ url: u('/images/favicons/XrpBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
   },
   openGraph: {
-    title: 'XRP',
+    title: 'XRP should never lose value',
     description: 'Investments should never lose value.',
     url: '/xrp',
     type: 'website',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    title: 'XRP',
+    title: 'XRP should never lose value',
     description: 'Investments should never lose value.',
     card: 'summary_large_image',
     images: [
