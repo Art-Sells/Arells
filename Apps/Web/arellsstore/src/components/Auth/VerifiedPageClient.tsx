@@ -7,6 +7,7 @@ import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthContentEntrance from './AuthContentEntrance';
 import { useUser } from '../../context/UserContext';
+import { emailVerifiedWelcomeCopy } from '../../content/emailVerifiedWelcomeCopy';
 
 /** Shown for every failure on this page (token missing, API error, network). */
 const VERIFY_PAGE_ERROR = 'This verification link is invalid or expired.';
@@ -85,9 +86,17 @@ const VerifiedPageClient: React.FC = () => {
     <AuthPageShell title={shellTitle} crossfadeTitle>
       {status === 'ok' ? (
         <AuthContentEntrance>
-          <div className={`auth-success-reveal${revealOpen ? ' is-open' : ''}`}>
-            <div className="auth-success-reveal-inner">
-              <div className="auth-verify-sent auth-verify-sent--verified-success">
+          <div className="auth-verify-sent auth-verify-sent--verified-success">
+            <div className={`auth-success-reveal auth-success-reveal--verified-full${revealOpen ? ' is-open' : ''}`}>
+              <div className="auth-success-reveal-inner">
+                <div className="auth-verified-welcome" aria-live="polite">
+                  <p className="auth-verified-welcome-headline">{emailVerifiedWelcomeCopy.headline}</p>
+                  {emailVerifiedWelcomeCopy.paragraphs.map((text, i) => (
+                    <p key={i} className="auth-verified-welcome-paragraph">
+                      {text}
+                    </p>
+                  ))}
+                </div>
                 <Link
                   href="/my-investments"
                   className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"

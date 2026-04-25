@@ -9029,6 +9029,47 @@ a.growth-metrics-about-button:focus-visible {
 	color: var(--myinv-accent-color);
 }
 
+/* Email verified: copy + CTA share one height reveal (wording: src/content/emailVerifiedWelcomeCopy.ts) */
+.auth-success-reveal--verified-full {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome {
+	width: 100%;
+	max-width: min(100%, 280px);
+	margin-inline: auto;
+	margin-bottom: 0;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.auth-verified-welcome-headline {
+	margin: 0 0 20px;
+	font-weight: 800;
+	font-size: 20px;
+	letter-spacing: -0.35px;
+	line-height: 1;
+	color: var(--myinv-accent-color);
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-paragraph {
+	margin: 0 auto 12px;
+	font-weight: 800;
+	font-size: 15px;
+	line-height: 1;
+	letter-spacing: -0.35px;
+	color: var(--myinv-accent-color);
+	width: 170px;
+	max-width: 100%;
+	box-sizing: border-box;
+	overflow-wrap: anywhere;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-paragraph:last-of-type {
+	margin-bottom: 14px;
+}
+
 a.myinv-cta-button {
 	text-decoration: none;
 	color: inherit;
