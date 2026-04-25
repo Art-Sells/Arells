@@ -133,7 +133,7 @@ const AboutPageClient = () => {
                   <p className="about-text about-text--mid">
                     If you&apos;ve signed up, started building your portfolio, and shared this with friends/family,
                     congratulations. Your investments never losing value is now closer to becoming a reality because
-                    this is how all new financial systems begin, as beliefs.
+                    this is how many new financial systems began, as beliefs.
                   </p>
                 </div>
                 <div className="about-section about-section--mid-body myinv-accent-border">
