@@ -3,9 +3,9 @@
  * Edit this file to change wording (styling is in Home.css: `.auth-verified-welcome*`).
  */
 export const emailVerifiedWelcomeCopy = {
-  headline: 'Welcome!',
+  headline: 'Welcome',
   paragraphs: [
-    'You are now part of a belief system that is paving the way for our investments to never lose value.',
-    'Every new financial system in history started exactly like this, as a belief system before it became a reality.',
+    'You are now part of a system that believes investments should never lose value.',
+    'Many new financial systems started exactly like this, as belief systems before they became a reality.',
   ],
 } as const;
