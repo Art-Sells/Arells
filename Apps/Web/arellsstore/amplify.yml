@@ -1,8 +1,4 @@
-# App root in Amplify MUST be: Apps/Web/arellsstore (monorepo).
-# Optional env: NODE_VERSION=20
-#
-# Global `npm install -g yarn` often fails on Amplify (EACCES / read-only global prefix).
-# Use npx to run Yarn 1.x with no global install.
+# If Amplify "App root" is empty, the job starts at repo root — cd into the Next app first.
 #
 version: 1
 frontend:
@@ -11,24 +7,32 @@ frontend:
       commands:
         - |
           set -eo pipefail
+          if [ -f package.json ]; then
+            echo "📂 App folder: $(pwd)"
+          elif [ -f Apps/Web/arellsstore/package.json ]; then
+            cd Apps/Web/arellsstore
+            echo "📂 Monorepo — cd into Apps/Web/arellsstore → $(pwd)"
+          else
+            echo "ERROR: package.json not found. pwd=$(pwd)" && ls -la && exit 1
+          fi
           echo "🧹 Clearing build cache..."
           rm -rf .next node_modules/.cache dist
-          echo "📂 PWD=$(pwd)"
-          echo "📂 Top-level files:" && ls -la
-          if [ ! -f package.json ]; then
-            echo "ERROR: package.json not here. In Amplify Console set App build settings → App root to: Apps/Web/arellsstore"
-            exit 1
-          fi
-          echo "Node:" && node -v
-          echo "npm:" && npm -v
-          echo "📦 Install deps with Yarn 1.x via npx (no global yarn)..."
+          node -v && npm -v
+          echo "📦 yarn via npx..."
           npx --yes yarn@1.22.22 --version
           npx --yes yarn@1.22.22 install --frozen-lockfile
     build:
       commands:
         - |
           set -eo pipefail
-          echo "🚀 Building Next.js app..."
+          if [ -f package.json ]; then
+            :
+          elif [ -f Apps/Web/arellsstore/package.json ]; then
+            cd Apps/Web/arellsstore
+          else
+            exit 1
+          fi
+          echo "🚀 next build..."
           npx --yes yarn@1.22.22 run build
   artifacts:
     baseDirectory: .next

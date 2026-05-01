@@ -1,6 +1,4 @@
-# Repository root. App: Apps/Web/arellsstore
-# If Amplify uses THIS file, appRoot below must match the Next app folder.
-# Global yarn install is avoided (npx instead) — see arellsstore/amplify.yml.
+# Repo-root spec (monorepo). Amplify cds into appRoot before phases when this file is used.
 #
 version: 1
 applications:
@@ -11,23 +9,29 @@ applications:
           commands:
             - |
               set -eo pipefail
-              echo "🧹 Clearing build cache..."
-              rm -rf .next node_modules/.cache dist
-              echo "📂 PWD=$(pwd)"
-              ls -la
-              if [ ! -f package.json ]; then
-                echo "ERROR: package.json missing — check App root Apps/Web/arellsstore"
-                exit 1
+              if [ -f package.json ]; then
+                echo "📂 $(pwd)"
+              elif [ -f Apps/Web/arellsstore/package.json ]; then
+                cd Apps/Web/arellsstore
+                echo "📂 cd → $(pwd)"
+              else
+                echo "ERROR: no package.json" && ls -la && exit 1
               fi
-              node -v
-              npm -v
-              echo "📦 yarn via npx..."
+              rm -rf .next node_modules/.cache dist
+              node -v && npm -v
               npx --yes yarn@1.22.22 --version
               npx --yes yarn@1.22.22 install --frozen-lockfile
         build:
           commands:
             - |
               set -eo pipefail
+              if [ -f package.json ]; then
+                :
+              elif [ -f Apps/Web/arellsstore/package.json ]; then
+                cd Apps/Web/arellsstore
+              else
+                exit 1
+              fi
               npx --yes yarn@1.22.22 run build
       artifacts:
         baseDirectory: .next
