@@ -1,37 +1,50 @@
-version: 1.0
-applications:
-  - appRoot: Apps/Web/arellsstore
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - echo "🧹 Clearing build cache..."
-            - rm -rf .next
-            - rm -rf node_modules/.cache
-            - rm -rf dist
-
-            - echo "🔧 Setting up Volta for Node & Yarn..."
-            - curl -sSf https://get.volta.sh | bash
-            - export VOLTA_HOME="$HOME/.volta"
-            - export PATH="$VOLTA_HOME/bin:$PATH"
-            - volta install node@20.20.1
-            - volta install yarn@1.22.22
-            - node -v && yarn -v
-
-            - echo "📦 Installing dependencies..."
-            - yarn install --frozen-lockfile
-
-        build:
-          commands:
-            - echo "🚀 Building Next.js app..."
-            - yarn run build
-
-      artifacts:
-        baseDirectory: .next
-        files:
-          - '**/*'
-
-      cache:
-        paths:
-          # optional: remove cache reuse completely if needed
-          # - node_modules/**/*
+# Amplify when "App root" = Apps/Web/arellsstore (simple spec — no `applications` block).
+# Volta was failing in CI: installer + PATH exports did not reliably persist between steps.
+# Node 20 + Yarn 1.x via nvm in one shell per phase.
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - |
+          set -euo pipefail
+          echo "🧹 Clearing build cache..."
+          rm -rf .next node_modules/.cache dist
+          echo "🔧 Node 20 + Yarn (nvm)..."
+          export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+          if [ -s "$NVM_DIR/nvm.sh" ]; then
+            . "$NVM_DIR/nvm.sh"
+          elif [ -s "/usr/local/nvm/nvm.sh" ]; then
+            export NVM_DIR="/usr/local/nvm"
+            . "/usr/local/nvm/nvm.sh"
+          else
+            echo "nvm.sh not found; install Node 20 in Amplify console (e.g. LIVE_UPDATES / custom image) or add nvm to the build image."
+            exit 1
+          fi
+          nvm install 20.20.1
+          nvm use 20.20.1
+          node -v
+          npm install -g yarn@1.22.22
+          yarn -v
+          echo "📦 Installing dependencies..."
+          yarn install --frozen-lockfile
+    build:
+      commands:
+        - |
+          set -euo pipefail
+          export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+          if [ -s "$NVM_DIR/nvm.sh" ]; then
+            . "$NVM_DIR/nvm.sh"
+          elif [ -s "/usr/local/nvm/nvm.sh" ]; then
+            export NVM_DIR="/usr/local/nvm"
+            . "/usr/local/nvm/nvm.sh"
+          fi
+          nvm use 20.20.1
+          echo "🚀 Building Next.js app..."
+          yarn run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths: []
