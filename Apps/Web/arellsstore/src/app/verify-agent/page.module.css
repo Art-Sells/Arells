@@ -1,0 +1,158 @@
+.main {
+  min-height: 100vh;
+  margin: 0;
+  padding: 2rem 1.25rem 3rem;
+  background: #0a0a0a;
+  color: #e8e6e3;
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+.inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #9a9590;
+  margin: 0 0 1.75rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7a756f;
+}
+
+.inputRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.input {
+  flex: 1 1 200px;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid #2a2826;
+  background: #141312;
+  color: #e8e6e3;
+  font-size: 1rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #5c534a;
+}
+
+.button {
+  padding: 0.65rem 1.1rem;
+  border-radius: 8px;
+  border: none;
+  background: #e8e6e3;
+  color: #0a0a0a;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: #2a1818;
+  border: 1px solid #5c2a2a;
+  color: #f0c4c4;
+  font-size: 0.9rem;
+}
+
+.card {
+  border-radius: 12px;
+  border: 1px solid #2a2826;
+  background: #141312;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7a756f;
+  margin: 0 0 0.65rem;
+}
+
+.row {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  font-size: 0.82rem;
+  word-break: break-all;
+}
+
+.badgeOk {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: #1a2e22;
+  color: #9ed9b0;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badgeWarn {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: #2e2a1a;
+  color: #e8d59a;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.15rem;
+  font-size: 0.88rem;
+  color: #b5b0a9;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #9a9590;
+  text-decoration: none;
+}
+
+.back:hover {
+  color: #e8e6e3;
+}
+
+.loading {
+  color: #9a9590;
+  font-size: 0.9rem;
+}

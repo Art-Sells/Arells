@@ -34,5 +34,5 @@
     "contracts/**/*.sol", 
     "scripts/**/*.js"
   ],
-  "exclude": ["node_modules", "artifacts", "cache"]
+  "exclude": ["node_modules", "artifacts", "cache", "scripts/**/*.ts"]
 }

@@ -740,6 +740,13 @@ const Index = () => {
       </div>
 
       {!showLoading && (!!email || forceHomeInvestmentsPreview) && <HomeInvestmentsSlideUpCTA />}
+      {!showLoading && !email && !forceHomeInvestmentsPreview && (
+        <HomeInvestmentsSlideUpCTA
+          href="/signin"
+          label="Sign In"
+          lead="Do you believe investments should never lose value?"
+        />
+      )}
 
     </>
   );

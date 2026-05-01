@@ -6,11 +6,14 @@ import Link from 'next/link';
 type Props = {
   href?: string;
   label?: string;
+  /** Optional line above the button (e.g. signed-out home CTA). */
+  lead?: string;
 };
 
 export default function HomeInvestmentsSlideUpCTA({
   href = '/my-investments',
   label = 'View My Investments',
+  lead,
 }: Props) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -132,12 +135,15 @@ export default function HomeInvestmentsSlideUpCTA({
     >
       <div className="home-investments-slideup-shell shadow-border-wrap">
         <span className="shadow-border" aria-hidden="true" />
-        <div className="home-investments-slideup-row">
-          <div className="home-investments-slideup-index-spacer" aria-hidden="true" />
-          <Link href={href} className="home-investments-slideup-button">
-            <span className="home-investments-slideup-button-bg" aria-hidden="true" />
-            <span className="home-investments-slideup-button-text">{label}</span>
-          </Link>
+        <div className="home-investments-slideup-stack">
+          {lead ? <p className="home-investments-slideup-lead">{lead}</p> : null}
+          <div className="home-investments-slideup-row">
+            <div className="home-investments-slideup-index-spacer" aria-hidden="true" />
+            <Link href={href} className="home-investments-slideup-button">
+              <span className="home-investments-slideup-button-bg" aria-hidden="true" />
+              <span className="home-investments-slideup-button-text">{label}</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

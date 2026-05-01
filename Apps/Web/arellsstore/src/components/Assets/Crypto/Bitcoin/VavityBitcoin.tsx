@@ -3550,6 +3550,9 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                 <div
                   className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
                 >
+                  <p className="asset-signin-believe-prompt">
+                    Do you believe Bitcoin should never lose value?
+                  </p>
                   <Link
                     href="/signin"
                     className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
@@ -3882,6 +3885,9 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                 <div ref={bottomActionsWrapRef}>
                 {investments.length > 0 && !isSignedIn && !email && (
                   <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
+                    <p className="asset-signin-believe-prompt">
+                      Do you believe Bitcoin should never lose value?
+                    </p>
                     <Link href="/signin" className="asset-action-button asset-action-button--save-signin">
                       <span className="asset-save-signin-text">Sign In</span>
                     </Link>

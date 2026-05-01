@@ -2210,11 +2210,58 @@ a.asset-action-button--myinv-asset-link {
 }
 
 /* Empty-state: fade out Sign-in CTA while the add form is open (no immediate display:none). */
+/* Guest Sign In — line above the button (asset pages) */
+.asset-signin-believe-prompt {
+	margin: 0 0 10px;
+	padding: 0 12px;
+	text-align: center;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.35;
+	color: rgba(255, 255, 255, 0.92);
+	text-wrap: balance;
+}
+
+@media screen and (max-width: 750px) {
+	.asset-signin-believe-prompt {
+    margin-top: 7px;
+    margin-bottom: -2px;
+		font-size: 11px;
+	}
+}
+
+.home-investments-slideup-stack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	gap: 14px;
+	box-sizing: border-box;
+}
+
+/* Match .home-investments-slideup-button-text (Sign In / View My Investments label) */
+.home-investments-slideup-lead {
+	margin: 0;
+	padding: 0 12px;
+	text-align: center;
+	font-family: Arial, sans-serif;
+	font-weight: 800;
+	letter-spacing: -0.6px;
+	font-size: 14px;
+	line-height: 1.35;
+	color: #000;
+	opacity: 0.5;
+	text-wrap: balance;
+}
+
 .asset-empty-signin {
 	/* Important: do NOT clip the button shadow or shift layout while visible */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	overflow: visible;
 	opacity: 1;
-	max-height: 240px;
+	max-height: 280px;
 	/* No fade-out: collapse via height/margins/padding only */
 	transition: max-height 1.5s ease, margin 1.5s ease, padding 1.5s ease;
 }
@@ -2603,6 +2650,10 @@ a.asset-action-button--myinv-asset-link {
 /* When the sign-in CTA is rendered as a standalone block (above Show/Hide),
    match the spacing it had when it lived directly under Add Investments. */
 .asset-portfolio-actions--signin.asset-portfolio-actions--signin-standalone {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
 	margin-top: var(--asset-portfolio-actions-signin-margin-top, 0px);
 	margin-bottom: max(calc(var(--asset-portfolio-actions-signin-margin-bottom, 0px) - 10px), 0px);
 }
@@ -6997,6 +7048,10 @@ a.myinv-about-button:focus-visible {
 	  }
 
 	  .home-investments-slideup-button-text {
+		font-size: 12px;
+	  }
+
+	  .home-investments-slideup-lead {
 		font-size: 12px;
 	  }
 
