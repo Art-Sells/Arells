@@ -1,7 +1,6 @@
-# Monorepo root — app lives at Apps/Web/arellsstore
-#
-# Set in Amplify Console → Environment variables: NODE_VERSION = 20
-# Avoid installing nvm/Volta in CI (fragile on Amplify).
+# Repository root. App: Apps/Web/arellsstore
+# If Amplify uses THIS file, appRoot below must match the Next app folder.
+# Global yarn install is avoided (npx instead) — see arellsstore/amplify.yml.
 #
 version: 1
 applications:
@@ -14,22 +13,26 @@ applications:
               set -eo pipefail
               echo "🧹 Clearing build cache..."
               rm -rf .next node_modules/.cache dist
-              echo "Node/npm (from Amplify image + NODE_VERSION):"
-              node -v || true
-              npm -v || true
-              npm install -g yarn@1.22.22
-              yarn -v
-              echo "📦 Installing dependencies..."
-              yarn install --frozen-lockfile
+              echo "📂 PWD=$(pwd)"
+              ls -la
+              if [ ! -f package.json ]; then
+                echo "ERROR: package.json missing — check App root Apps/Web/arellsstore"
+                exit 1
+              fi
+              node -v
+              npm -v
+              echo "📦 yarn via npx..."
+              npx --yes yarn@1.22.22 --version
+              npx --yes yarn@1.22.22 install --frozen-lockfile
         build:
           commands:
             - |
               set -eo pipefail
-              echo "🚀 Building Next.js app..."
-              yarn run build
+              npx --yes yarn@1.22.22 run build
       artifacts:
         baseDirectory: .next
         files:
           - '**/*'
       cache:
-        paths: []
+        paths:
+          - node_modules/**/*

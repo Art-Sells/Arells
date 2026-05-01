@@ -1,9 +1,8 @@
-# App root = Apps/Web/arellsstore
+# App root in Amplify MUST be: Apps/Web/arellsstore (monorepo).
+# Optional env: NODE_VERSION=20
 #
-# Do NOT install Volta/nvm in CI — brittle under Amplify (curl|bash, PATH, exit codes).
-# Set Node in Amplify Console → Hosting → Environment variables:
-#   NODE_VERSION = 20
-# Amplify applies this before these commands run. (.nvmrc 20.20.1 matches Volta.)
+# Global `npm install -g yarn` often fails on Amplify (EACCES / read-only global prefix).
+# Use npx to run Yarn 1.x with no global install.
 #
 version: 1
 frontend:
@@ -14,23 +13,27 @@ frontend:
           set -eo pipefail
           echo "🧹 Clearing build cache..."
           rm -rf .next node_modules/.cache dist
-          echo "Node/npm (from Amplify image + NODE_VERSION):"
-          node -v || true
-          npm -v || true
-          echo "📌 Expect NODE_VERSION=20 in Amplify env if build requires Node 20."
-          npm install -g yarn@1.22.22
-          yarn -v
-          echo "📦 Installing dependencies..."
-          yarn install --frozen-lockfile
+          echo "📂 PWD=$(pwd)"
+          echo "📂 Top-level files:" && ls -la
+          if [ ! -f package.json ]; then
+            echo "ERROR: package.json not here. In Amplify Console set App build settings → App root to: Apps/Web/arellsstore"
+            exit 1
+          fi
+          echo "Node:" && node -v
+          echo "npm:" && npm -v
+          echo "📦 Install deps with Yarn 1.x via npx (no global yarn)..."
+          npx --yes yarn@1.22.22 --version
+          npx --yes yarn@1.22.22 install --frozen-lockfile
     build:
       commands:
         - |
           set -eo pipefail
           echo "🚀 Building Next.js app..."
-          yarn run build
+          npx --yes yarn@1.22.22 run build
   artifacts:
     baseDirectory: .next
     files:
       - '**/*'
   cache:
-    paths: []
+    paths:
+      - node_modules/**/*
