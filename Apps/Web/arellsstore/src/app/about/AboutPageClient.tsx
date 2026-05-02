@@ -110,7 +110,7 @@ const AboutPageClient = () => {
               <div className="about-section about-section--mid myinv-accent-border">
                 <div className="about-section about-section--mid-body myinv-accent-border">
                   <p className="about-text about-text--mid">
-                    This belief is powered by a ledger that shows your investments never losing value.
+                    This mission is powered by a ledger that shows your investments never losing value.
                   </p>
                 </div>
                 <div className="about-section about-section--inner myinv-accent-border">

@@ -2,9 +2,9 @@
 
 # [Arells](https://arells.com)
 
-A belief that investments should never lose value. 
+Arells is on a mission to ensure investments never lose value.
 
-This belief uses a ledger that shows investments never losing value. 
+This mission is powered by a ledger that shows investments never losing value.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 
