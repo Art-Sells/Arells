@@ -3143,7 +3143,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
               alignSelf: 'flex-start',
               display: 'flex',
               flexDirection: 'column',
-              gap: '10px'
+              gap: '8px'
         }}
       >
             <div className="asset-metric-row">
