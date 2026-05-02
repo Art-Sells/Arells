@@ -30,7 +30,8 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "latest",
     "tiny-secp256k1": "^2.2.3",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "viem": "^2.21.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.130",
