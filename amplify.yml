@@ -1,38 +1,21 @@
-# Repo-root spec (monorepo). Amplify cds into appRoot before phases when this file is used.
+# Monorepo: Amplify cds into appRoot before preBuild/build — no manual cd.
 #
-version: 1
+version: 1.0
 applications:
   - appRoot: Apps/Web/arellsstore
     frontend:
       phases:
         preBuild:
           commands:
-            - |
-              set -eo pipefail
-              if [ -f package.json ]; then
-                echo "📂 $(pwd)"
-              elif [ -f Apps/Web/arellsstore/package.json ]; then
-                cd Apps/Web/arellsstore
-                echo "📂 cd → $(pwd)"
-              else
-                echo "ERROR: no package.json" && ls -la && exit 1
-              fi
-              rm -rf .next node_modules/.cache dist
-              node -v && npm -v
-              npx --yes yarn@1.22.22 --version
-              npx --yes yarn@1.22.22 install --frozen-lockfile
+            - echo "🧹 Clearing build cache..."
+            - rm -rf .next node_modules/.cache dist
+            - node -v && npm -v
+            - npx --yes yarn@1.22.22 --version
+            - npx --yes yarn@1.22.22 install --frozen-lockfile
         build:
           commands:
-            - |
-              set -eo pipefail
-              if [ -f package.json ]; then
-                :
-              elif [ -f Apps/Web/arellsstore/package.json ]; then
-                cd Apps/Web/arellsstore
-              else
-                exit 1
-              fi
-              npx --yes yarn@1.22.22 run build
+            - echo "🚀 next build..."
+            - npx --yes yarn@1.22.22 run build
       artifacts:
         baseDirectory: .next
         files:

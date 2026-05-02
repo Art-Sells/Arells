@@ -1,43 +1,26 @@
-# If Amplify "App root" is empty, the job starts at repo root — cd into the Next app first.
+# Same as repo-root amplify.yml. Prefer connecting Amplify to the repo root spec so appRoot applies.
+# Monorepo: Amplify cds into appRoot before preBuild/build — no manual cd.
 #
-version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - |
-          set -eo pipefail
-          if [ -f package.json ]; then
-            echo "📂 App folder: $(pwd)"
-          elif [ -f Apps/Web/arellsstore/package.json ]; then
-            cd Apps/Web/arellsstore
-            echo "📂 Monorepo — cd into Apps/Web/arellsstore → $(pwd)"
-          else
-            echo "ERROR: package.json not found. pwd=$(pwd)" && ls -la && exit 1
-          fi
-          echo "🧹 Clearing build cache..."
-          rm -rf .next node_modules/.cache dist
-          node -v && npm -v
-          echo "📦 yarn via npx..."
-          npx --yes yarn@1.22.22 --version
-          npx --yes yarn@1.22.22 install --frozen-lockfile
-    build:
-      commands:
-        - |
-          set -eo pipefail
-          if [ -f package.json ]; then
-            :
-          elif [ -f Apps/Web/arellsstore/package.json ]; then
-            cd Apps/Web/arellsstore
-          else
-            exit 1
-          fi
-          echo "🚀 next build..."
-          npx --yes yarn@1.22.22 run build
-  artifacts:
-    baseDirectory: .next
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
+version: 1.0
+applications:
+  - appRoot: Apps/Web/arellsstore
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - echo "🧹 Clearing build cache..."
+            - rm -rf .next node_modules/.cache dist
+            - node -v && npm -v
+            - npx --yes yarn@1.22.22 --version
+            - npx --yes yarn@1.22.22 install --frozen-lockfile
+        build:
+          commands:
+            - echo "🚀 next build..."
+            - npx --yes yarn@1.22.22 run build
+      artifacts:
+        baseDirectory: .next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
