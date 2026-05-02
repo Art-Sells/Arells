@@ -2,7 +2,6 @@
 
 ## Arells v1
 
-
 ### Clean Up Cursor storage (monthly):
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
