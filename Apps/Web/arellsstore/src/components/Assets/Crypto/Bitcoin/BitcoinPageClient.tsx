@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import SiteSocialFooter from '../../../SiteSocialFooter';
 import Bitcoin from './bitcoin';
 import { useUser } from '../../../../context/UserContext';
 
@@ -325,15 +326,16 @@ const BitcoinPageClient: React.FC = () => {
         >
           <span className="asset-footer-about-text">about</span>
         </Link>
-        <div className="asset-footer-share-sentence">
-          share this<br />
-          if you believe<br />
-          <span className="asset-footer-share-sentence-asset">Bitcoin</span>
-          <br />
-          should never<br />
-          lose value
-        </div>
       </footer>
+      <SiteSocialFooter />
+      <div className="asset-footer-share-sentence">
+        share this<br />
+        if you believe<br />
+        <span className="asset-footer-share-sentence-asset">Bitcoin</span>
+        <br />
+        should never<br />
+        lose value
+      </div>
     </div>
   );
 };

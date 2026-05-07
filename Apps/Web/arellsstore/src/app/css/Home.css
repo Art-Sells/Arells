@@ -2222,6 +2222,11 @@ a.asset-action-button--myinv-asset-link {
 	text-wrap: balance;
 }
 
+/* Same hue as headers / share line (`--asset-slogan-color` on `.asset-page--*`) */
+.asset-page .asset-signin-believe-prompt {
+	color: var(--asset-slogan-color);
+}
+
 @media screen and (max-width: 750px) {
 	.asset-signin-believe-prompt {
     margin-top: 7px;
@@ -4461,13 +4466,9 @@ a.asset-action-button--myinv-asset-link {
 .home-assets-about-wrap {
 	width: min(920px, 90%);
 	min-width: 350px;
-	margin: var(--home-assets-about-gap, 0px) auto	35px;
+	margin: var(--home-assets-about-gap, 0px) auto 0;
 	display: flex;
 	justify-content: center;
-}
-
-body.has-home-investments-cta .home-assets-about-wrap {
-	margin-bottom: var(--home-assets-about-bottom-gap, 145px);
 }
 
 .home-assets-about-wrap.page-slide-in {
@@ -4476,14 +4477,14 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 .home-assets-about-button {
 	width: auto;
-	margin-bottom: 30px;
+	margin-bottom: 0;
 }
 
-@media screen and (min-width: 701px) {
-	.home-assets-about-button {
-		margin-bottom: 50px;
-	}
+/* Home Follow us bottom margin = d9a9b99 `.home-assets-about-button`: 30px / 50px @ min-width 701px */
+.home-site-social-footer-spacer {
+	margin-bottom: 170px;
 }
+
 
 
 .myinv-cta-row {
@@ -5535,6 +5536,7 @@ a.myinv-about-button:focus-visible {
 		width: 100% !important;
 		min-width: 0 !important;
 		max-width: min(340px, calc(100vw - 24px)) !important;
+		padding-bottom: 20px;
 	}
 	.asset-footer-share-sentence-asset {
 		line-height: var(--asset-footer-share-sentence-asset-line-height, 1.7) !important;
@@ -6217,6 +6219,8 @@ a.myinv-about-button:focus-visible {
 	line-height: .9;
 	text-align: center;
 	margin-top: 20px;
+	margin-left: auto;
+	margin-right: auto;
 	opacity: 0.3 !important;
 	color: var(--asset-slogan-color) !important;
 	width: 100%;
@@ -6226,6 +6230,7 @@ a.myinv-about-button:focus-visible {
 	box-sizing: border-box;
 	padding-left: max(12px, env(safe-area-inset-left, 0px));
 	padding-right: max(12px, env(safe-area-inset-right, 0px));
+	padding-bottom: 20px;
 	margin-bottom: 30px;
 }
 
@@ -7193,6 +7198,11 @@ a.myinv-about-button:focus-visible {
 .auth-content-slide-in {
 	animation: pageSlideUp 0.9s ease both;
 	will-change: transform, opacity;
+}
+
+/* Verified email route only — tighter title bar top inset (see VerifiedPageClient `rootClassName`) */
+.auth-page.auth-page--verified-email .auth-title-bar {
+	padding-top: 40px;
 }
 
 /* Title sits above the card; negative margin-bottom pulls the card up so the title overlaps the top edge */
@@ -9133,8 +9143,111 @@ a.growth-metrics-about-button:focus-visible {
 	overflow-wrap: anywhere;
 }
 
-.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-paragraph:last-of-type {
-	margin-bottom: 25px;
+/* Outer bordered stack full width; copy column 170px like `.auth-verified-welcome-paragraph`; padding matches about mid-body (16px 14px) */
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked {
+	margin: 0 auto 14px;
+	width: 100%;
+	max-width: 100%;
+	padding: 16px 14px;
+	box-sizing: border-box;
+	text-align: center;
+	border-radius: 12px;
+	position: relative;
+	color: #000;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phase-intro-lines {
+	width: 170px;
+	max-width: 100%;
+	margin: 0 auto 12px;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phase-intro-lines .auth-verified-welcome-phase-line {
+	margin: 0;
+	width: 100%;
+	font-weight: 800;
+	font-size: 12px;
+	line-height: 1.25;
+	letter-spacing: -0.5px;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phase-intro-lines .auth-verified-welcome-phase-line + .auth-verified-welcome-phase-line {
+	margin-top: 2px;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-phase-section .auth-verified-welcome-phase-heading {
+	color: var(--myinv-accent-color);
+	opacity: 0.9;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-welcome-phase-line--stack-accent {
+	color: var(--myinv-accent-color);
+	opacity: 0.9;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-welcome-phase-line--stack-muted {
+	color: #000;
+	opacity: 1;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-phase-section {
+	width: 100%;
+	margin-top: 12px;
+	padding: 16px 14px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	position: relative;
+	text-align: center;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phase-heading {
+	margin: 0 0 6px;
+	font-weight: 800;
+	font-size: 12px;
+	line-height: 1.25;
+	letter-spacing: -0.5px;
+	text-align: center;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-phase-section .auth-verified-welcome-phase-heading,
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-phase-section .auth-verified-welcome-phase-line {
+	width: 170px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phase-line {
+	margin: 0 auto 8px;
+	font-weight: 800;
+	font-size: 12px;
+	line-height: 1.25;
+	letter-spacing: -0.5px;
+	text-align: center;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-phase-section .auth-verified-welcome-phase-list {
+	width: 170px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phase-list {
+	margin: 0 auto 0;
+	padding-left: 1.25em;
+	text-align: left;
+	font-weight: 800;
+	font-size: 12px;
+	line-height: 1.35;
+	letter-spacing: -0.5px;
+	list-style: disc;
 }
 
 a.myinv-cta-button {
@@ -9208,5 +9321,315 @@ a.asset-action-button--save-signin {
 	.auth-page .auth-title-bar {
 		padding-top: 60px;
 	}
+
+	.auth-page.auth-page--verified-email .auth-title-bar {
+		padding-top: 40px;
+	}
 }
-  
+
+/* About — phase bullet lists */
+.about-phase-list {
+	margin: 8px 0 0;
+	padding-left: 1.35em;
+	text-align: left;
+	font-weight: 800;
+	font-size: inherit;
+	line-height: 1.35;
+	list-style: disc;
+	color: inherit;
+}
+
+.about-phase-list li {
+	margin-bottom: 6px;
+}
+
+.about-phase-list li:last-child {
+	margin-bottom: 0;
+}
+
+/* About — phase blocks: same outer padding as ledger mid-body (16px 14px); inner margins match single-line .about-text--mid (25px top/bottom per paragraph) */
+.about-card .about-phase-copy-column {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.about-card .about-phase-copy-column .about-text--mid {
+	width: 130px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
+}
+
+.about-card .about-phase-copy-column .about-phase-list {
+	width: 130px;
+	max-width: 100%;
+	box-sizing: border-box;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 8px;
+	margin-bottom: 25px;
+	padding-left: 1.15em;
+	color: var(--myinv-accent-color);
+	opacity: 0.9;
+}
+
+.about-card .about-phase-copy-column .about-phase-list li {
+	color: inherit;
+	font-weight: 800;
+	font-size: 12px;
+	letter-spacing: -0.5px;
+}
+
+/* Site footer — Follow us (see SiteSocialFooter.tsx) */
+.site-social-footer {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 24px 16px max(28px, env(safe-area-inset-bottom, 0px));
+	display: flex;
+	justify-content: center;
+	background: transparent;
+}
+
+.asset-page .site-social-footer.site-social-footer--asset {
+	padding: 0 16px max(0px, env(safe-area-inset-bottom, 0px));
+}
+
+.site-social-footer-inner {
+	width: min(700px, 100%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	box-sizing: border-box;
+}
+
+.site-social-footer-rule {
+	display: block;
+	width: min(320px, 88%);
+	height: 2px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--myinv-accent-color, #222) 35%, transparent);
+	opacity: 0.85;
+}
+
+/* Cycling accent from `:root` `myInvAccentCycle` — footer sets color once; children inherit */
+.site-social-footer.site-social-footer--accent,
+.site-social-footer.site-social-footer--default {
+	color: var(--myinv-accent-color);
+}
+
+.site-social-footer--accent .site-social-footer-rule,
+.site-social-footer--default .site-social-footer-rule {
+	background: color-mix(in srgb, var(--myinv-accent-color, #222) 45%, transparent);
+}
+
+/* Asset Follow us: divider = same alpha as section borders; label/icons = footer about-button text; buttons = about-button fill + border */
+.asset-page--bitcoin .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(248, 141, 0, 0.3);
+	opacity: 1;
+}
+
+.asset-page--bitcoin .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(248, 141, 0, 0.95) !important;
+	-webkit-text-fill-color: rgba(248, 141, 0, 0.95) !important;
+}
+
+.asset-page--bitcoin .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(248, 141, 0, 0.95) !important;
+	-webkit-text-fill-color: rgba(248, 141, 0, 0.95) !important;
+	border-color: rgba(248, 141, 0, 0.9) !important;
+	background: rgba(248, 141, 0, 0.18) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--ethereum .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(107, 114, 168, 0.3);
+	opacity: 1;
+}
+
+.asset-page--ethereum .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(107, 114, 168, 0.95) !important;
+	-webkit-text-fill-color: rgba(107, 114, 168, 0.95) !important;
+}
+
+.asset-page--ethereum .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(107, 114, 168, 0.95) !important;
+	-webkit-text-fill-color: rgba(107, 114, 168, 0.95) !important;
+	border-color: rgba(107, 114, 168, 0.9) !important;
+	background: rgba(107, 114, 168, 0.18) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--solana .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(0, 208, 168, 0.3);
+	opacity: 1;
+}
+
+.asset-page--solana .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(0, 208, 168, 0.95) !important;
+	-webkit-text-fill-color: rgba(0, 208, 168, 0.95) !important;
+}
+
+.asset-page--solana .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(0, 208, 168, 0.95) !important;
+	-webkit-text-fill-color: rgba(0, 208, 168, 0.95) !important;
+	border-color: rgba(0, 208, 168, 0.9) !important;
+	background: rgba(0, 208, 168, 0.18) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--xrp .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(30, 41, 59, 0.3);
+	opacity: 1;
+}
+
+.asset-page--xrp .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(30, 41, 59, 0.95) !important;
+	-webkit-text-fill-color: rgba(30, 41, 59, 0.95) !important;
+}
+
+.asset-page--xrp .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(30, 41, 59, 0.95) !important;
+	-webkit-text-fill-color: rgba(30, 41, 59, 0.95) !important;
+	border-color: rgba(30, 41, 59, 0.4) !important;
+	background: rgba(30, 41, 59, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+@media screen and (max-width: 749px) {
+	.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+		width: min(250px, 100%);
+	}
+}
+
+.site-social-footer-label {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	font-weight: 800;
+	font-size: 13px;
+	letter-spacing: -0.3px;
+	color: #222;
+	text-align: center;
+}
+
+.site-social-footer.site-social-footer--accent .site-social-footer-label,
+.site-social-footer.site-social-footer--default .site-social-footer-label {
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+}
+
+.site-social-footer-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+}
+
+/* Asset rows only — accent links use `.site-social-footer-link--accent` rules below */
+.site-social-footer .site-social-footer-link:not(.site-social-footer-link--accent) {
+	min-width: 44px;
+	min-height: 44px;
+	padding: 8px 12px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	border-radius: 12px;
+	text-decoration: none;
+	color: inherit;
+	background: transparent !important;
+}
+
+.site-social-footer .site-social-footer-link.site-social-footer-link--accent {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	border-radius: 12px;
+	text-decoration: none;
+	background: transparent !important;
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+	border: 1px solid var(--myinv-accent-color) !important;
+	box-shadow: none !important;
+	padding: 13px !important;
+	min-width: 44px !important;
+	min-height: 44px !important;
+}
+
+/* PNG → mask so glyph fills with same accent as border (`currentColor` on link) */
+.site-social-footer.site-social-footer--accent .site-social-footer-link--accent .site-social-footer-icon,
+.site-social-footer.site-social-footer--default .site-social-footer-link--accent .site-social-footer-icon,
+.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link--accent .site-social-footer-icon {
+	display: inline-block;
+	flex-shrink: 0;
+	width: 15px;
+	height: 15px;
+	vertical-align: middle;
+	background-color: currentColor;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+}
+
+.site-social-footer.site-social-footer--accent .site-social-footer-link--accent .site-social-footer-icon--x,
+.site-social-footer.site-social-footer--default .site-social-footer-link--accent .site-social-footer-icon--x,
+.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link--accent .site-social-footer-icon--x {
+	-webkit-mask-image: url('/images/icons/socials/X.png');
+	mask-image: url('/images/icons/socials/X.png');
+}
+
+.site-social-footer.site-social-footer--accent .site-social-footer-link--accent .site-social-footer-icon--telegram,
+.site-social-footer.site-social-footer--default .site-social-footer-link--accent .site-social-footer-icon--telegram,
+.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link--accent .site-social-footer-icon--telegram {
+	-webkit-mask-image: url('/images/icons/socials/Telegram.png');
+	mask-image: url('/images/icons/socials/Telegram.png');
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.site-social-footer.site-social-footer--accent .site-social-footer-link--accent:hover,
+	.site-social-footer.site-social-footer--default .site-social-footer-link--accent:hover {
+		opacity: 0.88;
+	}
+
+	.asset-page--bitcoin .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover,
+	.asset-page--ethereum .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover,
+	.asset-page--solana .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover,
+	.asset-page--xrp .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover {
+		opacity: 0.88;
+	}
+}
+
+.site-social-footer-img {
+	display: block;
+	width: 20px;
+	height: 20px;
+	max-width: 20px;
+	max-height: 20px;
+	object-fit: contain;
+	pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.site-social-footer-link:hover {
+		transform: translateY(-2px);
+	}
+}
+
+.site-social-footer-link:active {
+	transform: translateY(-1px);
+}
+

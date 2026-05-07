@@ -131,16 +131,32 @@ const AboutPageClient = () => {
                 </div>
                 <div className="about-section about-section--mid-body myinv-accent-border">
                   <p className="about-text about-text--mid">
-                    If you&apos;ve signed up, started building your portfolio, and shared this with friends/family,
-                    congratulations. Your investments never losing value is now closer to becoming a reality because
-                    this is how many new financial systems began, as beliefs.
+                    We are currently in Phase One of our mission.
                   </p>
                 </div>
                 <div className="about-section about-section--mid-body myinv-accent-border">
-                  <p className="about-text about-text--mid">
-                    If you believe your investments should never lose value and haven&apos;t yet signed up or shared
-                    this, the time is now.
-                  </p>
+                  <div className="about-phase-copy-column">
+                    <p className="about-text about-text--mid">
+                      <strong>Phase One:</strong>
+                    </p>
+                    <p className="about-text about-text--mid">Expand our mission by...</p>
+                    <ul className="about-phase-list">
+                      <li>Adding assets we plan on impacting.</li>
+                      <li>Signing up supporters &amp; believers.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="about-section about-section--mid-body myinv-accent-border">
+                  <div className="about-phase-copy-column">
+                    <p className="about-text about-text--mid">
+                      <strong>Phase Two:</strong>
+                    </p>
+                    <p className="about-text about-text--mid">Implement our mission by...</p>
+                    <ul className="about-phase-list">
+                      <li>Building the infrastructure to support investments never losing value.</li>
+                      <li>Launching the infrastructure.</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>

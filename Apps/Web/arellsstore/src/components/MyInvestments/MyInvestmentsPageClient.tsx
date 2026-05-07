@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
+import SiteSocialFooter from '../SiteSocialFooter';
 
 const formatCurrencyParts = (value: number) => {
   const formatted = (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1245,6 +1246,7 @@ const MyInvestmentsPageClient: React.FC = () => {
             <span className="myinv-about-button-text">about</span>
           </Link>
         </div>
+        <SiteSocialFooter variant="accent" />
       </div>
     </>
   );

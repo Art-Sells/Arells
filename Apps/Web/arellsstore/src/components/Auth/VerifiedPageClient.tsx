@@ -7,7 +7,10 @@ import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthContentEntrance from './AuthContentEntrance';
 import { useUser } from '../../context/UserContext';
-import { emailVerifiedWelcomeCopy } from '../../content/emailVerifiedWelcomeCopy';
+import {
+  emailVerifiedWelcomeCopy,
+  emailVerifiedWelcomePhaseCopy,
+} from '../../content/emailVerifiedWelcomeCopy';
 
 /** Shown for every failure on this page (token missing, API error, network). */
 const VERIFY_PAGE_ERROR = 'This verification link is invalid or expired.';
@@ -83,7 +86,7 @@ const VerifiedPageClient: React.FC = () => {
   const shellTitle = status === 'ok' ? 'email verified' : status === 'err' ? 'verify email' : '';
 
   return (
-    <AuthPageShell title={shellTitle} crossfadeTitle>
+    <AuthPageShell title={shellTitle} crossfadeTitle rootClassName="auth-page--verified-email">
       {status === 'ok' ? (
         <AuthContentEntrance>
           <div className="auth-verify-sent auth-verify-sent--verified-success">
@@ -91,11 +94,38 @@ const VerifiedPageClient: React.FC = () => {
               <div className="auth-success-reveal-inner">
                 <div className="auth-verified-welcome" aria-live="polite">
                   <p className="auth-verified-welcome-headline">{emailVerifiedWelcomeCopy.headline}</p>
-                  {emailVerifiedWelcomeCopy.paragraphs.map((text, i) => (
-                    <p key={i} className="auth-verified-welcome-paragraph">
-                      {text}
-                    </p>
-                  ))}
+                  <p className="auth-verified-welcome-paragraph">{emailVerifiedWelcomeCopy.paragraphs[0]}</p>
+                  <div className="auth-verified-welcome-phases auth-verified-welcome-phases--stacked myinv-accent-border">
+                    <div className="auth-verified-welcome-phase-intro-lines">
+                      <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--stack-muted">
+                        {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line1}
+                      </p>
+                      <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--stack-accent">
+                        {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line2}
+                      </p>
+                      <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--stack-muted">
+                        {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line3}
+                      </p>
+                    </div>
+                    <div className="auth-verified-phase-section myinv-accent-border">
+                      <p className="auth-verified-welcome-phase-heading">{emailVerifiedWelcomePhaseCopy.phaseOneTitle}</p>
+                      <p className="auth-verified-welcome-phase-line">{emailVerifiedWelcomePhaseCopy.phaseOneLead}</p>
+                      <ul className="auth-verified-welcome-phase-list">
+                        {emailVerifiedWelcomePhaseCopy.phaseOneBullets.map((t) => (
+                          <li key={t}>{t}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="auth-verified-phase-section myinv-accent-border">
+                      <p className="auth-verified-welcome-phase-heading">{emailVerifiedWelcomePhaseCopy.phaseTwoTitle}</p>
+                      <p className="auth-verified-welcome-phase-line">{emailVerifiedWelcomePhaseCopy.phaseTwoLead}</p>
+                      <ul className="auth-verified-welcome-phase-list">
+                        {emailVerifiedWelcomePhaseCopy.phaseTwoBullets.map((t) => (
+                          <li key={t}>{t}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
                 <Link
                   href="/my-investments"

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
+import SiteSocialFooter from './SiteSocialFooter';
 
 const Index = () => {
   // Loader Functions
@@ -748,6 +749,9 @@ const Index = () => {
         />
       )}
 
+      <div className="home-site-social-footer-spacer">
+        <SiteSocialFooter variant="accent" />
+      </div>
     </>
   );
 }

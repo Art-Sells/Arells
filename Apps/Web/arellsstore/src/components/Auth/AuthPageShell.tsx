@@ -12,6 +12,8 @@ type AuthPageShellProps = {
   wide?: boolean;
   /** Fade between title strings instead of swapping instantly (e.g. verify flow). */
   crossfadeTitle?: boolean;
+  /** Appended to the root `.auth-page` wrapper for route-specific layout (e.g. verified email). */
+  rootClassName?: string;
 };
 
 const AuthPageShell: React.FC<AuthPageShellProps> = ({
@@ -20,6 +22,7 @@ const AuthPageShell: React.FC<AuthPageShellProps> = ({
   belowCard,
   wide,
   crossfadeTitle = false,
+  rootClassName,
 }) => {
   const [slideIn, setSlideIn] = useState(false);
   const [outgoingTitle, setOutgoingTitle] = useState<string | null>(null);
@@ -57,7 +60,11 @@ const AuthPageShell: React.FC<AuthPageShellProps> = ({
   }, []);
 
   return (
-    <div className={`auth-page myinv-page myinv-page--accent${wide ? ' auth-page--wide' : ''}`}>
+    <div
+      className={`auth-page myinv-page myinv-page--accent${wide ? ' auth-page--wide' : ''}${
+        rootClassName ? ` ${rootClassName}` : ''
+      }`}
+    >
       <div className={`auth-page-stack${slideIn ? ' page-slide-in' : ''}`}>
         {crossfadeTitle ? (
           <div className="auth-title-bar auth-title-bar--crossfade">
