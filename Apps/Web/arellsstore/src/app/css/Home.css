@@ -767,7 +767,11 @@ body {
 .asset-page--ethereum .asset-page-content,
 .asset-page--ethereum .asset-page-content *,
 .asset-page--ethereum .asset-footer,
-.asset-page--ethereum .asset-footer * {
+.asset-page--ethereum .asset-footer *,
+.asset-page--bnb .asset-page-content,
+.asset-page--bnb .asset-page-content *,
+.asset-page--bnb .asset-footer,
+.asset-page--bnb .asset-footer * {
 	color: var(--asset-unified-text-color) !important;
 }
 
@@ -802,8 +806,31 @@ body {
 	opacity: 0.5;
 }
 
+/* Title pill + spot $/% (BNB): `--asset-badge-spot-ink` — slightly darker than line gold (set on `.asset-page--bnb`). */
+.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:link,
+.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:visited,
+.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:hover,
+.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:active,
+.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(205, 155, 38)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(205, 155, 38)) !important;
+}
+
+.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(205, 155, 38)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(205, 155, 38)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--bnb .asset-page-content .asset-price-panel span.asset-metric-symbol--bnb,
+.asset-page--bnb .asset-page-content .asset-price-panel span.asset-metric-percent-symbol--bnb {
+	color: var(--asset-badge-spot-ink, rgb(205, 155, 38)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(205, 155, 38)) !important;
+}
+
 .asset-page--bitcoin .asset-header-title,
-.asset-page--ethereum .asset-header-title {
+.asset-page--ethereum .asset-header-title,
+.asset-page--bnb .asset-header-title {
 	color: var(--asset-line-color);
 	opacity: 1;
 }
@@ -813,7 +840,10 @@ body {
 .asset-page--bitcoin .asset-metric-number,
 .asset-page--ethereum .asset-metric-value,
 .asset-page--ethereum .asset-metric-inline-value,
-.asset-page--ethereum .asset-metric-number {
+.asset-page--ethereum .asset-metric-number,
+.asset-page--bnb .asset-metric-value,
+.asset-page--bnb .asset-metric-inline-value,
+.asset-page--bnb .asset-metric-number {
 	color: var(--asset-line-color);
 	opacity: 1;
 }

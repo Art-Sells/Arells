@@ -42,56 +42,12 @@
 	--asset-portfolio-actions-signin-margin-bottom: 25px;
 	--asset-save-signin-margin-top: 5px;
 	--asset-save-signin-margin-bottom: 15px;
+	/* Date-range row: line gold (BTC pattern). */
 	--asset-range-button-label-color: var(--asset-line-color);
-	/* Header badge + $ + % (muted brown; numerals stay --asset-line-color) */
-	--asset-header-muted-ink: rgb(112, 86, 68);
+	/* Pill “BNB” + header spot $/% — a touch darker than `--asset-line-color` */
+	--asset-badge-spot-ink: color-mix(in srgb, var(--asset-line-color) 76%, rgb(72, 54, 32));
 }
-.asset-page--bitcoin .asset-page-content,
-.asset-page--bitcoin .asset-page-content *,
-.asset-page--bitcoin .asset-footer,
-.asset-page--bitcoin .asset-footer *,
-.asset-page--bnb .asset-page-content,
-/* Exclude header spot $/% + badge pill — direct `* { color !important }` overrides every normal rule + React inline styles. */
-.asset-page--bnb
-	.asset-page-content
-	*:not(.asset-title-badge--bnb):not(.asset-title-badge-label):not(.asset-metric-symbol--bnb):not(.asset-metric-percent-symbol--bnb):not(.asset-save-signin-text):not(.bnb-glyph-ink),
-.asset-page--bnb .asset-footer,
-.asset-page--bnb .asset-footer * {
-	color: var(--asset-unified-text-color) !important;
-}
-/* Spot $ / % in price panel — muted brown (not line gold) */
-.asset-page--bnb .asset-page-content .asset-price-panel--bnb span.asset-metric-symbol--bnb,
-.asset-page--bnb .asset-page-content .asset-price-panel--bnb span.asset-metric-percent-symbol--bnb {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-}
-/* Badge word — muted brown on pill */
-.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:link,
-.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:visited,
-.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:hover,
-.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:active,
-.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:focus-visible {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-}
-.asset-page--bnb .asset-page-content a.asset-title-badge--section.asset-title-badge--bnb .asset-title-badge-label {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-	opacity: 1;
-}
-.asset-page--bitcoin .asset-header-title,
-.asset-page--bnb .asset-header-title {
-	color: var(--asset-line-color);
-	opacity: 1;
-}
-.asset-page--bitcoin .asset-metric-value,
-.asset-page--bitcoin .asset-metric-inline-value,
-.asset-page--bitcoin .asset-metric-number,
-.asset-page--bnb .asset-metric-value,
-.asset-page--bnb .asset-metric-inline-value,
-.asset-page--bnb .asset-metric-number {
-	color: var(--asset-line-color);
-}
+/* Keep opacity paired with BTC here — Home.css covers shared header metrics for BTC/ETH/BNB */
 .asset-page--bitcoin .asset-metric-value:not(.asset-mount-fade-2s),
 .asset-page--bitcoin .asset-metric-inline-value:not(.asset-mount-fade-2s),
 .asset-page--bitcoin .asset-metric-number:not(.asset-mount-fade-2s),
@@ -426,8 +382,8 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 }
 .asset-title-badge--bnb {
 	background: rgba(243, 186, 47, 1);
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
+	color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
 }
 .asset-title-badge--section.asset-title-badge--bnb {
 	padding-left: 12px;     /* <- edit ETH badge horizontal padding over 750px */
@@ -1211,52 +1167,3 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 
 	  
   }
-
-/*
- * Terminal overrides — literal rgba + compound .asset-page.asset-page--bnb (see layout import order).
- */
-.asset-page.asset-page--bnb .asset-page-content .asset-price-panel.asset-price-panel--bnb span.asset-metric-symbol--bnb,
-.asset-page.asset-page--bnb .asset-page-content .asset-price-panel.asset-price-panel--bnb span.asset-metric-percent-symbol--bnb {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-}
-
-.asset-page.asset-page--bnb .asset-page-content a.asset-title-badge.asset-title-badge--bnb.asset-title-badge--section:link,
-.asset-page.asset-page--bnb .asset-page-content a.asset-title-badge.asset-title-badge--bnb.asset-title-badge--section:visited,
-.asset-page.asset-page--bnb .asset-page-content a.asset-title-badge.asset-title-badge--bnb.asset-title-badge--section:hover,
-.asset-page.asset-page--bnb .asset-page-content a.asset-title-badge.asset-title-badge--bnb.asset-title-badge--section:active,
-.asset-page.asset-page--bnb .asset-page-content a.asset-title-badge.asset-title-badge--bnb.asset-title-badge--section:focus-visible {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-}
-
-.asset-page.asset-page--bnb .asset-page-content a.asset-title-badge.asset-title-badge--bnb.asset-title-badge--section .asset-title-badge-label {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-	opacity: 1;
-}
-
-/*
- * Last-win: scope to header panel so nothing earlier in the cascade (or inherited unified color)
- * can leave $ / % / “BNB” on the wrong ink. Inline JS previously fought this — removed.
- */
-.asset-page.asset-page--bnb .asset-page-content--bnb .asset-header-panel .asset-price-panel--bnb span.asset-metric-symbol--bnb,
-.asset-page.asset-page--bnb .asset-page-content--bnb .asset-header-panel .asset-price-panel--bnb span.asset-metric-percent-symbol--bnb {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-}
-
-.asset-page.asset-page--bnb .asset-page-content--bnb .asset-header-panel a.asset-title-badge.asset-title-badge--bnb:link,
-.asset-page.asset-page--bnb .asset-page-content--bnb .asset-header-panel a.asset-title-badge.asset-title-badge--bnb:visited,
-.asset-page.asset-page--bnb .asset-page-content--bnb .asset-header-panel a.asset-title-badge.asset-title-badge--bnb:hover,
-.asset-page.asset-page--bnb .asset-page-content--bnb .asset-header-panel a.asset-title-badge.asset-title-badge--bnb:active,
-.asset-page.asset-page--bnb .asset-page-content--bnb .asset-header-panel a.asset-title-badge.asset-title-badge--bnb:focus-visible {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-}
-
-.asset-page.asset-page--bnb .asset-page-content--bnb .asset-header-panel a.asset-title-badge.asset-title-badge--bnb .asset-title-badge-label {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-	opacity: 1;
-}

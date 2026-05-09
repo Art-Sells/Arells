@@ -1,5 +1,0 @@
-/* Inner text only (.bnb-glyph-ink); outer keeps metric/badge classes for sizing. Loaded last in layout. */
-#bnb-asset-page-root .bnb-glyph-ink {
-	color: rgb(112, 86, 68) !important;
-	-webkit-text-fill-color: rgb(112, 86, 68) !important;
-}
