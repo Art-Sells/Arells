@@ -7,7 +7,6 @@
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 - *Fix other issues if they arise if anyone signs up....*
-- *change metabanners for assets/my-investments make slogan bolder...*
 -*update sitemap and indexing after main submission*
 
 ### Day After Launch:

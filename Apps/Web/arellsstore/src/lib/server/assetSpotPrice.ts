@@ -5,6 +5,7 @@ const ASSET_PRICE: Record<string, { path: string; responseKey: string }> = {
   ethereum: { path: '/api/assets/crypto/ethereum/ethereumPrice', responseKey: 'ethereum' },
   xrp: { path: '/api/assets/crypto/xrp/xrpPrice', responseKey: 'ripple' },
   solana: { path: '/api/assets/crypto/solana/solanaPrice', responseKey: 'solana' },
+  bnb: { path: '/api/assets/crypto/bnb/bnbPrice', responseKey: 'binancecoin' },
 };
 
 export async function loadCurrentAssetSpotPrice(asset: string): Promise<number | null> {

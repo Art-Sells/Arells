@@ -12,7 +12,7 @@ function footerHiddenForPath(pathname: string): boolean {
   return false;
 }
 
-type FooterVariant = 'accent' | 'bitcoin' | 'ethereum' | 'solana' | 'xrp' | 'default';
+type FooterVariant = 'accent' | 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'default';
 
 function variantForPath(pathname: string): FooterVariant {
   const path = (pathname || '/').replace(/\/+$/, '') || '/';
@@ -20,8 +20,9 @@ function variantForPath(pathname: string): FooterVariant {
   const seg = path.split('/').filter(Boolean)[0];
   if (seg === 'bitcoin') return 'bitcoin';
   if (seg === 'ethereum') return 'ethereum';
-  if (seg === 'solana') return 'solana';
   if (seg === 'xrp') return 'xrp';
+  if (seg === 'bnb') return 'bnb';
+  if (seg === 'solana') return 'solana';
   return 'default';
 }
 

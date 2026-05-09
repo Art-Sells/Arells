@@ -26,6 +26,7 @@
 #overlayy .home-asset-bitcoin,
 #overlayy .home-asset-ethereum,
 #overlayy .home-asset-xrp,
+#overlayy .home-asset-bnb,
 #overlayy .home-asset-solana {
 	box-shadow: none !important;
 }
@@ -41,7 +42,7 @@
 	box-shadow: none !important;
 }
 
-/* Match .asset-page--bitcoin / .asset-page--ethereum / .asset-page--solana --asset-line-color (date range label hue) */
+/* Match .asset-page--bitcoin / .asset-page--ethereum / .asset-page--bnb / .asset-page--solana --asset-line-color (date range label hue) */
 #overlayy .home-asset-bitcoin {
 	--asset-line-color: rgb(209, 142, 55);
 }
@@ -52,6 +53,10 @@
 
 #overlayy .home-asset-xrp {
 	--asset-line-color: rgb(30, 41, 59);
+}
+
+#overlayy .home-asset-bnb {
+	--asset-line-color: rgb(243, 186, 47);
 }
 
 #overlayy .home-asset-solana {
@@ -9465,6 +9470,26 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
+.asset-page--bnb .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(243, 186, 47, 0.3);
+	opacity: 1;
+}
+
+.asset-page--bnb .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(243, 186, 47, 0.95) !important;
+	-webkit-text-fill-color: rgba(243, 186, 47, 0.95) !important;
+}
+
+.asset-page--bnb .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(243, 186, 47, 0.95) !important;
+	-webkit-text-fill-color: rgba(243, 186, 47, 0.95) !important;
+	border-color: rgba(243, 186, 47, 0.9) !important;
+	background: rgba(243, 186, 47, 0.18) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
 .asset-page--solana .site-social-footer.site-social-footer--asset .site-social-footer-rule {
 	background: rgba(0, 208, 168, 0.3);
 	opacity: 1;
@@ -9607,6 +9632,7 @@ a.asset-action-button--save-signin {
 
 	.asset-page--bitcoin .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover,
 	.asset-page--ethereum .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover,
+	.asset-page--bnb .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover,
 	.asset-page--solana .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover,
 	.asset-page--xrp .site-social-footer.site-social-footer--asset .site-social-footer-link--accent:hover {
 		opacity: 0.88;

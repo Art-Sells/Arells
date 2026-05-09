@@ -27,6 +27,14 @@ const assets: VapaAssetConfig[] = [
     priceUrl: 'https://pro-api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd&include_market_cap=true',
     historyUrl: 'https://pro-api.coingecko.com/api/v3/coins/solana/market_chart?vs_currency=usd&days=max',
   },
+  {
+    id: 'bnb',
+    coingeckoId: 'binancecoin',
+    s3Key: 'vavity/bnbVAPA.json',
+    priceUrl:
+      'https://pro-api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd&include_market_cap=true',
+    historyUrl: 'https://pro-api.coingecko.com/api/v3/coins/binancecoin/market_chart?vs_currency=usd&days=max',
+  },
 ];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

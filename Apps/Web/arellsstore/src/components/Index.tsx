@@ -363,6 +363,7 @@ const Index = () => {
       { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin' },
       { id: 'ethereum', label: 'Ethereum', href: '/ethereum' },
       { id: 'xrp', label: 'XRP', href: '/xrp' },
+      { id: 'bnb', label: 'BNB', href: '/bnb' },
       { id: 'solana', label: 'Solana', href: '/solana' },
     ];
 

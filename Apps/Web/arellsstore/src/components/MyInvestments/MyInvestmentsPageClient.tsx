@@ -35,7 +35,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   } = useVavity();
   const forceSessionPreview = false;
   const forceEmptyEmailPreview = false;
-  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'xrp', 'solana'], []);
+  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'xrp', 'bnb', 'solana'], []);
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
       (sessionInvestments || []).map((inv: any) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
@@ -53,7 +53,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const effectiveAssetsMissing = forceSessionPreview
     ? sessionAssetsMissing
     : forceEmptyEmailPreview
-      ? ['bitcoin', 'ethereum', 'xrp', 'solana']
+      ? ['bitcoin', 'ethereum', 'xrp', 'bnb', 'solana']
       : assetsMissingInEmail;
 
   const [open, setOpen] = useState(false);
@@ -1155,7 +1155,9 @@ const MyInvestmentsPageClient: React.FC = () => {
                               ? '/ethereum'
                               : asset === 'xrp'
                                 ? '/xrp'
-                                : '/solana';
+                                : asset === 'bnb'
+                                  ? '/bnb'
+                                  : '/solana';
                         const label =
                           asset === 'bitcoin'
                             ? 'Bitcoin'
@@ -1163,7 +1165,9 @@ const MyInvestmentsPageClient: React.FC = () => {
                               ? 'Ethereum'
                               : asset === 'xrp'
                                 ? 'XRP'
-                                : 'Solana';
+                                : asset === 'bnb'
+                                  ? 'BNB'
+                                  : 'Solana';
                         return (
                           <Link
                             key={`more-${asset}`}
@@ -1204,7 +1208,9 @@ const MyInvestmentsPageClient: React.FC = () => {
                               ? '/ethereum'
                               : asset === 'xrp'
                                 ? '/xrp'
-                                : '/solana';
+                                : asset === 'bnb'
+                                  ? '/bnb'
+                                  : '/solana';
                         const label =
                           asset === 'bitcoin'
                             ? 'Bitcoin'
@@ -1212,7 +1218,9 @@ const MyInvestmentsPageClient: React.FC = () => {
                               ? 'Ethereum'
                               : asset === 'xrp'
                                 ? 'XRP'
-                                : 'Solana';
+                                : asset === 'bnb'
+                                  ? 'BNB'
+                                  : 'Solana';
                         return (
                           <Link
                             key={`missing-${asset}`}

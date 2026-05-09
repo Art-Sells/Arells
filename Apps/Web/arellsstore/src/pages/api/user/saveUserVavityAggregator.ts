@@ -10,6 +10,7 @@ const VAPA_KEYS: Record<string, string> = {
   ethereum: 'vavity/ethereumVAPA.json',
   xrp: 'vavity/xrpVAPA.json',
   solana: 'vavity/solanaVAPA.json',
+  bnb: 'vavity/bnbVAPA.json',
 };
 
 const normalizeEmailKey = (raw: string) => encodeURIComponent(raw.trim().toLowerCase());
