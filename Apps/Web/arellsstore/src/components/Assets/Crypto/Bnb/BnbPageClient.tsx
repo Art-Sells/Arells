@@ -266,7 +266,7 @@ const BnbPageClient: React.FC = () => {
   }, [clearSessionResetFallbackTimer, completeSessionResetDismiss]);
 
   return (
-    <div className="asset-page asset-page--bnb" ref={pageRef}>
+    <div id="bnb-asset-page-root" className="asset-page asset-page--bnb" ref={pageRef}>
       <header className="asset-header asset-header--bnb" />
       {showLoading && !showSessionResetOverlay && (
         <div

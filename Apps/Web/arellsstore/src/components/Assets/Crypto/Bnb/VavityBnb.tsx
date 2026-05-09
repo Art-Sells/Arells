@@ -26,6 +26,7 @@ import {
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
+
 type VavityBnbProps = {
   sessionMountClearGuardRef: React.MutableRefObject<boolean>;
 };
@@ -277,6 +278,32 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
   const assetPageMountAtRef = useRef(Date.now());
   const openInvestmentsDeferTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    const panel = headerPanelRef.current;
+    if (!panel || typeof window === 'undefined') return;
+    const ink = 'rgb(112, 86, 68)';
+    let cancelled = false;
+    const paint = () => {
+      if (cancelled) return;
+      panel.querySelectorAll<HTMLElement>('.bnb-glyph-ink').forEach((el) => {
+        el.style.setProperty('color', ink, 'important');
+        el.style.setProperty('-webkit-text-fill-color', ink, 'important');
+      });
+    };
+    paint();
+    const raf = window.requestAnimationFrame(() => {
+      paint();
+      window.requestAnimationFrame(paint);
+    });
+    const mo = new MutationObserver(paint);
+    /* Do not observe `style` — setProperty would retrigger forever */
+    mo.observe(panel, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(raf);
+      mo.disconnect();
+    };
+  }, [headerNumbersVisible, chartRangeDays]);
   const sectionHeaderRef = useRef<HTMLDivElement | null>(null);
   const assetTitleRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
@@ -3119,7 +3146,9 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
           target="_blank"
           rel="noreferrer"
         >
-          <span className="asset-title-badge-label">BNB</span>
+          <span className="asset-title-badge-label">
+            <span className="bnb-glyph-ink">BNB</span>
+          </span>
         </a>
         <div ref={sectionHeaderRef} className={`asset-section-header${displayIsLiquidMode ? ' is-liquid' : ''}`}>
           <div ref={assetTitleRef} className="asset-header-title">BNB</div>
@@ -3152,7 +3181,9 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                 {!headerNumbersVisible && (
                   <span className={`asset-number-loader asset-number-loader--bnb asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
                 )}
-                <span className={`asset-metric-symbol--bnb asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
+                <span className={`asset-metric-symbol--bnb asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                  <span className="bnb-glyph-ink">$</span>
+                </span>
                 <span className="asset-header-switch-fade" style={realityFadeStyle}>
                   <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
                     {formatCurrency(displayPoint?.price ?? (displayIsLiquidMode ? assetPrice : vapa) ?? 0)}
@@ -3166,7 +3197,9 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                 {!headerNumbersVisible && (
                   <span className={`asset-number-loader asset-number-loader--bnb asset-number-loader--wide asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
                 )}
-                <span className={`asset-metric-symbol--bnb asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
+                <span className={`asset-metric-symbol--bnb asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                  <span className="bnb-glyph-ink">$</span>
+                </span>
                 <span className="asset-header-switch-fade" style={realityFadeStyle}>
                   <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
                     {renderDecimalSafe(formatMarketCap(activeMarketCap))}
@@ -3202,7 +3235,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                   headerNumbersVisible ? ' is-visible' : ''
                 }`}
               >
-                %
+                <span className="bnb-glyph-ink">%</span>
               </span>
               </span>
             </div>
