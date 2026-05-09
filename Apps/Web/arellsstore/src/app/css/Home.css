@@ -4549,6 +4549,24 @@ a.asset-action-button--myinv-asset-link {
 	justify-items: stretch;
 }
 
+/* Exactly two pills: avoid a 2-column grid stretching chips to the left/right edges; center the pair. */
+.myinv-asset-options:not(.is-single):not(.is-many) {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: stretch;
+	gap: 13px;
+	width: 100%;
+}
+
+.myinv-page .myinv-asset-options:not(.is-single):not(.is-many) > .myinv-asset-home-card {
+	width: auto;
+	flex: 0 1 clamp(150px, 42vw, 260px);
+	max-width: 260px;
+	min-width: 0;
+	box-sizing: border-box;
+}
+
 @media (min-width: 751px) {
 	.myinv-asset-options.is-many {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4592,7 +4610,7 @@ a.asset-action-button--myinv-asset-link {
 
 .myinv-page .myinv-asset-home-card.home-asset-bitcoin {
 	background: rgba(248, 141, 0, 0.06);
-	border: 1px solid rgba(248, 141, 0, 0.26);
+	border: 1px solid rgba(236, 131, 0, 0.34);
 	--asset-line-color: rgb(209, 142, 55);
 }
 
@@ -6823,11 +6841,11 @@ a.myinv-about-button:focus-visible {
 
 			.home-asset-bitcoin {
 				background: rgba(248, 141, 0, 0.06);
-				border: 1px solid rgba(248, 141, 0, 0.26);
+				border: 1px solid rgba(236, 131, 0, 0.34);
 			}
 
 			.home-asset-bitcoin .home-assets-cell + .home-assets-cell {
-				border-left: 5px solid rgba(248, 141, 0, 0.1);
+				border-left: 5px solid rgba(236, 131, 0, 0.14);
 				margin-left: -6.5px;
 				margin-right: 6.5px;
 				border-top-left-radius: 5px;
@@ -6897,7 +6915,7 @@ a.myinv-about-button:focus-visible {
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				gap: 0px;
+				gap: 1px;
 			}
 
 			.home-assets-number {
@@ -6907,12 +6925,12 @@ a.myinv-about-button:focus-visible {
 			}
 
 			.home-assets-price {
-				font-size: 12px;
+				font-size: 11px;
 			}
 
 			.home-assets-percent .home-assets-number {
 				font-weight: 700;
-				font-size: 12px;
+				font-size: 11px;
 			}
 
 			.home-assets-currency {
@@ -6922,6 +6940,7 @@ a.myinv-about-button:focus-visible {
 			}
 
 			.home-assets-currency-dollar {
+				font-size: 11px;
 				margin-right: 1.5px;
 			}
 
@@ -6931,11 +6950,8 @@ a.myinv-about-button:focus-visible {
 
 			.home-asset-arrow {
 				opacity: 0.8;
-			}
-
-			.home-asset-arrow {
-				width: 12px;
-				height: 12px;
+				width: 11px;
+				height: 11px;
 				display: block;
 			}
 
@@ -7180,12 +7196,19 @@ a.myinv-about-button:focus-visible {
 	}
 
 
-	.home-assets-percent .home-assets-number {
-		font-size: 10px;
+	.home-assets-percent .home-assets-number,
+	.home-assets-percent .home-assets-currency-percent {
+		font-size: 9px;
 	}
 
-	.home-assets-price {
-		font-size: 10px;
+	.home-asset-arrow {
+		width: 11px;
+		height: 11px;
+	}
+
+	.home-assets-price,
+	.home-assets-currency-dollar {
+		font-size: 9px;
 	}
   }
 
