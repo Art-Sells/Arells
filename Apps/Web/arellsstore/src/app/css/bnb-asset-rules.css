@@ -220,7 +220,8 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 	border-color: rgba(243, 186, 47, 0.3);
 }
 .asset-date-popover--bnb {
-	background: rgba(232, 250, 245, 0.9);
+	/* Warm gold wash — was mistakenly the same mint as Solana (rgb(232,250,245)). */
+	background: rgba(255, 243, 218, 0.93);
 }
 .asset-date-popover--bnb .asset-date-day:hover {
 	background: rgba(243, 186, 47, 0.14);
@@ -350,15 +351,15 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 	font-size: 12px;
 	font-weight: 200;
 }
-/* Purchase rows / portfolio / invest form: full line hue; existing rules keep opacity 0.7 on large symbols */
+/* Purchase rows / portfolio / invest form: match header price-panel $ / % (`--asset-badge-spot-ink`) */
 .asset-page--bnb .asset-page-content .asset-portfolio-summary-box .asset-metric-symbol--bnb,
 .asset-page--bnb .asset-page-content .asset-portfolio-summary-box .asset-metric-inline-symbol--bnb,
 .asset-page--bnb .asset-page-content .asset-investments-wrap .asset-metric-symbol--bnb,
 .asset-page--bnb .asset-page-content .asset-investments-wrap .asset-metric-inline-symbol--bnb,
 .asset-page--bnb .asset-page-content .asset-invest-form-metrics-panel .asset-metric-symbol--bnb,
 .asset-page--bnb .asset-page-content .asset-invest-form-metrics-panel .asset-metric-inline-symbol--bnb {
-	color: var(--asset-line-color) !important;
-	-webkit-text-fill-color: var(--asset-line-color) !important;
+	color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
 }
 .asset-metric-symbol--bnb,
 .asset-metric-inline-symbol--bnb {

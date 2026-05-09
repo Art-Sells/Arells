@@ -100,10 +100,11 @@ export default function CustomDatePicker({ value, onChange, className, placehold
           '--asset-border-color': 'rgba(107, 114, 168, 0.45)',
         } as React.CSSProperties;
       case 'bnb':
+        /* Match BNB asset body copy (`--asset-unified-text-color`), not bright chart gold */
         return {
-          '--asset-line-color': 'rgb(243, 186, 47)',
+          '--asset-line-color': 'rgb(190, 145, 55)',
           '--asset-slogan-color': 'rgb(130, 92, 18)',
-          '--asset-border-color': 'rgba(243, 186, 47, 0.45)',
+          '--asset-border-color': 'rgba(190, 145, 55, 0.42)',
         } as React.CSSProperties;
       case 'solana':
         return {
