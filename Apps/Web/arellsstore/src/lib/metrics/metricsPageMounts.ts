@@ -3,8 +3,13 @@ import { normalizeAnalyticsPath } from '../analytics/pathUtils';
 
 const DAY_MS = 86_400_000;
 
-/** One empty-ish object per distinct actor per UTC day (written by POST /api/metrics/page-mount). */
+/** One empty-ish object per signed-in user (hashed email) per UTC day (POST /api/metrics/page-mount). */
 export const METRICS_PAGE_MOUNTS_PREFIX = 'analytics/metrics-page-mounts-v1/';
+
+/** Mount object keys use `h:${hash}` only; legacy anonymous `s:${sessionId}` objects must not affect DAUt/WAUt/MAUt. */
+function isEmailMountDedupe(decodedFilenameStem: string): boolean {
+  return decodedFilenameStem.startsWith('h:');
+}
 
 export type MetricsPageActivityPayload = {
   generatedAt: number;
@@ -60,11 +65,14 @@ export async function listMountDedupesForUtcDay(
       const rest = k.slice(pref.length);
       if (!rest.endsWith('.json')) continue;
       const enc = rest.slice(0, -5);
+      let dedupe: string;
       try {
-        set.add(decodeURIComponent(enc));
+        dedupe = decodeURIComponent(enc);
       } catch {
-        set.add(enc);
+        dedupe = enc;
       }
+      if (!isEmailMountDedupe(dedupe)) continue;
+      set.add(dedupe);
     }
     token = out.IsTruncated ? out.NextContinuationToken : undefined;
   } while (token);

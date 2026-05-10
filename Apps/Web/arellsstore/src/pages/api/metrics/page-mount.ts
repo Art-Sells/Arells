@@ -21,21 +21,13 @@ function getClientIp(req: NextApiRequest): string {
   return first || req.socket.remoteAddress || 'unknown';
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const SESS_RE = /^sess-[a-z0-9]+-[a-z0-9]+$/i;
-
-function isValidSessionId(id: string): boolean {
-  const t = id.trim();
-  return t.length >= 8 && t.length <= 128 && (UUID_RE.test(t) || SESS_RE.test(t));
-}
-
 function utcDayKey(now: number): string {
   return new Date(now).toISOString().slice(0, 10);
 }
 
 /**
- * Records that this browser (session) opened the Growth Metrics page today (UTC).
- * Signed-in users dedupe by hashed email; anonymous by sessionId. Does not require analytics beacons.
+ * Records that a signed-in user opened the Growth Metrics page today (UTC).
+ * Dedupes only by hashed email — anonymous visits are not counted (DAUt/WAUt/MAUt = distinct accounts).
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -55,15 +47,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(204).end();
   }
 
-  const body = req.body || {};
-  const sessionId = typeof body.sessionId === 'string' ? body.sessionId.trim() : '';
-  if (!isValidSessionId(sessionId)) {
-    return res.status(400).json({ error: 'Invalid sessionId' });
+  const auth = await getSessionFromRequest(req);
+  const email = typeof auth?.email === 'string' ? auth.email.trim() : '';
+  if (!email) {
+    return res.status(204).end();
   }
 
-  const auth = await getSessionFromRequest(req);
-  const userHash = auth?.email ? hashEmailForAnalytics(auth.email) : null;
-  const dedupe = userHash ? `h:${userHash}` : `s:${sessionId}`;
+  const dedupe = `h:${hashEmailForAnalytics(email)}`;
   const dayKey = utcDayKey(Date.now());
   const key = `${METRICS_PAGE_MOUNTS_PREFIX}${dayKey}/${encodeURIComponent(dedupe)}.json`;
 

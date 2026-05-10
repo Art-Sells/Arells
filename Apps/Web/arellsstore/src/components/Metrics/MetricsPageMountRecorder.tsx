@@ -4,22 +4,22 @@ import { useEffect, useRef } from 'react';
 import { useUser } from '../../context/UserContext';
 
 /**
- * Registers each visit to /metrics in S3 (see /api/metrics/page-mount) so DAUt/WAUt/MAUt work without
- * NEXT_PUBLIC_ANALYTICS_ENABLED or session-meta path history.
+ * Registers signed-in visits to /metrics in S3 (see /api/metrics/page-mount). DAUt/WAUt/MAUt dedupe by email only.
  */
 export default function MetricsPageMountRecorder() {
-  const { sessionId, sessionReady } = useUser();
+  const { sessionReady, authSessionLoading, isSignedIn, email } = useUser();
   const sentRef = useRef(false);
 
   useEffect(() => {
-    if (!sessionReady || !sessionId) return;
+    if (!sessionReady || authSessionLoading) return;
+    if (!isSignedIn || !email) return;
     if (sentRef.current) return;
     sentRef.current = true;
     void fetch('/api/metrics/page-mount', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ sessionId }),
+      body: JSON.stringify({}),
     })
       .then((res) => {
         if (res.ok && typeof window !== 'undefined') {
@@ -27,7 +27,7 @@ export default function MetricsPageMountRecorder() {
         }
       })
       .catch(() => undefined);
-  }, [sessionReady, sessionId]);
+  }, [sessionReady, authSessionLoading, isSignedIn, email]);
 
   return null;
 }
