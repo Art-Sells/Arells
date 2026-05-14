@@ -1015,6 +1015,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
     summaryAnimating ? 'max-height 0s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 3s ease';
   const shouldRenderAddForm =
     (showEmptyAddForm && showAddForm) || addFormSubmitAnimating || addFormSubmitCollapsing;
+  const hideGuestSignInSection = !isSignedIn && !email && !hasInvestmentsUI && !shouldRenderAddForm;
 
   const beginClearing = useCallback(
     (heightOverride?: number) => {
@@ -3093,6 +3094,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
   useEffect(() => {
     if (hasInvestmentsUI) return;
     if (showInitialFetchLoader) return;
+    if (!isSignedIn && !email) return;
     if (emptyActionsMountPhase !== 'hidden') return;
     const revealTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('revealing');
@@ -3104,7 +3106,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
       globalThis.clearTimeout(revealTimer);
       globalThis.clearTimeout(doneTimer);
     };
-  }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
+  }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase, isSignedIn, email]);
 
   return (
     <>
@@ -3481,6 +3483,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
           summaryOpen && !isClearingInvestments ? ' asset-portfolio-center--summary-open' : ''
         }${summaryAnimating ? ' asset-portfolio-center--summary-animating' : ''}`}
         style={{ 
+          display: hideGuestSignInSection ? 'none' : undefined,
           marginBottom: '10px', 
           paddingTop: '25px', 
           paddingBottom: '16px',
@@ -3489,7 +3492,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
           ...(!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : {}),
         }}
       >
-        {!hasInvestmentsUI && !showInitialFetchLoader ? (
+        {!hasInvestmentsUI && !showInitialFetchLoader && (isSignedIn || email) ? (
           <>
             <div
               ref={emptyActionsRef}
@@ -3546,7 +3549,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                 </button>
               </div>
               )}
-              {!isSignedIn && !email && (
+              {false && !isSignedIn && !email && (
                 <div
                   className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
                 >
@@ -3567,7 +3570,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
               )}
             </div>
           </>
-        ) : (
+        ) : hasInvestmentsUI ? (
           <>
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation
                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
@@ -3859,7 +3862,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
             </button>
           </div>
           )}
-          {!isSignedIn && !email && (
+          {false && !isSignedIn && !email && (
             <div className="asset-empty-signin">
               <button
                 type="button"
@@ -3883,7 +3886,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
 
                 {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
                 <div ref={bottomActionsWrapRef}>
-                {investments.length > 0 && !isSignedIn && !email && (
+                {false && investments.length > 0 && !isSignedIn && !email && (
                   <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
                     <p className="asset-signin-believe-prompt">
                       Do you believe XRP should never lose value?
@@ -4167,7 +4170,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
               </div>
             </div>
           </>
-      )}
+        ) : null}
         {shouldRenderAddForm && (
           <div
             ref={addFormPanelRef}

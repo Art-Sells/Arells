@@ -108,15 +108,10 @@ const AboutPageClient = () => {
                 </p>
               </div>
               <div className="about-section about-section--mid myinv-accent-border">
-                <div className="about-section about-section--mid-body myinv-accent-border">
-                  <p className="about-text about-text--mid">
-                    This mission is powered by a ledger that shows your investments never losing value.
-                  </p>
-                </div>
                 <div className="about-section about-section--inner myinv-accent-border">
                   <div className="about-section about-section--inner-body myinv-accent-border">
                     <p className="about-text about-text--inner">
-                      This ledger is powered by a new psychological and technological invention called Vavity.
+                      This mission is powered by a new psychological and technological invention called Vavity.
                     </p>
                   </div>
                   <div className="about-section about-section--cta myinv-accent-border">
@@ -142,7 +137,7 @@ const AboutPageClient = () => {
                     <p className="about-text about-text--mid">Expand our mission by...</p>
                     <ul className="about-phase-list">
                       <li>Adding assets we plan on impacting.</li>
-                      <li>Signing up supporters &amp; believers.</li>
+                      <li>Gathering believers.</li>
                     </ul>
                   </div>
                 </div>
