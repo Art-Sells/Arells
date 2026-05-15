@@ -3133,7 +3133,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
           <div
             className={`asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}
           >
-            should never lose value
+            never loses value
           </div>
         </div>
         <div {...assetPriceChartMountSlide.slidePanelProps}>
@@ -3555,7 +3555,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                   className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
                 >
                   <p className="asset-signin-believe-prompt">
-                    Do you believe Ethereum should never lose value?
+                    Sign in to learn more
                   </p>
                   <Link
                     href="/signin"
@@ -3893,7 +3893,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                 {investments.length > 0 && !isSignedIn && !email && (
                   <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
                     <p className="asset-signin-believe-prompt">
-                      Do you believe Ethereum should never lose value?
+                      Sign in to learn more
                     </p>
                     <Link href="/signin" className="asset-action-button asset-action-button--save-signin">
                       <span className="asset-save-signin-text">Sign In</span>

@@ -3,8 +3,8 @@ import SolanaPageClient from '../../components/Assets/Crypto/Solana/SolanaPageCl
 import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
 
 export const metadata: Metadata = {
-  title: 'Solana should never lose value',
-  description: 'Investments should never lose value.',
+  title: 'Solana never loses value',
+  description: 'Investments never lose value.',
   robots: { index: true, follow: true },
   alternates: {
     canonical: '/solana',
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
     apple: [{ url: u('/images/favicons/SolBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
   },
   openGraph: {
-    title: 'Solana should never lose value',
-    description: 'Investments should never lose value.',
+    title: 'Solana never loses value',
+    description: 'Investments never lose value.',
     url: '/solana',
     type: 'website',
     images: [
@@ -29,8 +29,8 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    title: 'Solana should never lose value',
-    description: 'Investments should never lose value.',
+    title: 'Solana never loses value',
+    description: 'Investments never lose value.',
     card: 'summary_large_image',
     images: [
       {

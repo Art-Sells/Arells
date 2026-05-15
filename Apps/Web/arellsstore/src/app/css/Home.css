@@ -3883,7 +3883,7 @@ a.asset-action-button--myinv-asset-link {
 	font-family: Arial, sans-serif;
 	font-weight: 800;
 	letter-spacing: -.6px;
-	/* Match the Home slogan ("investments should never lose value") */
+	/* Match the Home slogan ("investments never lose value") */
 	font-size: 14px;
 	color: #000;
 	opacity: .5;
@@ -5595,19 +5595,6 @@ a.myinv-about-button:focus-visible {
 		letter-spacing: 0px;
 	}
 
-	.asset-footer-share-sentence {
-		font-size: 25px !important;
-		letter-spacing: 0px;
-		line-height: 8;
-		width: 100% !important;
-		min-width: 0 !important;
-		max-width: min(340px, calc(100vw - 24px)) !important;
-		padding-bottom: 20px;
-	}
-	.asset-footer-share-sentence-asset {
-		line-height: var(--asset-footer-share-sentence-asset-line-height, 1.7) !important;
-	}
-
 	.asset-action-button--add-investments {
 		font-size: 15px;  
 		padding-top: 12px;    /* <- edit add investments font size */
@@ -6214,7 +6201,7 @@ a.myinv-about-button:focus-visible {
 	align-items: center;
 	gap: 12px;
 	margin-top: 20px;
-	margin-bottom: 15px;
+	margin-bottom: 0;
 	min-width: 350px;
 	opacity: 1;
 	transition: opacity 0.4s ease;
@@ -6276,33 +6263,6 @@ a.myinv-about-button:focus-visible {
 	margin-right: 3px;
 	opacity: 1;
 	font-weight: 200;
-}
-
-.asset-footer-share-sentence {
-	font-size: 25px;
-	font-weight: 800;
-	letter-spacing: -1.3px;
-	line-height: .9;
-	text-align: center;
-	margin-top: 20px;
-	margin-left: auto;
-	margin-right: auto;
-	opacity: 0.3 !important;
-	color: var(--asset-slogan-color) !important;
-	width: 100%;
-	max-width: 600px;
-	min-width: 0;
-	flex: 0 1 auto;
-	box-sizing: border-box;
-	padding-left: max(12px, env(safe-area-inset-left, 0px));
-	padding-right: max(12px, env(safe-area-inset-right, 0px));
-	padding-bottom: 20px;
-	margin-bottom: 30px;
-}
-
-.asset-footer-share-sentence-asset {
-	line-height: var(--asset-footer-share-sentence-asset-line-height, 2);
-	display: inline-block;
 }
 
 .asset-footer-about-logo {
@@ -9452,11 +9412,12 @@ a.asset-action-button--save-signin {
 	letter-spacing: -0.5px;
 }
 
-/* Site footer — Follow us (see SiteSocialFooter.tsx) */
+/* Site footer — Follow us (see SiteSocialFooter.tsx); bottom margin replaces removed asset share line + footer gap */
 .site-social-footer {
 	width: 100%;
 	box-sizing: border-box;
 	padding: 24px 16px max(28px, env(safe-area-inset-bottom, 0px));
+	margin-bottom: 45px;
 	display: flex;
 	justify-content: center;
 	background: transparent;

@@ -328,14 +328,6 @@ const SolanaPageClient: React.FC = () => {
         </Link>
       </footer>
       <SiteSocialFooter />
-      <div className="asset-footer-share-sentence">
-        share this<br />
-        if you believe<br />
-        <span className="asset-footer-share-sentence-asset">Solana</span>
-        <br />
-        should never<br />
-        lose value
-      </div>
     </div>
   );
 };

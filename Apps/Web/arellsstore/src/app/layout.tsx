@@ -44,7 +44,7 @@ function siteJsonLd(origin: string) {
         '@id': `${origin}/#website`,
         name: 'Arells',
         url: origin,
-        description: 'Investments should never lose value.',
+        description: 'Investments never lose value.',
         inLanguage: 'en-US',
         publisher: { '@id': `${origin}/#organization` },
       },

@@ -820,7 +820,7 @@ const MyInvestmentsPageClient: React.FC = () => {
             <p
               className={`myinv-descriptioner myinv-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
             >
-              should never lose value
+              never lose value
             </p>
           </div>
         </div>

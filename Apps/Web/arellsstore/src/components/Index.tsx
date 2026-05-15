@@ -473,7 +473,7 @@ const Index = () => {
             className={`home-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
             style={{ letterSpacing: '0px', marginLeft: '0px' }}
           >
-            investments should never lose value
+            investments never lose value
           </p>
         </div>
       </div>
@@ -746,7 +746,7 @@ const Index = () => {
         <HomeInvestmentsSlideUpCTA
           href="/signin"
           label="Sign In"
-          lead="Do you believe investments should never lose value?"
+          lead="Sign in to learn more"
         />
       )}
 
