@@ -12,7 +12,12 @@ const formatCurrencyParts = (value: number) => {
   return { integer, decimals };
 };
 
-const MyInvestmentsPageClient: React.FC = () => {
+export type MyInvestmentsPageClientProps = {
+  /** Static UI preview: signed-in, zero holdings (no API polling for initial ready). */
+  emptyPortfolioPreview?: boolean;
+};
+
+const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ emptyPortfolioPreview = false }) => {
   const {
     isSignedIn,
     email,
@@ -34,7 +39,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     getAsset,
   } = useVavity();
   const forceSessionPreview = false;
-  const forceEmptyEmailPreview = false;
+  const forceEmptyEmailPreview = emptyPortfolioPreview;
   const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'xrp', 'bnb', 'solana'], []);
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
@@ -138,6 +143,13 @@ const MyInvestmentsPageClient: React.FC = () => {
   const lastFormattedProfitRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (forceEmptyEmailPreview) {
+      if (!initialFetchDoneRef.current) {
+        initialFetchDoneRef.current = true;
+        setInitialDataReady(true);
+      }
+      return;
+    }
     const shouldPoll = forceSessionPreview ? Boolean(sessionId) : Boolean(effectiveEmail);
     if (!shouldPoll) {
       const stillWaiting = forceSessionPreview
@@ -175,6 +187,7 @@ const MyInvestmentsPageClient: React.FC = () => {
       window.clearInterval(id);
     };
   }, [
+    forceEmptyEmailPreview,
     forceSessionPreview,
     fetchVavityAggregatorAll,
     refreshEmailAggregator,
@@ -1135,6 +1148,32 @@ const MyInvestmentsPageClient: React.FC = () => {
                   )}
                 </>
               ) : null}
+              {effectiveSignedIn && initialDataReady && (
+                <div className={`myinv-panel-group myinv-panel-group--bordered myinv-mission-group${slideIn ? ' page-slide-in' : ''}`}>
+                  <div className="myinv-panel-section myinv-accent-border myinv-mission-outer">
+                    <div className="myinv-panel myinv-panel--shell myinv-mission-outer-shell">
+                      <div className="myinv-panel-section myinv-accent-border myinv-mission-inner-card">
+                        <div className="myinv-panel myinv-panel--shell myinv-mission-inner-shell">
+                          <div className="myinv-mission-accent-body">
+                            <p className="myinv-mission-line">we are on a mission to ensure your investments never lose value</p>
+                            <div className="myinv-panel-section myinv-accent-border myinv-mission-phase-card">
+                              <div className="myinv-panel myinv-panel--shell myinv-mission-phase-shell">
+                                <p className="myinv-mission-sub">currently in</p>
+                                <div className="myinv-mission-about-wrap">
+                                  <Link className="myinv-about-button" href="/about" aria-label="Phase One — About Arells">
+                                    <span className="myinv-about-button-bg" aria-hidden="true" />
+                                    <span className="myinv-about-button-text">Phase One</span>
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
