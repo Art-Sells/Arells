@@ -4,7 +4,7 @@
 
 Arells is on a mission to ensure investments never lose value.
 
-This mission is powered by a ledger that shows investments never losing value.
+Powered by a ledger that shows investments never losing value.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 
