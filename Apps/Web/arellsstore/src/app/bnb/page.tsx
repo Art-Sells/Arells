@@ -3,8 +3,8 @@ import BnbPageClient from '../../components/Assets/Crypto/Bnb/BnbPageClient';
 import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
 
 export const metadata: Metadata = {
-  title: 'BNB should never lose value',
-  description: 'Investments should never lose value.',
+  title: 'BNB never loses value',
+  description: 'Investments never lose value.',
   robots: { index: true, follow: true },
   alternates: {
     canonical: '/bnb',
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     apple: [{ url: u('/images/favicons/BnbBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
   },
   openGraph: {
-    title: 'BNB should never lose value',
-    description: 'Investments should never lose value.',
+    title: 'BNB never loses value',
+    description: 'Investments never lose value.',
     url: '/bnb',
     type: 'website',
     images: [
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    title: 'BNB should never lose value',
-    description: 'Investments should never lose value.',
+    title: 'BNB never loses value',
+    description: 'Investments never lose value.',
     card: 'summary_large_image',
     images: [
       {

@@ -3,8 +3,8 @@ import BitcoinPageClient from '../../components/Assets/Crypto/Bitcoin/BitcoinPag
 import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
 
 export const metadata: Metadata = {
-  title: "Bitcoin should never lose value",
-  description: "Investments should never lose value.",
+  title: "Bitcoin never loses value",
+  description: "Investments never lose value.",
   robots: { index: true, follow: true },
   alternates: {
     canonical: '/bitcoin',
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     apple: [{ url: u('/images/favicons/BtcBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
   },
   openGraph: {
-    title: "Bitcoin should never lose value",
-    description: "Investments should never lose value.",
+    title: "Bitcoin never loses value",
+    description: "Investments never lose value.",
     url: "/bitcoin",
     type: "website",
     images: [
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     ]
   },
   twitter: {
-    title: "Bitcoin should never lose value",
-    description: "Investments should never lose value.",
+    title: "Bitcoin never loses value",
+    description: "Investments never lose value.",
     card: "summary_large_image",
     images: [
       {

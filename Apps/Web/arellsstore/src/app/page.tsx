@@ -7,14 +7,14 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: "Investments should never lose value.",
+  description: "Investments never lose value.",
   robots: { index: true, follow: true },
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: "Arells",
-    description: "Investments should never lose value.",
+    description: "Investments never lose value.",
     url: "/",
     type: "website",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-    description: "Investments should never lose value.",
+    description: "Investments never lose value.",
     card: "summary_large_image",
     images: [
       {

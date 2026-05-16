@@ -468,7 +468,7 @@ const Index = () => {
             className={`home-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
             style={{ letterSpacing: '0px', marginLeft: '0px' }}
           >
-            investments should never lose value
+            investments never lose value
           </p>
         </div>
       </div>
@@ -743,6 +743,13 @@ const Index = () => {
       </div>
 
       {!showLoading && (!!email || forceHomeInvestmentsPreview) && <HomeInvestmentsSlideUpCTA />}
+      {!showLoading && !email && !forceHomeInvestmentsPreview && (
+        <HomeInvestmentsSlideUpCTA
+          href="/signin"
+          label="Sign In"
+          lead="Sign in to learn more"
+        />
+      )}
 
       <div className="home-site-social-footer-spacer">
         <SiteSocialFooter variant="accent" />

@@ -108,10 +108,15 @@ const AboutPageClient = () => {
                 </p>
               </div>
               <div className="about-section about-section--mid myinv-accent-border">
+                <div className="about-section about-section--mid-body myinv-accent-border">
+                  <p className="about-text about-text--mid">
+                    Powered by a ledger that shows your investments never losing value.
+                  </p>
+                </div>
                 <div className="about-section about-section--inner myinv-accent-border">
                   <div className="about-section about-section--inner-body myinv-accent-border">
                     <p className="about-text about-text--inner">
-                      This mission is powered by a new psychological and technological invention called Vavity.
+                      Powered by a new psychological and technological invention called Vavity.
                     </p>
                   </div>
                   <div className="about-section about-section--cta myinv-accent-border">
