@@ -2245,14 +2245,6 @@ a.asset-action-button--myinv-asset-link {
 }
 
 /* Empty-state: fade out Sign-in CTA while the add form is open (no immediate display:none). */
-/* Guest Sign In CTA — hidden from view (not the footer “share this if you believe” line) */
-.asset-signin-believe-prompt,
-.asset-empty-signin,
-.asset-portfolio-actions--signin,
-.asset-portfolio-actions--signin-standalone {
-	display: none !important;
-}
-
 /* Guest Sign In — line above the button (asset pages) */
 .asset-signin-believe-prompt {
 	margin: 0 0 10px;
@@ -4629,9 +4621,9 @@ a.asset-action-button--myinv-asset-link {
 	margin-bottom: 0;
 }
 
-/* Bottom spacer for Follow us — was 170px to clear fixed `.home-toggle-footer` */
+/* Home Follow us bottom margin = d9a9b99 `.home-assets-about-button`: 30px / 50px @ min-width 701px */
 .home-site-social-footer-spacer {
-	margin-bottom: 80px;
+	margin-bottom: 170px;
 }
 
 

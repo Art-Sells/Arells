@@ -142,7 +142,7 @@ const AboutPageClient = () => {
                     <p className="about-text about-text--mid">Expand our mission by...</p>
                     <ul className="about-phase-list">
                       <li>Adding assets we plan on impacting.</li>
-                      <li>Gathering believers.</li>
+                      <li>Signing up supporters &amp; believers.</li>
                     </ul>
                   </div>
                 </div>

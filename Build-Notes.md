@@ -6,6 +6,7 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
+
 - *Fix other issues if they arise if anyone signs up....*
 -*update sitemap and indexing after main submission*
 

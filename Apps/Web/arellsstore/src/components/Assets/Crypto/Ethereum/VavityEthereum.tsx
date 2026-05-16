@@ -1002,7 +1002,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     summaryAnimating ? 'max-height 0s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 3s ease';
   const shouldRenderAddForm =
     (showEmptyAddForm && showAddForm) || addFormSubmitAnimating || addFormSubmitCollapsing;
-  const hideGuestSignInSection = !isSignedIn && !email && !hasInvestmentsUI && !shouldRenderAddForm;
 
   const beginClearing = useCallback(
     (heightOverride?: number) => {
@@ -3101,7 +3100,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
   useEffect(() => {
     if (hasInvestmentsUI) return;
     if (showInitialFetchLoader) return;
-    if (!isSignedIn && !email) return;
     if (emptyActionsMountPhase !== 'hidden') return;
     const revealTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('revealing');
@@ -3113,7 +3111,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
       globalThis.clearTimeout(revealTimer);
       globalThis.clearTimeout(doneTimer);
     };
-  }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase, isSignedIn, email]);
+  }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
 
   return (
     <>
@@ -3487,7 +3485,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
           summaryOpen && !isClearingInvestments ? ' asset-portfolio-center--summary-open' : ''
         }${summaryAnimating ? ' asset-portfolio-center--summary-animating' : ''}`}
         style={{ 
-          display: hideGuestSignInSection ? 'none' : undefined,
           marginBottom: '10px', 
           paddingTop: '25px', 
           paddingBottom: '16px',
@@ -3496,7 +3493,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
           ...(!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : {}),
         }}
       >
-        {!hasInvestmentsUI && !showInitialFetchLoader && (isSignedIn || email) ? (
+        {!hasInvestmentsUI && !showInitialFetchLoader ? (
           <>
             <div
               ref={emptyActionsRef}
@@ -3553,7 +3550,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                 </button>
               </div>
               )}
-              {false && !isSignedIn && !email && (
+              {!isSignedIn && !email && (
                 <div
                   className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
                 >
@@ -3574,7 +3571,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
               )}
             </div>
           </>
-        ) : hasInvestmentsUI ? (
+        ) : (
           <>
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation
                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
@@ -3869,7 +3866,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                             </button>
                           </div>
                           )}
-                          {false && !isSignedIn && !email && (
+                          {!isSignedIn && !email && (
                             <div className="asset-empty-signin">
                               <button
                                 type="button"
@@ -3893,7 +3890,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
 
                 {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
                 <div ref={bottomActionsWrapRef}>
-                {false && investments.length > 0 && !isSignedIn && !email && (
+                {investments.length > 0 && !isSignedIn && !email && (
                   <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
                     <p className="asset-signin-believe-prompt">
                       Sign in to learn more
@@ -4185,7 +4182,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
               </div>
             </div>
           </>
-        ) : null}
+        )}
         {shouldRenderAddForm && (
           <div
             ref={addFormPanelRef}
