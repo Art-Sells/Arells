@@ -6,7 +6,7 @@ const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
 export const metadata: Metadata = {
   title: 'Sign in',
   description: 'Sign in to save investments.',
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
   alternates: {
     canonical: '/signin',
   },
