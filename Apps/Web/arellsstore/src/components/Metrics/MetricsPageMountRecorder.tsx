@@ -4,17 +4,21 @@ import { useEffect, useRef } from 'react';
 import { useUser } from '../../context/UserContext';
 
 /**
- * Registers signed-in visits to /metrics in S3 (see /api/metrics/page-mount). DAUt/WAUt/MAUt dedupe by email only.
+ * Busts the metrics activity cache when /metrics loads (DAUt/WAUt/MAUt come from site-wide `AnalyticsBeacon`, not this POST).
  */
 export default function MetricsPageMountRecorder() {
   const { sessionReady, authSessionLoading, isSignedIn, email } = useUser();
-  const sentRef = useRef(false);
+  /** Last email we recorded for this page visit (reset on sign-out so account switches on /metrics each POST once). */
+  const recordedEmailRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!sessionReady || authSessionLoading) return;
-    if (!isSignedIn || !email) return;
-    if (sentRef.current) return;
-    sentRef.current = true;
+    if (!isSignedIn || !email) {
+      recordedEmailRef.current = null;
+      return;
+    }
+    if (recordedEmailRef.current === email) return;
+    recordedEmailRef.current = email;
     void fetch('/api/metrics/page-mount', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

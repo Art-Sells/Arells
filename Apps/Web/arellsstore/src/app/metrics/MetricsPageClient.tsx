@@ -4,7 +4,6 @@ import Link from 'next/link';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import GrowthMetricsPanel from '../../components/Metrics/GrowthMetricsPanel';
 import MetricsPageActivityPanel from '../../components/Metrics/MetricsPageActivityPanel';
-import MetricsPageMountRecorder from '../../components/Metrics/MetricsPageMountRecorder';
 
 export default function MetricsPageClient() {
   const [slideIn, setSlideIn] = useState(false);
@@ -106,7 +105,6 @@ export default function MetricsPageClient() {
           >
             <div ref={growthMetricsCardInnerRef} className="growth-metrics-card-inner">
               <div className="growth-metrics-card-content">
-                <MetricsPageMountRecorder />
                 <div className="growth-metrics-panels">
                   <GrowthMetricsPanel />
                   <MetricsPageActivityPanel />

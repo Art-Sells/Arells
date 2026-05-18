@@ -1,10 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {
-  aggregateMetricsPageMounts,
+  aggregateSignedInUserTraffic,
   metricsActivityTargetPath,
   type MetricsPageActivityPayload,
 } from '../../../lib/metrics/metricsPageMounts';
-import { computeMetricsRegisteredCombined } from '../../../lib/metrics/registeredCombinedCount';
 import { getServerS3 } from '../../../lib/server/awsS3';
 
 const s3 = getServerS3();
@@ -26,7 +25,7 @@ function metricsAuthorized(req: NextApiRequest): boolean {
 
 function cacheKey(pagePath: string): string {
   const safe = encodeURIComponent(pagePath.replace(/\//g, '_'));
-  return `analytics/metrics-page-activity-v5/${safe}.json`;
+  return `analytics/metrics-page-activity-v15/${safe}.json`;
 }
 
 function cacheTtlMs(): number {
@@ -37,7 +36,10 @@ function cacheTtlMs(): number {
 }
 
 function cacheDisabled(): boolean {
-  return process.env.METRICS_PAGE_ACTIVITY_CACHE_DISABLED === '1';
+  return (
+    process.env.METRICS_PAGE_ACTIVITY_CACHE_DISABLED === '1' ||
+    process.env.NODE_ENV === 'development'
+  );
 }
 
 async function tryReadCache(key: string, ttlMs: number): Promise<MetricsPageActivityPayload | null> {
@@ -77,17 +79,13 @@ const inflight = new Map<string, Promise<MetricsPageActivityPayload>>();
 
 async function buildPayload(pagePath: string): Promise<MetricsPageActivityPayload> {
   const now = Date.now();
-  const [counts, registeredCombined] = await Promise.all([
-    aggregateMetricsPageMounts(s3, bucket(), now),
-    computeMetricsRegisteredCombined(s3, bucket()),
-  ]);
-  const cap = Math.max(0, registeredCombined);
+  const counts = await aggregateSignedInUserTraffic(s3, bucket(), now);
   return {
     generatedAt: now,
     pagePath,
-    dau: Math.min(counts.dau, cap),
-    wau: Math.min(counts.wau, cap),
-    mau: Math.min(counts.mau, cap),
+    dau: counts.dau,
+    wau: counts.wau,
+    mau: counts.mau,
     utcToday: counts.utcToday,
     wauRollingDays: counts.wauRollingDays,
     mauMonthStart: counts.mauMonthStart,

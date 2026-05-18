@@ -124,8 +124,8 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
           view,
         });
         if (key) params.set('key', key);
-        if (force) params.set('nocache', '1');
-        const res = await fetch(`/api/metrics/growth?${params.toString()}`);
+        if (force || process.env.NODE_ENV === 'development') params.set('nocache', '1');
+        const res = await fetch(`/api/metrics/growth?${params.toString()}`, { cache: 'no-store' });
         const json = (await res.json().catch(() => ({}))) as MetricsGrowthResponse & { error?: string };
         if (!alive.current) return;
         if (res.status === 401) {

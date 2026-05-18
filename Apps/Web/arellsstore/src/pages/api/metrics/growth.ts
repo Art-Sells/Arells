@@ -44,7 +44,7 @@ function parseView(q: string | string[] | undefined): MetricsView {
 }
 
 function growthCacheKey(range: MetricsRange, segment: MetricsSegment, view: MetricsView): string {
-  return `analytics/metrics-growth-v2/${range}_${segment}_${view}.json`;
+  return `analytics/metrics-growth-v4/${range}_${segment}_${view}.json`;
 }
 
 function growthCacheTtlMs(): number {
@@ -55,7 +55,7 @@ function growthCacheTtlMs(): number {
 }
 
 function growthCacheDisabled(): boolean {
-  return process.env.METRICS_GROWTH_CACHE_DISABLED === '1';
+  return process.env.METRICS_GROWTH_CACHE_DISABLED === '1' || process.env.NODE_ENV === 'development';
 }
 
 async function tryReadGrowthCache(

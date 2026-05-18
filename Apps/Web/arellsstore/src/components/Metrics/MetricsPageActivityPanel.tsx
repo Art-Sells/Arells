@@ -44,8 +44,10 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
       try {
         const params = new URLSearchParams();
         if (apiKey) params.set('key', apiKey);
-        if (bustCache) params.set('nocache', '1');
-        const res = await fetch(`/api/metrics/page-activity?${params.toString()}`);
+        if (bustCache || process.env.NODE_ENV === 'development') params.set('nocache', '1');
+        const res = await fetch(`/api/metrics/page-activity?${params.toString()}`, {
+          cache: 'no-store',
+        });
         const json = (await res.json().catch(() => ({}))) as MetricsPageActivityPayload & { error?: string };
         if (!alive.current) return;
         if (res.status === 401) {
@@ -84,20 +86,18 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
   }, [load]);
 
   useEffect(() => {
-    const onMount = () => {
-      void load({ silent: true, bustCache: true });
-    };
-    window.addEventListener('arells-metrics-page-mount', onMount);
-    return () => window.removeEventListener('arells-metrics-page-mount', onMount);
-  }, [load]);
-
-  useEffect(() => {
     const tick = () => {
       if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
       void load({ silent: true });
     };
     const id = window.setInterval(tick, POLL_MS);
     return () => window.clearInterval(id);
+  }, [load]);
+
+  useEffect(() => {
+    const onSiteActivity = () => void load({ silent: true, bustCache: true });
+    window.addEventListener('arells-metrics-page-mount', onSiteActivity);
+    return () => window.removeEventListener('arells-metrics-page-mount', onSiteActivity);
   }, [load]);
 
   return (
@@ -109,12 +109,12 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
         <div className="metrics-kpi-grid metrics-page-activity-kpis">
           <div className="metrics-kpi-card myinv-accent-border">
             <div className="metrics-kpi-label metrics-growth-toolbar-tone">DAUt</div>
-            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Daily Active User traffic</div>
+            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Active today or yesterday (UTC)</div>
             <div className="metrics-kpi-value">{data.dau.toLocaleString()}</div>
           </div>
           <div className="metrics-kpi-card myinv-accent-border">
             <div className="metrics-kpi-label metrics-growth-toolbar-tone">WAUt</div>
-            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Weekly Active User traffic</div>
+            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Active in last 30 UTC days</div>
             <div className="metrics-kpi-value">{data.wau.toLocaleString()}</div>
           </div>
           <div className="metrics-kpi-card myinv-accent-border">

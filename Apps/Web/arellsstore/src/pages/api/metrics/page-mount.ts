@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSessionFromRequest } from '../../../lib/auth/session';
-import { hashEmailForAnalytics } from '../../../lib/analytics/userHash';
+import { normalizeEmailKey } from '../../../lib/auth/normalize';
 import { allowAnalyticsIp } from '../../../lib/analytics/ipRateLimit';
 import { isLikelyAutomatedClient, userAgentFromHeaders } from '../../../lib/analytics/isLikelyAutomatedClient';
 import { METRICS_PAGE_MOUNTS_PREFIX } from '../../../lib/metrics/metricsPageMounts';
@@ -26,7 +26,7 @@ function utcDayKey(now: number): string {
 }
 
 /**
- * Records that a signed-in user opened the Growth Metrics page today (UTC).
+ * Records that a signed-in user was active on any page today (UTC).
  * Dedupes only by hashed email — anonymous visits are not counted (DAUt/WAUt/MAUt = distinct accounts).
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -53,7 +53,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(204).end();
   }
 
-  const dedupe = `h:${hashEmailForAnalytics(email)}`;
+  /** Canonical S3 email key — matches users/…/Auth.json paths (no hash pepper required). */
+  const dedupe = `e:${normalizeEmailKey(email)}`;
   const dayKey = utcDayKey(Date.now());
   const key = `${METRICS_PAGE_MOUNTS_PREFIX}${dayKey}/${encodeURIComponent(dedupe)}.json`;
 

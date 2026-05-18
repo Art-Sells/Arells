@@ -7,8 +7,23 @@ import { useCallback, useEffect, useRef } from 'react';
 const ENABLED = process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === '1';
 const HEARTBEAT_MS = 15_000;
 
+function postSignedInSiteActivityMount() {
+  void fetch('/api/metrics/page-mount', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({}),
+  })
+    .then((res) => {
+      if (res.ok && typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('arells-metrics-page-mount'));
+      }
+    })
+    .catch(() => undefined);
+}
+
 export default function AnalyticsBeacon() {
-  const { sessionId, sessionReady } = useUser();
+  const { sessionId, sessionReady, authSessionLoading, isSignedIn, email } = useUser();
   const pathname = usePathname() || '/';
   const openedRef = useRef(false);
   const lastPathRef = useRef<string | null>(null);
@@ -25,6 +40,12 @@ export default function AnalyticsBeacon() {
     },
     [sessionId]
   );
+
+  /* Signed-in visit on any route → DAUt/WAUt/MAUt (union with session-meta when analytics is on). */
+  useEffect(() => {
+    if (!sessionReady || authSessionLoading || !isSignedIn || !email) return;
+    postSignedInSiteActivityMount();
+  }, [sessionReady, authSessionLoading, isSignedIn, email, pathname]);
 
   useEffect(() => {
     if (!sessionReady || !sessionId || !ENABLED) return;
