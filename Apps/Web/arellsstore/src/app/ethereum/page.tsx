@@ -1,44 +1,8 @@
 import type { Metadata } from 'next';
 import EthereumPageClient from '../../components/Assets/Crypto/Ethereum/EthereumPageClient';
-import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
+import { buildCryptoAssetPageMetadata } from '../../lib/assets/cryptoAssetRegistry';
 
-export const metadata: Metadata = {
-  title: 'Ethereum never loses value',
-  description: 'Investments never lose value.',
-  robots: { index: true, follow: true },
-  alternates: {
-    canonical: '/ethereum',
-  },
-  icons: {
-    shortcut: u('/images/favicons/EthBadge.svg'),
-    icon: [
-      { url: u('/images/favicons/EthBadge.svg'), type: 'image/svg+xml' },
-      { url: u('/ArellsIcon.png'), type: 'image/png', sizes: '192x192' },
-    ],
-    apple: [{ url: u('/images/favicons/EthBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
-  },
-  openGraph: {
-    title: 'Ethereum never loses value',
-    description: 'Investments never lose value.',
-    url: '/ethereum',
-    type: 'website',
-    images: [
-      {
-        url: '/images/banners/assets/crypto/Ethereum/ArellsETHBanner.jpg',
-      }
-    ]
-  },
-  twitter: {
-    title: 'Ethereum never loses value',
-    description: 'Investments never lose value.',
-    card: 'summary_large_image',
-    images: [
-      {
-        url: '/images/banners/assets/crypto/Ethereum/ArellsETHBanner.jpg',
-      }
-    ]
-  }
-};
+export const metadata: Metadata = buildCryptoAssetPageMetadata('ethereum');
 
 const EthereumPage = () => {
   return <EthereumPageClient />;

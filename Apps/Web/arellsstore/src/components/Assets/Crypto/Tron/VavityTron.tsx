@@ -7,7 +7,7 @@ import axios from 'axios';
 import { flushSync } from 'react-dom';
 import { useVavity } from '../../../../context/VavityAggregator';
 import { useUser } from '../../../../context/UserContext';
-import XrpChart from './XrpChart';
+import TronChart from './TronChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 import {
   ASSET_PRICE_CHART_MOUNT_SLIDE_MS,
@@ -23,18 +23,18 @@ import {
   runAfterMaxHeightTransitionEnd,
   scrollDocumentToBottomOverMs,
 } from '../../../../lib/client/documentScroll';
-
 import { CRYPTO_ASSET_BY_ID } from '../../../../lib/assets/cryptoAssetRegistry';
 
-const ASSET = CRYPTO_ASSET_BY_ID.xrp;
+const ASSET = CRYPTO_ASSET_BY_ID.tron;
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
-type VavityXrpProps = {
+
+type VavityTronProps = {
   sessionMountClearGuardRef: React.MutableRefObject<boolean>;
 };
 
-const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
+const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
   const { email, isSignedIn, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [vavityData, setVavityData] = useState<any>(null);
@@ -97,7 +97,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
   // Global background (used for overscroll beyond the page)
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const bg = 'rgba(30, 41, 59, 0.06)';
+    const bg = 'rgba(255, 0, 19, 0.075)';
     const prev = document.documentElement.style.getPropertyValue('--app-bg');
     document.documentElement.style.setProperty('--app-bg', bg);
     return () => {
@@ -1489,8 +1489,8 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
       const isoDate = targetDate.toISOString().split('T')[0];
       try {
         const [solidResp, liquidResp] = await Promise.all([
-          axios.get('/api/assets/crypto/xrp/xrpVapaHistoricalPrice', { params: { date: isoDate, mode: 'solid' } }),
-          axios.get('/api/assets/crypto/xrp/xrpVapaHistoricalPrice', { params: { date: isoDate, mode: 'liquid' } }),
+          axios.get('/api/assets/crypto/tron/tronVapaHistoricalPrice', { params: { date: isoDate, mode: 'solid' } }),
+          axios.get('/api/assets/crypto/tron/tronVapaHistoricalPrice', { params: { date: isoDate, mode: 'liquid' } }),
         ]);
         const solidNum = Number(solidResp.data?.price);
         const liquidNum = Number(liquidResp.data?.price);
@@ -2335,7 +2335,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
     let isMounted = true;
     const loadMock = async () => {
       try {
-        const resp = await axios.get('/api/assets/crypto/xrp/xrpMockPortfolio');
+        const resp = await axios.get('/api/assets/crypto/tron/tronMockPortfolio');
         const portfolio = Array.isArray(resp.data?.portfolio) ? resp.data.portfolio : [];
         if (isMounted) {
           setMockEntries(portfolio);
@@ -2406,10 +2406,10 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
       setHistoricalLoading(true);
       try {
         const [solidResp, liquidResp] = await Promise.all([
-          axios.get('/api/assets/crypto/xrp/xrpVapaHistoricalPrice', {
+          axios.get('/api/assets/crypto/tron/tronVapaHistoricalPrice', {
             params: { date: purchaseDate, mode: 'solid' },
           }),
-          axios.get('/api/assets/crypto/xrp/xrpVapaHistoricalPrice', {
+          axios.get('/api/assets/crypto/tron/tronVapaHistoricalPrice', {
             params: { date: purchaseDate, mode: 'liquid' },
           }),
         ]);
@@ -2875,16 +2875,16 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
       <div className="asset-invest-form">
         <div className="asset-submit-form">
           <div className="asset-metric-row asset-invest-form-heading">
-            <span className="asset-metric-title--xrp" style={{ fontWeight: 800 }}>
+            <span className="asset-metric-title--tron" style={{ fontWeight: 800 }}>
               {label}
             </span>
           </div>
 
-          <div className="asset-invest-form-body asset-invest-form-body--xrp">
-            <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--xrp">
+          <div className="asset-invest-form-body asset-invest-form-body--tron">
+            <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--tron">
               <div className="asset-invest-form-metrics">
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--xrp asset-invest-form-metric-title">Purchased Value</span>
+                  <span className="asset-metric-title--tron asset-invest-form-metric-title">Purchased Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${
                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
@@ -2894,7 +2894,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                       transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                     }}
                   >
-                    <span className="asset-metric-symbol--xrp">$</span>
+                    <span className="asset-metric-symbol--tron">$</span>
                     <span className="asset-metric-value">{renderDecimalSafe(purchasedValue)}</span>
                   </span>
                   <span
@@ -2907,7 +2907,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                 </div>
 
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--xrp asset-invest-form-metric-title">Current Value</span>
+                  <span className="asset-metric-title--tron asset-invest-form-metric-title">Current Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}
                     style={{
@@ -2915,7 +2915,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                       transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                     }}
                   >
-                    <span className="asset-metric-symbol--xrp">$</span>
+                    <span className="asset-metric-symbol--tron">$</span>
                     <span className="asset-metric-value">{renderDecimalSafe(currentValue)}</span>
                   </span>
                   <span
@@ -2928,7 +2928,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                 </div>
 
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--xrp asset-invest-form-metric-title">{profitRow.title}</span>
+                  <span className="asset-metric-title--tron asset-invest-form-metric-title">{profitRow.title}</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${
                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
@@ -2939,7 +2939,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                     }}
                   >
                     {profitRow.prefix ? (
-                      <span className="asset-metric-inline-symbol--xrp">{profitRow.prefix}</span>
+                      <span className="asset-metric-inline-symbol--tron">{profitRow.prefix}</span>
                     ) : null}
                     <span className="asset-metric-value">{renderDecimalSafe(profitRow.value)}</span>
                   </span>
@@ -2954,14 +2954,14 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
               </div>
             </div>
 
-            <div className="asset-invest-form-controls asset-invest-form-controls--xrp">
+            <div className="asset-invest-form-controls asset-invest-form-controls--tron">
               <div className="asset-invest-form-field">
                 <div className="asset-metric-row asset-invest-form-field-label">
-                  <span className="asset-metric-title--xrp">XRP amount</span>
+                  <span className="asset-metric-title--tron">{ASSET.ticker} amount</span>
                 </div>
                 <div className="asset-invest-form-field-control">
                   <input
-                    className="asset-invest-input asset-invest-input--xrp"
+                    className="asset-invest-input asset-invest-input--tron"
                     type="text"
                     inputMode="decimal"
                     pattern="^[0-9]*\\.?[0-9]*$"
@@ -2981,7 +2981,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
 
               <div className="asset-invest-form-field">
                 <div className="asset-metric-row asset-invest-form-field-label">
-                  <span className="asset-metric-title--xrp">Date purchased</span>
+                  <span className="asset-metric-title--tron">Date purchased</span>
                 </div>
                 <div className="asset-invest-form-field-control">
                   <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" asset={ASSET.theme} />
@@ -3112,21 +3112,21 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
 
   return (
     <>
-      <div className="asset-page-content asset-page-content--xrp page-slide-down">
+      <div className="asset-page-content asset-page-content--tron page-slide-down">
       <div
-        className="asset-panel asset-panel--xrp asset-header-panel asset-section-slide"
+        className="asset-panel asset-panel--tron asset-header-panel asset-section-slide"
         ref={headerPanelRef}
       >
         <a
-          className="asset-title-badge asset-title-badge--xrp asset-title-badge--section"
-          href="https://xrpl.org/"
+          className="asset-title-badge asset-title-badge--tron asset-title-badge--section"
+          href="https://tron.network/"
           target="_blank"
           rel="noreferrer"
         >
-          <span className="asset-title-badge-label">XRP</span>
+          <span className="asset-title-badge-label">{ASSET.ticker}</span>
         </a>
         <div ref={sectionHeaderRef} className={`asset-section-header${displayIsLiquidMode ? ' is-liquid' : ''}`}>
-          <div ref={assetTitleRef} className="asset-header-title">XRP</div>
+          <div ref={assetTitleRef} className="asset-header-title">{ASSET.displayName}</div>
           <div
             className={`asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}
           >
@@ -3136,11 +3136,11 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
         <div {...assetPriceChartMountSlide.slidePanelProps}>
           <div ref={assetPriceChartMountSlide.measureRef} className="asset-asset-price-chart-mount-slide-inner">
         <div
-          className="asset-panel asset-panel--xrp asset-price-chart-row asset-price-chart-row--combined"
+          className="asset-panel asset-panel--tron asset-price-chart-row asset-price-chart-row--combined"
           style={{ overflow: 'visible' }}
       >
           <div
-            className="asset-price-panel asset-price-panel--xrp asset-section-slide"
+            className="asset-price-panel asset-price-panel--tron asset-section-slide"
             style={{
               padding: '30px',
               background: 'transparent',
@@ -3151,12 +3151,12 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
         }}
       >
             <div className="asset-metric-row">
-              <span className="asset-metric-title--xrp">Price:</span>
+              <span className="asset-metric-title--tron">Price:</span>
               <span className="asset-metric-value-wrap">
                 {!headerNumbersVisible && (
-                  <span className={`asset-number-loader asset-number-loader--xrp asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
+                  <span className={`asset-number-loader asset-number-loader--tron asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
                 )}
-                <span className={`asset-metric-symbol--xrp asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
+                <span className={`asset-metric-symbol--tron asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
                 <span className="asset-header-switch-fade" style={realityFadeStyle}>
                   <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
                     {formatCurrency(displayPoint?.price ?? (displayIsLiquidMode ? assetPrice : vapa) ?? 0)}
@@ -3165,12 +3165,12 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
               </span>
             </div>
             <div className="asset-metric-row">
-              <span className="asset-metric-title--xrp">Market Cap:</span>
+              <span className="asset-metric-title--tron">Market Cap:</span>
               <span className="asset-metric-value-wrap">
                 {!headerNumbersVisible && (
-                  <span className={`asset-number-loader asset-number-loader--xrp asset-number-loader--wide asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
+                  <span className={`asset-number-loader asset-number-loader--tron asset-number-loader--wide asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
                 )}
-                <span className={`asset-metric-symbol--xrp asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
+                <span className={`asset-metric-symbol--tron asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
                 <span className="asset-header-switch-fade" style={realityFadeStyle}>
                   <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
                     {renderDecimalSafe(formatMarketCap(activeMarketCap))}
@@ -3181,13 +3181,13 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
             <div className="asset-metric-row">
               <span className="asset-metric-value-wrap">
                 {!headerNumbersVisible && (
-                  <span className={`asset-number-loader asset-number-loader--xrp asset-number-loader--narrow asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
+                  <span className={`asset-number-loader asset-number-loader--tron asset-number-loader--narrow asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
                 )}
               {percentageIncrease > 0 ? (
-                <span className={`asset-metric-trend-icon asset-metric-trend-icon--xrp asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`} aria-hidden="true" />
+                <span className={`asset-metric-trend-icon asset-metric-trend-icon--tron asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`} aria-hidden="true" />
               ) : (
                 <span
-                  className={`asset-metric-trend-icon asset-metric-trend-icon--down asset-metric-trend-icon--xrp asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}
+                  className={`asset-metric-trend-icon asset-metric-trend-icon--down asset-metric-trend-icon--tron asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}
                   aria-hidden="true"
                 />
               )}
@@ -3202,7 +3202,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                 </span>
               </span>
               <span
-                className={`asset-metric-symbol--xrp asset-metric-percent-symbol--xrp asset-mount-fade-2s${
+                className={`asset-metric-symbol--tron asset-metric-percent-symbol--tron asset-mount-fade-2s${
                   headerNumbersVisible ? ' is-visible' : ''
                 }`}
               >
@@ -3211,10 +3211,10 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
               </span>
             </div>
             <div
-              className="asset-panel asset-panel--xrp asset-section-slide asset-market-controls"
+              className="asset-panel asset-panel--tron asset-section-slide asset-market-controls"
             >
               <div className="asset-market-controls-header">
-                <div className="asset-profit-summary asset-profit-summary--xrp" style={{ marginBottom: 0 }}>
+                <div className="asset-profit-summary asset-profit-summary--tron" style={{ marginBottom: 0 }}>
                   <div className="asset-metric-inline-row">
                     {(() => {
                       const rawLabel = chartRanges.find((r) => r.days === chartRangeDays)?.label ?? 'All';
@@ -3232,7 +3232,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                                   : rawLabel;
                       return (
                         <>
-                          <span className="asset-metric-inline-title--xrp asset-market-status-title">
+                          <span className="asset-metric-inline-title--tron asset-market-status-title">
                             {label}:
                           </span>{' '}
                           <span
@@ -3262,7 +3262,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                     <button
                       key={range.label}
                       type="button"
-                      className={`asset-range-button asset-range-button--xrp${isActive ? ' is-active' : ''}`}
+                      className={`asset-range-button asset-range-button--tron${isActive ? ' is-active' : ''}`}
                       disabled={isActive}
                       onClick={() => {
                         if (isActive) return;
@@ -3283,7 +3283,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
 
           <div className="asset-chart-wrap" ref={chartWrapRef}>
           <div
-              className="asset-panel asset-panel--xrp asset-section-slide asset-chart-panel asset-chart-panel--xrp"
+              className="asset-panel asset-panel--tron asset-section-slide asset-chart-panel asset-chart-panel--tron"
             style={{
               padding: '0px',
                 position: 'relative',
@@ -3291,13 +3291,13 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
             }}
           >
             {chartHoverPoint != null && displayPoint && (
-                <div className="asset-chart-date-badge asset-chart-date-badge--xrp">
-                <span className="asset-metric-inline-title--xrp">Date:</span>{' '}
+                <div className="asset-chart-date-badge asset-chart-date-badge--tron">
+                <span className="asset-metric-inline-title--tron">Date:</span>{' '}
                 <span className="asset-metric-inline-value">{new Date(displayPoint.date.includes('T') ? displayPoint.date : `${displayPoint.date}T00:00:00`).toLocaleDateString('en-US')}</span>
               </div>
             )}
               <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
-                <div className="asset-chart-grid-shimmer asset-chart-grid-shimmer--xrp">
+                <div className="asset-chart-grid-shimmer asset-chart-grid-shimmer--tron">
                   <div className="asset-chart-grid-shimmer-thin" />
                   <div className="asset-chart-grid-shimmer-thick" />
                 </div>
@@ -3311,7 +3311,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                   pointerEvents: 'none',
                   zIndex: 0,
                   backgroundImage:
-                    'repeating-linear-gradient(to right, rgba(30, 41, 59, 0.1) 0px, rgba(30, 41, 59, 0.1) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(30, 41, 59, 0.1) 0px, rgba(30, 41, 59, 0.1) 1px, transparent 1px, transparent 30px)',
+                    'repeating-linear-gradient(to right, rgba(255, 0, 19, 0.1) 0px, rgba(255, 0, 19, 0.1) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(255, 0, 19, 0.1) 0px, rgba(255, 0, 19, 0.1) 1px, transparent 1px, transparent 30px)',
                 }}
               />
               <div
@@ -3319,18 +3319,18 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                   chartReady && !forceChartLoader ? ' is-visible' : ''
                 }${chartReady && !forceChartLoader ? '' : ' is-disabled'}`}
               >
-            <XrpChart
+            <TronChart
               history={chartHistoryForLine || []}
-                  color="rgba(30, 41, 59, 0.3)"
-                  activeColor="rgba(30, 41, 59, 0.4)"
-                  markerColor="rgba(30, 41, 59, 1)"
+                  color="rgba(255, 0, 19, 0.5)"
+                  activeColor="rgba(255, 0, 19, 0.6)"
+                  markerColor="rgba(255, 0, 19, 1)"
                   gridColor="transparent"
                   gridSpacing={30}
                   height={chartCanvasHeight}
                   interactiveHeight={chartPanelHeight}
                   canvasOffsetTop={chartTopPadding}
-                  backgroundColor="rgba(30, 41, 59, 0.16)"
-                  markerShadow="-5px 0 14px rgba(30, 41, 59, 0.26), 0 7px 10px rgba(15, 23, 42, 0.18)"
+                  backgroundColor="rgba(255, 0, 19, 0.16)"
+                  markerShadow="-5px 0 14px rgba(255, 0, 19, 0.26), 0 7px 10px rgba(255, 0, 19, 0.18)"
                   animateOn={false}
                   animateDelayMs={0}
                   animationDurationMs={toggleKnobLeftPx != null || toggleAnimating ? 0 : 1000}
@@ -3346,8 +3346,8 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
           </div>
         </div>
 
-          <div className="asset-panel asset-panel--xrp asset-reality-toggle-shell">
-            <div className="asset-reality-toggle-row asset-reality-toggle-row--xrp">
+          <div className="asset-panel asset-panel--tron asset-reality-toggle-shell">
+            <div className="asset-reality-toggle-row asset-reality-toggle-row--tron">
               <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
               <button
                 type="button"
@@ -3481,7 +3481,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
           </div>
 
       <div
-        className={`asset-panel asset-panel--xrp asset-portfolio-center asset-section-slide${
+        className={`asset-panel asset-panel--tron asset-portfolio-center asset-section-slide${
           summaryOpen && !isClearingInvestments ? ' asset-portfolio-center--summary-open' : ''
         }${summaryAnimating ? ' asset-portfolio-center--summary-animating' : ''}`}
         style={{ 
@@ -3513,7 +3513,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                 className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
               >
                 <button
-                  className="asset-action-button asset-action-button--xrp asset-action-button--invest-add asset-action-button--add-investments"
+                  className="asset-action-button asset-action-button--tron asset-action-button--invest-add asset-action-button--add-investments"
                   disabled={showEmptyAddForm || emptyAddHiding}
                   style={{
                     ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
@@ -3577,7 +3577,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
             <div
               ref={investmentsWholePanelRef}
-              className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-xrp' : ''}`}
+              className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-tron' : ''}`}
               style={{
                 maxHeight: isClearingInvestments ? clearingHeightPx : investmentsWholeMaxHeight,
                 transition: isClearingInvestments ? 'max-height 3s ease' : investmentsWholeTransition,
@@ -3588,11 +3588,11 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
               <div ref={investmentsWholeContentRef}>
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">my xrp</span>
+                    <span className="asset-portfolio-title-muted">my tron</span>
                   </h2>
                 )}
                 <div
-                  className={`asset-portfolio-summary-box asset-portfolio-summary-box--xrp${
+                  className={`asset-portfolio-summary-box asset-portfolio-summary-box--tron${
                     summaryQuickFade ? ' is-quickfade' : ''
                   }`}
                 >
@@ -3602,7 +3602,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                   >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--xrp" style={{ display: 'inline-block', marginTop: 30 }}>
+                <span className="asset-metric-title--tron" style={{ display: 'inline-block', marginTop: 30 }}>
                   Purchased Value
                 </span>
                 <div
@@ -3621,13 +3621,13 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                       transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                     }}
                   >
-                    <span className="asset-metric-symbol--xrp">$</span>
+                    <span className="asset-metric-symbol--tron">$</span>
                     <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVatop || 0))}</span>
                   </span>
                 </div>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--xrp">
+                <span className="asset-metric-title--tron">
                   Current Value
                 </span>
                 <div
@@ -3646,17 +3646,17 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                       transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
                     }}
                   >
-                    <span className="asset-metric-symbol--xrp">$</span>
+                    <span className="asset-metric-symbol--tron">$</span>
                     <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVact || 0))}</span>
                   </span>
                 </div>
             </div>
               <div
-                className="asset-panel asset-panel--xrp asset-profit-block asset-slide-in"
+                className="asset-panel asset-panel--tron asset-profit-block asset-slide-in"
                 style={{ 
                   padding: '20px 20px 20px', marginBottom: '10px', width: '92%', marginLeft: 'auto', marginRight: 'auto' }}
               >
-                <div className="asset-profit-summary asset-profit-summary--xrp">
+                <div className="asset-profit-summary asset-profit-summary--tron">
                   <div className="asset-metric-inline-row">
                 {(() => {
                       const formatRangeLabel = (days: number | null) => {
@@ -3680,7 +3680,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                             style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                           >
                             <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                              <span className="asset-metric-inline-title--xrp">
+                              <span className="asset-metric-inline-title--tron">
                                 {formatRangeLabel(selectedRangeDays)}{' '}
                                 <span
                                   style={{
@@ -3709,7 +3709,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                                     transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
                                   }}
                                 >
-                                  <span className="asset-metric-symbol--xrp">
+                                  <span className="asset-metric-symbol--tron">
                                     {isProfit ? '+$' : '-$'}
                                   </span>
                                   <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
@@ -3729,7 +3729,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                           style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                         >
                           <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                            <span className="asset-metric-inline-title--xrp">
+                            <span className="asset-metric-inline-title--tron">
                               {formatRangeLabel(null)}{' '}
                               <span
                                 style={{
@@ -3758,7 +3758,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                                   transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
                                 }}
                               >
-                                <span className="asset-metric-symbol--xrp">
+                                <span className="asset-metric-symbol--tron">
                                   {isProfit ? '+$' : '-$'}
                                 </span>
                                 <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
@@ -3787,7 +3787,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                           window.setTimeout(() => setProfitValueHidden(false), 350);
                         }
                       }}
-                        className={`asset-range-button asset-range-button--xrp${isActive ? ' is-active' : ''}`}
+                        className={`asset-range-button asset-range-button--tron${isActive ? ' is-active' : ''}`}
                     >
                       {range.label}
                     </button>
@@ -3797,7 +3797,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
           </div>
               <div className="asset-portfolio-actions asset-portfolio-actions--add">
                 <button
-                  className={`asset-action-button asset-action-button--xrp asset-action-button--invest-add${
+                  className={`asset-action-button asset-action-button--tron asset-action-button--invest-add${
                     addMorePulse ? ' asset-action-button--pulse' : ''
                   }`}
                   onClick={() => {
@@ -3844,17 +3844,17 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                   }}
                 >
                   <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
-                    <div className="asset-invest-form-box asset-invest-form-box--xrp">
+                    <div className="asset-invest-form-box asset-invest-form-box--tron">
                       {renderAddForm(
                         'Add more investments',
                         closeAddMoreForm,
-                        'asset-action-button asset-action-button--xrp'
+                        'asset-action-button asset-action-button--tron'
                       )}
         <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
           {(isSignedIn || email) && (
           <div className="asset-empty-addinvest">
             <button
-              className="asset-action-button asset-action-button--xrp asset-action-button--invest-add asset-action-button--add-investments"
+              className="asset-action-button asset-action-button--tron asset-action-button--invest-add asset-action-button--add-investments"
               type="button"
               disabled
               tabIndex={-1}
@@ -3902,7 +3902,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                   className={`asset-portfolio-actions asset-portfolio-actions--show${investmentsListOpen ? ' is-open' : ''}`}
                 >
                   <button
-                    className={`asset-action-button asset-action-button--xrp asset-action-button--invest-show${
+                    className={`asset-action-button asset-action-button--tron asset-action-button--invest-show${
                       showPulse ? ' asset-action-button--pulse' : ''
                     }`}
                     disabled={!investments.length || showMoreDisabled}
@@ -3939,7 +3939,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                       <span className="asset-portfolio-title-muted">investments</span>
                     </h2>
                     <div
-                      className={`asset-investments-wrap asset-investments-wrap--xrp asset-slide-panel${
+                      className={`asset-investments-wrap asset-investments-wrap--tron asset-slide-panel${
                         investmentsListOpen ? ' is-open' : ''
                       }`}
                       ref={investmentsListWrapRef}
@@ -4004,7 +4004,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                                 <div className="asset-investment-gap" />
                               )}
                               <div
-                                className={`asset-panel asset-panel--xrp${isPendingDelete ? ' is-pending-delete' : ''}${
+                                className={`asset-panel asset-panel--tron${isPendingDelete ? ' is-pending-delete' : ''}${
                                   isDeleting || isPendingDelete ? ' is-deleting' : ''
                                 }${isClosing ? ' is-closing-delete' : ''}${deleteRowHeight != null ? ' is-delete-transition' : ''}`}
                                 style={{
@@ -4021,27 +4021,27 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                                 <div
                                   className="asset-delete-loader-spinner"
                                   style={{
-                                    borderColor: 'rgba(30, 41, 59, 0.2)',
-                                    borderTopColor: 'rgba(15, 23, 42, 0.55)',
+                                    borderColor: 'rgba(255, 0, 19, 0.2)',
+                                    borderTopColor: 'rgba(255, 0, 19, 0.5)',
                                   }}
                                 />
                               </div>
                               <div className="asset-investment-metrics">
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--xrp" style={{ marginTop: 20 }}>
+                                    <span className="asset-metric-title--tron" style={{ marginTop: 20 }}>
                                       Purchased Value
                                     </span>
                                     <span className="asset-money-wrap">
-                                      <span className="asset-metric-symbol--xrp">$</span>
+                                      <span className="asset-metric-symbol--tron">$</span>
                                       <span className="asset-metric-value">
                                         {renderDecimalSafe(formatCurrency((isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0))}
                                       </span>
                                     </span>
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--xrp">Current Value</span>
+                                    <span className="asset-metric-title--tron">Current Value</span>
                                     <span className="asset-money-wrap">
-                                      <span className="asset-metric-symbol--xrp">$</span>
+                                      <span className="asset-metric-symbol--tron">$</span>
                                       <span className="asset-metric-value">
                                         {renderDecimalSafe(formatCurrency((isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0))}
                                       </span>
@@ -4057,9 +4057,9 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                                       const prefix = isProfit ? '+$' : '-$';
                                       return (
                                         <>
-                                          <span className="asset-metric-title--xrp">{title}</span>
+                                          <span className="asset-metric-title--tron">{title}</span>
                                           <span className="asset-money-wrap">
-                                            <span className="asset-metric-inline-symbol--xrp">{prefix}</span>
+                                            <span className="asset-metric-inline-symbol--tron">{prefix}</span>
                                             <span className="asset-metric-value">
                                               {renderDecimalSafe(formatMoneyFixed(Math.abs(value)))}
                                             </span>
@@ -4069,7 +4069,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                                     })()}
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--xrp">XRP amount</span>
+                                    <span className="asset-metric-title--tron">{ASSET.ticker} amount</span>
                                     <span className="asset-metric-value">
                                       {Number(amount).toLocaleString('en-US', {
                                         minimumFractionDigits: 0,
@@ -4078,12 +4078,12 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                                     </span>
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--xrp">Date purchased</span>
+                                    <span className="asset-metric-title--tron">Date purchased</span>
                                     <span className="asset-metric-value">{formatShortDate(entry.date)}</span>
                                   </div>
                                   <button
                                     type="button"
-                                    className="asset-range-button asset-range-button--xrp asset-delete-button asset-investment-delete-button"
+                                    className="asset-range-button asset-range-button--tron asset-delete-button asset-investment-delete-button"
                                     disabled={deleteLocked}
                                     onClick={() => {
                                       if (
@@ -4154,7 +4154,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                       {displayInvestments.length > visibleInvestments && (
                         <button
                           type="button"
-                          className="asset-action-button asset-action-button--xrp asset-action-button--invest-show"
+                          className="asset-action-button asset-action-button--tron asset-action-button--invest-show"
                           onClick={() => {
                             setVisibleInvestments((prev) => prev + 3);
                             requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
@@ -4191,7 +4191,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                   : undefined,
             }}
           >
-            <div className="asset-portfolio-summary-box asset-portfolio-summary-box--xrp">
+            <div className="asset-portfolio-summary-box asset-portfolio-summary-box--tron">
               <div
                 className={`asset-slide-panel asset-slide-panel--form${
                   addFormOpen || addFormSubmitCollapsing ? ' is-open' : ''
@@ -4202,11 +4202,11 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
                 ref={addFormSlidePanelRef}
               >
                 <div ref={addFormBoxRef} className="asset-slide-panel-inner">
-                  <div className="asset-invest-form-box asset-invest-form-box--xrp">
+                  <div className="asset-invest-form-box asset-invest-form-box--tron">
                     {renderAddForm(
                       'Add Investments',
                       closeAddForm,
-                      'asset-action-button asset-action-button--xrp'
+                      'asset-action-button asset-action-button--tron'
                     )}
                   </div>
                 </div>
@@ -4221,4 +4221,4 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
   );
 };
 
-export default VavityXrp;
+export default VavityTron;

@@ -1,12 +1,7 @@
 import axios from 'axios';
+import { getAssetSpotPriceEntries } from '../assets/cryptoAssetRegistry';
 
-const ASSET_PRICE: Record<string, { path: string; responseKey: string }> = {
-  bitcoin: { path: '/api/assets/crypto/bitcoin/bitcoinPrice', responseKey: 'bitcoin' },
-  ethereum: { path: '/api/assets/crypto/ethereum/ethereumPrice', responseKey: 'ethereum' },
-  xrp: { path: '/api/assets/crypto/xrp/xrpPrice', responseKey: 'ripple' },
-  solana: { path: '/api/assets/crypto/solana/solanaPrice', responseKey: 'solana' },
-  bnb: { path: '/api/assets/crypto/bnb/bnbPrice', responseKey: 'binancecoin' },
-};
+const ASSET_PRICE = getAssetSpotPriceEntries();
 
 export async function loadCurrentAssetSpotPrice(asset: string): Promise<number | null> {
   const cfg = ASSET_PRICE[asset] ?? ASSET_PRICE.bitcoin;

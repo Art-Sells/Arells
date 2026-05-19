@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { logFetchApiFailure } from '../lib/client/logClientApiError';
+import { SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
@@ -318,7 +319,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, [email]);
 
-  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'xrp', 'bnb', 'solana'], []);
+  const supportedAssets = useMemo(() => [...SUPPORTED_CRYPTO_ASSET_IDS], []);
 
   const hasEmailInvestmentsForAsset = useCallback(
     (assetId: string) => {

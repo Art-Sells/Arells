@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { CRYPTO_ASSETS, type CryptoAssetTheme } from '../lib/assets/cryptoAssetRegistry';
 
 function footerHiddenForPath(pathname: string): boolean {
   if (pathname === '/about') return true;
@@ -12,17 +13,14 @@ function footerHiddenForPath(pathname: string): boolean {
   return false;
 }
 
-type FooterVariant = 'accent' | 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'default';
+type FooterVariant = 'accent' | CryptoAssetTheme | 'default';
 
 function variantForPath(pathname: string): FooterVariant {
   const path = (pathname || '/').replace(/\/+$/, '') || '/';
   if (path === '/' || path === '/my-investments') return 'accent';
   const seg = path.split('/').filter(Boolean)[0];
-  if (seg === 'bitcoin') return 'bitcoin';
-  if (seg === 'ethereum') return 'ethereum';
-  if (seg === 'xrp') return 'xrp';
-  if (seg === 'bnb') return 'bnb';
-  if (seg === 'solana') return 'solana';
+  const asset = CRYPTO_ASSETS.find((a) => a.id === seg);
+  if (asset) return asset.theme;
   return 'default';
 }
 

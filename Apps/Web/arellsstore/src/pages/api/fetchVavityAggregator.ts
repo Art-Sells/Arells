@@ -3,6 +3,7 @@ import { logApiRouteError, withOptionalApiDebug } from '../../lib/server/apiErro
 import { loadCurrentAssetSpotPrice } from '../../lib/server/assetSpotPrice';
 import { getServerS3 } from '../../lib/server/awsS3';
 import { s3BucketNameOrThrow } from '../../lib/server/s3Bucket';
+import { CRYPTO_VAPA_KEYS } from '../../lib/assets/cryptoAssetRegistry';
 
 const s3 = getServerS3();
 const SESSION_TTL_MS = (() => {
@@ -14,13 +15,8 @@ const SESSION_TTL_MS = (() => {
   // Default to 1 minute unless explicitly overridden.
   return 60_000;
 })();
-const VAPA_KEYS: Record<string, string> = {
-  bitcoin: 'vavity/bitcoinVAPA.json',
-  ethereum: 'vavity/ethereumVAPA.json',
-  xrp: 'vavity/xrpVAPA.json',
-  solana: 'vavity/solanaVAPA.json',
-  bnb: 'vavity/bnbVAPA.json',
-};
+
+const VAPA_KEYS: Record<string, string> = CRYPTO_VAPA_KEYS;
 
 const normalizeToIsoDay = (value: string): string | null => {
   const d = new Date(value);

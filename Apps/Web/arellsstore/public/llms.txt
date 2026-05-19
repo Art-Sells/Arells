@@ -7,7 +7,10 @@
 - https://arells.com/
 - https://arells.com/bitcoin
 - https://arells.com/ethereum
+- https://arells.com/xrp
+- https://arells.com/bnb
 - https://arells.com/solana
+- https://arells.com/tron
 - https://arells.com/about
 - https://arells.com/vavity
 

@@ -1,45 +1,8 @@
 import type { Metadata } from 'next';
 import BitcoinPageClient from '../../components/Assets/Crypto/Bitcoin/BitcoinPageClient';
-import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
+import { buildCryptoAssetPageMetadata } from '../../lib/assets/cryptoAssetRegistry';
 
-export const metadata: Metadata = {
-  title: "Bitcoin never loses value",
-  description: "Investments never lose value.",
-  robots: { index: true, follow: true },
-  alternates: {
-    canonical: '/bitcoin',
-  },
-  icons: {
-    /* Next emits `shortcut icon` links BEFORE `icon`; pointing shortcut at /ArellsFavicon.ico forced the global Arells tab icon here. */
-    shortcut: u('/images/favicons/BtcBadge.svg'),
-    icon: [
-      { url: u('/images/favicons/BtcBadge.svg'), type: 'image/svg+xml' },
-      { url: u('/ArellsIcon.png'), type: 'image/png', sizes: '192x192' },
-    ],
-    apple: [{ url: u('/images/favicons/BtcBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
-  },
-  openGraph: {
-    title: "Bitcoin never loses value",
-    description: "Investments never lose value.",
-    url: "/bitcoin",
-    type: "website",
-    images: [
-      {
-        url: "/images/banners/assets/crypto/Bitcoin/ArellsBTCBanner.jpg",
-      }
-    ]
-  },
-  twitter: {
-    title: "Bitcoin never loses value",
-    description: "Investments never lose value.",
-    card: "summary_large_image",
-    images: [
-      {
-        url: "/images/banners/assets/crypto/Bitcoin/ArellsBTCBanner.jpg",
-      }
-    ]
-  }
-};
+export const metadata: Metadata = buildCryptoAssetPageMetadata('bitcoin');
 
 const BitcoinPage = () => {
   return <BitcoinPageClient />;

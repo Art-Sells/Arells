@@ -1,45 +1,8 @@
 import type { Metadata } from 'next';
 import BnbPageClient from '../../components/Assets/Crypto/Bnb/BnbPageClient';
-import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
+import { buildCryptoAssetPageMetadata } from '../../lib/assets/cryptoAssetRegistry';
 
-export const metadata: Metadata = {
-  title: 'BNB never loses value',
-  description: 'Investments never lose value.',
-  robots: { index: true, follow: true },
-  alternates: {
-    canonical: '/bnb',
-  },
-  icons: {
-    /* Next emits shortcut before icon; default layout shortcut is ArellsFavicon.ico — override so /bnb tab shows BNB badge. */
-    shortcut: u('/images/favicons/BnbBadge.svg'),
-    icon: [
-      { url: u('/images/favicons/BnbBadge.svg'), type: 'image/svg+xml' },
-      { url: u('/ArellsIcon.png'), type: 'image/png', sizes: '192x192' },
-    ],
-    apple: [{ url: u('/images/favicons/BnbBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
-  },
-  openGraph: {
-    title: 'BNB never loses value',
-    description: 'Investments never lose value.',
-    url: '/bnb',
-    type: 'website',
-    images: [
-      {
-        url: '/images/banners/assets/crypto/BNB/ArellsBNBBanner.jpg',
-      },
-    ],
-  },
-  twitter: {
-    title: 'BNB never loses value',
-    description: 'Investments never lose value.',
-    card: 'summary_large_image',
-    images: [
-      {
-        url: '/images/banners/assets/crypto/BNB/ArellsBNBBanner.jpg',
-      },
-    ],
-  },
-};
+export const metadata: Metadata = buildCryptoAssetPageMetadata('bnb');
 
 const BnbPage = () => {
   return <BnbPageClient />;

@@ -24,6 +24,10 @@ import {
   scrollDocumentToBottomOverMs,
 } from '../../../../lib/client/documentScroll';
 
+import { CRYPTO_ASSET_BY_ID } from '../../../../lib/assets/cryptoAssetRegistry';
+
+const ASSET = CRYPTO_ASSET_BY_ID.ethereum;
+
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
 type VavityEthereumProps = {
@@ -77,7 +81,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
   const [mockEntries, setMockEntries] = useState<any[]>([]);
   const [mockStep, setMockStep] = useState<number>(0);
 
-  const assetSnapshot = getAsset('ethereum');
+  const assetSnapshot = getAsset(ASSET.id);
   const assetPrice = assetSnapshot?.price ?? 0;
   const vapa = assetSnapshot?.vapa ?? 0;
   const [isLiquidMode, setIsLiquidMode] = useState<boolean>(false);
@@ -667,11 +671,11 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
       try {
         const data = isSignedIn
           ? await (async () => {
-              const params = new URLSearchParams({ email, asset: 'ethereum' });
+              const params = new URLSearchParams({ email, asset: ASSET.id });
               const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
               return await res.json();
             })()
-          : await fetchVavityAggregator(sessionId, 'ethereum');
+          : await fetchVavityAggregator(sessionId, ASSET.id);
         if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(data?.investments)) {
           const signature = lastDeletedSignatureRef.current;
           const returned = data.investments.some((entry: any) => {
@@ -735,7 +739,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
         }
         let hasInvestments = Array.isArray(vavityData?.investments) && vavityData!.investments.length > 0;
         if (!hasInvestments) {
-          const current = await fetchVavityAggregator(sessionId, 'ethereum');
+          const current = await fetchVavityAggregator(sessionId, ASSET.id);
           hasInvestments = Array.isArray(current?.investments) && current.investments.length > 0;
         }
         if (typeof window !== 'undefined') {
@@ -757,8 +761,8 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
           );
           await new Promise((r) => globalThis.setTimeout(r, 600));
         }
-        await saveVavityAggregator(sessionId, [], 'ethereum');
-        const cleared = await fetchVavityAggregator(sessionId, 'ethereum');
+        await saveVavityAggregator(sessionId, [], ASSET.id);
+        const cleared = await fetchVavityAggregator(sessionId, ASSET.id);
         if (cleared) setVavityData(cleared);
       } catch {
         // ignore
@@ -2638,7 +2642,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     const newInvestment = {
       cVactTaa,
       date: purchaseDate,
-      asset: 'ethereum',
+      asset: ASSET.id,
       clientId: `inv-${Date.now()}-${Math.random().toString(16).slice(2)}`
     };
 
@@ -2673,13 +2677,13 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     try {
       let refreshed: any = null;
       if (isSignedIn) {
-        await addEmailInvestments('ethereum', [newInvestment]);
-        const params = new URLSearchParams({ email, asset: 'ethereum' });
+        await addEmailInvestments(ASSET.id, [newInvestment]);
+        const params = new URLSearchParams({ email, asset: ASSET.id });
         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
         refreshed = await res.json();
       } else {
-        await addVavityAggregator(sessionId, [newInvestment], 'ethereum');
-        refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
+        await addVavityAggregator(sessionId, [newInvestment], ASSET.id);
+        refreshed = await fetchVavityAggregator(sessionId, ASSET.id);
       }
       const refreshedInvestments = Array.isArray(refreshed?.investments)
         ? refreshed.investments.map((entry: any) => ({ ...entry }))
@@ -2771,8 +2775,8 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     try {
       setVavityData((prev: any) => (prev ? { ...prev, investments: updated } : prev));
       if (isSignedIn) {
-        await saveEmailInvestmentsForAsset('ethereum', updated);
-        const params = new URLSearchParams({ email, asset: 'ethereum' });
+        await saveEmailInvestmentsForAsset(ASSET.id, updated);
+        const params = new URLSearchParams({ email, asset: ASSET.id });
         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
         const refreshed = await res.json();
         if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(refreshed?.investments)) {
@@ -2788,8 +2792,8 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
         }
         setVavityData(refreshed);
       } else {
-        await saveVavityAggregator(sessionId, updated, 'ethereum');
-        const refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
+        await saveVavityAggregator(sessionId, updated, ASSET.id);
+        const refreshed = await fetchVavityAggregator(sessionId, ASSET.id);
         if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(refreshed?.investments)) {
           const signature = lastDeletedSignatureRef.current;
           const returned = refreshed.investments.some((entry: any) => {
@@ -2987,7 +2991,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                   <span className="asset-metric-title--ethereum">Date purchased</span>
                 </div>
                 <div className="asset-invest-form-field-control">
-                  <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" asset="ethereum" />
+                  <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" asset={ASSET.theme} />
                 </div>
               </div>
 

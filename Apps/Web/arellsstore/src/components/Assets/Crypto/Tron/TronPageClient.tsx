@@ -1,21 +1,24 @@
 'use client';
 
-import { CRYPTO_ASSET_BY_ID } from '../../../../lib/assets/cryptoAssetRegistry';
-
-const ASSET = CRYPTO_ASSET_BY_ID.solana;
-
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import SiteSocialFooter from '../../../SiteSocialFooter';
-import Solana from './solana';
+import Tron from './tron';
 import { useUser } from '../../../../context/UserContext';
+import { iconAssetUrl } from '../../../../lib/iconAssetUrl';
+import { CRYPTO_ASSET_BY_ID } from '../../../../lib/assets/cryptoAssetRegistry';
+
+const ASSET = CRYPTO_ASSET_BY_ID.tron;
+
+/** Opaque viewport tint for overscroll (TRON red wash, not plain white). */
+const TRON_PAGE_OVERSCROLL_BG = 'rgb(255, 238, 238)';
 
 /** Session reset overlay timeline from fade-in start: fade in, hold, fade out. */
 const SESSION_RESET_MODAL_FADE_IN_MS = 2000;
 const SESSION_RESET_MODAL_HOLD_MS = 5000;
 const SESSION_RESET_MODAL_FADE_OUT_MS = 2000;
 
-const SolanaPageClient: React.FC = () => {
+const TronPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [sessionResetActive, setSessionResetActive] = useState(false);
@@ -26,7 +29,7 @@ const SolanaPageClient: React.FC = () => {
   const { email } = useUser();
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
-  /** Survives `<Solana key={sessionResetKey} />` remounts so session-clear-on-mount runs once per page visit. */
+  /** Survives `<Tron key={sessionResetKey} />` remounts so session-clear-on-mount runs once per page visit. */
   const sessionMountClearGuardRef = useRef(false);
   const sessionResetTimersRef = useRef<number[]>([]);
   /** True from `vavity:session-expired` until reset overlay fully dismissed (gates collapse-started listener). */
@@ -119,7 +122,7 @@ const SolanaPageClient: React.FC = () => {
   // Set global background immediately for overscroll beyond the asset page.
   useEffect(() => {
     // Use an opaque tint so overscroll can never blend back to browser white.
-    const bg = 'rgb(235, 249, 244)';
+    const bg = TRON_PAGE_OVERSCROLL_BG;
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
     const prevBody = document.body.style.getPropertyValue('--app-bg');
     const prevHtmlBg = document.documentElement.style.backgroundColor;
@@ -137,6 +140,15 @@ const SolanaPageClient: React.FC = () => {
       document.documentElement.style.backgroundColor = prevHtmlBg;
       document.body.style.backgroundColor = prevBodyBg;
     };
+  }, []);
+
+  useEffect(() => {
+    const badgeUrl = iconAssetUrl(ASSET.faviconPath);
+    document
+      .querySelectorAll<HTMLLinkElement>(
+        'link[rel="shortcut icon"], link[rel="icon"][type="image/svg+xml"], link[rel="apple-touch-icon"][type="image/svg+xml"]'
+      )
+      .forEach((link) => link.setAttribute('href', badgeUrl));
   }, []);
 
   useEffect(() => {
@@ -289,7 +301,7 @@ const SolanaPageClient: React.FC = () => {
               <div className="asset-session-reset-spinner" aria-hidden="true">
                 <div
                   className="asset-delete-loader-spinner"
-                  style={{ borderColor: 'rgba(0, 208, 168, 0.2)', borderTopColor: 'rgba(0, 208, 168, 0.5)' }}
+                  style={{ borderColor: 'rgba(255, 0, 19, 0.2)', borderTopColor: 'rgba(255, 0, 19, 0.5)' }}
                 />
               </div>
             </div>
@@ -300,7 +312,7 @@ const SolanaPageClient: React.FC = () => {
         </div>
       )}
 
-      <Solana key={`session-reset-${sessionResetKeyValue}`} sessionMountClearGuardRef={sessionMountClearGuardRef} />
+      <Tron key={`session-reset-${sessionResetKeyValue}`} sessionMountClearGuardRef={sessionMountClearGuardRef} />
 
       <footer
         className={`asset-footer${sessionResetFooterHidden ? ' asset-footer--session-reset-hidden' : ''}`}
@@ -336,4 +348,4 @@ const SolanaPageClient: React.FC = () => {
   );
 };
 
-export default SolanaPageClient;
+export default TronPageClient;

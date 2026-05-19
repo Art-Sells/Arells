@@ -1,36 +1,36 @@
-/* BNB asset rules (Solana structure + Binance gold palette). */
+/* TRX asset rules (Solana structure + TRON red palette). */
 #overlayy .home-investments-slideup-button,
 #overlayy .myinv-home-button,
 #overlayy .asset-home-button,
 #overlayy .home-asset-card,
 #overlayy .home-asset-bitcoin,
-#overlayy .home-asset-bnb {
+#overlayy .home-asset-tron {
 	box-shadow: none !important;
 }
-#overlayy .home-asset-bnb {
-	--asset-line-color: rgb(243, 186, 47);
+#overlayy .home-asset-tron {
+	--asset-line-color: rgb(255, 0, 19);
 }
-.asset-page--bnb {
+.asset-page--tron {
 	background: transparent;
 }
-.asset-page--bnb .asset-header-slogan,
-.asset-page--bnb .asset-home-font-title {
-	color: var(--asset-slogan-color, rgb(130, 92, 18));
+.asset-page--tron .asset-header-slogan,
+.asset-page--tron .asset-home-font-title {
+	color: var(--asset-slogan-color, rgb(180, 0, 24));
 }
-.asset-page--bnb .asset-investments-header {
-	color: var(--asset-slogan-color, rgb(130, 92, 18));
+.asset-page--tron .asset-investments-header {
+	color: var(--asset-slogan-color, rgb(180, 0, 24));
 	opacity: 1;
 	margin-bottom: -12.5px;
 }
-.asset-page--bnb {
-	--asset-slogan-color: rgb(130, 92, 18);
-	--asset-line-color: rgb(243, 186, 47);
-	--asset-unified-text-color: rgb(190, 145, 55);
-	/* Match chart hover-dot color (BNBChart markerColor) */
-	--asset-hover-dot-color: rgba(243, 186, 47, 1);
-	/* Match chart line color (BNBChart color) */
-	--asset-chart-line-color: rgba(243, 186, 47, 0.5);
-	/* Match chart line thickness (BNBChart borderWidth) */
+.asset-page--tron {
+	--asset-slogan-color: rgb(180, 0, 24);
+	--asset-line-color: rgb(255, 0, 19);
+	--asset-unified-text-color: rgb(255, 26, 26);
+	/* Match chart hover-dot color (TronChart markerColor) */
+	--asset-hover-dot-color: rgba(255, 0, 19, 1);
+	/* Match chart line color (TronChart color) */
+	--asset-chart-line-color: rgba(255, 0, 19, 0.5);
+	/* Match chart line thickness (TronChart borderWidth) */
 	--asset-chart-line-width: 6.5px;
 	/* Portfolio spacing tweaks (reduce gap between summary/add-more and Sign In/Show actions) */
 	--asset-portfolio-summary-padding-bottom: 10px;
@@ -44,227 +44,233 @@
 	--asset-save-signin-margin-bottom: 15px;
 	/* Date-range row: line gold (BTC pattern). */
 	--asset-range-button-label-color: var(--asset-line-color);
-	/* Pill “BNB” + header spot $/% — a touch darker than `--asset-line-color` */
-	--asset-badge-spot-ink: color-mix(in srgb, var(--asset-line-color) 76%, rgb(72, 54, 32));
+	/* Pill “TRX” + header spot $/% — a touch darker than `--asset-line-color` */
+	--asset-badge-spot-ink: color-mix(in srgb, var(--asset-line-color) 76%, rgb(120, 0, 16));
 }
-/* Keep opacity paired with BTC here — Home.css covers shared header metrics for BTC/ETH/BNB */
+/* Keep opacity paired with BTC here — Home.css covers shared header metrics for BTC/ETH/TRX */
 .asset-page--bitcoin .asset-metric-value:not(.asset-mount-fade-2s),
 .asset-page--bitcoin .asset-metric-inline-value:not(.asset-mount-fade-2s),
 .asset-page--bitcoin .asset-metric-number:not(.asset-mount-fade-2s),
-.asset-page--bnb .asset-metric-value:not(.asset-mount-fade-2s),
-.asset-page--bnb .asset-metric-inline-value:not(.asset-mount-fade-2s),
-.asset-page--bnb .asset-metric-number:not(.asset-mount-fade-2s) {
+.asset-page--tron .asset-metric-value:not(.asset-mount-fade-2s),
+.asset-page--tron .asset-metric-inline-value:not(.asset-mount-fade-2s),
+.asset-page--tron .asset-metric-number:not(.asset-mount-fade-2s) {
 	opacity: 1;
 }
 .asset-portfolio-summary-box--signin {
 	padding-top: 0px;
 	padding-bottom: 0px;
 	margin-bottom: 0px;
-	/* Remove the section outline for the Sign-in CTA (overrides --bitcoin/--bnb border) */
+	/* Remove the section outline for the Sign-in CTA (overrides --bitcoin/--tron border) */
 	border: none !important;
 }
-.asset-portfolio-summary-box--bnb {
-	border: 1px solid rgba(243, 186, 47, 0.6);
+.asset-portfolio-summary-box--tron {
+	border: 1px solid rgba(255, 0, 19, 0.32);
 }
-.asset-home-button--bnb {
+.asset-home-button--tron {
 	border: none;
 	box-shadow: none;
 }
-.asset-profit-summary--bnb {
-	background: rgba(243, 186, 47, 0.06);
-	border: 1px solid rgba(243, 186, 47, 0.6);
+.asset-profit-summary--tron {
+	background: rgba(255, 0, 19, 0.075);
+	border: 1px solid rgba(255, 0, 19, 0.32);
 }
-.asset-header-asset-icon--bnb {
+.asset-header-asset-icon--tron {
 }
-.asset-page--bnb .asset-home-button {
-	border-color: rgba(243, 186, 47, 0.8);
+.asset-page--tron .asset-home-button {
+	border-color: rgba(255, 0, 19, 0.38);
 }
-.asset-page-content--bnb .asset-header-panel {
+.asset-page-content--tron .asset-header-panel {
 	padding-top: 5px;
 	padding-right: 20px;   /* <- edit this */
 	padding-bottom: 15px;
 	padding-left: 0px;
   }
-.asset-metric-trend-icon--bnb {
-	color: var(--asset-slogan-color, rgb(130, 92, 18));
+.asset-metric-trend-icon--tron {
+	color: var(--asset-slogan-color, rgb(180, 0, 24));
 }
-.asset-metric-trend-icon--bnb:not(.asset-mount-fade-2s) {
+.asset-metric-trend-icon--tron:not(.asset-mount-fade-2s) {
 	opacity: 1;
 }
-.asset-home-font-label--bnb {
+.asset-home-font-label--tron {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
 }
-.asset-metric-title--bnb {
+.asset-metric-title--tron {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
 }
-.asset-metric-inline-title--bnb {
+.asset-metric-inline-title--tron {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
 }
 /* Color comes from scoped rules / inline on header metrics — avoid rgb(105,105,105) here or $/% read as flat grey */
-.asset-metric-symbol--bnb {
+.asset-metric-symbol--tron {
 	font-size: 12px;
 	margin-right: -2px;
 }
-.asset-metric-symbol--bnb:not(.asset-mount-fade-2s) {
+.asset-metric-symbol--tron:not(.asset-mount-fade-2s) {
 	opacity: 1;
 }
-.asset-metric-percent-symbol--bnb {
+.asset-metric-percent-symbol--tron {
 	margin-left: -1px;
 }
-.asset-metric-inline-symbol--bnb {
+.asset-metric-inline-symbol--tron {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
-	/* Match Purchased/Current $ spacing (asset-metric-symbol--bnb uses -2px) */
+	/* Match Purchased/Current $ spacing (asset-metric-symbol--tron uses -2px) */
 	margin-right: -2px;
 }
 .asset-page--bitcoin .asset-action-button,
-.asset-page--bnb .asset-action-button,
+.asset-page--tron .asset-action-button,
 .asset-page--bitcoin .asset-action-button:hover,
-.asset-page--bnb .asset-action-button:hover {
+.asset-page--tron .asset-action-button:hover {
 	box-shadow: none !important;
 }
-.asset-action-button--bnb {
-	border-color: rgba(243, 186, 47, 0.9);
-	background: rgba(243, 186, 47, 0.18);
-	color: rgba(243, 186, 47, 0.95);
-}a.asset-action-button--bnb:link,
-a.asset-action-button--bnb:visited {
-	color: rgba(243, 186, 47, 0.95) !important;
-}a.asset-action-button--myinv-asset-link.asset-action-button--bnb:link,
-a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
-	color: rgb(243, 186, 47) !important;
+.asset-action-button--tron {
+	border-color: rgba(255, 0, 19, 0.9);
+	background: rgba(255, 0, 19, 0.18);
+	color: rgba(255, 0, 19, 0.95);
+}a.asset-action-button--tron:link,
+a.asset-action-button--tron:visited {
+	color: rgba(255, 0, 19, 0.95) !important;
+}a.asset-action-button--myinv-asset-link.asset-action-button--tron:link,
+a.asset-action-button--myinv-asset-link.asset-action-button--tron:visited {
+	color: rgb(255, 0, 19) !important;
 }
-.home-asset-card .asset-action-button--home-asset-chip.asset-action-button--bnb {
+.home-asset-card .asset-action-button--home-asset-chip.asset-action-button--tron {
 	color: var(--asset-line-color) !important;
+	border-color: rgba(255, 0, 19, 0.38);
+	background: rgba(255, 0, 19, 0.08);
+}
+.asset-page--tron .asset-action-button:not(.asset-action-button--save-signin) {
+	border-color: rgba(255, 0, 19, 0.38);
+	background: rgba(255, 0, 19, 0.08);
 }
 .asset-page--bitcoin .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
-.asset-page--bnb .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
+.asset-page--tron .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
 .asset-page--bitcoin .asset-page-content .asset-action-button--invest-show,
-.asset-page--bnb .asset-page-content .asset-action-button--invest-show {
+.asset-page--tron .asset-page-content .asset-action-button--invest-show {
 	border-radius: 6px;
 }
-.asset-invest-form-box--bnb {
-	border: 1px solid rgba(243, 186, 47, 0.6);
+.asset-invest-form-box--tron {
+	border: 1px solid rgba(255, 0, 19, 0.32);
 }
 .asset-invest-form-heading .asset-metric-title--bitcoin,
-.asset-invest-form-heading .asset-metric-title--bnb {
+.asset-invest-form-heading .asset-metric-title--tron {
 	font-size: 28px;
 	letter-spacing: -2px;
 	opacity: 0.45;
 }
-.asset-invest-form-body--bnb {
-	border-color: rgba(243, 186, 47, 0.6);
+.asset-invest-form-body--tron {
+	border-color: rgba(255, 0, 19, 0.32);
 }
-.asset-invest-form-metrics-panel--bnb {
-	border-color: rgba(243, 186, 47, 0.6);
+.asset-invest-form-metrics-panel--tron {
+	border-color: rgba(255, 0, 19, 0.32);
 }
 .asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
-.asset-invest-form-metrics-panel .asset-metric-symbol--bnb,
+.asset-invest-form-metrics-panel .asset-metric-symbol--tron,
 .asset-invest-form-metrics-panel .asset-metric-inline-symbol--bitcoin,
-.asset-invest-form-metrics-panel .asset-metric-inline-symbol--bnb {
+.asset-invest-form-metrics-panel .asset-metric-inline-symbol--tron {
 	font-size: 19px;
 	font-weight: 800;
 	vertical-align: 2.7px;       /* <- edit symbol Y offset */
 	opacity: 0.7;
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
-.asset-invest-form-controls--bnb {
-	border-color: rgba(243, 186, 47, 0.6);
+.asset-invest-form-controls--tron {
+	border-color: rgba(255, 0, 19, 0.32);
 }
-.asset-number-loader--bnb {
+.asset-number-loader--tron {
 	width: 80px;
-	background: rgba(243, 186, 47, 0.1);
+	background: rgba(255, 0, 19, 0.1);
 }
-.asset-number-loader--bnb::after {
-	background: rgba(243, 186, 47, 0.5);
+.asset-number-loader--tron::after {
+	background: rgba(255, 0, 19, 0.5);
 }
-.asset-number-loader--bnb.asset-number-loader--wide {
+.asset-number-loader--tron.asset-number-loader--wide {
 	width: 140px;
 }
-.asset-number-loader--bnb.asset-number-loader--narrow {
+.asset-number-loader--tron.asset-number-loader--narrow {
 	width: 55px;
 }
-.home-asset-bnb .asset-number-loader--card {
-	background: rgba(243, 186, 47, 0.1);
+.home-asset-tron .asset-number-loader--card {
+	background: rgba(255, 0, 19, 0.1);
 }
-.home-asset-bnb .asset-number-loader--card::after {
-	background: rgba(243, 186, 47, 0.3);
+.home-asset-tron .asset-number-loader--card::after {
+	background: rgba(255, 0, 19, 0.3);
 }
-.asset-invest-input--bnb {
+.asset-invest-input--tron {
 	/* Match button border opacity */
-	border-color: rgba(243, 186, 47, 0.0);
-	background: rgba(243, 186, 47, 0.14);
+	border-color: rgba(255, 0, 19, 0.0);
+	background: rgba(255, 0, 19, 0.14);
 }
-.asset-invest-input--bnb:focus,
-.asset-invest-input--bnb:focus-visible {
+.asset-invest-input--tron:focus,
+.asset-invest-input--tron:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(243, 186, 47, 0.6);
+	border-color: rgba(255, 0, 19, 0.32);
 }
-.asset-date-picker--bnb .asset-date-trigger {
-	border-color: rgba(243, 186, 47, 0.0);
-	background: rgba(243, 186, 47, 0.14);
+.asset-date-picker--tron .asset-date-trigger {
+	border-color: rgba(255, 0, 19, 0.0);
+	background: rgba(255, 0, 19, 0.14);
 }
-.asset-date-picker--bnb .asset-date-trigger.is-open,
-.asset-date-picker--bnb .asset-date-trigger:focus,
-.asset-date-picker--bnb .asset-date-trigger:focus-visible {
+.asset-date-picker--tron .asset-date-trigger.is-open,
+.asset-date-picker--tron .asset-date-trigger:focus,
+.asset-date-picker--tron .asset-date-trigger:focus-visible {
 	background: transparent;
 	/* Match the surrounding section border tint/opacity while active */
-	border-color: rgba(243, 186, 47, 0.6);
+	border-color: rgba(255, 0, 19, 0.32);
 }
-.asset-date-popover--bnb {
+.asset-date-popover--tron {
 	/* Warm gold wash — was mistakenly the same mint as Solana (rgb(232,250,245)). */
-	background: rgba(255, 243, 218, 0.93);
+	background: rgba(255, 228, 228, 0.93);
 }
-.asset-date-popover--bnb .asset-date-day:hover {
-	background: rgba(243, 186, 47, 0.14);
+.asset-date-popover--tron .asset-date-day:hover {
+	background: rgba(255, 0, 19, 0.14);
 }
-.asset-date-popover--bnb .asset-date-day.is-selected {
-	background: rgba(243, 186, 47, 0.18);
+.asset-date-popover--tron .asset-date-day.is-selected {
+	background: rgba(255, 0, 19, 0.18);
 }
-.asset-date-popover--bnb .asset-date-nav:hover,
-.asset-date-popover--bnb .asset-date-nav:active,
-.asset-date-popover--bnb .asset-date-nav:focus {
-	background: rgba(243, 186, 47, 0.14);
+.asset-date-popover--tron .asset-date-nav:hover,
+.asset-date-popover--tron .asset-date-nav:active,
+.asset-date-popover--tron .asset-date-nav:focus {
+	background: rgba(255, 0, 19, 0.14);
 }
-.asset-date-popover--bnb .asset-date-day:focus {
+.asset-date-popover--tron .asset-date-day:focus {
 	outline: none;
 }
-.asset-loader-toggle-shell--bnb .asset-reality-toggle--loader::before {
-	animation: assetLoaderToggleLineBNB 3s ease forwards;
+.asset-loader-toggle-shell--tron .asset-reality-toggle--loader::before {
+	animation: assetLoaderToggleLineTRX 3s ease forwards;
 }
 
-@keyframes assetLoaderToggleLineBNB {
+@keyframes assetLoaderToggleLineTRX {
 	from {
 		background: rgba(196, 196, 196, 0.9);
 	}
 	to {
-		background: var(--asset-chart-line-color, rgba(243, 186, 47, 0.5));
+		background: var(--asset-chart-line-color, rgba(255, 0, 19, 0.5));
 	}
 }
 .asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
-.asset-portfolio-summary-box .asset-metric-symbol--bnb,
+.asset-portfolio-summary-box .asset-metric-symbol--tron,
 .asset-portfolio-summary-box .asset-metric-inline-symbol--bitcoin,
-.asset-portfolio-summary-box .asset-metric-inline-symbol--bnb {
+.asset-portfolio-summary-box .asset-metric-inline-symbol--tron {
 	font-size: 19px;
 	font-weight: 800;
 	vertical-align: 2.7px;       /* <- edit symbol Y offset */
 	opacity: 0.7;
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
-.asset-page--bnb .asset-page-content .asset-action-button--save-signin {
-	background: rgba(243, 186, 47, 1);
+.asset-page--tron .asset-page-content .asset-action-button--save-signin {
+	background: rgba(255, 0, 19, 1);
 	box-shadow: none !important;
-	border-color: rgba(243, 186, 47, 1);
+	border-color: rgba(255, 0, 19, 1);
 	/* brighter "same hue" tint of the background */
-	color: color-mix(in srgb, rgba(243, 186, 47, 1) 18%, white 82%) !important;
+	color: color-mix(in srgb, rgba(255, 0, 19, 1) 18%, white 82%) !important;
 }
 @media (hover: hover) and (pointer: fine) {
 	.asset-page--bitcoin .asset-page-content .asset-action-button--save-signin:hover {
@@ -272,27 +278,27 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 		transform: translateY(-4px);
 }
 
-.asset-page--bnb .asset-page-content .asset-action-button--save-signin:hover {
+.asset-page--tron .asset-page-content .asset-action-button--save-signin:hover {
 	box-shadow: none !important;
 	transform: translateY(-4px);
 	}
 }
-.asset-page--bnb .asset-range-button.asset-portfolio-icon-button {
-	background: rgba(243, 186, 47, 0.0) !important;
+.asset-page--tron .asset-range-button.asset-portfolio-icon-button {
+	background: rgba(255, 0, 19, 0.0) !important;
 }
-.asset-page--bnb .asset-range-button.asset-portfolio-icon-button {
-	border-color: rgba(243, 186, 47, 0.2) !important;
+.asset-page--tron .asset-range-button.asset-portfolio-icon-button {
+	border-color: rgba(255, 0, 19, 0.38) !important;
 }
-.asset-page--bnb .asset-range-button.asset-portfolio-icon-button:active {
-	border-color: rgba(243, 186, 47, 0.3) !important;
+.asset-page--tron .asset-range-button.asset-portfolio-icon-button:active {
+	border-color: rgba(255, 0, 19, 0.38) !important;
 }
 @media (hover: hover) and (pointer: fine) {
 	.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button:hover {
 		border-color: rgba(248, 141, 0, 0.3) !important;
 	}
 
-	.asset-page--bnb .asset-range-button.asset-portfolio-icon-button:hover {
-		border-color: rgba(243, 186, 47, 0.3) !important;
+	.asset-page--tron .asset-range-button.asset-portfolio-icon-button:hover {
+		border-color: rgba(255, 0, 19, 0.38) !important;
 	}
 
 	.asset-range-button.asset-portfolio-icon-button:hover .asset-portfolio-icon-text {
@@ -303,115 +309,112 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 		transform: translateY(-5px);
 	}
 }
-.asset-range-button--bnb.is-active {
+.asset-page--tron .asset-range-button--tron.is-active {
 	border: 1px solid transparent;
-	background: rgba(243, 186, 47, 0.18);
-	color: var(--asset-range-button-label-color, rgb(243, 186, 47));
+	background: rgba(255, 0, 19, 0.08);
+	color: var(--asset-range-button-label-color, rgb(255, 0, 19));
 	opacity: 0.6;
 	pointer-events: none;
 	cursor: default;
 	transform: none;
 }
-.asset-range-button--bnb:not(.is-active):not(:disabled) {
-	border-color: rgba(243, 186, 47, 0.9);
-	background: rgba(243, 186, 47, 0.18);
-	color: var(--asset-range-button-label-color, rgb(243, 186, 47));
+.asset-page--tron .asset-range-button--tron:not(.is-active):not(:disabled) {
+	border-color: rgba(255, 0, 19, 0.38);
+	background: rgba(255, 0, 19, 0.08);
+	color: var(--asset-range-button-label-color, rgb(255, 0, 19));
 }
-.asset-range-button--bnb:disabled {
-	background: rgba(243, 186, 47, 0.18);
-	color: var(--asset-range-button-label-color, rgb(243, 186, 47));
+.asset-page--tron .asset-range-button--tron:disabled {
+	background: rgba(255, 0, 19, 0.08);
+	color: var(--asset-range-button-label-color, rgb(255, 0, 19));
 }
 .asset-investments-list .asset-panel--bitcoin,
-.asset-investments-list .asset-panel--bnb {
+.asset-investments-list .asset-panel--tron {
 	background: transparent !important;
 }
-.asset-investments-wrap--bnb {
-	border: 1px solid rgba(243, 186, 47, 0.6);
-}
-/* BNB asset page — my investments summary + expanded list match panel border opacity */
-.asset-page--bnb .asset-portfolio-summary-box--bnb {
-	border: 1px solid rgba(243, 186, 47, 0.6);
-}
-.asset-page--bnb .asset-investments-wrap.asset-investments-wrap--bnb.is-open {
-	border: 1px solid rgba(243, 186, 47, 0.6);
+.asset-investments-wrap--tron {
+	border-color: rgba(255, 0, 19, 0.32);
 }
 .asset-investments-wrap .asset-metric-symbol--bitcoin,
-.asset-investments-wrap .asset-metric-symbol--bnb,
+.asset-investments-wrap .asset-metric-symbol--tron,
 .asset-investments-wrap .asset-metric-inline-symbol--bitcoin,
-.asset-investments-wrap .asset-metric-inline-symbol--bnb {
+.asset-investments-wrap .asset-metric-inline-symbol--tron {
 	font-size: 19px;
 	font-weight: 800;
 	vertical-align: 2.7px;       /* <- edit symbol Y offset */
 	opacity: 0.7;
 	margin-right: 1px;           /* <- edit gap between symbol and number */
 }
-.asset-slide-panel--clearing-bnb {
+.asset-slide-panel--clearing-tron {
 	background: transparent;
 	box-shadow: none;
 }
-.asset-home-font-label--bnb,
-.asset-metric-title--bnb,
-.asset-metric-inline-title--bnb {
+.asset-home-font-label--tron,
+.asset-metric-title--tron,
+.asset-metric-inline-title--tron {
 	margin-top: 0px;
-	color: var(--asset-slogan-color, rgb(130, 92, 18));
+	color: var(--asset-slogan-color, rgb(180, 0, 24));
 	opacity: 1;
 	font-size: 12px;
 	font-weight: 200;
 }
 /* Purchase rows / portfolio / invest form: match header price-panel $ / % (`--asset-badge-spot-ink`) */
-.asset-page--bnb .asset-page-content .asset-portfolio-summary-box .asset-metric-symbol--bnb,
-.asset-page--bnb .asset-page-content .asset-portfolio-summary-box .asset-metric-inline-symbol--bnb,
-.asset-page--bnb .asset-page-content .asset-investments-wrap .asset-metric-symbol--bnb,
-.asset-page--bnb .asset-page-content .asset-investments-wrap .asset-metric-inline-symbol--bnb,
-.asset-page--bnb .asset-page-content .asset-invest-form-metrics-panel .asset-metric-symbol--bnb,
-.asset-page--bnb .asset-page-content .asset-invest-form-metrics-panel .asset-metric-inline-symbol--bnb {
+.asset-page--tron .asset-page-content .asset-portfolio-summary-box .asset-metric-symbol--tron,
+.asset-page--tron .asset-page-content .asset-portfolio-summary-box .asset-metric-inline-symbol--tron,
+.asset-page--tron .asset-page-content .asset-investments-wrap .asset-metric-symbol--tron,
+.asset-page--tron .asset-page-content .asset-investments-wrap .asset-metric-inline-symbol--tron,
+.asset-page--tron .asset-page-content .asset-invest-form-metrics-panel .asset-metric-symbol--tron,
+.asset-page--tron .asset-page-content .asset-invest-form-metrics-panel .asset-metric-inline-symbol--tron {
 	color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
 	-webkit-text-fill-color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
 }
-.asset-metric-symbol--bnb,
-.asset-metric-inline-symbol--bnb {
+.asset-metric-symbol--tron,
+.asset-metric-inline-symbol--tron {
 	margin-top: 0px;
-	color: var(--asset-slogan-color, rgb(130, 92, 18));
+	color: var(--asset-slogan-color, rgb(180, 0, 24));
 	opacity: 1;
 
 }
 .asset-price-chart-row--combined.asset-panel--bitcoin,
-.asset-price-chart-row--combined.asset-panel--bnb {
+.asset-price-chart-row--combined.asset-panel--tron {
 	background: transparent !important;
 }
-.myinv-page .myinv-asset-home-card.home-asset-bnb {
-	background: rgba(243, 186, 47, 0.06);
-	border: 1px solid rgba(243, 186, 47, 0.6);
-	--asset-line-color: rgb(243, 186, 47);
+.myinv-page .myinv-asset-home-card.home-asset-tron {
+	background: rgba(255, 0, 19, 0.075);
+	border: 1px solid rgba(255, 0, 19, 0.32);
+	--asset-line-color: rgb(255, 0, 19);
 }
 .myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--bitcoin,
-.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--bnb {
+.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--tron {
 	color: var(--asset-line-color) !important;
 }
-.asset-title-badge--bnb {
-	background: rgba(243, 186, 47, 1);
+.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--tron {
+	border-color: rgba(255, 0, 19, 0.38);
+	background: rgba(255, 0, 19, 0.08);
+}
+.asset-title-badge--tron {
+	background: rgba(255, 0, 19, 1);
 	color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
 	-webkit-text-fill-color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
 }
-.asset-title-badge--section.asset-title-badge--bnb {
+.asset-title-badge--section.asset-title-badge--tron {
 	padding-left: 12px;     /* <- edit ETH badge horizontal padding over 750px */
 	padding-right: 12px;
 }
-.asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:link,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:visited,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:hover,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:active,
-.asset-page-content a.asset-title-badge--section.asset-title-badge--bnb:focus-visible {
+.asset-page-content a.asset-title-badge--section.asset-title-badge--tron:link,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--tron:visited,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--tron:hover,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--tron:active,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--tron:focus-visible {
 	box-sizing: border-box;
-	/* Match `.asset-panel--bnb` wash over warm canvas (same family as BnbPageClient overscroll rgb(254, 251, 243)); not Solana mint */
-	background: rgb(253, 248, 238) !important;
-	background: color-mix(in srgb, rgb(243, 186, 47) 6%, rgb(254, 251, 243)) !important;
-	border: 1px solid rgba(243, 186, 47, 0.6);
+	/* Match `.asset-panel--tron` wash over TRON canvas (TronPageClient overscroll rgb(255, 238, 238)) */
+	background: rgb(255, 238, 238) !important;
+	background: color-mix(in srgb, rgb(255, 0, 19) 7.5%, rgb(255, 238, 238)) !important;
+	border: 1px solid rgba(255, 0, 19, 0.38);
 }
-.myinv-edit-card--bnb {
-	background: rgba(243, 186, 47, 0.05);
-	border-color: rgba(243, 186, 47, 0.3);
-	color: rgba(243, 186, 47, 0.9);
+.myinv-edit-card--tron {
+	background: rgba(255, 0, 19, 0.08);
+	border-color: rgba(255, 0, 19, 0.3);
+	color: rgba(255, 0, 19, 0.9);
 }
 @media (max-width: 750px) {
 	/* Match desktop narrow-window text metrics: iOS otherwise boosts body text and shifts the title vs icons. */
@@ -447,7 +450,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 		padding-bottom: 0px;
 		padding-left: 10px;
 	}
-	.asset-page-content--bnb .asset-header-panel {
+	.asset-page-content--tron .asset-header-panel {
 		padding-top: 6px;
 		padding-right: 10px;   /* <- edit this */
 		padding-bottom: 0px;
@@ -468,7 +471,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 		padding-left: 14px;     /* <- edit BTC badge horizontal padding under 750px */
 		padding-right: 14px;
 	}
-	.asset-title-badge--section.asset-title-badge--bnb {
+	.asset-title-badge--section.asset-title-badge--tron {
 		padding-left: 14px;     /* <- edit ETH badge horizontal padding under 750px */
 		padding-right: 14px;
 	}
@@ -619,17 +622,17 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 	}
 
 	.asset-price-panel .asset-metric-title--bitcoin,
-	.asset-price-panel .asset-metric-title--bnb,
+	.asset-price-panel .asset-metric-title--tron,
 	.asset-market-controls .asset-metric-inline-title--bitcoin,
-	.asset-market-controls .asset-metric-inline-title--bnb {
+	.asset-market-controls .asset-metric-inline-title--tron {
 		font-size: 10.3px;
 	}
 
 	.asset-price-panel .asset-metric-value,
 	.asset-price-panel .asset-metric-symbol--bitcoin,
-	.asset-price-panel .asset-metric-symbol--bnb,
+	.asset-price-panel .asset-metric-symbol--tron,
 	.asset-price-panel .asset-metric-percent-symbol--bitcoin,
-	.asset-price-panel .asset-metric-percent-symbol--bnb,
+	.asset-price-panel .asset-metric-percent-symbol--tron,
 	.asset-market-controls .asset-market-status-value {
 		font-size: 10.8px;
 	}
@@ -638,7 +641,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 		margin-left: -1.5px;
 	}
 
-	.asset-price-panel .asset-metric-percent-symbol--bnb {
+	.asset-price-panel .asset-metric-percent-symbol--tron {
 		margin-left: -2px;
 	}
 
@@ -678,7 +681,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 	}
 
 	.asset-chart-date-badge .asset-metric-inline-title--bitcoin,
-	.asset-chart-date-badge .asset-metric-inline-title--bnb {
+	.asset-chart-date-badge .asset-metric-inline-title--tron {
 		font-size: 10.3px;
 	}
 
@@ -839,18 +842,18 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 
 	/* Group 2 — Metric word titles → match myinv-metric-title (10.5px, 0 letter-spacing) */
 	.asset-portfolio-summary-box .asset-metric-title--bitcoin,
-	.asset-portfolio-summary-box .asset-metric-title--bnb,
+	.asset-portfolio-summary-box .asset-metric-title--tron,
 	.asset-portfolio-summary-box .asset-metric-inline-title--bitcoin,
-	.asset-portfolio-summary-box .asset-metric-inline-title--bnb,
+	.asset-portfolio-summary-box .asset-metric-inline-title--tron,
 	.asset-invest-form-metrics-panel .asset-metric-title--bitcoin,
-	.asset-invest-form-metrics-panel .asset-metric-title--bnb,
+	.asset-invest-form-metrics-panel .asset-metric-title--tron,
 	.asset-invest-form-controls .asset-metric-title--bitcoin,
-	.asset-invest-form-controls .asset-metric-title--bnb,
+	.asset-invest-form-controls .asset-metric-title--tron,
 	.asset-invest-form-metric-title,
 	.asset-investments-wrap .asset-metric-title--bitcoin,
-	.asset-investments-wrap .asset-metric-title--bnb,
+	.asset-investments-wrap .asset-metric-title--tron,
 	.asset-investments-wrap .asset-metric-inline-title--bitcoin,
-	.asset-investments-wrap .asset-metric-inline-title--bnb {
+	.asset-investments-wrap .asset-metric-inline-title--tron {
 		font-size: 10.5px !important;
 	}
 
@@ -868,7 +871,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 	}
 
 	.asset-invest-form-heading .asset-metric-title--bitcoin,
-	.asset-invest-form-heading .asset-metric-title--bnb {
+	.asset-invest-form-heading .asset-metric-title--tron {
 		font-size: 23.5px !important;
 		letter-spacing: -2px !important;
 	}
@@ -895,17 +898,17 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 
 	/* Group 3 — $ symbols → match myinv-metric-symbol (14px) */
 	.asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
-	.asset-portfolio-summary-box .asset-metric-symbol--bnb,
+	.asset-portfolio-summary-box .asset-metric-symbol--tron,
 	.asset-portfolio-summary-box .asset-metric-inline-symbol--bitcoin,
-	.asset-portfolio-summary-box .asset-metric-inline-symbol--bnb,
+	.asset-portfolio-summary-box .asset-metric-inline-symbol--tron,
 	.asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
-	.asset-invest-form-metrics-panel .asset-metric-symbol--bnb,
+	.asset-invest-form-metrics-panel .asset-metric-symbol--tron,
 	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--bitcoin,
-	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--bnb,
+	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--tron,
 	.asset-investments-wrap .asset-metric-symbol--bitcoin,
-	.asset-investments-wrap .asset-metric-symbol--bnb,
+	.asset-investments-wrap .asset-metric-symbol--tron,
 	.asset-investments-wrap .asset-metric-inline-symbol--bitcoin,
-	.asset-investments-wrap .asset-metric-inline-symbol--bnb {
+	.asset-investments-wrap .asset-metric-inline-symbol--tron {
 		font-size: 14px !important;
 	}
 
@@ -952,26 +955,26 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 
 }
 .asset-profit-block.asset-panel--bitcoin,
-.asset-profit-block.asset-panel--bnb {
+.asset-profit-block.asset-panel--tron {
 	background: transparent !important;
 }
-.asset-panel--bnb {
-	background: rgba(243, 186, 47, 0.06);
-	border: 1px solid rgba(243, 186, 47, 0.6);
+.asset-panel--tron {
+	background: rgba(255, 0, 19, 0.075);
+	border: 1px solid rgba(255, 0, 19, 0.32);
 }
 .asset-portfolio-center.asset-panel--bitcoin,
-.asset-portfolio-center.asset-panel--bnb {
+.asset-portfolio-center.asset-panel--tron {
 	background: transparent !important;
 }
-.asset-reality-toggle-shell.asset-panel--bnb {
+.asset-reality-toggle-shell.asset-panel--tron {
 	background: transparent !important;
 }
-.asset-price-panel--bnb {
-	border: 1px solid rgba(243, 186, 47, 0.6);
+.asset-price-panel--tron {
+	border: 1px solid rgba(255, 0, 19, 0.32);
 	border-radius: 14px;
 }
 .asset-market-controls.asset-panel--bitcoin,
-.asset-market-controls.asset-panel--bnb {
+.asset-market-controls.asset-panel--tron {
 	background: transparent;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -980,32 +983,32 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 	transform: translateY(-4px);
 	}
 
-	.asset-page--bnb .asset-page-content .asset-action-button--add-investments:hover {
+	.asset-page--tron .asset-page-content .asset-action-button--add-investments:hover {
 		box-shadow: none !important;
 		transform: translateY(-4px);
 	}
 }
-.asset-page--bnb .asset-page-content .asset-action-button--add-investments {
+.asset-page--tron .asset-page-content .asset-action-button--add-investments {
 	box-shadow: none !important;
 }
-.asset-page--bnb .asset-page-content .asset-action-button--invest-submit {
+.asset-page--tron .asset-page-content .asset-action-button--invest-submit {
 	box-shadow: none !important;
 }
-.asset-page--bnb .asset-page-content .asset-action-button--invest-submit:hover {
+.asset-page--tron .asset-page-content .asset-action-button--invest-submit:hover {
 	box-shadow: none !important;
 }
 .asset-page-content .asset-home-icon,
 .asset-page-content .asset-home-icon--bitcoin,
-.asset-page-content .asset-home-icon--bnb,
+.asset-page-content .asset-home-icon--tron,
 .asset-page-content .asset-header-asset-icon,
 .asset-page-content .asset-header-asset-icon--bitcoin,
-.asset-page-content .asset-header-asset-icon--bnb {
+.asset-page-content .asset-header-asset-icon--tron {
 	filter: none !important;
 }
 .asset-page--bitcoin .asset-page-content button,
 .asset-page--bitcoin .asset-page-content .asset-action-button,
-.asset-page--bnb .asset-page-content button,
-.asset-page--bnb .asset-page-content .asset-action-button {
+.asset-page--tron .asset-page-content button,
+.asset-page--tron .asset-page-content .asset-action-button {
 	box-shadow: none !important;
 }
 .asset-page--bitcoin .asset-page-content button:hover,
@@ -1016,29 +1019,29 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 .asset-page--bitcoin .asset-page-content .asset-action-button:active,
 .asset-page--bitcoin .asset-page-content .asset-action-button:focus,
 .asset-page--bitcoin .asset-page-content .asset-action-button:focus-visible,
-.asset-page--bnb .asset-page-content button:hover,
-.asset-page--bnb .asset-page-content button:active,
-.asset-page--bnb .asset-page-content button:focus,
-.asset-page--bnb .asset-page-content button:focus-visible,
-.asset-page--bnb .asset-page-content .asset-action-button:hover,
-.asset-page--bnb .asset-page-content .asset-action-button:active,
-.asset-page--bnb .asset-page-content .asset-action-button:focus,
-.asset-page--bnb .asset-page-content .asset-action-button:focus-visible {
+.asset-page--tron .asset-page-content button:hover,
+.asset-page--tron .asset-page-content button:active,
+.asset-page--tron .asset-page-content button:focus,
+.asset-page--tron .asset-page-content button:focus-visible,
+.asset-page--tron .asset-page-content .asset-action-button:hover,
+.asset-page--tron .asset-page-content .asset-action-button:active,
+.asset-page--tron .asset-page-content .asset-action-button:focus,
+.asset-page--tron .asset-page-content .asset-action-button:focus-visible {
 	box-shadow: none !important;
 }
-.asset-page--bnb .asset-footer-about {
-	border-color: rgba(243, 186, 47, 0.35);
-	color: rgba(243, 186, 47, 0.75);
+.asset-page--tron .asset-footer-about {
+	border-color: rgba(255, 0, 19, 0.35);
+	color: rgba(255, 0, 19, 0.75);
 }
 .asset-loader-toggle-shell--bitcoin,
-.asset-loader-toggle-shell--bnb {
+.asset-loader-toggle-shell--tron {
 	--asset-loader-toggle-shell-width: 154px;
 	--asset-loader-toggle-width: 154px;
 }
 
 @media (min-width: 751px) {
 	.asset-loader-toggle-shell--bitcoin,
-	.asset-loader-toggle-shell--bnb {
+	.asset-loader-toggle-shell--tron {
 		--asset-loader-toggle-shell-width: 350px;
 		--asset-loader-toggle-width: 350px;
 	}
@@ -1048,44 +1051,44 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 	}
 }
 
-.asset-loader-overlay--bnb {
+.asset-loader-overlay--tron {
 	background: rgb(255, 255, 255);
 }
-.asset-loader-ring--bnb .asset-loader-spinner circle {
-	stroke: rgba(243, 186, 47, 1);
-	animation: assetLoaderStrokeBNB 3s ease forwards;
+.asset-loader-ring--tron .asset-loader-spinner circle {
+	stroke: rgba(255, 0, 19, 1);
+	animation: assetLoaderStrokeTRX 3s ease forwards;
 }
-.asset-footer-about-button.asset-action-button--bnb {
-	color: rgba(243, 186, 47, 0.95);
-	border-color: rgba(243, 186, 47, 0.9);
-	background: rgba(243, 186, 47, 0.18);
-	--asset-footer-about-divider-color: rgba(243, 186, 47, 0.9);
+.asset-footer-about-button.asset-action-button--tron {
+	color: rgba(255, 0, 19, 0.95);
+	border-color: rgba(255, 0, 19, 0.38);
+	background: rgba(255, 0, 19, 0.08);
+	--asset-footer-about-divider-color: rgba(255, 0, 19, 0.38);
 }
-.asset-view-more-assets--footer.asset-action-button--bnb {
-	--asset-footer-about-divider-color: rgba(243, 186, 47, 0.9);
+.asset-view-more-assets--footer.asset-action-button--tron {
+	--asset-footer-about-divider-color: rgba(255, 0, 19, 0.38);
 }
-.asset-chart-grid-shimmer--bnb .asset-chart-grid-shimmer-thin {
+.asset-chart-grid-shimmer--tron .asset-chart-grid-shimmer-thin {
 	background-image:
-		repeating-linear-gradient(to right, rgba(243, 186, 47, 0.25) 0px, rgba(243, 186, 47, 0.25) 1px, transparent 1px, transparent 30px),
-		repeating-linear-gradient(to bottom, rgba(243, 186, 47, 0.25) 0px, rgba(243, 186, 47, 0.25) 1px, transparent 1px, transparent 30px);
+		repeating-linear-gradient(to right, rgba(255, 0, 19, 0.25) 0px, rgba(255, 0, 19, 0.25) 1px, transparent 1px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(255, 0, 19, 0.25) 0px, rgba(255, 0, 19, 0.25) 1px, transparent 1px, transparent 30px);
 }
-.asset-chart-grid-shimmer--bnb .asset-chart-grid-shimmer-thick {
+.asset-chart-grid-shimmer--tron .asset-chart-grid-shimmer-thick {
 	background-image:
-		repeating-linear-gradient(to right, rgba(243, 186, 47, 0.2) 0px, rgba(243, 186, 47, 0.2) 2px, transparent 2px, transparent 30px),
-		repeating-linear-gradient(to bottom, rgba(243, 186, 47, 0.2) 0px, rgba(243, 186, 47, 0.2) 2px, transparent 2px, transparent 30px);
+		repeating-linear-gradient(to right, rgba(255, 0, 19, 0.2) 0px, rgba(255, 0, 19, 0.2) 2px, transparent 2px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(255, 0, 19, 0.2) 0px, rgba(255, 0, 19, 0.2) 2px, transparent 2px, transparent 30px);
 }
-.home-asset-bnb {
-				background: rgba(243, 186, 47, 0.06);
-				border: 1px solid rgba(243, 186, 47, 0.6);
+.home-asset-tron {
+				background: rgba(255, 0, 19, 0.075);
+				border: 1px solid rgba(255, 0, 19, 0.32);
 			}
-.home-asset-bnb .home-assets-cell + .home-assets-cell {
-				border-left: 5px solid rgba(243, 186, 47, 0.16);
+.home-asset-tron .home-assets-cell + .home-assets-cell {
+				border-left: 5px solid rgba(255, 0, 19, 0.1);
 				margin-left: -6.5px;
 				margin-right: 6.5px;
 				border-top-left-radius: 5px;
 				border-bottom-left-radius: 5px;
 			}
-.home-asset-label-bnb .home-asset-name {
+.home-asset-label-tron .home-asset-name {
 				font-size: 12.5px;
 			}
 @media screen and (max-width: 700px) {
@@ -1159,7 +1162,7 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bnb:visited {
 	}
 
 	.home-asset-label-bitcoin .home-asset-name,
-	.home-asset-label-bnb .home-asset-name {
+	.home-asset-label-tron .home-asset-name {
 		font-size: 10.5px;
 	}
 

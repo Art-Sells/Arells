@@ -5,6 +5,7 @@ import './css/xrp-asset-rules.css';
 import './css/solana-asset-rules.css';
 import './css/HomeLoaderOverrides.css';
 import './css/bnb-asset-rules.css';
+import './css/tron-asset-rules.css';
 import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
@@ -12,7 +13,7 @@ import { AssetsProvider } from '../context/Assets/AssetsProvider';
 import { defaultSiteIcons } from '../lib/defaultSiteIcons';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 
-/** Default tab icons; `/bitcoin`, `/ethereum`, `/bnb`, `/solana`, `/vavity` override via their own `metadata.icons`. */
+/** Default tab icons; `/bitcoin`, `/ethereum`, `/bnb`, `/solana`, `/tron`, `/vavity` override via their own `metadata.icons`. */
 export const metadata: Metadata = {
   metadataBase: getSiteMetadataBase(),
   icons: defaultSiteIcons,

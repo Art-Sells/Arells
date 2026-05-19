@@ -27,6 +27,7 @@
 #overlayy .home-asset-ethereum,
 #overlayy .home-asset-xrp,
 #overlayy .home-asset-bnb,
+#overlayy .home-asset-tron,
 #overlayy .home-asset-solana {
 	box-shadow: none !important;
 }
@@ -61,6 +62,10 @@
 
 #overlayy .home-asset-solana {
 	--asset-line-color: rgb(0, 173, 144);
+}
+
+#overlayy .home-asset-tron {
+	--asset-line-color: rgb(255, 0, 19);
 }
 
 html,
@@ -771,7 +776,11 @@ body {
 .asset-page--bnb .asset-page-content,
 .asset-page--bnb .asset-page-content *,
 .asset-page--bnb .asset-footer,
-.asset-page--bnb .asset-footer * {
+.asset-page--bnb .asset-footer *,
+.asset-page--tron .asset-page-content,
+.asset-page--tron .asset-page-content *,
+.asset-page--tron .asset-footer,
+.asset-page--tron .asset-footer * {
 	color: var(--asset-unified-text-color) !important;
 }
 
@@ -828,9 +837,32 @@ body {
 	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(205, 155, 38)) !important;
 }
 
+/* Title pill + spot $/% (TRX) */
+.asset-page--tron .asset-page-content a.asset-title-badge--section.asset-title-badge--tron:link,
+.asset-page--tron .asset-page-content a.asset-title-badge--section.asset-title-badge--tron:visited,
+.asset-page--tron .asset-page-content a.asset-title-badge--section.asset-title-badge--tron:hover,
+.asset-page--tron .asset-page-content a.asset-title-badge--section.asset-title-badge--tron:active,
+.asset-page--tron .asset-page-content a.asset-title-badge--section.asset-title-badge--tron:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(220, 0, 32)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(220, 0, 32)) !important;
+}
+
+.asset-page--tron .asset-page-content a.asset-title-badge--section.asset-title-badge--tron .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(220, 0, 32)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(220, 0, 32)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--tron .asset-page-content .asset-price-panel span.asset-metric-symbol--tron,
+.asset-page--tron .asset-page-content .asset-price-panel span.asset-metric-percent-symbol--tron {
+	color: var(--asset-badge-spot-ink, rgb(220, 0, 32)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(220, 0, 32)) !important;
+}
+
 .asset-page--bitcoin .asset-header-title,
 .asset-page--ethereum .asset-header-title,
-.asset-page--bnb .asset-header-title {
+.asset-page--bnb .asset-header-title,
+.asset-page--tron .asset-header-title {
 	color: var(--asset-line-color);
 	opacity: 1;
 }
@@ -843,7 +875,10 @@ body {
 .asset-page--ethereum .asset-metric-number,
 .asset-page--bnb .asset-metric-value,
 .asset-page--bnb .asset-metric-inline-value,
-.asset-page--bnb .asset-metric-number {
+.asset-page--bnb .asset-metric-number,
+.asset-page--tron .asset-metric-value,
+.asset-page--tron .asset-metric-inline-value,
+.asset-page--tron .asset-metric-number {
 	color: var(--asset-line-color);
 	opacity: 1;
 }
@@ -9651,6 +9686,26 @@ a.asset-action-button--save-signin {
 	-webkit-text-fill-color: rgba(243, 186, 47, 0.95) !important;
 	border-color: rgba(243, 186, 47, 0.9) !important;
 	background: rgba(243, 186, 47, 0.18) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--tron .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(255, 0, 19, 0.3);
+	opacity: 1;
+}
+
+.asset-page--tron .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(255, 0, 19, 0.95) !important;
+	-webkit-text-fill-color: rgba(255, 0, 19, 0.95) !important;
+}
+
+.asset-page--tron .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(255, 0, 19, 0.95) !important;
+	-webkit-text-fill-color: rgba(255, 0, 19, 0.95) !important;
+	border-color: rgba(255, 0, 19, 0.38) !important;
+	background: rgba(255, 0, 19, 0.08) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;

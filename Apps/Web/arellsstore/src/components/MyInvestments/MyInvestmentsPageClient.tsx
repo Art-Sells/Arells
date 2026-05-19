@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
+import { SUPPORTED_CRYPTO_ASSET_IDS, getCryptoAssetMeta } from '../../lib/assets/cryptoAssetRegistry';
 
 const formatCurrencyParts = (value: number) => {
   const formatted = (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -40,7 +41,7 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
   } = useVavity();
   const forceSessionPreview = false;
   const forceEmptyEmailPreview = emptyPortfolioPreview;
-  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum', 'xrp', 'bnb', 'solana'], []);
+  const supportedAssets = useMemo(() => [...SUPPORTED_CRYPTO_ASSET_IDS], []);
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
       (sessionInvestments || []).map((inv: any) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
@@ -58,7 +59,7 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
   const effectiveAssetsMissing = forceSessionPreview
     ? sessionAssetsMissing
     : forceEmptyEmailPreview
-      ? ['bitcoin', 'ethereum', 'xrp', 'bnb', 'solana']
+      ? [...SUPPORTED_CRYPTO_ASSET_IDS]
       : assetsMissingInEmail;
 
   const [open, setOpen] = useState(false);
@@ -1187,26 +1188,9 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
                     <span className="myinv-asset-border" aria-hidden="true" />
                     <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}${effectiveAssetsPresent.length > 2 ? ' is-many' : ''}`}>
                       {effectiveAssetsPresent.map((asset) => {
-                        const href =
-                          asset === 'bitcoin'
-                            ? '/bitcoin'
-                            : asset === 'ethereum'
-                              ? '/ethereum'
-                              : asset === 'xrp'
-                                ? '/xrp'
-                                : asset === 'bnb'
-                                  ? '/bnb'
-                                  : '/solana';
-                        const label =
-                          asset === 'bitcoin'
-                            ? 'Bitcoin'
-                            : asset === 'ethereum'
-                              ? 'Ethereum'
-                              : asset === 'xrp'
-                                ? 'XRP'
-                                : asset === 'bnb'
-                                  ? 'BNB'
-                                  : 'Solana';
+                        const meta = getCryptoAssetMeta(asset);
+                        const href = meta?.href ?? '/';
+                        const label = meta?.label ?? asset;
                         return (
                           <Link
                             key={`more-${asset}`}
@@ -1240,26 +1224,9 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
                     <span className="myinv-asset-border" aria-hidden="true" />
                     <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}${effectiveAssetsMissing.length > 2 ? ' is-many' : ''}`}>
                       {effectiveAssetsMissing.map((asset) => {
-                        const href =
-                          asset === 'bitcoin'
-                            ? '/bitcoin'
-                            : asset === 'ethereum'
-                              ? '/ethereum'
-                              : asset === 'xrp'
-                                ? '/xrp'
-                                : asset === 'bnb'
-                                  ? '/bnb'
-                                  : '/solana';
-                        const label =
-                          asset === 'bitcoin'
-                            ? 'Bitcoin'
-                            : asset === 'ethereum'
-                              ? 'Ethereum'
-                              : asset === 'xrp'
-                                ? 'XRP'
-                                : asset === 'bnb'
-                                  ? 'BNB'
-                                  : 'Solana';
+                        const meta = getCryptoAssetMeta(asset);
+                        const href = meta?.href ?? '/';
+                        const label = meta?.label ?? asset;
                         return (
                           <Link
                             key={`missing-${asset}`}

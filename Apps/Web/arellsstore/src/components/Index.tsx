@@ -9,6 +9,7 @@ import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
 import SiteSocialFooter from './SiteSocialFooter';
+import { CRYPTO_ASSETS } from '../lib/assets/cryptoAssetRegistry';
 
 const Index = () => {
   // Loader Functions
@@ -359,13 +360,7 @@ const Index = () => {
   };
 
   const assetRows = useMemo(() => {
-    const assets = [
-      { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin' },
-      { id: 'ethereum', label: 'Ethereum', href: '/ethereum' },
-      { id: 'xrp', label: 'XRP', href: '/xrp' },
-      { id: 'bnb', label: 'BNB', href: '/bnb' },
-      { id: 'solana', label: 'Solana', href: '/solana' },
-    ];
+    const assets = CRYPTO_ASSETS.map((a) => ({ id: a.id, label: a.label, href: a.href }));
 
     return assets.map((asset) => {
       const snapshot = getAsset(asset.id);

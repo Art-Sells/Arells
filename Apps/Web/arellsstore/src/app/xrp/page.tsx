@@ -1,44 +1,8 @@
 import type { Metadata } from 'next';
 import XrpPageClient from '../../components/Assets/Crypto/Xrp/XrpPageClient';
-import { iconAssetUrl as u } from '../../lib/iconAssetUrl';
+import { buildCryptoAssetPageMetadata } from '../../lib/assets/cryptoAssetRegistry';
 
-export const metadata: Metadata = {
-  title: 'XRP never loses value',
-  description: 'Investments never lose value.',
-  robots: { index: true, follow: true },
-  alternates: {
-    canonical: '/xrp',
-  },
-  icons: {
-    shortcut: u('/images/favicons/XrpBadge.svg'),
-    icon: [
-      { url: u('/images/favicons/XrpBadge.svg'), type: 'image/svg+xml' },
-      { url: u('/ArellsIcon.png'), type: 'image/png', sizes: '192x192' },
-    ],
-    apple: [{ url: u('/images/favicons/XrpBadge.svg'), type: 'image/svg+xml', sizes: '180x180' }],
-  },
-  openGraph: {
-    title: 'XRP never loses value',
-    description: 'Investments never lose value.',
-    url: '/xrp',
-    type: 'website',
-    images: [
-      {
-        url: '/images/banners/assets/crypto/XRP/ArellsXRPBanner.jpg',
-      },
-    ],
-  },
-  twitter: {
-    title: 'XRP never loses value',
-    description: 'Investments never lose value.',
-    card: 'summary_large_image',
-    images: [
-      {
-        url: '/images/banners/assets/crypto/XRP/ArellsXRPBanner.jpg',
-      },
-    ],
-  },
-};
+export const metadata: Metadata = buildCryptoAssetPageMetadata('xrp');
 
 const XrpPage = () => {
   return <XrpPageClient />;

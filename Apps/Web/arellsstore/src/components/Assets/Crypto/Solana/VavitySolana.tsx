@@ -24,6 +24,10 @@ import {
   scrollDocumentToBottomOverMs,
 } from '../../../../lib/client/documentScroll';
 
+import { CRYPTO_ASSET_BY_ID } from '../../../../lib/assets/cryptoAssetRegistry';
+
+const ASSET = CRYPTO_ASSET_BY_ID.solana;
+
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
 type VavitySolanaProps = {
@@ -145,7 +149,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
   const toggleKnobLeftEffectivePx = toggleKnobLeftPx ?? toggleKnobLeftComputedPx;
   const rangeHistoricalPrice = displayIsLiquidMode ? rangeHistoricalPriceLiquid : rangeHistoricalPriceSolid;
   const historicalPrice = displayIsLiquidMode ? historicalPriceLiquid : historicalPriceSolid;
-  const assetSnapshot = getAsset('solana');
+  const assetSnapshot = getAsset(ASSET.id);
   const assetPrice = assetSnapshot?.price ?? 0;
   const vapa = assetSnapshot?.vapa ?? 0;
   const solidHistory = assetSnapshot?.solidHistory ?? [];
@@ -675,11 +679,11 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
       try {
         const data = isSignedIn
           ? await (async () => {
-              const params = new URLSearchParams({ email, asset: 'solana' });
+              const params = new URLSearchParams({ email, asset: ASSET.id });
               const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
               return await res.json();
             })()
-          : await fetchVavityAggregator(sessionId, 'solana');
+          : await fetchVavityAggregator(sessionId, ASSET.id);
         if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(data?.investments)) {
           const signature = lastDeletedSignatureRef.current;
           const returned = data.investments.some((entry: any) => {
@@ -745,7 +749,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
         }
         let hasInvestments = Array.isArray(vavityData?.investments) && vavityData!.investments.length > 0;
         if (!hasInvestments) {
-          const current = await fetchVavityAggregator(sessionId, 'solana');
+          const current = await fetchVavityAggregator(sessionId, ASSET.id);
           hasInvestments = Array.isArray(current?.investments) && current.investments.length > 0;
         }
         if (typeof window !== 'undefined') {
@@ -767,8 +771,8 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
           );
           await new Promise((r) => globalThis.setTimeout(r, 600));
         }
-        await saveVavityAggregator(sessionId, [], 'solana');
-        const cleared = await fetchVavityAggregator(sessionId, 'solana');
+        await saveVavityAggregator(sessionId, [], ASSET.id);
+        const cleared = await fetchVavityAggregator(sessionId, ASSET.id);
         if (cleared) setVavityData(cleared);
       } catch {
         // ignore
@@ -2647,7 +2651,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     const newInvestment = {
       cVactTaa,
       date: purchaseDate,
-      asset: 'solana',
+      asset: ASSET.id,
       clientId: `inv-${Date.now()}-${Math.random().toString(16).slice(2)}`
     };
 
@@ -2682,13 +2686,13 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     try {
       let refreshed: any = null;
       if (isSignedIn) {
-        await addEmailInvestments('solana', [newInvestment]);
-        const params = new URLSearchParams({ email, asset: 'solana' });
+        await addEmailInvestments(ASSET.id, [newInvestment]);
+        const params = new URLSearchParams({ email, asset: ASSET.id });
         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
         refreshed = await res.json();
       } else {
-        await addVavityAggregator(sessionId, [newInvestment], 'solana');
-        refreshed = await fetchVavityAggregator(sessionId, 'solana');
+        await addVavityAggregator(sessionId, [newInvestment], ASSET.id);
+        refreshed = await fetchVavityAggregator(sessionId, ASSET.id);
       }
       const refreshedInvestments = Array.isArray(refreshed?.investments)
         ? refreshed.investments.map((entry: any) => ({ ...entry }))
@@ -2780,8 +2784,8 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     try {
       setVavityData((prev: any) => (prev ? { ...prev, investments: updated } : prev));
       if (isSignedIn) {
-        await saveEmailInvestmentsForAsset('solana', updated);
-        const params = new URLSearchParams({ email, asset: 'solana' });
+        await saveEmailInvestmentsForAsset(ASSET.id, updated);
+        const params = new URLSearchParams({ email, asset: ASSET.id });
         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
         const refreshed = await res.json();
         if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(refreshed?.investments)) {
@@ -2797,8 +2801,8 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
         }
         setVavityData(refreshed);
       } else {
-        await saveVavityAggregator(sessionId, updated, 'solana');
-        const refreshed = await fetchVavityAggregator(sessionId, 'solana');
+        await saveVavityAggregator(sessionId, updated, ASSET.id);
+        const refreshed = await fetchVavityAggregator(sessionId, ASSET.id);
         if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(refreshed?.investments)) {
           const signature = lastDeletedSignatureRef.current;
           const returned = refreshed.investments.some((entry: any) => {
@@ -2980,7 +2984,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
                   <span className="asset-metric-title--solana">Date purchased</span>
                 </div>
                 <div className="asset-invest-form-field-control">
-                  <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" asset="solana" />
+                  <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" asset={ASSET.theme} />
                 </div>
               </div>
 

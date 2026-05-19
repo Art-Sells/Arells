@@ -4,6 +4,7 @@ import axios from 'axios';
 import { logClientApiError } from '../lib/client/logClientApiError';
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useUser } from './UserContext';
+import { SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
 
 interface Investment {
   cVatop: number;   // Value at time of purchase
@@ -71,7 +72,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     acVact: 0,
     acVactTaa: 0,
   });
-  const assetIds = useMemo(() => ['bitcoin', 'ethereum', 'xrp', 'bnb', 'solana'], []);
+  const assetIds = useMemo(() => [...SUPPORTED_CRYPTO_ASSET_IDS], []);
   const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
   const sessionExpiryTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const lastSessionAssetRef = useRef<string>('bitcoin');

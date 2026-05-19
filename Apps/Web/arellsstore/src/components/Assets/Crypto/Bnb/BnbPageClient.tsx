@@ -6,6 +6,9 @@ import SiteSocialFooter from '../../../SiteSocialFooter';
 import Bnb from './bnb';
 import { useUser } from '../../../../context/UserContext';
 import { iconAssetUrl } from '../../../../lib/iconAssetUrl';
+import { CRYPTO_ASSET_BY_ID } from '../../../../lib/assets/cryptoAssetRegistry';
+
+const ASSET = CRYPTO_ASSET_BY_ID.bnb;
 
 /** Opaque viewport tint for overscroll; warm gold (not Solana mint rgb(235, 249, 244)). */
 const BNB_PAGE_OVERSCROLL_BG = 'rgb(254, 251, 243)';
@@ -266,15 +269,15 @@ const BnbPageClient: React.FC = () => {
   }, [clearSessionResetFallbackTimer, completeSessionResetDismiss]);
 
   return (
-    <div className="asset-page asset-page--bnb" ref={pageRef}>
-      <header className="asset-header asset-header--bnb" />
+    <div className={`asset-page asset-page--${ASSET.cssModifier}`} ref={pageRef}>
+      <header className={`asset-header asset-header--${ASSET.cssModifier}`} />
       {showLoading && !showSessionResetOverlay && (
         <div
-          className={`asset-loader-overlay asset-loader-overlay--bnb${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
+          className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier}${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >
           <div
             ref={loaderToggleShellRef}
-            className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--bnb"
+            className={`asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--${ASSET.cssModifier}`}
           >
             <div className="asset-reality-toggle-row">
               <button type="button" className="asset-reality-toggle asset-reality-toggle--loader" aria-hidden="true">
@@ -286,15 +289,15 @@ const BnbPageClient: React.FC = () => {
       )}
       {showSessionResetOverlay && (
         <div
-          className={`asset-loader-overlay asset-loader-overlay--bnb asset-session-reset-overlay${
+          className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier} asset-session-reset-overlay${
             showSessionResetFade ? ' asset-loader-overlay-fade' : ''
           }${sessionResetVisible ? ' is-visible' : ''}`}
         >
           <div className="asset-session-reset-modal">
-            <div className="asset-session-reset-text asset-session-reset-text--title asset-metric-title--bnb">
+            <div className={`asset-session-reset-text asset-session-reset-text--title asset-metric-title--${ASSET.cssModifier}`}>
               Resetting Investments
             </div>
-            <div className="asset-session-reset-spinner-wrap asset-profit-summary asset-profit-summary--bnb">
+            <div className={`asset-session-reset-spinner-wrap asset-profit-summary asset-profit-summary--${ASSET.cssModifier}`}>
               <div className="asset-session-reset-spinner" aria-hidden="true">
                 <div
                   className="asset-delete-loader-spinner"
@@ -302,7 +305,7 @@ const BnbPageClient: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="asset-session-reset-text asset-session-reset-text--subtitle asset-metric-title--bnb">
+            <div className={`asset-session-reset-text asset-session-reset-text--subtitle asset-metric-title--${ASSET.cssModifier}`}>
               Sign In to Save
             </div>
           </div>
@@ -318,14 +321,14 @@ const BnbPageClient: React.FC = () => {
         {!!email && (
           <Link
             href="/my-investments"
-            className="asset-action-button asset-action-button--bnb asset-action-button--invest-show asset-footer-about-button"
+            className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
           >
             <span className="asset-footer-about-text">view my portfolio</span>
           </Link>
         )}
         <Link
           href="/"
-          className="asset-action-button asset-action-button--bnb asset-action-button--invest-show asset-view-more-assets asset-view-more-assets--footer asset-footer-viewmore"
+          className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-view-more-assets asset-view-more-assets--footer asset-footer-viewmore`}
         >
           <span className="asset-view-more-assets-text">view</span>
           <span className="asset-footer-about-divider" aria-hidden="true" />
@@ -334,7 +337,7 @@ const BnbPageClient: React.FC = () => {
           <span className="asset-view-more-assets-text">assets</span>
         </Link>
         <Link
-          className="asset-action-button asset-action-button--bnb asset-action-button--invest-show asset-footer-about-button"
+          className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
           href="/about"
         >
           <span className="asset-footer-about-text">about</span>

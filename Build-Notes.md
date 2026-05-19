@@ -8,7 +8,7 @@
 
 
 - *Fix other issues if they arise if anyone signs up....*
--*update sitemap and indexing after main submission*
+-*update indexing after main submission*
 
 ### Day After Launch:
 - Prepare to launch new assets (components/api-pointers/llms.txt/sitemaps/css-styles/etc (match similar colors (make sure you're 1-2 points out of the hex, not exact colors)))basically and duplicate and change asset names and colors...
