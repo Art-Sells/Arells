@@ -6,6 +6,8 @@ import './css/solana-asset-rules.css';
 import './css/HomeLoaderOverrides.css';
 import './css/bnb-asset-rules.css';
 import './css/tron-asset-rules.css';
+import './css/doge-asset-rules.css';
+import './css/home-myinv-asset-chip-colors.css';
 import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';

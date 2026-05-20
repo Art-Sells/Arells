@@ -1,0 +1,27 @@
+/**
+ * Home (/) + My Investments chip label colors only.
+ * Match each asset page `.asset-header-title` rgb (same pattern as Bitcoin).
+ * Loaded after *-asset-rules.css so these win over `.asset-action-button--{asset}` tints.
+ */
+
+/* BNB — /bnb `.asset-header-title` uses --asset-line-color rgb(243, 186, 47) */
+#overlayy .home-asset-bnb .home-asset-name,
+#overlayy .home-asset-bnb .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-bnb .home-asset-name,
+.home-asset-card.home-asset-bnb .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-bnb .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-bnb .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(243, 186, 47) !important;
+	-webkit-text-fill-color: rgb(243, 186, 47) !important;
+}
+
+/* Dogecoin — /doge `.asset-header-title` uses --asset-line-color rgb(194, 166, 51) */
+#overlayy .home-asset-doge .home-asset-name,
+#overlayy .home-asset-doge .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-doge .home-asset-name,
+.home-asset-card.home-asset-doge .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-doge .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-doge .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(194, 166, 51) !important;
+	-webkit-text-fill-color: rgb(194, 166, 51) !important;
+}

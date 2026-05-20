@@ -9,7 +9,7 @@ export type VapaAssetConfig = {
   historyUrl: string;
 };
 
-export type CryptoAssetTheme = 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'tron';
+export type CryptoAssetTheme = 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'tron' | 'doge';
 
 export type CryptoAssetConfig = {
   id: string;
@@ -112,6 +112,20 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     metaTitle: 'Tron never loses value',
     faviconPath: '/images/favicons/TronBadge.svg',
     ogBannerPath: '/images/banners/assets/crypto/Tron/ArellsTRXBanner.jpg',
+  },
+  {
+    id: 'doge',
+    href: '/doge',
+    label: 'Dogecoin',
+    ticker: 'DOGE',
+    displayName: 'Dogecoin',
+    theme: 'doge',
+    cssModifier: 'doge',
+    coingeckoId: 'dogecoin',
+    s3VapaKey: 'vavity/dogeVAPA.json',
+    metaTitle: 'Dogecoin never loses value',
+    faviconPath: '/images/favicons/DogeBadge.svg',
+    ogBannerPath: '/images/banners/assets/crypto/Dogecoin/ArellsDOGEBanner.jpg',
   },
 ] as const;
 

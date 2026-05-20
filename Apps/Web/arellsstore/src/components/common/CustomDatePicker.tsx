@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-type AssetTheme = 'bitcoin' | 'ethereum' | 'bnb' | 'solana' | 'xrp' | 'tron';
+type AssetTheme = 'bitcoin' | 'ethereum' | 'bnb' | 'solana' | 'xrp' | 'tron' | 'doge';
 
 type Props = {
   value: string; // YYYY-MM-DD or ''
@@ -123,6 +123,12 @@ export default function CustomDatePicker({ value, onChange, className, placehold
           '--asset-line-color': 'rgb(255, 0, 19)',
           '--asset-slogan-color': 'rgb(180, 0, 24)',
           '--asset-border-color': 'rgba(255, 0, 19, 0.42)',
+        } as React.CSSProperties;
+      case 'doge':
+        return {
+          '--asset-line-color': 'rgb(194, 166, 51)',
+          '--asset-slogan-color': 'rgb(130, 100, 20)',
+          '--asset-border-color': 'rgba(194, 166, 51, 0.42)',
         } as React.CSSProperties;
       default:
         return {
