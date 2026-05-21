@@ -11,7 +11,6 @@ import './css/home-myinv-asset-chip-colors.css';
 import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import { VavityProvider } from '../context/VavityAggregator';
-import { AssetsProvider } from '../context/Assets/AssetsProvider';
 import { defaultSiteIcons } from '../lib/defaultSiteIcons';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 
@@ -65,12 +64,10 @@ const RootLayout = ({ children }: LayoutProps) => {
           // eslint-disable-next-line react/no-danger -- JSON-LD requires raw script injection
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(origin)) }}
         />
-        <AssetsProvider>
-          <UserProvider>
-            <AnalyticsBeacon />
-            <VavityProvider>{children}</VavityProvider>
-          </UserProvider>
-        </AssetsProvider>
+        <UserProvider>
+          <AnalyticsBeacon />
+          <VavityProvider>{children}</VavityProvider>
+        </UserProvider>
       </body>
     </html>
   );

@@ -6956,6 +6956,17 @@ a.myinv-about-button:focus-visible {
 	display: block;
 }
 
+.home-assets-show-more-wrap {
+	display: flex;
+	justify-content: center;
+	margin-top: 8px;
+	padding-bottom: 4px;
+}
+
+.home-assets-show-more-button {
+	margin: 0 auto;
+}
+
 .home-assets-rows-shell{
 	grid-column: auto;
 	width: 100%;

@@ -35,7 +35,12 @@ type VavityTronProps = {
 };
 
 const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) => {
-  const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
+  const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset, ensureAssetsLoaded } =
+    useVavity();
+
+  useEffect(() => {
+    void ensureAssetsLoaded([ASSET.id]);
+  }, [ensureAssetsLoaded]);
   const { email, isSignedIn, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [vavityData, setVavityData] = useState<any>(null);
   const prevVavityDataRef = useRef<any | null>(null);

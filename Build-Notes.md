@@ -16,6 +16,7 @@
 - Prepare for WACA transition (LTP folder)
 
 ## 2 months and beyond (adjust below if needed based on traction):
+- 50-100 users, check retention/WAU
 - Wait at least 2 months to adjust LTP (contact us for larger Re') based on feedback...
 - - If traction is good look at LTP folder post WACA
 - - increase CG API limit? (track)

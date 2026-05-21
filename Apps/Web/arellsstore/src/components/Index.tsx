@@ -9,7 +9,11 @@ import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
 import SiteSocialFooter from './SiteSocialFooter';
-import { CRYPTO_ASSETS } from '../lib/assets/cryptoAssetRegistry';
+import {
+  CRYPTO_ASSETS,
+  HOME_INITIAL_ASSET_COUNT,
+  HOME_LOAD_MORE_BATCH,
+} from '../lib/assets/cryptoAssetRegistry';
 
 const Index = () => {
   // Loader Functions
@@ -22,7 +26,8 @@ const Index = () => {
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     wordLogo: false,
   });
-  const { getAsset } = useVavity();
+  const { getAsset, loadMoreAssets } = useVavity();
+  const [visibleAssetCount, setVisibleAssetCount] = useState(HOME_INITIAL_ASSET_COUNT);
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
   const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
@@ -273,7 +278,7 @@ const Index = () => {
       if (raf) window.cancelAnimationFrame(raf);
       if (raf2) window.cancelAnimationFrame(raf2);
     };
-  }, []);
+  }, [visibleAssetCount]);
 
   useLayoutEffect(() => {
     const node = homeAssetsSlideInnerRef.current;
@@ -292,7 +297,7 @@ const Index = () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [visibleAssetCount]);
 
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
@@ -360,7 +365,11 @@ const Index = () => {
   };
 
   const assetRows = useMemo(() => {
-    const assets = CRYPTO_ASSETS.map((a) => ({ id: a.id, label: a.label, href: a.href }));
+    const assets = CRYPTO_ASSETS.slice(0, visibleAssetCount).map((a) => ({
+      id: a.id,
+      label: a.label,
+      href: a.href,
+    }));
 
     return assets.map((asset) => {
       const snapshot = getAsset(asset.id);
@@ -391,9 +400,17 @@ const Index = () => {
         liquidChangeAll: getPercentChange(liquidHistory),
       };
     });
-  }, [getAsset]);
+  }, [getAsset, visibleAssetCount]);
 
   const sortedRows = assetRows;
+  const canShowMoreAssets = visibleAssetCount < CRYPTO_ASSETS.length;
+
+  const handleShowMoreAssets = useCallback(() => {
+    const nextCount = Math.min(visibleAssetCount + HOME_LOAD_MORE_BATCH, CRYPTO_ASSETS.length);
+    const newIds = CRYPTO_ASSETS.slice(visibleAssetCount, nextCount).map((a) => a.id);
+    void loadMoreAssets(newIds);
+    setVisibleAssetCount(nextCount);
+  }, [loadMoreAssets, visibleAssetCount]);
 
   useEffect(() => {
     if (cardNumbersDidMountRef.current) return;
@@ -580,6 +597,17 @@ const Index = () => {
               );
             })}
                 </div>
+                {canShowMoreAssets ? (
+                  <div className="home-assets-show-more-wrap">
+                    <button
+                      type="button"
+                      className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-show home-assets-show-more-button"
+                      onClick={handleShowMoreAssets}
+                    >
+                      Show more assets
+                    </button>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

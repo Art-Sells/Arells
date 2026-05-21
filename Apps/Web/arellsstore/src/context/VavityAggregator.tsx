@@ -4,7 +4,7 @@ import axios from 'axios';
 import { logClientApiError } from '../lib/client/logClientApiError';
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useUser } from './UserContext';
-import { SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
+import { getHomeInitialAssetIds, SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
 
 interface Investment {
   cVatop: number;   // Value at time of purchase
@@ -42,6 +42,8 @@ interface VavityaggregatorType {
   getAsset: (assetId: string) => AssetSnapshot | undefined;
   refreshAsset: (assetId: string) => Promise<void>;
   refreshAllAssets: () => Promise<void>;
+  loadMoreAssets: (assetIds: string[]) => Promise<void>;
+  ensureAssetsLoaded: (assetIds: string[]) => Promise<void>;
   investments: Investment[];
   totals: TotalsState;
   totalsLiquid: TotalsState;
@@ -72,7 +74,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     acVact: 0,
     acVactTaa: 0,
   });
-  const assetIds = useMemo(() => [...SUPPORTED_CRYPTO_ASSET_IDS], []);
+  const initialLoadedIds = useMemo(() => getHomeInitialAssetIds(), []);
+  const loadedIdsRef = useRef<Set<string>>(new Set(initialLoadedIds));
   const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
   const sessionExpiryTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const lastSessionAssetRef = useRef<string>('bitcoin');
@@ -98,15 +101,45 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, []);
 
+  const refreshAssets = useCallback(
+    async (assetIds: string[]) => {
+      const unique = [...new Set(assetIds.map((id) => id.toLowerCase()))];
+      if (!unique.length) return;
+      await Promise.all(unique.map((assetId) => refreshAsset(assetId)));
+    },
+    [refreshAsset]
+  );
+
+  const ensureAssetsLoaded = useCallback(
+    async (assetIds: string[]) => {
+      const missing = [...new Set(assetIds.map((id) => id.toLowerCase()))].filter(
+        (id) => !loadedIdsRef.current.has(id)
+      );
+      if (!missing.length) return;
+      missing.forEach((id) => loadedIdsRef.current.add(id));
+      await refreshAssets(missing);
+    },
+    [refreshAssets]
+  );
+
+  const loadMoreAssets = useCallback(
+    async (assetIds: string[]) => {
+      await ensureAssetsLoaded(assetIds);
+    },
+    [ensureAssetsLoaded]
+  );
+
   const refreshAllAssets = useCallback(async () => {
-    await Promise.all(assetIds.map((assetId) => refreshAsset(assetId)));
-  }, [assetIds, refreshAsset]);
+    await refreshAssets([...loadedIdsRef.current]);
+  }, [refreshAssets]);
 
   useEffect(() => {
-    refreshAllAssets();
-    const interval = setInterval(refreshAllAssets, 60000);
+    void refreshAssets(initialLoadedIds);
+    const interval = setInterval(() => {
+      void refreshAssets([...loadedIdsRef.current]);
+    }, 60000);
     return () => clearInterval(interval);
-  }, [refreshAllAssets]);
+  }, [initialLoadedIds, refreshAssets]);
 
   const getAsset = useCallback((assetId: string) => assets[assetId], [assets]);
 
@@ -229,12 +262,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       lastSessionAssetRef.current = asset;
       const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
       setSessionExpiresAt(expiresAt);
+      void ensureAssetsLoaded([asset]);
       return data;
     } catch (err) {
       logClientApiError(`fetchVavityAggregator:${asset}`, err);
       throw err;
     }
-  }, [email]);
+  }, [email, ensureAssetsLoaded]);
 
   const fetchVavityAggregatorAll = useCallback(async (currentSessionId: string): Promise<any> => {
     if (email) {
@@ -261,12 +295,18 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setTotalsLiquid(fetchedTotalsLiquid);
       const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
       setSessionExpiresAt(expiresAt);
+      const invAssets = [
+        ...new Set(
+          fetchedInvestments.map((inv) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
+        ),
+      ];
+      if (invAssets.length) void ensureAssetsLoaded(invAssets);
       return data;
     } catch (err) {
       logClientApiError('fetchVavityAggregatorAll', err);
       throw err;
     }
-  }, [email]);
+  }, [email, ensureAssetsLoaded]);
 
   const addVavityAggregator = useCallback(async (currentSessionId: string, newInvestments: any[], asset = 'bitcoin'): Promise<any> => {
     if (email) {
@@ -289,12 +329,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       lastSessionAssetRef.current = asset;
       const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
       setSessionExpiresAt(expiresAt);
+      void ensureAssetsLoaded([asset]);
       return response.data;
     } catch (err) {
       logClientApiError(`addVavityAggregator:${asset}`, err);
       throw err;
     }
-  }, [email]);
+  }, [email, ensureAssetsLoaded]);
 
   const saveVavityAggregator = useCallback(async (currentSessionId: string, updatedInvestments: any[], asset = 'bitcoin'): Promise<any> => {
     if (email) {
@@ -317,12 +358,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       lastSessionAssetRef.current = asset;
       const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
       setSessionExpiresAt(expiresAt);
+      void ensureAssetsLoaded([asset]);
       return response.data;
     } catch (err) {
       logClientApiError(`saveVavityAggregator:${asset}`, err);
       throw err;
     }
-  }, [email]);
+  }, [email, ensureAssetsLoaded]);
 
   return (
     <Vavityaggregator.Provider
@@ -334,6 +376,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         getAsset,
         refreshAsset,
         refreshAllAssets,
+        loadMoreAssets,
+        ensureAssetsLoaded,
         sessionId,
         fetchVavityAggregator,
         fetchVavityAggregatorAll,

@@ -133,6 +133,18 @@ export type CryptoAssetId = (typeof CRYPTO_ASSETS)[number]['id'];
 
 export const SUPPORTED_CRYPTO_ASSET_IDS: CryptoAssetId[] = CRYPTO_ASSETS.map((a) => a.id);
 
+/** Home `/` table: first paint through Tron (TRX); overflow assets load on "Show more assets". */
+export const HOME_INITIAL_ASSET_COUNT = 6;
+export const HOME_LOAD_MORE_BATCH = 6;
+
+export function getHomeInitialAssetIds(): CryptoAssetId[] {
+  return CRYPTO_ASSETS.slice(0, HOME_INITIAL_ASSET_COUNT).map((a) => a.id);
+}
+
+export function getHomeOverflowAssetIds(): CryptoAssetId[] {
+  return CRYPTO_ASSETS.slice(HOME_INITIAL_ASSET_COUNT).map((a) => a.id);
+}
+
 export const CRYPTO_ASSET_BY_ID: Record<CryptoAssetId, CryptoAssetConfig> = Object.fromEntries(
   CRYPTO_ASSETS.map((a) => [a.id, a])
 ) as Record<CryptoAssetId, CryptoAssetConfig>;
