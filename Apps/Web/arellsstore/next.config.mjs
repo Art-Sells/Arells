@@ -3,8 +3,6 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/analytics-internal', destination: '/metrics', permanent: true },
-      { source: '/doge', destination: '/dogecoin', permanent: true },
-      { source: '/doge/:path*', destination: '/dogecoin/:path*', permanent: true },
     ];
   },
   async headers() {
