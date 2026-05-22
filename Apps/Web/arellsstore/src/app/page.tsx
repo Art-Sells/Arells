@@ -2,6 +2,7 @@
 // Change below link after test
 
 import Index from '../components/Index';
+import CrawlAssetLinks from '../components/seo/CrawlAssetLinks';
 import React from 'react';
 import type { Metadata } from 'next';
 
@@ -39,9 +40,10 @@ const Home = () => {
 
   return (
     <>
-        <div id="overlayy">
-          <Index/>
-        </div> 
+      <CrawlAssetLinks />
+      <div id="overlayy">
+        <Index />
+      </div>
     </>
   );
 }

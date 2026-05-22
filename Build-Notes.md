@@ -7,7 +7,7 @@
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 
-- *Fix other issues if they arise if anyone signs up.... (super slow loading mounting for first time)?*
+- *Fix other issues if they arise if anyone signs up....*
 -*update indexing after main submission*
 
 ## 3-4 weeks after launch

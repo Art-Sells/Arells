@@ -115,7 +115,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
   },
   {
     id: 'doge',
-    href: '/doge',
+    href: '/dogecoin',
     label: 'Dogecoin',
     ticker: 'DOGE',
     displayName: 'Dogecoin',

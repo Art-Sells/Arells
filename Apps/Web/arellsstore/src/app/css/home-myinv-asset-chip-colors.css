@@ -15,7 +15,7 @@
 	-webkit-text-fill-color: rgb(243, 186, 47) !important;
 }
 
-/* Dogecoin — /doge `.asset-header-title` uses --asset-line-color rgb(194, 166, 51) */
+/* Dogecoin — /dogecoin `.asset-header-title` uses --asset-line-color rgb(194, 166, 51) */
 #overlayy .home-asset-doge .home-asset-name,
 #overlayy .home-asset-doge .asset-action-button.asset-action-button--home-asset-chip,
 .home-asset-card.home-asset-doge .home-asset-name,

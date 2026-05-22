@@ -4,8 +4,8 @@ import { buildCryptoAssetPageMetadata } from '../../lib/assets/cryptoAssetRegist
 
 export const metadata: Metadata = buildCryptoAssetPageMetadata('doge');
 
-const DogePage = () => {
+const DogecoinPage = () => {
   return <DogePageClient />;
 };
 
-export default DogePage;
+export default DogecoinPage;
