@@ -2,7 +2,6 @@
 // Change below link after test
 
 import Index from '../components/Index';
-import CrawlAssetLinks from '../components/seo/CrawlAssetLinks';
 import React from 'react';
 import type { Metadata } from 'next';
 
@@ -39,12 +38,9 @@ export const metadata: Metadata = {
 const Home = () => {
 
   return (
-    <>
-      <CrawlAssetLinks />
-      <div id="overlayy">
-        <Index />
-      </div>
-    </>
+    <div id="overlayy">
+      <Index />
+    </div>
   );
 }
 
