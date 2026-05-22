@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { iconAssetUrl as u } from '../iconAssetUrl';
+import { buildAssetMetaDescription } from '../siteMetaDescriptions';
 
 export type VapaAssetConfig = {
   id: string;
@@ -184,9 +185,10 @@ export function getAssetSpotPriceEntries(): Record<string, { path: string; respo
 export function buildCryptoAssetPageMetadata(assetId: CryptoAssetId): Metadata {
   const asset = CRYPTO_ASSET_BY_ID[assetId];
   const favicon = u(asset.faviconPath);
+  const description = buildAssetMetaDescription(asset.displayName);
   return {
     title: asset.metaTitle,
-    description: 'Investments never lose value.',
+    description,
     robots: { index: true, follow: true },
     alternates: {
       canonical: asset.href,
@@ -201,14 +203,14 @@ export function buildCryptoAssetPageMetadata(assetId: CryptoAssetId): Metadata {
     },
     openGraph: {
       title: asset.metaTitle,
-      description: 'Investments never lose value.',
+      description,
       url: asset.href,
       type: 'website',
       images: [{ url: asset.ogBannerPath }],
     },
     twitter: {
       title: asset.metaTitle,
-      description: 'Investments never lose value.',
+      description,
       card: 'summary_large_image',
       images: [{ url: asset.ogBannerPath }],
     },

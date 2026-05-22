@@ -7,7 +7,7 @@
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 
-- *Fix other issues if they arise if anyone signs up....*
+- *(about buton accent color flicker and toggle accent color issues [take pic for reference to fix])*
 -*update indexing after main submission*
 
 ## 3-4 weeks after launch
