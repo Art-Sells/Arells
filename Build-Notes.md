@@ -8,7 +8,7 @@
 
 
 - *(about buton accent color flicker and toggle accent color issues [take pic for reference to fix])*
--*update indexing after main submission*
+-*update indexing after main submission, check google after a week*
 
 ## 3-4 weeks after launch
 - - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
