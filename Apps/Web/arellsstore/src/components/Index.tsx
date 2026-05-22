@@ -601,10 +601,10 @@ const Index = () => {
                   <div className="home-assets-show-more-wrap">
                     <button
                       type="button"
-                      className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-show home-assets-show-more-button"
+                      className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button"
                       onClick={handleShowMoreAssets}
                     >
-                      Show more assets
+                      show more assets
                     </button>
                   </div>
                 ) : null}

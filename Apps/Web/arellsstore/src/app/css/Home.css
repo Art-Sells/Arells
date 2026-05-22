@@ -6960,11 +6960,33 @@ a.myinv-about-button:focus-visible {
 	display: flex;
 	justify-content: center;
 	margin-top: 8px;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
 	padding-bottom: 4px;
 }
 
-.home-assets-show-more-button {
-	margin: 0 auto;
+/* Match sign-up page primary button (.auth-submit--signup-page on /signup) */
+.home-assets-show-more-wrap .home-assets-show-more-button.auth-submit {
+	margin: 0;
+	width: 100%;
+	max-width: none;
+	padding-top: 18px;
+	padding-bottom: 18px;
+	justify-content: center;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	font-weight: 800;
+	border-radius: 15px;
+	cursor: pointer;
+}
+
+@media screen and (max-width: 700px) {
+	.home-assets-show-more-wrap .home-assets-show-more-button.auth-submit--accent {
+		font-size: 16px !important;
+	}
 }
 
 .home-assets-rows-shell{
