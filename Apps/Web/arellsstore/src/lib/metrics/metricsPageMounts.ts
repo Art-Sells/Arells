@@ -7,8 +7,11 @@ import { listAllUserAuthAccountsFromS3, type UserTouchMap } from './listUserS3To
 
 const DAY_MS = 86_400_000;
 
-/** WAUt window — matches Growth “1 Month” (30d), not calendar 7d. */
-const WAU_ROLLING_DAYS = 30;
+/** WAUt: distinct accounts active on any of the last 7 UTC days (inclusive). */
+const WAU_ROLLING_DAYS = 7;
+
+/** MAUt: distinct accounts active on any of the last 30 UTC days (inclusive). */
+const MAU_ROLLING_DAYS = 30;
 
 /** Per-day signed-in mounts from POST /api/metrics/page-mount (merged with beacon session-meta for DAUt/WAUt/MAUt). */
 export const METRICS_PAGE_MOUNTS_PREFIX = 'analytics/metrics-page-mounts-v1/';
@@ -47,11 +50,6 @@ function eachUtcDay(fromMs: number, toMs: number): string[] {
     t += DAY_MS;
   }
   return keys;
-}
-
-function startOfUtcMonth(ts: number): number {
-  const d = new Date(ts);
-  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
 }
 
 export async function listMountDedupesForUtcDay(
@@ -199,8 +197,8 @@ export async function aggregateSignedInUserTraffic(
   const todayKey = isoDayKey(nowMs);
   const yesterdayKey = isoDayKey(nowMs - DAY_MS);
   const wauKeys = eachUtcDay(nowMs - (WAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
-  const monthStart = startOfUtcMonth(nowMs);
-  const monthKeys = eachUtcDay(monthStart, nowMs);
+  const mauStartMs = nowMs - (MAU_ROLLING_DAYS - 1) * DAY_MS;
+  const mauKeys = eachUtcDay(mauStartMs, nowMs);
 
   const [dauSet, wauSet, mauSet] = await Promise.all([
     collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, [
@@ -208,7 +206,7 @@ export async function aggregateSignedInUserTraffic(
       todayKey,
     ]),
     collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, wauKeys),
-    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, monthKeys),
+    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, mauKeys),
   ]);
 
   return {
@@ -217,7 +215,7 @@ export async function aggregateSignedInUserTraffic(
     mau: mauSet.size,
     utcToday: todayKey,
     wauRollingDays: WAU_ROLLING_DAYS,
-    mauMonthStart: isoDayKey(monthStart),
+    mauMonthStart: isoDayKey(mauStartMs),
   };
 }
 
@@ -227,9 +225,9 @@ export type MetricsActivityDebugAccount = {
   vavityDay: string | null;
   activeToday: boolean;
   activeYesterday: boolean;
+  activeLast7Days: boolean;
   activeLast30Days: boolean;
-  activeThisMonth: boolean;
-  mountDaysLast30: string[];
+  mountDaysLast7: string[];
 };
 
 /** Dev-only breakdown of how DAUt/WAUt/MAUt are computed. */
@@ -253,8 +251,7 @@ export async function buildMetricsActivityDebug(
   const todayKey = isoDayKey(nowMs);
   const yesterdayKey = isoDayKey(nowMs - DAY_MS);
   const wauKeys = eachUtcDay(nowMs - (WAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
-  const monthStart = startOfUtcMonth(nowMs);
-  const monthKeys = eachUtcDay(monthStart, nowMs);
+  const mauKeys = eachUtcDay(nowMs - (MAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
 
   const mountDaysByEmail = new Map<string, Set<string>>();
   for (const dayKey of wauKeys) {
@@ -275,9 +272,9 @@ export async function buildMetricsActivityDebug(
       vavityDay: ut.vavityMs != null ? isoDayKey(ut.vavityMs) : null,
       activeToday: userTouchesUtcDay(ut, todayKey),
       activeYesterday: userTouchesUtcDay(ut, yesterdayKey),
-      activeLast30Days: wauKeys.some((d) => userTouchesUtcDay(ut, d)),
-      activeThisMonth: monthKeys.some((d) => userTouchesUtcDay(ut, d)),
-      mountDaysLast30: [...(mountDaysByEmail.get(emailKey) ?? [])].sort(),
+      activeLast7Days: wauKeys.some((d) => userTouchesUtcDay(ut, d)),
+      activeLast30Days: mauKeys.some((d) => userTouchesUtcDay(ut, d)),
+      mountDaysLast7: [...(mountDaysByEmail.get(emailKey) ?? [])].sort(),
     });
   }
 
@@ -303,21 +300,21 @@ export async function aggregateSignedInUserTrafficFromSessionMeta(
   const signedIn = metas.filter((m) => Boolean(m.userHash));
 
   const todayKey = isoDayKey(nowMs);
-  const weekKeys = eachUtcDay(nowMs - 6 * DAY_MS, nowMs);
-  const monthStart = startOfUtcMonth(nowMs);
-  const monthKeys = eachUtcDay(monthStart, nowMs);
+  const wauKeys = eachUtcDay(nowMs - (WAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
+  const mauStartMs = nowMs - (MAU_ROLLING_DAYS - 1) * DAY_MS;
+  const mauKeys = eachUtcDay(mauStartMs, nowMs);
 
   const dau = distinctSignedInUserHashesOnUtcDay(signedIn, todayKey).size;
 
   const wauSet = new Set<string>();
-  for (const dayKey of weekKeys) {
+  for (const dayKey of wauKeys) {
     for (const hash of distinctSignedInUserHashesOnUtcDay(signedIn, dayKey)) {
       wauSet.add(hash);
     }
   }
 
   const mauSet = new Set<string>();
-  for (const dayKey of monthKeys) {
+  for (const dayKey of mauKeys) {
     for (const hash of distinctSignedInUserHashesOnUtcDay(signedIn, dayKey)) {
       mauSet.add(hash);
     }
@@ -328,8 +325,8 @@ export async function aggregateSignedInUserTrafficFromSessionMeta(
     wau: wauSet.size,
     mau: mauSet.size,
     utcToday: todayKey,
-    wauRollingDays: 7,
-    mauMonthStart: isoDayKey(monthStart),
+    wauRollingDays: WAU_ROLLING_DAYS,
+    mauMonthStart: isoDayKey(mauStartMs),
   };
 }
 
@@ -340,22 +337,22 @@ export async function aggregateMetricsPageMounts(
   nowMs: number
 ): Promise<Omit<MetricsPageActivityPayload, 'generatedAt' | 'pagePath'>> {
   const todayKey = isoDayKey(nowMs);
-  const weekKeys = eachUtcDay(nowMs - 6 * DAY_MS, nowMs);
-  const monthStart = startOfUtcMonth(nowMs);
-  const monthKeys = eachUtcDay(monthStart, nowMs);
+  const wauKeys = eachUtcDay(nowMs - (WAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
+  const mauStartMs = nowMs - (MAU_ROLLING_DAYS - 1) * DAY_MS;
+  const mauKeys = eachUtcDay(mauStartMs, nowMs);
 
   const dauSetPromise = listMountDedupesForUtcDay(s3, bucket, todayKey);
-  const weekSetsPromise = Promise.all(weekKeys.map((d) => listMountDedupesForUtcDay(s3, bucket, d)));
-  const [dauSet, weekSets] = await Promise.all([dauSetPromise, weekSetsPromise]);
+  const wauSetsPromise = Promise.all(wauKeys.map((d) => listMountDedupesForUtcDay(s3, bucket, d)));
+  const [dauSet, wauSets] = await Promise.all([dauSetPromise, wauSetsPromise]);
 
   const wauSet = new Set<string>();
-  for (const s of weekSets) {
+  for (const s of wauSets) {
     for (const id of s) wauSet.add(id);
   }
 
-  const monthSets = await Promise.all(monthKeys.map((d) => listMountDedupesForUtcDay(s3, bucket, d)));
+  const mauSets = await Promise.all(mauKeys.map((d) => listMountDedupesForUtcDay(s3, bucket, d)));
   const mauSet = new Set<string>();
-  for (const s of monthSets) {
+  for (const s of mauSets) {
     for (const id of s) mauSet.add(id);
   }
 
@@ -364,8 +361,8 @@ export async function aggregateMetricsPageMounts(
     wau: wauSet.size,
     mau: mauSet.size,
     utcToday: todayKey,
-    wauRollingDays: 7,
-    mauMonthStart: isoDayKey(monthStart),
+    wauRollingDays: WAU_ROLLING_DAYS,
+    mauMonthStart: isoDayKey(mauStartMs),
   };
 }
 

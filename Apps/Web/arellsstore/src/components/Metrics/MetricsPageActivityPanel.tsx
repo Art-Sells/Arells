@@ -114,12 +114,12 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
           </div>
           <div className="metrics-kpi-card myinv-accent-border">
             <div className="metrics-kpi-label metrics-growth-toolbar-tone">WAUt</div>
-            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Active in last 30 UTC days</div>
+            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Active in last 7 UTC days</div>
             <div className="metrics-kpi-value">{data.wau.toLocaleString()}</div>
           </div>
           <div className="metrics-kpi-card myinv-accent-border">
             <div className="metrics-kpi-label metrics-growth-toolbar-tone">MAUt</div>
-            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Monthly Active User traffic</div>
+            <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">Active in last 30 UTC days</div>
             <div className="metrics-kpi-value">{data.mau.toLocaleString()}</div>
           </div>
         </div>
