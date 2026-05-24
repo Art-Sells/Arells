@@ -6,6 +6,12 @@ import Link from 'next/link';
 import axios from 'axios';
 import { flushSync } from 'react-dom';
 import { useVavity } from '../../../../context/VavityAggregator';
+import {
+  investFormCurrentUnitPrice,
+  investFormPurchaseUnitPrice,
+  sumPortfolioTotalsFromEntries,
+  sumPortfolioTotalsForRange,
+} from '../../../../lib/vavity/portfolioValuation';
 import { useUser } from '../../../../context/UserContext';
 import SolanaChart from './SolanaChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
@@ -153,6 +159,8 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
   }, [toggleAlpha, toggleTrack]);
   const toggleKnobLeftEffectivePx = toggleKnobLeftPx ?? toggleKnobLeftComputedPx;
   const rangeHistoricalPrice = displayIsLiquidMode ? rangeHistoricalPriceLiquid : rangeHistoricalPriceSolid;
+  const rangeBaselineLiquidPrice =
+    rangeHistoricalPriceLiquid ?? rangeHistoricalPriceSolid ?? null;
   const historicalPrice = displayIsLiquidMode ? historicalPriceLiquid : historicalPriceSolid;
   const assetSnapshot = getAsset(ASSET.id);
   const assetPrice = assetSnapshot?.price ?? 0;
@@ -1385,14 +1393,14 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     const h = addFormBoxRef.current.scrollHeight;
     const next = Math.max(0, h + 24);
     setAddFormPanelHeight((prev) => (prev === next ? prev : next));
-  }, [addFormOpen, tokenAmount, purchaseDate, historicalLoading, historicalPrice, vapa]);
+  }, [addFormOpen, tokenAmount, purchaseDate, historicalLoading, historicalPriceLiquid, vapa, assetPrice, displayIsLiquidMode]);
 
   useLayoutEffect(() => {
     if (!addMoreOpen || !addMoreFormBoxRef.current) return;
     const h = addMoreFormBoxRef.current.scrollHeight;
     const next = Math.max(0, h + 24);
     setAddMoreFormPanelHeight((prev) => (prev === next ? prev : next));
-  }, [addMoreOpen, tokenAmount, purchaseDate, historicalLoading, historicalPrice, vapa]);
+  }, [addMoreOpen, tokenAmount, purchaseDate, historicalLoading, historicalPriceLiquid, vapa, assetPrice, displayIsLiquidMode]);
 
   useLayoutEffect(() => {
     if (!summaryOpen || isClearingInvestments || !hasInvestmentsUI) {
@@ -1939,65 +1947,36 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     const sign = value > 0 ? '+' : '';
     return `${sign}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
   }, []);
-  const allTimeTotals = useMemo(() => {
-    return investments.reduce(
-      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
-        const amount = Number(entry.cVactTaa) || 0;
-        const currentModeSpot = displayIsLiquidMode ? assetPrice : vapa;
-        const purchasePrice = displayIsLiquidMode
-          ? Number(entry.lCpVatop ?? entry.rCpVatop ?? entry.cpVatop) || currentModeSpot || 0
-          : Number(entry.cpVatop) || currentModeSpot || 0;
-        const currentValue = displayIsLiquidMode
-          ? Number(entry.lCVact ?? entry.rCVact) || amount * (currentModeSpot || 0)
-          : Number(entry.cVact) || amount * (currentModeSpot || 0);
-        const purchaseValue = displayIsLiquidMode
-          ? Number(entry.lCVatop ?? entry.rCVatop) || amount * (purchasePrice || 0)
-          : Number(entry.cVatop) || amount * (purchasePrice || 0);
-        acc.acVatop += purchaseValue;
-        acc.acVact += currentValue;
-        acc.acdVatop += currentValue - purchaseValue;
-        acc.acVactTaa += amount;
-        return acc;
-      },
-      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
-    );
-  }, [investments, displayIsLiquidMode, assetPrice, vapa]);
+  const allTimeTotals = useMemo(
+    () => sumPortfolioTotalsFromEntries(investments, displayIsLiquidMode),
+    [investments, displayIsLiquidMode]
+  );
 
   const filteredTotals = useMemo(() => {
     if (!selectedRangeDays) {
       return allTimeTotals;
     }
-    if (rangeHistoricalPrice == null) {
+    const rangeVapa = rangeBaselineLiquidPrice;
+    if (rangeVapa == null) {
       return displayTotals;
-            }
+    }
     const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
-    return investments.reduce(
-      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
-        const amount = Number(entry.cVactTaa) || 0;
-        const currentModeSpot = displayIsLiquidMode ? assetPrice : vapa;
-        const currentValue = displayIsLiquidMode
-          ? Number(entry.lCVact ?? entry.rCVact) || amount * (currentModeSpot || 0)
-          : Number(entry.cVact) || amount * (currentModeSpot || 0);
-        const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
-        const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
-        const pastValue =
-          hasValidPurchaseTime && purchaseTime > rangeStart
-            ? displayIsLiquidMode
-              ? Number(entry.lCVatop ?? entry.rCVatop) || amount * ((entry.lCpVatop ?? entry.rCpVatop) || rangeHistoricalPrice)
-              : Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
-            : amount * rangeHistoricalPrice;
-
-        acc.acVatop += pastValue;
-        acc.acVact += currentValue;
-        acc.acdVatop += currentValue - pastValue;
-        acc.acVactTaa += amount;
-        return acc;
-      },
-      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
-    );
-  }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice, allTimeTotals]);
+    const assetId = String(investments[0]?.asset || 'bitcoin').toLowerCase();
+    return sumPortfolioTotalsForRange(investments, displayIsLiquidMode, rangeStart, {
+      [assetId]: rangeVapa,
+    });
+  }, [
+    investments,
+    rangeBaselineLiquidPrice,
+    selectedRangeDays,
+    displayTotals,
+    displayIsLiquidMode,
+    allTimeTotals,
+  ]);
   const summaryTotals = summaryTotalsSnapshot ?? filteredTotals;
-  const summaryRangePrice = summaryRangePriceSnapshot ?? rangeHistoricalPrice;
+  const summaryRangePrice =
+    summaryRangePriceSnapshot ??
+    (selectedRangeDays ? rangeBaselineLiquidPrice : rangeHistoricalPrice);
 
   const animateNumberHeight = useCallback(
     (
@@ -2163,9 +2142,9 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
   useEffect(() => {
     if (liveInvestments.length > 0) {
       lastNonEmptyTotalsRef.current = filteredTotals;
-      lastNonEmptyRangePriceRef.current = rangeHistoricalPrice ?? null;
+      lastNonEmptyRangePriceRef.current = summaryRangePrice ?? null;
     }
-  }, [liveInvestments.length, filteredTotals, rangeHistoricalPrice]);
+  }, [liveInvestments.length, filteredTotals, summaryRangePrice]);
 
   useLayoutEffect(() => {
     const value = summaryTotals.acVatop || 0;
@@ -2211,7 +2190,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
 
   useLayoutEffect(() => {
     const profitValue =
-      selectedRangeDays && rangeHistoricalPrice != null
+      selectedRangeDays && summaryRangePrice != null
         ? (summaryTotals.acVact || 0) - (summaryTotals.acVactTaa || 0) * (summaryRangePrice ?? 0)
         : (summaryTotals.acVact || 0) - (summaryTotals.acVatop || 0);
     const formatted = Math.abs(profitValue).toLocaleString('en-US', {
@@ -2237,7 +2216,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     summaryTotals.acVactTaa,
     summaryRangePrice,
     selectedRangeDays,
-    rangeHistoricalPrice,
+    summaryRangePrice,
     summaryOpen,
     isClearingInvestments,
     summaryAnimating
@@ -2442,20 +2421,28 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     };
   }, [purchaseDate]);
 
-  const formCpVatop = useMemo(() => {
-    const currentModePrice = displayIsLiquidMode ? assetPrice : vapa;
+  const formPurchaseUnitPrice = useMemo(() => {
+    const liveLiquid = assetPrice || 0;
+    const liveVapa = vapa || 0;
     if (!purchaseDate) {
-      return currentModePrice || 0;
+      return investFormCurrentUnitPrice(displayIsLiquidMode, liveLiquid, liveVapa);
     }
-    return historicalPrice ?? currentModePrice ?? 0;
-  }, [purchaseDate, historicalPrice, assetPrice, vapa, displayIsLiquidMode]);
+    if (displayIsLiquidMode) {
+      return historicalPriceLiquid ?? liveLiquid ?? 0;
+    }
+    return investFormPurchaseUnitPrice(historicalPriceLiquid, liveLiquid, liveVapa);
+  }, [purchaseDate, historicalPriceLiquid, assetPrice, vapa, displayIsLiquidMode]);
+
+  const formCurrentUnitPrice = useMemo(
+    () => investFormCurrentUnitPrice(displayIsLiquidMode, assetPrice || 0, vapa || 0),
+    [displayIsLiquidMode, assetPrice, vapa]
+  );
 
   const formCVatop = useMemo(() => {
     const amt = parseTokenAmount(tokenAmount || '0');
     if (Number.isNaN(amt)) return 0;
-    const currentModePrice = displayIsLiquidMode ? assetPrice : vapa;
-    return amt * (currentModePrice || 0);
-  }, [tokenAmount, parseTokenAmount, vapa, assetPrice, displayIsLiquidMode]);
+    return amt * formCurrentUnitPrice;
+  }, [tokenAmount, parseTokenAmount, formCurrentUnitPrice]);
 
   const pulseSummaryValues = useCallback(() => {
     if (summaryQuickFadeTimerRef.current) {
@@ -2469,7 +2456,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     setSummaryQuickFade(true);
     if (!summaryTotalsSnapshot) {
       setSummaryTotalsSnapshot({ ...filteredTotals });
-      setSummaryRangePriceSnapshot(rangeHistoricalPrice ?? null);
+      setSummaryRangePriceSnapshot(summaryRangePrice ?? null);
     }
     setSummaryValuesHidden(true);
     summaryQuickFadeTimerRef.current = globalThis.setTimeout(() => {
@@ -2482,7 +2469,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
         summaryQuickFadeEndRef.current = null;
       }, 350);
     }, 350);
-  }, [filteredTotals, rangeHistoricalPrice, summaryTotalsSnapshot]);
+  }, [filteredTotals, summaryRangePrice, summaryTotalsSnapshot]);
 
   useEffect(() => {
     if (!summaryPulseAfterDelete) return;
@@ -2683,7 +2670,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     }
     if (submitTargetRef.current === 'addMore') {
       setSummaryTotalsSnapshot({ ...filteredTotals });
-      setSummaryRangePriceSnapshot(rangeHistoricalPrice ?? null);
+      setSummaryRangePriceSnapshot(summaryRangePrice ?? null);
     }
     setSubmitPhase('submitting');
     submitResetPendingRef.current = true;
@@ -2853,8 +2840,8 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
 
   const renderAddForm = (label: string, onClose: () => void, buttonClass: string) => {
     const purchasedValue =
-      tokenAmount && purchaseDate && historicalPrice != null
-        ? formatCurrency(parseTokenAmount(tokenAmount || '0') * historicalPrice)
+      tokenAmount && purchaseDate && formPurchaseUnitPrice > 0
+        ? formatCurrency(parseTokenAmount(tokenAmount || '0') * formPurchaseUnitPrice)
         : '0.00';
 
     const currentValue = tokenAmount ? formatCurrency(formCVatop) : '0.00';
@@ -2862,10 +2849,11 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     const profitRow = (() => {
       // Keep `$` aligned with other rows (e.g. Current Value) even while the value is still loading/empty.
       if (!tokenAmount) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
-      if (purchaseDate && historicalPrice == null) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
-      const currentModePrice = displayIsLiquidMode ? assetPrice : vapa;
-      const basePrice = purchaseDate ? (historicalPrice ?? 0) : (currentModePrice || 0);
-      const profitValue = ((currentModePrice || 0) - basePrice) * parseTokenAmount(tokenAmount || '0');
+      if (purchaseDate && historicalPriceLiquid == null) {
+        return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
+      }
+      const basePrice = purchaseDate ? formPurchaseUnitPrice : formCurrentUnitPrice;
+      const profitValue = (formCurrentUnitPrice - basePrice) * parseTokenAmount(tokenAmount || '0');
       // Default 0.00 to "Profits" in the form.
       const isProfit = profitValue >= -0.005;
       const title = isProfit ? 'Profits' : 'Losses';
@@ -3673,7 +3661,7 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
                         if (days === 1) return '24 hrs';
                         return `${days} days`;
                       };
-                  if (selectedRangeDays && rangeHistoricalPrice != null) {
+                  if (selectedRangeDays && summaryRangePrice != null) {
                     const pastValue = (summaryTotals.acVactTaa || 0) * (summaryRangePrice ?? 0);
                     const profitValue = (summaryTotals.acVact || 0) - pastValue;
                         const isProfit = profitValue >= -0.005;

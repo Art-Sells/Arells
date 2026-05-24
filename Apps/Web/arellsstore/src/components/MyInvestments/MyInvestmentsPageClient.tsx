@@ -6,6 +6,14 @@ import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
 import { SUPPORTED_CRYPTO_ASSET_IDS, getCryptoAssetMeta } from '../../lib/assets/cryptoAssetRegistry';
+import {
+  liquidSpotOnUtcDay,
+  recalculateInvestmentsWithSnapshots,
+  sumPortfolioTotalsForRange,
+  sumPortfolioTotalsFromEntries,
+  toVapaAssetSnapshot,
+  type VapaAssetSnapshot,
+} from '../../lib/vavity/portfolioValuation';
 
 const formatCurrencyParts = (value: number) => {
   const formatted = (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -38,6 +46,8 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
     sessionId,
     fetchVavityAggregatorAll,
     getAsset,
+    ensureAssetsLoaded,
+    assets,
   } = useVavity();
   const forceSessionPreview = false;
   const forceEmptyEmailPreview = emptyPortfolioPreview;
@@ -61,6 +71,46 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
     : forceEmptyEmailPreview
       ? [...SUPPORTED_CRYPTO_ASSET_IDS]
       : assetsMissingInEmail;
+
+  useEffect(() => {
+    if (forceEmptyEmailPreview || !effectiveInvestments.length) return;
+    const assetIds = [
+      ...new Set(
+        effectiveInvestments.map((inv: { asset?: string }) =>
+          String(inv?.asset || 'bitcoin').toLowerCase()
+        )
+      ),
+    ];
+    void ensureAssetsLoaded(assetIds);
+  }, [effectiveInvestments, ensureAssetsLoaded, forceEmptyEmailPreview]);
+
+  const valuedInvestments = useMemo(() => {
+    if (!effectiveInvestments.length) return [];
+    return recalculateInvestmentsWithSnapshots(
+      effectiveInvestments as Record<string, unknown>[],
+      (assetId) => toVapaAssetSnapshot(getAsset(assetId)),
+      (assetId) => getAsset(assetId)?.price
+    );
+  }, [effectiveInvestments, getAsset, assets]);
+
+  const solidSummaryTotals = useMemo(
+    () => sumPortfolioTotalsFromEntries(valuedInvestments, false),
+    [valuedInvestments]
+  );
+  const liquidSummaryTotals = useMemo(
+    () => sumPortfolioTotalsFromEntries(valuedInvestments, true),
+    [valuedInvestments]
+  );
+
+  const portfolioAssetIds = useMemo(
+    () =>
+      [
+        ...new Set(
+          valuedInvestments.map((inv) => String(inv?.asset || 'bitcoin').toLowerCase())
+        ),
+      ],
+    [valuedInvestments]
+  );
 
   const [open, setOpen] = useState(false);
   const myinvWrapperRef = useRef<HTMLDivElement | null>(null);
@@ -102,7 +152,6 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
   const initialFetchDoneRef = useRef(false);
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState(false);
-  const [rangePricesSolid, setRangePricesSolid] = useState<Record<string, number | null>>({});
   const [rangePricesLiquid, setRangePricesLiquid] = useState<Record<string, number | null>>({});
   const [summaryValuesHidden, setSummaryValuesHidden] = useState(false);
   const summaryValuesDidMountRef = useRef(false);
@@ -437,13 +486,7 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
   }, [forceSessionPreview, sessionId, fetchVavityAggregatorAll]);
 
   const hasAny = effectiveInvestments.length > 0;
-  const displayTotals = forceSessionPreview
-    ? displayIsLiquidMode
-      ? sessionTotalsLiquid
-      : sessionTotals
-    : displayIsLiquidMode
-      ? emailTotalsLiquid
-      : emailTotals;
+  const displayTotals = displayIsLiquidMode ? liquidSummaryTotals : solidSummaryTotals;
 
   const portfolioRanges = useMemo(
     () => [
@@ -457,93 +500,81 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
     []
   );
 
-  const getNearestHistoricalPrice = useCallback((history: { date: string; price: number }[], targetDate: string) => {
-    if (!history.length) return null;
-    const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
-    let selected: { date: string; price: number } | null = null;
-    for (const entry of sorted) {
-      if (entry.date <= targetDate) selected = entry;
-      else break;
-    }
-    return selected?.price ?? null;
-  }, []);
-
   useEffect(() => {
-    if (!selectedRangeDays) {
-      setRangePricesSolid({});
+    if (!selectedRangeDays || portfolioAssetIds.length === 0) {
       setRangePricesLiquid({});
       setRangeLoading(false);
       return;
     }
+
+    let cancelled = false;
     setRangeLoading(true);
-    const targetDate = new Date(Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000);
-    const isoDate = targetDate.toISOString().split('T')[0];
-    const nextSolid: Record<string, number | null> = {};
-    const nextLiquid: Record<string, number | null> = {};
-    supportedAssets.forEach((asset) => {
-      const snapshot = getAsset(asset);
-      const solid =
-        getNearestHistoricalPrice(snapshot?.solidHistory || [], isoDate) ??
-        (typeof snapshot?.vapa === 'number' ? snapshot.vapa : null) ??
-        (typeof snapshot?.price === 'number' ? snapshot.price : null);
-      const liquid =
-        getNearestHistoricalPrice(snapshot?.liquidHistory || [], isoDate) ??
-        (typeof snapshot?.price === 'number' ? snapshot.price : null) ??
-        (typeof snapshot?.vapa === 'number' ? snapshot.vapa : null);
-      nextSolid[asset] = solid;
-      nextLiquid[asset] = liquid;
-    });
-    setRangePricesSolid(nextSolid);
-    setRangePricesLiquid(nextLiquid);
-    setRangeLoading(false);
-  }, [getAsset, getNearestHistoricalPrice, selectedRangeDays, supportedAssets]);
+    const isoDate = new Date(Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split('T')[0];
+
+    const loadRangePrices = async () => {
+      const nextLiquid: Record<string, number | null> = {};
+
+      await Promise.all(
+        portfolioAssetIds.map(async (asset) => {
+          const raw = getAsset(asset);
+          const snapshot: VapaAssetSnapshot = toVapaAssetSnapshot(raw);
+          let liquidAtRange = liquidSpotOnUtcDay(snapshot, isoDate);
+
+          if (!(liquidAtRange > 0)) {
+            try {
+              const base = `/api/assets/crypto/${asset}/${asset}VapaHistoricalPrice`;
+              const params = new URLSearchParams({ date: isoDate, mode: 'liquid' });
+              const liquidResp = await fetch(`${base}?${params.toString()}`);
+              if (liquidResp.ok) {
+                const liquidNum = Number((await liquidResp.json())?.price);
+                if (Number.isFinite(liquidNum) && liquidNum > 0) liquidAtRange = liquidNum;
+              }
+            } catch {
+              // keep snapshot-derived values
+            }
+          }
+
+          nextLiquid[asset] =
+            liquidAtRange > 0 ? liquidAtRange : typeof raw?.price === 'number' ? raw.price : null;
+        })
+      );
+
+      if (!cancelled) {
+        setRangePricesLiquid(nextLiquid);
+        setRangeLoading(false);
+      }
+    };
+
+    void loadRangePrices();
+    return () => {
+      cancelled = true;
+    };
+  }, [getAsset, selectedRangeDays, portfolioAssetIds, assets]);
 
   const filteredTotals = useMemo(() => {
     if (!selectedRangeDays) return displayTotals;
-    if (!effectiveInvestments.length) return displayTotals;
-    const rangePrices = displayIsLiquidMode ? rangePricesLiquid : rangePricesSolid;
-    const hasMissingRange = supportedAssets.some((asset) => rangePrices[asset] == null);
+    if (!valuedInvestments.length) return displayTotals;
+    const hasMissingRange = portfolioAssetIds.some((asset) => rangePricesLiquid[asset] == null);
     if (hasMissingRange) return displayTotals;
     const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
-    return effectiveInvestments.reduce(
-      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
-        const amount = Number(entry.cVactTaa) || 0;
-        const assetId = ((entry?.asset || 'bitcoin') as string).toLowerCase();
-        const snapshot = getAsset(assetId);
-        const currentSpot = displayIsLiquidMode
-          ? typeof snapshot?.price === 'number'
-            ? snapshot.price
-            : snapshot?.vapa || 0
-          : snapshot?.vapa || 0;
-        const currentValue = displayIsLiquidMode
-          ? Number(entry.lCVact ?? entry.rCVact) || amount * (currentSpot || 0)
-          : Number(entry.cVact) || amount * (currentSpot || 0);
-        const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
-        const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
-        const rangePrice = rangePrices[assetId] ?? 0;
-        const pastValue =
-          hasValidPurchaseTime && purchaseTime > rangeStart
-            ? displayIsLiquidMode
-              ? Number(entry.lCVatop ?? entry.rCVatop) || amount * ((entry.lCpVatop ?? entry.rCpVatop) || rangePrice)
-              : Number(entry.cVatop) || amount * (entry.cpVatop || rangePrice)
-            : amount * rangePrice;
-        acc.acVatop += pastValue;
-        acc.acVact += currentValue;
-        acc.acdVatop += currentValue - pastValue;
-        acc.acVactTaa += amount;
-        return acc;
-      },
-      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
+    const rangeLiquidByAsset = Object.fromEntries(
+      portfolioAssetIds.map((asset) => [asset, rangePricesLiquid[asset] ?? 0])
+    ) as Record<string, number | null>;
+    return sumPortfolioTotalsForRange(
+      valuedInvestments,
+      displayIsLiquidMode,
+      rangeStart,
+      rangeLiquidByAsset
     );
   }, [
     displayTotals,
-    effectiveInvestments,
-    getAsset,
+    valuedInvestments,
     displayIsLiquidMode,
     rangePricesLiquid,
-    rangePricesSolid,
     selectedRangeDays,
-    supportedAssets,
+    portfolioAssetIds,
   ]);
 
   useEffect(() => {
@@ -610,15 +641,15 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
   }, [selectedRangeDays]);
 
   const oldestInvestmentDate = useMemo(() => {
-    if (effectiveInvestments.length === 0) return null;
-    const dates = effectiveInvestments
+    if (valuedInvestments.length === 0) return null;
+    const dates = valuedInvestments
       .map((entry: any) => entry?.date)
       .filter((value: any) => typeof value === 'string' && value.length > 0)
       .map((value: string) => new Date(value))
       .filter((date: Date) => !Number.isNaN(date.getTime()));
     if (dates.length === 0) return null;
     return new Date(Math.min(...dates.map((date: Date) => date.getTime())));
-  }, [effectiveInvestments]);
+  }, [valuedInvestments]);
 
   const oldestInvestmentAgeDays = useMemo(() => {
     if (!oldestInvestmentDate) return 0;

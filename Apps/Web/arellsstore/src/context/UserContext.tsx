@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { usePathname } from 'next/navigation';
 import { logFetchApiFailure } from '../lib/client/logClientApiError';
 import { SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
+import { sumPortfolioTotalsFromEntries } from '../lib/vavity/portfolioValuation';
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
@@ -222,11 +223,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
         const data = await res.json();
         if (!asset) {
-          setEmailInvestments(Array.isArray(data?.investments) ? data.investments : []);
-          setEmailTotals(data?.totals || { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 });
-          setEmailTotalsLiquid(
-            data?.totalsLiquid ?? data?.totalsReality ?? { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
-          );
+          const investments = Array.isArray(data?.investments) ? data.investments : [];
+          setEmailInvestments(investments);
+          setEmailTotals(sumPortfolioTotalsFromEntries(investments, false));
+          setEmailTotalsLiquid(sumPortfolioTotalsFromEntries(investments, true));
         }
         return data;
       } finally {

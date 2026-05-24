@@ -1,4 +1,5 @@
 import { getServerS3 } from '../server/awsS3';
+import { VALUATION_VERSION } from './portfolioValuation';
 
 const emptyTotals = { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
 
@@ -26,6 +27,7 @@ export async function ensureUserVavityAggregateExists(email: string): Promise<vo
       investments: [],
       totals: { ...emptyTotals },
       totalsLiquid: { ...emptyTotals },
+      valuationVersion: VALUATION_VERSION,
     });
     try {
       await s3

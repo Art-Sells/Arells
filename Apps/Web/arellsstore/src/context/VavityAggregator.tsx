@@ -5,6 +5,7 @@ import { logClientApiError } from '../lib/client/logClientApiError';
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useUser } from './UserContext';
 import { getHomeInitialAssetIds, SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
+import { sumPortfolioTotalsFromEntries } from '../lib/vavity/portfolioValuation';
 
 interface Investment {
   cVatop: number;   // Value at time of purchase
@@ -254,11 +255,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
       }
       const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
-      const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
-      const fetchedTotalsLiquid: TotalsState = data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
       setInvestments(fetchedInvestments);
-      setTotals(fetchedTotals);
-      setTotalsLiquid(fetchedTotalsLiquid);
+      setTotals(sumPortfolioTotalsFromEntries(fetchedInvestments as unknown as Record<string, unknown>[], false));
+      setTotalsLiquid(sumPortfolioTotalsFromEntries(fetchedInvestments as unknown as Record<string, unknown>[], true));
       lastSessionAssetRef.current = asset;
       const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
       setSessionExpiresAt(expiresAt);
@@ -288,11 +287,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
       const data = response.data || {};
       const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
-      const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
-      const fetchedTotalsLiquid: TotalsState = data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
       setInvestments(fetchedInvestments);
-      setTotals(fetchedTotals);
-      setTotalsLiquid(fetchedTotalsLiquid);
+      setTotals(sumPortfolioTotalsFromEntries(fetchedInvestments as unknown as Record<string, unknown>[], false));
+      setTotalsLiquid(sumPortfolioTotalsFromEntries(fetchedInvestments as unknown as Record<string, unknown>[], true));
       const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
       setSessionExpiresAt(expiresAt);
       const invAssets = [
@@ -323,9 +320,10 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: true } : {}),
       });
       const data = response.data?.data || {};
-      setInvestments(data.investments || []);
-      setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
-      setTotalsLiquid(data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+      const nextInvestments = data.investments || [];
+      setInvestments(nextInvestments);
+      setTotals(sumPortfolioTotalsFromEntries(nextInvestments as unknown as Record<string, unknown>[], false));
+      setTotalsLiquid(sumPortfolioTotalsFromEntries(nextInvestments as unknown as Record<string, unknown>[], true));
       lastSessionAssetRef.current = asset;
       const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
       setSessionExpiresAt(expiresAt);

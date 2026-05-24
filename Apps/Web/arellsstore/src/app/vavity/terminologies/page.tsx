@@ -175,7 +175,7 @@ export default function Terminologies() {
             </ul>
 
             <h3 className={styles.scenarioTitle}>5. External asset price falls: $50,000</h3>
-            <p className={styles.paragraph}><strong>Action:</strong> $200 worth of the external asset investment purchased.</p>
+            <p className={styles.paragraph}><strong>Action:</strong> $260 worth of the Vavity asset investment purchased.</p>
             <p className={styles.paragraph}>VAPA = $65,000.</p>
             <p className={styles.scenarioLabel}>Purchase 1</p>
             <ul className={styles.calcBulletList}>
