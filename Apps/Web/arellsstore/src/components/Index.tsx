@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
+import HomeGuestLanding from './Home/HomeGuestLanding';
 import SiteSocialFooter from './SiteSocialFooter';
 import {
   CRYPTO_ASSETS,
@@ -28,8 +29,10 @@ const Index = () => {
   });
   const { getAsset, loadMoreAssets } = useVavity();
   const [visibleAssetCount, setVisibleAssetCount] = useState(HOME_INITIAL_ASSET_COUNT);
-  const { email } = useUser();
+  const { email, authSessionLoading } = useUser();
   const forceHomeInvestmentsPreview = false;
+  const isGuest = !authSessionLoading && !email && !forceHomeInvestmentsPreview;
+  const showSignedInHome = !authSessionLoading && (!!email || forceHomeInvestmentsPreview);
   const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
   const [cardShimmersFading, setCardShimmersFading] = useState(false);
   const [cardFadeInDone, setCardFadeInDone] = useState(false);
@@ -91,6 +94,11 @@ const Index = () => {
   };
 
   useEffect(() => {
+    if (authSessionLoading || isGuest) {
+      setLoading(false);
+      setFadeOut(false);
+      return;
+    }
     if (Object.values(imagesLoaded).every(Boolean)) {
       const fadeTimer = setTimeout(() => {
         setFadeOut(true);
@@ -106,7 +114,7 @@ const Index = () => {
         clearTimeout(hideTimer);
       };
     }
-  }, [imagesLoaded]);
+  }, [imagesLoaded, isGuest, authSessionLoading]);
 
   const displayIsLiquidMode = toggleAlpha > 0.5;
   const realityOpacity = Math.max(0, Math.min(1, Math.abs(toggleAlpha - 0.5) * 2));
@@ -434,7 +442,7 @@ const Index = () => {
 
   return (
     <>
-      {showLoading && (
+      {showLoading && showSignedInHome && (
         <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
           <div
             className="loader-toggle-clone loader-toggle-clone--home"
@@ -463,6 +471,8 @@ const Index = () => {
         </div>
       )}
 
+      {showSignedInHome && (
+      <>
       <div
         ref={homeHeaderRef}
         className={`home-header-inner page-slide-down${displayIsLiquidMode ? ' is-liquid' : ''}`}
@@ -616,6 +626,7 @@ const Index = () => {
       <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
         <div className="home-assets-footer-text">new assets added weekly</div>
       </div>
+
       <div
         className="home-toggle-footer"
         style={
@@ -757,25 +768,27 @@ const Index = () => {
           </div>
         </div>
       </div>
-      <div className="home-assets-about-wrap page-slide-in">
-        <Link className="myinv-about-button home-assets-about-button" href="/about">
-          <span className="myinv-about-button-bg" aria-hidden="true" />
-          <span className="myinv-about-button-text">about</span>
-        </Link>
-      </div>
-
-      {!showLoading && (!!email || forceHomeInvestmentsPreview) && <HomeInvestmentsSlideUpCTA />}
-      {!showLoading && !email && !forceHomeInvestmentsPreview && (
-        <HomeInvestmentsSlideUpCTA
-          href="/signin"
-          label="Sign In"
-          lead="Sign in to learn more"
-        />
+      </>
       )}
 
-      <div className="home-site-social-footer-spacer">
-        <SiteSocialFooter variant="accent" />
-      </div>
+      {!authSessionLoading && isGuest && <HomeGuestLanding />}
+
+      {!authSessionLoading && !isGuest && (
+        <div className="home-assets-about-wrap page-slide-in">
+          <Link className="myinv-about-button home-assets-about-button" href="/about">
+            <span className="myinv-about-button-bg" aria-hidden="true" />
+            <span className="myinv-about-button-text">about</span>
+          </Link>
+        </div>
+      )}
+
+      {!showLoading && showSignedInHome && <HomeInvestmentsSlideUpCTA />}
+
+      {!authSessionLoading && !isGuest && (
+        <div className="home-site-social-footer-spacer">
+          <SiteSocialFooter variant="accent" />
+        </div>
+      )}
     </>
   );
 }

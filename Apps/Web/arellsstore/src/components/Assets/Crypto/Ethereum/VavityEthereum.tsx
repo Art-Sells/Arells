@@ -13,6 +13,7 @@ import {
   sumPortfolioTotalsForRange,
 } from '../../../../lib/vavity/portfolioValuation';
 import { useUser } from '../../../../context/UserContext';
+import AssetGuestLanding from '../../shared/AssetGuestLanding';
 import EthereumChart from './EthereumChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 import {
@@ -47,7 +48,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
   useEffect(() => {
     void ensureAssetsLoaded([ASSET.id]);
   }, [ensureAssetsLoaded]);
-  const { email, isSignedIn, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
+  const { email, isSignedIn, authSessionLoading, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [vavityData, setVavityData] = useState<any>(null);
   const prevVavityDataRef = useRef<any | null>(null);
   const clearingSnapshotRef = useRef<any | null>(null);
@@ -3109,6 +3110,18 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
       globalThis.clearTimeout(doneTimer);
     };
   }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
+
+  if (authSessionLoading && !email) {
+    return null;
+  }
+
+  const isGuestView = !isSignedIn && !email;
+
+  if (isGuestView) {
+    return (
+      <AssetGuestLanding cssModifier={ASSET.cssModifier} ticker={ASSET.ticker} title={ASSET.label} />
+    );
+  }
 
   return (
     <>

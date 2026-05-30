@@ -26,7 +26,8 @@ const TronPageClient: React.FC = () => {
   const [sessionResetFade, setSessionResetFade] = useState(false);
   const [sessionResetKey, setSessionResetKey] = useState(0);
   const [sessionResetVisible, setSessionResetVisible] = useState(false);
-  const { email } = useUser();
+  const { email, isSignedIn, authSessionLoading } = useUser();
+  const isGuest = !authSessionLoading && !email && !isSignedIn;
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
   /** Survives `<Tron key={sessionResetKey} />` remounts so session-clear-on-mount runs once per page visit. */
@@ -152,6 +153,11 @@ const TronPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (authSessionLoading || isGuest) {
+      setLoading(false);
+      setFadeOut(false);
+      return;
+    }
     const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
     const hideTimer = setTimeout(() => {
       setLoading(false);
@@ -161,7 +167,7 @@ const TronPageClient: React.FC = () => {
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
-  }, []);
+  }, [authSessionLoading, isGuest]);
 
   useEffect(() => {
     if (!showSessionResetOverlay) {
@@ -271,7 +277,7 @@ const TronPageClient: React.FC = () => {
   return (
     <div className={`asset-page asset-page--${ASSET.cssModifier}`} ref={pageRef}>
       <header className={`asset-header asset-header--${ASSET.cssModifier}`} />
-      {showLoading && !showSessionResetOverlay && (
+      {showLoading && !showSessionResetOverlay && !authSessionLoading && !isGuest && (
         <div
           className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier}${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >
@@ -314,36 +320,38 @@ const TronPageClient: React.FC = () => {
 
       <Tron key={`session-reset-${sessionResetKeyValue}`} sessionMountClearGuardRef={sessionMountClearGuardRef} />
 
-      <footer
-        className={`asset-footer${sessionResetFooterHidden ? ' asset-footer--session-reset-hidden' : ''}`}
-        aria-hidden={sessionResetFooterHidden ? true : undefined}
-      >
-        {!!email && (
+      {!authSessionLoading && !isGuest && (
+        <footer
+          className={`asset-footer${sessionResetFooterHidden ? ' asset-footer--session-reset-hidden' : ''}`}
+          aria-hidden={sessionResetFooterHidden ? true : undefined}
+        >
+          {!!email && (
+            <Link
+              href="/my-investments"
+              className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
+            >
+              <span className="asset-footer-about-text">view my portfolio</span>
+            </Link>
+          )}
           <Link
-            href="/my-investments"
-            className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
+            href="/"
+            className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-view-more-assets asset-view-more-assets--footer asset-footer-viewmore`}
           >
-            <span className="asset-footer-about-text">view my portfolio</span>
+            <span className="asset-view-more-assets-text">view</span>
+            <span className="asset-footer-about-divider" aria-hidden="true" />
+            <span className="asset-view-more-assets-text">more</span>
+            <span className="asset-footer-about-divider" aria-hidden="true" />
+            <span className="asset-view-more-assets-text">assets</span>
           </Link>
-        )}
-        <Link
-          href="/"
-          className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-view-more-assets asset-view-more-assets--footer asset-footer-viewmore`}
-        >
-          <span className="asset-view-more-assets-text">view</span>
-          <span className="asset-footer-about-divider" aria-hidden="true" />
-          <span className="asset-view-more-assets-text">more</span>
-          <span className="asset-footer-about-divider" aria-hidden="true" />
-          <span className="asset-view-more-assets-text">assets</span>
-        </Link>
-        <Link
-          className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
-          href="/about"
-        >
-          <span className="asset-footer-about-text">about</span>
-        </Link>
-      </footer>
-      <SiteSocialFooter />
+          <Link
+            className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
+            href="/about"
+          >
+            <span className="asset-footer-about-text">about</span>
+          </Link>
+        </footer>
+      )}
+      {!authSessionLoading && !isGuest && <SiteSocialFooter />}
     </div>
   );
 };
