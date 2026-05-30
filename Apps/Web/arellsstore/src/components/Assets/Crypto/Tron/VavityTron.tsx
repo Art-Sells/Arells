@@ -49,6 +49,7 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
     void ensureAssetsLoaded([ASSET.id]);
   }, [ensureAssetsLoaded]);
   const { email, isSignedIn, authSessionLoading, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
+  const isGuestView = !isSignedIn && !email;
   const [vavityData, setVavityData] = useState<any>(null);
   const prevVavityDataRef = useRef<any | null>(null);
   const clearingSnapshotRef = useRef<any | null>(null);
@@ -1177,12 +1178,15 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
         prevSummaryCountRef.current = next;
         return;
       }
-      openInvestmentsSection();
+      if (!isGuestView) {
+        openInvestmentsSection();
+      }
     }
     prevSummaryCountRef.current = next;
   }, [
     investments.length,
     isClearingInvestments,
+    isGuestView,
     openInvestmentsSection,
     summaryTotalsSnapshot,
     suppressInvestmentsUI,
@@ -3086,9 +3090,10 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [isSignedIn, email]);
+  }, [emptyActionsMountPhase]);
 
   useEffect(() => {
+    if (isGuestView) return;
     if (hasInvestmentsUI) return;
     if (showInitialFetchLoader) return;
     if (emptyActionsMountPhase !== 'hidden') return;
@@ -3102,9 +3107,40 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
       globalThis.clearTimeout(revealTimer);
       globalThis.clearTimeout(doneTimer);
     };
-  }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
+  }, [isGuestView, hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
 
-  const isGuestView = !isSignedIn && !email;
+  useEffect(() => {
+    if (isGuestView) return;
+    if (!initialFetchDone) return;
+    if (liveInvestments.length > 0) {
+      if (!summaryOpen || investmentsWholeHeight === 0 || summaryHeight === 0) {
+        openInvestmentsSection();
+      }
+      return;
+    }
+    if (hasInvestmentsUI || showInitialFetchLoader || emptyActionsMountPhase !== 'hidden') return;
+    const revealTimer = globalThis.setTimeout(() => {
+      setEmptyActionsMountPhase('revealing');
+    }, 1000);
+    const doneTimer = globalThis.setTimeout(() => {
+      setEmptyActionsMountPhase('done');
+    }, 4200);
+    return () => {
+      globalThis.clearTimeout(revealTimer);
+      globalThis.clearTimeout(doneTimer);
+    };
+  }, [
+    isGuestView,
+    initialFetchDone,
+    liveInvestments.length,
+    summaryOpen,
+    investmentsWholeHeight,
+    summaryHeight,
+    openInvestmentsSection,
+    hasInvestmentsUI,
+    showInitialFetchLoader,
+    emptyActionsMountPhase,
+  ]);
 
   if (isGuestView) {
     return (
@@ -3510,7 +3546,6 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
                       : undefined
               }
             >
-              {(isSignedIn || email) && (
               <div
                 className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
               >
@@ -3551,26 +3586,6 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
                   Add Investments
                 </button>
               </div>
-              )}
-              {!isSignedIn && !email && (
-                <div
-                  className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
-                >
-                  <p className="asset-signin-believe-prompt">
-                    Sign in to learn more
-                  </p>
-                  <Link
-                    href="/signin"
-                    className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
-                    style={{
-                      opacity: emptySigninHiding ? 0 : 1,
-                      transition: 'opacity 3s ease, transform 0.2s ease',
-                    }}
-                  >
-                    <span className="asset-save-signin-text">Sign In</span>
-                  </Link>
-                </div>
-              )}
             </div>
           </>
         ) : (
@@ -3853,7 +3868,6 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
                         'asset-action-button asset-action-button--tron'
                       )}
         <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
-          {(isSignedIn || email) && (
           <div className="asset-empty-addinvest">
             <button
               className="asset-action-button asset-action-button--tron asset-action-button--invest-add asset-action-button--add-investments"
@@ -3864,19 +3878,6 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
               Add Investments
             </button>
           </div>
-          )}
-          {!isSignedIn && !email && (
-            <div className="asset-empty-signin">
-              <button
-                type="button"
-                className="asset-action-button asset-action-button--save-signin"
-                disabled
-                tabIndex={-1}
-              >
-                    <span className="asset-save-signin-text">Sign In</span>
-              </button>
-            </div>
-          )}
         </div>
                     </div>
                   </div>
@@ -3889,16 +3890,6 @@ const VavityTron: React.FC<VavityTronProps> = ({ sessionMountClearGuardRef }) =>
 
                 {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
                 <div ref={bottomActionsWrapRef}>
-                {investments.length > 0 && !isSignedIn && !email && (
-                  <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
-                    <p className="asset-signin-believe-prompt">
-                      Sign in to learn more
-                    </p>
-                    <Link href="/signin" className="asset-action-button asset-action-button--save-signin">
-                      <span className="asset-save-signin-text">Sign In</span>
-                    </Link>
-                  </div>
-                )}
                 <div
                   ref={showActionsRef}
                   className={`asset-portfolio-actions asset-portfolio-actions--show${investmentsListOpen ? ' is-open' : ''}`}
