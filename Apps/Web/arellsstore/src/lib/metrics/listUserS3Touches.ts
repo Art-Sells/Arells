@@ -121,22 +121,22 @@ async function filterTouchMapToVerifiedAuth(
 }
 
 /**
- * Every distinct users/…/Auth.json in S3 (matches what you see under users/).
- * Used for “New User Accounts” headline and DAUt/WAUt/MAUt.
+ * Every distinct users/…/Auth.json in S3 (includes unverified registrations).
+ * Prefer {@link listVerifiedUserS3Touches} for metrics and product counts.
  */
 export async function listAllUserAuthAccountsFromS3(s3: AWS.S3, bucket: string): Promise<UserTouchMap> {
   return buildRawTouchMapFromS3Listing(s3, bucket);
 }
 
-/** Verified-only subset (retention cohorts). */
+/** Verified Auth.json only — used for all user metrics (growth, retention, DAUt/WAUt/MAUt). */
 export async function listVerifiedUserS3Touches(s3: AWS.S3, bucket: string): Promise<UserTouchMap> {
   const raw = await buildRawTouchMapFromS3Listing(s3, bucket);
   return filterTouchMapToVerifiedAuth(s3, bucket, raw);
 }
 
-/** @alias listAllUserAuthAccountsFromS3 */
+/** @alias listVerifiedUserS3Touches */
 export async function listUserS3Touches(s3: AWS.S3, bucket: string): Promise<UserTouchMap> {
-  return listAllUserAuthAccountsFromS3(s3, bucket);
+  return listVerifiedUserS3Touches(s3, bucket);
 }
 
 export async function countVerifiedRegisteredUsers(s3: AWS.S3, bucket: string): Promise<number> {

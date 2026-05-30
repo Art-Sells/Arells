@@ -25,7 +25,7 @@ function metricsAuthorized(req: NextApiRequest): boolean {
 
 function cacheKey(pagePath: string): string {
   const safe = encodeURIComponent(pagePath.replace(/\//g, '_'));
-  return `analytics/metrics-page-activity-v16/${safe}.json`;
+  return `analytics/metrics-page-activity-v17/${safe}.json`;
 }
 
 function cacheTtlMs(): number {

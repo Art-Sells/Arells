@@ -3,7 +3,7 @@ import type { AnalyticsSessionMeta } from '../analytics/types';
 import { hashEmailForAnalytics } from '../analytics/userHash';
 import { loadAllSessionMetasFromS3 } from '../analytics/loadSessionMetasFromS3';
 import { normalizeAnalyticsPath } from '../analytics/pathUtils';
-import { listAllUserAuthAccountsFromS3, type UserTouchMap } from './listUserS3Touches';
+import { listVerifiedUserS3Touches, type UserTouchMap } from './listUserS3Touches';
 
 const DAY_MS = 86_400_000;
 
@@ -189,7 +189,7 @@ export async function aggregateSignedInUserTraffic(
   nowMs: number
 ): Promise<Omit<MetricsPageActivityPayload, 'generatedAt' | 'pagePath'>> {
   const [touchMap, metas] = await Promise.all([
-    listAllUserAuthAccountsFromS3(s3, bucket),
+    listVerifiedUserS3Touches(s3, bucket),
     loadAllSessionMetasFromS3(s3, bucket),
   ]);
   const hashToEmail = buildHashToEmailKeyMap(touchMap);
@@ -245,7 +245,7 @@ export async function buildMetricsActivityDebug(
   wauWindowDays: string[];
   accounts: MetricsActivityDebugAccount[];
 }> {
-  const touchMap = await listAllUserAuthAccountsFromS3(s3, bucket);
+  const touchMap = await listVerifiedUserS3Touches(s3, bucket);
   const hashToEmail = buildHashToEmailKeyMap(touchMap);
   const counts = await aggregateSignedInUserTraffic(s3, bucket, nowMs);
   const todayKey = isoDayKey(nowMs);

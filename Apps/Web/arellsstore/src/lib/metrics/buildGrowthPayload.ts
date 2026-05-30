@@ -3,11 +3,7 @@ import { loadAllSessionMetasFromS3 } from '../analytics/loadSessionMetasFromS3';
 import type { AnalyticsSessionMeta } from '../analytics/types';
 import { countSessionAggregateKeys } from './countSessionKeysInS3';
 import { listSessionAggregatesFromS3, type SessionAggregateRow } from './listSessionAggregatesFromS3';
-import {
-  listAllUserAuthAccountsFromS3,
-  listVerifiedUserS3Touches,
-  type UserTouchMap,
-} from './listUserS3Touches';
+import { listVerifiedUserS3Touches, type UserTouchMap } from './listUserS3Touches';
 import type {
   MetricsGrowthKpis,
   MetricsGrowthResponse,
@@ -688,7 +684,7 @@ function computeRollingRetentionKpis(
 }
 
 /**
- * Retention: verified S3 accounts only (UserTouchMap — Auth + VavityAggregate LM span).
+ * Retention: verified S3 accounts (same UserTouchMap as growth — Auth + VavityAggregate LM span).
  * No session IDs. `sessions` on each point is 0; `signedInUsers` / `combined` = retained cohort count.
  */
 function buildRetentionSeries(
@@ -825,24 +821,21 @@ export async function buildGrowthPayload(
 ): Promise<MetricsGrowthResponse> {
   const notes: string[] = [
     'Unique (anonymous session) counts use analytics/session-meta when present; otherwise sessions/{id}/VavityAggregate.json (S3 LastModified for range + chart day). Enable NEXT_PUBLIC_ANALYTICS_ENABLED=1 for full session-meta.',
-    '“New User Accounts” = every distinct users/…/Auth.json in S3 (one per email; duplicate folder encodings merged). Not filtered by chart date range.',
-    'DAUt/WAUt/MAUt (activity panel): same rule per UTC day — S3 Auth/Vavity span, signed-in page-mount, or analytics meta. Windows: today+yesterday / last 7 days / last 30 days.',
-    'Retention view uses verified Auth.json only. Anonymous sessions are not part of cohort or retained counts.',
+    '“New User Accounts” = distinct verified users/…/Auth.json in S3 (one per email; duplicate folder encodings merged). Unverified registrations are excluded. Not filtered by chart date range.',
+    'DAUt/WAUt/MAUt (activity panel): verified accounts only — S3 Auth/Vavity span, signed-in page-mount, or analytics meta per UTC day. Windows: today+yesterday / last 7 days / last 30 days.',
+    'Retention view uses the same verified Auth.json set. Anonymous sessions are not part of cohort or retained counts.',
     'Retention uses the same UTC day/week bucket list as growth. Cohort = accounts active on the first bucket in that list that has any activity (leading quiet buckets show null retention). Each later point is % of that cohort still active in that bucket. Verified users with a single S3 timestamp are stretched to range end for retention only. Headline % = last chart point with defined retention.',
     'WoW/MoM/YoY retention KPIs use rolling 7 / 30 / 365 UTC-day windows on account return rates (earlier block → following block). Growth KPIs use week/month/year-over-week on the chart series. Growth session activity uses firstSeen–lastSeen (includes heartbeats).',
   ];
 
-  const [metasAll, touchMapAll, touchMapVerified, registeredSessionKeys, sessionAggregates] =
-    await Promise.all([
-      loadAllSessionMetasFromS3(s3, bucket),
-      listAllUserAuthAccountsFromS3(s3, bucket),
-      listVerifiedUserS3Touches(s3, bucket),
-      countSessionAggregateKeys(s3, bucket),
-      listSessionAggregatesFromS3(s3, bucket),
-    ]);
+  const [metasAll, touchMap, registeredSessionKeys, sessionAggregates] = await Promise.all([
+    loadAllSessionMetasFromS3(s3, bucket),
+    listVerifiedUserS3Touches(s3, bucket),
+    countSessionAggregateKeys(s3, bucket),
+    listSessionAggregatesFromS3(s3, bucket),
+  ]);
 
-  const touchMap = touchMapAll;
-  const registeredUserKeys = touchMapAll.size;
+  const registeredUserKeys = touchMap.size;
   const registeredCombined = registeredUserKeys + registeredSessionKeys;
 
   const { start: rangeStart, end: rangeEnd } = computeRangeBounds(range);
@@ -853,8 +846,8 @@ export async function buildGrowthPayload(
 
   const touchMapForRetention =
     view === 'retention'
-      ? widenSingleInstantUserTouchesForRetention(touchMapVerified, rangeStart, rangeEnd)
-      : touchMapVerified;
+      ? widenSingleInstantUserTouchesForRetention(touchMap, rangeStart, rangeEnd)
+      : touchMap;
 
   const aauSessionsAnonymous = countAnonymousBrowsingInRange(metasAll, sessionAggregates, rangeStart, rangeEnd);
   const aauSessionsAny = countAllSessionsInRangeWithS3Orphans(metasAll, sessionAggregates, rangeStart, rangeEnd);

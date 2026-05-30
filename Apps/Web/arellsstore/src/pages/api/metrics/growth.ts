@@ -44,7 +44,7 @@ function parseView(q: string | string[] | undefined): MetricsView {
 }
 
 function growthCacheKey(range: MetricsRange, segment: MetricsSegment, view: MetricsView): string {
-  return `analytics/metrics-growth-v4/${range}_${segment}_${view}.json`;
+  return `analytics/metrics-growth-v5/${range}_${segment}_${view}.json`;
 }
 
 function growthCacheTtlMs(): number {
