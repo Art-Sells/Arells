@@ -14,6 +14,8 @@ import {
 } from '../../../../lib/vavity/portfolioValuation';
 import { useUser } from '../../../../context/UserContext';
 import AssetGuestLanding from '../../shared/AssetGuestLanding';
+import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
+import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import BnbChart from './BnbChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 import {
@@ -51,6 +53,9 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
   }, [ensureAssetsLoaded]);
   const { email, isSignedIn, authSessionLoading, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const isGuestView = !isSignedIn && !email;
+  const summaryCircleLoader = useAssetSummaryCircleLoader();
+  const summaryCircleLoaderDismissRef = useRef<(() => void) | null>(null);
+  summaryCircleLoaderDismissRef.current = summaryCircleLoader.dismissOnSummaryExpandStarted;
   const [vavityData, setVavityData] = useState<any>(null);
   const prevVavityDataRef = useRef<any | null>(null);
   const clearingSnapshotRef = useRef<any | null>(null);
@@ -959,6 +964,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
             const h = whole.scrollHeight + 24;
             setInvestmentsWholeHeight(h);
           }
+          summaryCircleLoaderDismissRef.current?.();
           scrollToBottomAfterMaxHeightOn(investmentsWholePanelRef.current, 4000);
         });
       });
@@ -2660,6 +2666,9 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
     // Mark which panel is currently being submitted from, so we can collapse that panel smoothly.
     submitTargetRef.current = showAddMoreForm ? 'addMore' : 'add';
     const isAddMoreSubmit = submitTargetRef.current === 'addMore';
+    if (!isAddMoreSubmit) {
+      summaryCircleLoader.show();
+    }
     if (toggleReenableTimerRef.current) {
       globalThis.clearTimeout(toggleReenableTimerRef.current);
       toggleReenableTimerRef.current = null;
@@ -2733,6 +2742,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
       }, 2000);
     } catch (err) {
       // Quiet failure per prior behavior
+      summaryCircleLoader.dismissImmediately();
       setSubmitPhase('idle');
     } finally {
       isMutatingRef.current = false;
@@ -3143,9 +3153,26 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
     emptyActionsMountPhase,
   ]);
 
+
+  useEffect(() => {
+    if (isGuestView) return;
+    if (!initialFetchDone) return;
+    if (liveInvestments.length === 0) return;
+    if (investmentsWholeHeight > 0 && summaryOpen) return;
+    summaryCircleLoader.show();
+  }, [
+    isGuestView,
+    initialFetchDone,
+    liveInvestments.length,
+    investmentsWholeHeight,
+    summaryOpen,
+    summaryCircleLoader.show,
+  ]);
+
   if (isGuestView) {
     return (
-      <AssetGuestLanding cssModifier={ASSET.cssModifier} ticker={ASSET.ticker} title={ASSET.label} />
+      <AssetGuestLanding cssModifier={ASSET.cssModifier}
+        ticker={ASSET.ticker} title={ASSET.label} />
     );
   }
 
@@ -4211,6 +4238,12 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
         </div>
       </div>
     </div>
+      <AssetSummaryCircleLoader
+        cssModifier={ASSET.cssModifier}
+        mounted={summaryCircleLoader.mounted}
+        visible={summaryCircleLoader.visible}
+        fadingOut={summaryCircleLoader.fadingOut}
+      />
     </>
   );
 };

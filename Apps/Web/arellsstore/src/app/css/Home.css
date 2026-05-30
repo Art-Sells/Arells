@@ -649,6 +649,7 @@ body {
 	position: relative;
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
+	--asset-summary-circle-loader-bottom: 46vh;
 }
 
 .asset-page--bitcoin {
@@ -10398,5 +10399,44 @@ a.asset-action-button--save-signin {
 
 .asset-page--xrp .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(35, 41, 47)) !important;
+}
+
+.asset-summary-circle-loader {
+	position: fixed;
+	bottom: var(--asset-summary-circle-loader-bottom);
+	left: 50%;
+	transform: translateX(-50%);
+	width: var(--toggle-knob-size, 33px);
+	height: var(--toggle-knob-size, 33px);
+	pointer-events: none;
+	z-index: 120;
+	opacity: 0;
+	transition: opacity 1s ease;
+}
+
+.asset-summary-circle-loader.is-visible {
+	opacity: 1;
+}
+
+.asset-summary-circle-loader.is-fading-out {
+	opacity: 0;
+	transition: opacity 2s ease;
+}
+
+.asset-summary-circle-loader-ring {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	box-sizing: border-box;
+	background: color-mix(in srgb, var(--asset-chart-line-color, var(--asset-line-color)) 20%, transparent);
+	border: var(--asset-chart-line-width, 6.5px) solid color-mix(in srgb, var(--asset-hover-dot-color, rgba(255, 255, 255, 0.85)) 28%, transparent);
+	border-top-color: var(--asset-hover-dot-color, rgba(255, 255, 255, 0.85));
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+@keyframes assetSummaryCircleLoaderSpin {
+	to {
+		transform: rotate(360deg);
+	}
 }
 

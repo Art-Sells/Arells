@@ -153,16 +153,16 @@ const DogePageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isGuest) {
+    if (authSessionLoading) return;
+
+    if (!email) {
       setLoading(false);
       setFadeOut(false);
       return;
     }
-    if (authSessionLoading || !email) {
-      setLoading(false);
-      setFadeOut(false);
-      return;
-    }
+
+    setLoading(true);
+    setFadeOut(false);
     const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
     const hideTimer = setTimeout(() => {
       setLoading(false);
@@ -172,7 +172,7 @@ const DogePageClient: React.FC = () => {
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
-  }, [isGuest, authSessionLoading]);
+  }, [authSessionLoading, email]);
 
   useEffect(() => {
     if (!showSessionResetOverlay) {
