@@ -3137,8 +3137,10 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
     if (isGuestView) return;
     if (!initialFetchDone) return;
     if (liveInvestments.length > 0) {
-      if (!summaryOpen || investmentsWholeHeight === 0 || summaryHeight === 0) {
-        openInvestmentsSection();
+      if (!isSubmitCollapsing && !suppressInvestmentsUI) {
+        if (!summaryOpen || investmentsWholeHeight === 0 || summaryHeight === 0) {
+          openInvestmentsSection();
+        }
       }
       return;
     }
@@ -3164,6 +3166,8 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
     hasInvestmentsUI,
     showInitialFetchLoader,
     emptyActionsMountPhase,
+    isSubmitCollapsing,
+    suppressInvestmentsUI,
   ]);
 
 

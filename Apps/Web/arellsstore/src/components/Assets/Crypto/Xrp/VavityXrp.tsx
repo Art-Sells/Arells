@@ -3136,8 +3136,10 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
     if (isGuestView) return;
     if (!initialFetchDone) return;
     if (liveInvestments.length > 0) {
-      if (!summaryOpen || investmentsWholeHeight === 0 || summaryHeight === 0) {
-        openInvestmentsSection();
+      if (!isSubmitCollapsing && !suppressInvestmentsUI) {
+        if (!summaryOpen || investmentsWholeHeight === 0 || summaryHeight === 0) {
+          openInvestmentsSection();
+        }
       }
       return;
     }
@@ -3163,6 +3165,8 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
     hasInvestmentsUI,
     showInitialFetchLoader,
     emptyActionsMountPhase,
+    isSubmitCollapsing,
+    suppressInvestmentsUI,
   ]);
 
 
