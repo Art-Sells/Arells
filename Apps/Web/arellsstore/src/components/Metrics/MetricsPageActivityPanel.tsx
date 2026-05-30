@@ -16,6 +16,7 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<MetricsPageActivityPayload | null>(null);
   const alive = useRef(true);
+  const refreshOnNextLoadRef = useRef(true);
 
   useEffect(() => {
     alive.current = true;
@@ -36,7 +37,12 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
   const load = useCallback(
     async (opts?: { silent?: boolean; bustCache?: boolean }) => {
       const silent = opts?.silent === true;
-      const bustCache = opts?.bustCache === true;
+      let bustCache = opts?.bustCache === true;
+      let mountRefresh = false;
+      if (refreshOnNextLoadRef.current && !silent) {
+        bustCache = true;
+        mountRefresh = true;
+      }
       if (!silent) {
         setLoading(true);
         setError(null);
@@ -65,6 +71,7 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
           if (!silent) setData(null);
           return;
         }
+        if (mountRefresh) refreshOnNextLoadRef.current = false;
         setData(json as MetricsPageActivityPayload);
         if (!silent) setError(null);
       } catch {
@@ -95,7 +102,10 @@ export default function MetricsPageActivityPanel({ initialApiKey = '' }: Props) 
   }, [load]);
 
   useEffect(() => {
-    const onSiteActivity = () => void load({ silent: true, bustCache: true });
+    const onSiteActivity = () => {
+      refreshOnNextLoadRef.current = true;
+      void load({ silent: true, bustCache: true });
+    };
     window.addEventListener('arells-metrics-page-mount', onSiteActivity);
     return () => window.removeEventListener('arells-metrics-page-mount', onSiteActivity);
   }, [load]);

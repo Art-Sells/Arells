@@ -91,6 +91,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const [hoverPoint, setHoverPoint] = useState<{ x: Date; y: number } | null>(null);
   const alive = useRef(true);
   const prevViewRef = useRef<MetricsView>('growth');
+  const refreshOnNextLoadRef = useRef(true);
 
   useEffect(() => {
     alive.current = true;
@@ -111,7 +112,12 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const load = useCallback(
     async (opts?: { silent?: boolean; force?: boolean; keyOverride?: string }) => {
       const silent = opts?.silent === true;
-      const force = opts?.force === true;
+      let force = opts?.force === true;
+      let mountRefresh = false;
+      if (refreshOnNextLoadRef.current && !silent) {
+        force = true;
+        mountRefresh = true;
+      }
       const key = opts?.keyOverride ?? apiKey;
       if (!silent) {
         setLoading(true);
@@ -143,6 +149,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
           if (!silent) setData(null);
           return;
         }
+        if (mountRefresh) refreshOnNextLoadRef.current = false;
         setData(json as MetricsGrowthResponse);
         if (!silent) setError(null);
       } catch {
@@ -170,6 +177,15 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
     };
     const id = window.setInterval(tick, GROWTH_POLL_MS);
     return () => window.clearInterval(id);
+  }, [load]);
+
+  useEffect(() => {
+    const onSiteActivity = () => {
+      refreshOnNextLoadRef.current = true;
+      void load({ silent: true, force: true });
+    };
+    window.addEventListener('arells-metrics-page-mount', onSiteActivity);
+    return () => window.removeEventListener('arells-metrics-page-mount', onSiteActivity);
   }, [load]);
 
   useEffect(() => {
