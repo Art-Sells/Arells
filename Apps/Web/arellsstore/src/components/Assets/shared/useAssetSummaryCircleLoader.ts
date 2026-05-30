@@ -19,7 +19,7 @@ export function useAssetSummaryCircleLoader() {
     });
   }, []);
 
-  const dismissOnSummaryExpandStarted = useCallback(() => {
+  const dismissOnSummaryExpandComplete = useCallback(() => {
     setPhase((current) => {
       if (current === 'hidden' || current === 'fading') return current;
       dismissedRef.current = true;
@@ -57,7 +57,7 @@ export function useAssetSummaryCircleLoader() {
     visible: phase === 'visible',
     fadingOut: phase === 'fading',
     show,
-    dismissOnSummaryExpandStarted,
+    dismissOnSummaryExpandComplete,
     dismissImmediately,
   };
 }

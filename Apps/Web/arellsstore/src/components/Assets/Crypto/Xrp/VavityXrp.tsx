@@ -54,7 +54,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
   const isGuestView = !isSignedIn && !email;
   const summaryCircleLoader = useAssetSummaryCircleLoader();
   const summaryCircleLoaderDismissRef = useRef<(() => void) | null>(null);
-  summaryCircleLoaderDismissRef.current = summaryCircleLoader.dismissOnSummaryExpandStarted;
+  summaryCircleLoaderDismissRef.current = summaryCircleLoader.dismissOnSummaryExpandComplete;
   const [vavityData, setVavityData] = useState<any>(null);
   const prevVavityDataRef = useRef<any | null>(null);
   const clearingSnapshotRef = useRef<any | null>(null);
@@ -364,6 +364,7 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
   const forceChartLoader = false;
 
   const pendingScrollLayoutCancelRef = useRef<(() => void) | null>(null);
+  const pendingCircleLoaderDismissCancelRef = useRef<(() => void) | null>(null);
   const cancelPendingScrollToBottom = useCallback(() => {
     pendingScrollLayoutCancelRef.current?.();
     pendingScrollLayoutCancelRef.current = null;
@@ -399,6 +400,8 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
   useEffect(() => {
     return () => {
       cancelPendingScrollToBottom();
+      pendingCircleLoaderDismissCancelRef.current?.();
+      pendingCircleLoaderDismissCancelRef.current = null;
       if (showMoreDisableTimerRef.current) {
         globalThis.clearTimeout(showMoreDisableTimerRef.current);
         showMoreDisableTimerRef.current = null;
@@ -962,8 +965,18 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
           if (whole) {
             const h = whole.scrollHeight + 24;
             setInvestmentsWholeHeight(h);
+            if (h > 0) {
+              pendingCircleLoaderDismissCancelRef.current?.();
+              pendingCircleLoaderDismissCancelRef.current = runAfterMaxHeightTransitionEnd(
+                investmentsWholePanelRef.current,
+                () => {
+                  pendingCircleLoaderDismissCancelRef.current = null;
+                  summaryCircleLoaderDismissRef.current?.();
+                },
+                { timeoutMs: 3500 }
+              );
+            }
           }
-          summaryCircleLoaderDismissRef.current?.();
           scrollToBottomAfterMaxHeightOn(investmentsWholePanelRef.current, 4000);
         });
       });
