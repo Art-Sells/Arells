@@ -3105,10 +3105,6 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
     };
   }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
 
-  if (authSessionLoading && !email) {
-    return null;
-  }
-
   const isGuestView = !isSignedIn && !email;
 
   if (isGuestView) {

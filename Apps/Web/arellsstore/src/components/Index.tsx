@@ -29,10 +29,11 @@ const Index = () => {
   });
   const { getAsset, loadMoreAssets } = useVavity();
   const [visibleAssetCount, setVisibleAssetCount] = useState(HOME_INITIAL_ASSET_COUNT);
-  const { email, authSessionLoading } = useUser();
+  const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
-  const isGuest = !authSessionLoading && !email && !forceHomeInvestmentsPreview;
-  const showSignedInHome = !authSessionLoading && (!!email || forceHomeInvestmentsPreview);
+  const showGuestLanding = !email && !forceHomeInvestmentsPreview;
+  const showSignedInHome = !!email || forceHomeInvestmentsPreview;
+  const showHomeLoader = showLoading && showSignedInHome;
   const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
   const [cardShimmersFading, setCardShimmersFading] = useState(false);
   const [cardFadeInDone, setCardFadeInDone] = useState(false);
@@ -73,6 +74,7 @@ const Index = () => {
     track: null,
     raf: null,
   });
+  const showSignedInHomeRef = useRef(false);
 
   // Home should always own/reset the global background so asset-page tint never bleeds into `/`.
   useEffect(() => {
@@ -94,11 +96,19 @@ const Index = () => {
   };
 
   useEffect(() => {
-    if (authSessionLoading || isGuest) {
+    if (showGuestLanding) {
       setLoading(false);
       setFadeOut(false);
       return;
     }
+    if (showSignedInHome && !showSignedInHomeRef.current) {
+      setLoading(true);
+      setFadeOut(false);
+    }
+    showSignedInHomeRef.current = showSignedInHome;
+
+    if (!showSignedInHome) return;
+
     if (Object.values(imagesLoaded).every(Boolean)) {
       const fadeTimer = setTimeout(() => {
         setFadeOut(true);
@@ -114,7 +124,7 @@ const Index = () => {
         clearTimeout(hideTimer);
       };
     }
-  }, [imagesLoaded, isGuest, authSessionLoading]);
+  }, [imagesLoaded, showGuestLanding, showSignedInHome]);
 
   const displayIsLiquidMode = toggleAlpha > 0.5;
   const realityOpacity = Math.max(0, Math.min(1, Math.abs(toggleAlpha - 0.5) * 2));
@@ -341,7 +351,7 @@ const Index = () => {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', schedule);
     };
-  }, []);
+  }, [showSignedInHome]);
 
   const formatCurrency = (value: number) =>
     value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -442,18 +452,18 @@ const Index = () => {
 
   return (
     <>
-      {showLoading && showSignedInHome && (
+      {showHomeLoader && (
         <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
           <div
             className="loader-toggle-clone loader-toggle-clone--home"
             style={
-              homeAssetsLayout
+              showSignedInHome && homeAssetsLayout
                 ? {
                     left: homeAssetsLayout.left - homeAssetsLayout.width / 2,
                     width: homeAssetsLayout.width,
                     transform: 'none',
                   }
-                : { visibility: 'hidden' as const }
+                : undefined
             }
           >
             <div className="home-toggle-shell-wrap">
@@ -768,23 +778,20 @@ const Index = () => {
           </div>
         </div>
       </div>
+      <div className="home-assets-about-wrap page-slide-in">
+        <Link className="myinv-about-button home-assets-about-button" href="/about">
+          <span className="myinv-about-button-bg" aria-hidden="true" />
+          <span className="myinv-about-button-text">about</span>
+        </Link>
+      </div>
       </>
       )}
 
-      {!authSessionLoading && isGuest && <HomeGuestLanding />}
-
-      {!authSessionLoading && !isGuest && (
-        <div className="home-assets-about-wrap page-slide-in">
-          <Link className="myinv-about-button home-assets-about-button" href="/about">
-            <span className="myinv-about-button-bg" aria-hidden="true" />
-            <span className="myinv-about-button-text">about</span>
-          </Link>
-        </div>
-      )}
+      {showGuestLanding && <HomeGuestLanding />}
 
       {!showLoading && showSignedInHome && <HomeInvestmentsSlideUpCTA />}
 
-      {!authSessionLoading && !isGuest && (
+      {showSignedInHome && (
         <div className="home-site-social-footer-spacer">
           <SiteSocialFooter variant="accent" />
         </div>

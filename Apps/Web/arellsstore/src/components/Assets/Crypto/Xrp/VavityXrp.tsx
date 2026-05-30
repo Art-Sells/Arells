@@ -3104,10 +3104,6 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
     };
   }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
 
-  if (authSessionLoading && !email) {
-    return null;
-  }
-
   const isGuestView = !isSignedIn && !email;
 
   if (isGuestView) {

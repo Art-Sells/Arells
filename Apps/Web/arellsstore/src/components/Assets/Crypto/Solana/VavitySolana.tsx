@@ -3104,10 +3104,6 @@ const VavitySolana: React.FC<VavitySolanaProps> = ({ sessionMountClearGuardRef }
     };
   }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
 
-  if (authSessionLoading && !email) {
-    return null;
-  }
-
   const isGuestView = !isSignedIn && !email;
 
   if (isGuestView) {

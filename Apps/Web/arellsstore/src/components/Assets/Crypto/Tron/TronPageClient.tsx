@@ -153,7 +153,12 @@ const TronPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (authSessionLoading || isGuest) {
+    if (isGuest) {
+      setLoading(false);
+      setFadeOut(false);
+      return;
+    }
+    if (authSessionLoading || !email) {
       setLoading(false);
       setFadeOut(false);
       return;
@@ -167,7 +172,7 @@ const TronPageClient: React.FC = () => {
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
-  }, [authSessionLoading, isGuest]);
+  }, [isGuest, authSessionLoading]);
 
   useEffect(() => {
     if (!showSessionResetOverlay) {
@@ -277,7 +282,7 @@ const TronPageClient: React.FC = () => {
   return (
     <div className={`asset-page asset-page--${ASSET.cssModifier}`} ref={pageRef}>
       <header className={`asset-header asset-header--${ASSET.cssModifier}`} />
-      {showLoading && !showSessionResetOverlay && !authSessionLoading && !isGuest && (
+      {showLoading && !showSessionResetOverlay && !!email && (
         <div
           className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier}${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >

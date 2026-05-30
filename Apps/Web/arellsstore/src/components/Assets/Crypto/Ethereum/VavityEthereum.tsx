@@ -3111,10 +3111,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     };
   }, [hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
 
-  if (authSessionLoading && !email) {
-    return null;
-  }
-
   const isGuestView = !isSignedIn && !email;
 
   if (isGuestView) {

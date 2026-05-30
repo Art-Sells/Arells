@@ -10101,7 +10101,7 @@ a.asset-action-button--save-signin {
 
 .home-guest-mount-slide {
 	animation-name: pageSlideUp;
-	animation-duration: 4s;
+	animation-duration: 1s;
 	animation-timing-function: ease;
 	animation-fill-mode: both;
 	will-change: transform, opacity;
@@ -10112,21 +10112,19 @@ a.asset-action-button--save-signin {
 }
 
 .home-guest-mount-slide--logo {
-	animation-delay: 0.15s;
+	animation-delay: 0.12s;
 }
 
 .home-guest-mount-slide--slogan {
-	animation-duration: 1s;
-	animation-delay: 2s;
+	animation-delay: 0.24s;
 }
 
 .home-guest-mount-slide--signin {
-	animation-delay: 2.5s;
+	animation-delay: 0.36s;
 }
 
 .home-guest-mount-slide--copyright {
-	animation-duration: 1s;
-	animation-delay: 3s;
+	animation-delay: 0.48s;
 }
 
 /* Guest landing reuses `.asset-page-content` — reset its fixed 20px top padding so badge margin drives vertical offset. */
