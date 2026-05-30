@@ -10035,35 +10035,10 @@ a.asset-action-button--save-signin {
 	height: 60px !important;
 }
 
-.home-guest-logo-wrap {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	max-width: 100px;
-}
-
-.home-guest-logo-tint {
-	position: absolute;
-	inset: 0;
-	background: var(--myinv-accent-color);
-	opacity: 1;
-	-webkit-mask-image: url('/images/Arells-Logo-Ebony.png');
-	mask-image: url('/images/Arells-Logo-Ebony.png');
-	-webkit-mask-size: contain;
-	mask-size: contain;
-	-webkit-mask-repeat: no-repeat;
-	mask-repeat: no-repeat;
-	-webkit-mask-position: center;
-	mask-position: center;
-	pointer-events: none;
-}
-
 .home-guest-logo {
 	width: auto !important;
 	height: auto !important;
 	max-width: 100px;
-	opacity: 0;
 }
 
 .home-guest-slogan {
@@ -10392,9 +10367,9 @@ a.asset-action-button--save-signin {
 
 .guest-landing-copyright--home {
 	color: var(--myinv-accent-color);
+	opacity: 1;
 	margin: 20px 0 0;
 	padding-bottom: 0;
-	opacity: 1;
 }
 
 .asset-page--bitcoin .asset-guest-landing .guest-landing-copyright--asset {

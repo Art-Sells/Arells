@@ -24,18 +24,15 @@ export default function HomeGuestLanding() {
             priority
           />
         </span>
-        <span className="home-guest-logo-wrap home-guest-mount-slide home-guest-mount-slide--logo">
-          <span className="home-guest-logo-tint" aria-hidden="true" />
-          <Image
-            loader={imageLoader}
-            alt="Arells"
-            width={100}
-            height={33}
-            className="home-guest-logo"
-            src="images/Arells-Logo-Ebony.png"
-            priority
-          />
-        </span>
+        <Image
+          loader={imageLoader}
+          alt="Arells"
+          width={100}
+          height={33}
+          className="home-guest-logo home-guest-mount-slide home-guest-mount-slide--logo"
+          src="images/Arells-Logo-Ebony.png"
+          priority
+        />
         <p className="home-guest-slogan home-guest-mount-slide home-guest-mount-slide--slogan">
           investments never lose value
         </p>
