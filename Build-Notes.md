@@ -15,7 +15,7 @@ phase two (everywhere) add: Share infastructure revenue with phase one supporter
 
 and also like a Multi Level Marketing company... those who get people to sign in/up, get a bigger percentage that they can see...
 
-this means we have to create a new page called "my-portfolio" designed from top to bottom exactly like the my-investments page (even with the ability to see if a user is signed in or not/etc if signed in then it shows, if not then it shows what the "my investments" page shows
+this means we have to create a new page called "my-portfolio" designed from top to bottom exactly like the my-investments page (even with the ability to see if a user is signed in or not/etc if signed in then it shows, if not then it shows what the "my investments" page shows)
 
 the my portfolio button in "verify email" and the my portfolio button in the assets page links to /my-portfolio 
 
@@ -65,7 +65,7 @@ and below that a double bordered section and inside it, add these words:
 Your Financial Benefits will be derived from the 65% of advertising revenue (User Ad Revenue (UAR)) Arells generates, Arells will keep 35%.
 
 Out of the 65%, you currently will get (add the dollar amount bold styled the same as purchased value numbers from my -investments dependent on how many users they signed up) from weekly User Advertising Revenue 
-of $3,000-$6,000 <- (bold letters styled the same as purchased value numbers from my-investments) based on 100,000~ WAU (Weekly Active Users)
+of $3,000-$7,000 <- (bold letters styled the same as purchased value numbers from my-investments) based on 100,000~ WAU (Weekly Active Users)
 
 This means the more people you sign up, the more advertising revenue you receive.
 
