@@ -1,10 +1,8 @@
 import type AWS from 'aws-sdk';
-import { normalizeEmailKey } from '../auth/normalize';
 import type { UserAuthRecord } from '../auth/s3UserAuth';
+import { normalizeEmailKey } from '../auth/normalize';
 
-const AUTH_GET_BATCH = 24;
-
-function pathSegmentToEmailKey(segment: string): string {
+function pathSegmentToCanonicalEmailKey(segment: string): string {
   try {
     return normalizeEmailKey(decodeURIComponent(segment));
   } catch {
@@ -12,9 +10,11 @@ function pathSegmentToEmailKey(segment: string): string {
   }
 }
 
-async function listAuthObjectKeys(s3: AWS.S3, bucket: string): Promise<string[]> {
-  const keys: string[] = [];
+/** Every users/…/Auth.json in the bucket. */
+export async function listAllUserAuthRecordsFromS3(s3: AWS.S3, bucket: string): Promise<UserAuthRecord[]> {
+  const records: UserAuthRecord[] = [];
   let token: string | undefined;
+
   do {
     const out = await s3
       .listObjectsV2({
@@ -24,47 +24,25 @@ async function listAuthObjectKeys(s3: AWS.S3, bucket: string): Promise<string[]>
         MaxKeys: 1000,
       })
       .promise();
+
     for (const obj of out.Contents || []) {
-      if (!obj.Key?.endsWith('/Auth.json')) continue;
-      keys.push(obj.Key);
+      const key = obj.Key;
+      const m = key?.match(/^users\/(.+)\/Auth\.json$/);
+      if (!m || !key) continue;
+      const emailKey = pathSegmentToCanonicalEmailKey(m[1]);
+      const objectKey = key;
+      try {
+        const data = await s3.getObject({ Bucket: bucket, Key: objectKey }).promise();
+        if (!data.Body) continue;
+        const record = JSON.parse(data.Body.toString()) as UserAuthRecord;
+        records.push({ ...record, email: record.email || decodeURIComponent(emailKey) });
+      } catch {
+        // skip unreadable
+      }
     }
+
     token = out.IsTruncated ? out.NextContinuationToken : undefined;
   } while (token);
-  return keys;
-}
 
-export async function listAllUserAuthRecords(s3: AWS.S3, bucket: string): Promise<UserAuthRecord[]> {
-  const objectKeys = await listAuthObjectKeys(s3, bucket);
-  const out: UserAuthRecord[] = [];
-
-  for (let i = 0; i < objectKeys.length; i += AUTH_GET_BATCH) {
-    const slice = objectKeys.slice(i, i + AUTH_GET_BATCH);
-    const batch = await Promise.all(
-      slice.map(async (key) => {
-        try {
-          const obj = await s3.getObject({ Bucket: bucket, Key: key }).promise();
-          if (!obj.Body) return null;
-          return JSON.parse(obj.Body.toString()) as UserAuthRecord;
-        } catch {
-          return null;
-        }
-      })
-    );
-    for (const rec of batch) {
-      if (rec?.email) out.push(rec);
-    }
-  }
-  return out;
-}
-
-export function emailKeyFromAuthRecord(rec: UserAuthRecord): string {
-  return normalizeEmailKey(rec.email);
-}
-
-export function emailFromAuthKey(emailKey: string): string {
-  try {
-    return decodeURIComponent(emailKey);
-  } catch {
-    return emailKey;
-  }
+  return records;
 }

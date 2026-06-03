@@ -1,21 +1,33 @@
-const REFERRAL_CODE_RE = /^[a-z0-9]{8,12}$/;
-export const REFERRAL_COOKIE_NAME = 'arells_ref';
+export const REFERRAL_CODE_COOKIE = 'arells_ref';
+const REFERRAL_CODE_COOKIE_MAX_AGE_DAYS = 30;
 
-export function normalizeReferralCode(raw: unknown): string | null {
-  if (typeof raw !== 'string') return null;
-  const code = raw.trim().toLowerCase();
-  if (!REFERRAL_CODE_RE.test(code)) return null;
-  return code;
+export function captureReferralFromSearchParams(search: string): void {
+  if (typeof window === 'undefined') return;
+  const ref = new URLSearchParams(search).get('ref')?.trim().toLowerCase();
+  if (!ref || !/^[a-f0-9]{12}$/.test(ref)) return;
+
+  const maxAge = REFERRAL_CODE_COOKIE_MAX_AGE_DAYS * 24 * 60 * 60;
+  document.cookie = `${REFERRAL_CODE_COOKIE}=${encodeURIComponent(ref)}; Path=/; Max-Age=${maxAge}; SameSite=Lax`;
+
+  try {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('ref')) return;
+    url.searchParams.delete('ref');
+    const next = url.pathname + (url.search || '') + url.hash;
+    window.history.replaceState({}, '', next);
+  } catch {
+    // ignore
+  }
 }
 
-export function readReferralCodeFromDocumentCookie(): string | null {
-  if (typeof document === 'undefined') return null;
-  const parts = document.cookie.split(';');
-  for (const part of parts) {
-    const [name, ...rest] = part.trim().split('=');
-    if (name !== REFERRAL_COOKIE_NAME) continue;
-    const value = decodeURIComponent(rest.join('='));
-    return normalizeReferralCode(value);
+export function readReferralCodeFromDocumentCookie(): string | undefined {
+  if (typeof document === 'undefined') return undefined;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${REFERRAL_CODE_COOKIE}=([^;]*)`));
+  if (!match) return undefined;
+  try {
+    const decoded = decodeURIComponent(match[1]).trim().toLowerCase();
+    return decoded || undefined;
+  } catch {
+    return undefined;
   }
-  return null;
 }

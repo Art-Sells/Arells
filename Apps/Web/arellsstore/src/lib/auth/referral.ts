@@ -1,12 +1,10 @@
 import { randomBytes } from 'crypto';
+import type { UserAuthRecord } from './s3UserAuth';
+import { getUserAuthByEmail, putUserAuth } from './s3UserAuth';
 import { normalizeEmail, normalizeEmailKey } from './normalize';
-import { getUserAuthByEmail, putUserAuth, type UserAuthRecord } from './s3UserAuth';
 import { getServerS3 } from '../server/awsS3';
 
 const s3 = getServerS3();
-
-const REFERRAL_CODE_BYTES = 6;
-const REFERRAL_CODE_RE = /^[a-z0-9]{8,12}$/;
 
 function bucket(): string {
   const b = process.env.S3_BUCKET_NAME;
@@ -14,38 +12,22 @@ function bucket(): string {
   return b;
 }
 
-export function referralCodeIndexKey(code: string): string {
-  return `auth/referral-codes/${code.toLowerCase()}.json`;
-}
+export const REFERRAL_CODE_COOKIE = 'arells_ref';
+export const REFERRAL_CODE_COOKIE_MAX_AGE_SEC = 30 * 24 * 60 * 60;
 
-export function normalizeReferralCode(raw: unknown): string | null {
-  if (typeof raw !== 'string') return null;
-  const code = raw.trim().toLowerCase();
-  if (!REFERRAL_CODE_RE.test(code)) return null;
-  return code;
+function referralCodeIndexKey(code: string) {
+  return `auth/referral-codes/${code}.json`;
 }
 
 function generateReferralCode(): string {
-  return randomBytes(REFERRAL_CODE_BYTES).toString('hex');
-}
-
-async function putReferralCodeIndex(code: string, email: string): Promise<void> {
-  await s3
-    .putObject({
-      Bucket: bucket(),
-      Key: referralCodeIndexKey(code),
-      Body: JSON.stringify({ email: normalizeEmail(email) }),
-      ContentType: 'application/json',
-      ACL: 'private',
-    })
-    .promise();
+  return randomBytes(6).toString('hex');
 }
 
 export async function resolveReferrerEmailFromCode(code: string): Promise<string | null> {
-  const normalized = normalizeReferralCode(code);
-  if (!normalized) return null;
+  const trimmed = code.trim().toLowerCase();
+  if (!trimmed || trimmed.length > 64) return null;
   try {
-    const obj = await s3.getObject({ Bucket: bucket(), Key: referralCodeIndexKey(normalized) }).promise();
+    const obj = await s3.getObject({ Bucket: bucket(), Key: referralCodeIndexKey(trimmed) }).promise();
     if (!obj.Body) return null;
     const parsed = JSON.parse(obj.Body.toString()) as { email?: string };
     const email = typeof parsed.email === 'string' ? normalizeEmail(parsed.email) : '';
@@ -57,64 +39,58 @@ export async function resolveReferrerEmailFromCode(code: string): Promise<string
   }
 }
 
-/** Assign referralCode on Auth.json + index file if missing. */
-export async function ensureUserReferralCode(email: string): Promise<string> {
-  const normalized = normalizeEmail(email);
-  const auth = await getUserAuthByEmail(normalized);
+export async function ensureReferralCodeForUser(email: string): Promise<string> {
+  const auth = await getUserAuthByEmail(email);
   if (!auth) throw new Error('Account not found');
+  if (auth.referralCode) return auth.referralCode;
 
-  if (auth.referralCode) {
-    const existing = normalizeReferralCode(auth.referralCode);
-    if (existing) return existing;
-  }
-
-  let code = '';
+  let code = generateReferralCode();
   for (let attempt = 0; attempt < 8; attempt += 1) {
-    const candidate = generateReferralCode();
-    const taken = await resolveReferrerEmailFromCode(candidate);
-    if (!taken) {
-      code = candidate;
-      break;
+    try {
+      await s3
+        .headObject({ Bucket: bucket(), Key: referralCodeIndexKey(code) })
+        .promise();
+      code = generateReferralCode();
+    } catch (err: unknown) {
+      const e = err as { code?: string; statusCode?: number };
+      if (e.code === 'NotFound' || e.code === 'NoSuchKey' || e.statusCode === 404) break;
+      throw err;
     }
   }
-  if (!code) code = generateReferralCode() + randomBytes(2).toString('hex').slice(0, 2);
 
-  await putReferralCodeIndex(code, normalized);
-  await putUserAuth(normalized, {
-    ...auth,
-    email: normalized,
-    referralCode: code,
-    updatedAt: Date.now(),
-  });
+  const normalized = normalizeEmail(email);
+  await s3
+    .putObject({
+      Bucket: bucket(),
+      Key: referralCodeIndexKey(code),
+      Body: JSON.stringify({ email: normalized }),
+      ContentType: 'application/json',
+      ACL: 'private',
+    })
+    .promise();
+
+  await putUserAuth(email, { ...auth, email: normalized, referralCode: code, updatedAt: Date.now() });
   return code;
 }
 
-export function buildReferralShareUrl(appOrigin: string, code: string): string {
-  const base = appOrigin.replace(/\/$/, '');
-  return `${base}/?ref=${encodeURIComponent(code)}`;
-}
-
 export async function attachReferrerOnRegister(
-  newEmail: string,
+  newUserEmail: string,
   referralCodeRaw: unknown
 ): Promise<void> {
-  const code = normalizeReferralCode(
-    typeof referralCodeRaw === 'string' ? referralCodeRaw : ''
-  );
-  if (!code) return;
+  if (typeof referralCodeRaw !== 'string' || !referralCodeRaw.trim()) return;
 
-  const referrerEmail = await resolveReferrerEmailFromCode(code);
+  const referrerEmail = await resolveReferrerEmailFromCode(referralCodeRaw);
   if (!referrerEmail) return;
 
-  const normalizedNew = normalizeEmail(newEmail);
-  if (referrerEmail === normalizedNew) return;
+  const newEmail = normalizeEmail(newUserEmail);
+  if (referrerEmail === newEmail) return;
 
-  const auth = await getUserAuthByEmail(normalizedNew);
+  const auth = await getUserAuthByEmail(newEmail);
   if (!auth || auth.referredByEmail) return;
 
-  await putUserAuth(normalizedNew, {
+  await putUserAuth(newEmail, {
     ...auth,
-    email: normalizedNew,
+    email: newEmail,
     referredByEmail: referrerEmail,
     referredAt: Date.now(),
     updatedAt: Date.now(),
@@ -122,15 +98,18 @@ export async function attachReferrerOnRegister(
 }
 
 export function mergeAuthPreservingReferral(
-  auth: UserAuthRecord,
-  patch: Partial<UserAuthRecord>
+  existing: UserAuthRecord,
+  patch: UserAuthRecord
 ): UserAuthRecord {
   return {
-    ...auth,
     ...patch,
-    email: normalizeEmail(patch.email ?? auth.email),
-    referralCode: patch.referralCode ?? auth.referralCode,
-    referredByEmail: patch.referredByEmail ?? auth.referredByEmail,
-    referredAt: patch.referredAt ?? auth.referredAt,
+    referralCode: patch.referralCode ?? existing.referralCode,
+    referredByEmail: patch.referredByEmail ?? existing.referredByEmail,
+    referredAt: patch.referredAt ?? existing.referredAt,
   };
+}
+
+export function buildShareUrl(origin: string, referralCode: string): string {
+  const base = origin.replace(/\/$/, '');
+  return `${base}/?ref=${encodeURIComponent(referralCode)}`;
 }

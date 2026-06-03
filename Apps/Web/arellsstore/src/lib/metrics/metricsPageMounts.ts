@@ -179,21 +179,6 @@ function distinctSignedInUserHashesOnUtcDay(metas: AnalyticsSessionMeta[], dayKe
   return set;
 }
 
-/** Verified accounts active on any of the last 7 UTC days (WAUt definition). */
-export async function collectVerifiedWauEmailKeys(
-  s3: AWS.S3,
-  bucket: string,
-  nowMs: number = Date.now()
-): Promise<Set<string>> {
-  const [touchMap, metas] = await Promise.all([
-    listVerifiedUserS3Touches(s3, bucket),
-    loadAllSessionMetasFromS3(s3, bucket),
-  ]);
-  const hashToEmail = buildHashToEmailKeyMap(touchMap);
-  const wauKeys = eachUtcDay(nowMs - (WAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
-  return collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, wauKeys);
-}
-
 /**
  * DAUt/WAUt/MAUt — same rules, different UTC windows (all from users/ + visits).
  * Active on a day = S3 Auth/Vavity span touches that day, or signed-in page-mount, or analytics meta.
@@ -220,7 +205,7 @@ export async function aggregateSignedInUserTraffic(
       yesterdayKey,
       todayKey,
     ]),
-    collectVerifiedWauEmailKeys(s3, bucket, nowMs),
+    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, wauKeys),
     collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, mauKeys),
   ]);
 
@@ -232,6 +217,21 @@ export async function aggregateSignedInUserTraffic(
     wauRollingDays: WAU_ROLLING_DAYS,
     mauMonthStart: isoDayKey(mauStartMs),
   };
+}
+
+/** Verified accounts active on any of the last 7 UTC days (portfolio referral “active weekly”). */
+export async function listVerifiedWauActiveEmailKeys(
+  s3: AWS.S3,
+  bucket: string,
+  nowMs: number = Date.now()
+): Promise<Set<string>> {
+  const [touchMap, metas] = await Promise.all([
+    listVerifiedUserS3Touches(s3, bucket),
+    loadAllSessionMetasFromS3(s3, bucket),
+  ]);
+  const hashToEmail = buildHashToEmailKeyMap(touchMap);
+  const wauKeys = eachUtcDay(nowMs - (WAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
+  return collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, wauKeys);
 }
 
 export type MetricsActivityDebugAccount = {

@@ -33,11 +33,11 @@ and in the the my-portfolio page:
 
 the title "my porfolio" with no slogan at the top and centered just like the my investments title but in liquid mode (forever) and just like the summary from my investments is wrapped in double borders, wrap this also in double borders:
 
-My Financial Benefits: <(styled same as purchased value from my-investments)
-0% <-bold numbers styles same as purchase value numbers from my investments (calculate this number from "my financial benefits" page (will add details about how later)) and below the number, styled the same as the UTC words from metrics: of User Ad Revenue
+My Weekly Potential Earnings: <(styled same as purchased value from my-investments)
+$-$ <-bold numbers styles same as purchase value numbers from my investments (calculate this number from "my financial benefits" page (will add details about how later)) and below the number, styled the same as the UTC words from metrics: of User Ad Revenue
 
 Add this in another bordered section: 
-Sign-up your friends/family to financially benefit from our mission to ensure your investments never lose value by using this link: "share" <button links to https://arells.com (but connects their e-mail to the sharing link so if the person they shared with signs up using that link, it adds them to the user that shared the links MLM)
+Sign-up your friends/family to potentially earn $xxx-$xxx a week from our mission to ensure your investments never lose value by using this link: "share" <button links to https://arells.com (but connects their e-mail to the sharing link so if the person they shared with signs up using that link, it adds them to the user that shared the links MLM)
 
 Add a new bordered section inside the "get your friends and family" underneath the share button that says
 

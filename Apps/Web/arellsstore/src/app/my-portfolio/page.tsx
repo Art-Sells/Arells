@@ -5,12 +5,12 @@ import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../../lib/siteMetaDe
 const banner = '/images/banners/MyInvestmentsBanner.jpg';
 
 export const metadata: Metadata = {
-  title: 'My Portfolio — Arells',
+  title: 'My Portfolio',
   description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
   robots: { index: false, follow: true },
   alternates: { canonical: '/my-portfolio' },
   openGraph: {
-    title: 'My Portfolio — Arells',
+    title: 'My Portfolio',
     description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
     url: '/my-portfolio',
     type: 'website',

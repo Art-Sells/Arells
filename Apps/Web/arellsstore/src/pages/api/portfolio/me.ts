@@ -1,11 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import {
-  buildReferralShareUrl,
-  ensureUserReferralCode,
-} from '../../../lib/auth/referral';
+import { buildShareUrl, ensureReferralCodeForUser } from '../../../lib/auth/referral';
 import { resolveAppOrigin } from '../../../lib/auth/origin';
 import { getSessionFromRequest } from '../../../lib/auth/session';
-import { buildReferralShareSnapshot } from '../../../lib/portfolio/referralShares';
+import { buildPortfolioMePayload } from '../../../lib/portfolio/referralShares';
 import { getServerS3 } from '../../../lib/server/awsS3';
 
 const s3 = getServerS3();
@@ -31,16 +28,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const code = await ensureUserReferralCode(session.email);
+    const referralCode = await ensureReferralCodeForUser(session.email);
     const origin = resolveAppOrigin(req.headers.origin, undefined);
-    const shareUrl = buildReferralShareUrl(origin, code);
-    const snapshot = await buildReferralShareSnapshot(s3, bucket(), session.email);
-
-    return res.status(200).json({
-      referralCode: code,
-      shareUrl,
-      ...snapshot,
-    });
+    const shareUrl = buildShareUrl(origin, referralCode);
+    const payload = await buildPortfolioMePayload(s3, bucket(), session.email, shareUrl, referralCode);
+    return res.status(200).json(payload);
   } catch (e) {
     console.error('[portfolio/me]', e);
     return res.status(500).json({ error: 'Failed to load portfolio' });

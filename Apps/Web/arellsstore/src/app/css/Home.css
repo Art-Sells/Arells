@@ -10556,3 +10556,20 @@ a.asset-action-button--save-signin {
 	font-weight: 600;
 }
 
+.myportfolio-usd-range-sep {
+	margin: 0 0.15em;
+	font-weight: 700;
+}
+
+.myportfolio-inline-usd {
+	display: inline-flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.1em;
+}
+
+.myportfolio-share-panel {
+	padding: 12px 14px 16px;
+}
+

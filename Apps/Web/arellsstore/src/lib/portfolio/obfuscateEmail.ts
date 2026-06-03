@@ -1,14 +1,13 @@
 import { normalizeEmail } from '../auth/normalize';
 
-/** `jane.doe@gmail.com` → `jane.doe (at)..... com` */
-export function obfuscateEmailForLeaderboard(raw: string): string {
+/** e.g. `jeya (at)..... com` — local prefix + TLD only. */
+export function obfuscateEmail(raw: string): string {
   const email = normalizeEmail(raw);
   const at = email.indexOf('@');
-  if (at < 1) return email;
+  if (at < 1) return 'user (at)..... com';
   const local = email.slice(0, at);
   const domain = email.slice(at + 1);
-  const dot = domain.lastIndexOf('.');
-  if (dot < 1) return `${local} (at)..... ${domain}`;
-  const tld = domain.slice(dot + 1);
-  return `${local} (at)..... ${tld}`;
+  const tld = domain.includes('.') ? domain.split('.').pop() || 'com' : domain || 'com';
+  const prefix = local.slice(0, Math.min(4, local.length)) || 'user';
+  return `${prefix} (at)..... ${tld}`;
 }

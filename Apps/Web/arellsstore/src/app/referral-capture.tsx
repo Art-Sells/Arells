@@ -1,12 +1,11 @@
 'use client';
 
-import { Suspense } from 'react';
-import ReferralCapture from '../components/Referral/ReferralCapture';
+import { useEffect } from 'react';
+import { captureReferralFromSearchParams } from '../lib/auth/referralClient';
 
 export default function ReferralCaptureRoot() {
-  return (
-    <Suspense fallback={null}>
-      <ReferralCapture />
-    </Suspense>
-  );
+  useEffect(() => {
+    captureReferralFromSearchParams(window.location.search);
+  }, []);
+  return null;
 }
