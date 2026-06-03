@@ -67,7 +67,7 @@ Your Financial Benefits will be derived from the 65% of advertising revenue (Use
 Out of the 65%, you currently will get (add the dollar amount bold styled the same as purchased value numbers from my -investments dependent on how many users they signed up) from weekly User Advertising Revenue 
 of $3,000-$7,000 <- (bold letters styled the same as purchased value numbers from my-investments) based on 100,000~ WAU (Weekly Active Users)
 
-This means the more people you sign up, the more advertising revenue you receive.
+This means the more people you sign up and are active, the more advertising revenue you receive.
 
 Below that bordered section, add another double bordered section styled also the same as My Assets section from my-investments
 
@@ -81,8 +81,8 @@ User <- title
 3. repeat
 
 2nd column (list of users signed up per email)
-Users Signed-up < title
-- xxxx <- numbers of users signed up
+Users Signed-up and Active Weekly < title
+- xxxx <- numbers of users signed up and are active based on WAU from metrics
 - repeat
 - repeat
 
