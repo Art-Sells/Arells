@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
+import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import { WEEKLY_UAR_MAX, WEEKLY_UAR_MIN } from '../../lib/portfolio/financialBenefits';
 
@@ -30,22 +31,29 @@ const MyPortfolioPageClient: React.FC = () => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [shellMaxHeight, setShellMaxHeight] = useState(0);
   const [data, setData] = useState<PortfolioMe | null>(null);
+  const [leaderboardRows, setLeaderboardRows] = useState<PortfolioLeaderboardRow[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [shareNote, setShareNote] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSignedIn) {
       setData(null);
+      setLeaderboardRows([]);
       return;
     }
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch('/api/portfolio/me', { credentials: 'include', cache: 'no-store' });
-        if (!res.ok) throw new Error('fetch failed');
-        const json = (await res.json()) as PortfolioMe;
+        const [meRes, lbRes] = await Promise.all([
+          fetch('/api/portfolio/me', { credentials: 'include', cache: 'no-store' }),
+          fetch('/api/portfolio/leaderboard', { credentials: 'include', cache: 'no-store' }),
+        ]);
+        if (!meRes.ok || !lbRes.ok) throw new Error('fetch failed');
+        const json = (await meRes.json()) as PortfolioMe;
+        const lbJson = (await lbRes.json()) as { rows: PortfolioLeaderboardRow[] };
         if (!cancelled) {
           setData(json);
+          setLeaderboardRows(Array.isArray(lbJson.rows) ? lbJson.rows : []);
           setLoadError(false);
         }
       } catch {
@@ -65,7 +73,7 @@ const MyPortfolioPageClient: React.FC = () => {
       window.requestAnimationFrame(() => setOpen(true));
     });
     return () => window.cancelAnimationFrame(raf);
-  }, [isSignedIn, data]);
+  }, [isSignedIn, data, leaderboardRows]);
 
   useLayoutEffect(() => {
     const node = wrapperRef.current;
@@ -75,7 +83,7 @@ const MyPortfolioPageClient: React.FC = () => {
     });
     ro.observe(node);
     return () => ro.disconnect();
-  }, [data, isSignedIn]);
+  }, [data, leaderboardRows, isSignedIn]);
 
   useEffect(() => {
     if (open) setSlideIn(true);
@@ -114,10 +122,16 @@ const MyPortfolioPageClient: React.FC = () => {
   return (
     <>
       <div className="myinv-page myinv-page--accent myinv-page--portfolio">
-        <div className="myinv-header-inner myinv-header-inner--liquid-forever is-liquid page-slide-in">
-          <div className="myinv-title">my portfolio</div>
+        <div className="myportfolio-mission-block page-slide-in">
+          <Link href="/" className="asset-action-button about-icon-button myportfolio-mission-icon-button" aria-label="Arells">
+            <span className="about-icon" aria-hidden="true" />
+          </Link>
+          <p className="myportfolio-mission-tagline">
+            on a mission to ensure
+            <br />
+            your investments never lose value
+          </p>
         </div>
-        <div className="myinv-slogan-layer" aria-hidden="true" />
 
         <div className="myinv-shell shadow-border-wrap">
           <span className="shadow-border" aria-hidden="true" />
@@ -144,9 +158,7 @@ const MyPortfolioPageClient: React.FC = () => {
                   <div className={`myinv-summary-block myinv-accent-border myportfolio-metric-panel${slideIn ? ' page-slide-in' : ''}`}>
                     <div className="myinv-summary-section">
                       <div className="myinv-summary-shell">
-                        <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
-                          <span className="myinv-metric-title">My Weekly Potential Earnings</span>
-                        </div>
+                        <p className="myportfolio-about-title">My Weekly Potential Earnings</p>
                         <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                           {data ? (
                             <UsdRangeMetric min={data.earningsUsdMin} max={data.earningsUsdMax} />
@@ -154,7 +166,7 @@ const MyPortfolioPageClient: React.FC = () => {
                             <UsdRangeMetric min={0} max={0} />
                           )}
                         </div>
-                        <p className="metrics-growth-toolbar-tone myportfolio-benefits-sublabel">
+                        <p className="myinv-metric-title myportfolio-benefits-sublabel">
                           per week at ~100k WAU
                         </p>
                       </div>
@@ -173,8 +185,7 @@ const MyPortfolioPageClient: React.FC = () => {
                             <span className="myinv-metric-symbol">$</span>
                             <span className="myinv-metric-integer">{projected.max}</span>
                           </span>{' '}
-                          a week from our mission to ensure your investments never lose value by using this
-                          link:
+                          a week by using this link:
                         </p>
                         <button
                           type="button"
@@ -186,10 +197,17 @@ const MyPortfolioPageClient: React.FC = () => {
                         </button>
                         {shareNote ? <p className="myportfolio-share-note">{shareNote}</p> : null}
 
+                        <div className="myportfolio-leaderboard-nested myinv-accent-border">
+                          <p className="myportfolio-about-title">Leaderboard</p>
+                          <div className="myportfolio-leaderboard-wrap">
+                            <PortfolioLeaderboard rows={leaderboardRows} />
+                          </div>
+                        </div>
+
                         <div className="myportfolio-about-nested myinv-accent-border">
-                          <p className="myportfolio-about-title">About My Financial Benefits</p>
+                          <p className="myportfolio-about-title">About My Weekly Potential Earnings</p>
                           <p className="myportfolio-body-copy">
-                            Your financial benefits will be derived from our advertising revenue once we have
+                            Your weekly earnings will be derived from our advertising revenue once we have
                             100,000~ Weekly Active Users (WAU).
                           </p>
                           <p className="myportfolio-body-copy">
@@ -203,7 +221,7 @@ const MyPortfolioPageClient: React.FC = () => {
                             </span>
                           </p>
                           <Link
-                            href="/my-financial-benefits"
+                            href="/my-weekly-earnings"
                             className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button myportfolio-learn-more"
                           >
                             learn more
@@ -225,7 +243,7 @@ const MyPortfolioPageClient: React.FC = () => {
                           </span>
                         </div>
                         <div className="asset-metric-row" style={{ justifyContent: 'center', marginTop: 12 }}>
-                          <span className="myinv-metric-title">Users to gain until Financial Benefits activated:</span>
+                          <span className="myinv-metric-title">Users to gain until weekly earnings activated:</span>
                         </div>
                         <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                           <span className="myinv-metric-value myportfolio-count-value">

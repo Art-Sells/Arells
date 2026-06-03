@@ -10449,6 +10449,48 @@ a.asset-action-button--save-signin {
 	display: none;
 }
 
+.myportfolio-mission-block {
+	margin-top: 30px;
+	margin-bottom: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+
+.myportfolio-mission-block .about-icon-button.myportfolio-mission-icon-button {
+	width: 41px;
+	height: 41px;
+	margin-bottom: 0;
+}
+
+.myportfolio-mission-block .about-icon {
+	width: 27px;
+	height: 27px;
+	background: var(--myinv-accent-color);
+	-webkit-mask-image: url('/images/Arells-Icon.png');
+	mask-image: url('/images/Arells-Icon.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+
+.myportfolio-mission-tagline {
+	margin: 0;
+	padding: 0 16px;
+	text-align: center;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.1;
+	letter-spacing: -0.2px;
+	word-spacing: -0.5px;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
 .myportfolio-stack {
 	display: flex;
 	flex-direction: column;
@@ -10482,6 +10524,22 @@ a.asset-action-button--save-signin {
 
 .myportfolio-about-nested {
 	margin-top: 16px;
+}
+
+.myportfolio-leaderboard-nested {
+	margin-top: 16px;
+	padding: 12px 10px 14px;
+}
+
+.myportfolio-leaderboard-nested .myportfolio-leaderboard-wrap {
+	padding: 0;
+	overflow-x: auto;
+}
+
+.myportfolio-leaderboard-show-more {
+	display: block;
+	margin: 14px auto 0;
+	text-transform: lowercase;
 }
 
 .myportfolio-share-button,

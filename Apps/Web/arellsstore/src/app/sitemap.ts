@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/about',
     '/my-investments',
     '/my-portfolio',
-    '/my-financial-benefits',
+    '/my-weekly-earnings',
     '/vavity',
   ];
 

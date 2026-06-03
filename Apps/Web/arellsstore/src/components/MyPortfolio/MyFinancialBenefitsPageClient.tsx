@@ -12,13 +12,6 @@ type PortfolioMe = {
   earningsUsdMax: number;
 };
 
-type LeaderboardRow = {
-  obfuscatedEmail: string;
-  activeReferralCount: number;
-  earningsUsdMin: number;
-  earningsUsdMax: number;
-};
-
 const MyFinancialBenefitsPageClient: React.FC = () => {
   const { isSignedIn, authSessionLoading } = useUser();
   const [open, setOpen] = useState(false);
@@ -26,28 +19,21 @@ const MyFinancialBenefitsPageClient: React.FC = () => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [shellMaxHeight, setShellMaxHeight] = useState(0);
   const [me, setMe] = useState<PortfolioMe | null>(null);
-  const [rows, setRows] = useState<LeaderboardRow[]>([]);
   const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     if (!isSignedIn) {
       setMe(null);
-      setRows([]);
       return;
     }
     let cancelled = false;
     (async () => {
       try {
-        const [meRes, lbRes] = await Promise.all([
-          fetch('/api/portfolio/me', { credentials: 'include', cache: 'no-store' }),
-          fetch('/api/portfolio/leaderboard', { credentials: 'include', cache: 'no-store' }),
-        ]);
-        if (!meRes.ok || !lbRes.ok) throw new Error('fetch failed');
+        const meRes = await fetch('/api/portfolio/me', { credentials: 'include', cache: 'no-store' });
+        if (!meRes.ok) throw new Error('fetch failed');
         const meJson = (await meRes.json()) as PortfolioMe;
-        const lbJson = (await lbRes.json()) as { rows: LeaderboardRow[] };
         if (!cancelled) {
           setMe(meJson);
-          setRows(Array.isArray(lbJson.rows) ? lbJson.rows : []);
           setLoadError(false);
         }
       } catch {
@@ -67,7 +53,7 @@ const MyFinancialBenefitsPageClient: React.FC = () => {
       window.requestAnimationFrame(() => setOpen(true));
     });
     return () => window.cancelAnimationFrame(raf);
-  }, [isSignedIn, me, rows]);
+  }, [isSignedIn, me]);
 
   useLayoutEffect(() => {
     const node = wrapperRef.current;
@@ -77,7 +63,7 @@ const MyFinancialBenefitsPageClient: React.FC = () => {
     });
     ro.observe(node);
     return () => ro.disconnect();
-  }, [me, rows, isSignedIn]);
+  }, [me, isSignedIn]);
 
   useEffect(() => {
     if (open) setSlideIn(true);
@@ -100,7 +86,7 @@ const MyFinancialBenefitsPageClient: React.FC = () => {
   return (
     <div className="myinv-page myinv-page--accent myinv-page--portfolio">
       <div className="myinv-header-inner myinv-header-inner--liquid-forever is-liquid page-slide-in">
-        <div className="myinv-title">my financial benefits</div>
+        <div className="myinv-title">my weekly earnings</div>
       </div>
       <div className="myinv-slogan-layer" aria-hidden="true" />
 
@@ -123,15 +109,15 @@ const MyFinancialBenefitsPageClient: React.FC = () => {
             ) : isSignedIn ? (
               <>
                 {loadError ? (
-                  <p className="myportfolio-body-copy">Unable to load financial benefits. Try again later.</p>
+                  <p className="myportfolio-body-copy">Unable to load weekly earnings. Try again later.</p>
                 ) : null}
 
                 <div className={`myinv-summary-block myinv-accent-border myportfolio-explainer${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-summary-section">
                     <div className="myinv-summary-shell">
                       <p className="myportfolio-body-copy" style={{ textAlign: 'left' }}>
-                        Your Financial Benefits will be derived from the 65% of advertising revenue (User Ad
-                        Revenue (UAR)) Arells generates, Arells will keep 35%.
+                        Your weekly earnings will be derived from the 65% of advertising revenue (User Ad Revenue
+                        (UAR)) Arells generates, Arells will keep 35%.
                       </p>
                       <p className="myportfolio-body-copy" style={{ textAlign: 'left' }}>
                         Out of the 65%, you currently will get{' '}
@@ -150,38 +136,6 @@ const MyFinancialBenefitsPageClient: React.FC = () => {
                         This means the more people you sign up and are active, the more advertising revenue you
                         receive.
                       </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                  <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Leaderboard</div>
-                  <div className="myinv-panel-section myinv-accent-border">
-                    <div className="myinv-panel myinv-panel--shell myportfolio-leaderboard-wrap">
-                      {rows.length === 0 ? (
-                        <p className="myportfolio-leaderboard-empty">No referral activity yet.</p>
-                      ) : (
-                        <table className="myportfolio-leaderboard">
-                          <thead>
-                            <tr>
-                              <th>User</th>
-                              <th>Users Signed-up and Active Weekly</th>
-                              <th>Weekly Potential Earnings</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {rows.map((row) => (
-                              <tr key={row.obfuscatedEmail}>
-                                <td>{row.obfuscatedEmail}</td>
-                                <td>{row.activeReferralCount.toLocaleString('en-US')}</td>
-                                <td>
-                                  <UsdRangeMetric min={row.earningsUsdMin} max={row.earningsUsdMax} />
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      )}
                     </div>
                   </div>
                 </div>

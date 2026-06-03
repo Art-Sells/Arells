@@ -5,19 +5,19 @@ import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../../lib/siteMetaDe
 const banner = '/images/banners/MyInvestmentsBanner.jpg';
 
 export const metadata: Metadata = {
-  title: 'My Financial Benefits',
+  title: 'My Weekly Earnings',
   description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
   robots: { index: false, follow: true },
-  alternates: { canonical: '/my-financial-benefits' },
+  alternates: { canonical: '/my-weekly-earnings' },
   openGraph: {
-    title: 'My Financial Benefits',
+    title: 'My Weekly Earnings',
     description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
-    url: '/my-financial-benefits',
+    url: '/my-weekly-earnings',
     type: 'website',
     images: [{ url: banner }],
   },
 };
 
-export default function MyFinancialBenefitsPage() {
+export default function MyWeeklyEarningsPage() {
   return <MyFinancialBenefitsPageClient />;
 }

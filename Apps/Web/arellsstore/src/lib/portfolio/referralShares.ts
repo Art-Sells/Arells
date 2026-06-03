@@ -9,7 +9,7 @@ import {
   weeklyEarningsUsdRangeFromShare,
 } from './financialBenefits';
 import { listAllUserAuthRecordsFromS3 } from './listUserAuthRecords';
-import { obfuscateEmail } from './obfuscateEmail';
+import { maskEmailForLeaderboard } from './maskEmailForLeaderboard';
 
 export type ReferralEconomics = {
   activeReferralCount: number;
@@ -30,7 +30,7 @@ export type PortfolioMePayload = ReferralEconomics & {
 
 export type LeaderboardRow = {
   email: string;
-  obfuscatedEmail: string;
+  maskedLabel: string;
   activeReferralCount: number;
   earningsUsdMin: number;
   earningsUsdMax: number;
@@ -121,19 +121,15 @@ export async function buildLeaderboardRows(
 ): Promise<LeaderboardRow[]> {
   const { counts } = await buildActiveReferralCounts(s3, bucket, nowMs);
   const records = await listAllUserAuthRecordsFromS3(s3, bucket);
-  const referrerEmails = new Set<string>();
-
-  for (const record of records) {
-    if (record.referralCode) referrerEmails.add(normalizeEmail(record.email));
-    if (record.referredByEmail) referrerEmails.add(normalizeEmail(record.referredByEmail));
-  }
 
   const rows: LeaderboardRow[] = [];
-  for (const email of referrerEmails) {
+  for (const record of records) {
+    if (!record.verified) continue;
+    const email = normalizeEmail(record.email);
     const economics = economicsForReferrer(email, counts);
     rows.push({
       email,
-      obfuscatedEmail: obfuscateEmail(email),
+      maskedLabel: maskEmailForLeaderboard(email),
       activeReferralCount: economics.activeReferralCount,
       earningsUsdMin: economics.earningsUsdMin,
       earningsUsdMax: economics.earningsUsdMax,
@@ -144,7 +140,10 @@ export async function buildLeaderboardRows(
     if (b.activeReferralCount !== a.activeReferralCount) {
       return b.activeReferralCount - a.activeReferralCount;
     }
-    return b.earningsUsdMax - a.earningsUsdMax;
+    if (b.earningsUsdMax !== a.earningsUsdMax) {
+      return b.earningsUsdMax - a.earningsUsdMax;
+    }
+    return a.email.localeCompare(b.email);
   });
 
   return rows;
