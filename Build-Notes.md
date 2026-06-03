@@ -37,22 +37,22 @@ My Financial Benefits: <(styled same as purchased value from my-investments)
 0% <-bold numbers styles same as purchase value numbers from my investments (calculate this number from "my financial benefits" page (will add details about how later)) and below the number, styled the same as the UTC words from metrics: of User Ad Revenue
 
 Add this in another bordered section: 
-Sign-up your friends/family to financially benefit from our mission to ensure your investments never lose value by using this link: "share" <button links to htps://arells.com (but connects their e-mail to the sharing link so if the person they shared with signs up using that link, it adds them to the user that shared the links MLM)
+Sign-up your friends/family to financially benefit from our mission to ensure your investments never lose value by using this link: "share" <button links to https://arells.com (but connects their e-mail to the sharing link so if the person they shared with signs up using that link, it adds them to the user that shared the links MLM)
 
 Add a new bordered section inside the "get your friends and family" underneath the share button that says
 
 About My Financial Benefits:
 Your financial benefits will be derived from our advertising revenue once we have 100,000~ Weekly Active Users (WAU).
 
-Estimated weekly Advertising revenue from 100,000~ WAU: 
-$5,000-$10,000 <- bold letters styled the same as purchased value numbers from my-investments
+Estimated weekly User Advertising Advertising revenue from 100,000~ WAU: 
+$3,000-$7,000 <- bold letters styled the same as purchased value numbers from my-investments
 
 (learn more) - button links to /my-financial-benefits
 
 and below the my financial benefits bordered section, create another bordered section styled/ double-bordered just like the "My Assets" section and and in place of the "My Assets" title it "Weekly Active Users"
  and inside the double borders, in big bold black numbers same stylings as the summary purchase value numbers from y -investments, list the WAU from metrics
 
-and below that number, list in the same style as purchased value title from my investments page "Users to gain until Financial Benefits activated:" and subtract the WAU from 100,000 and lis it in the same stylings as the purchased valye numbers.
+and below that number, list in the same style as purchased value title from my investments page "Users to gain until Financial Benefits activated:" and subtract the WAU from 100,000 and list it in the same stylings as the purchased valye numbers.
 
 and below the "Weekly Active Users" section, add another bordered section styled the same as My Assets bordered section titled "Add Investments" in place of "My Assets" title and inside the bordered section, add a button "view my investments" that links to: /my-investments
 
@@ -64,8 +64,8 @@ and below that a double bordered section and inside it, add these words:
 
 Your Financial Benefits will be derived from the 65% of advertising revenue (User Ad Revenue (UAR)) Arells generates, Arells will keep 35%.
 
-Out of the 65%, you currently will get (add the dollar amount bold styled the same as purchased value numbers from my -investments dependent on how many users they signed up) from our estimated weekly Advertising revenue from 
-of $5,000-$10,000 <- (bold letters styled the same as purchased value numbers from my-investments) based on 100,000~ WAU (Weekly Active Users)
+Out of the 65%, you currently will get (add the dollar amount bold styled the same as purchased value numbers from my -investments dependent on how many users they signed up) from weekly User Advertising Revenue 
+of $3,000-$6,000 <- (bold letters styled the same as purchased value numbers from my-investments) based on 100,000~ WAU (Weekly Active Users)
 
 This means the more people you sign up, the more advertising revenue you receive.
 
@@ -95,8 +95,6 @@ Users Signed-up < title
 And in the my-investments page
 
 replace "currently in" and phase one button with "view my portfolio" button  that links to /my-portfolio styled the same as the "view more assets" buttom from /index 
-
-Now brainstorm and tell me what you are going to do
 
 - *(about buton accent color flicker and toggle accent color issues [take pic for reference to fix])*
 -*update indexing after main submission, check google after a week*
