@@ -46,7 +46,7 @@ export default function AssetGuestLanding({
           <span className="shadow-border" aria-hidden="true" />
           <div className={`asset-guest-signin-panel asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
-              <p className="asset-signin-believe-prompt">Sign in to learn more</p>
+              <p className="asset-signin-believe-prompt">Sign in to get involved</p>
               <Link
                 href="/signin"
                 className={`asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty asset-action-button--${cssModifier}`}

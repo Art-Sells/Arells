@@ -143,6 +143,7 @@ const AboutPageClient = () => {
                     <ul className="about-phase-list">
                       <li>Adding assets we plan on impacting.</li>
                       <li>Signing up supporters &amp; believers.</li>
+                      <li>Share advertising revenue with supporters &amp; believers.</li>
                     </ul>
                   </div>
                 </div>
@@ -155,6 +156,7 @@ const AboutPageClient = () => {
                     <ul className="about-phase-list">
                       <li>Building the infrastructure to support investments never losing value.</li>
                       <li>Launching the infrastructure.</li>
+                      <li>Share infrastructure revenue with phase one supporters &amp; believers.</li>
                     </ul>
                   </div>
                 </div>

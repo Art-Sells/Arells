@@ -6,7 +6,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteMetadataBase().origin;
   const now = new Date();
 
-  const staticPaths = ['', '/signin', '/signup', '/about', '/my-investments', '/vavity'];
+  const staticPaths = [
+    '',
+    '/signin',
+    '/signup',
+    '/about',
+    '/my-investments',
+    '/my-portfolio',
+    '/my-financial-benefits',
+    '/vavity',
+  ];
 
   return [
     ...staticPaths.map((path) => ({

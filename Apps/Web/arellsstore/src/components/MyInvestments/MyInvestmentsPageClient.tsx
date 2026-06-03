@@ -1188,16 +1188,13 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
                         <div className="myinv-panel myinv-panel--shell myinv-mission-inner-shell">
                           <div className="myinv-mission-accent-body">
                             <p className="myinv-mission-line">we are on a mission to ensure your investments never lose value</p>
-                            <div className="myinv-panel-section myinv-accent-border myinv-mission-phase-card">
-                              <div className="myinv-panel myinv-panel--shell myinv-mission-phase-shell">
-                                <p className="myinv-mission-sub">currently in</p>
-                                <div className="myinv-mission-about-wrap">
-                                  <Link className="myinv-about-button" href="/about" aria-label="Phase One — About Arells">
-                                    <span className="myinv-about-button-bg" aria-hidden="true" />
-                                    <span className="myinv-about-button-text">Phase One</span>
-                                  </Link>
-                                </div>
-                              </div>
+                            <div className="myinv-mission-portfolio-wrap">
+                              <Link
+                                href="/my-portfolio"
+                                className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button"
+                              >
+                                view my portfolio
+                              </Link>
                             </div>
                           </div>
                         </div>

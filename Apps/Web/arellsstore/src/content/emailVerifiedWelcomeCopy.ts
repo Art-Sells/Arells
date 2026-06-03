@@ -9,22 +9,24 @@ export const emailVerifiedWelcomeCopy = {
 
 /** Rendered below the paragraph above; nested borders in `VerifiedPageClient` + `.auth-verified-welcome-phases--stacked`. */
 export const emailVerifiedWelcomePhaseCopy = {
-  /** Three stacked lines in `VerifiedPageClient`: outer lines black, middle accent. */
   missionPhaseIntroLines: {
     line1: 'We are currently in',
     line2: 'Phase One',
     line3: 'of our mission.',
   },
+  portfolioBenefitLine: 'View portfolio to see how you can financially benefit.',
   phaseOneTitle: 'Phase One:',
   phaseOneLead: 'Expand our mission by...',
   phaseOneBullets: [
     'Adding assets we plan on impacting.',
     'Signing up supporters & believers.',
+    'Share advertising revenue with supporters & believers.',
   ] as const,
   phaseTwoTitle: 'Phase Two:',
   phaseTwoLead: 'Implement our mission by...',
   phaseTwoBullets: [
     'Building the infrastructure to support investments never losing value.',
     'Launching the infrastructure.',
+    'Share infrastructure revenue with phase one supporters & believers.',
   ] as const,
 } as const;

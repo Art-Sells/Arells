@@ -18,6 +18,11 @@ export type UserAuthRecord = {
   resetToken?: string;
   resetExpiresAt?: number;
   updatedAt: number;
+  /** Opaque share code (public in ?ref= links). */
+  referralCode?: string;
+  /** Normalized referrer email set once at registration. */
+  referredByEmail?: string;
+  referredAt?: number;
 };
 
 export type PendingVerification = {

@@ -10440,3 +10440,119 @@ a.asset-action-button--save-signin {
 	}
 }
 
+/* --- My Portfolio / My Financial Benefits --- */
+.myinv-page--portfolio .myinv-header-inner--liquid-forever.is-liquid .myinv-title {
+	font-family: var(--myinv-title-font-liquid, inherit);
+}
+
+.myinv-page--portfolio .myinv-slogan-layer {
+	display: none;
+}
+
+.myportfolio-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.myportfolio-benefits-sublabel {
+	text-align: center;
+	margin: 4px 0 0;
+}
+
+.myportfolio-pct-value,
+.myportfolio-count-value,
+.myportfolio-static-revenue {
+	display: block;
+	text-align: center;
+}
+
+.myportfolio-body-copy {
+	margin: 0 0 12px;
+	text-align: center;
+	font-size: 14px;
+	line-height: 1.45;
+}
+
+.myportfolio-about-title {
+	font-weight: 700;
+	margin: 0 0 10px;
+	text-align: center;
+}
+
+.myportfolio-about-nested {
+	margin-top: 16px;
+}
+
+.myportfolio-share-button,
+.myportfolio-learn-more {
+	display: block;
+	margin: 12px auto 0;
+}
+
+.myportfolio-share-note {
+	text-align: center;
+	margin: 8px 0 0;
+	font-size: 13px;
+}
+
+.myportfolio-metric-panel,
+.myportfolio-cta-panel,
+.myportfolio-explainer {
+	text-align: center;
+	padding: 8px 12px 16px;
+}
+
+.myportfolio-metric-label {
+	display: block;
+	margin: 12px 0 8px;
+}
+
+.myinv-mission-portfolio-wrap {
+	display: flex;
+	justify-content: center;
+	margin-top: 12px;
+}
+
+.myinv-mission-portfolio-wrap .home-assets-show-more-button {
+	text-transform: lowercase;
+}
+
+.auth-verified-welcome-phase-line--portfolio-cta {
+	text-align: center;
+	font-size: 15px;
+	line-height: 1.45;
+}
+
+.myportfolio-leaderboard-wrap {
+	overflow-x: auto;
+	padding: 8px 4px 12px;
+}
+
+.myportfolio-leaderboard {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.myportfolio-leaderboard th,
+.myportfolio-leaderboard td {
+	padding: 8px 6px;
+	text-align: left;
+	vertical-align: top;
+	border-bottom: 1px solid color-mix(in srgb, var(--page-accent-color, #000) 12%, transparent);
+}
+
+.myportfolio-leaderboard th {
+	font-weight: 700;
+}
+
+.myportfolio-leaderboard-empty {
+	text-align: center;
+	padding: 16px;
+}
+
+.myportfolio-static-revenue-line {
+	font-weight: 600;
+}
+

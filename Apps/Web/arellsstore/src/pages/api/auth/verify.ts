@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { mergeAuthPreservingReferral } from '../../../lib/auth/referral';
 import {
   deletePendingVerification,
   getPendingVerification,
@@ -51,12 +52,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ ok: true, email, alreadyVerified: true });
     }
 
-    await putUserAuth(email, {
+    await putUserAuth(
       email,
-      passwordHash: auth.passwordHash,
-      verified: true,
-      updatedAt: Date.now(),
-    });
+      mergeAuthPreservingReferral(auth, {
+        email,
+        passwordHash: auth.passwordHash,
+        verified: true,
+        verificationToken: undefined,
+        verificationExpiresAt: undefined,
+        updatedAt: Date.now(),
+      })
+    );
     await deletePendingVerification(token);
     await ensureUserVavityAggregateExists(email);
 

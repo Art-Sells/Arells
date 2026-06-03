@@ -108,27 +108,14 @@ const VerifiedPageClient: React.FC = () => {
                       </p>
                     </div>
                     <div className="auth-verified-phase-section myinv-accent-border">
-                      <p className="auth-verified-welcome-phase-heading">{emailVerifiedWelcomePhaseCopy.phaseOneTitle}</p>
-                      <p className="auth-verified-welcome-phase-line">{emailVerifiedWelcomePhaseCopy.phaseOneLead}</p>
-                      <ul className="auth-verified-welcome-phase-list">
-                        {emailVerifiedWelcomePhaseCopy.phaseOneBullets.map((t) => (
-                          <li key={t}>{t}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="auth-verified-phase-section myinv-accent-border">
-                      <p className="auth-verified-welcome-phase-heading">{emailVerifiedWelcomePhaseCopy.phaseTwoTitle}</p>
-                      <p className="auth-verified-welcome-phase-line">{emailVerifiedWelcomePhaseCopy.phaseTwoLead}</p>
-                      <ul className="auth-verified-welcome-phase-list">
-                        {emailVerifiedWelcomePhaseCopy.phaseTwoBullets.map((t) => (
-                          <li key={t}>{t}</li>
-                        ))}
-                      </ul>
+                      <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--portfolio-cta">
+                        {emailVerifiedWelcomePhaseCopy.portfolioBenefitLine}
+                      </p>
                     </div>
                   </div>
                 </div>
                 <Link
-                  href="/my-investments"
+                  href="/my-portfolio"
                   className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
                 >
                   View Portfolio

@@ -11,6 +11,7 @@ import {
   isPasswordFieldAuthError,
 } from '../../lib/auth/authFieldErrors';
 import { validateAuthPassword } from '../../lib/auth/validateAuthPassword';
+import { readReferralCodeFromDocumentCookie } from '../../lib/auth/referralClient';
 import { AUTH_COLLAPSE_SCROLL_TOP_MS, scrollDocumentToTopOverMs } from '../../lib/client/documentScroll';
 
 const COLLAPSE_MS = 1500;
@@ -99,6 +100,7 @@ const SignUpPageClient: React.FC = () => {
           password,
           passwordConfirm,
           origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+          referralCode: readReferralCodeFromDocumentCookie(),
         }),
       });
       const data = await res.json().catch(() => ({}));

@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import { EMAIL_RE, normalizeEmail } from '../../../lib/auth/normalize';
 import { validateAuthPassword } from '../../../lib/auth/validateAuthPassword';
+import { attachReferrerOnRegister } from '../../../lib/auth/referral';
 import { getUserAuthByEmail, putPendingVerification, putUserAuth } from '../../../lib/auth/s3UserAuth';
 import { resolveAppOrigin, resolveEmailLogoUrl } from '../../../lib/auth/origin';
 import { sendVerificationEmail } from '../../../lib/auth/sendVerificationEmail';
@@ -12,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email: rawEmail, password, passwordConfirm, origin: bodyOrigin } = req.body || {};
+  const { email: rawEmail, password, passwordConfirm, origin: bodyOrigin, referralCode } = req.body || {};
   if (typeof rawEmail !== 'string' || typeof password !== 'string' || typeof passwordConfirm !== 'string') {
     return res.status(400).json({ error: 'Invalid request', code: 'INVALID_BODY' });
   }
@@ -40,6 +41,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const verificationExpiresAt = Date.now() + 48 * 60 * 60 * 1000;
     const now = Date.now();
 
+    const existingReferral = existing?.referredByEmail
+      ? { referredByEmail: existing.referredByEmail, referredAt: existing.referredAt }
+      : {};
+
     await putUserAuth(email, {
       email,
       passwordHash,
@@ -47,7 +52,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       verificationToken: token,
       verificationExpiresAt,
       updatedAt: now,
+      ...existingReferral,
     });
+
+    if (!existing?.referredByEmail) {
+      await attachReferrerOnRegister(email, referralCode);
+    }
 
     await putPendingVerification(token, { email, expiresAt: verificationExpiresAt });
 

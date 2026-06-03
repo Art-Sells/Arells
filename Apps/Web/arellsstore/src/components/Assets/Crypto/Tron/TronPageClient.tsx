@@ -332,7 +332,7 @@ const TronPageClient: React.FC = () => {
         >
           {!!email && (
             <Link
-              href="/my-investments"
+              href="/my-portfolio"
               className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
             >
               <span className="asset-footer-about-text">view my portfolio</span>

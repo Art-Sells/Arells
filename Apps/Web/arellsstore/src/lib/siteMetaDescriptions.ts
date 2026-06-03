@@ -10,5 +10,5 @@ export const SIGN_UP_META_DESCRIPTION =
   'Sign up to join our mission to ensure investments never lose value. Powered by Vavity.';
 
 export function buildAssetMetaDescription(displayName: string): string {
-  return `${displayName} never loses value with Arells. Sign in to learn more about Arells' mission to ensure ${displayName} never loses value. Powered by Vavity.`;
+  return `${displayName} never loses value with Arells. Sign in to get involved in Arells' mission to ensure ${displayName} never loses value. Powered by Vavity.`;
 }
