@@ -16,11 +16,21 @@ export function referrerShareRatio(activeReferrals: number, totalActiveReferrals
   return activeReferrals / totalActiveReferrals;
 }
 
-export function weeklyEarningsUsdRangeFromShare(share: number): { min: number; max: number } {
-  const s = Math.max(0, Math.min(1, share));
+/** Low band: each active referral's slice of $3k UAR spread over the 100k WAU target. */
+export function referrerLowShareRatio(activeReferrals: number): number {
+  if (activeReferrals <= 0) return 0;
+  return Math.min(1, activeReferrals / WAU_ACTIVATION_TARGET);
+}
+
+export function weeklyEarningsUsdRange(
+  activeReferrals: number,
+  totalActiveReferrals: number
+): { min: number; max: number } {
+  const lowShare = referrerLowShareRatio(activeReferrals);
+  const highShare = referrerShareRatio(activeReferrals, totalActiveReferrals);
   return {
-    min: s * USERS_POOL_WEEKLY_MIN,
-    max: s * USERS_POOL_WEEKLY_MAX,
+    min: lowShare * USERS_POOL_WEEKLY_MIN,
+    max: Math.min(1, highShare) * USERS_POOL_WEEKLY_MAX,
   };
 }
 
@@ -30,9 +40,10 @@ export function projectedWeeklyRangeIfAddedReferrals(
   addMin: number,
   addMax: number
 ): { min: number; max: number } {
-  const lowShare = referrerShareRatio(currentActive + addMin, totalActive + addMin);
+  const lowShare = referrerLowShareRatio(currentActive + addMin);
   const highShare = referrerShareRatio(currentActive + addMax, totalActive + addMax);
-  const low = weeklyEarningsUsdRangeFromShare(lowShare);
-  const high = weeklyEarningsUsdRangeFromShare(highShare);
-  return { min: low.min, max: high.max };
+  return {
+    min: lowShare * USERS_POOL_WEEKLY_MIN,
+    max: Math.min(1, highShare) * USERS_POOL_WEEKLY_MAX,
+  };
 }

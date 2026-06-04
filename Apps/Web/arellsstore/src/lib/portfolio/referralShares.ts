@@ -4,9 +4,8 @@ import { listVerifiedWauActiveEmailKeys } from '../metrics/metricsPageMounts';
 import { aggregateSignedInUserTraffic } from '../metrics/metricsPageMounts';
 import {
   projectedWeeklyRangeIfAddedReferrals,
-  referrerShareRatio,
+  weeklyEarningsUsdRange,
   WAU_ACTIVATION_TARGET,
-  weeklyEarningsUsdRangeFromShare,
 } from './financialBenefits';
 import { listAllUserAuthRecordsFromS3 } from './listUserAuthRecords';
 import { maskEmailForLeaderboard } from './maskEmailForLeaderboard';
@@ -59,8 +58,7 @@ function economicsForReferrer(
   const activeReferralCount = counts.get(normalized) ?? 0;
   let totalActiveReferrals = 0;
   for (const n of counts.values()) totalActiveReferrals += n;
-  const share = referrerShareRatio(activeReferralCount, totalActiveReferrals);
-  const { min, max } = weeklyEarningsUsdRangeFromShare(share);
+  const { min, max } = weeklyEarningsUsdRange(activeReferralCount, totalActiveReferrals);
   return {
     activeReferralCount,
     totalActiveReferrals,
