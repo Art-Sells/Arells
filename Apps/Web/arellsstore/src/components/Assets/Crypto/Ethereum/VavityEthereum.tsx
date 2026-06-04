@@ -298,7 +298,11 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
   const submitResetPendingRef = useRef(false);
   const profitInlineAnimRef = useRef<HTMLSpanElement | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
-  const assetPriceChartMountSlide = useAssetPriceChartMountSlide(24, ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS);
+  const assetPriceChartMountSlide = useAssetPriceChartMountSlide(
+    24,
+    ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS,
+    !isGuestView
+  );
   const assetPageMountAtRef = useRef(Date.now());
   const openInvestmentsDeferTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
@@ -847,6 +851,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
   // in the click handler (mount, then open next tick) to match the Add-more form timing.
 
   useEffect(() => {
+    if (isGuestView) return;
     const el = chartWrapRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
     const update = () => {
@@ -869,7 +874,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
       window.removeEventListener('resize', update);
       window.removeEventListener('resize', updateMobile);
     };
-  }, []);
+  }, [isGuestView]);
 
   const liveInvestments = vavityData?.investments || [];
   const displayData = isClearingInvestments && clearingSnapshotRef.current ? clearingSnapshotRef.current : vavityData;

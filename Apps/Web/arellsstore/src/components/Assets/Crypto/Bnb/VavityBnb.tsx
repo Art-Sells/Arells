@@ -298,7 +298,11 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
   const addMoreFormPanelRef = useRef<HTMLDivElement | null>(null);
   const profitInlineAnimRef = useRef<HTMLSpanElement | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
-  const assetPriceChartMountSlide = useAssetPriceChartMountSlide(24, ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS);
+  const assetPriceChartMountSlide = useAssetPriceChartMountSlide(
+    24,
+    ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS,
+    !isGuestView
+  );
   const assetPageMountAtRef = useRef(Date.now());
   const openInvestmentsDeferTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
@@ -858,6 +862,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
   // in the click handler (mount, then open next tick) to match the Add-more form timing.
 
   useEffect(() => {
+    if (isGuestView) return;
     const el = chartWrapRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
     const update = () => {
@@ -880,7 +885,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
       window.removeEventListener('resize', update);
       window.removeEventListener('resize', updateMobile);
     };
-  }, []);
+  }, [isGuestView]);
 
   const liveInvestments = vavityData?.investments || [];
   const displayData = isClearingInvestments && clearingSnapshotRef.current ? clearingSnapshotRef.current : vavityData;

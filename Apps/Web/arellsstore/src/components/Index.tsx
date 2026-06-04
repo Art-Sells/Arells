@@ -284,6 +284,11 @@ const Index = () => {
 
   /* Measured max-height open (same pattern as growth metrics main card). */
   useEffect(() => {
+    if (!showSignedInHome) {
+      setHomeAssetsPanelOpen(false);
+      setHomeAssetsPanelMaxHeight(0);
+      return;
+    }
     let raf = 0;
     let raf2 = 0;
     raf = window.requestAnimationFrame(() => {
@@ -296,9 +301,10 @@ const Index = () => {
       if (raf) window.cancelAnimationFrame(raf);
       if (raf2) window.cancelAnimationFrame(raf2);
     };
-  }, [visibleAssetCount]);
+  }, [visibleAssetCount, showSignedInHome]);
 
   useLayoutEffect(() => {
+    if (!showSignedInHome) return;
     const node = homeAssetsSlideInnerRef.current;
     if (!node || typeof ResizeObserver === 'undefined') return;
     let raf = 0;
@@ -315,7 +321,7 @@ const Index = () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [visibleAssetCount]);
+  }, [visibleAssetCount, showSignedInHome]);
 
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;

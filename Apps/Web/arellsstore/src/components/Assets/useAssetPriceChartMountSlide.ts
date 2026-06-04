@@ -25,13 +25,19 @@ export const ASSET_SUMMARY_PAUSE_BEFORE_EXPAND_MS = 2000;
  */
 export function useAssetPriceChartMountSlide(
   bufferPx: number = 24,
-  transitionSeconds: number = ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS
+  transitionSeconds: number = ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS,
+  enabled: boolean = true
 ) {
   const measureRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
   const [maxHeight, setMaxHeight] = useState(0);
 
   useEffect(() => {
+    if (!enabled) {
+      setOpen(false);
+      setMaxHeight(0);
+      return;
+    }
     let raf = 0;
     let raf2 = 0;
     raf = window.requestAnimationFrame(() => {
@@ -44,9 +50,10 @@ export function useAssetPriceChartMountSlide(
       if (raf) window.cancelAnimationFrame(raf);
       if (raf2) window.cancelAnimationFrame(raf2);
     };
-  }, [bufferPx]);
+  }, [bufferPx, enabled]);
 
   useLayoutEffect(() => {
+    if (!enabled) return;
     const node = measureRef.current;
     if (!node || typeof ResizeObserver === 'undefined') return;
     let raf = 0;
@@ -63,7 +70,7 @@ export function useAssetPriceChartMountSlide(
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [bufferPx]);
+  }, [bufferPx, enabled]);
 
   const slidePanelProps: { className: string; style: CSSProperties } = {
     className: `asset-slide-panel asset-asset-price-chart-mount-slide${open ? ' is-open' : ''}`,
