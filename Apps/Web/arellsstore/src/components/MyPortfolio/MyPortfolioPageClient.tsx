@@ -177,7 +177,7 @@ const MyPortfolioPageClient: React.FC = () => {
                     <div className="myinv-panel-section myinv-accent-border">
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
                         <p className="myportfolio-body-copy">
-                          Sign-up 2–3 friends/family to potentially earn{' '}
+                          Sign-up 3 or more friends/family to potentially earn{' '}
                           <span className="myinv-metric-value myportfolio-inline-usd">
                             <span className="myinv-metric-symbol">$</span>
                             <span className="myinv-metric-integer">{projected.min}</span>
