@@ -117,7 +117,7 @@ const MyPortfolioPageClient: React.FC = () => {
 
   const projected = data
     ? formatUsdRangeDisplay(data.projectedEarningsUsdMin, data.projectedEarningsUsdMax)
-    : { min: '0', max: '0' };
+    : formatUsdRangeDisplay(0, 0);
 
   return (
     <>
@@ -273,6 +273,13 @@ const MyPortfolioPageClient: React.FC = () => {
               ) : null}
             </div>
           </div>
+        </div>
+
+        <div className="myinv-about-wrap">
+          <Link className="myinv-about-button" href="/about">
+            <span className="myinv-about-button-bg" aria-hidden="true" />
+            <span className="myinv-about-button-text">about</span>
+          </Link>
         </div>
 
         <SiteSocialFooter variant="accent" />

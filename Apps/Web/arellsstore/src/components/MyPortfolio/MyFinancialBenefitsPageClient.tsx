@@ -126,7 +126,7 @@ const MyFinancialBenefitsPageClient: React.FC = () => {
                         <span className="myportfolio-static-revenue-line">
                           <span className="myinv-metric-symbol">$</span>
                           {WEEKLY_UAR_MIN.toLocaleString('en-US')}
-                          <span>–</span>
+                          <span className="myportfolio-usd-range-sep">–</span>
                           <span className="myinv-metric-symbol">$</span>
                           {WEEKLY_UAR_MAX.toLocaleString('en-US')}
                         </span>{' '}
@@ -154,6 +154,13 @@ const MyFinancialBenefitsPageClient: React.FC = () => {
             ) : null}
           </div>
         </div>
+      </div>
+
+      <div className="myinv-about-wrap">
+        <Link className="myinv-about-button" href="/about">
+          <span className="myinv-about-button-bg" aria-hidden="true" />
+          <span className="myinv-about-button-text">about</span>
+        </Link>
       </div>
 
       <SiteSocialFooter variant="accent" />

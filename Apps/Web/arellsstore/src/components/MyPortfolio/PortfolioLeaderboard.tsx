@@ -40,9 +40,17 @@ const PortfolioLeaderboard: React.FC<Props> = ({ rows }) => {
           {visibleRows.map((row) => (
             <tr key={row.email}>
               <td>{row.maskedLabel}</td>
-              <td>{row.activeReferralCount.toLocaleString('en-US')}</td>
               <td>
-                <UsdRangeMetric min={row.earningsUsdMin} max={row.earningsUsdMax} />
+                {row.activeReferralCount === 0
+                  ? '--'
+                  : row.activeReferralCount.toLocaleString('en-US')}
+              </td>
+              <td>
+                {row.earningsUsdMin === 0 && row.earningsUsdMax === 0 ? (
+                  '--'
+                ) : (
+                  <UsdRangeMetric min={row.earningsUsdMin} max={row.earningsUsdMax} />
+                )}
               </td>
             </tr>
           ))}

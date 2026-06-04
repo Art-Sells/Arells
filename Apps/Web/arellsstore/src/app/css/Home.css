@@ -5577,6 +5577,10 @@ a.myinv-about-button:focus-visible {
 		font-size: 14px;
 	}
 
+	.myportfolio-usd-range-sep {
+		font-size: 14px;
+	}
+
 	.myinv-metric-value {
 		font-size: 25px;
 	}
@@ -10615,16 +10619,17 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-usd-range-sep {
-	margin: 0 0.15em;
-	font-weight: 700;
+	margin: 0 0.4em;
+	font-size: 19px;
+	font-weight: 800;
+	color: #000;
+	opacity: 0.4;
+	vertical-align: 2.7px;
 }
 
 .myportfolio-inline-usd {
-	display: inline-flex;
-	align-items: baseline;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 0.1em;
+	display: inline;
+	text-align: inherit;
 }
 
 .myportfolio-share-panel {
