@@ -22,6 +22,7 @@ export type PortfolioMePayload = ReferralEconomics & {
   referralCode: string;
   projectedEarningsUsdMin: number;
   projectedEarningsUsdMax: number;
+  topReferrerMaxUsd: number;
   wau: number;
   usersUntilActivation: number;
   wauActivationTarget: number;
@@ -34,6 +35,37 @@ export type LeaderboardRow = {
   earningsUsdMin: number;
   earningsUsdMax: number;
 };
+
+export type PublicEarningsPayload = {
+  topReferrerMaxUsd: number;
+  fallbackProjectionMaxUsd: number;
+};
+
+/** Highest weekly max among referrers on the leaderboard (0 if none have active referrals). */
+export function topReferrerWeeklyMaxUsd(rows: LeaderboardRow[]): number {
+  let top = 0;
+  for (const row of rows) {
+    if (row.earningsUsdMax > top) top = row.earningsUsdMax;
+  }
+  return top;
+}
+
+function topReferrerMaxFromCounts(counts: Map<string, number>): number {
+  let totalActiveReferrals = 0;
+  for (const n of counts.values()) totalActiveReferrals += n;
+  let top = 0;
+  for (const n of counts.values()) {
+    const { max } = weeklyEarningsUsdRange(n, totalActiveReferrals);
+    if (max > top) top = max;
+  }
+  return top;
+}
+
+/** UI max: top referrer when one exists, otherwise share-projection max. */
+export function groupDisplayMaxUsd(topReferrerMax: number, shareProjectionMax: number): number {
+  if (topReferrerMax > 0) return topReferrerMax;
+  return shareProjectionMax;
+}
 
 function countActiveReferralsByReferrer(
   records: Awaited<ReturnType<typeof listAllUserAuthRecordsFromS3>>,
@@ -83,6 +115,22 @@ export async function buildActiveReferralCounts(
   };
 }
 
+export async function buildPublicEarningsPayload(
+  s3: AWS.S3,
+  bucket: string,
+  nowMs: number = Date.now()
+): Promise<PublicEarningsPayload> {
+  const { counts } = await buildActiveReferralCounts(s3, bucket, nowMs);
+  const topReferrerMaxUsd = topReferrerMaxFromCounts(counts);
+  let totalActiveReferrals = 0;
+  for (const n of counts.values()) totalActiveReferrals += n;
+  const fallback = projectedWeeklyRangeIfAddedReferrals(0, totalActiveReferrals, 2, 3);
+  return {
+    topReferrerMaxUsd,
+    fallbackProjectionMaxUsd: fallback.max,
+  };
+}
+
 export async function buildPortfolioMePayload(
   s3: AWS.S3,
   bucket: string,
@@ -99,6 +147,7 @@ export async function buildPortfolioMePayload(
     2,
     3
   );
+  const topReferrerMaxUsd = topReferrerMaxFromCounts(counts);
 
   return {
     shareUrl,
@@ -106,6 +155,7 @@ export async function buildPortfolioMePayload(
     ...economics,
     projectedEarningsUsdMin: projected.min,
     projectedEarningsUsdMax: projected.max,
+    topReferrerMaxUsd,
     wau,
     usersUntilActivation: Math.max(0, WAU_ACTIVATION_TARGET - wau),
     wauActivationTarget: WAU_ACTIVATION_TARGET,

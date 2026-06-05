@@ -21,12 +21,7 @@ const formatCurrencyParts = (value: number) => {
   return { integer, decimals };
 };
 
-export type MyInvestmentsPageClientProps = {
-  /** Static UI preview: signed-in, zero holdings (no API polling for initial ready). */
-  emptyPortfolioPreview?: boolean;
-};
-
-const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ emptyPortfolioPreview = false }) => {
+const MyInvestmentsPageClient: React.FC = () => {
   const {
     isSignedIn,
     email,
@@ -50,7 +45,6 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
     assets,
   } = useVavity();
   const forceSessionPreview = false;
-  const forceEmptyEmailPreview = emptyPortfolioPreview;
   const supportedAssets = useMemo(() => [...SUPPORTED_CRYPTO_ASSET_IDS], []);
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
@@ -62,18 +56,14 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
     () => supportedAssets.filter((asset) => !sessionAssetsPresent.includes(asset)),
     [sessionAssetsPresent, supportedAssets]
   );
-  const effectiveSignedIn = forceSessionPreview ? true : forceEmptyEmailPreview ? true : isSignedIn;
-  const effectiveEmail = forceSessionPreview ? 'session' : forceEmptyEmailPreview ? 'preview@arells.com' : email;
-  const effectiveInvestments = forceSessionPreview ? sessionInvestments : forceEmptyEmailPreview ? [] : emailInvestments;
-  const effectiveAssetsPresent = forceSessionPreview ? sessionAssetsPresent : forceEmptyEmailPreview ? [] : assetsPresentInEmail;
-  const effectiveAssetsMissing = forceSessionPreview
-    ? sessionAssetsMissing
-    : forceEmptyEmailPreview
-      ? [...SUPPORTED_CRYPTO_ASSET_IDS]
-      : assetsMissingInEmail;
+  const effectiveSignedIn = forceSessionPreview ? true : isSignedIn;
+  const effectiveEmail = forceSessionPreview ? 'session' : email;
+  const effectiveInvestments = forceSessionPreview ? sessionInvestments : emailInvestments;
+  const effectiveAssetsPresent = forceSessionPreview ? sessionAssetsPresent : assetsPresentInEmail;
+  const effectiveAssetsMissing = forceSessionPreview ? sessionAssetsMissing : assetsMissingInEmail;
 
   useEffect(() => {
-    if (forceEmptyEmailPreview || !effectiveInvestments.length) return;
+    if (!effectiveInvestments.length) return;
     const assetIds = [
       ...new Set(
         effectiveInvestments.map((inv: { asset?: string }) =>
@@ -82,7 +72,7 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
       ),
     ];
     void ensureAssetsLoaded(assetIds);
-  }, [effectiveInvestments, ensureAssetsLoaded, forceEmptyEmailPreview]);
+  }, [effectiveInvestments, ensureAssetsLoaded]);
 
   const valuedInvestments = useMemo(() => {
     if (!effectiveInvestments.length) return [];
@@ -193,13 +183,6 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
   const lastFormattedProfitRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (forceEmptyEmailPreview) {
-      if (!initialFetchDoneRef.current) {
-        initialFetchDoneRef.current = true;
-        setInitialDataReady(true);
-      }
-      return;
-    }
     const shouldPoll = forceSessionPreview ? Boolean(sessionId) : Boolean(effectiveEmail);
     if (!shouldPoll) {
       const stillWaiting = forceSessionPreview
@@ -237,7 +220,6 @@ const MyInvestmentsPageClient: React.FC<MyInvestmentsPageClientProps> = ({ empty
       window.clearInterval(id);
     };
   }, [
-    forceEmptyEmailPreview,
     forceSessionPreview,
     fetchVavityAggregatorAll,
     refreshEmailAggregator,

@@ -10664,3 +10664,150 @@ a.asset-action-button--save-signin {
 	padding: 12px 14px 16px;
 }
 
+.myportfolio-mission-icon-static {
+	width: 41px;
+	height: 41px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.myportfolio-weekly-guest-signin-pitch {
+	margin: 0 auto 16px;
+	padding: 0 16px;
+	max-width: 340px;
+	text-align: center;
+	font-size: 15px;
+	line-height: 1.35;
+	color: #222;
+}
+
+.myportfolio-weekly-guest-signin-button {
+	display: block;
+	margin: 0 auto 24px;
+	text-transform: lowercase;
+}
+
+.myportfolio-referral-network-nested {
+	margin-top: 16px;
+	padding: 12px 10px 14px;
+}
+
+.myportfolio-referral-pyramid {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0;
+	width: 100%;
+}
+
+.myportfolio-referral-pyramid-tier {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	gap: 6px;
+}
+
+.myportfolio-referral-pyramid-tier--you {
+	margin-bottom: 2px;
+}
+
+.myportfolio-referral-pyramid-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+}
+
+.myportfolio-referral-pyramid-node {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	padding: 8px 12px;
+	border-radius: 8px;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--myinv-accent-color);
+	background: color-mix(in srgb, var(--myinv-accent-color) 10%, transparent);
+	border: 1px solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	box-sizing: border-box;
+}
+
+.myportfolio-referral-pyramid-tier--you .myportfolio-referral-pyramid-node {
+	min-width: 56px;
+	font-size: 13px;
+}
+
+.myportfolio-referral-pyramid-connector {
+	width: 2px;
+	height: 14px;
+	background: color-mix(in srgb, var(--myinv-accent-color) 35%, transparent);
+	border-radius: 1px;
+}
+
+.myportfolio-referral-pyramid-band {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	padding: 10px 16px;
+	border-radius: 10px;
+	width: min(100%, 280px);
+	box-sizing: border-box;
+	background: color-mix(in srgb, var(--myinv-accent-color) 8%, transparent);
+	border: 1px solid color-mix(in srgb, var(--myinv-accent-color) 22%, transparent);
+}
+
+.myportfolio-referral-pyramid-band-label {
+	font-size: 12px;
+	font-weight: 800;
+	color: var(--myinv-accent-color);
+	letter-spacing: -0.3px;
+}
+
+.myportfolio-referral-pyramid-band-count {
+	font-size: 11px;
+	font-weight: 600;
+	color: #444;
+}
+
+.myportfolio-referral-pyramid-tier-meta {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.35;
+	color: #444;
+	text-align: center;
+}
+
+.myportfolio-referral-pyramid-amount {
+	font-weight: 700;
+	color: var(--myinv-accent-color);
+}
+
+.myportfolio-referral-pyramid-footer {
+	margin: 14px 0 0;
+	text-align: center;
+	font-size: 13px;
+	font-weight: 600;
+	color: #222;
+}
+
+.myportfolio-referral-pyramid-range {
+	display: inline-flex;
+	vertical-align: baseline;
+}
+
+.myportfolio-referral-pyramid-footer-suffix {
+	margin-left: 2px;
+}
+
+.myportfolio-referral-pyramid-disclaimer {
+	margin: 10px 0 0;
+	font-size: 11px;
+	line-height: 1.35;
+	color: #666;
+	text-align: center;
+}
+

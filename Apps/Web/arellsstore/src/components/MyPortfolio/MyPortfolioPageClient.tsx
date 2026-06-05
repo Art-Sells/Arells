@@ -7,8 +7,8 @@ import SiteSocialFooter from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
 import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
+import { groupDisplayMaxUsd, topReferrerWeeklyMaxUsd } from '../../lib/portfolio/referralShares';
 import { WEEKLY_UAR_MAX, WEEKLY_UAR_MIN } from '../../lib/portfolio/financialBenefits';
-
 type PortfolioMe = {
   shareUrl: string;
   referralCode: string;
@@ -24,8 +24,14 @@ type PortfolioMe = {
 
 const staticRevenue = formatUsdRangeDisplay(WEEKLY_UAR_MIN, WEEKLY_UAR_MAX);
 
-const MyPortfolioPageClient: React.FC = () => {
+export type MyPortfolioPageClientProps = {
+  /** Renders signed-out layout without signing out (preview route only). */
+  guestPreview?: boolean;
+};
+
+const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPreview = false }) => {
   const { isSignedIn, authSessionLoading } = useUser();
+  const showGuestLayout = guestPreview || (!isSignedIn && !authSessionLoading);
   const [open, setOpen] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -36,7 +42,7 @@ const MyPortfolioPageClient: React.FC = () => {
   const [shareNote, setShareNote] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isSignedIn) {
+    if (guestPreview || !isSignedIn) {
       setData(null);
       setLeaderboardRows([]);
       return;
@@ -63,7 +69,7 @@ const MyPortfolioPageClient: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [isSignedIn]);
+  }, [isSignedIn, guestPreview]);
 
   useEffect(() => {
     setOpen(false);
@@ -73,7 +79,7 @@ const MyPortfolioPageClient: React.FC = () => {
       window.requestAnimationFrame(() => setOpen(true));
     });
     return () => window.cancelAnimationFrame(raf);
-  }, [isSignedIn, data, leaderboardRows]);
+  }, [isSignedIn, data, leaderboardRows, guestPreview, showGuestLayout]);
 
   useLayoutEffect(() => {
     const node = wrapperRef.current;
@@ -83,7 +89,7 @@ const MyPortfolioPageClient: React.FC = () => {
     });
     ro.observe(node);
     return () => ro.disconnect();
-  }, [data, leaderboardRows, isSignedIn]);
+  }, [data, leaderboardRows, isSignedIn, guestPreview, showGuestLayout]);
 
   useEffect(() => {
     if (open) setSlideIn(true);
@@ -119,6 +125,10 @@ const MyPortfolioPageClient: React.FC = () => {
     ? formatUsdRangeDisplay(data.projectedEarningsUsdMin, data.projectedEarningsUsdMax)
     : formatUsdRangeDisplay(0, 0);
 
+  const headlineGroupMaxUsd = data
+    ? groupDisplayMaxUsd(topReferrerWeeklyMaxUsd(leaderboardRows), data.projectedEarningsUsdMax)
+    : 0;
+
   return (
     <>
       <div className="myinv-page myinv-page--accent myinv-page--portfolio">
@@ -140,7 +150,7 @@ const MyPortfolioPageClient: React.FC = () => {
             style={{ maxHeight: open ? `${shellMaxHeight}px` : '0px', transition: 'max-height 2s ease' }}
           >
             <div ref={wrapperRef} className="myinv-wrapper myportfolio-stack">
-              {!isSignedIn && !authSessionLoading ? (
+              {showGuestLayout ? (
                 <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-cta-row">
                     <Link href="/signin" className="myinv-cta-button">
@@ -161,7 +171,7 @@ const MyPortfolioPageClient: React.FC = () => {
                         <p className="myportfolio-about-title">My Weekly Potential Earnings</p>
                         <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                           {data ? (
-                            <UsdRangeMetric min={data.earningsUsdMin} max={data.earningsUsdMax} />
+                            <UsdRangeMetric min={data.earningsUsdMin} max={headlineGroupMaxUsd} />
                           ) : (
                             <UsdRangeMetric min={0} max={0} />
                           )}
