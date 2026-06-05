@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 
 /** Default max-height transition for the price/chart block under the title (seconds). */
 export const ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS = 5;
@@ -27,15 +27,24 @@ export function useAssetPriceChartMountSlide(
   bufferPx: number = 24,
   transitionSeconds: number = ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS
 ) {
-  const measureRef = useRef<HTMLDivElement | null>(null);
+  const [measureNode, setMeasureNode] = useState<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
   const [maxHeight, setMaxHeight] = useState(0);
 
+  const measureRef = useCallback((node: HTMLDivElement | null) => {
+    setMeasureNode(node);
+  }, []);
+
   useEffect(() => {
+    if (!measureNode) {
+      setOpen(false);
+      setMaxHeight(0);
+      return;
+    }
     let raf = 0;
     let raf2 = 0;
     raf = window.requestAnimationFrame(() => {
-      const h = measureRef.current?.scrollHeight ?? 0;
+      const h = measureNode.scrollHeight;
       const next = Math.max(0, h + bufferPx);
       setMaxHeight(next);
       raf2 = window.requestAnimationFrame(() => setOpen(true));
@@ -44,26 +53,25 @@ export function useAssetPriceChartMountSlide(
       if (raf) window.cancelAnimationFrame(raf);
       if (raf2) window.cancelAnimationFrame(raf2);
     };
-  }, [bufferPx]);
+  }, [bufferPx, measureNode]);
 
   useLayoutEffect(() => {
-    const node = measureRef.current;
-    if (!node || typeof ResizeObserver === 'undefined') return;
+    if (!measureNode || typeof ResizeObserver === 'undefined') return;
     let raf = 0;
     const measure = () => {
       raf = window.requestAnimationFrame(() => {
-        const next = Math.max(0, node.scrollHeight + bufferPx);
+        const next = Math.max(0, measureNode.scrollHeight + bufferPx);
         setMaxHeight((prev) => (prev === next ? prev : next));
       });
     };
     measure();
     const ro = new ResizeObserver(measure);
-    ro.observe(node);
+    ro.observe(measureNode);
     return () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [bufferPx]);
+  }, [bufferPx, measureNode]);
 
   const slidePanelProps: { className: string; style: CSSProperties } = {
     className: `asset-slide-panel asset-asset-price-chart-mount-slide${open ? ' is-open' : ''}`,

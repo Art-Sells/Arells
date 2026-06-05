@@ -30,19 +30,21 @@ export default function AssetGuestLanding({
   const badgeHref = ASSET_BADGE_HREF[cssModifier] ?? '#';
 
   return (
-    <div className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing page-slide-down`}>
+    <div className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing`}>
       <div className="asset-guest-landing-stack">
         <a
-          className={`asset-title-badge asset-title-badge--section asset-title-badge--${cssModifier} asset-guest-landing-badge`}
+          className={`asset-title-badge asset-title-badge--section asset-title-badge--${cssModifier} asset-guest-landing-badge asset-guest-mount-slide asset-guest-mount-slide--badge`}
           href={badgeHref}
           target="_blank"
           rel="noreferrer"
         >
           <span className="asset-title-badge-label">{ticker}</span>
         </a>
-        <div className="asset-guest-landing-title">{title}</div>
-        <div className={`asset-guest-landing-slogan asset-guest-landing-slogan--${cssModifier}`}>{slogan}</div>
-        <div className={`asset-guest-signin-shell shadow-border-wrap asset-guest-signin-shell--${cssModifier}`}>
+        <div className="asset-guest-landing-title asset-guest-mount-slide asset-guest-mount-slide--title">{title}</div>
+        <div className={`asset-guest-landing-slogan asset-guest-landing-slogan--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}>
+          {slogan}
+        </div>
+        <div className={`asset-guest-signin-shell shadow-border-wrap asset-guest-signin-shell--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--signin`}>
           <span className="shadow-border" aria-hidden="true" />
           <div className={`asset-guest-signin-panel asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
@@ -56,7 +58,11 @@ export default function AssetGuestLanding({
             </div>
           </div>
         </div>
-        <GuestLandingCopyright variant="asset" cssModifier={cssModifier} />
+        <GuestLandingCopyright
+          variant="asset"
+          cssModifier={cssModifier}
+          className="asset-guest-mount-slide asset-guest-mount-slide--copyright"
+        />
       </div>
     </div>
   );

@@ -10132,6 +10132,34 @@ a.asset-action-button--save-signin {
 	animation-delay: 0.48s;
 }
 
+.asset-guest-mount-slide {
+	animation-name: pageSlideUp;
+	animation-duration: 1s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+	will-change: transform, opacity;
+}
+
+.asset-guest-mount-slide--badge {
+	animation-delay: 0s;
+}
+
+.asset-guest-mount-slide--title {
+	animation-delay: 0.12s;
+}
+
+.asset-guest-mount-slide--slogan {
+	animation-delay: 0.24s;
+}
+
+.asset-guest-mount-slide--signin {
+	animation-delay: 0.36s;
+}
+
+.asset-guest-mount-slide--copyright {
+	animation-delay: 0.48s;
+}
+
 /* Guest landing reuses `.asset-page-content` — reset its fixed 20px top padding so badge margin drives vertical offset. */
 .asset-page-content.asset-guest-landing {
 	width: min(340px, calc(100% - 20px));

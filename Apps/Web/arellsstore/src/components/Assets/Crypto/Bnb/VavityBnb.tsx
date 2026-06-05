@@ -858,6 +858,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
   // in the click handler (mount, then open next tick) to match the Add-more form timing.
 
   useEffect(() => {
+    if (isGuestView) return;
     const el = chartWrapRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
     const update = () => {
@@ -880,7 +881,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
       window.removeEventListener('resize', update);
       window.removeEventListener('resize', updateMobile);
     };
-  }, []);
+  }, [isGuestView]);
 
   const liveInvestments = vavityData?.investments || [];
   const displayData = isClearingInvestments && clearingSnapshotRef.current ? clearingSnapshotRef.current : vavityData;
