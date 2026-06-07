@@ -10601,11 +10601,30 @@ a.asset-action-button--save-signin {
 .myinv-mission-portfolio-wrap {
 	display: flex;
 	justify-content: center;
-	margin-top: 12px;
+	width: 95%;
+	margin-top: -5px;
 }
 
-.myinv-mission-portfolio-wrap .home-assets-show-more-button {
+.myinv-mission-portfolio-wrap .myinv-mission-portfolio-button {
+	margin-top: 0;
+	width: 100%;
+	max-width: none;
 	text-transform: lowercase;
+	background: var(--myinv-accent-color) !important;
+	color: #fff !important;
+	-webkit-text-fill-color: #fff !important;
+	border-color: var(--myinv-accent-color) !important;
+	transition: transform 0.2s ease;
+}
+
+.myinv-mission-portfolio-wrap .myinv-mission-portfolio-button:active {
+	transform: translateY(-2px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.myinv-mission-portfolio-wrap .myinv-mission-portfolio-button:hover {
+		transform: translateY(-2px);
+	}
 }
 
 .auth-verified-welcome-phase-line--portfolio-cta {

@@ -1173,7 +1173,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                             <div className="myinv-mission-portfolio-wrap">
                               <Link
                                 href="/my-portfolio"
-                                className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button"
+                                className="auth-submit auth-submit--accent auth-submit--signup-page myinv-mission-portfolio-button"
                               >
                                 view my portfolio
                               </Link>
