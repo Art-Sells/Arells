@@ -13,11 +13,11 @@ function formatUsdAmount(value: number, withDecimals: boolean): string {
   });
 }
 
-/** Show cents when the amount is sub-dollar or has a fractional part worth displaying. */
+/** Show cents when the amount is sub-dollar, zero, or has a fractional part worth displaying. */
 function formatUsdRangeAmount(value: number, bothZero: boolean): string {
   if (bothZero) return formatUsdAmount(0, true);
   const n = value || 0;
-  if (n === 0) return formatUsdAmount(0, false);
+  if (n === 0) return formatUsdAmount(0, true);
   if (n > 0 && n < 1) return formatUsdAmount(n, true);
   if (Math.abs(n - Math.round(n)) >= 0.005) return formatUsdAmount(n, true);
   return formatUsdAmount(n, false);

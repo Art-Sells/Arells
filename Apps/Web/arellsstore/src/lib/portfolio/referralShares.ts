@@ -9,6 +9,14 @@ import {
 } from './financialBenefits';
 import { listAllUserAuthRecordsFromS3 } from './listUserAuthRecords';
 import { maskEmailForLeaderboard } from './maskEmailForLeaderboard';
+import {
+  buildSiteWidePyramidSnapshot,
+  type ReferralPyramidSnapshot,
+} from './referralTree';
+import { isUserAuthVerified } from '../metrics/listUserS3Touches';
+import type { UserAuthRecord } from '../auth/s3UserAuth';
+
+export type { ReferralPyramidSnapshot };
 
 export type ReferralEconomics = {
   activeReferralCount: number;
@@ -26,6 +34,7 @@ export type PortfolioMePayload = ReferralEconomics & {
   wau: number;
   usersUntilActivation: number;
   wauActivationTarget: number;
+  referralPyramid: ReferralPyramidSnapshot;
 };
 
 export type LeaderboardRow = {
@@ -61,10 +70,24 @@ function topReferrerMaxFromCounts(counts: Map<string, number>): number {
   return top;
 }
 
-/** UI max: top referrer when one exists, otherwise share-projection max. */
+/** UI max for guest / share projection fallback. */
 export function groupDisplayMaxUsd(topReferrerMax: number, shareProjectionMax: number): number {
   if (topReferrerMax > 0) return topReferrerMax;
   return shareProjectionMax;
+}
+
+/** Headline / pyramid max: top referrer when set, else your personal max (not share-projection $4,550). */
+export function headlineDisplayMaxUsd(topReferrerMax: number, personalMaxUsd: number): number {
+  if (topReferrerMax > 0) return topReferrerMax;
+  return personalMaxUsd;
+}
+
+export function buildReferralPyramidSnapshot(
+  records: UserAuthRecord[],
+  wauActiveEmailKeys: Set<string>,
+  topReferrerMaxUsd: number
+): ReferralPyramidSnapshot {
+  return buildSiteWidePyramidSnapshot(records, wauActiveEmailKeys, topReferrerMaxUsd);
 }
 
 function countActiveReferralsByReferrer(
@@ -73,8 +96,8 @@ function countActiveReferralsByReferrer(
 ): Map<string, number> {
   const counts = new Map<string, number>();
   for (const record of records) {
-    if (!record.verified || !record.referredByEmail) continue;
-    const childKey = normalizeEmailKey(record.email);
+    if (!isUserAuthVerified(record) || !record.referredByEmail) continue;
+    const childKey = normalizeEmailKey(normalizeEmail(record.email));
     if (!wauActiveEmailKeys.has(childKey)) continue;
     const referrer = normalizeEmail(record.referredByEmail);
     counts.set(referrer, (counts.get(referrer) ?? 0) + 1);
@@ -103,7 +126,12 @@ export async function buildActiveReferralCounts(
   s3: AWS.S3,
   bucket: string,
   nowMs: number = Date.now()
-): Promise<{ counts: Map<string, number>; wau: number }> {
+): Promise<{
+  counts: Map<string, number>;
+  wau: number;
+  records: UserAuthRecord[];
+  wauActiveEmailKeys: Set<string>;
+}> {
   const [records, wauActiveEmailKeys, traffic] = await Promise.all([
     listAllUserAuthRecordsFromS3(s3, bucket),
     listVerifiedWauActiveEmailKeys(s3, bucket, nowMs),
@@ -112,6 +140,8 @@ export async function buildActiveReferralCounts(
   return {
     counts: countActiveReferralsByReferrer(records, wauActiveEmailKeys),
     wau: traffic.wau,
+    records,
+    wauActiveEmailKeys,
   };
 }
 
@@ -139,7 +169,7 @@ export async function buildPortfolioMePayload(
   referralCode: string,
   nowMs: number = Date.now()
 ): Promise<PortfolioMePayload> {
-  const { counts, wau } = await buildActiveReferralCounts(s3, bucket, nowMs);
+  const { counts, wau, records, wauActiveEmailKeys } = await buildActiveReferralCounts(s3, bucket, nowMs);
   const economics = economicsForReferrer(email, counts);
   const projected = projectedWeeklyRangeIfAddedReferrals(
     economics.activeReferralCount,
@@ -148,6 +178,11 @@ export async function buildPortfolioMePayload(
     3
   );
   const topReferrerMaxUsd = topReferrerMaxFromCounts(counts);
+  const referralPyramid = buildReferralPyramidSnapshot(
+    records,
+    wauActiveEmailKeys,
+    topReferrerMaxUsd
+  );
 
   return {
     shareUrl,
@@ -159,6 +194,7 @@ export async function buildPortfolioMePayload(
     wau,
     usersUntilActivation: Math.max(0, WAU_ACTIVATION_TARGET - wau),
     wauActivationTarget: WAU_ACTIVATION_TARGET,
+    referralPyramid,
   };
 }
 

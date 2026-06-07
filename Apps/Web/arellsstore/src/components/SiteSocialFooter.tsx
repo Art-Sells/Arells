@@ -26,7 +26,7 @@ function variantForPath(pathname: string): FooterVariant {
 }
 
 const SOCIAL_X = 'https://x.com/arellsinc';
-const SOCIAL_TELEGRAM = 'https://t.me/+FauIWiryMRRjMjZh';
+export const SOCIAL_TELEGRAM = 'https://t.me/+FauIWiryMRRjMjZh';
 
 export type SiteSocialFooterProps = {
   variant?: FooterVariant;

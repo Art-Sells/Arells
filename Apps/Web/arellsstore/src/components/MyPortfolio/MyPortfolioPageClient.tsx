@@ -7,7 +7,7 @@ import SiteSocialFooter from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
 import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
-import { groupDisplayMaxUsd, topReferrerWeeklyMaxUsd } from '../../lib/portfolio/referralShares';
+import { headlineDisplayMaxUsd, topReferrerWeeklyMaxUsd } from '../../lib/portfolio/referralShares';
 import { WEEKLY_UAR_MAX, WEEKLY_UAR_MIN } from '../../lib/portfolio/financialBenefits';
 type PortfolioMe = {
   shareUrl: string;
@@ -126,7 +126,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPrev
     : formatUsdRangeDisplay(0, 0);
 
   const headlineGroupMaxUsd = data
-    ? groupDisplayMaxUsd(topReferrerWeeklyMaxUsd(leaderboardRows), data.projectedEarningsUsdMax)
+    ? headlineDisplayMaxUsd(topReferrerWeeklyMaxUsd(leaderboardRows), data.earningsUsdMax)
     : 0;
 
   return (

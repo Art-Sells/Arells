@@ -3,17 +3,21 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
-import SiteSocialFooter from '../SiteSocialFooter';
+import SiteSocialFooter, { SOCIAL_TELEGRAM } from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
 import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import { groupDisplayMaxUsd } from '../../lib/portfolio/referralShares';
-import { WEEKLY_UAR_MAX, WEEKLY_UAR_MIN } from '../../lib/portfolio/financialBenefits';
+import { USERS_POOL_WEEKLY_MAX, USERS_POOL_WEEKLY_MIN, WAU_ACTIVATION_TARGET } from '../../lib/portfolio/financialBenefits';
+import type { ReferralPyramidSnapshot } from '../../lib/portfolio/referralShares';
+
 type PortfolioMe = {
   earningsUsdMin: number;
   earningsUsdMax: number;
+  projectedEarningsUsdMin: number;
   projectedEarningsUsdMax: number;
   topReferrerMaxUsd: number;
+  referralPyramid: ReferralPyramidSnapshot;
 };
 
 type PublicEarnings = {
@@ -128,7 +132,8 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
 
   const groupMaxUsd = useMemo(() => {
     if (me) {
-      return groupDisplayMaxUsd(me.topReferrerMaxUsd, me.projectedEarningsUsdMax);
+      const projectionMax = me.projectedEarningsUsdMax > 0 ? me.projectedEarningsUsdMax : USERS_POOL_WEEKLY_MAX;
+      return groupDisplayMaxUsd(me.topReferrerMaxUsd, projectionMax);
     }
     if (publicEarnings) {
       return groupDisplayMaxUsd(
@@ -138,6 +143,14 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
     }
     return 0;
   }, [me, publicEarnings]);
+
+  /** Personal min when set; else 2-friend projection; else one-referral floor — never $0 on this line. */
+  const explainerMinUsd = useMemo(() => {
+    if (!me) return 0;
+    if (me.earningsUsdMin > 0) return me.earningsUsdMin;
+    if (me.projectedEarningsUsdMin > 0) return me.projectedEarningsUsdMin;
+    return USERS_POOL_WEEKLY_MIN / WAU_ACTIVATION_TARGET;
+  }, [me]);
 
   const guestMaxLabel = formatUsdRangeDisplay(groupMaxUsd, groupMaxUsd).max;
 
@@ -212,27 +225,36 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
                       <p className="myportfolio-body-copy" style={{ textAlign: 'left' }}>
                         Out of the 65%, you currently will get{' '}
                         {me ? (
-                          <UsdRangeMetric min={me.earningsUsdMin} max={groupMaxUsd} />
+                          <UsdRangeMetric min={explainerMinUsd} max={groupMaxUsd} />
                         ) : (
                           <UsdRangeMetric min={0} max={0} />
                         )}{' '}
-                        from weekly User Advertising Revenue of{' '}
-                        <span className="myportfolio-static-revenue-line">
-                          <span className="myinv-metric-symbol">$</span>
-                          {WEEKLY_UAR_MIN.toLocaleString('en-US')}
-                          <span className="myportfolio-usd-range-sep">–</span>
-                          <span className="myinv-metric-symbol">$</span>
-                          {WEEKLY_UAR_MAX.toLocaleString('en-US')}
-                        </span>{' '}
-                        based on 100,000~ WAU (Weekly Active Users).
-                      </p>
-                      <p className="myportfolio-body-copy" style={{ textAlign: 'left' }}>
-                        This means the more people you sign up and are active, the more you will earn.
+                        from weekly User Advertising based on 100,000~ WAU (Weekly Active Users).
                       </p>
 
-                      <div className="myportfolio-referral-network-nested myinv-accent-border">
-                        <p className="myportfolio-about-title">How referral levels add up</p>
-                        <ReferralNetworkExamplePyramid groupMaxUsd={groupMaxUsd} />
+                      {me?.referralPyramid ? (
+                        <div className="myportfolio-referral-network-nested myinv-accent-border">
+                          <p className="myportfolio-about-title">How referral levels add up</p>
+                          <ReferralNetworkExamplePyramid
+                            pyramid={me.referralPyramid}
+                            groupMaxUsd={groupMaxUsd}
+                          />
+                        </div>
+                      ) : null}
+
+                      <div className="myportfolio-referral-network-nested myinv-accent-border myportfolio-telegram-support">
+                        <p className="myportfolio-telegram-support-copy">
+                          Questions/Concerns? Message us on Telegram:{' '}
+                          <a
+                            href={SOCIAL_TELEGRAM}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="myportfolio-telegram-support-link"
+                            aria-label="Message Arells on Telegram"
+                          >
+                            <span className="myportfolio-telegram-support-icon" aria-hidden="true" />
+                          </a>
+                        </p>
                       </div>
                     </div>
                   </div>

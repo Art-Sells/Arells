@@ -1,74 +1,78 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import UsdRangeMetric from './UsdRangeMetric';
+import React from 'react';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
-import {
-  referralNetworkExampleTiers,
-  referralNetworkExampleTotalMinUsd,
-} from '../../lib/portfolio/referralNetworkExample';
+import type { ReferralPyramidSnapshot } from '../../lib/portfolio/referralShares';
 
 type Props = {
+  pyramid: ReferralPyramidSnapshot;
+  /** Top-referrer max with empty-pool fallback (same as my-portfolio headline max). */
   groupMaxUsd: number;
 };
 
-const ReferralNetworkExamplePyramid: React.FC<Props> = ({ groupMaxUsd }) => {
-  const tiers = useMemo(() => referralNetworkExampleTiers(), []);
-  const totalMinUsd = useMemo(() => referralNetworkExampleTotalMinUsd(), []);
+function weeklyActiveUsersLabel(count: number): string {
+  const formatted = count.toLocaleString('en-US');
+  return count === 1 ? `${formatted} weekly active user` : `${formatted} weekly active users`;
+}
+
+const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid, groupMaxUsd }) => {
+  const topReferrerLabel = formatUsdRangeDisplay(groupMaxUsd, groupMaxUsd).max;
+  const l1MinLabel = formatUsdRangeDisplay(pyramid.l1MinUsd, pyramid.l1MinUsd).min;
+  const midMinLabel = formatUsdRangeDisplay(pyramid.midMinUsd, pyramid.midMinUsd).min;
+  const l1CountFormatted = pyramid.l1ActiveWeekly.toLocaleString('en-US');
+  const midCountFormatted = pyramid.midActiveWeekly.toLocaleString('en-US');
 
   return (
     <div className="myportfolio-referral-pyramid">
       <div className="myportfolio-referral-pyramid-tier myportfolio-referral-pyramid-tier--you">
         <span className="myportfolio-referral-pyramid-node">You</span>
       </div>
+
       <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
       <div className="myportfolio-referral-pyramid-tier">
         <div className="myportfolio-referral-pyramid-band">
-          <span className="myportfolio-referral-pyramid-band-label">Level 1</span>
-          <span className="myportfolio-referral-pyramid-band-count">{tiers[0].activeCount} active weekly</span>
+          <span className="myportfolio-referral-pyramid-band-label">You refer:</span>
+          <span className="myportfolio-referral-pyramid-band-count">
+            {weeklyActiveUsersLabel(pyramid.l1ActiveWeekly)}
+          </span>
         </div>
         <p className="myportfolio-referral-pyramid-tier-meta">
-          example min{' '}
-          <span className="myportfolio-referral-pyramid-amount">
-            ${formatUsdRangeDisplay(tiers[0].minUsd, tiers[0].minUsd).min}/wk
-          </span>
+          you earn{' '}
+          <span className="myportfolio-referral-pyramid-amount">${l1MinLabel}/wk</span>
         </p>
       </div>
+
       <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
       <div className="myportfolio-referral-pyramid-tier">
         <div className="myportfolio-referral-pyramid-band">
-          <span className="myportfolio-referral-pyramid-band-label">Level 2</span>
-          <span className="myportfolio-referral-pyramid-band-count">{tiers[1].activeCount} active weekly</span>
+          <span className="myportfolio-referral-pyramid-band-label">
+            Your {l1CountFormatted} Weekly Active Users refer:
+          </span>
+          <span className="myportfolio-referral-pyramid-band-count">
+            {weeklyActiveUsersLabel(pyramid.midActiveWeekly)}
+          </span>
         </div>
         <p className="myportfolio-referral-pyramid-tier-meta">
-          example min{' '}
-          <span className="myportfolio-referral-pyramid-amount">
-            ${formatUsdRangeDisplay(tiers[1].minUsd, tiers[1].minUsd).min}/wk
-          </span>
+          you earn{' '}
+          <span className="myportfolio-referral-pyramid-amount">${midMinLabel}/wk</span>
         </p>
       </div>
+
       <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
       <div className="myportfolio-referral-pyramid-tier">
         <div className="myportfolio-referral-pyramid-band">
-          <span className="myportfolio-referral-pyramid-band-label">Level 3</span>
-          <span className="myportfolio-referral-pyramid-band-count">{tiers[2].activeCount} active weekly</span>
+          <span className="myportfolio-referral-pyramid-band-label">
+            Your {midCountFormatted} Weekly Active Users refer:
+          </span>
+          <span className="myportfolio-referral-pyramid-band-count">
+            {weeklyActiveUsersLabel(pyramid.bottomActiveWeekly)}
+          </span>
         </div>
         <p className="myportfolio-referral-pyramid-tier-meta">
-          example min{' '}
-          <span className="myportfolio-referral-pyramid-amount">
-            ${formatUsdRangeDisplay(tiers[2].minUsd, tiers[2].minUsd).min}/wk
-          </span>
+          you earn up to{' '}
+          <span className="myportfolio-referral-pyramid-amount">${topReferrerLabel}/wk</span>
         </p>
       </div>
-      <p className="myportfolio-referral-pyramid-footer">
-        Example total{' '}
-        <UsdRangeMetric min={totalMinUsd} max={groupMaxUsd} className="myportfolio-referral-pyramid-range" />
-        <span className="myportfolio-referral-pyramid-footer-suffix">/wk</span>
-      </p>
-      <p className="myportfolio-referral-pyramid-disclaimer">
-        Example only: if each person you refer signs up 3 active weekly users, and each of them does the same. Not
-        your current earnings.
-      </p>
     </div>
   );
 };

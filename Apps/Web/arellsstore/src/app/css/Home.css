@@ -10693,6 +10693,49 @@ a.asset-action-button--save-signin {
 	padding: 12px 10px 14px;
 }
 
+.myportfolio-telegram-support-copy {
+	margin: 0;
+	text-align: center;
+	font-size: 13px;
+	line-height: 1.45;
+	color: #222;
+}
+
+.myportfolio-telegram-support-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	width: 36px;
+	height: 36px;
+	margin-left: 2px;
+	border-radius: 8px;
+	border: 1px solid var(--myinv-accent-color);
+	color: var(--myinv-accent-color);
+	text-decoration: none;
+}
+
+.myportfolio-telegram-support-icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-color: currentColor;
+	-webkit-mask-image: url('/images/icons/socials/Telegram.png');
+	mask-image: url('/images/icons/socials/Telegram.png');
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.myportfolio-telegram-support-link:hover {
+		opacity: 0.88;
+	}
+}
+
 .myportfolio-referral-pyramid {
 	display: flex;
 	flex-direction: column;
