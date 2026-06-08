@@ -1,13 +1,18 @@
 'use client';
 
 import React from 'react';
-import { usePortfolioMetricReveal } from './usePortfolioMetricReveal';
+import {
+  usePortfolioMetricReveal,
+  type PortfolioMetricRevealTiming,
+} from './usePortfolioMetricReveal';
 
 type Props = {
   value: string;
   isReady: boolean;
   valueClassName?: string;
   wrapClassName?: string;
+  fadeClassName?: string;
+  revealTiming?: PortfolioMetricRevealTiming;
 };
 
 const PortfolioMetricNumberSlot: React.FC<Props> = ({
@@ -15,8 +20,10 @@ const PortfolioMetricNumberSlot: React.FC<Props> = ({
   isReady,
   valueClassName = 'myinv-metric-integer',
   wrapClassName = 'myinv-metric-value',
+  fadeClassName = 'myportfolio-metric-fade-2s',
+  revealTiming,
 }) => {
-  const { shimmersFading, numbersVisible, showLoader } = usePortfolioMetricReveal(isReady);
+  const { shimmersFading, numbersVisible, showLoader } = usePortfolioMetricReveal(isReady, revealTiming);
 
   return (
     <span
@@ -29,7 +36,7 @@ const PortfolioMetricNumberSlot: React.FC<Props> = ({
         />
       ) : null}
       <span
-        className={`myportfolio-metric-fade-2s${numbersVisible ? ' is-visible' : ''}`}
+        className={`${fadeClassName}${numbersVisible ? ' is-visible' : ''}`}
         aria-hidden={!numbersVisible}
       >
         <span className={valueClassName}>{value}</span>

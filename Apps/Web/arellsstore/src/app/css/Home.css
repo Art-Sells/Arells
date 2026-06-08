@@ -10730,6 +10730,15 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
+.myinv-page--portfolio .myportfolio-metric-fade-1s {
+	opacity: 0;
+	transition: opacity 1s ease;
+}
+
+.myinv-page--portfolio .myportfolio-metric-fade-1s.is-visible {
+	opacity: 1;
+}
+
 .myinv-page--portfolio .myportfolio-usd-amount {
 	display: inline;
 	white-space: nowrap;
@@ -10760,6 +10769,10 @@ a.asset-action-button--save-signin {
 
 .myinv-page--weekly-guest .home-guest-signin-shell {
 	margin-bottom: 8px;
+}
+
+.myinv-page--weekly-guest .home-guest-signin-button.auth-submit--accent {
+	text-transform: none;
 }
 
 .myinv-page--weekly-guest .home-guest-slogan {

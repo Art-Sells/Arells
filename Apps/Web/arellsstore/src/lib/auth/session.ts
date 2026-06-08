@@ -1,4 +1,5 @@
 import type { NextApiRequest } from 'next';
+import { cookies } from 'next/headers';
 import { jwtVerify, SignJWT } from 'jose';
 
 export const AUTH_COOKIE_NAME = 'arells_auth';
@@ -35,6 +36,13 @@ export async function verifySessionToken(token: string): Promise<{ email: string
 
 export async function getSessionFromRequest(req: NextApiRequest): Promise<{ email: string } | null> {
   const raw = req.cookies[AUTH_COOKIE_NAME];
+  if (!raw) return null;
+  return verifySessionToken(raw);
+}
+
+/** App Router pages — read auth cookie from `next/headers`. */
+export async function getSessionFromAppCookies(): Promise<{ email: string } | null> {
+  const raw = cookies().get(AUTH_COOKIE_NAME)?.value;
   if (!raw) return null;
   return verifySessionToken(raw);
 }

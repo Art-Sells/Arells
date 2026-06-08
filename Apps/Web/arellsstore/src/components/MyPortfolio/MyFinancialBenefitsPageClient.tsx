@@ -11,22 +11,24 @@ import UsdRangeMetric from './UsdRangeMetric';
 import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import { groupDisplayMaxUsd } from '../../lib/portfolio/referralShares';
+import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
+import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { USERS_POOL_WEEKLY_MAX, USERS_POOL_WEEKLY_MIN, WAU_ACTIVATION_TARGET } from '../../lib/portfolio/financialBenefits';
 import type { ReferralPyramidSnapshot } from '../../lib/portfolio/referralShares';
+import {
+  PORTFOLIO_METRIC_FADE_FAST,
+  PORTFOLIO_METRIC_REVEAL_FAST,
+} from './usePortfolioMetricReveal';
 
-type PortfolioMe = {
-  earningsUsdMin: number;
-  earningsUsdMax: number;
-  projectedEarningsUsdMin: number;
-  projectedEarningsUsdMax: number;
-  topReferrerMaxUsd: number;
-  referralPyramid: ReferralPyramidSnapshot;
-};
-
-type PublicEarnings = {
-  topReferrerMaxUsd: number;
-  fallbackProjectionMaxUsd: number;
-};
+type PortfolioMe = Pick<
+  PortfolioMePayload,
+  | 'earningsUsdMin'
+  | 'earningsUsdMax'
+  | 'projectedEarningsUsdMin'
+  | 'projectedEarningsUsdMax'
+  | 'topReferrerMaxUsd'
+  | 'referralPyramid'
+>;
 
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
@@ -34,32 +36,54 @@ const imageLoader = ({ src, width, quality }: { src: string; width: number; qual
 export type MyFinancialBenefitsPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
   guestPreview?: boolean;
+  /** SSR public earnings for guest pitch (skips client wait when present). */
+  initialPublicEarnings?: PublicEarningsPayload | null;
+  /** SSR portfolio me for signed-in layout (skips client wait when present). */
+  initialPortfolioMe?: PortfolioMePayload | null;
+};
+
+const toWeeklyMe = (payload: PortfolioMePayload | null): PortfolioMe | null => {
+  if (!payload) return null;
+  return {
+    earningsUsdMin: payload.earningsUsdMin,
+    earningsUsdMax: payload.earningsUsdMax,
+    projectedEarningsUsdMin: payload.projectedEarningsUsdMin,
+    projectedEarningsUsdMax: payload.projectedEarningsUsdMax,
+    topReferrerMaxUsd: payload.topReferrerMaxUsd,
+    referralPyramid: payload.referralPyramid,
+  };
 };
 
 const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps> = ({
   guestPreview = false,
+  initialPublicEarnings = null,
+  initialPortfolioMe = null,
 }) => {
   const { isSignedIn, authSessionLoading } = useUser();
   const [open, setOpen] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [shellMaxHeight, setShellMaxHeight] = useState(0);
-  const [me, setMe] = useState<PortfolioMe | null>(null);
-  const [publicEarnings, setPublicEarnings] = useState<PublicEarnings | null>(null);
+  const [me, setMe] = useState<PortfolioMe | null>(() => toWeeklyMe(initialPortfolioMe));
+  const [publicEarnings, setPublicEarnings] = useState<PublicEarningsPayload | null>(
+    initialPublicEarnings
+  );
   const [loadError, setLoadError] = useState(false);
 
-  const showGuestLayout = guestPreview || (!isSignedIn && !authSessionLoading);
+  const showGuestLayout = guestPreview || (!isSignedIn && !initialPortfolioMe);
+  const showSignedInPanel = isSignedIn || !!initialPortfolioMe;
 
   useEffect(() => {
-    if (authSessionLoading && !guestPreview) return;
     if (showGuestLayout) {
       setMe(null);
+      if (publicEarnings) return;
+
       let cancelled = false;
       (async () => {
         try {
           const res = await fetch('/api/portfolio/public-earnings', { cache: 'no-store' });
           if (!res.ok) throw new Error('fetch failed');
-          const json = (await res.json()) as PublicEarnings;
+          const json = (await res.json()) as PublicEarningsPayload;
           if (!cancelled) {
             setPublicEarnings(json);
             setLoadError(false);
@@ -73,14 +97,17 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
       };
     }
 
+    if (me) return;
+    if (authSessionLoading) return;
+
     let cancelled = false;
     (async () => {
       try {
         const meRes = await fetch('/api/portfolio/me', { credentials: 'include', cache: 'no-store' });
         if (!meRes.ok) throw new Error('fetch failed');
-        const meJson = (await meRes.json()) as PortfolioMe;
+        const meJson = (await meRes.json()) as PortfolioMePayload;
         if (!cancelled) {
-          setMe(meJson);
+          setMe(toWeeklyMe(meJson));
           setLoadError(false);
         }
       } catch {
@@ -90,10 +117,10 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
     return () => {
       cancelled = true;
     };
-  }, [isSignedIn, authSessionLoading, showGuestLayout, guestPreview]);
+  }, [showGuestLayout, authSessionLoading, publicEarnings, me]);
 
   useEffect(() => {
-    if (authSessionLoading && !guestPreview) return;
+    if (!showSignedInPanel && authSessionLoading) return;
     if (showGuestLayout) {
       setOpen(true);
       return;
@@ -160,10 +187,6 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
 
   const guestMaxLabel = formatUsdRangeDisplay(groupMaxUsd, groupMaxUsd).max;
 
-  if (authSessionLoading && !guestPreview) {
-    return <div className="myinv-page myinv-page--accent myinv-page--portfolio" />;
-  }
-
   if (showGuestLayout) {
     return (
       <div className="myinv-page myinv-page--accent myinv-page--portfolio myinv-page--weekly-guest">
@@ -194,6 +217,8 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
                     loading={!publicEarnings}
                     className="myportfolio-weekly-guest-usd-amount"
                     symbolClassName="myinv-metric-symbol myportfolio-weekly-guest-dollar"
+                    fadeClassName={PORTFOLIO_METRIC_FADE_FAST}
+                    revealTiming={PORTFOLIO_METRIC_REVEAL_FAST}
                   />{' '}
                   a week
                 </span>
@@ -203,12 +228,12 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
               <span className="shadow-border" aria-hidden="true" />
               <div className="home-guest-signin-panel myinv-accent-border">
                 <div className="home-guest-signin-inner">
-                  <p className="home-guest-signin-lead">sign in to get involved</p>
+                  <p className="home-guest-signin-lead">Sign In to learn more</p>
                   <Link
                     href="/signin"
                     className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button home-guest-signin-button"
                   >
-                    sign in
+                    Sign In
                   </Link>
                 </div>
               </div>
@@ -242,7 +267,7 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
           style={{ maxHeight: open ? `${shellMaxHeight}px` : '0px', transition: 'max-height 2s ease' }}
         >
           <div ref={wrapperRef} className="myinv-wrapper myportfolio-stack">
-            {isSignedIn ? (
+            {showSignedInPanel ? (
               <>
                 {loadError ? (
                   <p className="myportfolio-body-copy">Unable to load weekly earnings. Try again later.</p>

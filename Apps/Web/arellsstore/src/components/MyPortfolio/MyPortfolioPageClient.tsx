@@ -8,45 +8,47 @@ import UsdRangeMetric from './UsdRangeMetric';
 import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import { headlineDisplayMaxUsd, topReferrerWeeklyMaxUsd } from '../../lib/portfolio/referralShares';
+import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { WEEKLY_UAR_MAX, WEEKLY_UAR_MIN } from '../../lib/portfolio/financialBenefits';
-type PortfolioMe = {
-  shareUrl: string;
-  referralCode: string;
-  earningsUsdMin: number;
-  earningsUsdMax: number;
-  projectedEarningsUsdMin: number;
-  projectedEarningsUsdMax: number;
-  activeReferralCount: number;
-  wau: number;
-  usersUntilActivation: number;
-  wauActivationTarget: number;
-};
 
 const staticRevenue = formatUsdRangeDisplay(WEEKLY_UAR_MIN, WEEKLY_UAR_MAX);
 
 export type MyPortfolioPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
   guestPreview?: boolean;
+  initialPortfolioMe?: PortfolioMePayload | null;
+  initialLeaderboardRows?: PortfolioLeaderboardRow[];
 };
 
-const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPreview = false }) => {
-  const { isSignedIn, authSessionLoading } = useUser();
-  const showGuestLayout = guestPreview || (!isSignedIn && !authSessionLoading);
+const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
+  guestPreview = false,
+  initialPortfolioMe = null,
+  initialLeaderboardRows = [],
+}) => {
+  const { isSignedIn } = useUser();
+  const showGuestLayout = guestPreview || (!isSignedIn && !initialPortfolioMe);
+  const showSignedInPanel = isSignedIn || !!initialPortfolioMe;
   const [open, setOpen] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [shellMaxHeight, setShellMaxHeight] = useState(0);
-  const [data, setData] = useState<PortfolioMe | null>(null);
-  const [leaderboardRows, setLeaderboardRows] = useState<PortfolioLeaderboardRow[]>([]);
+  const [data, setData] = useState<PortfolioMePayload | null>(initialPortfolioMe);
+  const [leaderboardRows, setLeaderboardRows] = useState<PortfolioLeaderboardRow[]>(
+    initialLeaderboardRows
+  );
   const [loadError, setLoadError] = useState(false);
   const [shareNote, setShareNote] = useState<string | null>(null);
 
   useEffect(() => {
-    if (guestPreview || !isSignedIn) {
-      setData(null);
-      setLeaderboardRows([]);
+    if (guestPreview || !showSignedInPanel) {
+      if (!guestPreview) {
+        setData(null);
+        setLeaderboardRows([]);
+      }
       return;
     }
+    if (data) return;
+
     let cancelled = false;
     (async () => {
       try {
@@ -55,7 +57,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPrev
           fetch('/api/portfolio/leaderboard', { credentials: 'include', cache: 'no-store' }),
         ]);
         if (!meRes.ok || !lbRes.ok) throw new Error('fetch failed');
-        const json = (await meRes.json()) as PortfolioMe;
+        const json = (await meRes.json()) as PortfolioMePayload;
         const lbJson = (await lbRes.json()) as { rows: PortfolioLeaderboardRow[] };
         if (!cancelled) {
           setData(json);
@@ -69,7 +71,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPrev
     return () => {
       cancelled = true;
     };
-  }, [isSignedIn, guestPreview]);
+  }, [showSignedInPanel, guestPreview, data]);
 
   useEffect(() => {
     setOpen(false);
@@ -157,7 +159,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPrev
                     </Link>
                   </div>
                 </div>
-              ) : isSignedIn ? (
+              ) : showSignedInPanel ? (
                 <>
                   {loadError ? (
                     <p className="myportfolio-body-copy">Unable to load portfolio. Try again later.</p>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import MyFinancialBenefitsPageClient from '../../components/MyPortfolio/MyFinancialBenefitsPageClient';
+import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarningsServer';
 import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../../lib/siteMetaDescriptions';
 
 const banner = '/images/banners/MyInvestmentsBanner.jpg';
@@ -19,6 +20,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MyWeeklyEarningsPreviewPage() {
-  return <MyFinancialBenefitsPageClient guestPreview />;
+export default async function MyWeeklyEarningsPreviewPage() {
+  const initialPublicEarnings = await fetchPublicEarningsServer();
+
+  return (
+    <MyFinancialBenefitsPageClient
+      guestPreview
+      initialPublicEarnings={initialPublicEarnings}
+    />
+  );
 }
