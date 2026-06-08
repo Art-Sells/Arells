@@ -10706,13 +10706,13 @@ a.asset-action-button--save-signin {
 
 .myinv-page--portfolio .myportfolio-metric-number-wrap .metrics-number-loader--accent {
 	width: 60px;
-	height: 10px;
-	clip-path: inset(0 0 0 0 round 5px);
+	height: 15px;
+	clip-path: inset(0 0 0 0 round 7.5px);
 }
 
 .myinv-page--portfolio .myportfolio-metric-number-wrap .metrics-number-loader--accent::after {
-	height: 10px;
-	border-radius: 5px;
+	height: 15px;
+	border-radius: 7.5px;
 }
 
 .myinv-page--portfolio .myportfolio-metric-number-wrap .asset-number-loader--overlay {
