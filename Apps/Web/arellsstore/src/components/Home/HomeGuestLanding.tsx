@@ -40,7 +40,6 @@ export default function HomeGuestLanding() {
           <span className="shadow-border" aria-hidden="true" />
           <div className="home-guest-signin-panel myinv-accent-border">
             <div className="home-guest-signin-inner">
-              <p className="home-guest-signin-lead">Sign in to get involved</p>
               <Link
                 href="/signin"
                 className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button home-guest-signin-button"

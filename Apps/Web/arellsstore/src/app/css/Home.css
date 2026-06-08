@@ -10691,20 +10691,67 @@ a.asset-action-button--save-signin {
 	justify-content: center;
 }
 
-.myportfolio-weekly-guest-signin-pitch {
-	margin: 0 auto 16px;
-	padding: 0 16px;
-	max-width: 340px;
-	text-align: center;
-	font-size: 15px;
-	line-height: 1.35;
-	color: #222;
+/* Weekly earnings guest — home guest column (340px), icon top spacing via .home-guest-icon-wrap */
+.myinv-page--weekly-guest .home-guest-landing {
+	margin-bottom: 0;
 }
 
-.myportfolio-weekly-guest-signin-button {
-	display: block;
-	margin: 0 auto 24px;
-	text-transform: lowercase;
+.myinv-page--weekly-guest .home-guest-signin-shell {
+	margin-bottom: 8px;
+}
+
+.myinv-page--weekly-guest .home-guest-slogan {
+	font-size: 19px;
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn-accent {
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn {
+	letter-spacing: -0.5px;
+	color: #222;
+	-webkit-text-fill-color: #222;
+}
+
+.myinv-page--weekly-guest .home-guest-slogan.myportfolio-weekly-guest-mission {
+	font-size: 15px;
+	letter-spacing: -.5px;
+	color: #222;
+	-webkit-text-fill-color: #222;
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-copyright.guest-landing-copyright--home {
+	color: var(--myinv-accent-color);
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn .myinv-metric-value {
+	display: inline;
+	font-size: 26px;
+	font-weight: 700;
+	letter-spacing: -1px;
+	line-height: inherit;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+	text-align: inherit;
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn .myinv-metric-symbol {
+	display: inline;
+	font-weight: 800;
+	color: black;
+	font-size: 21px;
+	opacity: .7;
+	vertical-align: 1px;
+	margin-right: 3px;
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn .myinv-metric-integer {
+	font-size: inherit;
+	font-weight: inherit;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
 .myportfolio-referral-network-nested {

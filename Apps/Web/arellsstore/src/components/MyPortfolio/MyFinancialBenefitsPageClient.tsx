@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter, { SOCIAL_TELEGRAM } from '../SiteSocialFooter';
+import GuestLandingCopyright from '../GuestLandingCopyright';
 import UsdRangeMetric from './UsdRangeMetric';
 import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
@@ -24,6 +26,9 @@ type PublicEarnings = {
   topReferrerMaxUsd: number;
   fallbackProjectionMaxUsd: number;
 };
+
+const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
+  `/${src}?w=${width}&q=${quality || 100}`;
 
 export type MyFinancialBenefitsPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
@@ -161,36 +166,61 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
   if (showGuestLayout) {
     return (
       <div className="myinv-page myinv-page--accent myinv-page--portfolio myinv-page--weekly-guest">
-        <div className="myportfolio-mission-block page-slide-in">
-          <div className="myportfolio-mission-icon-static" aria-hidden="true">
-            <span className="about-icon" />
+        <div className="home-guest-landing">
+          <div className="home-guest-landing-stack">
+            <span className="home-guest-icon-wrap home-guest-mount-slide home-guest-mount-slide--icon" aria-hidden="true">
+              <span className="home-guest-icon-tint" aria-hidden="true" />
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={60}
+                height={60}
+                className="home-guest-icon-img"
+                src="images/Arells-Icon.png"
+                priority
+              />
+            </span>
+            <p className="home-guest-slogan myportfolio-weekly-guest-pitch home-guest-mount-slide home-guest-mount-slide--logo">
+              {loadError ? (
+                <>Unable to load earnings info. Try again later.</>
+              ) : (
+                <span className="myportfolio-weekly-guest-pitch-earn">
+                  <span className="myportfolio-weekly-guest-pitch-earn-accent">earn</span>
+                  <br />
+                  up to{' '}
+                  <span className="myinv-metric-value">
+                    <span className="myinv-metric-symbol">$</span>
+                    <span className="myinv-metric-integer">{guestMaxLabel}</span>
+                  </span>{' '}
+                  a week
+                </span>
+              )}
+            </p>
+            <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--slogan">
+              <span className="shadow-border" aria-hidden="true" />
+              <div className="home-guest-signin-panel myinv-accent-border">
+                <div className="home-guest-signin-inner">
+                  <p className="home-guest-signin-lead">sign in to get involved</p>
+                  <Link
+                    href="/signin"
+                    className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button home-guest-signin-button"
+                  >
+                    sign in
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <p className="home-guest-slogan myportfolio-weekly-guest-mission home-guest-mount-slide home-guest-mount-slide--signin">
+              on a mission to ensure investments
+              <br />
+              never lose value
+            </p>
+            <GuestLandingCopyright
+              variant="home"
+              className="myportfolio-weekly-guest-copyright home-guest-mount-slide home-guest-mount-slide--copyright"
+            />
           </div>
-          <p className="myportfolio-mission-tagline">
-            on a mission to ensure
-            <br />
-            investments never lose value
-          </p>
         </div>
-
-        {loadError ? (
-          <p className="myportfolio-weekly-guest-signin-pitch">Unable to load earnings info. Try again later.</p>
-        ) : (
-          <p className="myportfolio-weekly-guest-signin-pitch">
-            Sign in to learn how you can earn up to{' '}
-            <span className="myinv-metric-value">
-              <span className="myinv-metric-symbol">$</span>
-              <span className="myinv-metric-integer">{guestMaxLabel}</span>
-            </span>{' '}
-            a week.
-          </p>
-        )}
-
-        <Link
-          href="/signin"
-          className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button myportfolio-learn-more myportfolio-weekly-guest-signin-button"
-        >
-          sign in
-        </Link>
       </div>
     );
   }
