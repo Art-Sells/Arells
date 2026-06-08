@@ -10691,6 +10691,68 @@ a.asset-action-button--save-signin {
 	justify-content: center;
 }
 
+/* Portfolio metric loaders — accent line (60px), $ visible, numbers fade like home */
+.myinv-page--portfolio .myportfolio-metric-number-wrap {
+	position: relative;
+	display: inline-block;
+	min-width: 60px;
+	line-height: 1;
+	vertical-align: baseline;
+}
+
+.myinv-page--portfolio .myportfolio-metric-number-wrap.myinv-metric-value {
+	min-height: 1em;
+}
+
+.myinv-page--portfolio .myportfolio-metric-number-wrap .metrics-number-loader--accent {
+	width: 60px;
+	height: 10px;
+	clip-path: inset(0 0 0 0 round 5px);
+}
+
+.myinv-page--portfolio .myportfolio-metric-number-wrap .metrics-number-loader--accent::after {
+	height: 10px;
+	border-radius: 5px;
+}
+
+.myinv-page--portfolio .myportfolio-metric-number-wrap .asset-number-loader--overlay {
+	left: 50%;
+	top: calc(50% + 2px);
+	transform: translate(-50%, -50%);
+}
+
+.myinv-page--portfolio .myportfolio-metric-fade-2s {
+	opacity: 0;
+	transition: opacity 2s ease;
+}
+
+.myinv-page--portfolio .myportfolio-metric-fade-2s.is-visible {
+	opacity: 1;
+}
+
+.myinv-page--portfolio .myportfolio-usd-amount {
+	display: inline;
+	white-space: nowrap;
+}
+
+.myinv-page--portfolio .myportfolio-usd-range.myportfolio-inline-usd {
+	display: inline;
+	white-space: nowrap;
+	text-align: inherit;
+}
+
+/* $ — accent; loader/fade applies to number slots only */
+.myinv-page--portfolio .myportfolio-usd-range > .myinv-metric-symbol,
+.myinv-page--portfolio .myportfolio-usd-amount > .myinv-metric-symbol {
+	font-size: 19px;
+	font-weight: 800;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+	opacity: 0.4;
+	vertical-align: 2.7px;
+	margin-right: 1px;
+}
+
 /* Weekly earnings guest — home guest column (340px), icon top spacing via .home-guest-icon-wrap */
 .myinv-page--weekly-guest .home-guest-landing {
 	margin-bottom: 0;
@@ -10726,30 +10788,26 @@ a.asset-action-button--save-signin {
 	color: var(--myinv-accent-color);
 }
 
-.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn .myinv-metric-value {
-	display: inline;
-	font-size: 26px;
-	font-weight: 700;
-	letter-spacing: -1px;
-	line-height: inherit;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	text-align: inherit;
-}
-
-.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn .myinv-metric-symbol {
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn .myportfolio-weekly-guest-dollar {
 	display: inline;
 	font-weight: 800;
-	color: black;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
 	font-size: 21px;
-	opacity: .7;
+	opacity: 0.7;
 	vertical-align: 1px;
 	margin-right: 3px;
 }
 
-.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn .myinv-metric-integer {
-	font-size: inherit;
-	font-weight: inherit;
+.myinv-page--weekly-guest .myportfolio-weekly-guest-usd-amount .myportfolio-metric-number-wrap {
+	font-size: 26px;
+	min-height: 1em;
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-usd-amount .myinv-metric-integer {
+	font-size: 26px;
+	font-weight: 700;
+	letter-spacing: -1px;
 	color: var(--myinv-accent-color);
 	-webkit-text-fill-color: var(--myinv-accent-color);
 }

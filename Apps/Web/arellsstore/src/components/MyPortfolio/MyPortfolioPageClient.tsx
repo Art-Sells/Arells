@@ -121,9 +121,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPrev
     window.setTimeout(() => setShareNote(null), 4000);
   }, [data?.shareUrl]);
 
-  const projected = data
-    ? formatUsdRangeDisplay(data.projectedEarningsUsdMin, data.projectedEarningsUsdMax)
-    : formatUsdRangeDisplay(0, 0);
+  const portfolioMetricsReady = !!data && !loadError;
 
   const headlineGroupMaxUsd = data
     ? headlineDisplayMaxUsd(topReferrerWeeklyMaxUsd(leaderboardRows), data.earningsUsdMax)
@@ -170,11 +168,13 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPrev
                       <div className="myinv-summary-shell">
                         <p className="myportfolio-about-title">My Weekly Potential Earnings</p>
                         <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                          {data ? (
-                            <UsdRangeMetric min={data.earningsUsdMin} max={headlineGroupMaxUsd} />
-                          ) : (
-                            <UsdRangeMetric min={0} max={0} />
-                          )}
+                          {!loadError ? (
+                            <UsdRangeMetric
+                              min={data?.earningsUsdMin ?? 0}
+                              max={headlineGroupMaxUsd}
+                              loading={!portfolioMetricsReady}
+                            />
+                          ) : null}
                         </div>
                         <p className="myinv-metric-title myportfolio-benefits-sublabel">
                           per week at ~100k WAU
@@ -188,13 +188,14 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({ guestPrev
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
                         <p className="myportfolio-body-copy">
                           Sign-up 3 or more friends/family to potentially earn{' '}
-                          <span className="myinv-metric-value myportfolio-inline-usd">
-                            <span className="myinv-metric-symbol">$</span>
-                            <span className="myinv-metric-integer">{projected.min}</span>
-                            <span className="myportfolio-usd-range-sep">–</span>
-                            <span className="myinv-metric-symbol">$</span>
-                            <span className="myinv-metric-integer">{projected.max}</span>
-                          </span>{' '}
+                          {!loadError ? (
+                            <UsdRangeMetric
+                              min={data?.projectedEarningsUsdMin ?? 0}
+                              max={data?.projectedEarningsUsdMax ?? 0}
+                              loading={!portfolioMetricsReady}
+                              className="myportfolio-inline-usd"
+                            />
+                          ) : null}{' '}
                           a week by using this link:
                         </p>
                         <button

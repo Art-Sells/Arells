@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter, { SOCIAL_TELEGRAM } from '../SiteSocialFooter';
 import GuestLandingCopyright from '../GuestLandingCopyright';
+import PortfolioUsdAmount from './PortfolioUsdAmount';
 import UsdRangeMetric from './UsdRangeMetric';
 import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
@@ -188,10 +189,12 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
                   <span className="myportfolio-weekly-guest-pitch-earn-accent">earn</span>
                   <br />
                   up to{' '}
-                  <span className="myinv-metric-value">
-                    <span className="myinv-metric-symbol">$</span>
-                    <span className="myinv-metric-integer">{guestMaxLabel}</span>
-                  </span>{' '}
+                  <PortfolioUsdAmount
+                    amount={guestMaxLabel}
+                    loading={!publicEarnings}
+                    className="myportfolio-weekly-guest-usd-amount"
+                    symbolClassName="myinv-metric-symbol myportfolio-weekly-guest-dollar"
+                  />{' '}
                   a week
                 </span>
               )}
@@ -254,11 +257,13 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
                       </p>
                       <p className="myportfolio-body-copy" style={{ textAlign: 'left' }}>
                         Out of the 65%, you currently will get{' '}
-                        {me ? (
-                          <UsdRangeMetric min={explainerMinUsd} max={groupMaxUsd} />
-                        ) : (
-                          <UsdRangeMetric min={0} max={0} />
-                        )}{' '}
+                        {!loadError ? (
+                          <UsdRangeMetric
+                            min={me ? explainerMinUsd : 0}
+                            max={me ? groupMaxUsd : 0}
+                            loading={!me}
+                          />
+                        ) : null}{' '}
                         from weekly User Advertising based on 100,000~ WAU (Weekly Active Users).
                       </p>
 
