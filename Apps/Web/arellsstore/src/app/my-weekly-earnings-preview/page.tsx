@@ -7,12 +7,12 @@ const banner = '/images/banners/MyInvestmentsBanner.jpg';
 
 /** Signed-out my-weekly-earnings UI. Works while signed in. */
 export const metadata: Metadata = {
-  title: 'Preview — My Weekly Earnings (signed out)',
+  title: 'Earn Money Weekly',
   description: 'Layout preview: guest / signed-out my weekly earnings.',
   robots: { index: false, follow: false },
   alternates: { canonical: '/my-weekly-earnings-preview' },
   openGraph: {
-    title: 'Preview — My Weekly Earnings (signed out)',
+    title: 'Earn Money Weekly',
     description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
     url: '/my-weekly-earnings-preview',
     type: 'website',

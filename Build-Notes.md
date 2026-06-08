@@ -6,7 +6,7 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-*keep chipping away at fixing timing issues for numbers in previews, UI, etc in my weekly earnings and my portfolio, and then create dummy emails to sign up and see with the shared links/etc... test normal signd ups also...*
+*keep chipping away at fixing timing issues for numbers in previews, UI, etc in my weekly earnings and my portfolio, and then create dummy emails to sign up and see with the shared links/etc... test normal sign ups also (with banners)...*
 
 - *(about buton accent color flicker and toggle accent color issues [take pic for reference to fix])*
 -*update indexing after main submission, check google after a week*
