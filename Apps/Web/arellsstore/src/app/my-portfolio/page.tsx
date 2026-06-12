@@ -7,6 +7,7 @@ import {
   fetchPortfolioLeaderboardServer,
   fetchPortfolioMeServer,
 } from '../../lib/portfolio/fetchPortfolioDataServer';
+import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarningsServer';
 import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../../lib/siteMetaDescriptions';
 
 const banner = '/images/banners/MyInvestmentsBanner.jpg';
@@ -29,17 +30,23 @@ export default async function MyPortfolioPage() {
   const session = await getSessionFromAppCookies();
   const origin = resolveAppOrigin(headers().get('origin') ?? undefined, undefined);
 
-  const [initialPortfolioMe, initialLeaderboardRows] = session
+  const [initialPortfolioMe, initialLeaderboardRows, initialPublicEarnings] = session
     ? await Promise.all([
         fetchPortfolioMeServer(session.email, origin),
         fetchPortfolioLeaderboardServer(),
+        Promise.resolve(null),
       ])
-    : [null, null];
+    : await Promise.all([
+        Promise.resolve(null),
+        Promise.resolve([]),
+        fetchPublicEarningsServer(),
+      ]);
 
   return (
     <MyPortfolioPageClient
       initialPortfolioMe={initialPortfolioMe}
       initialLeaderboardRows={initialLeaderboardRows ?? []}
+      initialPublicEarnings={initialPublicEarnings}
     />
   );
 }

@@ -1,24 +1,18 @@
 'use client';
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter, { SOCIAL_TELEGRAM } from '../SiteSocialFooter';
-import GuestLandingCopyright from '../GuestLandingCopyright';
-import PortfolioUsdAmount from './PortfolioUsdAmount';
 import UsdRangeMetric from './UsdRangeMetric';
 import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
+import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import { groupDisplayMaxUsd } from '../../lib/portfolio/referralShares';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { USERS_POOL_WEEKLY_MAX, USERS_POOL_WEEKLY_MIN, WAU_ACTIVATION_TARGET } from '../../lib/portfolio/financialBenefits';
 import type { ReferralPyramidSnapshot } from '../../lib/portfolio/referralShares';
-import {
-  PORTFOLIO_METRIC_FADE_FAST,
-  PORTFOLIO_METRIC_REVEAL_FAST,
-} from './usePortfolioMetricReveal';
 
 type PortfolioMe = Pick<
   PortfolioMePayload,
@@ -29,9 +23,6 @@ type PortfolioMe = Pick<
   | 'topReferrerMaxUsd'
   | 'referralPyramid'
 >;
-
-const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
-  `/${src}?w=${width}&q=${quality || 100}`;
 
 export type MyFinancialBenefitsPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
@@ -189,67 +180,11 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
 
   if (showGuestLayout) {
     return (
-      <div className="myinv-page myinv-page--accent myinv-page--portfolio myinv-page--weekly-guest">
-        <div className="home-guest-landing">
-          <div className="home-guest-landing-stack">
-            <span className="home-guest-icon-wrap home-guest-mount-slide home-guest-mount-slide--icon" aria-hidden="true">
-              <span className="home-guest-icon-tint" aria-hidden="true" />
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={60}
-                height={60}
-                className="home-guest-icon-img"
-                src="images/Arells-Icon.png"
-                priority
-              />
-            </span>
-            <p className="home-guest-slogan myportfolio-weekly-guest-pitch home-guest-mount-slide home-guest-mount-slide--logo">
-              {loadError ? (
-                <>Unable to load earnings info. Try again later.</>
-              ) : (
-                <span className="myportfolio-weekly-guest-pitch-earn">
-                  <span className="myportfolio-weekly-guest-pitch-earn-accent">earn</span>
-                  <br />
-                  up to{' '}
-                  <PortfolioUsdAmount
-                    amount={guestMaxLabel}
-                    loading={!publicEarnings}
-                    className="myportfolio-weekly-guest-usd-amount"
-                    symbolClassName="myinv-metric-symbol myportfolio-weekly-guest-dollar"
-                    fadeClassName={PORTFOLIO_METRIC_FADE_FAST}
-                    revealTiming={PORTFOLIO_METRIC_REVEAL_FAST}
-                  />{' '}
-                  a week
-                </span>
-              )}
-            </p>
-            <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--slogan">
-              <span className="shadow-border" aria-hidden="true" />
-              <div className="home-guest-signin-panel myinv-accent-border">
-                <div className="home-guest-signin-inner">
-                  <p className="home-guest-signin-lead">Sign In to learn more</p>
-                  <Link
-                    href="/signin"
-                    className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button home-guest-signin-button"
-                  >
-                    Sign In
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <p className="home-guest-slogan myportfolio-weekly-guest-mission home-guest-mount-slide home-guest-mount-slide--signin">
-              on a mission to ensure investments
-              <br />
-              never lose value
-            </p>
-            <GuestLandingCopyright
-              variant="home"
-              className="myportfolio-weekly-guest-copyright home-guest-mount-slide home-guest-mount-slide--copyright"
-            />
-          </div>
-        </div>
-      </div>
+      <PortfolioWeeklyGuestPageView
+        guestMaxLabel={guestMaxLabel}
+        loading={!publicEarnings}
+        loadError={loadError}
+      />
     );
   }
 

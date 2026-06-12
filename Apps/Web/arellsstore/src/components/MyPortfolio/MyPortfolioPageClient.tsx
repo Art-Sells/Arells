@@ -1,13 +1,19 @@
 'use client';
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
 import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
+import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
-import { headlineDisplayMaxUsd, topReferrerWeeklyMaxUsd } from '../../lib/portfolio/referralShares';
+import {
+  groupDisplayMaxUsd,
+  headlineDisplayMaxUsd,
+  topReferrerWeeklyMaxUsd,
+} from '../../lib/portfolio/referralShares';
+import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { WEEKLY_UAR_MAX, WEEKLY_UAR_MIN } from '../../lib/portfolio/financialBenefits';
 
@@ -18,12 +24,15 @@ export type MyPortfolioPageClientProps = {
   guestPreview?: boolean;
   initialPortfolioMe?: PortfolioMePayload | null;
   initialLeaderboardRows?: PortfolioLeaderboardRow[];
+  /** SSR public earnings for guest pitch (skips client wait when present). */
+  initialPublicEarnings?: PublicEarningsPayload | null;
 };
 
 const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   guestPreview = false,
   initialPortfolioMe = null,
   initialLeaderboardRows = [],
+  initialPublicEarnings = null,
 }) => {
   const { isSignedIn } = useUser();
   const showGuestLayout = guestPreview || (!isSignedIn && !initialPortfolioMe);
@@ -36,15 +45,38 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const [leaderboardRows, setLeaderboardRows] = useState<PortfolioLeaderboardRow[]>(
     initialLeaderboardRows
   );
+  const [publicEarnings, setPublicEarnings] = useState<PublicEarningsPayload | null>(
+    initialPublicEarnings
+  );
   const [loadError, setLoadError] = useState(false);
   const [shareNote, setShareNote] = useState<string | null>(null);
 
   useEffect(() => {
+    if (showGuestLayout) {
+      setData(null);
+      setLeaderboardRows([]);
+      if (publicEarnings) return;
+
+      let cancelled = false;
+      (async () => {
+        try {
+          const res = await fetch('/api/portfolio/public-earnings', { cache: 'no-store' });
+          if (!res.ok) throw new Error('fetch failed');
+          const json = (await res.json()) as PublicEarningsPayload;
+          if (!cancelled) {
+            setPublicEarnings(json);
+            setLoadError(false);
+          }
+        } catch {
+          if (!cancelled) setLoadError(true);
+        }
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }
+
     if (guestPreview || !showSignedInPanel) {
-      if (!guestPreview) {
-        setData(null);
-        setLeaderboardRows([]);
-      }
       return;
     }
     if (data) return;
@@ -71,9 +103,10 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [showSignedInPanel, guestPreview, data]);
+  }, [showGuestLayout, showSignedInPanel, guestPreview, data, publicEarnings]);
 
   useEffect(() => {
+    if (showGuestLayout) return;
     setOpen(false);
     const raf = window.requestAnimationFrame(() => {
       const h = wrapperRef.current?.scrollHeight ?? 0;
@@ -84,6 +117,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   }, [isSignedIn, data, leaderboardRows, guestPreview, showGuestLayout]);
 
   useLayoutEffect(() => {
+    if (showGuestLayout) return;
     const node = wrapperRef.current;
     if (!node || typeof ResizeObserver === 'undefined') return;
     const ro = new ResizeObserver(() => {
@@ -129,6 +163,26 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     ? headlineDisplayMaxUsd(topReferrerWeeklyMaxUsd(leaderboardRows), data.earningsUsdMax)
     : 0;
 
+  const guestMaxUsd = useMemo(() => {
+    if (!publicEarnings) return 0;
+    return groupDisplayMaxUsd(
+      publicEarnings.topReferrerMaxUsd,
+      publicEarnings.fallbackProjectionMaxUsd
+    );
+  }, [publicEarnings]);
+
+  const guestMaxLabel = formatUsdRangeDisplay(guestMaxUsd, guestMaxUsd).max;
+
+  if (showGuestLayout) {
+    return (
+      <PortfolioWeeklyGuestPageView
+        guestMaxLabel={guestMaxLabel}
+        loading={!publicEarnings}
+        loadError={loadError}
+      />
+    );
+  }
+
   return (
     <>
       <div className="myinv-page myinv-page--accent myinv-page--portfolio">
@@ -150,16 +204,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
             style={{ maxHeight: open ? `${shellMaxHeight}px` : '0px', transition: 'max-height 2s ease' }}
           >
             <div ref={wrapperRef} className="myinv-wrapper myportfolio-stack">
-              {showGuestLayout ? (
-                <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
-                  <div className="myinv-cta-row">
-                    <Link href="/signin" className="myinv-cta-button">
-                      <span className="myinv-cta-button-bg" aria-hidden="true" />
-                      <span className="myinv-cta-button-text">Sign In</span>
-                    </Link>
-                  </div>
-                </div>
-              ) : showSignedInPanel ? (
+              {showSignedInPanel ? (
                 <>
                   {loadError ? (
                     <p className="myportfolio-body-copy">Unable to load portfolio. Try again later.</p>
