@@ -213,18 +213,20 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                     <div className="myinv-summary-section">
                       <div className="myinv-summary-shell">
                         <p className="myportfolio-about-title">My Weekly Projected Earnings</p>
-                        <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                          {!loadError ? (
-                            <UsdRangeMetric
-                              min={data?.earningsUsdMin ?? 0}
-                              max={headlineGroupMaxUsd}
-                              loading={!portfolioMetricsReady}
-                            />
-                          ) : null}
+                        <div className="myportfolio-projected-earnings-nested myinv-accent-border">
+                          <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                            {!loadError ? (
+                              <UsdRangeMetric
+                                min={data?.earningsUsdMin ?? 0}
+                                max={headlineGroupMaxUsd}
+                                loading={!portfolioMetricsReady}
+                              />
+                            ) : null}
+                          </div>
+                          <p className="myinv-metric-title myportfolio-benefits-sublabel">
+                            per week at ~100k WAU
+                          </p>
                         </div>
-                        <p className="myinv-metric-title myportfolio-benefits-sublabel">
-                          per week at ~100k WAU
-                        </p>
                       </div>
                     </div>
                   </div>
