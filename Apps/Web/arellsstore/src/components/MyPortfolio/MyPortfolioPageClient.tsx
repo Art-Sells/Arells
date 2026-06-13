@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
@@ -15,9 +16,6 @@ import {
 } from '../../lib/portfolio/referralShares';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
-import { WEEKLY_UAR_MAX, WEEKLY_UAR_MIN } from '../../lib/portfolio/financialBenefits';
-
-const staticRevenue = formatUsdRangeDisplay(WEEKLY_UAR_MIN, WEEKLY_UAR_MAX);
 
 export type MyPortfolioPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
@@ -34,6 +32,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   initialLeaderboardRows = [],
   initialPublicEarnings = null,
 }) => {
+  const router = useRouter();
   const { isSignedIn } = useUser();
   const showGuestLayout = guestPreview || (!isSignedIn && !initialPortfolioMe);
   const showSignedInPanel = isSignedIn || !!initialPortfolioMe;
@@ -213,7 +212,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                   <div className={`myinv-summary-block myinv-accent-border myportfolio-metric-panel${slideIn ? ' page-slide-in' : ''}`}>
                     <div className="myinv-summary-section">
                       <div className="myinv-summary-shell">
-                        <p className="myportfolio-about-title">My Weekly Potential Earnings</p>
+                        <p className="myportfolio-about-title">My Weekly Projected Earnings</p>
                         <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                           {!loadError ? (
                             <UsdRangeMetric
@@ -230,11 +229,11 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                     </div>
                   </div>
 
-                  <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
+                  <div className={`myinv-panel-group myinv-panel-group--bordered myportfolio-portfolio-share-group${slideIn ? ' page-slide-in' : ''}`}>
                     <div className="myinv-panel-section myinv-accent-border">
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
                         <p className="myportfolio-body-copy">
-                          Sign-up 3 or more friends/family to potentially earn{' '}
+                          Sign-up 3 or more friends/family to earn{' '}
                           {!loadError ? (
                             <UsdRangeMetric
                               min={data?.projectedEarningsUsdMin ?? 0}
@@ -243,7 +242,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                               className="myportfolio-inline-usd"
                             />
                           ) : null}{' '}
-                          a week by using this link:
+                          a week (based on 100k WAU) by using this link:
                         </p>
                         <button
                           type="button"
@@ -256,74 +255,20 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                         {shareNote ? <p className="myportfolio-share-note">{shareNote}</p> : null}
 
                         <div className="myportfolio-leaderboard-nested myinv-accent-border">
-                          <p className="myportfolio-about-title">Leaderboard</p>
                           <div className="myportfolio-leaderboard-wrap">
                             <PortfolioLeaderboard rows={leaderboardRows} />
                           </div>
                         </div>
 
                         <div className="myportfolio-about-nested myinv-accent-border">
-                          <p className="myportfolio-about-title">About My Weekly Potential Earnings</p>
-                          <p className="myportfolio-body-copy">
-                            Your weekly earnings will be derived from our advertising revenue once we have
-                            100,000~ Weekly Active Users (WAU).
-                          </p>
-                          <p className="myportfolio-body-copy">
-                            Estimated weekly User Advertising revenue from 100,000~ WAU:{' '}
-                            <span className="myportfolio-static-revenue">
-                              <span className="myinv-metric-symbol">$</span>
-                              <span className="myinv-metric-integer">{staticRevenue.min}</span>
-                              <span className="myportfolio-usd-range-sep">–</span>
-                              <span className="myinv-metric-symbol">$</span>
-                              <span className="myinv-metric-integer">{staticRevenue.max}</span>
-                            </span>
-                          </p>
-                          <Link
-                            href="/earn-money-weekly"
-                            className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button myportfolio-learn-more"
+                          <button
+                            type="button"
+                            className="asset-range-button myinv-range-button about-cta-button myportfolio-learn-more"
+                            onClick={() => router.push('/earn-money-weekly')}
                           >
                             learn more
-                          </Link>
+                          </button>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                    <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Active Users</div>
-                    <div className="myinv-panel-section myinv-accent-border myportfolio-metric-panel">
-                      <div className="myinv-panel myinv-panel--shell">
-                        <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                          <span className="myinv-metric-value myportfolio-count-value">
-                            <span className="myinv-metric-integer">
-                              {data ? data.wau.toLocaleString('en-US') : '—'}
-                            </span>
-                          </span>
-                        </div>
-                        <div className="asset-metric-row" style={{ justifyContent: 'center', marginTop: 12 }}>
-                          <span className="myinv-metric-title">Users to gain until weekly earnings activated:</span>
-                        </div>
-                        <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                          <span className="myinv-metric-value myportfolio-count-value">
-                            <span className="myinv-metric-integer">
-                              {data ? data.usersUntilActivation.toLocaleString('en-US') : '—'}
-                            </span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                    <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
-                    <div className="myinv-panel-section myinv-accent-border myportfolio-cta-panel">
-                      <div className="myinv-panel myinv-panel--shell">
-                        <Link
-                          href="/my-investments"
-                          className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button"
-                        >
-                          view my investments
-                        </Link>
                       </div>
                     </div>
                   </div>
@@ -332,6 +277,45 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
             </div>
           </div>
         </div>
+
+        {showSignedInPanel ? (
+          <div className={`myportfolio-portfolio-below-shell myportfolio-stack${slideIn ? ' page-slide-in' : ''}`}>
+            <div className={`myinv-panel-group myportfolio-portfolio-below-panel${slideIn ? ' page-slide-in' : ''}`}>
+              <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Active Users</div>
+              <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
+                <span className="shadow-border" aria-hidden="true" />
+                <div className="myinv-panel-section myinv-accent-border myportfolio-metric-panel">
+                  <div className="myinv-panel myinv-panel--shell">
+                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                      <span className="myinv-metric-value myportfolio-count-value">
+                        <span className="myinv-metric-integer">
+                          {data ? data.wau.toLocaleString('en-US') : '—'}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className={`myinv-panel-group myportfolio-portfolio-below-panel${slideIn ? ' page-slide-in' : ''}`}>
+              <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
+              <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
+                <span className="shadow-border" aria-hidden="true" />
+                <div className="myinv-panel-section myinv-accent-border myportfolio-cta-panel">
+                  <div className="myinv-panel myinv-panel--shell">
+                    <Link
+                      href="/my-investments"
+                      className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button"
+                    >
+                      view my investments
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         <div className="myinv-about-wrap">
           <Link className="myinv-about-button" href="/about">

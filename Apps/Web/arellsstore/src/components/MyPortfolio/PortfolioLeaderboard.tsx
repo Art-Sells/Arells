@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import UsdRangeMetric from './UsdRangeMetric';
 
 export type PortfolioLeaderboardRow = {
@@ -18,9 +18,15 @@ type Props = {
 };
 
 const PortfolioLeaderboard: React.FC<Props> = ({ rows }) => {
-  const [expanded, setExpanded] = useState(false);
-  const canExpand = rows.length > LEADERBOARD_INITIAL_ROWS;
-  const visibleRows = expanded || !canExpand ? rows : rows.slice(0, LEADERBOARD_INITIAL_ROWS);
+  const [visibleCount, setVisibleCount] = useState(LEADERBOARD_INITIAL_ROWS);
+
+  useEffect(() => {
+    setVisibleCount(LEADERBOARD_INITIAL_ROWS);
+  }, [rows.length]);
+
+  const canPaginate = rows.length > LEADERBOARD_INITIAL_ROWS;
+  const visibleRows = canPaginate ? rows.slice(0, visibleCount) : rows;
+  const hasMore = visibleCount < rows.length;
 
   if (rows.length === 0) {
     return <p className="myportfolio-leaderboard-empty">No verified users yet.</p>;
@@ -32,19 +38,13 @@ const PortfolioLeaderboard: React.FC<Props> = ({ rows }) => {
         <thead>
           <tr>
             <th>User</th>
-            <th>Users Signed-up and Active Weekly</th>
-            <th>Weekly Potential Earnings</th>
+            <th>Weekly Projected Earnings</th>
           </tr>
         </thead>
         <tbody>
           {visibleRows.map((row) => (
             <tr key={row.email}>
               <td>{row.maskedLabel}</td>
-              <td>
-                {row.activeReferralCount === 0
-                  ? '--'
-                  : row.activeReferralCount.toLocaleString('en-US')}
-              </td>
               <td>
                 {row.earningsUsdMin === 0 && row.earningsUsdMax === 0 ? (
                   '--'
@@ -56,13 +56,21 @@ const PortfolioLeaderboard: React.FC<Props> = ({ rows }) => {
           ))}
         </tbody>
       </table>
-      {canExpand ? (
+      {canPaginate ? (
         <button
           type="button"
-          className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button myportfolio-leaderboard-show-more"
-          onClick={() => setExpanded((v) => !v)}
+          className="asset-range-button myinv-range-button about-cta-button myportfolio-leaderboard-show-more"
+          onClick={() => {
+            if (hasMore) {
+              setVisibleCount((count) =>
+                Math.min(count + LEADERBOARD_INITIAL_ROWS, rows.length)
+              );
+            } else {
+              setVisibleCount(LEADERBOARD_INITIAL_ROWS);
+            }
+          }}
         >
-          {expanded ? 'show less' : 'show more'}
+          {hasMore ? 'show more' : 'show less'}
         </button>
       ) : null}
     </>
