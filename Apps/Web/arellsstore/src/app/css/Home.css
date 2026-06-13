@@ -10554,13 +10554,19 @@ a.asset-action-button--save-signin {
 	text-align: center;
 }
 
-.myportfolio-about-nested {
-	margin-top: 16px;
-}
-
-.myportfolio-leaderboard-nested {
+.myportfolio-about-nested,
+.myportfolio-leaderboard-nested,
+.myportfolio-referral-network-nested,
+.myportfolio-weekly-uara-intro-nested,
+.myportfolio-weekly-uara-revenue-nested {
 	margin-top: 16px;
 	padding: 12px 10px 14px;
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+.myinv-summary-shell > .myportfolio-weekly-uara-intro-nested {
+	margin-top: 0;
 }
 
 .myportfolio-leaderboard-nested .myportfolio-leaderboard-wrap {
@@ -10591,6 +10597,91 @@ a.asset-action-button--save-signin {
 .myportfolio-explainer {
 	text-align: center;
 	padding: 8px 12px 16px;
+}
+
+.myinv-summary-block.myportfolio-explainer {
+	padding: 10px;
+}
+
+.myportfolio-explainer .myinv-summary-section {
+	margin: 0;
+	padding: 0;
+}
+
+.myportfolio-referral-network-nested.myportfolio-telegram-support {
+	margin-bottom: 0;
+}
+
+.myportfolio-weekly-uara-intro-copy {
+	text-align: center;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.myportfolio-weekly-uara-intro-copy .myportfolio-body-copy {
+	font-size: 12px;
+	line-height: 1.35;
+	color: #444;
+	margin: 0 0 8px;
+	text-align: center;
+}
+
+.myportfolio-weekly-uara-intro-copy .myportfolio-body-copy:last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 750px) {
+	.myportfolio-weekly-uara-earnings-copy {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.myportfolio-weekly-uara-earnings-lead,
+	.myportfolio-weekly-uara-earnings-range,
+	.myportfolio-weekly-uara-earnings-after-range {
+		display: block;
+		width: 100%;
+	}
+
+	.myportfolio-weekly-uara-earnings-after-range {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0;
+	}
+
+	.myportfolio-weekly-uara-earnings-week-based,
+	.myportfolio-weekly-uara-earnings-tail-wau,
+	.myportfolio-weekly-uara-earnings-tail-label {
+		display: block;
+		width: 100%;
+	}
+}
+
+@media (min-width: 751px) {
+	.myportfolio-weekly-uara-intro-copy {
+		width: 500px;
+		max-width: 100%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+.myportfolio-weekly-back-panel.myinv-summary-block {
+	margin-bottom: 20px;
+	padding-top: 15px;
+	width: min(700px, 100%);
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.myportfolio-weekly-back-panel .myportfolio-weekly-back-button {
+	display: flex;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .myportfolio-metric-label {
@@ -10750,16 +10841,48 @@ a.asset-action-button--save-signin {
 	text-align: inherit;
 }
 
-/* $ — accent; loader/fade applies to number slots only */
+/* $ — black (same as myinv-metric-symbol); loader/fade applies to number slots only */
 .myinv-page--portfolio .myportfolio-usd-range > .myinv-metric-symbol,
 .myinv-page--portfolio .myportfolio-usd-amount > .myinv-metric-symbol {
 	font-size: 19px;
 	font-weight: 800;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
+	color: #000;
+	-webkit-text-fill-color: #000;
 	opacity: 0.4;
 	vertical-align: 2.7px;
 	margin-right: 1px;
+}
+
+.myinv-page--portfolio .myportfolio-weekly-uara-intro-copy .myportfolio-usd-range > .myinv-metric-symbol,
+.myinv-page--portfolio .myportfolio-weekly-uara-intro-copy .myportfolio-usd-range .myinv-metric-integer {
+	font-size: 17px;
+	font-weight: 700;
+	color: #000;
+	-webkit-text-fill-color: #000;
+	letter-spacing: 0;
+	opacity: 1;
+	vertical-align: baseline;
+	margin-right: 0;
+}
+
+.myinv-page--portfolio .myportfolio-weekly-uara-intro-copy .myportfolio-usd-range-sep {
+	margin: 0 5px;
+	padding: 0;
+	font-size: 12px;
+	font-weight: 800;
+	color: #888;
+	-webkit-text-fill-color: #888;
+	opacity: 1;
+	vertical-align: baseline;
+	position: relative;
+	top: -2px;
+}
+
+.myinv-page--portfolio .myportfolio-weekly-uara-intro-copy .myportfolio-metric-number-wrap {
+	font-size: 17px;
+	font-weight: 700;
+	letter-spacing: 0;
+	min-width: 0;
 }
 
 /* Weekly earnings guest — home guest column (340px), icon top spacing via .home-guest-icon-wrap */
@@ -10825,12 +10948,18 @@ a.asset-action-button--save-signin {
 	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
-.myportfolio-referral-network-nested {
-	margin-top: 16px;
-	padding: 12px 10px 14px;
+.myportfolio-referral-network-nested,
+.myportfolio-weekly-uara-intro-nested,
+.myportfolio-weekly-uara-revenue-nested {
+	--myinv-asset-border-opacity: 0.3;
 }
 
 .myportfolio-telegram-support-copy {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0;
 	margin: 0;
 	text-align: center;
 	font-size: 13px;
@@ -10838,39 +10967,90 @@ a.asset-action-button--save-signin {
 	color: #222;
 }
 
-.myportfolio-telegram-support-link {
+.myportfolio-telegram-support-copy-lead {
+	margin: 0;
+	color: #222;
+}
+
+.myportfolio-telegram-support-copy-text {
+	margin: 0;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
+.myportfolio-telegram-support-copy .site-social-footer-link {
+	margin-top: 8px;
+}
+
+/* Telegram support — footer link classes; WebKit needs ::after ring (same as .myinv-about-button) */
+.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent,
+.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:link,
+.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:visited,
+.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:hover,
+.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:active,
+.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:focus-visible {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	vertical-align: middle;
-	width: 36px;
-	height: 36px;
-	margin-left: 2px;
-	border-radius: 8px;
-	border: 1px solid var(--myinv-accent-color);
-	color: var(--myinv-accent-color);
+	box-sizing: border-box;
+	border-radius: 12px;
 	text-decoration: none;
+	background: transparent !important;
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+	border: none !important;
+	box-shadow: none !important;
+	padding: 13px !important;
+	min-width: 44px !important;
+	min-height: 44px !important;
+	position: relative;
+	isolation: isolate;
+	z-index: 0;
+	flex-shrink: 0;
+	vertical-align: middle;
 }
 
-.myportfolio-telegram-support-icon {
+.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	padding: 1px;
+	border-radius: inherit;
+	background: var(--myinv-accent-color);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	pointer-events: none;
+	z-index: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:hover {
+		opacity: 0.88;
+	}
+}
+
+.myportfolio-telegram-support .site-social-footer-link--accent .site-social-footer-icon {
 	display: inline-block;
-	width: 16px;
-	height: 16px;
-	background-color: currentColor;
-	-webkit-mask-image: url('/images/icons/socials/Telegram.png');
-	mask-image: url('/images/icons/socials/Telegram.png');
+	flex-shrink: 0;
+	width: 15px;
+	height: 15px;
+	vertical-align: middle;
+	background-color: var(--myinv-accent-color);
 	-webkit-mask-repeat: no-repeat;
 	mask-repeat: no-repeat;
 	-webkit-mask-position: center;
 	mask-position: center;
 	-webkit-mask-size: contain;
 	mask-size: contain;
+	position: relative;
+	z-index: 2;
 }
 
-@media (hover: hover) and (pointer: fine) {
-	.myportfolio-telegram-support-link:hover {
-		opacity: 0.88;
-	}
+.myportfolio-telegram-support .site-social-footer-link--accent .site-social-footer-icon--telegram {
+	-webkit-mask-image: url('/images/icons/socials/Telegram.png');
+	mask-image: url('/images/icons/socials/Telegram.png');
 }
 
 .myportfolio-referral-pyramid {
@@ -10934,7 +11114,7 @@ a.asset-action-button--save-signin {
 	gap: 2px;
 	padding: 10px 16px;
 	border-radius: 10px;
-	width: min(100%, 280px);
+	width: 100%;
 	box-sizing: border-box;
 	background: color-mix(in srgb, var(--myinv-accent-color) 8%, transparent);
 	border: 1px solid color-mix(in srgb, var(--myinv-accent-color) 22%, transparent);
@@ -10962,8 +11142,9 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-referral-pyramid-amount {
+	font-size: 17px;
 	font-weight: 700;
-	color: var(--myinv-accent-color);
+	color: #000;
 }
 
 .myportfolio-referral-pyramid-footer {

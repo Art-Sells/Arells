@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
-import MyFinancialBenefitsPageClient from '../../components/MyPortfolio/MyFinancialBenefitsPageClient';
+import EarnMoneyWeeklyPageClient from '../../components/MyPortfolio/EarnMoneyWeeklyPageClient';
 import { resolveAppOrigin } from '../../lib/auth/origin';
 import { getSessionFromAppCookies } from '../../lib/auth/session';
 import { fetchPortfolioMeServer } from '../../lib/portfolio/fetchPortfolioDataServer';
@@ -13,17 +13,17 @@ export const metadata: Metadata = {
   title: 'Earn Money Weekly',
   description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
   robots: { index: false, follow: true },
-  alternates: { canonical: '/my-weekly-earnings' },
+  alternates: { canonical: '/earn-money-weekly' },
   openGraph: {
     title: 'Earn Money Weekly',
     description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
-    url: '/my-weekly-earnings',
+    url: '/earn-money-weekly',
     type: 'website',
     images: [{ url: banner }],
   },
 };
 
-export default async function MyWeeklyEarningsPage() {
+export default async function EarnMoneyWeeklyPage() {
   const session = await getSessionFromAppCookies();
   const origin = resolveAppOrigin(headers().get('origin') ?? undefined, undefined);
 
@@ -33,7 +33,7 @@ export default async function MyWeeklyEarningsPage() {
   ]);
 
   return (
-    <MyFinancialBenefitsPageClient
+    <EarnMoneyWeeklyPageClient
       initialPortfolioMe={initialPortfolioMe}
       initialPublicEarnings={initialPublicEarnings}
     />

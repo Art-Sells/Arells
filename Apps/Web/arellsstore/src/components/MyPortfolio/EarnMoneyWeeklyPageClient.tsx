@@ -12,7 +12,6 @@ import { groupDisplayMaxUsd } from '../../lib/portfolio/referralShares';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { USERS_POOL_WEEKLY_MAX, USERS_POOL_WEEKLY_MIN, WAU_ACTIVATION_TARGET } from '../../lib/portfolio/financialBenefits';
-import type { ReferralPyramidSnapshot } from '../../lib/portfolio/referralShares';
 
 type PortfolioMe = Pick<
   PortfolioMePayload,
@@ -24,7 +23,7 @@ type PortfolioMe = Pick<
   | 'referralPyramid'
 >;
 
-export type MyFinancialBenefitsPageClientProps = {
+export type EarnMoneyWeeklyPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
   guestPreview?: boolean;
   /** SSR public earnings for guest pitch (skips client wait when present). */
@@ -45,7 +44,7 @@ const toWeeklyMe = (payload: PortfolioMePayload | null): PortfolioMe | null => {
   };
 };
 
-const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps> = ({
+const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
   guestPreview = false,
   initialPublicEarnings = null,
   initialPortfolioMe = null,
@@ -211,25 +210,47 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
                 <div className={`myinv-summary-block myinv-accent-border myportfolio-explainer${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-summary-section">
                     <div className="myinv-summary-shell">
-                      <p className="myportfolio-body-copy" style={{ textAlign: 'left' }}>
-                        Your weekly earnings will be derived from the 65% of advertising revenue (User Ad Revenue
-                        (UAR)) Arells generates, Arells will keep 35%.
-                      </p>
-                      <p className="myportfolio-body-copy" style={{ textAlign: 'left' }}>
-                        Out of the 65%, you currently will get{' '}
-                        {!loadError ? (
-                          <UsdRangeMetric
-                            min={me ? explainerMinUsd : 0}
-                            max={me ? groupMaxUsd : 0}
-                            loading={!me}
-                          />
-                        ) : null}{' '}
-                        from weekly User Advertising based on 100,000~ WAU (Weekly Active Users).
-                      </p>
+                      <div className="myportfolio-weekly-uara-intro-nested myinv-accent-border">
+                        <div className="myportfolio-weekly-uara-intro-copy">
+                          <p className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy">
+                            <span className="myportfolio-weekly-uara-earnings-lead">
+                              You are projected to earn{' '}
+                            </span>
+                            {!loadError ? (
+                              <span className="myportfolio-weekly-uara-earnings-range">
+                                <UsdRangeMetric
+                                  min={me ? explainerMinUsd : 0}
+                                  max={me ? groupMaxUsd : 0}
+                                  loading={!me}
+                                />
+                              </span>
+                            ) : null}
+                            <span className="myportfolio-weekly-uara-earnings-after-range">
+                              <span className="myportfolio-weekly-uara-earnings-week-based">
+                                <span className="myportfolio-weekly-uara-earnings-week">
+                                  {' '}
+                                  a week
+                                </span>
+                                <span className="myportfolio-weekly-uara-earnings-based-on">
+                                  {' '}
+                                  based on
+                                </span>
+                              </span>
+                              <span className="myportfolio-weekly-uara-earnings-tail-wau">
+                                {' '}
+                                100,000~ WAU
+                              </span>
+                              <span className="myportfolio-weekly-uara-earnings-tail-label">
+                                {' '}
+                                (Weekly Active Users).
+                              </span>
+                            </span>
+                          </p>
+                        </div>
+                      </div>
 
                       {me?.referralPyramid ? (
                         <div className="myportfolio-referral-network-nested myinv-accent-border">
-                          <p className="myportfolio-about-title">How referral levels add up</p>
                           <ReferralNetworkExamplePyramid
                             pyramid={me.referralPyramid}
                             groupMaxUsd={groupMaxUsd}
@@ -237,33 +258,41 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
                         </div>
                       ) : null}
 
+                      <div className="myportfolio-weekly-uara-revenue-nested myinv-accent-border">
+                        <div className="myportfolio-weekly-uara-intro-copy">
+                          <p className="myportfolio-body-copy">
+                            Your weekly earnings will be derived from the 65% of advertising revenue (User Ad Revenue
+                            (UAR)) Arells generates, Arells will keep 35%.
+                          </p>
+                        </div>
+                      </div>
+
                       <div className="myportfolio-referral-network-nested myinv-accent-border myportfolio-telegram-support">
-                        <p className="myportfolio-telegram-support-copy">
-                          Questions/Concerns? Message us on Telegram:{' '}
+                        <div className="myportfolio-telegram-support-copy">
+                          <p className="myportfolio-telegram-support-copy-lead">Questions/Concerns?</p>
+                          <p className="myportfolio-telegram-support-copy-text">Message us on Telegram:</p>
                           <a
                             href={SOCIAL_TELEGRAM}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="myportfolio-telegram-support-link"
+                            className="site-social-footer-link site-social-footer-link--accent"
                             aria-label="Message Arells on Telegram"
                           >
-                            <span className="myportfolio-telegram-support-icon" aria-hidden="true" />
+                            <span className="site-social-footer-icon site-social-footer-icon--telegram" aria-hidden="true" />
                           </a>
-                        </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                  <div className="myinv-panel-section myinv-accent-border myportfolio-cta-panel">
-                    <Link
-                      href="/my-portfolio"
-                      className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button"
-                    >
-                      back to my portfolio
-                    </Link>
-                  </div>
+                <div className={`myinv-summary-block myinv-accent-border myportfolio-cta-panel myportfolio-weekly-back-panel${slideIn ? ' page-slide-in' : ''}`}>
+                  <Link
+                    href="/my-portfolio"
+                    className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button myportfolio-weekly-back-button"
+                  >
+                    back to my portfolio
+                  </Link>
                 </div>
               </>
             ) : null}
@@ -283,4 +312,4 @@ const MyFinancialBenefitsPageClient: React.FC<MyFinancialBenefitsPageClientProps
   );
 };
 
-export default MyFinancialBenefitsPageClient;
+export default EarnMoneyWeeklyPageClient;

@@ -279,7 +279,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                             </span>
                           </p>
                           <Link
-                            href="/my-weekly-earnings"
+                            href="/earn-money-weekly"
                             className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button myportfolio-learn-more"
                           >
                             learn more

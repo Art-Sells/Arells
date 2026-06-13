@@ -1,30 +1,30 @@
 import type { Metadata } from 'next';
-import MyFinancialBenefitsPageClient from '../../components/MyPortfolio/MyFinancialBenefitsPageClient';
+import EarnMoneyWeeklyPageClient from '../../components/MyPortfolio/EarnMoneyWeeklyPageClient';
 import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarningsServer';
 import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../../lib/siteMetaDescriptions';
 
 const banner = '/images/banners/MyInvestmentsBanner.jpg';
 
-/** Signed-out my-weekly-earnings UI. Works while signed in. */
+/** Signed-out earn-money-weekly UI. Works while signed in. */
 export const metadata: Metadata = {
   title: 'Earn Money Weekly',
-  description: 'Layout preview: guest / signed-out my weekly earnings.',
+  description: 'Layout preview: guest / signed-out earn money weekly.',
   robots: { index: false, follow: false },
-  alternates: { canonical: '/my-weekly-earnings-preview' },
+  alternates: { canonical: '/earn-money-weekly-preview' },
   openGraph: {
     title: 'Earn Money Weekly',
     description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
-    url: '/my-weekly-earnings-preview',
+    url: '/earn-money-weekly-preview',
     type: 'website',
     images: [{ url: banner }],
   },
 };
 
-export default async function MyWeeklyEarningsPreviewPage() {
+export default async function EarnMoneyWeeklyPreviewPage() {
   const initialPublicEarnings = await fetchPublicEarningsServer();
 
   return (
-    <MyFinancialBenefitsPageClient
+    <EarnMoneyWeeklyPageClient
       guestPreview
       initialPublicEarnings={initialPublicEarnings}
     />
