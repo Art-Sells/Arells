@@ -10586,6 +10586,7 @@ a.asset-action-button--save-signin {
 .myportfolio-leaderboard-nested,
 .myportfolio-projected-earnings-nested,
 .myportfolio-referral-network-nested,
+.myportfolio-share-copy-nested,
 .myportfolio-weekly-uara-intro-nested {
 	margin-top: 16px;
 	padding: 12px 10px 14px;
@@ -10644,9 +10645,67 @@ a.asset-action-button--save-signin {
 	margin-top: 0;
 }
 
-.myportfolio-share-button {
-	display: block;
-	margin: 12px auto 0;
+.myportfolio-share-copy-row {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	margin-top: 4px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.myportfolio-share-copy-button {
+	flex: 0 0 auto;
+	width: auto;
+	min-width: 64px;
+	margin: 0 -15px 0 0;
+	padding: 13px 14px;
+	position: relative;
+	z-index: 2;
+	font-size: 12px !important;
+	font-weight: 800 !important;
+	line-height: 1.1;
+	border-radius: 6px;
+	background: var(--myinv-accent-color) !important;
+	color: #fff !important;
+	-webkit-text-fill-color: #fff;
+	border-color: var(--myinv-accent-color) !important;
+	text-transform: lowercase;
+	letter-spacing: 0 !important;
+}
+
+.myportfolio-share-url-display {
+	flex: 0 1 auto;
+	max-width: calc(100% - 72px);
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	padding: 8px 20px 8px 20px;
+	border-radius: 8px;
+	background: var(--page-accent-tint);
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+	font-size: 12px;
+	line-height: 1.1;
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.myportfolio-share-url-display.myinv-accent-border {
+	position: relative;
+	isolation: isolate;
+	z-index: 1;
+}
+
+.myportfolio-share-url-display.myinv-accent-border::before {
+	padding: 0px;
 }
 
 .myportfolio-share-note {
@@ -10812,6 +10871,36 @@ a.asset-action-button--save-signin {
 	margin: 0 0 8px;
 }
 
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-copy {
+	display: block;
+	text-align: center;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-line-one,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-lead-range,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-tail-signup,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-tail-share {
+	display: inline;
+	width: auto;
+	text-align: inherit;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-tail-signup::after,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-line-one::after {
+	content: ' ';
+}
+
+@media (min-width: 751px) {
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-copy {
+		font-size: 14px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-copy .myportfolio-usd-amount > .myinv-metric-symbol,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-copy .myportfolio-usd-amount .myinv-metric-integer {
+		font-size: 19px;
+	}
+}
+
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-body-copy {
 	font-size: 12px;
 	line-height: 1.35;
@@ -10830,13 +10919,24 @@ a.asset-action-button--save-signin {
 	margin-bottom: 0;
 }
 
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-row {
+	margin-top: 8px;
+	margin-bottom: 0;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested {
+	margin-top: 0;
+}
+
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-leaderboard-nested,
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-about-nested {
 	margin-top: 10px;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-range > .myinv-metric-symbol,
-.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-range .myinv-metric-integer {
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-range .myinv-metric-integer,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-amount > .myinv-metric-symbol,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-amount .myinv-metric-integer {
 	font-size: 17px;
 	font-weight: 700;
 	color: #000;
@@ -10959,6 +11059,36 @@ a.asset-action-button--save-signin {
 	.myportfolio-portfolio-below-shell {
 		width: min(340px, calc(100% - 20px));
 		min-width: 0;
+	}
+
+	.myportfolio-share-copy-row {
+		align-items: center;
+		justify-content: center;
+	}
+
+	.myportfolio-share-url-display {
+		max-width: calc(100% - 72px);
+		white-space: normal;
+		overflow: visible;
+		text-overflow: unset;
+		overflow-wrap: anywhere;
+		word-break: break-all;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-line-one {
+		display: block;
+		margin: 0;
+		padding: 0;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-line-one::after {
+		content: none;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-tail-share {
+		display: inline;
+		margin: 0;
+		padding: 0;
 	}
 
 	.myportfolio-weekly-uara-earnings-copy {

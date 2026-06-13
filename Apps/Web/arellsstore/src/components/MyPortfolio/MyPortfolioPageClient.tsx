@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
+import PortfolioUsdAmount from './PortfolioUsdAmount';
 import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
@@ -48,7 +49,8 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     initialPublicEarnings
   );
   const [loadError, setLoadError] = useState(false);
-  const [shareNote, setShareNote] = useState<string | null>(null);
+  const [shareCopied, setShareCopied] = useState(false);
+  const shareResetRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (showGuestLayout) {
@@ -144,19 +146,38 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (shareResetRef.current !== null) {
+        window.clearTimeout(shareResetRef.current);
+      }
+    };
+  }, []);
+
   const onShare = useCallback(async () => {
     const url = data?.shareUrl;
     if (!url) return;
     try {
       await navigator.clipboard.writeText(url);
-      setShareNote('Link copied.');
+      setShareCopied(true);
+      if (shareResetRef.current !== null) {
+        window.clearTimeout(shareResetRef.current);
+      }
+      shareResetRef.current = window.setTimeout(() => {
+        setShareCopied(false);
+        shareResetRef.current = null;
+      }, 3000);
     } catch {
-      setShareNote('Copy the link from your browser bar after tapping share.');
+      // Clipboard unavailable — button label unchanged; no message below button.
     }
-    window.setTimeout(() => setShareNote(null), 4000);
   }, [data?.shareUrl]);
 
   const portfolioMetricsReady = !!data && !loadError;
+
+  const projectedShareMaxLabel = formatUsdRangeDisplay(
+    data?.projectedEarningsUsdMin ?? 0,
+    data?.projectedEarningsUsdMax ?? 0
+  ).max;
 
   const headlineGroupMaxUsd = data
     ? headlineDisplayMaxUsd(topReferrerWeeklyMaxUsd(leaderboardRows), data.earningsUsdMax)
@@ -234,27 +255,44 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                   <div className={`myinv-panel-group myinv-panel-group--bordered myportfolio-portfolio-share-group${slideIn ? ' page-slide-in' : ''}`}>
                     <div className="myinv-panel-section myinv-accent-border">
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
-                        <p className="myportfolio-body-copy">
-                          Sign-up 3 or more friends/family to earn{' '}
-                          {!loadError ? (
-                            <UsdRangeMetric
-                              min={data?.projectedEarningsUsdMin ?? 0}
-                              max={data?.projectedEarningsUsdMax ?? 0}
-                              loading={!portfolioMetricsReady}
-                              className="myportfolio-inline-usd"
-                            />
-                          ) : null}{' '}
-                          a week (based on 100k WAU) by using this link:
-                        </p>
-                        <button
-                          type="button"
-                          className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button myportfolio-share-button"
-                          onClick={onShare}
-                          disabled={!data?.shareUrl}
-                        >
-                          share
-                        </button>
-                        {shareNote ? <p className="myportfolio-share-note">{shareNote}</p> : null}
+                        <div className="myportfolio-share-copy-nested myinv-accent-border">
+                          <p className="myportfolio-body-copy myportfolio-share-earnings-copy">
+                            <span className="myportfolio-share-earnings-line-one">
+                              <span className="myportfolio-share-earnings-tail-signup">
+                                Sign up 2 (or more) people
+                              </span>
+                              <span className="myportfolio-share-earnings-lead-range">
+                                <span className="myportfolio-share-earnings-lead">to earn up to</span>{' '}
+                                {!loadError ? (
+                                  <PortfolioUsdAmount
+                                    amount={projectedShareMaxLabel}
+                                    loading={!portfolioMetricsReady}
+                                    className="myportfolio-inline-usd"
+                                  />
+                                ) : null}
+                              </span>
+                            </span>
+                            <span className="myportfolio-share-earnings-tail-share">
+                              a week by copying and sharing this link:
+                            </span>
+                          </p>
+                          <div className="myportfolio-share-copy-row">
+                            <button
+                              type="button"
+                              className="auth-submit auth-submit--accent asset-range-button myportfolio-share-copy-button"
+                              onClick={onShare}
+                              disabled={!data?.shareUrl}
+                            >
+                              {shareCopied ? 'copied' : 'copy'}
+                            </button>
+                            <div
+                              className="myportfolio-share-url-display myinv-accent-border"
+                              title={data?.shareUrl ?? undefined}
+                            >
+                              {data?.shareUrl ?? ''}
+                            </div>
+                          </div>
+                        </div>
 
                         <div className="myportfolio-leaderboard-nested myinv-accent-border">
                           <div className="myportfolio-leaderboard-wrap">
