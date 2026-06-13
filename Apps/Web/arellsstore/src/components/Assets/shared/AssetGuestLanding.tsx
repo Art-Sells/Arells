@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import React from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
+import GuestWeeklyEarnPitch from '../../MyPortfolio/GuestWeeklyEarnPitch';
+import { useInitialPublicEarnings } from '../../MyPortfolio/PublicEarningsGuestContext';
+import { usePublicEarningsGuestPitch } from '../../MyPortfolio/usePublicEarningsGuestPitch';
 
 const ASSET_BADGE_HREF: Record<string, string> = {
   bitcoin: 'https://bitcoin.org/en/',
@@ -28,6 +31,9 @@ export default function AssetGuestLanding({
   slogan = 'never loses value',
 }: AssetGuestLandingProps) {
   const badgeHref = ASSET_BADGE_HREF[cssModifier] ?? '#';
+  const initialPublicEarnings = useInitialPublicEarnings();
+  const { guestMaxLabel, loadError } = usePublicEarningsGuestPitch(true, initialPublicEarnings);
+  const showEarnPitch = Boolean(guestMaxLabel || loadError);
 
   return (
     <div className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing`}>
@@ -40,13 +46,19 @@ export default function AssetGuestLanding({
         >
           <span className="asset-title-badge-label">{ticker}</span>
         </a>
-        <div className="asset-guest-landing-title asset-guest-mount-slide asset-guest-mount-slide--title">{title}</div>
-        <div className={`asset-guest-landing-slogan asset-guest-landing-slogan--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}>
+        <div className="asset-guest-landing-title asset-guest-mount-slide asset-guest-mount-slide--title">
+          {title}
+        </div>
+        <div
+          className={`asset-guest-landing-slogan asset-guest-landing-slogan--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
+        >
           {slogan}
         </div>
-        <div className={`asset-guest-signin-shell shadow-border-wrap asset-guest-signin-shell--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--signin`}>
+        <div
+          className={`asset-guest-action-shell shadow-border-wrap asset-guest-action-shell--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--signin`}
+        >
           <span className="shadow-border" aria-hidden="true" />
-          <div className={`asset-guest-signin-panel asset-panel asset-panel--${cssModifier}`}>
+          <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
               <p className="asset-signin-believe-prompt">Sign in to get involved</p>
               <Link
@@ -58,6 +70,14 @@ export default function AssetGuestLanding({
             </div>
           </div>
         </div>
+        {showEarnPitch ? (
+          <GuestWeeklyEarnPitch
+            guestMaxLabel={guestMaxLabel}
+            loadError={loadError}
+            layout="inline"
+            className="asset-guest-earn-pitch asset-guest-mount-slide asset-guest-mount-slide--earn"
+          />
+        ) : null}
         <GuestLandingCopyright
           variant="asset"
           cssModifier={cssModifier}

@@ -9,9 +9,9 @@ import UsdRangeMetric from './UsdRangeMetric';
 import PortfolioUsdAmount from './PortfolioUsdAmount';
 import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
+import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import {
-  groupDisplayMaxUsd,
   headlineDisplayMaxUsd,
   topReferrerWeeklyMaxUsd,
 } from '../../lib/portfolio/referralShares';
@@ -45,36 +45,17 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const [leaderboardRows, setLeaderboardRows] = useState<PortfolioLeaderboardRow[]>(
     initialLeaderboardRows
   );
-  const [publicEarnings, setPublicEarnings] = useState<PublicEarningsPayload | null>(
-    initialPublicEarnings
-  );
   const [loadError, setLoadError] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const shareResetRef = useRef<number | null>(null);
+  const { guestMaxLabel, loadError: guestPitchLoadError } =
+    usePublicEarningsGuestPitch(showGuestLayout, initialPublicEarnings);
 
   useEffect(() => {
     if (showGuestLayout) {
       setData(null);
       setLeaderboardRows([]);
-      if (publicEarnings) return;
-
-      let cancelled = false;
-      (async () => {
-        try {
-          const res = await fetch('/api/portfolio/public-earnings', { cache: 'no-store' });
-          if (!res.ok) throw new Error('fetch failed');
-          const json = (await res.json()) as PublicEarningsPayload;
-          if (!cancelled) {
-            setPublicEarnings(json);
-            setLoadError(false);
-          }
-        } catch {
-          if (!cancelled) setLoadError(true);
-        }
-      })();
-      return () => {
-        cancelled = true;
-      };
+      return;
     }
 
     if (guestPreview || !showSignedInPanel) {
@@ -104,7 +85,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [showGuestLayout, showSignedInPanel, guestPreview, data, publicEarnings]);
+  }, [showGuestLayout, showSignedInPanel, guestPreview, data]);
 
   useEffect(() => {
     if (showGuestLayout) return;
@@ -183,22 +164,11 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     ? headlineDisplayMaxUsd(topReferrerWeeklyMaxUsd(leaderboardRows), data.earningsUsdMax)
     : 0;
 
-  const guestMaxUsd = useMemo(() => {
-    if (!publicEarnings) return 0;
-    return groupDisplayMaxUsd(
-      publicEarnings.topReferrerMaxUsd,
-      publicEarnings.fallbackProjectionMaxUsd
-    );
-  }, [publicEarnings]);
-
-  const guestMaxLabel = formatUsdRangeDisplay(guestMaxUsd, guestMaxUsd).max;
-
   if (showGuestLayout) {
     return (
       <PortfolioWeeklyGuestPageView
         guestMaxLabel={guestMaxLabel}
-        loading={!publicEarnings}
-        loadError={loadError}
+        loadError={guestPitchLoadError}
       />
     );
   }

@@ -111,5 +111,5 @@ export function mergeAuthPreservingReferral(
 
 export function buildShareUrl(origin: string, referralCode: string): string {
   const base = origin.replace(/\/$/, '');
-  return `${base}/?ref=${encodeURIComponent(referralCode)}`;
+  return `${base}/earn-money-weekly?ref=${encodeURIComponent(referralCode)}`;
 }

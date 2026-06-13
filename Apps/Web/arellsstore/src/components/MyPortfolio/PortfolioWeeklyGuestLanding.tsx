@@ -4,24 +4,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import GuestLandingCopyright from '../GuestLandingCopyright';
-import PortfolioUsdAmount from './PortfolioUsdAmount';
-import {
-  PORTFOLIO_METRIC_FADE_FAST,
-  PORTFOLIO_METRIC_REVEAL_FAST,
-} from './usePortfolioMetricReveal';
+import GuestWeeklyEarnPitch from './GuestWeeklyEarnPitch';
 
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
 
 export type PortfolioWeeklyGuestLandingProps = {
   guestMaxLabel: string;
-  loading: boolean;
   loadError: boolean;
 };
 
 const PortfolioWeeklyGuestLanding: React.FC<PortfolioWeeklyGuestLandingProps> = ({
   guestMaxLabel,
-  loading,
   loadError,
 }) => {
   return (
@@ -39,26 +33,11 @@ const PortfolioWeeklyGuestLanding: React.FC<PortfolioWeeklyGuestLandingProps> = 
             priority
           />
         </span>
-        <p className="home-guest-slogan myportfolio-weekly-guest-pitch home-guest-mount-slide home-guest-mount-slide--logo">
-          {loadError ? (
-            <>Unable to load earnings info. Try again later.</>
-          ) : (
-            <span className="myportfolio-weekly-guest-pitch-earn">
-              <span className="myportfolio-weekly-guest-pitch-earn-accent">earn</span>
-              <br />
-              up to{' '}
-              <PortfolioUsdAmount
-                amount={guestMaxLabel}
-                loading={loading}
-                className="myportfolio-weekly-guest-usd-amount"
-                symbolClassName="myinv-metric-symbol myportfolio-weekly-guest-dollar"
-                fadeClassName={PORTFOLIO_METRIC_FADE_FAST}
-                revealTiming={PORTFOLIO_METRIC_REVEAL_FAST}
-              />{' '}
-              a week
-            </span>
-          )}
-        </p>
+        <GuestWeeklyEarnPitch
+          guestMaxLabel={guestMaxLabel}
+          loadError={loadError}
+          className="home-guest-slogan myportfolio-weekly-guest-pitch home-guest-mount-slide home-guest-mount-slide--logo"
+        />
         <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--slogan">
           <span className="shadow-border" aria-hidden="true" />
           <div className="home-guest-signin-panel myinv-accent-border">

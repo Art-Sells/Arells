@@ -8,15 +8,21 @@ import Link from 'next/link';
 import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
-import HomeGuestLanding from './Home/HomeGuestLanding';
+import PortfolioWeeklyGuestPageView from './MyPortfolio/PortfolioWeeklyGuestPageView';
+import { usePublicEarningsGuestPitch } from './MyPortfolio/usePublicEarningsGuestPitch';
 import SiteSocialFooter from './SiteSocialFooter';
+import type { PublicEarningsPayload } from '../lib/portfolio/referralShares';
 import {
   CRYPTO_ASSETS,
   HOME_INITIAL_ASSET_COUNT,
   HOME_LOAD_MORE_BATCH,
 } from '../lib/assets/cryptoAssetRegistry';
 
-const Index = () => {
+type IndexProps = {
+  initialPublicEarnings?: PublicEarningsPayload | null;
+};
+
+const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   // Loader Functions
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
@@ -34,6 +40,8 @@ const Index = () => {
   const showGuestLanding = !email && !forceHomeInvestmentsPreview;
   const showSignedInHome = !!email || forceHomeInvestmentsPreview;
   const showHomeLoader = showLoading && showSignedInHome;
+  const { guestMaxLabel, loadError: guestPitchLoadError } =
+    usePublicEarningsGuestPitch(showGuestLanding, initialPublicEarnings);
   const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
   const [cardShimmersFading, setCardShimmersFading] = useState(false);
   const [cardFadeInDone, setCardFadeInDone] = useState(false);
@@ -793,7 +801,12 @@ const Index = () => {
       </>
       )}
 
-      {showGuestLanding && <HomeGuestLanding />}
+      {showGuestLanding ? (
+        <PortfolioWeeklyGuestPageView
+          guestMaxLabel={guestMaxLabel}
+          loadError={guestPitchLoadError}
+        />
+      ) : null}
 
       {!showLoading && showSignedInHome && <HomeInvestmentsSlideUpCTA />}
 

@@ -7,9 +7,8 @@ import SiteSocialFooter, { SOCIAL_TELEGRAM } from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
 import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
-import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
-import { groupDisplayMaxUsd } from '../../lib/portfolio/referralShares';
-import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
+import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
+import { groupDisplayMaxUsd, type PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { USERS_POOL_WEEKLY_MAX, USERS_POOL_WEEKLY_MIN, WAU_ACTIVATION_TARGET } from '../../lib/portfolio/financialBenefits';
 
@@ -55,36 +54,17 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [shellMaxHeight, setShellMaxHeight] = useState(0);
   const [me, setMe] = useState<PortfolioMe | null>(() => toWeeklyMe(initialPortfolioMe));
-  const [publicEarnings, setPublicEarnings] = useState<PublicEarningsPayload | null>(
-    initialPublicEarnings
-  );
   const [loadError, setLoadError] = useState(false);
 
   const showGuestLayout = guestPreview || (!isSignedIn && !initialPortfolioMe);
   const showSignedInPanel = isSignedIn || !!initialPortfolioMe;
+  const { guestMaxLabel, loadError: guestPitchLoadError } =
+    usePublicEarningsGuestPitch(showGuestLayout, initialPublicEarnings);
 
   useEffect(() => {
     if (showGuestLayout) {
       setMe(null);
-      if (publicEarnings) return;
-
-      let cancelled = false;
-      (async () => {
-        try {
-          const res = await fetch('/api/portfolio/public-earnings', { cache: 'no-store' });
-          if (!res.ok) throw new Error('fetch failed');
-          const json = (await res.json()) as PublicEarningsPayload;
-          if (!cancelled) {
-            setPublicEarnings(json);
-            setLoadError(false);
-          }
-        } catch {
-          if (!cancelled) setLoadError(true);
-        }
-      })();
-      return () => {
-        cancelled = true;
-      };
+      return;
     }
 
     if (me) return;
@@ -107,7 +87,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [showGuestLayout, authSessionLoading, publicEarnings, me]);
+  }, [showGuestLayout, authSessionLoading, me]);
 
   useEffect(() => {
     if (!showSignedInPanel && authSessionLoading) return;
@@ -154,18 +134,10 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
   }, []);
 
   const groupMaxUsd = useMemo(() => {
-    if (me) {
-      const projectionMax = me.projectedEarningsUsdMax > 0 ? me.projectedEarningsUsdMax : USERS_POOL_WEEKLY_MAX;
-      return groupDisplayMaxUsd(me.topReferrerMaxUsd, projectionMax);
-    }
-    if (publicEarnings) {
-      return groupDisplayMaxUsd(
-        publicEarnings.topReferrerMaxUsd,
-        publicEarnings.fallbackProjectionMaxUsd
-      );
-    }
-    return 0;
-  }, [me, publicEarnings]);
+    if (!me) return 0;
+    const projectionMax = me.projectedEarningsUsdMax > 0 ? me.projectedEarningsUsdMax : USERS_POOL_WEEKLY_MAX;
+    return groupDisplayMaxUsd(me.topReferrerMaxUsd, projectionMax);
+  }, [me]);
 
   /** Personal min when set; else 2-friend projection; else one-referral floor — never $0 on this line. */
   const explainerMinUsd = useMemo(() => {
@@ -175,14 +147,11 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
     return USERS_POOL_WEEKLY_MIN / WAU_ACTIVATION_TARGET;
   }, [me]);
 
-  const guestMaxLabel = formatUsdRangeDisplay(groupMaxUsd, groupMaxUsd).max;
-
   if (showGuestLayout) {
     return (
       <PortfolioWeeklyGuestPageView
         guestMaxLabel={guestMaxLabel}
-        loading={!publicEarnings}
-        loadError={loadError}
+        loadError={guestPitchLoadError}
       />
     );
   }

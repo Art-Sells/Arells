@@ -4,6 +4,7 @@
 import Index from '../components/Index';
 import React from 'react';
 import type { Metadata } from 'next';
+import { loadGuestPublicEarnings } from '../lib/portfolio/loadGuestPublicEarnings';
 import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../lib/siteMetaDescriptions';
 
 export const metadata: Metadata = {
@@ -36,13 +37,14 @@ export const metadata: Metadata = {
   }
 };
 
-const Home = () => {
+const Home = async () => {
+  const initialPublicEarnings = await loadGuestPublicEarnings();
 
   return (
     <div id="overlayy">
-      <Index />
+      <Index initialPublicEarnings={initialPublicEarnings} />
     </div>
   );
-}
+};
 
 export default Home;

@@ -10174,8 +10174,55 @@ a.asset-action-button--save-signin {
 	animation-delay: 0.36s;
 }
 
-.asset-guest-mount-slide--copyright {
+.asset-guest-mount-slide--earn {
 	animation-delay: 0.48s;
+}
+
+.asset-guest-mount-slide--copyright {
+	animation-delay: 0.6s;
+}
+
+.asset-guest-earn-pitch {
+	margin: 10px 0 0;
+	text-align: center;
+	text-wrap: balance;
+}
+
+.asset-guest-earn-pitch .myportfolio-weekly-guest-pitch-earn {
+	display: block;
+	letter-spacing: -0.5px;
+}
+
+.asset-guest-earn-pitch .myportfolio-weekly-guest-pitch-earn-word,
+.asset-guest-earn-pitch .myportfolio-weekly-guest-pitch-up-to {
+	font-family: Arial, sans-serif;
+	font-weight: 800;
+	letter-spacing: -0.6px;
+	font-size: 14px;
+	line-height: 1.35;
+	opacity: 0.92;
+}
+
+.asset-page .asset-guest-earn-pitch .myportfolio-weekly-guest-pitch-dollar,
+.asset-page .asset-guest-earn-pitch .myportfolio-weekly-guest-pitch-value {
+	color: var(--asset-hover-dot-color) !important;
+	-webkit-text-fill-color: var(--asset-hover-dot-color) !important;
+	opacity: 1;
+}
+
+.asset-guest-earn-pitch .myportfolio-weekly-guest-pitch-amount {
+	display: block;
+	margin-top: 2px;
+	font-size: 24px;
+	font-weight: 800;
+	letter-spacing: -1px;
+	line-height: 1.15;
+	opacity: 1;
+}
+
+.asset-guest-earn-pitch .myportfolio-weekly-guest-pitch-dollar {
+	margin-right: 0;
+	vertical-align: baseline;
 }
 
 /* Guest landing reuses `.asset-page-content` — reset its fixed 20px top padding so badge margin drives vertical offset. */
@@ -10262,7 +10309,7 @@ a.asset-action-button--save-signin {
 	color: var(--asset-slogan-color, rgb(35, 41, 47));
 }
 
-.asset-guest-signin-shell {
+.asset-guest-action-shell {
 	width: 100%;
 	border-radius: 12px;
 	box-sizing: border-box;
@@ -10270,7 +10317,7 @@ a.asset-action-button--save-signin {
 	padding: 10px;
 }
 
-.asset-guest-signin-panel {
+.asset-guest-signin-nested {
 	width: 100%;
 	box-sizing: border-box;
 	border-radius: 12px;
@@ -10286,65 +10333,65 @@ a.asset-action-button--save-signin {
 	gap: 4px;
 }
 
-.asset-page--bitcoin .asset-guest-signin-shell {
+.asset-page--bitcoin .asset-guest-action-shell {
 	background: rgba(248, 141, 0, 0.06);
 }
 
-.asset-page--ethereum .asset-guest-signin-shell {
+.asset-page--ethereum .asset-guest-action-shell {
 	background: rgba(107, 114, 168, 0.07);
 }
 
-.asset-page--bnb .asset-guest-signin-shell {
+.asset-page--bnb .asset-guest-action-shell {
 	background: rgba(243, 186, 47, 0.06);
 }
 
-.asset-page--tron .asset-guest-signin-shell {
+.asset-page--tron .asset-guest-action-shell {
 	background: rgba(255, 0, 19, 0.075);
 }
 
-.asset-page--doge .asset-guest-signin-shell {
+.asset-page--doge .asset-guest-action-shell {
 	background: rgba(194, 166, 51, 0.075);
 }
 
-.asset-page--solana .asset-guest-signin-shell {
+.asset-page--solana .asset-guest-action-shell {
 	background: rgba(0, 208, 168, 0.06);
 }
 
-.asset-page--xrp .asset-guest-signin-shell {
+.asset-page--xrp .asset-guest-action-shell {
 	background: rgba(30, 41, 59, 0.06);
 }
 
-.asset-page--bitcoin .asset-guest-signin-shell .shadow-border {
+.asset-page--bitcoin .asset-guest-action-shell .shadow-border {
 	border-color: rgba(248, 141, 0, 0.3);
 	opacity: 1;
 }
 
-.asset-page--ethereum .asset-guest-signin-shell .shadow-border {
+.asset-page--ethereum .asset-guest-action-shell .shadow-border {
 	border-color: rgba(107, 114, 168, 0.3);
 	opacity: 1;
 }
 
-.asset-page--bnb .asset-guest-signin-shell .shadow-border {
+.asset-page--bnb .asset-guest-action-shell .shadow-border {
 	border-color: rgba(243, 186, 47, 0.6);
 	opacity: 1;
 }
 
-.asset-page--tron .asset-guest-signin-shell .shadow-border {
+.asset-page--tron .asset-guest-action-shell .shadow-border {
 	border-color: rgba(255, 0, 19, 0.32);
 	opacity: 1;
 }
 
-.asset-page--doge .asset-guest-signin-shell .shadow-border {
+.asset-page--doge .asset-guest-action-shell .shadow-border {
 	border-color: rgba(194, 166, 51, 0.55);
 	opacity: 1;
 }
 
-.asset-page--solana .asset-guest-signin-shell .shadow-border {
+.asset-page--solana .asset-guest-action-shell .shadow-border {
 	border-color: rgba(0, 208, 168, 0.6);
 	opacity: 1;
 }
 
-.asset-page--xrp .asset-guest-signin-shell .shadow-border {
+.asset-page--xrp .asset-guest-action-shell .shadow-border {
 	border-color: rgba(30, 41, 59, 0.25);
 	opacity: 1;
 }
@@ -11481,7 +11528,7 @@ a.asset-action-button--save-signin {
 	font-size: 19px;
 }
 
-.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn-accent {
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn-word {
 	color: var(--myinv-accent-color);
 	-webkit-text-fill-color: var(--myinv-accent-color);
 }
@@ -11490,6 +11537,37 @@ a.asset-action-button--save-signin {
 	letter-spacing: -0.5px;
 	color: #222;
 	-webkit-text-fill-color: #222;
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-up-to,
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-week {
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: -0.6px;
+	line-height: 1.35;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-amount {
+	display: inline;
+	font-size: 26px;
+	font-weight: 700;
+	letter-spacing: -1px;
+	line-height: 1;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
+.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-dollar {
+	display: inline;
+	font-weight: 800;
+	font-size: 21px;
+	opacity: 0.7;
+	vertical-align: 1px;
+	margin-right: 3px;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
 .myinv-page--weekly-guest .home-guest-slogan.myportfolio-weekly-guest-mission {
@@ -11501,30 +11579,6 @@ a.asset-action-button--save-signin {
 
 .myinv-page--weekly-guest .myportfolio-weekly-guest-copyright.guest-landing-copyright--home {
 	color: var(--myinv-accent-color);
-}
-
-.myinv-page--weekly-guest .myportfolio-weekly-guest-pitch-earn .myportfolio-weekly-guest-dollar {
-	display: inline;
-	font-weight: 800;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	font-size: 21px;
-	opacity: 0.7;
-	vertical-align: 1px;
-	margin-right: 3px;
-}
-
-.myinv-page--weekly-guest .myportfolio-weekly-guest-usd-amount .myportfolio-metric-number-wrap {
-	font-size: 26px;
-	min-height: 1em;
-}
-
-.myinv-page--weekly-guest .myportfolio-weekly-guest-usd-amount .myinv-metric-integer {
-	font-size: 26px;
-	font-weight: 700;
-	letter-spacing: -1px;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
 .myportfolio-referral-network-nested,
