@@ -5,7 +5,7 @@ import Index from '../components/Index';
 import React from 'react';
 import type { Metadata } from 'next';
 import { loadGuestPublicEarnings } from '../lib/portfolio/loadGuestPublicEarnings';
-import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../lib/siteMetaDescriptions';
+import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION, HOME_OG_BANNER } from '../lib/siteMetaDescriptions';
 
 export const metadata: Metadata = {
   title: "Arells",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/banners/ArellsGeneralBannerOfficial.jpg",
+        url: HOME_OG_BANNER,
       }
     ]
   },
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: [
       {
-        url: "/images/banners/ArellsGeneralBannerOfficial.jpg",
+        url: HOME_OG_BANNER,
       }
     ]
   }

@@ -2,15 +2,14 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import MyPortfolioPageClient from '../../components/MyPortfolio/MyPortfolioPageClient';
 import { resolveAppOrigin } from '../../lib/auth/origin';
+import { readRequestHostHeaders } from '../../lib/auth/requestHostHeaders';
 import { getSessionFromAppCookies } from '../../lib/auth/session';
 import {
   fetchPortfolioLeaderboardServer,
   fetchPortfolioMeServer,
 } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarningsServer';
-import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../../lib/siteMetaDescriptions';
-
-const banner = '/images/banners/MyInvestmentsBanner.jpg';
+import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION, HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
 
 export const metadata: Metadata = {
   title: 'My Portfolio',
@@ -22,13 +21,18 @@ export const metadata: Metadata = {
     description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
     url: '/my-portfolio',
     type: 'website',
-    images: [{ url: banner }],
+    images: [{ url: HOME_OG_BANNER }],
   },
 };
 
 export default async function MyPortfolioPage() {
   const session = await getSessionFromAppCookies();
-  const origin = resolveAppOrigin(headers().get('origin') ?? undefined, undefined);
+  const requestHeaders = headers();
+  const origin = resolveAppOrigin(
+    requestHeaders.get('origin') ?? undefined,
+    undefined,
+    readRequestHostHeaders(requestHeaders)
+  );
 
   const [initialPortfolioMe, initialLeaderboardRows, initialPublicEarnings] = session
     ? await Promise.all([

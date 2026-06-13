@@ -16,6 +16,7 @@ import {
   topReferrerWeeklyMaxUsd,
 } from '../../lib/portfolio/referralShares';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
+import { buildShareUrl } from '../../lib/auth/referral';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 
 export type MyPortfolioPageClientProps = {
@@ -135,11 +136,18 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     };
   }, []);
 
+  const shareUrl = useMemo(() => {
+    if (!data?.referralCode) return '';
+    if (typeof window !== 'undefined') {
+      return buildShareUrl(window.location.origin, data.referralCode);
+    }
+    return data.shareUrl ?? '';
+  }, [data?.referralCode, data?.shareUrl]);
+
   const onShare = useCallback(async () => {
-    const url = data?.shareUrl;
-    if (!url) return;
+    if (!shareUrl) return;
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareUrl);
       setShareCopied(true);
       if (shareResetRef.current !== null) {
         window.clearTimeout(shareResetRef.current);
@@ -151,7 +159,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     } catch {
       // Clipboard unavailable — button label unchanged; no message below button.
     }
-  }, [data?.shareUrl]);
+  }, [shareUrl]);
 
   const portfolioMetricsReady = !!data && !loadError;
 
@@ -251,15 +259,15 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                               type="button"
                               className="auth-submit auth-submit--accent asset-range-button myportfolio-share-copy-button"
                               onClick={onShare}
-                              disabled={!data?.shareUrl}
+                              disabled={!shareUrl}
                             >
                               {shareCopied ? 'copied' : 'copy'}
                             </button>
                             <div
                               className="myportfolio-share-url-display myinv-accent-border"
-                              title={data?.shareUrl ?? undefined}
+                              title={shareUrl || undefined}
                             >
-                              {data?.shareUrl ?? ''}
+                              {shareUrl}
                             </div>
                           </div>
                         </div>

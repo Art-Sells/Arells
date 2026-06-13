@@ -2,6 +2,12 @@
  * Restrict signup verification link origins (open-redirect hardening).
  */
 
+export type RequestHostHeaders = {
+  host?: string | null;
+  forwardedHost?: string | null;
+  forwardedProto?: string | null;
+};
+
 export function sanitizeWebOrigin(raw: unknown): string | null {
   if (typeof raw !== 'string' || raw.length > 200) return null;
   try {
@@ -31,11 +37,34 @@ function isOriginAllowed(origin: string): boolean {
   }
 }
 
-export function resolveAppOrigin(reqOriginHeader: string | undefined, bodyOrigin: unknown): string {
+function originFromHostHeaders(headers: RequestHostHeaders): string | null {
+  const host = headers.forwardedHost?.split(',')[0]?.trim() || headers.host?.trim();
+  if (!host) return null;
+
+  const forwardedProto = headers.forwardedProto?.split(',')[0]?.trim().replace(/:$/, '');
+  const proto =
+    forwardedProto === 'http' || forwardedProto === 'https'
+      ? forwardedProto
+      : host.startsWith('localhost') || host.startsWith('127.0.0.1')
+        ? 'http'
+        : 'https';
+
+  return sanitizeWebOrigin(`${proto}://${host}`);
+}
+
+export function resolveAppOrigin(
+  reqOriginHeader: string | undefined,
+  bodyOrigin: unknown,
+  hostHeaders?: RequestHostHeaders
+): string {
   const fromBody = sanitizeWebOrigin(bodyOrigin);
   if (fromBody && isOriginAllowed(fromBody)) return fromBody;
   const fromHeader = sanitizeWebOrigin(reqOriginHeader);
   if (fromHeader && isOriginAllowed(fromHeader)) return fromHeader;
+  if (hostHeaders) {
+    const fromHost = originFromHostHeaders(hostHeaders);
+    if (fromHost && isOriginAllowed(fromHost)) return fromHost;
+  }
   const env = process.env.NEXT_PUBLIC_APP_URL;
   const fromEnv = sanitizeWebOrigin(env);
   if (fromEnv && isOriginAllowed(fromEnv)) return fromEnv;

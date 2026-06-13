@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { buildShareUrl, ensureReferralCodeForUser } from '../../../lib/auth/referral';
 import { resolveAppOrigin } from '../../../lib/auth/origin';
+import { readRequestHostHeadersFromApi } from '../../../lib/auth/requestHostHeaders';
 import { getSessionFromRequest } from '../../../lib/auth/session';
 import { buildPortfolioMePayload } from '../../../lib/portfolio/referralShares';
 import { getServerS3 } from '../../../lib/server/awsS3';
@@ -29,7 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const referralCode = await ensureReferralCodeForUser(session.email);
-    const origin = resolveAppOrigin(req.headers.origin, undefined);
+    const origin = resolveAppOrigin(
+      req.headers.origin as string | undefined,
+      undefined,
+      readRequestHostHeadersFromApi(req)
+    );
     const shareUrl = buildShareUrl(origin, referralCode);
     const payload = await buildPortfolioMePayload(s3, bucket(), session.email, shareUrl, referralCode);
     return res.status(200).json(payload);

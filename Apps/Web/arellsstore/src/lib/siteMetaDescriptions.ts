@@ -1,5 +1,7 @@
 /** Shared meta descriptions (also used in OG/Twitter on each route). */
 
+export const HOME_OG_BANNER = '/images/banners/ArellsGeneralBannerOfficial.jpg';
+
 export const HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION =
   'Investments never lose value with Arells. Arells is on a mission to ensure investments never lose value. Powered by Vavity.';
 
