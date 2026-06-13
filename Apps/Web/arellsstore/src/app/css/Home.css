@@ -5489,6 +5489,17 @@ a.myinv-about-button:focus-visible {
 		transform: translateX(54.5px);
 	}
 
+	.myinv-page--earn-weekly .myinv-header-inner .myinv-title {
+		margin-right: 3px;
+		margin-bottom: 10px;
+		width: 100%;
+		text-align: center;
+	}
+
+	.myinv-page--earn-weekly .myinv-header-inner.is-liquid .myinv-title {
+		transform: translateX(-2px);
+	}
+
 	.home-asset-card .asset-action-button--home-asset-chip,
 	.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip,
 	a.asset-action-button--myinv-asset-link {
@@ -10557,8 +10568,7 @@ a.asset-action-button--save-signin {
 .myportfolio-about-nested,
 .myportfolio-leaderboard-nested,
 .myportfolio-referral-network-nested,
-.myportfolio-weekly-uara-intro-nested,
-.myportfolio-weekly-uara-revenue-nested {
+.myportfolio-weekly-uara-intro-nested {
 	margin-top: 16px;
 	padding: 12px 10px 14px;
 	border-radius: 12px;
@@ -10592,6 +10602,29 @@ a.asset-action-button--save-signin {
 	font-size: 13px;
 }
 
+.myinv-page--earn-weekly .myinv-header-inner {
+	justify-content: center;
+}
+
+.myinv-page--earn-weekly .myinv-header-inner.page-slide-in {
+	animation: none;
+	transform: none;
+}
+
+.myinv-page--earn-weekly .myinv-header-inner .myinv-title {
+	margin-left: 0;
+	margin-bottom: -1px;
+	text-align: center;
+}
+
+.myinv-page--earn-weekly .myinv-header-inner.is-liquid .myinv-title {
+	transform: none;
+}
+
+.myinv-page--earn-weekly .myinv-shell {
+	padding: 10px;
+}
+
 .myportfolio-metric-panel,
 .myportfolio-cta-panel,
 .myportfolio-explainer {
@@ -10601,6 +10634,16 @@ a.asset-action-button--save-signin {
 
 .myinv-summary-block.myportfolio-explainer {
 	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.myportfolio-explainer .myportfolio-referral-network-nested,
+.myportfolio-explainer .myportfolio-weekly-uara-intro-nested {
+	margin-top: 10px;
+}
+
+.myportfolio-explainer .myinv-summary-shell > .myportfolio-weekly-uara-intro-nested {
+	margin-top: 0;
 }
 
 .myportfolio-explainer .myinv-summary-section {
@@ -10638,9 +10681,22 @@ a.asset-action-button--save-signin {
 		gap: 8px;
 	}
 
-	.myportfolio-weekly-uara-earnings-lead,
+	.myportfolio-weekly-uara-earnings-lead-group,
 	.myportfolio-weekly-uara-earnings-range,
 	.myportfolio-weekly-uara-earnings-after-range {
+		display: block;
+		width: 100%;
+	}
+
+	.myportfolio-weekly-uara-earnings-lead-group {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0;
+	}
+
+	.myportfolio-weekly-uara-earnings-refer-lead,
+	.myportfolio-weekly-uara-earnings-projected-lead {
 		display: block;
 		width: 100%;
 	}
@@ -10667,10 +10723,28 @@ a.asset-action-button--save-signin {
 		margin-left: auto;
 		margin-right: auto;
 	}
+
+	.myportfolio-weekly-uara-earnings-copy {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.myportfolio-weekly-uara-earnings-lead-group,
+	.myportfolio-weekly-uara-earnings-range,
+	.myportfolio-weekly-uara-earnings-after-range {
+		display: block;
+		width: 100%;
+	}
+
+	.myportfolio-weekly-uara-earnings-after-range {
+		display: block;
+	}
 }
 
 .myportfolio-weekly-back-panel.myinv-summary-block {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	padding-top: 15px;
 	width: min(700px, 100%);
 	max-width: 100%;
@@ -10682,6 +10756,43 @@ a.asset-action-button--save-signin {
 	width: 100%;
 	max-width: 100%;
 	box-sizing: border-box;
+}
+
+.myportfolio-weekly-uara-revenue-panel.shadow-border-wrap {
+	width: min(700px, 100%);
+	max-width: 100%;
+	margin: 0 auto;
+	padding: 10px;
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+.myportfolio-weekly-uara-revenue-inner {
+	width: 100%;
+	padding: 12px 10px 14px;
+	border-radius: 12px;
+	box-sizing: border-box;
+	--myinv-asset-border-opacity: 0.3;
+}
+
+.myportfolio-weekly-uara-revenue-inner .myportfolio-body-copy {
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
+@media (min-width: 751px) {
+	.myportfolio-weekly-uara-revenue-inner .myportfolio-weekly-uara-revenue-copy {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0;
+	}
+
+	.myportfolio-weekly-uara-revenue-lead,
+	.myportfolio-weekly-uara-revenue-tail {
+		display: block;
+		width: 100%;
+	}
 }
 
 .myportfolio-metric-label {
@@ -10949,8 +11060,7 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-referral-network-nested,
-.myportfolio-weekly-uara-intro-nested,
-.myportfolio-weekly-uara-revenue-nested {
+.myportfolio-weekly-uara-intro-nested {
 	--myinv-asset-border-opacity: 0.3;
 }
 
@@ -11066,7 +11176,11 @@ a.asset-action-button--save-signin {
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
-	gap: 6px;
+	gap: 0;
+}
+
+.myportfolio-referral-pyramid-tier + .myportfolio-referral-pyramid-tier {
+	margin-top: 10px;
 }
 
 .myportfolio-referral-pyramid-tier--you {
@@ -11101,10 +11215,24 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-referral-pyramid-connector {
+	position: relative;
 	width: 2px;
-	height: 14px;
+	height: 12px;
+	margin: 0 0 7px;
 	background: color-mix(in srgb, var(--myinv-accent-color) 35%, transparent);
 	border-radius: 1px;
+	flex-shrink: 0;
+}
+
+.myportfolio-referral-pyramid-connector::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	bottom: -5px;
+	transform: translateX(-50%);
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 5px solid color-mix(in srgb, var(--myinv-accent-color) 35%, transparent);
 }
 
 .myportfolio-referral-pyramid-band {

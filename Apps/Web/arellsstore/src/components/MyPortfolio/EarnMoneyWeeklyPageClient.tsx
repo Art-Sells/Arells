@@ -188,7 +188,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
   }
 
   return (
-    <div className="myinv-page myinv-page--accent myinv-page--portfolio">
+    <div className="myinv-page myinv-page--accent myinv-page--portfolio myinv-page--earn-weekly">
       <div className="myinv-header-inner myinv-header-inner--liquid-forever is-liquid page-slide-in">
         <div className="myinv-title">my weekly earnings</div>
       </div>
@@ -213,8 +213,14 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                       <div className="myportfolio-weekly-uara-intro-nested myinv-accent-border">
                         <div className="myportfolio-weekly-uara-intro-copy">
                           <p className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy">
-                            <span className="myportfolio-weekly-uara-earnings-lead">
-                              You are projected to earn{' '}
+                            <span className="myportfolio-weekly-uara-earnings-lead-group">
+                              <span className="myportfolio-weekly-uara-earnings-refer-lead">
+                                If you refer 2 (or more) users,
+                              </span>
+                              <span className="myportfolio-weekly-uara-earnings-projected-lead">
+                                {' '}
+                                you are projected to earn{' '}
+                              </span>
                             </span>
                             {!loadError ? (
                               <span className="myportfolio-weekly-uara-earnings-range">
@@ -258,15 +264,6 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                         </div>
                       ) : null}
 
-                      <div className="myportfolio-weekly-uara-revenue-nested myinv-accent-border">
-                        <div className="myportfolio-weekly-uara-intro-copy">
-                          <p className="myportfolio-body-copy">
-                            Your weekly earnings will be derived from the 65% of advertising revenue (User Ad Revenue
-                            (UAR)) Arells generates, Arells will keep 35%.
-                          </p>
-                        </div>
-                      </div>
-
                       <div className="myportfolio-referral-network-nested myinv-accent-border myportfolio-telegram-support">
                         <div className="myportfolio-telegram-support-copy">
                           <p className="myportfolio-telegram-support-copy-lead">Questions/Concerns?</p>
@@ -293,6 +290,23 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                   >
                     back to my portfolio
                   </Link>
+                </div>
+
+                <div className={`myportfolio-weekly-uara-revenue-panel shadow-border-wrap${slideIn ? ' page-slide-in' : ''}`}>
+                  <span className="shadow-border" aria-hidden="true" />
+                  <div className="myinv-accent-border myportfolio-weekly-uara-revenue-inner">
+                    <div className="myportfolio-weekly-uara-intro-copy">
+                      <p className="myportfolio-body-copy myportfolio-weekly-uara-revenue-copy">
+                        <span className="myportfolio-weekly-uara-revenue-lead">
+                          Your weekly earnings will be derived from the 65% of advertising revenue
+                        </span>
+                        <span className="myportfolio-weekly-uara-revenue-tail">
+                          {' '}
+                          (User Ad Revenue (UAR)) Arells generates, Arells will keep 35%.
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </>
             ) : null}

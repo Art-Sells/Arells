@@ -31,13 +31,13 @@ const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid, groupMaxUsd }
             {weeklyActiveUsersLabel(pyramid.l1ActiveWeekly)}
           </span>
         </div>
+        <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
         <p className="myportfolio-referral-pyramid-tier-meta">
           you earn{' '}
           <span className="myportfolio-referral-pyramid-amount">${l1MinLabel}</span> a week
         </p>
       </div>
 
-      <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
       <div className="myportfolio-referral-pyramid-tier">
         <div className="myportfolio-referral-pyramid-band">
           <span className="myportfolio-referral-pyramid-band-label">
@@ -47,13 +47,13 @@ const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid, groupMaxUsd }
             {weeklyActiveUsersLabel(pyramid.midActiveWeekly)}
           </span>
         </div>
+        <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
         <p className="myportfolio-referral-pyramid-tier-meta">
           you earn{' '}
           <span className="myportfolio-referral-pyramid-amount">${midMinLabel}</span> a week
         </p>
       </div>
 
-      <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
       <div className="myportfolio-referral-pyramid-tier">
         <div className="myportfolio-referral-pyramid-band">
           <span className="myportfolio-referral-pyramid-band-label">
@@ -63,6 +63,7 @@ const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid, groupMaxUsd }
             {weeklyActiveUsersLabel(pyramid.bottomActiveWeekly)}
           </span>
         </div>
+        <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
         <p className="myportfolio-referral-pyramid-tier-meta">
           you earn up to{' '}
           <span className="myportfolio-referral-pyramid-amount">${topReferrerLabel}</span> a week
