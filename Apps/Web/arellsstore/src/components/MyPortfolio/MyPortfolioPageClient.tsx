@@ -11,10 +11,6 @@ import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioL
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
-import {
-  headlineDisplayMaxUsd,
-  topReferrerWeeklyMaxUsd,
-} from '../../lib/portfolio/referralShares';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import { buildShareUrl } from '../../lib/auth/referral';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
@@ -168,10 +164,6 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     data?.projectedEarningsUsdMax ?? 0
   ).max;
 
-  const headlineGroupMaxUsd = data
-    ? headlineDisplayMaxUsd(topReferrerWeeklyMaxUsd(leaderboardRows), data.earningsUsdMax)
-    : 0;
-
   if (showGuestLayout) {
     return (
       <PortfolioWeeklyGuestPageView
@@ -217,7 +209,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                             {!loadError ? (
                               <UsdRangeMetric
                                 min={data?.earningsUsdMin ?? 0}
-                                max={headlineGroupMaxUsd}
+                                max={data?.earningsUsdMax ?? 0}
                                 loading={!portfolioMetricsReady}
                               />
                             ) : null}

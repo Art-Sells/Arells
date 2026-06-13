@@ -90,7 +90,7 @@ const SignInPageClient: React.FC = () => {
         return;
       }
       await refreshAuthSession();
-      router.push('/my-investments');
+      router.push('/my-portfolio');
       router.refresh();
     } catch {
       setError('Something went wrong. Try again.');

@@ -4,13 +4,15 @@ import { listVerifiedWauActiveEmailKeys } from '../metrics/metricsPageMounts';
 import { aggregateSignedInUserTraffic } from '../metrics/metricsPageMounts';
 import {
   projectedWeeklyRangeIfAddedReferrals,
-  weeklyEarningsUsdRange,
+  USERS_POOL_WEEKLY_MAX,
   WAU_ACTIVATION_TARGET,
+  weeklyEarningsUsdRangeFromWeightedCredits,
 } from './financialBenefits';
 import { listAllUserAuthRecordsFromS3 } from './listUserAuthRecords';
 import { maskEmailForLeaderboard } from './maskEmailForLeaderboard';
 import {
   buildSiteWidePyramidSnapshot,
+  buildWeightedCreditsByReferrer,
   type ReferralPyramidSnapshot,
 } from './referralTree';
 import { isUserAuthVerified } from '../metrics/listUserS3Touches';
@@ -50,38 +52,6 @@ export type PublicEarningsPayload = {
   fallbackProjectionMaxUsd: number;
 };
 
-/** Highest weekly max among referrers on the leaderboard (0 if none have active referrals). */
-export function topReferrerWeeklyMaxUsd(rows: LeaderboardRow[]): number {
-  let top = 0;
-  for (const row of rows) {
-    if (row.earningsUsdMax > top) top = row.earningsUsdMax;
-  }
-  return top;
-}
-
-function topReferrerMaxFromCounts(counts: Map<string, number>): number {
-  let totalActiveReferrals = 0;
-  for (const n of counts.values()) totalActiveReferrals += n;
-  let top = 0;
-  for (const n of counts.values()) {
-    const { max } = weeklyEarningsUsdRange(n, totalActiveReferrals);
-    if (max > top) top = max;
-  }
-  return top;
-}
-
-/** UI max for guest / share projection fallback. */
-export function groupDisplayMaxUsd(topReferrerMax: number, shareProjectionMax: number): number {
-  if (topReferrerMax > 0) return topReferrerMax;
-  return shareProjectionMax;
-}
-
-/** Headline / pyramid max: top referrer when set, else your personal max (not share-projection $4,550). */
-export function headlineDisplayMaxUsd(topReferrerMax: number, personalMaxUsd: number): number {
-  if (topReferrerMax > 0) return topReferrerMax;
-  return personalMaxUsd;
-}
-
 export function buildReferralPyramidSnapshot(
   records: UserAuthRecord[],
   wauActiveEmailKeys: Set<string>,
@@ -107,13 +77,15 @@ function countActiveReferralsByReferrer(
 
 function economicsForReferrer(
   referrerEmail: string,
-  counts: Map<string, number>
+  counts: Map<string, number>,
+  weightedCredits: Map<string, number>
 ): ReferralEconomics {
   const normalized = normalizeEmail(referrerEmail);
   const activeReferralCount = counts.get(normalized) ?? 0;
   let totalActiveReferrals = 0;
   for (const n of counts.values()) totalActiveReferrals += n;
-  const { min, max } = weeklyEarningsUsdRange(activeReferralCount, totalActiveReferrals);
+  const credits = weightedCredits.get(normalized) ?? 0;
+  const { min, max } = weeklyEarningsUsdRangeFromWeightedCredits(credits);
   return {
     activeReferralCount,
     totalActiveReferrals,
@@ -128,6 +100,7 @@ export async function buildActiveReferralCounts(
   nowMs: number = Date.now()
 ): Promise<{
   counts: Map<string, number>;
+  weightedCredits: Map<string, number>;
   wau: number;
   records: UserAuthRecord[];
   wauActiveEmailKeys: Set<string>;
@@ -137,8 +110,11 @@ export async function buildActiveReferralCounts(
     listVerifiedWauActiveEmailKeys(s3, bucket, nowMs),
     aggregateSignedInUserTraffic(s3, bucket, nowMs),
   ]);
+  const counts = countActiveReferralsByReferrer(records, wauActiveEmailKeys);
+  const weightedCredits = buildWeightedCreditsByReferrer(records, wauActiveEmailKeys);
   return {
-    counts: countActiveReferralsByReferrer(records, wauActiveEmailKeys),
+    counts,
+    weightedCredits,
     wau: traffic.wau,
     records,
     wauActiveEmailKeys,
@@ -146,18 +122,13 @@ export async function buildActiveReferralCounts(
 }
 
 export async function buildPublicEarningsPayload(
-  s3: AWS.S3,
-  bucket: string,
-  nowMs: number = Date.now()
+  _s3: AWS.S3,
+  _bucket: string,
+  _nowMs: number = Date.now()
 ): Promise<PublicEarningsPayload> {
-  const { counts } = await buildActiveReferralCounts(s3, bucket, nowMs);
-  const topReferrerMaxUsd = topReferrerMaxFromCounts(counts);
-  let totalActiveReferrals = 0;
-  for (const n of counts.values()) totalActiveReferrals += n;
-  const fallback = projectedWeeklyRangeIfAddedReferrals(0, totalActiveReferrals, 2, 3);
   return {
-    topReferrerMaxUsd,
-    fallbackProjectionMaxUsd: fallback.max,
+    topReferrerMaxUsd: 0,
+    fallbackProjectionMaxUsd: USERS_POOL_WEEKLY_MAX,
   };
 }
 
@@ -169,19 +140,15 @@ export async function buildPortfolioMePayload(
   referralCode: string,
   nowMs: number = Date.now()
 ): Promise<PortfolioMePayload> {
-  const { counts, wau, records, wauActiveEmailKeys } = await buildActiveReferralCounts(s3, bucket, nowMs);
-  const economics = economicsForReferrer(email, counts);
-  const projected = projectedWeeklyRangeIfAddedReferrals(
-    economics.activeReferralCount,
-    economics.totalActiveReferrals,
-    2,
-    3
-  );
-  const topReferrerMaxUsd = topReferrerMaxFromCounts(counts);
+  const { counts, weightedCredits, wau, records, wauActiveEmailKeys } =
+    await buildActiveReferralCounts(s3, bucket, nowMs);
+  const economics = economicsForReferrer(email, counts, weightedCredits);
+  const personalCredits = weightedCredits.get(normalizeEmail(email)) ?? 0;
+  const projected = projectedWeeklyRangeIfAddedReferrals(personalCredits, 2, 3);
   const referralPyramid = buildReferralPyramidSnapshot(
     records,
     wauActiveEmailKeys,
-    topReferrerMaxUsd
+    USERS_POOL_WEEKLY_MAX
   );
 
   return {
@@ -190,7 +157,7 @@ export async function buildPortfolioMePayload(
     ...economics,
     projectedEarningsUsdMin: projected.min,
     projectedEarningsUsdMax: projected.max,
-    topReferrerMaxUsd,
+    topReferrerMaxUsd: USERS_POOL_WEEKLY_MAX,
     wau,
     usersUntilActivation: Math.max(0, WAU_ACTIVATION_TARGET - wau),
     wauActivationTarget: WAU_ACTIVATION_TARGET,
@@ -203,14 +170,13 @@ export async function buildLeaderboardRows(
   bucket: string,
   nowMs: number = Date.now()
 ): Promise<LeaderboardRow[]> {
-  const { counts } = await buildActiveReferralCounts(s3, bucket, nowMs);
-  const records = await listAllUserAuthRecordsFromS3(s3, bucket);
+  const { counts, weightedCredits, records } = await buildActiveReferralCounts(s3, bucket, nowMs);
 
   const rows: LeaderboardRow[] = [];
   for (const record of records) {
     if (!record.verified) continue;
     const email = normalizeEmail(record.email);
-    const economics = economicsForReferrer(email, counts);
+    const economics = economicsForReferrer(email, counts, weightedCredits);
     rows.push({
       email,
       maskedLabel: maskEmailForLeaderboard(email),
@@ -223,6 +189,9 @@ export async function buildLeaderboardRows(
   rows.sort((a, b) => {
     if (b.activeReferralCount !== a.activeReferralCount) {
       return b.activeReferralCount - a.activeReferralCount;
+    }
+    if (b.earningsUsdMin !== a.earningsUsdMin) {
+      return b.earningsUsdMin - a.earningsUsdMin;
     }
     if (b.earningsUsdMax !== a.earningsUsdMax) {
       return b.earningsUsdMax - a.earningsUsdMax;

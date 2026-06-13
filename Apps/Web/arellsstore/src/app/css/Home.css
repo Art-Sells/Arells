@@ -9221,12 +9221,13 @@ a.growth-metrics-about-button:focus-visible {
  * No top padding on the wrapper so this is the sole vertical control above the button.
  */
 .auth-verify-sent.auth-verify-sent--verified-success {
-	--auth-verify-success-cta-margin-top: 5px;
 	padding: 0 4px 8px;
 }
 
-.auth-verify-sent.auth-verify-sent--verified-success .auth-verify-success-cta {
-	margin-top: var(--auth-verify-success-cta-margin-top);
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-phase-section .auth-verify-success-cta {
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 0;
 }
 
 /*
@@ -9521,12 +9522,12 @@ a.growth-metrics-about-button:focus-visible {
 	text-align: center;
 }
 
-.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-phase-section .auth-verified-welcome-phase-heading,
-.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-phase-section .auth-verified-welcome-phase-line {
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked .auth-verified-phase-section .auth-verified-welcome-phase-line--portfolio-cta {
 	width: 170px;
 	max-width: 100%;
 	margin-left: auto;
 	margin-right: auto;
+	margin-bottom: 0;
 	box-sizing: border-box;
 }
 

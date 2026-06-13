@@ -111,15 +111,15 @@ const VerifiedPageClient: React.FC = () => {
                       <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--portfolio-cta">
                         {emailVerifiedWelcomePhaseCopy.portfolioBenefitLine}
                       </p>
+                      <Link
+                        href="/my-portfolio"
+                        className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
+                      >
+                        View Portfolio
+                      </Link>
                     </div>
                   </div>
                 </div>
-                <Link
-                  href="/my-portfolio"
-                  className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
-                >
-                  View Portfolio
-                </Link>
               </div>
             </div>
           </div>

@@ -8,9 +8,9 @@ import UsdRangeMetric from './UsdRangeMetric';
 import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
-import { groupDisplayMaxUsd, type PublicEarningsPayload } from '../../lib/portfolio/referralShares';
+import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
-import { USERS_POOL_WEEKLY_MAX, USERS_POOL_WEEKLY_MIN, WAU_ACTIVATION_TARGET } from '../../lib/portfolio/financialBenefits';
+import { USERS_POOL_WEEKLY_MIN, WAU_ACTIVATION_TARGET } from '../../lib/portfolio/financialBenefits';
 
 type PortfolioMe = Pick<
   PortfolioMePayload,
@@ -18,7 +18,6 @@ type PortfolioMe = Pick<
   | 'earningsUsdMax'
   | 'projectedEarningsUsdMin'
   | 'projectedEarningsUsdMax'
-  | 'topReferrerMaxUsd'
   | 'referralPyramid'
 >;
 
@@ -38,7 +37,6 @@ const toWeeklyMe = (payload: PortfolioMePayload | null): PortfolioMe | null => {
     earningsUsdMax: payload.earningsUsdMax,
     projectedEarningsUsdMin: payload.projectedEarningsUsdMin,
     projectedEarningsUsdMax: payload.projectedEarningsUsdMax,
-    topReferrerMaxUsd: payload.topReferrerMaxUsd,
     referralPyramid: payload.referralPyramid,
   };
 };
@@ -133,11 +131,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
     };
   }, []);
 
-  const groupMaxUsd = useMemo(() => {
-    if (!me) return 0;
-    const projectionMax = me.projectedEarningsUsdMax > 0 ? me.projectedEarningsUsdMax : USERS_POOL_WEEKLY_MAX;
-    return groupDisplayMaxUsd(me.topReferrerMaxUsd, projectionMax);
-  }, [me]);
+  const groupMaxUsd = me?.earningsUsdMax ?? 0;
 
   /** Personal min when set; else 2-friend projection; else one-referral floor — never $0 on this line. */
   const explainerMinUsd = useMemo(() => {

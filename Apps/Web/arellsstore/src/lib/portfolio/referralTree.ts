@@ -42,6 +42,36 @@ export function displayCountAtDepth(liveCount: number, exampleFloor: number): nu
   return liveCount > 0 ? liveCount : exampleFloor;
 }
 
+/** Sum of level-weighted credits each referrer earns from WAU-active downline. */
+export function buildWeightedCreditsByReferrer(
+  records: UserAuthRecord[],
+  wauActiveEmailKeys: Set<string>
+): Map<string, number> {
+  const parent = new Map<string, string>();
+  for (const record of records) {
+    if (!isUserAuthVerified(record) || !record.referredByEmail) continue;
+    const childKey = normalizeEmailKey(normalizeEmail(record.email));
+    if (!wauActiveEmailKeys.has(childKey)) continue;
+    parent.set(normalizeEmail(record.email), normalizeEmail(record.referredByEmail));
+  }
+
+  const credits = new Map<string, number>();
+  for (const child of parent.keys()) {
+    let node: string | undefined = child;
+    let depth = 0;
+    const seen = new Set<string>();
+    while (node && parent.has(node) && !seen.has(node)) {
+      seen.add(node);
+      depth += 1;
+      const referrer: string = parent.get(node)!;
+      const weight = referralLevelWeight(depth);
+      credits.set(referrer, (credits.get(referrer) ?? 0) + weight);
+      node = referrer;
+    }
+  }
+  return credits;
+}
+
 export function buildChildrenMap(
   records: UserAuthRecord[],
   wauActiveEmailKeys: Set<string>

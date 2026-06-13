@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
-import { groupDisplayMaxUsd, type PublicEarningsPayload } from '../../lib/portfolio/referralShares';
+import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
+import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 
 export function usePublicEarningsGuestPitch(
   enabled: boolean,
@@ -37,13 +38,9 @@ export function usePublicEarningsGuestPitch(
   }, [enabled, publicEarnings]);
 
   const guestMaxLabel = useMemo(() => {
-    if (!publicEarnings) return '';
-    const guestMaxUsd = groupDisplayMaxUsd(
-      publicEarnings.topReferrerMaxUsd,
-      publicEarnings.fallbackProjectionMaxUsd
-    );
-    return formatUsdRangeDisplay(guestMaxUsd, guestMaxUsd).max;
-  }, [publicEarnings]);
+    if (!enabled) return '';
+    return formatUsdRangeDisplay(USERS_POOL_WEEKLY_MAX, USERS_POOL_WEEKLY_MAX).max;
+  }, [enabled]);
 
   return { guestMaxLabel, loadError };
 }

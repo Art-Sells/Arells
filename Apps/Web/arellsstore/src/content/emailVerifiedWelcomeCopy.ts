@@ -14,7 +14,7 @@ export const emailVerifiedWelcomePhaseCopy = {
     line2: 'Phase One',
     line3: 'of our mission.',
   },
-  portfolioBenefitLine: 'View portfolio to see how you can financially benefit.',
+  portfolioBenefitLine: 'view portfolio to see how you can earn money weekly',
   phaseOneTitle: 'Phase One:',
   phaseOneLead: 'Expand our mission by...',
   phaseOneBullets: [
