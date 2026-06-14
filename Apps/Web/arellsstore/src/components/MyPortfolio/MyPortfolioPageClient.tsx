@@ -261,13 +261,13 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                     <div className="myinv-panel-section myinv-accent-border">
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
                         <div className="myportfolio-share-copy-nested myinv-accent-border">
-                          <p className="myportfolio-body-copy myportfolio-share-earnings-copy">
-                            <span className="myportfolio-share-earnings-line-one">
-                              <span className="myportfolio-share-earnings-tail-signup">
+                          <p className="myportfolio-share-invite-copy">
+                            <span className="myportfolio-share-invite-line-one">
+                              <span className="myportfolio-share-invite-signup">
                                 Sign up 2 (or more) people
-                              </span>
-                              <span className="myportfolio-share-earnings-lead-range">
-                                <span className="myportfolio-share-earnings-lead">to earn up to</span>{' '}
+                              </span>{' '}
+                              <span className="myportfolio-share-invite-lead-range">
+                                <span className="myportfolio-share-invite-lead">to earn up to</span>{' '}
                                 {!loadError ? (
                                   <PortfolioUsdAmount
                                     amount={shareEarnUpToLabel}
@@ -276,8 +276,8 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                                   />
                                 ) : null}
                               </span>
-                            </span>
-                            <span className="myportfolio-share-earnings-tail-share">
+                            </span>{' '}
+                            <span className="myportfolio-share-invite-tail">
                               a week by copying and sharing this link:
                             </span>
                           </p>
