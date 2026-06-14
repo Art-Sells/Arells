@@ -19,6 +19,7 @@ type PortfolioMe = Pick<
   PortfolioMePayload,
   | 'earningsUsdMin'
   | 'earningsUsdMax'
+  | 'projectedEarningsUsdMin'
 >;
 
 export type EarnMoneyWeeklyPageClientProps = {
@@ -35,6 +36,7 @@ const toWeeklyMe = (payload: PortfolioMePayload | null): PortfolioMe | null => {
   return {
     earningsUsdMin: payload.earningsUsdMin,
     earningsUsdMax: payload.earningsUsdMax,
+    projectedEarningsUsdMin: payload.projectedEarningsUsdMin,
   };
 };
 
@@ -128,10 +130,10 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
     };
   }, []);
 
-  /** Intro range low end — this user's current weekly earnings minimum. */
+  /** “If you refer 2 (or more)…” — projected min at low UAR band; max stays $4,550 (~100k WAU). */
   const explainerMinUsd = useMemo(() => {
     if (!me) return 0;
-    return me.earningsUsdMin;
+    return me.projectedEarningsUsdMin;
   }, [me]);
 
   const explainerMaxUsd = USERS_POOL_WEEKLY_MAX;
