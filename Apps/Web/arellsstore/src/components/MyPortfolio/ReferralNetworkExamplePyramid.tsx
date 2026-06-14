@@ -13,15 +13,20 @@ function weeklyActiveUsersLabel(count: number): string {
   return count === 1 ? `${formatted} weekly active user` : `${formatted} weekly active users`;
 }
 
+function weeklyActiveUsersReferLabel(count: number): string {
+  const formatted = count.toLocaleString('en-US');
+  return count === 1
+    ? `Your ${formatted} weekly active user refers:`
+    : `Your ${formatted} weekly active users refer:`;
+}
+
 const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid }) => {
   const topReferrerLabel = formatUsdRangeDisplay(
     pyramid.topReferrerMaxUsd,
     pyramid.topReferrerMaxUsd
   ).max;
-  const l1MinLabel = formatUsdRangeDisplay(pyramid.l1MinUsd, pyramid.l1MinUsd).min;
-  const midMinLabel = formatUsdRangeDisplay(pyramid.midMinUsd, pyramid.midMinUsd).min;
-  const l1CountFormatted = pyramid.l1ActiveWeekly.toLocaleString('en-US');
-  const midCountFormatted = pyramid.midActiveWeekly.toLocaleString('en-US');
+  const l1MaxLabel = formatUsdRangeDisplay(pyramid.l1MaxUsd, pyramid.l1MaxUsd).max;
+  const midMaxLabel = formatUsdRangeDisplay(pyramid.midMaxUsd, pyramid.midMaxUsd).max;
 
   return (
     <div className="myportfolio-referral-pyramid">
@@ -34,15 +39,15 @@ const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid }) => {
         </div>
         <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
         <p className="myportfolio-referral-pyramid-tier-meta">
-          you earn{' '}
-          <span className="myportfolio-referral-pyramid-amount">${l1MinLabel}</span> a week
+          you earn up to{' '}
+          <span className="myportfolio-referral-pyramid-amount">${l1MaxLabel}</span> a week
         </p>
       </div>
 
       <div className="myportfolio-referral-pyramid-tier">
         <div className="myportfolio-referral-pyramid-band">
           <span className="myportfolio-referral-pyramid-band-label">
-            Your {l1CountFormatted} Weekly Active Users refer:
+            {weeklyActiveUsersReferLabel(pyramid.l1ActiveWeekly)}
           </span>
           <span className="myportfolio-referral-pyramid-band-count">
             {weeklyActiveUsersLabel(pyramid.midActiveWeekly)}
@@ -50,15 +55,15 @@ const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid }) => {
         </div>
         <div className="myportfolio-referral-pyramid-connector" aria-hidden="true" />
         <p className="myportfolio-referral-pyramid-tier-meta">
-          you earn{' '}
-          <span className="myportfolio-referral-pyramid-amount">${midMinLabel}</span> a week
+          you earn up to{' '}
+          <span className="myportfolio-referral-pyramid-amount">${midMaxLabel}</span> a week
         </p>
       </div>
 
       <div className="myportfolio-referral-pyramid-tier">
         <div className="myportfolio-referral-pyramid-band">
           <span className="myportfolio-referral-pyramid-band-label">
-            Your {midCountFormatted} Weekly Active Users refer:
+            {weeklyActiveUsersReferLabel(pyramid.midActiveWeekly)}
           </span>
           <span className="myportfolio-referral-pyramid-band-count">
             {weeklyActiveUsersLabel(pyramid.bottomActiveWeekly)}

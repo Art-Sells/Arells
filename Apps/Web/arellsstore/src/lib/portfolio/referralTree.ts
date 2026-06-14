@@ -1,7 +1,7 @@
 import { normalizeEmail, normalizeEmailKey } from '../auth/normalize';
 import { isUserAuthVerified } from '../metrics/listUserS3Touches';
 import type { UserAuthRecord } from '../auth/s3UserAuth';
-import { USERS_POOL_WEEKLY_MIN, WAU_ACTIVATION_TARGET } from './financialBenefits';
+import { USERS_POOL_WEEKLY_MIN, USERS_POOL_WEEKLY_MAX, WAU_ACTIVATION_TARGET } from './financialBenefits';
 
 /** Hypothetical example: each referrer signs up this many active weekly users. */
 export const REFERRAL_EXAMPLE_BRANCH = 3;
@@ -10,10 +10,7 @@ export const REFERRAL_EXAMPLE_BRANCH = 3;
 export const REFERRAL_PYRAMID_MID_DEPTH = 6;
 export const REFERRAL_PYRAMID_BOTTOM_DEPTH = 12;
 
-/** Example L2 branch count for tier min ($0.09/wk at 9 users); mid band label may still show 3^6. */
-export const REFERRAL_PYRAMID_L2_EXAMPLE_COUNT = REFERRAL_EXAMPLE_BRANCH ** 2;
-
-/** Example floor counts when live referred actives are missing at that depth. */
+/** Example counts for the fixed pyramid (3 → 3^6 → 100k WAU). */
 export const REFERRAL_PYRAMID_L1_EXAMPLE_COUNT = REFERRAL_EXAMPLE_BRANCH ** 1;
 export const REFERRAL_PYRAMID_MID_EXAMPLE_COUNT = REFERRAL_EXAMPLE_BRANCH ** REFERRAL_PYRAMID_MID_DEPTH;
 export const REFERRAL_PYRAMID_BOTTOM_EXAMPLE_COUNT = WAU_ACTIVATION_TARGET;
@@ -22,12 +19,13 @@ export const REFERRAL_PYRAMID_BOTTOM_EXAMPLE_COUNT = WAU_ACTIVATION_TARGET;
 export const REFERRAL_LEVEL_WEIGHTS = [1, 0.5, 0.25] as const;
 
 const MIN_PER_FULL_CREDIT = USERS_POOL_WEEKLY_MIN / WAU_ACTIVATION_TARGET;
+const MAX_PER_FULL_CREDIT = USERS_POOL_WEEKLY_MAX / WAU_ACTIVATION_TARGET;
 
 export type ReferralPyramidSnapshot = {
   l1ActiveWeekly: number;
-  l1MinUsd: number;
+  l1MaxUsd: number;
   midActiveWeekly: number;
-  midMinUsd: number;
+  midMaxUsd: number;
   bottomActiveWeekly: number;
   topReferrerMaxUsd: number;
 };
@@ -41,9 +39,29 @@ export function exampleMinUsdAtDepth(activeCount: number, depth: number): number
   return activeCount * MIN_PER_FULL_CREDIT * referralLevelWeight(depth);
 }
 
-export function displayCountAtDepth(liveCount: number, exampleFloor: number): number {
-  return liveCount > 0 ? liveCount : exampleFloor;
+export function exampleMaxUsdAtDepth(activeCount: number, depth: number): number {
+  return activeCount * MAX_PER_FULL_CREDIT * referralLevelWeight(depth);
 }
+
+/** Fixed example pyramid (3 → 729 → 100k WAU); never varies with live site data. */
+export function buildFixedExamplePyramidSnapshot(
+  topReferrerMaxUsd: number = USERS_POOL_WEEKLY_MAX
+): ReferralPyramidSnapshot {
+  const l1 = REFERRAL_PYRAMID_L1_EXAMPLE_COUNT;
+  const mid = REFERRAL_PYRAMID_MID_EXAMPLE_COUNT;
+  const bottom = REFERRAL_PYRAMID_BOTTOM_EXAMPLE_COUNT;
+
+  return {
+    l1ActiveWeekly: l1,
+    l1MaxUsd: exampleMaxUsdAtDepth(l1, 1),
+    midActiveWeekly: mid,
+    midMaxUsd: exampleMaxUsdAtDepth(mid, REFERRAL_PYRAMID_MID_DEPTH),
+    bottomActiveWeekly: bottom,
+    topReferrerMaxUsd,
+  };
+}
+
+export const FIXED_REFERRAL_PYRAMID_SNAPSHOT = buildFixedExamplePyramidSnapshot();
 
 /** Sum of level-weighted credits each referrer earns from WAU-active downline. */
 export function buildWeightedCreditsByReferrer(
@@ -91,61 +109,4 @@ export function buildChildrenMap(
     children.set(referrer, list);
   }
   return children;
-}
-
-/** Each referred WAU-active user's depth from their root referrer (L1 = direct). */
-export function siteWideDepthCounts(
-  records: UserAuthRecord[],
-  wauActiveEmailKeys: Set<string>
-): Map<number, number> {
-  const parent = new Map<string, string>();
-  for (const record of records) {
-    if (!isUserAuthVerified(record) || !record.referredByEmail) continue;
-    const childKey = normalizeEmailKey(normalizeEmail(record.email));
-    if (!wauActiveEmailKeys.has(childKey)) continue;
-    parent.set(normalizeEmail(record.email), normalizeEmail(record.referredByEmail));
-  }
-
-  const depthCounts = new Map<number, number>();
-  for (const child of parent.keys()) {
-    let depth = 0;
-    let node: string | undefined = child;
-    const seen = new Set<string>();
-    while (node && parent.has(node) && !seen.has(node)) {
-      seen.add(node);
-      depth += 1;
-      node = parent.get(node);
-    }
-    if (depth > 0) {
-      depthCounts.set(depth, (depthCounts.get(depth) ?? 0) + 1);
-    }
-  }
-  return depthCounts;
-}
-
-export function buildSiteWidePyramidSnapshot(
-  records: UserAuthRecord[],
-  wauActiveEmailKeys: Set<string>,
-  topReferrerMaxUsd: number
-): ReferralPyramidSnapshot {
-  const depthCounts = siteWideDepthCounts(records, wauActiveEmailKeys);
-
-  const liveL1 = depthCounts.get(1) ?? 0;
-  const liveL2 = depthCounts.get(2) ?? 0;
-  const liveMid = depthCounts.get(REFERRAL_PYRAMID_MID_DEPTH) ?? 0;
-  const liveBottom = depthCounts.get(REFERRAL_PYRAMID_BOTTOM_DEPTH) ?? 0;
-
-  const l1ActiveWeekly = displayCountAtDepth(liveL1, REFERRAL_PYRAMID_L1_EXAMPLE_COUNT);
-  const midActiveWeekly = displayCountAtDepth(liveMid, REFERRAL_PYRAMID_MID_EXAMPLE_COUNT);
-  const bottomActiveWeekly = displayCountAtDepth(liveBottom, REFERRAL_PYRAMID_BOTTOM_EXAMPLE_COUNT);
-  const l2MinCount = liveL2 > 0 ? liveL2 : REFERRAL_PYRAMID_L2_EXAMPLE_COUNT;
-
-  return {
-    l1ActiveWeekly,
-    l1MinUsd: exampleMinUsdAtDepth(l1ActiveWeekly, 1),
-    midActiveWeekly,
-    midMinUsd: exampleMinUsdAtDepth(l2MinCount, 2),
-    bottomActiveWeekly,
-    topReferrerMaxUsd,
-  };
 }

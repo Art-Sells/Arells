@@ -11,21 +11,14 @@ import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 import {
-  projectedWeeklyRangeIfAddedReferrals,
   USERS_POOL_WEEKLY_MAX,
-  USERS_POOL_WEEKLY_MIN,
-  WAU_ACTIVATION_TARGET,
 } from '../../lib/portfolio/financialBenefits';
-
-const ZERO_CREDIT_PROJECTION = projectedWeeklyRangeIfAddedReferrals(0, 2, 3);
+import { FIXED_REFERRAL_PYRAMID_SNAPSHOT } from '../../lib/portfolio/referralTree';
 
 type PortfolioMe = Pick<
   PortfolioMePayload,
   | 'earningsUsdMin'
   | 'earningsUsdMax'
-  | 'projectedEarningsUsdMin'
-  | 'projectedEarningsUsdMax'
-  | 'referralPyramid'
 >;
 
 export type EarnMoneyWeeklyPageClientProps = {
@@ -42,9 +35,6 @@ const toWeeklyMe = (payload: PortfolioMePayload | null): PortfolioMe | null => {
   return {
     earningsUsdMin: payload.earningsUsdMin,
     earningsUsdMax: payload.earningsUsdMax,
-    projectedEarningsUsdMin: payload.projectedEarningsUsdMin,
-    projectedEarningsUsdMax: payload.projectedEarningsUsdMax,
-    referralPyramid: payload.referralPyramid,
   };
 };
 
@@ -138,11 +128,10 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
     };
   }, []);
 
-  /** “If you refer 2 (or more)…” — projected min; max stays $4,550 (~100k WAU ceiling). */
+  /** Intro range low end — this user's current weekly earnings minimum. */
   const explainerMinUsd = useMemo(() => {
     if (!me) return 0;
-    if (me.projectedEarningsUsdMin > 0) return me.projectedEarningsUsdMin;
-    return ZERO_CREDIT_PROJECTION.min || USERS_POOL_WEEKLY_MIN / WAU_ACTIVATION_TARGET;
+    return me.earningsUsdMin;
   }, [me]);
 
   const explainerMaxUsd = USERS_POOL_WEEKLY_MAX;
@@ -224,11 +213,9 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                         </div>
                       </div>
 
-                      {me?.referralPyramid ? (
-                        <div className="myportfolio-referral-network-nested myinv-accent-border">
-                          <ReferralNetworkExamplePyramid pyramid={me.referralPyramid} />
-                        </div>
-                      ) : null}
+                      <div className="myportfolio-referral-network-nested myinv-accent-border">
+                        <ReferralNetworkExamplePyramid pyramid={FIXED_REFERRAL_PYRAMID_SNAPSHOT} />
+                      </div>
 
                       <div className="myportfolio-referral-network-nested myinv-accent-border myportfolio-telegram-support">
                         <div className="myportfolio-telegram-support-copy">

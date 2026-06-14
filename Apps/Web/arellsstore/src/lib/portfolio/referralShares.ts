@@ -11,7 +11,7 @@ import {
 import { listAllUserAuthRecordsFromS3 } from './listUserAuthRecords';
 import { maskEmailForLeaderboard } from './maskEmailForLeaderboard';
 import {
-  buildSiteWidePyramidSnapshot,
+  buildFixedExamplePyramidSnapshot,
   buildWeightedCreditsByReferrer,
   type ReferralPyramidSnapshot,
 } from './referralTree';
@@ -53,11 +53,11 @@ export type PublicEarningsPayload = {
 };
 
 export function buildReferralPyramidSnapshot(
-  records: UserAuthRecord[],
-  wauActiveEmailKeys: Set<string>,
+  _records: UserAuthRecord[],
+  _wauActiveEmailKeys: Set<string>,
   topReferrerMaxUsd: number
 ): ReferralPyramidSnapshot {
-  return buildSiteWidePyramidSnapshot(records, wauActiveEmailKeys, topReferrerMaxUsd);
+  return buildFixedExamplePyramidSnapshot(topReferrerMaxUsd);
 }
 
 function countActiveReferralsByReferrer(
