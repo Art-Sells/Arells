@@ -10814,9 +10814,10 @@ a.asset-action-button--save-signin {
 	font-size: 12px;
 	line-height: 1.1;
 	box-sizing: border-box;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	white-space: normal;
+	overflow: visible;
+	overflow-wrap: anywhere;
+	word-break: break-all;
 }
 
 @media (min-width: 751px) {
@@ -10836,6 +10837,7 @@ a.asset-action-button--save-signin {
 		max-width: calc(100% + 100px);
 		margin-left: -50px;
 		margin-right: -50px;
+		align-items: center;
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-button {
@@ -11232,11 +11234,6 @@ a.asset-action-button--save-signin {
 
 	.myportfolio-share-url-display {
 		max-width: calc(100% - var(--myportfolio-share-url-reserved, 72px));
-		white-space: normal;
-		overflow: visible;
-		text-overflow: unset;
-		overflow-wrap: anywhere;
-		word-break: break-all;
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-line-one {
