@@ -1,5 +1,16 @@
 # Monorepo: Amplify cds into appRoot before preBuild/build — no manual cd.
 #
+# Cache bust (Safari / mobile browsers):
+# Next.js CSS/JS use content-hashed filenames and are served with
+# Cache-Control: public, max-age=31536000, immutable. Browsers (especially Safari
+# on iOS) may keep an OLD hash until the user hard-refreshes or clears site data.
+# After each deploy, verify in a private window or force-reload:
+#   iPhone Safari — close the tab and reopen the URL (or clear website data)
+#   Mac Safari — Cmd+Option+R (empty cache and hard reload)
+#   Chrome — Cmd+Shift+R / Ctrl+Shift+R
+# In Web Inspector → Network, confirm _next/static/css/<hash>.css matches a fresh
+# curl of the page HTML (not a hash from a previous deploy).
+#
 version: 1.0
 applications:
   - appRoot: Apps/Web/arellsstore
@@ -16,6 +27,7 @@ applications:
           commands:
             - echo "🚀 next build..."
             - npx --yes yarn@1.22.22 run build
+            - echo "✅ Deploy complete — Safari/iOS may show stale CSS until hard refresh (see amplify.yml cache-bust note)"
       artifacts:
         baseDirectory: .next
         files:

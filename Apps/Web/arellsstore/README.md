@@ -38,3 +38,19 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Deploy on Amplify — cache bust after CSS/UI changes
+
+Next.js ships CSS and JS as hashed files under `_next/static/` with `Cache-Control: public, max-age=31536000, immutable`. Each deploy gets new hashes; HTML is not cached as aggressively.
+
+**Safari (especially iPhone)** often keeps an old CSS bundle until you force a fresh load. After deploying UI/CSS changes:
+
+| Browser | Action |
+|---------|--------|
+| iPhone Safari | Close the tab and reopen the site, or Settings → Safari → Clear History and Website Data |
+| Mac Safari | **Cmd+Option+R** (empty cache and hard reload) |
+| Chrome | **Cmd+Shift+R** / **Ctrl+Shift+R** |
+
+**Verify:** open a private/incognito window, or in Web Inspector → Network check that `_next/static/css/<hash>.css` matches the hash in a fresh fetch of the page HTML (not a hash from an earlier deploy).
+
+Amplify build logs also print a reminder after `next build` (see `amplify.yml`).
