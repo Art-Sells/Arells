@@ -6,7 +6,6 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-*keep chipping away at fixing UI, etc in my weekly earnings and my portfolio, and then create dummy emails to sign up and see with the shared links/etc... test normal sign ups also (with banners)...*
 
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins*
 
