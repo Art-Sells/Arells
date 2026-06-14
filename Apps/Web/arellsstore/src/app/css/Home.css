@@ -11015,42 +11015,27 @@ a.asset-action-button--save-signin {
 	padding: 0;
 }
 
-/* 404 — explicit colors so global body + dark-mode defaults stay readable. */
+/* 404 — home guest icon, accent earn-word copy, sign-in shell + button. */
 .not-found-page {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	text-align: center;
-	padding: 24px 20px;
 	box-sizing: border-box;
 	background: var(--page-accent-tint);
-	color: #222;
-	-webkit-text-fill-color: #222;
 }
 
-.not-found-page__code {
-	margin: 0 0 8px;
-	font-size: 24px;
-	font-weight: 600;
-	line-height: 1.2;
-	color: #000;
-	-webkit-text-fill-color: #000;
+.not-found-page .home-guest-landing {
+	margin-bottom: 0;
 }
 
-.not-found-page__message {
-	margin: 0 0 24px;
-	font-size: 14px;
-	line-height: 1.45;
-	color: #444;
-	-webkit-text-fill-color: #444;
+.not-found-page .home-guest-icon-wrap {
+	margin-top: 50px;
 }
 
-.not-found-page__home-link {
-	text-decoration: none;
-	min-width: 140px;
-	justify-content: center;
+.not-found-page .home-guest-signin-button.auth-submit--accent {
+	text-transform: none;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel {
