@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const auth = await getUserAuthByEmail(email);
     if (!auth) {
       return res.status(401).json({
-        error: 'No account exists for this email.',
+        error: 'account does not exist, sign up',
         code: 'NO_ACCOUNT',
       });
     }

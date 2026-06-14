@@ -11,7 +11,7 @@ import { useUser } from '../../context/UserContext';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
 
-/** Single copy for any failed POST /api/auth/login on this page only (client validation unchanged). */
+/** Fallback when POST /api/auth/login fails without a usable API message. */
 const SIGN_IN_FAILED_MESSAGE = 'Wrong email/password combo.';
 const SIGN_IN_FAILED_CODE = 'SIGN_IN_COMBO';
 
@@ -101,8 +101,12 @@ const SignInPageClient: React.FC = () => {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(SIGN_IN_FAILED_MESSAGE);
-        setErrorCode(SIGN_IN_FAILED_CODE);
+        const code =
+          typeof data.code === 'string' && data.code.length > 0 ? data.code : SIGN_IN_FAILED_CODE;
+        const message =
+          typeof data.error === 'string' && data.error.length > 0 ? data.error : SIGN_IN_FAILED_MESSAGE;
+        setError(message);
+        setErrorCode(code);
         setSubmitting(false);
         circleLoader.hide();
         return;
