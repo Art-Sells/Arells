@@ -2,8 +2,10 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
+import AuthCircleLoader from './AuthCircleLoader';
+import { useAuthCircleLoader } from './useAuthCircleLoader';
 import AuthFormMessage from './AuthFormMessage';
 import AuthContentEntrance from './AuthContentEntrance';
 import { useUser } from '../../context/UserContext';
@@ -19,21 +21,33 @@ const VERIFY_PAGE_ERROR_CODE = 'VERIFY_LINK';
 
 const VerifiedPageClient: React.FC = () => {
   const params = useParams();
+  const router = useRouter();
   const { refreshAuthSession } = useUser();
   const token = typeof params?.token === 'string' ? params.token : '';
   const [status, setStatus] = useState<'idle' | 'ok' | 'err'>('idle');
   const [revealOpen, setRevealOpen] = useState(false);
+  const [loadingPortfolio, setLoadingPortfolio] = useState(false);
+  const circleLoader = useAuthCircleLoader();
   /** Set true when `?verifyPreview=success` — skips API; remove query when done styling. */
   const verifyPreviewSuccessRef = useRef(false);
+  /** `?portfolioPreview=loading` — frozen loading-portfolio UI (no redirect). */
+  const portfolioPreviewLoadingRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const q = new URLSearchParams(window.location.search).get('verifyPreview');
-    if (q === 'success') {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('verifyPreview') === 'success') {
       verifyPreviewSuccessRef.current = true;
       setStatus('ok');
     }
-  }, []);
+    if (params.get('portfolioPreview') === 'loading') {
+      portfolioPreviewLoadingRef.current = true;
+      verifyPreviewSuccessRef.current = true;
+      setStatus('ok');
+      setLoadingPortfolio(true);
+      circleLoader.show();
+    }
+  }, [circleLoader.show]);
 
   useEffect(() => {
     if (status !== 'ok') {
@@ -85,7 +99,17 @@ const VerifiedPageClient: React.FC = () => {
 
   const shellTitle = status === 'ok' ? 'email verified' : status === 'err' ? 'verify email' : '';
 
+  const onViewPortfolio = () => {
+    if (loadingPortfolio) return;
+    setLoadingPortfolio(true);
+    circleLoader.show();
+    if (portfolioPreviewLoadingRef.current) return;
+    router.push('/my-portfolio');
+    router.refresh();
+  };
+
   return (
+    <>
     <AuthPageShell title={shellTitle} crossfadeTitle rootClassName="auth-page--verified-email">
       {status === 'ok' ? (
         <AuthContentEntrance>
@@ -111,12 +135,14 @@ const VerifiedPageClient: React.FC = () => {
                       <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--portfolio-cta">
                         {emailVerifiedWelcomePhaseCopy.portfolioBenefitLine}
                       </p>
-                      <Link
-                        href="/my-portfolio"
+                      <button
+                        type="button"
+                        onClick={onViewPortfolio}
+                        disabled={loadingPortfolio}
                         className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
                       >
-                        View Portfolio
-                      </Link>
+                        {loadingPortfolio ? 'Loading…' : 'View Portfolio'}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -138,6 +164,8 @@ const VerifiedPageClient: React.FC = () => {
         </AuthContentEntrance>
       ) : null}
     </AuthPageShell>
+    <AuthCircleLoader mounted={circleLoader.mounted} visible={circleLoader.visible} />
+    </>
   );
 };
 

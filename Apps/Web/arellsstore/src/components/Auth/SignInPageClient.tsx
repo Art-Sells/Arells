@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
+import AuthCircleLoader from './AuthCircleLoader';
+import { useAuthCircleLoader } from './useAuthCircleLoader';
 import { useUser } from '../../context/UserContext';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
@@ -42,6 +44,18 @@ const SignInPageClient: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const circleLoader = useAuthCircleLoader();
+  /** `?signInPreview=loading` — frozen signing-in UI for styling (no API, no redirect). */
+  const signInPreviewLoadingRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (new URLSearchParams(window.location.search).get('signInPreview') === 'loading') {
+      signInPreviewLoadingRef.current = true;
+      setSubmitting(true);
+      circleLoader.show();
+    }
+  }, [circleLoader.show]);
 
   useLayoutEffect(() => {
     const el = forgotLinkRef.current;
@@ -57,6 +71,7 @@ const SignInPageClient: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (signInPreviewLoadingRef.current) return;
     setError(null);
     setErrorCode(null);
     const em = normalizeEmail(email);
@@ -76,6 +91,7 @@ const SignInPageClient: React.FC = () => {
       return;
     }
     setSubmitting(true);
+    circleLoader.show();
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -87,6 +103,8 @@ const SignInPageClient: React.FC = () => {
       if (!res.ok) {
         setError(SIGN_IN_FAILED_MESSAGE);
         setErrorCode(SIGN_IN_FAILED_CODE);
+        setSubmitting(false);
+        circleLoader.hide();
         return;
       }
       await refreshAuthSession();
@@ -94,12 +112,13 @@ const SignInPageClient: React.FC = () => {
       router.refresh();
     } catch {
       setError('Something went wrong. Try again.');
-    } finally {
       setSubmitting(false);
+      circleLoader.hide();
     }
   };
 
   return (
+    <>
     <AuthPageShell
       title="sign in"
       belowCard={
@@ -160,6 +179,8 @@ const SignInPageClient: React.FC = () => {
         </button>
       </form>
     </AuthPageShell>
+    <AuthCircleLoader mounted={circleLoader.mounted} visible={circleLoader.visible} />
+    </>
   );
 };
 

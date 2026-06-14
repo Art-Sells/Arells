@@ -16,6 +16,9 @@ import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import { buildShareUrl } from '../../lib/auth/referral';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 
+/** Matches inline `max-height` transition on `.myinv-slide` (fallback if `transitionend` is skipped). */
+const PORTFOLIO_SHELL_MAX_HEIGHT_MS = 2000;
+
 export type MyPortfolioPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
   guestPreview?: boolean;
@@ -38,6 +41,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const [open, setOpen] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const shellSlideRef = useRef<HTMLDivElement | null>(null);
+  const shellRevealDoneRef = useRef(false);
+  const [showBelowContent, setShowBelowContent] = useState(false);
   const [shellMaxHeight, setShellMaxHeight] = useState(0);
   const [data, setData] = useState<PortfolioMePayload | null>(initialPortfolioMe);
   const [leaderboardRows, setLeaderboardRows] = useState<PortfolioLeaderboardRow[]>(
@@ -110,6 +116,33 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   useEffect(() => {
     if (open) setSlideIn(true);
   }, [open]);
+
+  const revealBelowContent = useCallback(() => {
+    if (shellRevealDoneRef.current) return;
+    shellRevealDoneRef.current = true;
+    setShowBelowContent(true);
+  }, []);
+
+  useEffect(() => {
+    if (showGuestLayout || shellRevealDoneRef.current) return;
+    if (!open || shellMaxHeight <= 0) return;
+
+    const el = shellSlideRef.current;
+    if (!el) return;
+
+    const onTransitionEnd = (e: TransitionEvent) => {
+      if (e.target !== el || e.propertyName !== 'max-height') return;
+      revealBelowContent();
+    };
+
+    const fallback = window.setTimeout(revealBelowContent, PORTFOLIO_SHELL_MAX_HEIGHT_MS);
+
+    el.addEventListener('transitionend', onTransitionEnd);
+    return () => {
+      el.removeEventListener('transitionend', onTransitionEnd);
+      window.clearTimeout(fallback);
+    };
+  }, [open, shellMaxHeight, showGuestLayout, revealBelowContent]);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
@@ -191,6 +224,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
         <div className="myinv-shell shadow-border-wrap">
           <span className="shadow-border" aria-hidden="true" />
           <div
+            ref={shellSlideRef}
             className={`asset-slide-panel myinv-slide${open ? ' is-open' : ''}`}
             style={{ maxHeight: open ? `${shellMaxHeight}px` : '0px', transition: 'max-height 2s ease' }}
           >
@@ -289,9 +323,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
           </div>
         </div>
 
-        {showSignedInPanel ? (
-          <div className={`myportfolio-portfolio-below-shell myportfolio-stack${slideIn ? ' page-slide-in' : ''}`}>
-            <div className={`myinv-panel-group myportfolio-portfolio-below-panel${slideIn ? ' page-slide-in' : ''}`}>
+        {showBelowContent && showSignedInPanel ? (
+          <div className="myportfolio-portfolio-below-shell myportfolio-stack page-slide-in">
+            <div className="myinv-panel-group myportfolio-portfolio-below-panel page-slide-in">
               <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Active Users</div>
               <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
                 <span className="shadow-border" aria-hidden="true" />
@@ -309,7 +343,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
               </div>
             </div>
 
-            <div className={`myinv-panel-group myportfolio-portfolio-below-panel${slideIn ? ' page-slide-in' : ''}`}>
+            <div className="myinv-panel-group myportfolio-portfolio-below-panel page-slide-in">
               <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
               <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
                 <span className="shadow-border" aria-hidden="true" />
@@ -328,14 +362,18 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
           </div>
         ) : null}
 
-        <div className="myinv-about-wrap">
-          <Link className="myinv-about-button" href="/about">
-            <span className="myinv-about-button-bg" aria-hidden="true" />
-            <span className="myinv-about-button-text">about</span>
-          </Link>
-        </div>
+        {showBelowContent ? (
+          <>
+            <div className="myinv-about-wrap page-slide-in">
+              <Link className="myinv-about-button" href="/about">
+                <span className="myinv-about-button-bg" aria-hidden="true" />
+                <span className="myinv-about-button-text">about</span>
+              </Link>
+            </div>
 
-        <SiteSocialFooter variant="accent" />
+            <SiteSocialFooter variant="accent" />
+          </>
+        ) : null}
       </div>
     </>
   );

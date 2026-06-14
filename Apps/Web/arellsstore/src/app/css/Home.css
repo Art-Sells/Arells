@@ -9230,6 +9230,54 @@ a.growth-metrics-about-button:focus-visible {
 	margin-bottom: 0;
 }
 
+/* Sign-in / verified: accent circle loader (same placement as asset summary loader). */
+.auth-circle-loader {
+	position: fixed;
+	bottom: var(--auth-circle-loader-bottom, 54vh);
+	left: 50%;
+	transform: translateX(-50%);
+	width: var(--toggle-knob-size, 33px);
+	height: var(--toggle-knob-size, 33px);
+	pointer-events: none;
+	z-index: 120;
+	opacity: 0;
+	transition: opacity 1s ease;
+}
+
+.auth-circle-loader.is-visible {
+	opacity: 1;
+}
+
+.auth-circle-loader-ring {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	box-sizing: border-box;
+	background: color-mix(in srgb, var(--myinv-accent-color) 20%, transparent);
+	border: var(--asset-chart-line-width, 6.5px) solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
+	animation: authCircleLoaderSpin 1s linear infinite;
+}
+
+@keyframes authCircleLoaderSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Submit / CTA while signing in or loading portfolio — keep label readable (global :disabled hides text). */
+.auth-page .auth-submit.myinv-range-button:disabled,
+.auth-page .auth-secondary-link.auth-submit--accent.myinv-range-button:disabled {
+	opacity: 1;
+	cursor: not-allowed;
+	pointer-events: none;
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+	background: color-mix(in srgb, var(--myinv-accent-color) 18%, transparent) !important;
+	border: 1px solid transparent !important;
+	border-color: transparent !important;
+}
+
 /*
  * Verify page error state (single copy for all failure reasons).
  * Tune: --auth-verify-mismatch-msg-margin-top on .auth-page or here.
@@ -10647,6 +10695,31 @@ a.asset-action-button--save-signin {
 	padding: 10px;
 }
 
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested {
+	margin-top: 0;
+	padding: 10px;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-leaderboard-nested {
+	padding: 10px;
+}
+
+@media (min-width: 751px) {
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-metric-panel.myinv-summary-block .myportfolio-projected-earnings-nested {
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested {
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-leaderboard-nested {
+		padding: 20px;
+	}
+}
+
 .myinv-summary-shell > .myportfolio-weekly-uara-intro-nested {
 	margin-top: 0;
 }
@@ -10729,7 +10802,7 @@ a.asset-action-button--save-signin {
 
 .myportfolio-share-url-display {
 	flex: 0 1 auto;
-	max-width: calc(100% - 72px);
+	max-width: calc(100% - var(--myportfolio-share-url-reserved, 72px));
 	min-width: 0;
 	display: flex;
 	align-items: center;
@@ -10744,6 +10817,39 @@ a.asset-action-button--save-signin {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+@media (min-width: 751px) {
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myinv-slide.is-open {
+		overflow: visible;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myinv-panel-section,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-nested,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-row {
+		overflow: visible;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-row {
+		width: calc(100% + 100px);
+		max-width: calc(100% + 100px);
+		margin-left: -50px;
+		margin-right: -50px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-button {
+		min-width: 80px;
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-url-display {
+		flex: 1 1 auto;
+		width: auto;
+		max-width: 400px;
+		min-width: 0;
+	}
 }
 
 .myportfolio-share-url-display.myinv-accent-border {
@@ -10843,6 +10949,7 @@ a.asset-action-button--save-signin {
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-metric-panel.myinv-summary-block .myportfolio-usd-range > .myinv-metric-symbol {
 		position: relative;
 		top: -3px;
+		margin-right: 2px;
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-metric-panel.myinv-summary-block .myportfolio-usd-range-sep {
@@ -10908,6 +11015,44 @@ a.asset-action-button--save-signin {
 	padding: 0;
 }
 
+/* 404 — explicit colors so global body + dark-mode defaults stay readable. */
+.not-found-page {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 24px 20px;
+	box-sizing: border-box;
+	background: var(--page-accent-tint);
+	color: #222;
+	-webkit-text-fill-color: #222;
+}
+
+.not-found-page__code {
+	margin: 0 0 8px;
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 1.2;
+	color: #000;
+	-webkit-text-fill-color: #000;
+}
+
+.not-found-page__message {
+	margin: 0 0 24px;
+	font-size: 14px;
+	line-height: 1.45;
+	color: #444;
+	-webkit-text-fill-color: #444;
+}
+
+.not-found-page__home-link {
+	text-decoration: none;
+	min-width: 140px;
+	justify-content: center;
+}
+
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel {
 	padding: 0;
 }
@@ -10938,17 +11083,6 @@ a.asset-action-button--save-signin {
 	content: ' ';
 }
 
-@media (min-width: 751px) {
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-copy {
-		font-size: 14px;
-	}
-
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-copy .myportfolio-usd-amount > .myinv-metric-symbol,
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-share-earnings-copy .myportfolio-usd-amount .myinv-metric-integer {
-		font-size: 19px;
-	}
-}
-
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-body-copy {
 	font-size: 12px;
 	line-height: 1.35;
@@ -10970,10 +11104,6 @@ a.asset-action-button--save-signin {
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-row {
 	margin-top: 8px;
 	margin-bottom: 0;
-}
-
-.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested {
-	margin-top: 0;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-leaderboard-nested,
@@ -11097,7 +11227,8 @@ a.asset-action-button--save-signin {
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-metric-panel.myinv-summary-block .myportfolio-usd-range > .myinv-metric-symbol {
 		position: relative;
-		top: -1px;
+		top: -2px;
+		margin-right: 1px;
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-metric-panel.myinv-summary-block .myportfolio-usd-range-sep {
@@ -11115,7 +11246,7 @@ a.asset-action-button--save-signin {
 	}
 
 	.myportfolio-share-url-display {
-		max-width: calc(100% - 72px);
+		max-width: calc(100% - var(--myportfolio-share-url-reserved, 72px));
 		white-space: normal;
 		overflow: visible;
 		text-overflow: unset;
