@@ -10,6 +10,9 @@ export const REFERRAL_EXAMPLE_BRANCH = 3;
 export const REFERRAL_PYRAMID_MID_DEPTH = 6;
 export const REFERRAL_PYRAMID_BOTTOM_DEPTH = 12;
 
+/** Example L2 branch count for tier min ($0.09/wk at 9 users); mid band label may still show 3^6. */
+export const REFERRAL_PYRAMID_L2_EXAMPLE_COUNT = REFERRAL_EXAMPLE_BRANCH ** 2;
+
 /** Example floor counts when live referred actives are missing at that depth. */
 export const REFERRAL_PYRAMID_L1_EXAMPLE_COUNT = REFERRAL_EXAMPLE_BRANCH ** 1;
 export const REFERRAL_PYRAMID_MID_EXAMPLE_COUNT = REFERRAL_EXAMPLE_BRANCH ** REFERRAL_PYRAMID_MID_DEPTH;
@@ -128,18 +131,20 @@ export function buildSiteWidePyramidSnapshot(
   const depthCounts = siteWideDepthCounts(records, wauActiveEmailKeys);
 
   const liveL1 = depthCounts.get(1) ?? 0;
+  const liveL2 = depthCounts.get(2) ?? 0;
   const liveMid = depthCounts.get(REFERRAL_PYRAMID_MID_DEPTH) ?? 0;
   const liveBottom = depthCounts.get(REFERRAL_PYRAMID_BOTTOM_DEPTH) ?? 0;
 
   const l1ActiveWeekly = displayCountAtDepth(liveL1, REFERRAL_PYRAMID_L1_EXAMPLE_COUNT);
   const midActiveWeekly = displayCountAtDepth(liveMid, REFERRAL_PYRAMID_MID_EXAMPLE_COUNT);
   const bottomActiveWeekly = displayCountAtDepth(liveBottom, REFERRAL_PYRAMID_BOTTOM_EXAMPLE_COUNT);
+  const l2MinCount = liveL2 > 0 ? liveL2 : REFERRAL_PYRAMID_L2_EXAMPLE_COUNT;
 
   return {
     l1ActiveWeekly,
     l1MinUsd: exampleMinUsdAtDepth(l1ActiveWeekly, 1),
     midActiveWeekly,
-    midMinUsd: exampleMinUsdAtDepth(midActiveWeekly, REFERRAL_PYRAMID_MID_DEPTH),
+    midMinUsd: exampleMinUsdAtDepth(l2MinCount, 2),
     bottomActiveWeekly,
     topReferrerMaxUsd,
   };

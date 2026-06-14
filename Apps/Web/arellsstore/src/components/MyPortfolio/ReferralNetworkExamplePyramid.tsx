@@ -6,8 +6,6 @@ import type { ReferralPyramidSnapshot } from '../../lib/portfolio/referralShares
 
 type Props = {
   pyramid: ReferralPyramidSnapshot;
-  /** Top-referrer max with empty-pool fallback (same as my-portfolio headline max). */
-  groupMaxUsd: number;
 };
 
 function weeklyActiveUsersLabel(count: number): string {
@@ -15,8 +13,11 @@ function weeklyActiveUsersLabel(count: number): string {
   return count === 1 ? `${formatted} weekly active user` : `${formatted} weekly active users`;
 }
 
-const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid, groupMaxUsd }) => {
-  const topReferrerLabel = formatUsdRangeDisplay(groupMaxUsd, groupMaxUsd).max;
+const ReferralNetworkExamplePyramid: React.FC<Props> = ({ pyramid }) => {
+  const topReferrerLabel = formatUsdRangeDisplay(
+    pyramid.topReferrerMaxUsd,
+    pyramid.topReferrerMaxUsd
+  ).max;
   const l1MinLabel = formatUsdRangeDisplay(pyramid.l1MinUsd, pyramid.l1MinUsd).min;
   const midMinLabel = formatUsdRangeDisplay(pyramid.midMinUsd, pyramid.midMinUsd).min;
   const l1CountFormatted = pyramid.l1ActiveWeekly.toLocaleString('en-US');

@@ -46,7 +46,11 @@ const PortfolioLeaderboard: React.FC<Props> = ({ rows }) => {
             <tr key={row.email}>
               <td>{row.maskedLabel}</td>
               <td>
-                <UsdRangeMetric min={row.earningsUsdMin} max={row.earningsUsdMax} />
+                {row.earningsUsdMin === 0 && row.earningsUsdMax === 0 ? (
+                  '--'
+                ) : (
+                  <UsdRangeMetric min={row.earningsUsdMin} max={row.earningsUsdMax} />
+                )}
               </td>
             </tr>
           ))}

@@ -11,6 +11,7 @@ import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioL
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
+import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import { buildShareUrl } from '../../lib/auth/referral';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
@@ -159,9 +160,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
   const portfolioMetricsReady = !!data && !loadError;
 
-  const projectedShareMaxLabel = formatUsdRangeDisplay(
-    data?.projectedEarningsUsdMin ?? 0,
-    data?.projectedEarningsUsdMax ?? 0
+  const shareEarnUpToLabel = formatUsdRangeDisplay(
+    USERS_POOL_WEEKLY_MAX,
+    USERS_POOL_WEEKLY_MAX
   ).max;
 
   if (showGuestLayout) {
@@ -235,8 +236,8 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                                 <span className="myportfolio-share-earnings-lead">to earn up to</span>{' '}
                                 {!loadError ? (
                                   <PortfolioUsdAmount
-                                    amount={projectedShareMaxLabel}
-                                    loading={!portfolioMetricsReady}
+                                    amount={shareEarnUpToLabel}
+                                    loading={false}
                                     className="myportfolio-inline-usd"
                                   />
                                 ) : null}
