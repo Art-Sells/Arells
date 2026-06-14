@@ -1,42 +1,10 @@
 'use client';
 
-import type { ImageLoaderProps } from 'next/image';
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import HomeAboutMountLoader from '../../components/HomeAboutMountLoader';
 
 const AboutPageClient = () => {
-  const router = useRouter();
-  const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
-    return `/${src}?w=${width}&q=${quality || 100}`;
-  };
-
-  const [showLoading, setLoading] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
-  const [imagesLoaded, setImagesLoaded] = useState<{ icon: boolean }>({
-    icon: false,
-  });
-
-  const handleImageLoaded = () => {
-    setImagesLoaded({ icon: true });
-  };
-
-  useEffect(() => {
-    if (!showLoading) return;
-    const fadeTimer = setTimeout(() => {
-      setFadeOut(true);
-    }, 1000);
-    const hideTimer = setTimeout(() => {
-      setLoading(false);
-      setFadeOut(false);
-    }, 2000);
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(hideTimer);
-    };
-  }, [showLoading]);
-
   const [aboutSlideIn, setAboutSlideIn] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setAboutSlideIn(true), 50);
@@ -63,35 +31,7 @@ const AboutPageClient = () => {
 
   return (
     <>
-      {showLoading && (
-        <div
-          className={`home-loader-overlay home-loader-overlay--about${fadeOut ? ' home-loader-overlay-fade' : ''}`}
-        >
-          <div className={`home-loader-ring${fadeOut ? ' home-loader-fade' : ''}`}>
-            <svg className="home-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
-              <defs>
-                <filter id="homeLoaderBlur" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="10" />
-                </filter>
-              </defs>
-              <circle cx="30" cy="30" r="26" filter="url(#homeLoaderBlur)" />
-            </svg>
-            <span className="home-loader-icon-wrap" aria-hidden="true">
-              <span className="home-loader-icon-tint" aria-hidden="true" />
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={29}
-                height={30}
-                id="arells-loader-icon-bitcoin"
-                className="home-loader-icon-img"
-                src="images/Arells-Icon.png"
-                onLoad={handleImageLoaded}
-              />
-            </span>
-          </div>
-        </div>
-      )}
+      <HomeAboutMountLoader />
       <div className="about-page">
         <div className={`about-card shadow-border-wrap${aboutSlideIn ? ' page-slide-in' : ''}`}>
           <span className="shadow-border" aria-hidden="true" />

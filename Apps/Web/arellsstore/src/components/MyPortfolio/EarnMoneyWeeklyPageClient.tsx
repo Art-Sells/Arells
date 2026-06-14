@@ -14,6 +14,7 @@ import {
   USERS_POOL_WEEKLY_MAX,
 } from '../../lib/portfolio/financialBenefits';
 import { FIXED_REFERRAL_PYRAMID_SNAPSHOT } from '../../lib/portfolio/referralTree';
+import HomeAboutMountLoader from '../HomeAboutMountLoader';
 
 type PortfolioMe = Pick<
   PortfolioMePayload,
@@ -148,7 +149,9 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
   }
 
   return (
-    <div className="myinv-page myinv-page--accent myinv-page--portfolio myinv-page--earn-weekly">
+    <>
+      <HomeAboutMountLoader />
+      <div className="myinv-page myinv-page--accent myinv-page--portfolio myinv-page--earn-weekly">
       <div className="myinv-header-inner myinv-header-inner--liquid-forever is-liquid page-slide-in">
         <div className="myinv-title">my weekly earnings</div>
       </div>
@@ -278,6 +281,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
 
       <SiteSocialFooter variant="accent" />
     </div>
+    </>
   );
 };
 

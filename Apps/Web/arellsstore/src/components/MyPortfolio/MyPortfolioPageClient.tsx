@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter from '../SiteSocialFooter';
+import HomeAboutMountLoader from '../HomeAboutMountLoader';
 import UsdRangeMetric from './UsdRangeMetric';
 import PortfolioUsdAmount from './PortfolioUsdAmount';
 import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
@@ -209,6 +210,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
   return (
     <>
+      <HomeAboutMountLoader />
       <div className="myinv-page myinv-page--accent myinv-page--portfolio">
         <div className="myportfolio-mission-block page-slide-in">
           <Link href="/" className="asset-action-button about-icon-button myportfolio-mission-icon-button" aria-label="Arells">
