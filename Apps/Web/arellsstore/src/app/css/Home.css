@@ -29,6 +29,7 @@
 #overlayy .home-asset-bnb,
 #overlayy .home-asset-tron,
 #overlayy .home-asset-doge,
+#overlayy .home-asset-cardano,
 #overlayy .home-asset-solana {
 	box-shadow: none !important;
 }
@@ -71,6 +72,10 @@
 
 #overlayy .home-asset-doge {
 	--asset-line-color: rgb(194, 166, 51);
+}
+
+#overlayy .home-asset-cardano {
+	--asset-line-color: rgb(0, 51, 173);
 }
 
 html,
@@ -790,7 +795,11 @@ body {
 .asset-page--doge .asset-page-content,
 .asset-page--doge .asset-page-content *,
 .asset-page--doge .asset-footer,
-.asset-page--doge .asset-footer * {
+.asset-page--doge .asset-footer *,
+.asset-page--cardano .asset-page-content,
+.asset-page--cardano .asset-page-content *,
+.asset-page--cardano .asset-footer,
+.asset-page--cardano .asset-footer * {
 	color: var(--asset-unified-text-color) !important;
 }
 
@@ -891,11 +900,34 @@ body {
 	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(165, 140, 40)) !important;
 }
 
+/* Title pill + spot $/% (Cardano) */
+.asset-page--cardano .asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:link,
+.asset-page--cardano .asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:visited,
+.asset-page--cardano .asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:hover,
+.asset-page--cardano .asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:active,
+.asset-page--cardano .asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(0, 38, 130)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(0, 38, 130)) !important;
+}
+
+.asset-page--cardano .asset-page-content a.asset-title-badge--section.asset-title-badge--cardano .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(0, 38, 130)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(0, 38, 130)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--cardano .asset-page-content .asset-price-panel span.asset-metric-symbol--cardano,
+.asset-page--cardano .asset-page-content .asset-price-panel span.asset-metric-percent-symbol--cardano {
+	color: var(--asset-badge-spot-ink, rgb(0, 38, 130)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(0, 38, 130)) !important;
+}
+
 .asset-page--bitcoin .asset-header-title,
 .asset-page--ethereum .asset-header-title,
 .asset-page--bnb .asset-header-title,
 .asset-page--tron .asset-header-title,
-.asset-page--doge .asset-header-title {
+.asset-page--doge .asset-header-title,
+.asset-page--cardano .asset-header-title {
 	color: var(--asset-line-color);
 	opacity: 1;
 }
@@ -914,7 +946,10 @@ body {
 .asset-page--tron .asset-metric-number,
 .asset-page--doge .asset-metric-value,
 .asset-page--doge .asset-metric-inline-value,
-.asset-page--doge .asset-metric-number {
+.asset-page--doge .asset-metric-number,
+.asset-page--cardano .asset-metric-value,
+.asset-page--cardano .asset-metric-inline-value,
+.asset-page--cardano .asset-metric-number {
 	color: var(--asset-line-color);
 	opacity: 1;
 }
@@ -4830,6 +4865,12 @@ a.asset-action-button--myinv-asset-link {
 
 .myinv-page .myinv-asset-home-card.home-asset-doge {
 	--asset-line-color: rgb(194, 166, 51);
+}
+
+.myinv-page .myinv-asset-home-card.home-asset-cardano {
+	background: rgba(0, 51, 173, 0.07);
+	border: 1px solid rgba(0, 51, 173, 0.28);
+	--asset-line-color: rgb(0, 51, 173);
 }
 
 .myinv-page .myinv-asset-home-card:active {
@@ -9883,6 +9924,26 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
+.asset-page--cardano .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(0, 51, 173, 0.3);
+	opacity: 1;
+}
+
+.asset-page--cardano .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(0, 51, 173, 0.95) !important;
+	-webkit-text-fill-color: rgba(0, 51, 173, 0.95) !important;
+}
+
+.asset-page--cardano .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(0, 51, 173, 0.95) !important;
+	-webkit-text-fill-color: rgba(0, 51, 173, 0.95) !important;
+	border-color: rgba(0, 51, 173, 0.38) !important;
+	background: rgba(0, 51, 173, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
 .asset-page--solana .site-social-footer.site-social-footer--asset .site-social-footer-rule {
 	background: rgba(0, 208, 168, 0.3);
 	opacity: 1;
@@ -10402,6 +10463,10 @@ a.asset-action-button--save-signin {
 	background: rgba(194, 166, 51, 0.075);
 }
 
+.asset-page--cardano .asset-guest-action-shell {
+	background: rgba(0, 51, 173, 0.075);
+}
+
 .asset-page--solana .asset-guest-action-shell {
 	background: rgba(0, 208, 168, 0.06);
 }
@@ -10432,6 +10497,11 @@ a.asset-action-button--save-signin {
 
 .asset-page--doge .asset-guest-action-shell .shadow-border {
 	border-color: rgba(194, 166, 51, 0.55);
+	opacity: 1;
+}
+
+.asset-page--cardano .asset-guest-action-shell .shadow-border {
+	border-color: rgba(0, 51, 173, 0.3);
 	opacity: 1;
 }
 
@@ -10537,6 +10607,10 @@ a.asset-action-button--save-signin {
 
 .asset-page--doge .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(194, 166, 51)) !important;
+}
+
+.asset-page--cardano .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(0, 38, 130)) !important;
 }
 
 .asset-page--solana .asset-guest-landing .guest-landing-copyright--asset {

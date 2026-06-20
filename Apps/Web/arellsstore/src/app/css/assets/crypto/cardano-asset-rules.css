@@ -1,0 +1,1176 @@
+/* Cardano asset rules (Solana structure + Cardano blue palette). */
+#overlayy .home-investments-slideup-button,
+#overlayy .myinv-home-button,
+#overlayy .asset-home-button,
+#overlayy .home-asset-card,
+#overlayy .home-asset-bitcoin,
+#overlayy .home-asset-cardano {
+	box-shadow: none !important;
+}
+#overlayy .home-asset-cardano {
+	--asset-line-color: rgb(0, 51, 173);
+}
+.asset-page--cardano {
+	background: transparent;
+}
+.asset-page--cardano .asset-header-slogan,
+.asset-page--cardano .asset-home-font-title {
+	color: var(--asset-slogan-color, rgb(0, 38, 130));
+}
+.asset-page--cardano .asset-investments-header {
+	color: var(--asset-slogan-color, rgb(0, 38, 130));
+	opacity: 1;
+	margin-bottom: -12.5px;
+}
+.asset-page--cardano {
+	--asset-slogan-color: rgb(0, 38, 130);
+	--asset-line-color: rgb(0, 51, 173);
+	--asset-unified-text-color: var(--asset-line-color);
+	/* Match chart hover-dot color (TronChart markerColor) */
+	--asset-hover-dot-color: rgba(0, 51, 173, 1);
+	/* Match chart line color (TronChart color) */
+	--asset-chart-line-color: rgba(0, 51, 173, 0.5);
+	/* Match chart line thickness (TronChart borderWidth) */
+	--asset-chart-line-width: 6.5px;
+	/* Portfolio spacing tweaks (reduce gap between summary/add-more and Sign In/Show actions) */
+	--asset-portfolio-summary-padding-bottom: 10px;
+	--asset-portfolio-summary-margin-bottom: 6px;
+	--asset-portfolio-actions-add-margin-top: 14px;
+	--asset-portfolio-actions-show-margin-top: 14px;
+	--asset-portfolio-actions-show-margin-bottom: 10px;
+	--asset-portfolio-actions-signin-margin-top: -5px;
+	--asset-portfolio-actions-signin-margin-bottom: 25px;
+	--asset-save-signin-margin-top: 5px;
+	--asset-save-signin-margin-bottom: 15px;
+	/* Date-range row: line blue (BTC pattern). */
+	--asset-range-button-label-color: var(--asset-line-color);
+	/* Pill “ADA” + header spot $/% — a touch darker than `--asset-line-color` */
+	--asset-badge-spot-ink: color-mix(in srgb, var(--asset-line-color) 76%, rgb(24, 36, 72));
+}
+/* Keep opacity paired with BTC here — Home.css covers shared header metrics for BTC/ETH/ADA */
+.asset-page--bitcoin .asset-metric-value:not(.asset-mount-fade-2s),
+.asset-page--bitcoin .asset-metric-inline-value:not(.asset-mount-fade-2s),
+.asset-page--bitcoin .asset-metric-number:not(.asset-mount-fade-2s),
+.asset-page--cardano .asset-metric-value:not(.asset-mount-fade-2s),
+.asset-page--cardano .asset-metric-inline-value:not(.asset-mount-fade-2s),
+.asset-page--cardano .asset-metric-number:not(.asset-mount-fade-2s) {
+	opacity: 1;
+}
+.asset-portfolio-summary-box--signin {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+	/* Remove the section outline for the Sign-in CTA (overrides --bitcoin/--cardano border) */
+	border: none !important;
+}
+.asset-portfolio-summary-box--cardano {
+	border: 1px solid rgba(0, 51, 173, 0.3);
+}
+.asset-home-button--cardano {
+	border: none;
+	box-shadow: none;
+}
+.asset-profit-summary--cardano {
+	background: rgba(0, 51, 173, 0.075);
+	border: 1px solid rgba(0, 51, 173, 0.3);
+}
+.asset-header-asset-icon--cardano {
+}
+.asset-page--cardano .asset-home-button {
+	border-color: rgba(0, 51, 173, 0.8);
+}
+.asset-page-content--cardano .asset-header-panel {
+	padding-top: 5px;
+	padding-right: 20px;   /* <- edit this */
+	padding-bottom: 15px;
+	padding-left: 0px;
+  }
+.asset-metric-trend-icon--cardano {
+	color: var(--asset-slogan-color, rgb(0, 38, 130));
+}
+.asset-metric-trend-icon--cardano:not(.asset-mount-fade-2s) {
+	opacity: 1;
+}
+.asset-home-font-label--cardano {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+.asset-metric-title--cardano {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+.asset-metric-inline-title--cardano {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+/* Color comes from scoped rules / inline on header metrics — avoid rgb(105,105,105) here or $/% read as flat grey */
+.asset-metric-symbol--cardano {
+	font-size: 12px;
+	margin-right: -2px;
+}
+.asset-metric-symbol--cardano:not(.asset-mount-fade-2s) {
+	opacity: 1;
+}
+.asset-metric-percent-symbol--cardano {
+	margin-left: -1px;
+}
+.asset-metric-inline-symbol--cardano {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+	/* Match Purchased/Current $ spacing (asset-metric-symbol--cardano uses -2px) */
+	margin-right: -2px;
+}
+.asset-page--bitcoin .asset-action-button,
+.asset-page--cardano .asset-action-button,
+.asset-page--bitcoin .asset-action-button:hover,
+.asset-page--cardano .asset-action-button:hover {
+	box-shadow: none !important;
+}
+.asset-action-button--cardano {
+	border-color: rgba(0, 51, 173, 0.9);
+	background: rgba(0, 51, 173, 0.18);
+	color: rgba(0, 51, 173, 0.95);
+}a.asset-action-button--cardano:link,
+a.asset-action-button--cardano:visited {
+	color: rgba(0, 51, 173, 0.95) !important;
+}a.asset-action-button--myinv-asset-link.asset-action-button--cardano:link,
+a.asset-action-button--myinv-asset-link.asset-action-button--cardano:visited {
+	color: rgb(0, 51, 173) !important;
+}
+.home-asset-card .asset-action-button--home-asset-chip.asset-action-button--cardano {
+	color: var(--asset-line-color) !important;
+	border-color: rgba(0, 51, 173, 0.38);
+	background: rgba(0, 51, 173, 0.08);
+}
+.asset-page--cardano .asset-action-button:not(.asset-action-button--save-signin) {
+	border-color: rgba(0, 51, 173, 0.9);
+	background: rgba(0, 51, 173, 0.08);
+}
+.asset-page--bitcoin .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
+.asset-page--cardano .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
+.asset-page--bitcoin .asset-page-content .asset-action-button--invest-show,
+.asset-page--cardano .asset-page-content .asset-action-button--invest-show {
+	border-radius: 6px;
+}
+.asset-invest-form-box--cardano {
+	border: 1px solid rgba(0, 51, 173, 0.3);
+}
+.asset-invest-form-heading .asset-metric-title--bitcoin,
+.asset-invest-form-heading .asset-metric-title--cardano {
+	font-size: 28px;
+	letter-spacing: -2px;
+	opacity: 0.45;
+}
+.asset-invest-form-body--cardano {
+	border-color: rgba(0, 51, 173, 0.3);
+}
+.asset-invest-form-metrics-panel--cardano {
+	border-color: rgba(0, 51, 173, 0.3);
+}
+.asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
+.asset-invest-form-metrics-panel .asset-metric-symbol--cardano,
+.asset-invest-form-metrics-panel .asset-metric-inline-symbol--bitcoin,
+.asset-invest-form-metrics-panel .asset-metric-inline-symbol--cardano {
+	font-size: 19px;
+	font-weight: 800;
+	vertical-align: 2.7px;       /* <- edit symbol Y offset */
+	opacity: 0.7;
+	margin-right: 1px;           /* <- edit gap between symbol and number */
+}
+.asset-invest-form-controls--cardano {
+	border-color: rgba(0, 51, 173, 0.3);
+}
+.asset-number-loader--cardano {
+	width: 80px;
+	background: rgba(0, 51, 173, 0.1);
+}
+.asset-number-loader--cardano::after {
+	background: rgba(0, 51, 173, 0.5);
+}
+.asset-number-loader--cardano.asset-number-loader--wide {
+	width: 140px;
+}
+.asset-number-loader--cardano.asset-number-loader--narrow {
+	width: 55px;
+}
+.home-asset-cardano .asset-number-loader--card {
+	background: rgba(0, 51, 173, 0.1);
+}
+.home-asset-cardano .asset-number-loader--card::after {
+	background: rgba(0, 51, 173, 0.3);
+}
+.asset-invest-input--cardano {
+	/* Match button border opacity */
+	border-color: rgba(0, 51, 173, 0.0);
+	background: rgba(0, 51, 173, 0.14);
+}
+.asset-invest-input--cardano:focus,
+.asset-invest-input--cardano:focus-visible {
+	background: transparent;
+	/* Match the surrounding section border tint/opacity while active */
+	border-color: rgba(0, 51, 173, 0.3);
+}
+.asset-date-picker--cardano .asset-date-trigger {
+	border-color: rgba(0, 51, 173, 0.0);
+	background: rgba(0, 51, 173, 0.14);
+}
+.asset-date-picker--cardano .asset-date-trigger.is-open,
+.asset-date-picker--cardano .asset-date-trigger:focus,
+.asset-date-picker--cardano .asset-date-trigger:focus-visible {
+	background: transparent;
+	/* Match the surrounding section border tint/opacity while active */
+	border-color: rgba(0, 51, 173, 0.3);
+}
+.asset-date-popover--cardano {
+	/* Same gold wash as ADA title badge / panels (7.5% line gold on overscroll canvas). */
+	background: color-mix(in srgb, rgb(0, 51, 173) 7.5%, rgb(244, 246, 255));
+}
+.asset-date-popover--cardano .asset-date-day:hover {
+	background: rgba(0, 51, 173, 0.14);
+}
+.asset-date-popover--cardano .asset-date-day.is-selected {
+	background: rgba(0, 51, 173, 0.18);
+}
+.asset-date-popover--cardano .asset-date-nav:hover,
+.asset-date-popover--cardano .asset-date-nav:active,
+.asset-date-popover--cardano .asset-date-nav:focus {
+	background: rgba(0, 51, 173, 0.14);
+}
+.asset-date-popover--cardano .asset-date-day:focus {
+	outline: none;
+}
+.asset-loader-toggle-shell--cardano .asset-reality-toggle--loader::before {
+	animation: assetLoaderToggleLineADA 3s ease forwards;
+}
+
+@keyframes assetLoaderToggleLineADA {
+	from {
+		background: rgba(196, 196, 196, 0.9);
+	}
+	to {
+		background: var(--asset-chart-line-color, rgba(0, 51, 173, 0.5));
+	}
+}
+.asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
+.asset-portfolio-summary-box .asset-metric-symbol--cardano,
+.asset-portfolio-summary-box .asset-metric-inline-symbol--bitcoin,
+.asset-portfolio-summary-box .asset-metric-inline-symbol--cardano {
+	font-size: 19px;
+	font-weight: 800;
+	vertical-align: 2.7px;       /* <- edit symbol Y offset */
+	opacity: 0.7;
+	margin-right: 1px;           /* <- edit gap between symbol and number */
+}
+.asset-page--cardano .asset-page-content .asset-action-button--save-signin {
+	background: rgba(0, 51, 173, 1);
+	box-shadow: none !important;
+	border-color: rgba(0, 51, 173, 1);
+	/* brighter "same hue" tint of the background */
+	color: color-mix(in srgb, rgba(0, 51, 173, 1) 18%, white 82%) !important;
+}
+@media (hover: hover) and (pointer: fine) {
+	.asset-page--bitcoin .asset-page-content .asset-action-button--save-signin:hover {
+		box-shadow: none !important;
+		transform: translateY(-4px);
+}
+
+.asset-page--cardano .asset-page-content .asset-action-button--save-signin:hover {
+	box-shadow: none !important;
+	transform: translateY(-4px);
+	}
+}
+.asset-page--cardano .asset-range-button.asset-portfolio-icon-button {
+	background: rgba(0, 51, 173, 0.0) !important;
+}
+.asset-page--cardano .asset-range-button.asset-portfolio-icon-button {
+	border-color: rgba(0, 51, 173, 0.2) !important;
+}
+.asset-page--cardano .asset-range-button.asset-portfolio-icon-button:active {
+	border-color: rgba(0, 51, 173, 0.3) !important;
+}
+@media (hover: hover) and (pointer: fine) {
+	.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button:hover {
+		border-color: rgba(248, 141, 0, 0.3) !important;
+	}
+
+	.asset-page--cardano .asset-range-button.asset-portfolio-icon-button:hover {
+		border-color: rgba(0, 51, 173, 0.3) !important;
+	}
+
+	.asset-range-button.asset-portfolio-icon-button:hover .asset-portfolio-icon-text {
+		opacity: 0.23;
+	}
+
+	.asset-range-button:hover {
+		transform: translateY(-5px);
+	}
+}
+.asset-page--cardano .asset-range-button--cardano.is-active {
+	border: 1px solid transparent;
+	background: rgba(0, 51, 173, 0.08);
+	color: var(--asset-range-button-label-color, rgb(0, 51, 173));
+	opacity: 0.6;
+	pointer-events: none;
+	cursor: default;
+	transform: none;
+}
+.asset-page--cardano .asset-range-button--cardano:not(.is-active):not(:disabled) {
+	border-color: rgba(0, 51, 173, 0.9);
+	background: rgba(0, 51, 173, 0.08);
+	color: var(--asset-range-button-label-color, rgb(0, 51, 173));
+}
+.asset-page--cardano .asset-range-button--cardano:disabled {
+	background: rgba(0, 51, 173, 0.08);
+	color: var(--asset-range-button-label-color, rgb(0, 51, 173));
+}
+.asset-investments-list .asset-panel--bitcoin,
+.asset-investments-list .asset-panel--cardano {
+	background: transparent !important;
+}
+.asset-investments-wrap--cardano {
+	border-color: rgba(0, 51, 173, 0.3);
+}
+.asset-investments-wrap .asset-metric-symbol--bitcoin,
+.asset-investments-wrap .asset-metric-symbol--cardano,
+.asset-investments-wrap .asset-metric-inline-symbol--bitcoin,
+.asset-investments-wrap .asset-metric-inline-symbol--cardano {
+	font-size: 19px;
+	font-weight: 800;
+	vertical-align: 2.7px;       /* <- edit symbol Y offset */
+	opacity: 0.7;
+	margin-right: 1px;           /* <- edit gap between symbol and number */
+}
+.asset-slide-panel--clearing-cardano {
+	background: transparent;
+	box-shadow: none;
+}
+.asset-home-font-label--cardano,
+.asset-metric-title--cardano,
+.asset-metric-inline-title--cardano {
+	margin-top: 0px;
+	color: var(--asset-slogan-color, rgb(0, 38, 130));
+	opacity: 1;
+	font-size: 12px;
+	font-weight: 200;
+}
+/* Purchase rows / portfolio / invest form: match header price-panel $ / % (`--asset-badge-spot-ink`) */
+.asset-page--cardano .asset-page-content .asset-portfolio-summary-box .asset-metric-symbol--cardano,
+.asset-page--cardano .asset-page-content .asset-portfolio-summary-box .asset-metric-inline-symbol--cardano,
+.asset-page--cardano .asset-page-content .asset-investments-wrap .asset-metric-symbol--cardano,
+.asset-page--cardano .asset-page-content .asset-investments-wrap .asset-metric-inline-symbol--cardano,
+.asset-page--cardano .asset-page-content .asset-invest-form-metrics-panel .asset-metric-symbol--cardano,
+.asset-page--cardano .asset-page-content .asset-invest-form-metrics-panel .asset-metric-inline-symbol--cardano {
+	color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
+}
+.asset-metric-symbol--cardano,
+.asset-metric-inline-symbol--cardano {
+	margin-top: 0px;
+	color: var(--asset-slogan-color, rgb(0, 38, 130));
+	opacity: 1;
+
+}
+.asset-price-chart-row--combined.asset-panel--bitcoin,
+.asset-price-chart-row--combined.asset-panel--cardano {
+	background: transparent !important;
+}
+.myinv-page .myinv-asset-home-card.home-asset-cardano {
+	background: rgba(0, 51, 173, 0.075);
+	border: 1px solid rgba(0, 51, 173, 0.28);
+	--asset-line-color: rgb(0, 51, 173);
+}
+.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip.asset-action-button--cardano {
+	border-color: rgba(0, 51, 173, 0.38);
+	background: rgba(0, 51, 173, 0.08);
+}
+.asset-title-badge--cardano {
+	background: rgba(0, 51, 173, 1);
+	color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, var(--asset-line-color)) !important;
+}
+.asset-title-badge--section.asset-title-badge--cardano {
+	padding-left: 12px;     /* <- edit ETH badge horizontal padding over 750px */
+	padding-right: 12px;
+}
+.asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:link,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:visited,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:hover,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:active,
+.asset-page-content a.asset-title-badge--section.asset-title-badge--cardano:focus-visible {
+	box-sizing: border-box;
+	/* Match `.asset-panel--cardano` wash over ADA canvas (CardanoPageClient overscroll rgb(244, 246, 255)) */
+	background: rgb(244, 246, 255) !important;
+	background: color-mix(in srgb, rgb(0, 51, 173) 7.5%, rgb(244, 246, 255)) !important;
+	border: 1px solid rgba(0, 51, 173, 0.3);
+}
+.myinv-edit-card--cardano {
+	background: rgba(0, 51, 173, 0.08);
+	border-color: rgba(0, 51, 173, 0.35);
+	color: rgba(0, 51, 173, 0.9);
+}
+@media (max-width: 750px) {
+	/* Match desktop narrow-window text metrics: iOS otherwise boosts body text and shifts the title vs icons. */
+	.myinv-page {
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
+	.myinv-header-inner .myinv-title {
+		font-size: 20px;
+		margin-left: 50px;
+		margin-bottom: -36px;
+	}
+
+	.myinv-slogan-layer {
+		margin-bottom: 13px;
+	}
+
+
+	.myinv-header-inner.is-liquid .myinv-title {
+		transform: translateX(54.5px);
+	}
+
+	.home-asset-card .asset-action-button--home-asset-chip,
+	.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip,
+	a.asset-action-button--myinv-asset-link {
+		font-size: 9.5px !important;
+	}
+
+	.asset-page-content--bitcoin .asset-header-panel {
+		padding-top: 6px;
+		padding-right: 10px;   /* <- edit this */
+		padding-bottom: 0px;
+		padding-left: 10px;
+	}
+	.asset-page-content--cardano .asset-header-panel {
+		padding-top: 6px;
+		padding-right: 10px;   /* <- edit this */
+		padding-bottom: 0px;
+		padding-left: 10px;
+	}
+	.asset-title-badge {
+		border-radius: 20px;      /* <- edit badge border-radius under 750px */
+	}
+	.asset-title-badge--section {
+		left: 42px;
+		top: -15.5px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		font-size: 7px;
+		border-radius: 200px;
+	}
+	.asset-title-badge--section.asset-title-badge--bitcoin {
+		padding-left: 14px;     /* <- edit BTC badge horizontal padding under 750px */
+		padding-right: 14px;
+	}
+	.asset-title-badge--section.asset-title-badge--cardano {
+		padding-left: 14px;     /* <- edit ETH badge horizontal padding under 750px */
+		padding-right: 14px;
+	}
+	.asset-price-chart-row--combined {
+		width: 100%;
+		gap: 10px;
+		padding: 10px;
+	}
+	.asset-home-button--section {
+		left: 7px;
+		top: -60px;
+	}
+	.asset-home-button {
+		width: 35px;
+		height: 35px;
+	}
+	.asset-home-icon {
+		width: 32px !important;
+		height: 32px !important;
+	}
+	.asset-section-header {
+		margin-top: 1px;    /* <- edit title/slogan section margin-top under 750px */
+	}
+	.asset-header-title {
+		font-size: 17px;
+		margin-left: 32px;
+		transform: translateY(9px);
+	}
+	.asset-header-slogan {
+		font-size: 7px;
+		margin-right: 33.5px;
+		transform: translateY(2.3px);
+	}
+
+	.asset-page-content .asset-header-slogan {
+		animation-name: pageSlideUpAssetSloganMobile;
+		animation-fill-mode: backwards;
+	}
+
+	.myinv-descriptioner {
+		font-size: 10.5px;
+		margin: 0 50px 0 0;
+		top: var(--myinv-slogan-offset, 15px);
+	}
+
+	.myinv-metric-title {
+		font-size: 10.5px;
+	}
+
+	.myinv-metric-symbol,
+	.myinv-metric-inline-symbol {
+		font-size: 14px;
+	}
+
+	.myinv-metric-value {
+		font-size: 25px;
+	}
+
+	.myinv-profit-block {
+		margin-top: -15px;
+	}
+
+	.myinv-summary-block {
+		padding-top: 0;
+	}
+
+	.myinv-header-inner,
+	.myinv-slogan-layer {
+		width: min(340px, calc(100% - 20px));
+	}
+
+	.myinv-panel-title--add {
+		font-size: 23.5px;
+		margin-top: 10px;    /* <- edit top */
+		margin-bottom: -6px; /* <- edit bottom */
+	}
+
+	.asset-page-content > .asset-header-panel {
+		width: 340px;
+		height: auto;
+		min-height: auto !important;
+	}
+
+	.myinv-shell {
+		width: min(340px, calc(100% - 20px));
+	}
+
+	.myinv-panel-section {
+		width: min(340px, calc(100% - 20px));
+	}
+
+	.loader-toggle-clone--myinv {
+		width: min(340px, calc(100% - 20px));
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	.asset-loader-toggle-shell--myinv {
+		--asset-loader-toggle-shell-width: calc(min(340px, calc(100% - 20px)) - 80px) !important;
+		--asset-loader-toggle-width: calc(100%) !important;
+	}
+
+	.asset-loader-toggle-shell--home {
+		--asset-loader-toggle-shell-width: calc(min(920px, 90%) - 20px) !important;
+		--asset-loader-toggle-width: calc(100% - 156px) !important;
+		--asset-loader-toggle-min-left: calc(var(--toggle-knob-left-inset) - (var(--toggle-knob-size) / 2)) !important;
+		--asset-loader-toggle-max-left: calc(100% - var(--toggle-knob-right-inset) - (var(--toggle-knob-size) / 2)) !important;
+	}
+
+	.asset-price-chart-row {
+		align-items: stretch;
+		min-height: auto;
+		grid-template-columns: 300px;
+		justify-content: center;
+		row-gap: 16px;
+		height: auto;
+	}
+
+	.asset-price-chart-row--combined {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.asset-price-panel {
+		align-items: flex-start;
+		text-align: left;
+		width: 100%;
+		box-sizing: border-box;
+		height: auto;
+		margin-bottom: -5px !important;
+		padding-top: 20px !important;
+		padding-bottom: 10px !important;
+		padding-left: 10px !important;
+		padding-right: 10px !important;
+	}
+
+	.asset-price-panel > .asset-metric-row:nth-of-type(3) {
+		margin-top: -7px;
+	}
+
+	.asset-price-panel > .asset-metric-row {
+		margin-left: 10px;
+	}
+
+	.asset-price-panel > .asset-metric-row:nth-of-type(2) {
+		margin-top: -2.5px;
+	}
+
+	.asset-price-panel .asset-metric-title--bitcoin,
+	.asset-price-panel .asset-metric-title--cardano,
+	.asset-market-controls .asset-metric-inline-title--bitcoin,
+	.asset-market-controls .asset-metric-inline-title--cardano {
+		font-size: 10.3px;
+	}
+
+	.asset-price-panel .asset-metric-value,
+	.asset-price-panel .asset-metric-symbol--bitcoin,
+	.asset-price-panel .asset-metric-symbol--cardano,
+	.asset-price-panel .asset-metric-percent-symbol--bitcoin,
+	.asset-price-panel .asset-metric-percent-symbol--cardano,
+	.asset-market-controls .asset-market-status-value {
+		font-size: 10.8px;
+	}
+
+	.asset-price-panel .asset-metric-percent-symbol--bitcoin {
+		margin-left: -1.5px;
+	}
+
+	.asset-price-panel .asset-metric-percent-symbol--cardano {
+		margin-left: -2px;
+	}
+
+	.asset-chart-wrap {
+		width: 100%;
+		box-sizing: border-box;
+		overflow: hidden;
+	}
+
+	.asset-page-content .asset-chart-wrap {
+		height: 150px; /* edit chart height */
+		margin-left: 0;
+		width: 100%;
+	}
+
+	.asset-price-button-row {
+		justify-content: center;
+	}
+
+	.asset-price-chart-row--combined {
+		width: 100%;
+	}
+
+	.asset-chart-panel {
+		width: 100%;
+		margin-left: 0;
+	}
+
+	.asset-chart-date-badge {
+		top: 0px;
+		right: auto;
+		left: 0px;
+	}
+
+	.asset-page-content .asset-range-button:not(.asset-delete-button):not(.asset-portfolio-icon-button) {
+		font-size: 9.5px;
+	}
+
+	.asset-chart-date-badge .asset-metric-inline-title--bitcoin,
+	.asset-chart-date-badge .asset-metric-inline-title--cardano {
+		font-size: 10.3px;
+	}
+
+	.asset-chart-date-badge .asset-metric-inline-value {
+		font-size: 10.8px;
+	}
+
+	.asset-market-controls {
+		width: 100%;
+		box-sizing: border-box;
+		margin-top: 0px;
+		padding: 10px;
+	}
+
+	.asset-reality-toggle-shell {
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
+		transform: none;
+		margin-top: 10px;
+		margin-bottom: 13px; /* <- edit toggle right */
+		border-radius: 10px;
+	}
+
+	.asset-page-content .asset-reality-toggle {
+		margin-left: -25px;
+		margin-right: -25px;
+	}
+
+	.asset-reality-toggle-shell--loader:not(.asset-loader-toggle-shell--myinv):not(.asset-loader-toggle-shell--home) {
+		--asset-loader-toggle-shell-width: 380px;
+	}
+
+	.asset-portfolio-center {
+		width: 100%;
+		margin-left: 0;
+		box-sizing: border-box;
+		padding-top: 10px !important;    /* <- edit top */
+		padding-bottom: 10px !important; /* <- edit bottom */
+		padding-left: 10px !important;   /* <- edit left */
+		padding-right: 10px !important;  /* <- edit right */
+		margin-bottom: 13px !important;  /* <- edit bottom margin */
+	}
+
+	.asset-profit-block {
+		width: 100% !important;
+		box-sizing: border-box;
+	}
+
+	.asset-action-button--save-signin {
+		margin-top: 5px;
+		margin-bottom: 5px;
+		padding-top: 20px;
+		padding-bottom: 21px;
+		padding-left: 10px;
+		padding-right: 10px; 
+		font-size: 20px;
+		letter-spacing: 0px;
+	}
+
+	.asset-action-button--add-investments {
+		font-size: 15px;  
+		padding-top: 12px;    /* <- edit add investments font size */
+		padding-bottom: 12px;    /* <- edit add investments font size */
+		padding-left: 10px;    /* <- edit add investments font size */
+		padding-right: 10px;    /* <- edit add investments font size */
+		margin-bottom: 10px;  /* <- edit add investments bottom spacing */
+		letter-spacing: -0.4px;
+	}
+
+	/* --- Invest form bordered sections (under 750px) --- */
+	.asset-invest-form-box {
+		width: 100%;              /* <- edit form outer box width */
+		margin-left: auto;       /* <- edit form outer box left margin */
+		margin-right: auto;      /* <- edit form outer box right margin */
+		margin-top: 12px;        /* <- edit form outer box top margin */
+		margin-bottom: 0px;      /* <- edit form outer box bottom margin */
+		padding: 10px;           /* <- edit form outer box padding */
+		border-radius: 14px;     /* <- edit form outer box border-radius */
+	}
+
+	.asset-invest-form-metrics-panel {
+		padding-left: 10px;      /* <- edit metrics panel left padding */
+		padding-right: 10px;     /* <- edit metrics panel right padding */
+		padding-top: 30px;       /* <- edit metrics panel top padding */
+		padding-bottom: 5px;     /* <- edit metrics panel bottom padding */
+		border-radius: 14px;     /* <- edit metrics panel border-radius */
+	}
+
+	.asset-invest-form-metrics-panel .asset-invest-form-row:not(:last-child) {
+		margin-bottom: -20px;    /* <- edit space between form metric rows */
+	}
+
+	.asset-invest-form-controls {
+		margin-top: 10px;        /* <- edit controls panel top margin */
+		padding-left: 16px;      /* <- edit controls panel left padding */
+		padding-right: 16px;     /* <- edit controls panel right padding */
+		padding-top: 20px;       /* <- edit controls panel top padding */
+		padding-bottom: 5px;     /* <- edit controls panel bottom padding */
+		border-radius: 14px;     /* <- edit controls panel border-radius */
+	}
+
+	.asset-invest-form-body {
+		width: 100%;             /* <- edit form body width */
+		padding: 0;              /* <- edit form body padding */
+	}
+
+	/* --- Summary bordered box (under 750px) --- */
+	.asset-portfolio-summary-box {
+		width: 100%;             /* <- edit summary box width */
+		padding-left: 12px;      /* <- edit summary box left padding */
+		padding-right: 12px;     /* <- edit summary box right padding */
+		padding-top: 0px;        /* <- edit summary box top padding */
+		padding-bottom: 10px;    /* <- edit summary box bottom padding */
+		border-radius: 14px; 
+		margin-bottom: 0px;    /* <- edit summary box border-radius */
+	}
+
+	/* --- Profit/loss block (under 750px) --- */
+	.asset-profit-block {
+		margin-top: 15px !important;       /* <- edit profit block top margin */
+		margin-bottom: 0px;      /* <- edit profit block bottom margin */
+		margin-left: 0;          /* <- edit profit block left margin */
+		margin-right: 0;         /* <- edit profit block right margin */
+		--asset-profit-range-buttons-margin-top: 15px; /* <- gap above 1W/1M/… row (was .asset-profit-summary margin-bottom) */
+	}
+
+	.asset-profit-block .asset-profit-summary {
+		margin-bottom: 0;
+	}
+
+	.asset-profit-block .asset-range-buttons {
+		margin-top: var(--asset-profit-range-buttons-margin-top);
+	}
+
+	.asset-profit-inline-wrap {
+		width: 170px;            /* <- edit profit numbers width */
+		max-width: 100%;
+	}
+
+	/* --- Portfolio action rows (under 750px) --- */
+	.asset-portfolio-actions {
+		margin-top: 20px;        /* <- edit actions row top margin */
+		margin-bottom: 0px;      /* <- edit actions row bottom margin */
+		gap: 8px;                /* <- edit actions row gap */
+	}
+
+	.asset-portfolio-actions--add {
+		margin-top: 12px;        /* <- edit "add more/hide add more" button top margin */
+	}
+
+	.asset-portfolio-actions--show {
+		margin-top: 12px;    
+		margin-bottom: 5px;    /* <- edit "show/hide investments" button top margin */
+	}
+
+	/* --- Typography: match My Investments sizing (under 750px) --- */
+
+	/* Group 2 — Metric word titles → match myinv-metric-title (10.5px, 0 letter-spacing) */
+	.asset-portfolio-summary-box .asset-metric-title--bitcoin,
+	.asset-portfolio-summary-box .asset-metric-title--cardano,
+	.asset-portfolio-summary-box .asset-metric-inline-title--bitcoin,
+	.asset-portfolio-summary-box .asset-metric-inline-title--cardano,
+	.asset-invest-form-metrics-panel .asset-metric-title--bitcoin,
+	.asset-invest-form-metrics-panel .asset-metric-title--cardano,
+	.asset-invest-form-controls .asset-metric-title--bitcoin,
+	.asset-invest-form-controls .asset-metric-title--cardano,
+	.asset-invest-form-metric-title,
+	.asset-investments-wrap .asset-metric-title--bitcoin,
+	.asset-investments-wrap .asset-metric-title--cardano,
+	.asset-investments-wrap .asset-metric-inline-title--bitcoin,
+	.asset-investments-wrap .asset-metric-inline-title--cardano {
+		font-size: 10.5px !important;
+	}
+
+	/* Group 1 — Section titles → match myinv-panel-title--add (23.5px, -2px)
+	   MUST appear after Group 2 so form headings win over the broader summary-box rule */
+	.asset-investments-header {
+		font-size: 23.5px !important;
+		letter-spacing: -2px !important;
+		margin-top: 10px;         /* <- edit "investments" title top margin */
+	}
+
+	.asset-portfolio-title-muted {
+		letter-spacing: -1.4px;
+		transform: translateY(-1.7px);   /* <- edit "my bitcoin/investments" title letter-spacing */
+	}
+
+	.asset-invest-form-heading .asset-metric-title--bitcoin,
+	.asset-invest-form-heading .asset-metric-title--cardano {
+		font-size: 23.5px !important;
+		letter-spacing: -2px !important;
+	}
+
+	.asset-invest-form-heading {
+		margin-top: 10px;        /* <- edit form heading top margin */
+		margin-bottom: -5.5px;   /* <- edit form heading bottom margin */
+		transform: translateY(0px); /* <- edit form heading Y translate */
+	}
+
+	.asset-invest-form-subnote {
+		font-size: 10.5px !important;
+	}
+
+	.asset-invest-form-controls .asset-date-trigger .asset-date-value,
+	.asset-invest-form-controls .asset-date-trigger .asset-date-value.is-placeholder {
+		font-size: 12px !important;
+	}
+
+	.asset-invest-form-controls .asset-date-trigger .asset-date-icon svg {
+		width: 13.5px;
+		height: 13.5px;
+	}
+
+	/* Group 3 — $ symbols → match myinv-metric-symbol (14px) */
+	.asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
+	.asset-portfolio-summary-box .asset-metric-symbol--cardano,
+	.asset-portfolio-summary-box .asset-metric-inline-symbol--bitcoin,
+	.asset-portfolio-summary-box .asset-metric-inline-symbol--cardano,
+	.asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
+	.asset-invest-form-metrics-panel .asset-metric-symbol--cardano,
+	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--bitcoin,
+	.asset-invest-form-metrics-panel .asset-metric-inline-symbol--cardano,
+	.asset-investments-wrap .asset-metric-symbol--bitcoin,
+	.asset-investments-wrap .asset-metric-symbol--cardano,
+	.asset-investments-wrap .asset-metric-inline-symbol--bitcoin,
+	.asset-investments-wrap .asset-metric-inline-symbol--cardano {
+		font-size: 14px !important;
+	}
+
+	/* Group 4 — Numbers → match myinv-metric-value (25px, -2px) */
+	.asset-portfolio-summary-box .asset-metric-value,
+	.asset-portfolio-summary-box .asset-metric-inline-value,
+	.asset-invest-form-metrics-panel .asset-metric-value,
+	.asset-invest-form-metrics-panel .asset-metric-inline-value,
+	.asset-investments-wrap .asset-metric-value,
+	.asset-investments-wrap .asset-metric-inline-value {
+		font-size: 25px !important;
+		letter-spacing: -2px !important;
+	}
+
+	/* --- Display number row widths (under 750px) --- */
+	.asset-invest-form-row {
+		width: 170px;            /* <- edit form row width */
+		max-width: 100%;
+	}
+
+	.asset-money-row {
+		width: 170px;            /* <- edit summary money row width */
+		max-width: 100%;
+	}
+
+	/* --- Input widths (under 750px) --- */
+	.asset-invest-form-field-control .asset-invest-input {
+		width: 190px;            /* <- edit input width */
+		min-width: 190px;        /* <- edit input min-width */
+	}
+
+	.asset-invest-form-field-control .asset-date-picker {
+		width: 190px;            /* <- edit date picker width */
+	}
+
+	/* --- Investment list row widths (under 750px) --- */
+	.asset-investments-list .asset-metric-row {
+		width: 175px;             /* <- edit investment list row width */
+	}
+
+	.asset-investments-list {
+		padding: 12px;           /* <- edit investment list padding */
+	}
+
+}
+.asset-profit-block.asset-panel--bitcoin,
+.asset-profit-block.asset-panel--cardano {
+	background: transparent !important;
+}
+.asset-panel--cardano {
+	background: rgba(0, 51, 173, 0.075);
+	border: 1px solid rgba(0, 51, 173, 0.3);
+}
+.asset-portfolio-center.asset-panel--bitcoin,
+.asset-portfolio-center.asset-panel--cardano {
+	background: transparent !important;
+}
+.asset-reality-toggle-shell.asset-panel--cardano {
+	background: transparent !important;
+}
+.asset-price-panel--cardano {
+	border: 1px solid rgba(0, 51, 173, 0.3);
+	border-radius: 14px;
+}
+.asset-market-controls.asset-panel--bitcoin,
+.asset-market-controls.asset-panel--cardano {
+	background: transparent;
+}
+@media (hover: hover) and (pointer: fine) {
+.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments:hover {
+	box-shadow: none !important;
+	transform: translateY(-4px);
+	}
+
+	.asset-page--cardano .asset-page-content .asset-action-button--add-investments:hover {
+		box-shadow: none !important;
+		transform: translateY(-4px);
+	}
+}
+.asset-page--cardano .asset-page-content .asset-action-button--add-investments {
+	box-shadow: none !important;
+}
+.asset-page--cardano .asset-page-content .asset-action-button--invest-submit {
+	box-shadow: none !important;
+}
+.asset-page--cardano .asset-page-content .asset-action-button--invest-submit:hover {
+	box-shadow: none !important;
+}
+.asset-page-content .asset-home-icon,
+.asset-page-content .asset-home-icon--bitcoin,
+.asset-page-content .asset-home-icon--cardano,
+.asset-page-content .asset-header-asset-icon,
+.asset-page-content .asset-header-asset-icon--bitcoin,
+.asset-page-content .asset-header-asset-icon--cardano {
+	filter: none !important;
+}
+.asset-page--bitcoin .asset-page-content button,
+.asset-page--bitcoin .asset-page-content .asset-action-button,
+.asset-page--cardano .asset-page-content button,
+.asset-page--cardano .asset-page-content .asset-action-button {
+	box-shadow: none !important;
+}
+.asset-page--bitcoin .asset-page-content button:hover,
+.asset-page--bitcoin .asset-page-content button:active,
+.asset-page--bitcoin .asset-page-content button:focus,
+.asset-page--bitcoin .asset-page-content button:focus-visible,
+.asset-page--bitcoin .asset-page-content .asset-action-button:hover,
+.asset-page--bitcoin .asset-page-content .asset-action-button:active,
+.asset-page--bitcoin .asset-page-content .asset-action-button:focus,
+.asset-page--bitcoin .asset-page-content .asset-action-button:focus-visible,
+.asset-page--cardano .asset-page-content button:hover,
+.asset-page--cardano .asset-page-content button:active,
+.asset-page--cardano .asset-page-content button:focus,
+.asset-page--cardano .asset-page-content button:focus-visible,
+.asset-page--cardano .asset-page-content .asset-action-button:hover,
+.asset-page--cardano .asset-page-content .asset-action-button:active,
+.asset-page--cardano .asset-page-content .asset-action-button:focus,
+.asset-page--cardano .asset-page-content .asset-action-button:focus-visible {
+	box-shadow: none !important;
+}
+.asset-page--cardano .asset-footer-about {
+	border-color: rgba(0, 51, 173, 0.45);
+	color: rgba(0, 51, 173, 0.9);
+}
+.asset-loader-toggle-shell--bitcoin,
+.asset-loader-toggle-shell--cardano {
+	--asset-loader-toggle-shell-width: 154px;
+	--asset-loader-toggle-width: 154px;
+}
+
+@media (min-width: 751px) {
+	.asset-loader-toggle-shell--bitcoin,
+	.asset-loader-toggle-shell--cardano {
+		--asset-loader-toggle-shell-width: 350px;
+		--asset-loader-toggle-width: 350px;
+	}
+
+	.asset-reality-toggle-shell--loader .asset-reality-toggle--loader {
+		width: 350px;
+	}
+}
+
+.asset-loader-overlay--cardano {
+	background: rgb(255, 255, 255);
+}
+.asset-loader-ring--cardano .asset-loader-spinner circle {
+	stroke: rgba(0, 51, 173, 1);
+	animation: assetLoaderStrokeADA 3s ease forwards;
+}
+.asset-footer-about-button.asset-action-button--cardano {
+	color: rgba(0, 51, 173, 0.95);
+	border-color: rgba(0, 51, 173, 0.9);
+	background: rgba(0, 51, 173, 0.08);
+	--asset-footer-about-divider-color: rgba(0, 51, 173, 0.9);
+}
+.asset-view-more-assets--footer.asset-action-button--cardano {
+	--asset-footer-about-divider-color: rgba(0, 51, 173, 0.9);
+}
+.asset-chart-grid-shimmer--cardano .asset-chart-grid-shimmer-thin {
+	background-image:
+		repeating-linear-gradient(to right, rgba(0, 51, 173, 0.25) 0px, rgba(0, 51, 173, 0.25) 1px, transparent 1px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(0, 51, 173, 0.25) 0px, rgba(0, 51, 173, 0.25) 1px, transparent 1px, transparent 30px);
+}
+.asset-chart-grid-shimmer--cardano .asset-chart-grid-shimmer-thick {
+	background-image:
+		repeating-linear-gradient(to right, rgba(0, 51, 173, 0.2) 0px, rgba(0, 51, 173, 0.2) 2px, transparent 2px, transparent 30px),
+		repeating-linear-gradient(to bottom, rgba(0, 51, 173, 0.2) 0px, rgba(0, 51, 173, 0.2) 2px, transparent 2px, transparent 30px);
+}
+.home-asset-cardano {
+				background: rgba(0, 51, 173, 0.075);
+				border: 1px solid rgba(0, 51, 173, 0.28);
+			}
+.home-asset-cardano .home-assets-cell + .home-assets-cell {
+				border-left: 5px solid rgba(0, 51, 173, 0.1);
+				margin-left: -6.5px;
+				margin-right: 6.5px;
+				border-top-left-radius: 5px;
+				border-bottom-left-radius: 5px;
+			}
+.home-asset-label-cardano .home-asset-name {
+				font-size: 12.5px;
+			}
+@media screen and (max-width: 700px) {
+	#overlayy {
+	  -webkit-text-size-adjust: none;
+	}  
+	  #arells-iconn {
+		margin-top: 60px;
+		  width: 65px;
+		  height: 70px;
+	  }
+  
+	  #word-logoo {
+		  width: 60px;	
+		  height: 20px;
+		  margin-bottom: -30px;
+	  }  
+	  
+	  #descriptioner-wrapper {
+		font-size: 7.3px;
+		margin-top: 4px;
+		margin-bottom: -21.8px;
+	  }
+
+	  #descriptioner {
+		font-size: 12px;
+	  }
+
+	  .home-investments-slideup-button-text {
+		font-size: 12px;
+	  }
+
+		#ada-description {
+			opacity: 1;
+			display: inline-block;
+		}
+		#ada-descriptioner {
+			opacity: 1;
+			display: inline-block;
+		}
+
+
+	#buy-info-wrapping {
+		font-size: 7px;
+	}
+
+	#buy-info-homer {
+		margin-left: 4px;
+	}
+
+	#login {
+		width: 240px;
+		font-size: 11px; 			  
+		}
+
+	.home-assets-footer-text {
+		font-size: 23.5px;
+		opacity: 1;
+		letter-spacing: -1.5px;
+		padding-left: 0;
+		color: var(--myinv-accent-color);
+		text-align: center;
+	}
+
+	.home-assets-list {
+		gap: 15px;
+	}
+
+	.home-assets-cell {
+		font-size: 10px;
+	}
+
+	.home-asset-label-bitcoin .home-asset-name,
+	.home-asset-label-cardano .home-asset-name {
+		font-size: 10.5px;
+	}
+
+	.home-assets-index {
+		font-size: 8px;
+	}
+
+	.asset-chart-panel {
+		width: calc(100% + 80px);
+		margin-left: -40px;
+		margin-top: -0px;
+	}
+
+	  
+  }

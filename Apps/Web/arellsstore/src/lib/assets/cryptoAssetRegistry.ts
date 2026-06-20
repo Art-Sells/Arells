@@ -10,7 +10,7 @@ export type VapaAssetConfig = {
   historyUrl: string;
 };
 
-export type CryptoAssetTheme = 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'tron' | 'doge';
+export type CryptoAssetTheme = 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'tron' | 'doge' | 'cardano';
 
 export type CryptoAssetConfig = {
   id: string;
@@ -127,6 +127,20 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     metaTitle: 'Dogecoin never loses value',
     faviconPath: '/images/favicons/DogeBadge.svg',
     ogBannerPath: '/images/banners/assets/crypto/Dogecoin/ArellsDOGEBanner.jpg',
+  },
+  {
+    id: 'cardano',
+    href: '/cardano',
+    label: 'Cardano',
+    ticker: 'ADA',
+    displayName: 'Cardano',
+    theme: 'cardano',
+    cssModifier: 'cardano',
+    coingeckoId: 'cardano',
+    s3VapaKey: 'vavity/cardanoVAPA.json',
+    metaTitle: 'Cardano never loses value',
+    faviconPath: '/images/favicons/AdaBadge.svg',
+    ogBannerPath: '/images/banners/assets/crypto/Cardano/ArellsADABanner.jpg',
   },
 ] as const;
 

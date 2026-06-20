@@ -15,6 +15,7 @@ const ASSET_BADGE_HREF: Record<string, string> = {
   solana: 'https://solana.org/en/',
   tron: 'https://tron.network/',
   doge: 'https://dogecoin.com/',
+  cardano: 'https://cardano.org/',
 };
 
 type AssetGuestLandingProps = {

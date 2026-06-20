@@ -25,3 +25,14 @@
 	color: rgb(194, 166, 51) !important;
 	-webkit-text-fill-color: rgb(194, 166, 51) !important;
 }
+
+/* Cardano — /cardano `.asset-header-title` uses --asset-line-color rgb(0, 51, 173) */
+#overlayy .home-asset-cardano .home-asset-name,
+#overlayy .home-asset-cardano .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-cardano .home-asset-name,
+.home-asset-card.home-asset-cardano .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-cardano .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-cardano .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(0, 51, 173) !important;
+	-webkit-text-fill-color: rgb(0, 51, 173) !important;
+}
