@@ -6,9 +6,9 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins*
 
+- *Cardano and other assets (my-investments values after deployment pop on pagemount issue)*
 - *(about buton accent color flicker and toggle accent color issues [take pic for reference to fix])*
 -*update indexing after main submission, check google after a week*
 

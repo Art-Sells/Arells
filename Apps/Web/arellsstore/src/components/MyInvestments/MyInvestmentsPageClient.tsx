@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
-import { SUPPORTED_CRYPTO_ASSET_IDS, getCryptoAssetMeta } from '../../lib/assets/cryptoAssetRegistry';
+import MyInvAssetHubPanel from './MyInvAssetHubPanel';
+import { SUPPORTED_CRYPTO_ASSET_IDS } from '../../lib/assets/cryptoAssetRegistry';
 import {
   liquidSpotOnUtcDay,
   recalculateInvestmentsWithSnapshots,
@@ -139,6 +140,9 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
   const [initialDataReady, setInitialDataReady] = useState(false);
+  const [addInvestCryptoOpen, setAddInvestCryptoOpen] = useState(false);
+  const [otherAssetsCryptoOpen, setOtherAssetsCryptoOpen] = useState(false);
+  const [addInvestStocksPhase, setAddInvestStocksPhase] = useState<'button' | 'coming-soon'>('button');
   const initialFetchDoneRef = useRef(false);
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState(false);
@@ -1191,75 +1195,43 @@ const MyInvestmentsPageClient: React.FC = () => {
         {effectiveSignedIn && initialDataReady && (
           <>
             {effectiveAssetsPresent.length > 0 && (
-              <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">My Assets</div>
-                <div className="myinv-panel-section myinv-accent-border">
-                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
-                    <span className="myinv-asset-border" aria-hidden="true" />
-                    <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}${effectiveAssetsPresent.length > 2 ? ' is-many' : ''}`}>
-                      {effectiveAssetsPresent.map((asset) => {
-                        const meta = getCryptoAssetMeta(asset);
-                        const href = meta?.href ?? '/';
-                        const label = meta?.label ?? asset;
-                        return (
-                          <Link
-                            key={`more-${asset}`}
-                            href={href}
-                            className={`myinv-asset-home-card home-asset-${asset}`}
-                            aria-label={label}
-                          >
-                            <div className="home-assets-cell home-assets-asset">
-                              <span className={`home-asset-label home-asset-label-${asset}`}>
-                                <span
-                                  className={`home-asset-name asset-action-button asset-action-button--${asset} asset-action-button--home-asset-chip`}
-                                >
-                                  {label}
-                                </span>
-                              </span>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <MyInvAssetHubPanel
+                title="My Assets"
+                slideIn={slideIn}
+                assets={effectiveAssetsPresent}
+                linkKeyPrefix="held"
+                cryptoMode="badges"
+                stocksPhase={addInvestStocksPhase}
+                onStocksClick={() => setAddInvestStocksPhase('coming-soon')}
+              />
             )}
 
-            {effectiveAssetsMissing.length > 0 && (
-              <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">{effectiveAssetsPresent.length > 0 ? 'Other Assets' : 'Add Investments'}</div>
-                <div className="myinv-panel-section myinv-accent-border">
-                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
-                    <span className="myinv-asset-border" aria-hidden="true" />
-                    <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}${effectiveAssetsMissing.length > 2 ? ' is-many' : ''}`}>
-                      {effectiveAssetsMissing.map((asset) => {
-                        const meta = getCryptoAssetMeta(asset);
-                        const href = meta?.href ?? '/';
-                        const label = meta?.label ?? asset;
-                        return (
-                          <Link
-                            key={`missing-${asset}`}
-                            href={href}
-                            className={`myinv-asset-home-card home-asset-${asset}`}
-                            aria-label={label}
-                          >
-                            <div className="home-assets-cell home-assets-asset">
-                              <span className={`home-asset-label home-asset-label-${asset}`}>
-                                <span
-                                  className={`home-asset-name asset-action-button asset-action-button--${asset} asset-action-button--home-asset-chip`}
-                                >
-                                  {label}
-                                </span>
-                              </span>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {effectiveAssetsMissing.length > 0 && effectiveAssetsPresent.length > 0 && (
+              <MyInvAssetHubPanel
+                title="Other Assets"
+                slideIn={slideIn}
+                assets={effectiveAssetsMissing}
+                linkKeyPrefix="missing"
+                cryptoMode="expandable"
+                cryptoOpen={otherAssetsCryptoOpen}
+                onCryptoOpen={() => setOtherAssetsCryptoOpen(true)}
+                stocksPhase={addInvestStocksPhase}
+                onStocksClick={() => setAddInvestStocksPhase('coming-soon')}
+              />
+            )}
+
+            {effectiveAssetsMissing.length > 0 && effectiveAssetsPresent.length === 0 && (
+              <MyInvAssetHubPanel
+                title="Add Investments"
+                slideIn={slideIn}
+                assets={effectiveAssetsMissing}
+                linkKeyPrefix="add-missing"
+                cryptoMode="expandable"
+                cryptoOpen={addInvestCryptoOpen}
+                onCryptoOpen={() => setAddInvestCryptoOpen(true)}
+                stocksPhase={addInvestStocksPhase}
+                onStocksClick={() => setAddInvestStocksPhase('coming-soon')}
+              />
             )}
           </>
         )}

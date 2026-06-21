@@ -44,6 +44,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const shellSlideRef = useRef<HTMLDivElement | null>(null);
   const shellRevealDoneRef = useRef(false);
+  const [showBelowPanels, setShowBelowPanels] = useState(false);
   const [showBelowContent, setShowBelowContent] = useState(false);
   const [shellMaxHeight, setShellMaxHeight] = useState(0);
   const [data, setData] = useState<PortfolioMePayload | null>(initialPortfolioMe);
@@ -95,6 +96,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   useEffect(() => {
     if (showGuestLayout) return;
     setOpen(false);
+    setShowBelowPanels(false);
     const raf = window.requestAnimationFrame(() => {
       const h = wrapperRef.current?.scrollHeight ?? 0;
       setShellMaxHeight(Math.max(0, h + 24));
@@ -115,7 +117,10 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   }, [data, leaderboardRows, isSignedIn, guestPreview, showGuestLayout]);
 
   useEffect(() => {
-    if (open) setSlideIn(true);
+    if (open) {
+      setSlideIn(true);
+      setShowBelowPanels(true);
+    }
   }, [open]);
 
   const revealBelowContent = useCallback(() => {
@@ -325,7 +330,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
           </div>
         </div>
 
-        {showBelowContent && showSignedInPanel ? (
+        {showBelowPanels && showSignedInPanel ? (
           <div className="myportfolio-portfolio-below-shell myportfolio-stack page-slide-in">
             <div className="myinv-panel-group myportfolio-portfolio-below-panel page-slide-in">
               <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Active Users</div>
