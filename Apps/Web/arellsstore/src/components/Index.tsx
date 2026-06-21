@@ -292,10 +292,15 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
 
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
-    const wrapper = homeAssetsWrapRef.current;
-    if (!wrapper || typeof ResizeObserver === 'undefined') return;
+    const stack = homeAssetsWrapRef.current;
+    if (!stack || typeof ResizeObserver === 'undefined') return;
+
+    const getLayoutTarget = () =>
+      stack.querySelector<HTMLElement>('.home-asset-category-card.home-assets-wrapper') ?? stack;
+
     const measure = () => {
-      const r = wrapper.getBoundingClientRect();
+      const target = getLayoutTarget();
+      const r = target.getBoundingClientRect();
       setHomeAssetsLayout({
         left: r.left + r.width / 2,
         width: r.width,
@@ -311,7 +316,9 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
     };
     measure();
     const ro = new ResizeObserver(schedule);
-    ro.observe(wrapper);
+    ro.observe(stack);
+    const layoutTarget = getLayoutTarget();
+    if (layoutTarget !== stack) ro.observe(layoutTarget);
     const onResize = () => {
       schedule();
       window.requestAnimationFrame(schedule);
