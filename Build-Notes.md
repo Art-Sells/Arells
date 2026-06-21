@@ -6,18 +6,22 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
--*Add Terms/Conditions in sign/up agreement checklist if sharing begins*
+
+-*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*
+- check (sign in with google) https://console.cloud.google.com/auth/scopes?authuser=2&chat=true&project=arells-492319&supportedpurview=project 
+- - info@arells.com
+- - sign in with google (xx is already an email etc etc, link?, can they sign in normally using gmail/email through normal sign in process? investigate)
 
 - *Cardano and other assets (my-investments values after deployment pop on pagemount issue)*
 - *(about buton accent color flicker and toggle accent color issues [take pic for reference to fix])*
 -*update indexing after main submission, check google after a week*
 
-## 3-4 weeks after launch
+## 2-3 months after launch
 - - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
 - Continue resolving Metrics Page UI
 - Prepare for WACA transition (LTP folder)
 
-## 2 months and beyond (adjust below if needed based on traction):
+## 3 months and beyond (adjust below if needed based on traction):
 - 50-100 users, check retention/WAU
 - Wait at least 2 months to adjust LTP (contact us for larger Re') based on feedback...
 - - If traction is good look at LTP folder post WACA
@@ -25,12 +29,8 @@
 - - Compare Retention rate (in bear markets WoM only (percentages)) : Projections (with current trajectory) with/without (WoW percentage comparisons)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
 
-### 3 months and beyond
-- Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)
-- check (sign in with google) https://console.cloud.google.com/auth/scopes?authuser=2&chat=true&project=arells-492319&supportedpurview=project 
-- - info@arells.com
-- - sign in with google (xx is already an email etc etc, link?, can they sign in normally using gmail/email through normal sign in process? investigate)
-- Check CSC (TAX)
+### 4 months and beyond
+
 - Fix
 - - Eth card under 400 px (or so, margin bottom changes?)
 - - Sometimes when i click the toggle, and i hover out and then release the hold (on desktop), the clicker sometimes thinks I still havenn't releaded the hold so when i hover over the toggle it still thinks I'm clicked... its not only after i click agian does the toggle clicker release
