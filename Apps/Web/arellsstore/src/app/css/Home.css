@@ -11522,8 +11522,30 @@ a.asset-action-button--save-signin {
 	padding: 0;
 }
 
-.myportfolio-referral-network-nested.myportfolio-telegram-support {
-	margin-bottom: 0;
+.myportfolio-questions-support-shell {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	width: min(700px, calc(100% - 20px));
+	min-width: 350px;
+	margin: 30px auto -20px;
+	box-sizing: border-box;
+}
+
+.myportfolio-questions-support-shell .myportfolio-questions-support-rule {
+	flex-shrink: 0;
+	background: color-mix(in srgb, var(--myinv-accent-color, #222) 45%, transparent);
+}
+
+.myportfolio-questions-support-shell .myportfolio-questions-panel {
+	margin-top: 0;
+	width: 100%;
+}
+
+.myportfolio-questions-panel .myinv-panel-title--add {
+	font-size: 26px;
+	letter-spacing: -1.5px;
 }
 
 .myportfolio-weekly-uara-intro-copy {
@@ -11566,6 +11588,16 @@ a.asset-action-button--save-signin {
 	.myportfolio-portfolio-below-shell {
 		width: min(340px, calc(100% - 20px));
 		min-width: 0;
+	}
+
+	.myportfolio-questions-support-shell {
+		width: min(340px, calc(100% - 20px));
+		min-width: 0;
+	}
+
+	.myportfolio-questions-panel .myinv-panel-title--add {
+		font-size: 20px;
+		letter-spacing: -1px;
 	}
 
 	.myportfolio-share-copy-row {
@@ -12045,7 +12077,7 @@ a.asset-action-button--save-signin {
 	--myinv-asset-border-opacity: 0.3;
 }
 
-.myportfolio-telegram-support-copy {
+.myportfolio-email-support-copy {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -12058,28 +12090,24 @@ a.asset-action-button--save-signin {
 	color: #222;
 }
 
-.myportfolio-telegram-support-copy-lead {
+.myportfolio-email-support-copy-text {
 	margin: 0;
-	color: #222;
+	color: #000;
+	-webkit-text-fill-color: #000;
+	font-weight: 800;
 }
 
-.myportfolio-telegram-support-copy-text {
-	margin: 0;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-}
-
-.myportfolio-telegram-support-copy .site-social-footer-link {
+.myportfolio-email-support-copy .site-social-footer-link {
 	margin-top: 8px;
 }
 
-/* Telegram support — footer link classes; WebKit needs ::after ring (same as .myinv-about-button) */
-.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent,
-.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:link,
-.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:visited,
-.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:hover,
-.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:active,
-.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:focus-visible {
+/* Email support — footer link classes; WebKit needs ::after ring (same as .myinv-about-button) */
+.myportfolio-email-support-panel a.site-social-footer-link.site-social-footer-link--accent,
+.myportfolio-email-support-panel a.site-social-footer-link.site-social-footer-link--accent:link,
+.myportfolio-email-support-panel a.site-social-footer-link.site-social-footer-link--accent:visited,
+.myportfolio-email-support-panel a.site-social-footer-link.site-social-footer-link--accent:hover,
+.myportfolio-email-support-panel a.site-social-footer-link.site-social-footer-link--accent:active,
+.myportfolio-email-support-panel a.site-social-footer-link.site-social-footer-link--accent:focus-visible {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -12091,7 +12119,7 @@ a.asset-action-button--save-signin {
 	-webkit-text-fill-color: var(--myinv-accent-color) !important;
 	border: none !important;
 	box-shadow: none !important;
-	padding: 13px !important;
+	padding: 8px !important;
 	min-width: 44px !important;
 	min-height: 44px !important;
 	position: relative;
@@ -12101,7 +12129,7 @@ a.asset-action-button--save-signin {
 	vertical-align: middle;
 }
 
-.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent::after {
+.myportfolio-email-support-panel a.site-social-footer-link.site-social-footer-link--accent::after {
 	content: '';
 	position: absolute;
 	inset: 0;
@@ -12117,16 +12145,16 @@ a.asset-action-button--save-signin {
 }
 
 @media (hover: hover) and (pointer: fine) {
-	.myportfolio-telegram-support a.site-social-footer-link.site-social-footer-link--accent:hover {
+	.myportfolio-email-support-panel a.site-social-footer-link.site-social-footer-link--accent:hover {
 		opacity: 0.88;
 	}
 }
 
-.myportfolio-telegram-support .site-social-footer-link--accent .site-social-footer-icon {
+.myportfolio-email-support-panel .site-social-footer-link--accent .site-social-footer-icon {
 	display: inline-block;
 	flex-shrink: 0;
-	width: 15px;
-	height: 15px;
+	width: 25px;
+	height: 25px;
 	vertical-align: middle;
 	background-color: var(--myinv-accent-color);
 	-webkit-mask-repeat: no-repeat;
@@ -12139,9 +12167,9 @@ a.asset-action-button--save-signin {
 	z-index: 2;
 }
 
-.myportfolio-telegram-support .site-social-footer-link--accent .site-social-footer-icon--telegram {
-	-webkit-mask-image: url('/images/icons/socials/Telegram.png');
-	mask-image: url('/images/icons/socials/Telegram.png');
+.myportfolio-email-support-panel .site-social-footer-link--accent .site-social-footer-icon--email {
+	-webkit-mask-image: url('/images/icons/email.png');
+	mask-image: url('/images/icons/email.png');
 }
 
 .myportfolio-referral-pyramid {

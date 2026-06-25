@@ -3,7 +3,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
-import SiteSocialFooter, { SOCIAL_TELEGRAM } from '../SiteSocialFooter';
+import SiteSocialFooter from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
 import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
@@ -220,22 +220,6 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
 
                       <div className="myportfolio-referral-network-nested myinv-accent-border">
                         <ReferralNetworkExamplePyramid pyramid={FIXED_REFERRAL_PYRAMID_SNAPSHOT} />
-                      </div>
-
-                      <div className="myportfolio-referral-network-nested myinv-accent-border myportfolio-telegram-support">
-                        <div className="myportfolio-telegram-support-copy">
-                          <p className="myportfolio-telegram-support-copy-lead">Questions/Concerns?</p>
-                          <p className="myportfolio-telegram-support-copy-text">Message us on Telegram:</p>
-                          <a
-                            href={SOCIAL_TELEGRAM}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="site-social-footer-link site-social-footer-link--accent"
-                            aria-label="Message Arells on Telegram"
-                          >
-                            <span className="site-social-footer-icon site-social-footer-icon--telegram" aria-hidden="true" />
-                          </a>
-                        </div>
                       </div>
                     </div>
                   </div>

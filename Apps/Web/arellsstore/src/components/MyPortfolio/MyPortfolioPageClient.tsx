@@ -9,6 +9,7 @@ import HomeAboutMountLoader from '../HomeAboutMountLoader';
 import UsdRangeMetric from './UsdRangeMetric';
 import PortfolioUsdAmount from './PortfolioUsdAmount';
 import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
+import PortfolioQuestionsSupport from './PortfolioQuestionsSupport';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
@@ -371,6 +372,11 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
         {showBelowContent ? (
           <>
+            <div className="myportfolio-questions-support-shell page-slide-in">
+              <div className="site-social-footer-rule myportfolio-questions-support-rule" aria-hidden="true" />
+              <PortfolioQuestionsSupport />
+            </div>
+
             <div className="myinv-about-wrap page-slide-in">
               <Link className="myinv-about-button" href="/about">
                 <span className="myinv-about-button-bg" aria-hidden="true" />

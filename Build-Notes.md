@@ -16,7 +16,8 @@
 - *(about buton accent color flicker and toggle accent color issues [take pic for reference to fix])*
 -*update indexing after main submission, check google after a week*
 
-## 2-3 months after launch
+## 2-3 months after launch (if compounding begins)
+- - Set Crisis Plan for Arells.
 - - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
 - Continue resolving Metrics Page UI
 - Prepare for WACA transition (LTP folder)
