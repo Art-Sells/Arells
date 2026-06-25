@@ -11529,7 +11529,7 @@ a.asset-action-button--save-signin {
 	gap: 14px;
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
-	margin: 30px auto -20px;
+	margin: 30px auto -27px;
 	box-sizing: border-box;
 }
 
