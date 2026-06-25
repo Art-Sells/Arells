@@ -332,6 +332,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
         </div>
 
         {showBelowPanels && showSignedInPanel ? (
+          <>
           <div className="myportfolio-portfolio-below-shell myportfolio-stack page-slide-in">
             <div className="myinv-panel-group myportfolio-portfolio-below-panel page-slide-in">
               <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Active Users</div>
@@ -368,15 +369,16 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
               </div>
             </div>
           </div>
+
+          <div className="myportfolio-questions-support-shell page-slide-in">
+            <div className="site-social-footer-rule myportfolio-questions-support-rule" aria-hidden="true" />
+            <PortfolioQuestionsSupport />
+          </div>
+          </>
         ) : null}
 
         {showBelowContent ? (
           <>
-            <div className="myportfolio-questions-support-shell page-slide-in">
-              <div className="site-social-footer-rule myportfolio-questions-support-rule" aria-hidden="true" />
-              <PortfolioQuestionsSupport />
-            </div>
-
             <div className="myinv-about-wrap page-slide-in">
               <Link className="myinv-about-button" href="/about">
                 <span className="myinv-about-button-bg" aria-hidden="true" />

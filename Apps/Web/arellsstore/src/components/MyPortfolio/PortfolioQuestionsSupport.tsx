@@ -5,7 +5,7 @@ import React from 'react';
 export const PORTFOLIO_SUPPORT_EMAIL = 'info@arells.com';
 
 const PortfolioQuestionsSupport: React.FC = () => (
-  <div className="myinv-panel-group myportfolio-portfolio-below-panel myportfolio-questions-panel page-slide-in">
+  <div className="myinv-panel-group myportfolio-portfolio-below-panel myportfolio-questions-panel">
     <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Questions/Concerns?</div>
     <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
       <span className="shadow-border" aria-hidden="true" />
