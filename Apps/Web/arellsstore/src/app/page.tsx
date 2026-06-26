@@ -5,18 +5,21 @@ import Index from '../components/Index';
 import React from 'react';
 import type { Metadata } from 'next';
 import { loadGuestPublicEarnings } from '../lib/portfolio/loadGuestPublicEarnings';
-import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION, HOME_OG_BANNER } from '../lib/siteMetaDescriptions';
+import { HOME_OG_BANNER } from '../lib/siteMetaDescriptions';
+
+const description =
+  'Investments never lose value with Arells. Arells is on a mission to ensure investments never lose value. Powered by Vavity. Now in Phase One of the mission.';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+  description,
   robots: { index: true, follow: true },
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: "Arells",
-    description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+    description,
     url: "/",
     type: "website",
     images: [
@@ -27,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-    description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+    description,
     card: "summary_large_image",
     images: [
       {

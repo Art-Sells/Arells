@@ -6,16 +6,19 @@ import { readRequestHostHeaders } from '../../lib/auth/requestHostHeaders';
 import { getSessionFromAppCookies } from '../../lib/auth/session';
 import { fetchPortfolioMeServer } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarningsServer';
-import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION, HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
+import { HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
+
+const description =
+  'See how much you can earn weekly on Arells through referrals and the users pool. Sign in to view your projected earnings.';
 
 export const metadata: Metadata = {
   title: 'Earn Money Weekly',
-  description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+  description,
   robots: { index: false, follow: true },
   alternates: { canonical: '/earn-money-weekly' },
   openGraph: {
     title: 'Earn Money Weekly',
-    description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+    description,
     url: '/earn-money-weekly',
     type: 'website',
     images: [{ url: HOME_OG_BANNER }],

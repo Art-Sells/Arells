@@ -47,3 +47,6 @@
 - - Tagline: If investments never lost value
 - - Desc: This is how your investments would look If investments never lost value.
 - - submission: An accounting ledger that shows how investments would look If investments never lost value. 
+
+### Phase Two
+Remove all Phase one (metadate/etc/github info)

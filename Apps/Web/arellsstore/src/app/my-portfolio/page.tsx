@@ -9,16 +9,19 @@ import {
   fetchPortfolioMeServer,
 } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarningsServer';
-import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION, HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
+import { HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
+
+const description =
+  'Your Arells portfolio, referral network, and projected weekly earnings. Investments never lose value.';
 
 export const metadata: Metadata = {
   title: 'My Portfolio',
-  description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+  description,
   robots: { index: false, follow: true },
   alternates: { canonical: '/my-portfolio' },
   openGraph: {
     title: 'My Portfolio',
-    description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+    description,
     url: '/my-portfolio',
     type: 'website',
     images: [{ url: HOME_OG_BANNER }],

@@ -1,26 +1,27 @@
 import type { Metadata } from 'next';
 import AboutPageClient from './AboutPageClient';
-import { HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION } from '../../lib/siteMetaDescriptions';
-
 const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
+
+const description =
+  'Learn about Arells, Vavity, and our mission to ensure investments never lose value. Now in Phase One.';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+  description,
   robots: { index: false, follow: true },
   alternates: {
     canonical: '/about',
   },
   openGraph: {
     title: 'About',
-    description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+    description,
     url: '/about',
     type: 'website',
     images: [{ url: generalBanner }],
   },
   twitter: {
     title: 'About',
-    description: HOME_ABOUT_MY_INVESTMENTS_META_DESCRIPTION,
+    description,
     card: 'summary_large_image',
     images: [{ url: generalBanner }],
   },

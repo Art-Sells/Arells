@@ -1,26 +1,27 @@
 import type { Metadata } from 'next';
 import SignUpPageClient from '../../components/Auth/SignUpPageClient';
-import { SIGN_UP_META_DESCRIPTION } from '../../lib/siteMetaDescriptions';
-
 const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
+
+const description =
+  'Sign up to join our mission to ensure investments never lose value. Powered by Vavity.';
 
 export const metadata: Metadata = {
   title: 'Sign up',
-  description: SIGN_UP_META_DESCRIPTION,
+  description,
   robots: { index: true, follow: true },
   alternates: {
     canonical: '/signup',
   },
   openGraph: {
     title: 'Sign up',
-    description: SIGN_UP_META_DESCRIPTION,
+    description,
     url: '/signup',
     type: 'website',
     images: [{ url: generalBanner }],
   },
   twitter: {
     title: 'Sign up',
-    description: SIGN_UP_META_DESCRIPTION,
+    description,
     card: 'summary_large_image',
     images: [{ url: generalBanner }],
   },
