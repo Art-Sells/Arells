@@ -7,7 +7,10 @@ import PortfolioWeeklyGuestLanding, {
 
 const PortfolioWeeklyGuestPageView: React.FC<PortfolioWeeklyGuestLandingProps> = (props) => {
   return (
-    <div className="myinv-page myinv-page--accent myinv-page--portfolio myinv-page--weekly-guest">
+    <div
+      className="myinv-page myinv-page--accent myinv-page--portfolio myinv-page--weekly-guest"
+      data-nosnippet
+    >
       <PortfolioWeeklyGuestLanding {...props} />
     </div>
   );
