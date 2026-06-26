@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import HomeAboutMountLoader from '../../components/HomeAboutMountLoader';
+import { emailVerifiedWelcomePhaseCopy } from '../../content/emailVerifiedWelcomeCopy';
 
 const AboutPageClient = () => {
   const [aboutSlideIn, setAboutSlideIn] = useState(false);
@@ -77,26 +78,26 @@ const AboutPageClient = () => {
                 <div className="about-section about-section--mid-body myinv-accent-border">
                   <div className="about-phase-copy-column">
                     <p className="about-text about-text--mid">
-                      <strong>Phase One:</strong>
+                      <strong>{emailVerifiedWelcomePhaseCopy.phaseOneTitle}</strong>
                     </p>
-                    <p className="about-text about-text--mid">Expand our mission by...</p>
+                    <p className="about-text about-text--mid">{emailVerifiedWelcomePhaseCopy.phaseOneLead}</p>
                     <ul className="about-phase-list">
-                      <li>Adding assets we plan on impacting.</li>
-                      <li>Signing up supporters &amp; believers.</li>
-                      <li>Share advertising revenue with supporters &amp; believers.</li>
+                      {emailVerifiedWelcomePhaseCopy.phaseOneBullets.map((bullet) => (
+                        <li key={bullet}>{bullet}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
                 <div className="about-section about-section--mid-body myinv-accent-border">
                   <div className="about-phase-copy-column">
                     <p className="about-text about-text--mid">
-                      <strong>Phase Two:</strong>
+                      <strong>{emailVerifiedWelcomePhaseCopy.phaseTwoTitle}</strong>
                     </p>
-                    <p className="about-text about-text--mid">Implement our mission by...</p>
+                    <p className="about-text about-text--mid">{emailVerifiedWelcomePhaseCopy.phaseTwoLead}</p>
                     <ul className="about-phase-list">
-                      <li>Building the infrastructure to support investments never losing value.</li>
-                      <li>Launching the infrastructure.</li>
-                      <li>Share infrastructure revenue with phase one supporters &amp; believers.</li>
+                      {emailVerifiedWelcomePhaseCopy.phaseTwoBullets.map((bullet) => (
+                        <li key={bullet}>{bullet}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
