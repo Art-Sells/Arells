@@ -946,10 +946,13 @@ body {
 	opacity: 0.5;
 }
 
+.asset-page--bch .asset-page-content .asset-price-panel .asset-metric-title--bch,
+.asset-page--bch .asset-page-content .asset-price-panel .asset-metric-value,
+.asset-page--bch .asset-page-content .asset-price-panel .asset-percentage-value,
 .asset-page--bch .asset-page-content .asset-price-panel span.asset-metric-symbol--bch,
 .asset-page--bch .asset-page-content .asset-price-panel span.asset-metric-percent-symbol--bch {
-	color: var(--asset-badge-spot-ink, rgb(8, 145, 106)) !important;
-	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(8, 145, 106)) !important;
+	color: var(--asset-line-color) !important;
+	-webkit-text-fill-color: var(--asset-line-color) !important;
 }
 
 .asset-page--bitcoin .asset-header-title,
@@ -6962,7 +6965,8 @@ a.myinv-about-button:focus-visible {
 }
 
 .home-header-inner.is-liquid #word-logoo {
-	transform: translateX(var(--home-logo-shift, 0px));
+	/* Compensate header row `translate(10px, 1px)` so liquid centering matches viewport; logo-only so slide transition stays smooth */
+	transform: translateX(calc(var(--home-logo-shift, 0px) - 10px));
 }
 
 			.home-divider {
@@ -7698,7 +7702,7 @@ a.myinv-about-button:focus-visible {
 	  }
 
 	  .home-header-inner.is-liquid #word-logoo {
-		  transform: translate(var(--home-logo-shift, 0px), -2px);
+		  transform: translate(calc(var(--home-logo-shift, 0px) - 10px), -2px);
 	  }
 	  
 	  #descriptioner-wrapper {

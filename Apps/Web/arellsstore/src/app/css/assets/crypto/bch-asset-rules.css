@@ -44,8 +44,8 @@
 	--asset-save-signin-margin-bottom: 15px;
 	/* Date-range row: line blue (BTC pattern). */
 	--asset-range-button-label-color: var(--asset-line-color);
-	/* Pill “ADA” + header spot $/% — a touch darker than `--asset-line-color` */
-	--asset-badge-spot-ink: color-mix(in srgb, var(--asset-line-color) 76%, rgb(24, 36, 72));
+	/* Pill “BCH” + header spot $/% — same hue as line color (Solana pattern) */
+	--asset-badge-spot-ink: var(--asset-line-color);
 }
 /* Keep opacity paired with BTC here — Home.css covers shared header metrics for BTC/ETH/ADA */
 .asset-page--bitcoin .asset-metric-value:not(.asset-mount-fade-2s),
@@ -350,10 +350,23 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bch:visited {
 .asset-metric-title--bch,
 .asset-metric-inline-title--bch {
 	margin-top: 0px;
-	color: var(--asset-slogan-color, rgb(8, 145, 106));
+	color: var(--asset-line-color, rgb(10, 193, 142));
 	opacity: 1;
 	font-size: 12px;
 	font-weight: 200;
+}
+.asset-page--bch .asset-page-content .asset-metric-symbol--bch,
+.asset-page--bch .asset-page-content .asset-metric-inline-symbol--bch {
+	color: var(--asset-line-color) !important;
+	-webkit-text-fill-color: var(--asset-line-color) !important;
+}
+.asset-page--bch .asset-page-content .asset-price-panel .asset-metric-title--bch,
+.asset-page--bch .asset-page-content .asset-price-panel .asset-metric-value,
+.asset-page--bch .asset-page-content .asset-price-panel .asset-percentage-value,
+.asset-page--bch .asset-page-content .asset-price-panel span.asset-metric-symbol--bch,
+.asset-page--bch .asset-page-content .asset-price-panel span.asset-metric-percent-symbol--bch {
+	color: var(--asset-line-color) !important;
+	-webkit-text-fill-color: var(--asset-line-color) !important;
 }
 /* Purchase rows / portfolio / invest form: match header price-panel $ / % (`--asset-badge-spot-ink`) */
 .asset-page--bch .asset-page-content .asset-portfolio-summary-box .asset-metric-symbol--bch,
