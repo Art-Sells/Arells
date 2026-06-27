@@ -366,6 +366,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
     const assets = CRYPTO_ASSETS.slice(0, visibleAssetCount).map((a) => ({
       id: a.id,
       label: a.label,
+      ticker: a.ticker,
       href: a.href,
     }));
 
@@ -531,7 +532,14 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
                           <span
                             className={`home-asset-name asset-action-button asset-action-button--${row.id} asset-action-button--invest-add asset-action-button--home-asset-chip`}
                           >
-                            {row.label}
+                            {row.id === 'bch' ? (
+                              <>
+                                <span className="home-asset-name-bch-wide">{row.label}</span>
+                                <span className="home-asset-name-bch-narrow">{row.ticker}</span>
+                              </>
+                            ) : (
+                              row.label
+                            )}
                           </span>
                         </span>
                       </div>

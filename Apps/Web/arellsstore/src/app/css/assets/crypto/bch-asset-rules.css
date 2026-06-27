@@ -1084,6 +1084,9 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bch:visited {
 .home-asset-label-bch .home-asset-name {
 				font-size: 12.5px;
 			}
+.home-asset-card.home-asset-bch .home-asset-name-bch-narrow {
+	display: none;
+}
 @media screen and (max-width: 700px) {
 	#overlayy {
 	  -webkit-text-size-adjust: none;
@@ -1157,6 +1160,14 @@ a.asset-action-button--myinv-asset-link.asset-action-button--bch:visited {
 	.home-asset-label-bitcoin .home-asset-name,
 	.home-asset-label-bch .home-asset-name {
 		font-size: 10.5px;
+	}
+
+	.home-asset-card.home-asset-bch .home-asset-name-bch-wide {
+		display: none;
+	}
+
+	.home-asset-card.home-asset-bch .home-asset-name-bch-narrow {
+		display: inline;
 	}
 
 	.home-assets-index {
