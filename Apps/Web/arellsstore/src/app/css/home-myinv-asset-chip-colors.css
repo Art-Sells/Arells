@@ -36,3 +36,14 @@
 	color: rgb(0, 51, 173) !important;
 	-webkit-text-fill-color: rgb(0, 51, 173) !important;
 }
+
+/* Bitcoin Cash — /bitcoin-cash `.asset-header-title` uses --asset-line-color rgb(10, 193, 142) */
+#overlayy .home-asset-bch .home-asset-name,
+#overlayy .home-asset-bch .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-bch .home-asset-name,
+.home-asset-card.home-asset-bch .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-bch .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-bch .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(10, 193, 142) !important;
+	-webkit-text-fill-color: rgb(10, 193, 142) !important;
+}

@@ -10,7 +10,7 @@ export type VapaAssetConfig = {
   historyUrl: string;
 };
 
-export type CryptoAssetTheme = 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'tron' | 'doge' | 'cardano';
+export type CryptoAssetTheme = 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'tron' | 'doge' | 'cardano' | 'bch';
 
 export type CryptoAssetConfig = {
   id: string;
@@ -141,6 +141,20 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     metaTitle: 'Cardano never loses value',
     faviconPath: '/images/favicons/AdaBadge.svg',
     ogBannerPath: '/images/banners/assets/crypto/Cardano/ArellsADABanner.jpg',
+  },
+  {
+    id: 'bch',
+    href: '/bitcoin-cash',
+    label: 'Bitcoin Cash',
+    ticker: 'BCH',
+    displayName: 'Bitcoin Cash',
+    theme: 'bch',
+    cssModifier: 'bch',
+    coingeckoId: 'bitcoin-cash',
+    s3VapaKey: 'vavity/bchVAPA.json',
+    metaTitle: 'Bitcoin Cash never loses value',
+    faviconPath: '/images/favicons/BchBadge.svg',
+    ogBannerPath: '/images/banners/assets/crypto/BitcoinCash/ArellsBCHBanner.jpg',
   },
 ] as const;
 
