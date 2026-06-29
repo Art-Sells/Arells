@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { iconAssetUrl as u } from '../iconAssetUrl';
+import type { PageSeoFields } from '../pageWebPageJsonLd';
 import { buildAssetMetaDescription } from '../siteMetaDescriptions';
 
 export type VapaAssetConfig = {
@@ -208,6 +209,15 @@ export function getAssetSpotPriceEntries(): Record<string, { path: string; respo
       },
     ])
   );
+}
+
+export function getCryptoAssetPageSeo(assetId: CryptoAssetId): PageSeoFields {
+  const asset = CRYPTO_ASSET_BY_ID[assetId];
+  return {
+    title: asset.metaTitle,
+    description: buildAssetMetaDescription(asset.displayName),
+    path: asset.href,
+  };
 }
 
 export function buildCryptoAssetPageMetadata(assetId: CryptoAssetId): Metadata {

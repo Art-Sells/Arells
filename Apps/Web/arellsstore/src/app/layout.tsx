@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { ReactNode } from 'react';
+import './css/server-seo-summary.css';
 import './css/Home.css';
 import './css/HomeLoaderOverrides.css';
 import './css/assets/crypto/xrp-asset-rules.css';
