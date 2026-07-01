@@ -6,6 +6,7 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
+- *switch from live to local testing false/true for myinv-engagement-v1 payments*
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*
 -- *Add in Terms/Conditions and future payout dynamics and Learn More: and the 65% is dependent on if they check their "investment" portfolio at least once weekly (this sill only be activated after 100k WAU)....*
 - check (sign in with google) https://console.cloud.google.com/auth/scopes?authuser=2&chat=true&project=arells-492319&supportedpurview=project 

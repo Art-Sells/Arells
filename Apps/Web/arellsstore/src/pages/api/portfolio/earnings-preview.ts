@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { myInvEngagementStorageMode } from '../../../lib/portfolio/myInvestmentsEngagement';
 import { buildEarningsPreviewPayload } from '../../../lib/portfolio/referralShares';
 import { isS3WriteDisabled } from '../../../lib/server/s3WriteGuard';
 import { getServerS3 } from '../../../lib/server/awsS3';
@@ -29,6 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const payload = await buildEarningsPreviewPayload(s3, bucket(), Date.now());
     return res.status(200).json({
       ...payload,
+      engagementStorageMode: myInvEngagementStorageMode(),
       s3WriteDisabled: isS3WriteDisabled(),
     });
   } catch (e) {

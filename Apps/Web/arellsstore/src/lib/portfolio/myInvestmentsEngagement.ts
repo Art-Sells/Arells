@@ -7,6 +7,12 @@ const ENGAGEMENT_ROLLING_DAYS = 7;
 
 const BASE_PREFIX = 'analytics/myinv-engagement-v1';
 
+/**
+ * Engagement S3 storage: `false` = preview prefix (safe local + pre-launch deploys).
+ * Set to `true` and deploy when real user earnings should read/write live data.
+ */
+export const MYINV_ENGAGEMENT_LIVE_STORAGE = true;
+
 export type MyInvEngagementEventType = 'range_select' | 'toggle_flip' | 'section_expand';
 
 /** Points per event — summed over rolling UTC window for earnings score. */
@@ -43,13 +49,19 @@ function eachUtcDay(fromMs: number, toMs: number): string[] {
   return keys;
 }
 
-/** Prod prefix in production; `-preview/` in non-prod unless overridden. */
+export function isMyInvEngagementLive(): boolean {
+  return MYINV_ENGAGEMENT_LIVE_STORAGE;
+}
+
+export type MyInvEngagementStorageMode = 'live' | 'preview';
+
+export function myInvEngagementStorageMode(): MyInvEngagementStorageMode {
+  return isMyInvEngagementLive() ? 'live' : 'preview';
+}
+
+/** Live prefix when MYINV_ENGAGEMENT_LIVE_STORAGE is true; otherwise `-preview/`. */
 export function myInvEngagementS3Prefix(): string {
-  const override = process.env.MYINV_ENGAGEMENT_S3_PREFIX?.trim();
-  if (override) {
-    return override.endsWith('/') ? override : `${override}/`;
-  }
-  if (process.env.NODE_ENV === 'production') {
+  if (isMyInvEngagementLive()) {
     return `${BASE_PREFIX}/`;
   }
   return `${BASE_PREFIX}-preview/`;
