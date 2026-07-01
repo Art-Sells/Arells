@@ -15,6 +15,7 @@ import {
   toVapaAssetSnapshot,
   type VapaAssetSnapshot,
 } from '../../lib/vavity/portfolioValuation';
+import { useMyInvEngagementEvent } from '../../hooks/useMyInvEngagementEvent';
 
 const formatCurrencyParts = (value: number) => {
   const formatted = (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -45,6 +46,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     ensureAssetsLoaded,
     assets,
   } = useVavity();
+  const { recordEngagement } = useMyInvEngagementEvent();
   const forceSessionPreview = false;
   const supportedAssets = useMemo(() => [...SUPPORTED_CRYPTO_ASSET_IDS], []);
   const sessionAssetsPresent = useMemo(() => {
@@ -107,6 +109,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const myinvWrapperRef = useRef<HTMLDivElement | null>(null);
   const [shellMaxHeight, setShellMaxHeight] = useState(0);
   const [isLiquidMode, setIsLiquidMode] = useState(false);
+  const isLiquidModeRef = useRef(false);
   const [toggleKnobLeftPx, setToggleKnobLeftPx] = useState<number | null>(null);
   const [toggleAlpha, setToggleAlpha] = useState<number>(0);
   const toggleAlphaRef = useRef(0);
@@ -403,12 +406,16 @@ const MyInvestmentsPageClient: React.FC = () => {
         setToggleAnimating(false);
         setToggleKnobLeftPx(null);
         const nextMode = toAlpha > 0.5;
+        if (nextMode !== isLiquidModeRef.current) {
+          isLiquidModeRef.current = nextMode;
+          recordEngagement('toggle_flip');
+        }
         setIsLiquidMode(nextMode);
         setToggleAlpha(toAlpha);
       };
       toggleAnimRafRef.current = window.requestAnimationFrame(step);
     },
-    [clamp01, measureToggleTrack, toggleTrack]
+    [clamp01, measureToggleTrack, recordEngagement, toggleTrack]
   );
 
   useEffect(() => {
@@ -1025,6 +1032,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                               disabled={!isEnabled || isActive}
                               onClick={() => {
                                 if (isActive) return;
+                                recordEngagement('range_select');
                                 setSelectedRangeDays(range.days);
                               }}
                               className={`asset-range-button myinv-range-button${isActive ? ' is-active' : ''}`}
@@ -1214,7 +1222,10 @@ const MyInvestmentsPageClient: React.FC = () => {
                 linkKeyPrefix="missing"
                 cryptoMode="expandable"
                 cryptoOpen={otherAssetsCryptoOpen}
-                onCryptoOpen={() => setOtherAssetsCryptoOpen(true)}
+                onCryptoOpen={() => {
+                  setOtherAssetsCryptoOpen(true);
+                  recordEngagement('section_expand');
+                }}
                 stocksPhase={addInvestStocksPhase}
                 onStocksClick={() => setAddInvestStocksPhase('coming-soon')}
               />
@@ -1228,7 +1239,10 @@ const MyInvestmentsPageClient: React.FC = () => {
                 linkKeyPrefix="add-missing"
                 cryptoMode="expandable"
                 cryptoOpen={addInvestCryptoOpen}
-                onCryptoOpen={() => setAddInvestCryptoOpen(true)}
+                onCryptoOpen={() => {
+                  setAddInvestCryptoOpen(true);
+                  recordEngagement('section_expand');
+                }}
                 stocksPhase={addInvestStocksPhase}
                 onStocksClick={() => setAddInvestStocksPhase('coming-soon')}
               />

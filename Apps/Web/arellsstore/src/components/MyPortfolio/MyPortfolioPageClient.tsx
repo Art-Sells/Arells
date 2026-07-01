@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
@@ -15,7 +15,6 @@ import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
-import { buildShareUrl } from '../../lib/auth/referral';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 
 /** Matches inline `max-height` transition on `.myinv-slide` (fallback if `transitionend` is skipped). */
@@ -37,8 +36,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   initialPublicEarnings = null,
 }) => {
   const router = useRouter();
-  const { isSignedIn } = useUser();
-  const showGuestLayout = guestPreview || (!isSignedIn && !initialPortfolioMe);
+  const { isSignedIn, authSessionLoading } = useUser();
+  const showGuestLayout =
+    guestPreview || (!authSessionLoading && !isSignedIn && !initialPortfolioMe);
   const showSignedInPanel = isSignedIn || !!initialPortfolioMe;
   const [open, setOpen] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
@@ -53,8 +53,6 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     initialLeaderboardRows
   );
   const [loadError, setLoadError] = useState(false);
-  const [shareCopied, setShareCopied] = useState(false);
-  const shareResetRef = useRef<number | null>(null);
   const { guestMaxLabel, loadError: guestPitchLoadError } =
     usePublicEarningsGuestPitch(showGuestLayout, initialPublicEarnings);
 
@@ -165,42 +163,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     };
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (shareResetRef.current !== null) {
-        window.clearTimeout(shareResetRef.current);
-      }
-    };
-  }, []);
-
-  const shareUrl = useMemo(() => {
-    if (!data?.referralCode) return '';
-    if (typeof window !== 'undefined') {
-      return buildShareUrl(window.location.origin, data.referralCode);
-    }
-    return data.shareUrl ?? '';
-  }, [data?.referralCode, data?.shareUrl]);
-
-  const onShare = useCallback(async () => {
-    if (!shareUrl) return;
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setShareCopied(true);
-      if (shareResetRef.current !== null) {
-        window.clearTimeout(shareResetRef.current);
-      }
-      shareResetRef.current = window.setTimeout(() => {
-        setShareCopied(false);
-        shareResetRef.current = null;
-      }, 3000);
-    } catch {
-      // Clipboard unavailable — button label unchanged; no message below button.
-    }
-  }, [shareUrl]);
-
   const portfolioMetricsReady = !!data && !loadError;
 
-  const shareEarnUpToLabel = formatUsdRangeDisplay(
+  const interactEarnUpToLabel = formatUsdRangeDisplay(
     USERS_POOL_WEEKLY_MAX,
     USERS_POOL_WEEKLY_MAX
   ).max;
@@ -272,13 +237,13 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                           <p className="myportfolio-share-invite-copy">
                             <span className="myportfolio-share-invite-line-one">
                               <span className="myportfolio-share-invite-signup">
-                                Sign up 2 (or more) people
+                                Build your portfolio
                               </span>{' '}
                               <span className="myportfolio-share-invite-lead-range">
                                 <span className="myportfolio-share-invite-lead">to earn up to</span>{' '}
                                 {!loadError ? (
                                   <PortfolioUsdAmount
-                                    amount={shareEarnUpToLabel}
+                                    amount={interactEarnUpToLabel}
                                     loading={false}
                                     className="myportfolio-inline-usd"
                                   />
@@ -286,23 +251,17 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                               </span>
                             </span>{' '}
                             <span className="myportfolio-share-invite-tail">
-                              a week by copying and sharing this link:
+                              a week by engaging with your investments.
                             </span>
                           </p>
-                          <div className="myportfolio-share-copy-row">
-                            <button
-                              type="button"
-                              className="auth-submit auth-submit--accent asset-range-button myportfolio-share-copy-button"
-                              onClick={onShare}
-                              disabled={!shareUrl}
-                            >
-                              {shareCopied ? 'copied' : 'copy'}
-                            </button>
-                            <div
-                              className="myportfolio-share-url-display myinv-accent-border"
-                              title={shareUrl || undefined}
-                            >
-                              {shareUrl}
+                          <div className="myinv-panel-section myportfolio-cta-panel">
+                            <div className="myinv-panel myinv-panel--shell">
+                              <Link
+                                href="/my-investments"
+                                className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button"
+                              >
+                                view my investments
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -347,23 +306,6 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                         </span>
                       </span>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="myinv-panel-group myportfolio-portfolio-below-panel page-slide-in">
-              <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
-              <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
-                <span className="shadow-border" aria-hidden="true" />
-                <div className="myinv-panel-section myinv-accent-border myportfolio-cta-panel">
-                  <div className="myinv-panel myinv-panel--shell">
-                    <Link
-                      href="/my-investments"
-                      className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button"
-                    >
-                      view my investments
-                    </Link>
                   </div>
                 </div>
               </div>

@@ -1,4 +1,3 @@
-import { buildShareUrl, ensureReferralCodeForUser } from '../auth/referral';
 import { getServerS3 } from '../server/awsS3';
 import {
   buildLeaderboardRows,
@@ -9,15 +8,13 @@ import {
 
 export async function fetchPortfolioMeServer(
   email: string,
-  origin: string
+  _origin?: string
 ): Promise<PortfolioMePayload | null> {
   const bucket = process.env.S3_BUCKET_NAME;
   if (!bucket) return null;
   try {
     const s3 = getServerS3();
-    const referralCode = await ensureReferralCodeForUser(email);
-    const shareUrl = buildShareUrl(origin, referralCode);
-    return await buildPortfolioMePayload(s3, bucket, email, shareUrl, referralCode);
+    return await buildPortfolioMePayload(s3, bucket, email);
   } catch {
     return null;
   }

@@ -9,7 +9,7 @@ import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarnin
 import { HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
 
 const description =
-  'See how much you can earn weekly on Arells through referrals and the users pool. Sign in to view your projected earnings.';
+  'See how much you can earn weekly on Arells by engaging with your investments. Sign in to view your projected earnings.';
 
 export const metadata: Metadata = {
   title: 'Earn Money Weekly',

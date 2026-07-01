@@ -6,7 +6,7 @@ import UsdRangeMetric from './UsdRangeMetric';
 export type PortfolioLeaderboardRow = {
   email: string;
   maskedLabel: string;
-  activeReferralCount: number;
+  engagementScore: number;
   earningsUsdMin: number;
   earningsUsdMax: number;
 };

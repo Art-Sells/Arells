@@ -11136,6 +11136,11 @@ a.asset-action-button--save-signin {
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-leaderboard-nested {
 		padding: 20px;
 	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested .myportfolio-cta-panel .auth-submit {
+		width: calc(100% - 15px);
+		box-sizing: border-box;
+	}
 }
 
 .myinv-summary-shell > .myportfolio-weekly-uara-intro-nested {
@@ -11503,6 +11508,20 @@ a.asset-action-button--save-signin {
 	margin-bottom: 0;
 }
 
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested .myinv-panel-section.myportfolio-cta-panel {
+	margin-top: 8px;
+	margin-bottom: 0;
+	padding: 0;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested .myportfolio-cta-panel .myinv-panel--shell {
+	padding: 0;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested .myportfolio-cta-panel .auth-submit {
+	border-radius: 7px;
+}
+
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-row {
 	margin-top: 8px;
 	margin-bottom: 0;
@@ -11573,6 +11592,10 @@ a.asset-action-button--save-signin {
 	padding: 10px;
 }
 
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested .myinv-panel-section.myportfolio-cta-panel {
+	padding: 0;
+}
+
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myinv-panel-group--bordered .myinv-panel-section .myinv-panel--shell {
 	padding: 0;
 }
@@ -11580,6 +11603,10 @@ a.asset-action-button--save-signin {
 .myinv-summary-block.myportfolio-explainer {
 	padding: 10px;
 	margin-bottom: 10px;
+}
+
+.myinv-page--earn-weekly .myinv-summary-block.myportfolio-explainer {
+	margin-bottom: 0px;
 }
 
 .myportfolio-explainer .myportfolio-referral-network-nested,
@@ -11735,6 +11762,33 @@ a.asset-action-button--save-signin {
 		display: block;
 		width: 100%;
 	}
+
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-block {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0;
+		width: 100%;
+	}
+
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-rule {
+		flex-shrink: 0;
+		width: 200px;
+		max-width: 100%;
+		height: 1px;
+		margin-top: 5px;
+		margin-bottom: 10px;
+		background: color-mix(in srgb, var(--myinv-accent-color, #222) 45%, transparent);
+	}
+
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-copy {
+		display: block;
+		width: 220px;
+		max-width: 100%;
+		margin-left: auto;
+		margin-right: auto;
+		box-sizing: border-box;
+	}
 }
 
 @media (min-width: 751px) {
@@ -11765,7 +11819,8 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-weekly-back-panel.myinv-summary-block {
-	margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 0;
 	padding-top: 15px;
 	width: min(700px, 100%);
 	max-width: 100%;
@@ -11779,41 +11834,43 @@ a.asset-action-button--save-signin {
 	box-sizing: border-box;
 }
 
-.myportfolio-weekly-uara-revenue-panel.shadow-border-wrap {
-	width: min(700px, 100%);
-	max-width: 100%;
-	margin: 0 auto;
-	padding: 10px;
-	border-radius: 12px;
-	box-sizing: border-box;
-}
-
-.myportfolio-weekly-uara-revenue-inner {
+.myportfolio-weekly-uara-revenue-block {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0;
 	width: 100%;
-	padding: 12px 10px 14px;
-	border-radius: 12px;
-	box-sizing: border-box;
-	--myinv-asset-border-opacity: 0.3;
 }
 
-.myportfolio-weekly-uara-revenue-inner .myportfolio-body-copy {
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
+.myportfolio-weekly-uara-revenue-rule {
+	flex-shrink: 0;
+	height: 1px;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	background: color-mix(in srgb, var(--myinv-accent-color, #222) 45%, transparent);
 }
 
-@media (min-width: 751px) {
-	.myportfolio-weekly-uara-revenue-inner .myportfolio-weekly-uara-revenue-copy {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0;
-	}
+.myinv-page--earn-weekly .myportfolio-portfolio-below-panel-wrap .myinv-panel-section {
+	width: 100%;
+	min-width: 0;
+	margin: 0;
+	padding: 10px;
+	background: #fff;
+}
 
-	.myportfolio-weekly-uara-revenue-lead,
-	.myportfolio-weekly-uara-revenue-tail {
-		display: block;
-		width: 100%;
-	}
+.myinv-page--earn-weekly .myportfolio-portfolio-below-panel-wrap .myinv-panel--shell {
+	padding: 0;
+}
+
+.myportfolio-weekly-uara-revenue-copy {
+	color: #000;
+	-webkit-text-fill-color: #000;
+}
+
+.myportfolio-weekly-uara-revenue-lead,
+.myportfolio-weekly-uara-revenue-tail {
+	color: inherit;
+	-webkit-text-fill-color: inherit;
 }
 
 .myportfolio-metric-label {

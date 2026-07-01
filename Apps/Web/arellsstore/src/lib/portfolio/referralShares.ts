@@ -1,123 +1,137 @@
 import type AWS from 'aws-sdk';
 import { normalizeEmail, normalizeEmailKey } from '../auth/normalize';
-import { listVerifiedWauActiveEmailKeys } from '../metrics/metricsPageMounts';
 import { aggregateSignedInUserTraffic } from '../metrics/metricsPageMounts';
 import {
-  projectedWeeklyRangeIfAddedReferrals,
+  projectedWeeklyRangeIfAddedEngagement,
+  USERS_POOL_WEEKLY_MIN,
   USERS_POOL_WEEKLY_MAX,
   WAU_ACTIVATION_TARGET,
-  weeklyEarningsUsdRangeFromWeightedCredits,
+  weeklyEarningsUsdRangeFromEngagementShare,
 } from './financialBenefits';
+import {
+  buildEngagementScoresByEmail,
+  emailKeyFromEmail,
+  ENGAGEMENT_ROLLING_DAYS_EXPORT,
+  getEngagementScoreForEmail,
+  myInvEngagementS3Prefix,
+} from './myInvestmentsEngagement';
 import { listAllUserAuthRecordsFromS3 } from './listUserAuthRecords';
 import { maskEmailForLeaderboard } from './maskEmailForLeaderboard';
-import {
-  buildFixedExamplePyramidSnapshot,
-  buildWeightedCreditsByReferrer,
-  type ReferralPyramidSnapshot,
-} from './referralTree';
 import { isUserAuthVerified } from '../metrics/listUserS3Touches';
 import type { UserAuthRecord } from '../auth/s3UserAuth';
 
-export type { ReferralPyramidSnapshot };
+/** Typical extra engagement points for explainer projection copy. */
+export const PROJECTED_ENGAGEMENT_ADD_MIN = 10;
+export const PROJECTED_ENGAGEMENT_ADD_MAX = 25;
 
-export type ReferralEconomics = {
-  activeReferralCount: number;
-  totalActiveReferrals: number;
+export type PortfolioEconomics = {
+  engagementScore: number;
   earningsUsdMin: number;
   earningsUsdMax: number;
 };
 
-export type PortfolioMePayload = ReferralEconomics & {
-  shareUrl: string;
-  referralCode: string;
+export type PortfolioMePayload = PortfolioEconomics & {
   projectedEarningsUsdMin: number;
   projectedEarningsUsdMax: number;
-  topReferrerMaxUsd: number;
+  topEngagerMaxUsd: number;
   wau: number;
   usersUntilActivation: number;
   wauActivationTarget: number;
-  referralPyramid: ReferralPyramidSnapshot;
+  engagementRollingDays: number;
 };
 
 export type LeaderboardRow = {
   email: string;
   maskedLabel: string;
-  activeReferralCount: number;
+  engagementScore: number;
   earningsUsdMin: number;
   earningsUsdMax: number;
 };
 
 export type PublicEarningsPayload = {
-  topReferrerMaxUsd: number;
+  topEngagerMaxUsd: number;
   fallbackProjectionMaxUsd: number;
 };
 
-export function buildReferralPyramidSnapshot(
-  _records: UserAuthRecord[],
-  _wauActiveEmailKeys: Set<string>,
-  topReferrerMaxUsd: number
-): ReferralPyramidSnapshot {
-  return buildFixedExamplePyramidSnapshot(topReferrerMaxUsd);
-}
+export type EarningsPreviewRow = {
+  email: string;
+  engagementScore: number;
+  earningsUsdMin: number;
+  earningsUsdMax: number;
+};
 
-function countActiveReferralsByReferrer(
-  records: Awaited<ReturnType<typeof listAllUserAuthRecordsFromS3>>,
-  wauActiveEmailKeys: Set<string>
-): Map<string, number> {
-  const counts = new Map<string, number>();
-  for (const record of records) {
-    if (!isUserAuthVerified(record) || !record.referredByEmail) continue;
-    const childKey = normalizeEmailKey(normalizeEmail(record.email));
-    if (!wauActiveEmailKeys.has(childKey)) continue;
-    const referrer = normalizeEmail(record.referredByEmail);
-    counts.set(referrer, (counts.get(referrer) ?? 0) + 1);
+export type EarningsPreviewPayload = {
+  generatedAt: number;
+  engagementPrefix: string;
+  engagementRollingDays: number;
+  wau: number;
+  wauActivationTarget: number;
+  usersPoolWeeklyMin: number;
+  usersPoolWeeklyMax: number;
+  topEngagerMaxUsd: number;
+  /** Sum of every verified user's engagement score this rolling window — the proportional split denominator. */
+  totalEngagementScore: number;
+  rows: EarningsPreviewRow[];
+};
+
+function totalEngagementScore(engagementScores: Map<string, number>): number {
+  let total = 0;
+  for (const score of engagementScores.values()) {
+    total += score;
   }
-  return counts;
+  return total;
 }
 
-function economicsForReferrer(
-  referrerEmail: string,
-  counts: Map<string, number>,
-  weightedCredits: Map<string, number>
-): ReferralEconomics {
-  const normalized = normalizeEmail(referrerEmail);
-  const activeReferralCount = counts.get(normalized) ?? 0;
-  let totalActiveReferrals = 0;
-  for (const n of counts.values()) totalActiveReferrals += n;
-  const credits = weightedCredits.get(normalized) ?? 0;
-  const { min, max } = weeklyEarningsUsdRangeFromWeightedCredits(credits);
+function economicsForUser(
+  email: string,
+  engagementScores: Map<string, number>,
+  totalScore: number
+): PortfolioEconomics {
+  const normalized = normalizeEmail(email);
+  const emailKey = emailKeyFromEmail(normalized);
+  const engagementScore = engagementScores.get(emailKey) ?? 0;
+  const { min, max } = weeklyEarningsUsdRangeFromEngagementShare(engagementScore, totalScore);
   return {
-    activeReferralCount,
-    totalActiveReferrals,
+    engagementScore,
     earningsUsdMin: min,
     earningsUsdMax: max,
   };
 }
 
-export async function buildActiveReferralCounts(
+function verifiedEmailKeysFromRecords(records: UserAuthRecord[]): string[] {
+  return records
+    .filter((r) => isUserAuthVerified(r))
+    .map((r) => normalizeEmailKey(normalizeEmail(r.email)));
+}
+
+export async function buildEngagementScoreMap(
+  s3: AWS.S3,
+  bucket: string,
+  records: UserAuthRecord[],
+  nowMs: number = Date.now()
+): Promise<Map<string, number>> {
+  const keys = verifiedEmailKeysFromRecords(records);
+  return buildEngagementScoresByEmail(s3, bucket, keys, nowMs);
+}
+
+export async function buildPortfolioContext(
   s3: AWS.S3,
   bucket: string,
   nowMs: number = Date.now()
 ): Promise<{
-  counts: Map<string, number>;
-  weightedCredits: Map<string, number>;
+  engagementScores: Map<string, number>;
   wau: number;
   records: UserAuthRecord[];
-  wauActiveEmailKeys: Set<string>;
 }> {
-  const [records, wauActiveEmailKeys, traffic] = await Promise.all([
+  const [records, traffic] = await Promise.all([
     listAllUserAuthRecordsFromS3(s3, bucket),
-    listVerifiedWauActiveEmailKeys(s3, bucket, nowMs),
     aggregateSignedInUserTraffic(s3, bucket, nowMs),
   ]);
-  const counts = countActiveReferralsByReferrer(records, wauActiveEmailKeys);
-  const weightedCredits = buildWeightedCreditsByReferrer(records, wauActiveEmailKeys);
+  const engagementScores = await buildEngagementScoreMap(s3, bucket, records, nowMs);
   return {
-    counts,
-    weightedCredits,
+    engagementScores,
     wau: traffic.wau,
     records,
-    wauActiveEmailKeys,
   };
 }
 
@@ -127,7 +141,7 @@ export async function buildPublicEarningsPayload(
   _nowMs: number = Date.now()
 ): Promise<PublicEarningsPayload> {
   return {
-    topReferrerMaxUsd: 0,
+    topEngagerMaxUsd: USERS_POOL_WEEKLY_MAX,
     fallbackProjectionMaxUsd: USERS_POOL_WEEKLY_MAX,
   };
 }
@@ -136,32 +150,27 @@ export async function buildPortfolioMePayload(
   s3: AWS.S3,
   bucket: string,
   email: string,
-  shareUrl: string,
-  referralCode: string,
   nowMs: number = Date.now()
 ): Promise<PortfolioMePayload> {
-  const { counts, weightedCredits, wau, records, wauActiveEmailKeys } =
-    await buildActiveReferralCounts(s3, bucket, nowMs);
-  const economics = economicsForReferrer(email, counts, weightedCredits);
-  const personalCredits = weightedCredits.get(normalizeEmail(email)) ?? 0;
-  const projected = projectedWeeklyRangeIfAddedReferrals(personalCredits, 2, 3);
-  const referralPyramid = buildReferralPyramidSnapshot(
-    records,
-    wauActiveEmailKeys,
-    USERS_POOL_WEEKLY_MAX
+  const { engagementScores, wau } = await buildPortfolioContext(s3, bucket, nowMs);
+  const totalScore = totalEngagementScore(engagementScores);
+  const economics = economicsForUser(email, engagementScores, totalScore);
+  const projected = projectedWeeklyRangeIfAddedEngagement(
+    economics.engagementScore,
+    totalScore,
+    PROJECTED_ENGAGEMENT_ADD_MIN,
+    PROJECTED_ENGAGEMENT_ADD_MAX
   );
 
   return {
-    shareUrl,
-    referralCode,
     ...economics,
     projectedEarningsUsdMin: projected.min,
     projectedEarningsUsdMax: projected.max,
-    topReferrerMaxUsd: USERS_POOL_WEEKLY_MAX,
+    topEngagerMaxUsd: USERS_POOL_WEEKLY_MAX,
     wau,
     usersUntilActivation: Math.max(0, WAU_ACTIVATION_TARGET - wau),
     wauActivationTarget: WAU_ACTIVATION_TARGET,
-    referralPyramid,
+    engagementRollingDays: ENGAGEMENT_ROLLING_DAYS_EXPORT,
   };
 }
 
@@ -170,25 +179,26 @@ export async function buildLeaderboardRows(
   bucket: string,
   nowMs: number = Date.now()
 ): Promise<LeaderboardRow[]> {
-  const { counts, weightedCredits, records } = await buildActiveReferralCounts(s3, bucket, nowMs);
+  const { engagementScores, records } = await buildPortfolioContext(s3, bucket, nowMs);
+  const totalScore = totalEngagementScore(engagementScores);
 
   const rows: LeaderboardRow[] = [];
   for (const record of records) {
     if (!record.verified) continue;
     const email = normalizeEmail(record.email);
-    const economics = economicsForReferrer(email, counts, weightedCredits);
+    const economics = economicsForUser(email, engagementScores, totalScore);
     rows.push({
       email,
       maskedLabel: maskEmailForLeaderboard(email),
-      activeReferralCount: economics.activeReferralCount,
+      engagementScore: economics.engagementScore,
       earningsUsdMin: economics.earningsUsdMin,
       earningsUsdMax: economics.earningsUsdMax,
     });
   }
 
   rows.sort((a, b) => {
-    if (b.activeReferralCount !== a.activeReferralCount) {
-      return b.activeReferralCount - a.activeReferralCount;
+    if (b.engagementScore !== a.engagementScore) {
+      return b.engagementScore - a.engagementScore;
     }
     if (b.earningsUsdMin !== a.earningsUsdMin) {
       return b.earningsUsdMin - a.earningsUsdMin;
@@ -200,4 +210,50 @@ export async function buildLeaderboardRows(
   });
 
   return rows;
+}
+
+export async function buildEarningsPreviewPayload(
+  s3: AWS.S3,
+  bucket: string,
+  nowMs: number = Date.now()
+): Promise<EarningsPreviewPayload> {
+  const { engagementScores, wau, records } = await buildPortfolioContext(s3, bucket, nowMs);
+  const totalScore = totalEngagementScore(engagementScores);
+  const rows: EarningsPreviewRow[] = [];
+
+  for (const record of records) {
+    if (!record.verified) continue;
+    const email = normalizeEmail(record.email);
+    const economics = economicsForUser(email, engagementScores, totalScore);
+    rows.push({
+      email,
+      engagementScore: economics.engagementScore,
+      earningsUsdMin: economics.earningsUsdMin,
+      earningsUsdMax: economics.earningsUsdMax,
+    });
+  }
+
+  rows.sort((a, b) => b.engagementScore - a.engagementScore);
+
+  return {
+    generatedAt: nowMs,
+    engagementPrefix: myInvEngagementS3Prefix(),
+    engagementRollingDays: ENGAGEMENT_ROLLING_DAYS_EXPORT,
+    wau,
+    wauActivationTarget: WAU_ACTIVATION_TARGET,
+    usersPoolWeeklyMin: USERS_POOL_WEEKLY_MIN,
+    usersPoolWeeklyMax: USERS_POOL_WEEKLY_MAX,
+    topEngagerMaxUsd: USERS_POOL_WEEKLY_MAX,
+    totalEngagementScore: totalScore,
+    rows,
+  };
+}
+
+export async function getEngagementScoreForUserEmail(
+  s3: AWS.S3,
+  bucket: string,
+  email: string,
+  nowMs: number = Date.now()
+): Promise<number> {
+  return getEngagementScoreForEmail(s3, bucket, emailKeyFromEmail(normalizeEmail(email)), nowMs);
 }

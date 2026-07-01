@@ -1,27 +1,22 @@
 'use client';
 
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import SiteSocialFooter from '../SiteSocialFooter';
 import UsdRangeMetric from './UsdRangeMetric';
-import ReferralNetworkExamplePyramid from './ReferralNetworkExamplePyramid';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
+import PortfolioQuestionsSupport from './PortfolioQuestionsSupport';
 import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
-import {
-  USERS_POOL_WEEKLY_MAX,
-} from '../../lib/portfolio/financialBenefits';
-import { FIXED_REFERRAL_PYRAMID_SNAPSHOT } from '../../lib/portfolio/referralTree';
+import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
 import HomeAboutMountLoader from '../HomeAboutMountLoader';
 
-type PortfolioMe = Pick<
-  PortfolioMePayload,
-  | 'earningsUsdMin'
-  | 'earningsUsdMax'
-  | 'projectedEarningsUsdMin'
->;
+/** Low end of the engage pitch range on /earn-money-weekly (not live engagement math). */
+const WEEKLY_EARNINGS_EXPLAINER_MIN_USD = 0.01;
+
+type PortfolioMe = Pick<PortfolioMePayload, 'earningsUsdMin' | 'earningsUsdMax'>;
 
 export type EarnMoneyWeeklyPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
@@ -37,7 +32,6 @@ const toWeeklyMe = (payload: PortfolioMePayload | null): PortfolioMe | null => {
   return {
     earningsUsdMin: payload.earningsUsdMin,
     earningsUsdMax: payload.earningsUsdMax,
-    projectedEarningsUsdMin: payload.projectedEarningsUsdMin,
   };
 };
 
@@ -54,7 +48,8 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
   const [me, setMe] = useState<PortfolioMe | null>(() => toWeeklyMe(initialPortfolioMe));
   const [loadError, setLoadError] = useState(false);
 
-  const showGuestLayout = guestPreview || (!isSignedIn && !initialPortfolioMe);
+  const showGuestLayout =
+    guestPreview || (!authSessionLoading && !isSignedIn && !initialPortfolioMe);
   const showSignedInPanel = isSignedIn || !!initialPortfolioMe;
   const { guestMaxLabel, loadError: guestPitchLoadError } =
     usePublicEarningsGuestPitch(showGuestLayout, initialPublicEarnings);
@@ -131,12 +126,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
     };
   }, []);
 
-  /** “If you refer 2 (or more)…” — projected min at low UAR band; max stays $4,550 (~100k WAU). */
-  const explainerMinUsd = useMemo(() => {
-    if (!me) return 0;
-    return me.projectedEarningsUsdMin;
-  }, [me]);
-
+  const explainerMinUsd = WEEKLY_EARNINGS_EXPLAINER_MIN_USD;
   const explainerMaxUsd = USERS_POOL_WEEKLY_MAX;
 
   if (showGuestLayout) {
@@ -178,11 +168,11 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                           <p className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy">
                             <span className="myportfolio-weekly-uara-earnings-lead-group">
                               <span className="myportfolio-weekly-uara-earnings-refer-lead">
-                                If you refer 2 (or more) users,
+                                Engaging with your investments,
                               </span>
                               <span className="myportfolio-weekly-uara-earnings-projected-lead">
                                 {' '}
-                                you are projected to earn{' '}
+                                projects you to earn{' '}
                               </span>
                             </span>
                             {!loadError ? (
@@ -214,12 +204,23 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                                 (Weekly Active Users).
                               </span>
                             </span>
+                            <span className="myportfolio-weekly-uara-revenue-block">
+                              <span
+                                className="site-social-footer-rule myportfolio-weekly-uara-revenue-rule"
+                                aria-hidden="true"
+                              />
+                              <span className="myportfolio-weekly-uara-revenue-copy">
+                                <span className="myportfolio-weekly-uara-revenue-lead">
+                                  Your weekly earnings will be derived from the 65% of advertising revenue
+                                </span>
+                                <span className="myportfolio-weekly-uara-revenue-tail">
+                                  {' '}
+                                  (User Ad Revenue (UAR)) Arells generates, Arells will keep 35%.
+                                </span>
+                              </span>
+                            </span>
                           </p>
                         </div>
-                      </div>
-
-                      <div className="myportfolio-referral-network-nested myinv-accent-border">
-                        <ReferralNetworkExamplePyramid pyramid={FIXED_REFERRAL_PYRAMID_SNAPSHOT} />
                       </div>
                     </div>
                   </div>
@@ -227,34 +228,24 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
 
                 <div className={`myinv-summary-block myinv-accent-border myportfolio-cta-panel myportfolio-weekly-back-panel${slideIn ? ' page-slide-in' : ''}`}>
                   <Link
-                    href="/my-portfolio"
+                    href="/my-investments"
                     className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button myportfolio-weekly-back-button"
                   >
-                    back to my portfolio
+                    view my investments
                   </Link>
-                </div>
-
-                <div className={`myportfolio-weekly-uara-revenue-panel shadow-border-wrap${slideIn ? ' page-slide-in' : ''}`}>
-                  <span className="shadow-border" aria-hidden="true" />
-                  <div className="myinv-accent-border myportfolio-weekly-uara-revenue-inner">
-                    <div className="myportfolio-weekly-uara-intro-copy">
-                      <p className="myportfolio-body-copy myportfolio-weekly-uara-revenue-copy">
-                        <span className="myportfolio-weekly-uara-revenue-lead">
-                          Your weekly earnings will be derived from the 65% of advertising revenue
-                        </span>
-                        <span className="myportfolio-weekly-uara-revenue-tail">
-                          {' '}
-                          (User Ad Revenue (UAR)) Arells generates, Arells will keep 35%.
-                        </span>
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </>
             ) : null}
           </div>
         </div>
       </div>
+
+      {showSignedInPanel ? (
+        <div className={`myportfolio-questions-support-shell${slideIn ? ' page-slide-in' : ''}`}>
+          <div className="site-social-footer-rule myportfolio-questions-support-rule" aria-hidden="true" />
+          <PortfolioQuestionsSupport />
+        </div>
+      ) : null}
 
       <div className="myinv-about-wrap">
         <Link className="myinv-about-button" href="/about">
