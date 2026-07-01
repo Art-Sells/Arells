@@ -11763,6 +11763,14 @@ a.asset-action-button--save-signin {
 		width: 100%;
 	}
 
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-stack {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0;
+		width: 100%;
+	}
+
 	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-block {
 		display: flex;
 		flex-direction: column;
@@ -11783,7 +11791,7 @@ a.asset-action-button--save-signin {
 
 	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-copy {
 		display: block;
-		width: 220px;
+		width: 200px;
 		max-width: 100%;
 		margin-left: auto;
 		margin-right: auto;
@@ -11834,6 +11842,14 @@ a.asset-action-button--save-signin {
 	box-sizing: border-box;
 }
 
+.myportfolio-weekly-uara-revenue-stack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0;
+	width: 100%;
+}
+
 .myportfolio-weekly-uara-revenue-block {
 	display: flex;
 	flex-direction: column;
@@ -11865,6 +11881,10 @@ a.asset-action-button--save-signin {
 .myportfolio-weekly-uara-revenue-copy {
 	color: #000;
 	-webkit-text-fill-color: #000;
+}
+
+.myportfolio-weekly-uara-revenue-stack > .myportfolio-weekly-uara-revenue-block:first-child .myportfolio-weekly-uara-revenue-copy {
+	margin-bottom: 5px;
 }
 
 .myportfolio-weekly-uara-revenue-lead,
