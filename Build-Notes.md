@@ -21,7 +21,7 @@ If sharing (organic) happens:
 -*update indexing after main submission, check google after a week*
 
 ## 2-3 months after launch (if compounding begins)
-- - Set Crisis Plan for Arells.
+- - Set Crisis Plan for Arells (start process of transitioning away from AWS and self-host route53/emails/s3-json/domain-names/dns/etc-servers (Solar Powered-Off-Grid-Decentralized) (create duplicate (minimal)website on AWS (with all the configurations to test transition)))
 - - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
 - Continue resolving Metrics Page UI
 - Prepare for WACA transition (LTP folder)
