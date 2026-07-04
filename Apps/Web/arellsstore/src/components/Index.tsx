@@ -404,6 +404,13 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   const sortedRows = assetRows;
   const canShowMoreAssets = visibleAssetCount < CRYPTO_ASSETS.length;
 
+  const cryptoPanelTransition = useMemo(() => {
+    if (cryptoCategoryOpen && visibleAssetCount > HOME_INITIAL_ASSET_COUNT) {
+      return 'max-height 1.5s ease-out';
+    }
+    return 'max-height 3.5s linear';
+  }, [cryptoCategoryOpen, visibleAssetCount]);
+
   const handleShowMoreAssets = useCallback(() => {
     const nextCount = Math.min(visibleAssetCount + HOME_LOAD_MORE_BATCH, CRYPTO_ASSETS.length);
     const newIds = CRYPTO_ASSETS.slice(visibleAssetCount, nextCount).map((a) => a.id);
@@ -516,16 +523,20 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
           categoryButton={!cryptoCategoryOpen}
           buttonLabel={!cryptoCategoryOpen ? 'cryptocurrencies' : 'show more assets'}
           onButtonClick={handleCryptoCategoryClick}
+          panelTransition={cryptoPanelTransition}
         >
           {cryptoCategoryOpen ? (
             <div className="home-assets-rows-shell">
-              {sortedRows.map((row) => {
+              {sortedRows.map((row, index) => {
                 const displayPrice = displayIsLiquidMode ? row.liquidPrice : row.solidPrice;
                 const change1w = displayIsLiquidMode ? row.liquidChange1w : row.solidChange1w;
                 const change1y = displayIsLiquidMode ? row.liquidChange1y : row.solidChange1y;
                 const changeAll = displayIsLiquidMode ? row.liquidChangeAll : row.solidChangeAll;
                 return (
-                  <div key={row.id} className="home-asset-row">
+                  <div
+                    key={row.id}
+                    className={`home-asset-row${index >= HOME_INITIAL_ASSET_COUNT ? ' home-asset-row--appended' : ''}`}
+                  >
                     <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
                       <div className="home-assets-cell home-assets-asset">
                         <span className={`home-asset-label home-asset-label-${row.id}`}>

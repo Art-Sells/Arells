@@ -9,6 +9,7 @@ import './css/assets/crypto/solana-asset-rules.css';
 import './css/assets/crypto/tron-asset-rules.css';
 import './css/assets/crypto/doge-asset-rules.css';
 import './css/assets/crypto/cardano-asset-rules.css';
+import './css/assets/crypto/stellar-asset-rules.css';
 import './css/assets/crypto/bch-asset-rules.css';
 import './css/home-myinv-asset-chip-colors.css';
 import { UserProvider } from '../context/UserContext';
@@ -18,7 +19,7 @@ import { VavityProvider } from '../context/VavityAggregator';
 import { defaultSiteIcons } from '../lib/defaultSiteIcons';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 
-/** Default tab icons; `/bitcoin`, `/ethereum`, `/bnb`, `/solana`, `/tron`, `/cardano`, `/bitcoin-cash`, `/vavity` override via their own `metadata.icons`. */
+/** Default tab icons; `/bitcoin`, `/ethereum`, `/bnb`, `/solana`, `/tron`, `/cardano`, `/stellar`, `/bitcoin-cash`, `/vavity` override via their own `metadata.icons`. */
 export const metadata: Metadata = {
   metadataBase: getSiteMetadataBase(),
   icons: defaultSiteIcons,

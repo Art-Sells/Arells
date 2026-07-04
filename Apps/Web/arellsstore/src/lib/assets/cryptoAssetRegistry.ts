@@ -11,7 +11,17 @@ export type VapaAssetConfig = {
   historyUrl: string;
 };
 
-export type CryptoAssetTheme = 'bitcoin' | 'ethereum' | 'xrp' | 'bnb' | 'solana' | 'tron' | 'doge' | 'cardano' | 'bch';
+export type CryptoAssetTheme =
+  | 'bitcoin'
+  | 'ethereum'
+  | 'xrp'
+  | 'bnb'
+  | 'solana'
+  | 'tron'
+  | 'doge'
+  | 'cardano'
+  | 'stellar'
+  | 'bch';
 
 export type CryptoAssetConfig = {
   id: string;
@@ -142,6 +152,20 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     metaTitle: 'Cardano never loses value',
     faviconPath: '/images/favicons/AdaBadge.svg',
     ogBannerPath: '/images/banners/assets/crypto/Cardano/ArellsADABanner.jpg',
+  },
+  {
+    id: 'stellar',
+    href: '/stellar',
+    label: 'Stellar',
+    ticker: 'XLM',
+    displayName: 'Stellar',
+    theme: 'stellar',
+    cssModifier: 'stellar',
+    coingeckoId: 'stellar',
+    s3VapaKey: 'vavity/stellarVAPA.json',
+    metaTitle: 'Stellar never loses value',
+    faviconPath: '/images/favicons/XlmBadge.svg',
+    ogBannerPath: '/images/banners/assets/crypto/Stellar/ArellsXLMBanner.jpg',
   },
   {
     id: 'bch',

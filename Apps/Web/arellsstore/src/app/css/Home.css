@@ -30,6 +30,7 @@
 #overlayy .home-asset-tron,
 #overlayy .home-asset-doge,
 #overlayy .home-asset-cardano,
+#overlayy .home-asset-stellar,
 #overlayy .home-asset-bch,
 #overlayy .home-asset-solana {
 	box-shadow: none !important;
@@ -77,6 +78,9 @@
 
 #overlayy .home-asset-cardano {
 	--asset-line-color: rgb(0, 51, 173);
+}
+#overlayy .home-asset-stellar {
+	--asset-line-color: rgb(0, 0, 0);
 }
 #overlayy .home-asset-bch {
 	--asset-line-color: rgb(10, 193, 142);
@@ -5055,6 +5059,11 @@ a.asset-action-button--myinv-asset-link {
 	border: 1px solid rgba(0, 51, 173, 0.28);
 	--asset-line-color: rgb(0, 51, 173);
 }
+.myinv-page .myinv-asset-home-card.home-asset-stellar {
+	background: rgba(0, 0, 0, 0.04);
+	border: 1px solid rgba(0, 0, 0, 0.22);
+	--asset-line-color: rgb(0, 0, 0);
+}
 .myinv-page .myinv-asset-home-card.home-asset-bch {
 	background: rgba(10, 193, 142, 0.06);
 	border: 1px solid rgba(10, 193, 142, 0.6);
@@ -7225,6 +7234,10 @@ a.myinv-about-button:focus-visible {
 	display: block;
 }
 
+.home-asset-row--appended {
+	animation: none !important;
+}
+
 .home-asset-category-stack {
 	display: flex;
 	flex-direction: column;
@@ -7401,6 +7414,10 @@ a.myinv-about-button:focus-visible {
 				column-gap: 10px;
 				animation: pageSlideUp 4s ease;
 				animation-fill-mode: both;
+			}
+
+			.home-asset-row.home-asset-row--appended {
+				animation: none;
 			}
 
 			.home-assets-cell {
@@ -10252,6 +10269,26 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
+.asset-page--stellar .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(0, 0, 0, 0.3);
+	opacity: 1;
+}
+
+.asset-page--stellar .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(0, 0, 0, 0.95) !important;
+	-webkit-text-fill-color: rgba(0, 0, 0, 0.95) !important;
+}
+
+.asset-page--stellar .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(0, 0, 0, 0.95) !important;
+	-webkit-text-fill-color: rgba(0, 0, 0, 0.95) !important;
+	border-color: rgba(0, 0, 0, 0.4) !important;
+	background: rgba(0, 0, 0, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
 .asset-page--bch .site-social-footer.site-social-footer--asset .site-social-footer-rule {
 	background: rgba(10, 193, 142, 0.3);
 	opacity: 1;
@@ -10747,6 +10784,10 @@ a.asset-action-button--save-signin {
 	color: var(--asset-slogan-color, rgb(35, 41, 47));
 }
 
+.asset-guest-landing-slogan--stellar {
+	color: var(--asset-slogan-color, rgb(17, 17, 17));
+}
+
 .asset-guest-action-shell {
 	width: 100%;
 	border-radius: 12px;
@@ -10807,6 +10848,10 @@ a.asset-action-button--save-signin {
 	background: rgba(30, 41, 59, 0.06);
 }
 
+.asset-page--stellar .asset-guest-action-shell {
+	background: rgba(0, 0, 0, 0.04);
+}
+
 .asset-page--bitcoin .asset-guest-action-shell .shadow-border {
 	border-color: rgba(248, 141, 0, 0.3);
 	opacity: 1;
@@ -10848,6 +10893,11 @@ a.asset-action-button--save-signin {
 
 .asset-page--xrp .asset-guest-action-shell .shadow-border {
 	border-color: rgba(30, 41, 59, 0.25);
+	opacity: 1;
+}
+
+.asset-page--stellar .asset-guest-action-shell .shadow-border {
+	border-color: rgba(0, 0, 0, 0.25);
 	opacity: 1;
 }
 
@@ -10958,6 +11008,10 @@ a.asset-action-button--save-signin {
 
 .asset-page--xrp .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(35, 41, 47)) !important;
+}
+
+.asset-page--stellar .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(17, 17, 17)) !important;
 }
 
 .asset-summary-circle-loader {

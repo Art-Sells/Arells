@@ -16,6 +16,7 @@ const ASSET_BADGE_HREF: Record<string, string> = {
   tron: 'https://tron.network/',
   doge: 'https://dogecoin.com/',
   cardano: 'https://cardano.org/',
+  stellar: 'https://stellar.org/',
   bch: 'https://bitcoincash.org/',
 };
 
