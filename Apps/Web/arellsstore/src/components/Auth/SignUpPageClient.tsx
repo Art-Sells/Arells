@@ -28,6 +28,14 @@ const SignUpPageClient: React.FC = () => {
   const [revealSuccess, setRevealSuccess] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (new URLSearchParams(window.location.search).get('signupPreview') === 'sent') {
+      setSentTo('preview@arells.app');
+      setPhase('sent');
+    }
+  }, []);
+
+  useEffect(() => {
     if (phase !== 'exiting') return;
     const t = window.setTimeout(() => setPhase('sent'), COLLAPSE_MS);
     return () => window.clearTimeout(t);
@@ -138,9 +146,7 @@ const SignUpPageClient: React.FC = () => {
               </p>
               <div className="auth-verify-sent-copy">
                 <p className="auth-verify-sent-sub auth-verify-sent-sub--forgot-sent">
-                  Verify your email before continuing. Check your{' '}
-                  <span className="auth-verify-sent-spam-emphasis">spam/junk</span> in case your inbox doesn&apos;t
-                  receive it.
+                  verify your email
                 </p>
               </div>
             </div>

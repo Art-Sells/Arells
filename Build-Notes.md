@@ -10,7 +10,6 @@
 
 - *switch from live to local testing false/true for myinv-engagement-v1 payments*
 -*brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
--*Fix Junk/Spm email issue!!!*
 
 If sharing (organic) happens:
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*

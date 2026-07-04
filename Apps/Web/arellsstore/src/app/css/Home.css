@@ -9797,11 +9797,6 @@ a.growth-metrics-about-button:focus-visible {
 	}
 }
 
-.auth-verify-sent-spam-emphasis {
-	font-weight: 800;
-	color: #000;
-}
-
 .auth-verified-block {
 	padding: 22px 16px 20px;
 	border-radius: 12px;

@@ -227,7 +227,7 @@ export function buildCryptoAssetPageMetadata(assetId: CryptoAssetId): Metadata {
   return {
     title: asset.metaTitle,
     description,
-    robots: { index: true, follow: true },
+    robots: { index: false, follow: true },
     alternates: {
       canonical: asset.href,
     },

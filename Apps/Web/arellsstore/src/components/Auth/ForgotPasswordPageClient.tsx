@@ -20,6 +20,14 @@ const ForgotPasswordPageClient: React.FC = () => {
   const [revealSuccess, setRevealSuccess] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (new URLSearchParams(window.location.search).get('forgotPreview') === 'sent') {
+      setSentTo('preview@arells.app');
+      setPhase('sent');
+    }
+  }, []);
+
+  useEffect(() => {
     if (phase !== 'exiting') return;
     const t = window.setTimeout(() => setPhase('sent'), COLLAPSE_MS);
     return () => window.clearTimeout(t);
@@ -103,9 +111,7 @@ const ForgotPasswordPageClient: React.FC = () => {
               </p>
               <div className="auth-verify-sent-copy auth-verify-sent-copy--forgot-password">
                 <p className="auth-verify-sent-sub auth-verify-sent-sub--forgot-sent">
-                  If we have an account for your email, you will receive it shortly. Check your{' '}
-                  <span className="auth-verify-sent-spam-emphasis">spam/junk</span> in case your inbox
-                  doesn&apos;t receive it.
+                  If we have an account for your email, you will receive it shortly.
                 </p>
               </div>
             </div>

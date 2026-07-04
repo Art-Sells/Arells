@@ -141,7 +141,7 @@ const VerifiedPageClient: React.FC = () => {
                         disabled={loadingPortfolio}
                         className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
                       >
-                        {loadingPortfolio ? 'Loading…' : 'View Portfolio'}
+                        {loadingPortfolio ? 'Loading Portfolio' : 'View Portfolio'}
                       </button>
                     </div>
                   </div>
