@@ -7,7 +7,6 @@
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 
-
 - *switch from live to local testing false/true for myinv-engagement-v1 payments*
 -*brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
 
@@ -15,10 +14,12 @@ If sharing (organic) happens:
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*
 -- *Add in Terms/Conditions and future payout dynamics and Learn More: and the 65% is dependent on if they check their "investment" portfolio at least once weekly (this sill only be activated after 100k WAU)....*
 
-
-- *Cardano and other assets (my-investments values after deployment pop on pagemount issue)*
-- *(about buton accent color flicker and toggle accent color issues [take pic for reference to fix])*
 -*update indexing after main submission, check google after a week*
+
+- Minor Fixes:
+- - (about buton accent color flicker and toggle accent color issues [take pic for reference to fix])
+- - Fix Favicon issue on Yahoo and other Websearchers (minor fix)
+
 
 ## 2-3 months after launch (if compounding begins)
 - - Set Crisis Plan for Arells (start process of transitioning away from AWS and self-host route53/emails/s3-json/domain-names/dns/etc-servers (Solar Powered-Off-Grid-Decentralized) (create duplicate (minimal)website on AWS (with all the configurations to test transition)))
