@@ -14,6 +14,7 @@
 - https://arells.com/dogecoin
 - https://arells.com/cardano
 - https://arells.com/bitcoin-cash
+- https://arells.com/chainlink
 - https://arells.com/about
 - https://arells.com/vavity
 

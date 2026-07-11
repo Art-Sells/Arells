@@ -5,6 +5,8 @@ import { useMemo, useState, useEffect, useCallback, useLayoutEffect, useRef } fr
 import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
+import { liquidSolidToggleKnobStyle } from './Assets/shared/liquidSolidToggleKnobStyle';
+import { useLiquidSolidToggleTrackSync } from './Assets/shared/useLiquidSolidToggleTrackSync';
 import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import HomeAssetCategoryCard from './Home/HomeAssetCategoryCard';
@@ -180,55 +182,24 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
     setToggleAlpha(isLiquidMode ? 1 : 0);
   }, [isLiquidMode, toggleKnobLeftPx]);
 
-  useLayoutEffect(() => {
-    const btn = toggleBtnRef.current;
-    if (!btn || typeof ResizeObserver === 'undefined') return;
-    const initialTrack = measureToggleTrack();
-    if (initialTrack && !toggleDragRef.current.active && !toggleAnimating) {
-      const alpha = toggleAlphaRef.current;
-      const left = initialTrack.maxLeft - alpha * (initialTrack.maxLeft - initialTrack.minLeft);
-      btn.style.setProperty('--toggle-knob-left', `${left}px`);
-    }
-    let raf: number | null = null;
-    const ro = new ResizeObserver(() => {
-      if (raf != null) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = null;
-        const track = measureToggleTrack();
-        if (!track || toggleDragRef.current.active || toggleAnimating) return;
-        const alpha = toggleAlphaRef.current;
-        const left = track.maxLeft - alpha * (track.maxLeft - track.minLeft);
-        btn.style.setProperty('--toggle-knob-left', `${left}px`);
-        setToggleKnobLeftPx(left);
-        btn.classList.add('is-resizing');
-        if (toggleResizeTimerRef.current != null) {
-          window.clearTimeout(toggleResizeTimerRef.current);
-        }
-        toggleResizeTimerRef.current = window.setTimeout(() => {
-          btn.classList.remove('is-resizing');
-          toggleResizeTimerRef.current = null;
-        }, 150);
-      });
-    });
-    ro.observe(btn);
-    return () => {
-      if (raf != null) window.cancelAnimationFrame(raf);
-      if (toggleResizeTimerRef.current != null) {
-        window.clearTimeout(toggleResizeTimerRef.current);
-        toggleResizeTimerRef.current = null;
-      }
-      ro.disconnect();
-    };
-  }, [measureToggleTrack, toggleAnimating]);
+  useLiquidSolidToggleTrackSync(
+    toggleBtnRef,
+    toggleDragRef,
+    toggleAnimRafRef,
+    measureToggleTrack,
+    setToggleKnobLeftPx
+  );
 
   const animateToggleToAlpha = useCallback(
     (targetAlpha: number) => {
-      const track = toggleTrack ?? measureToggleTrack();
+      const track = measureToggleTrack();
       if (!track) return;
       const fromAlpha = toggleAlphaRef.current;
       const toAlpha = clamp01(targetAlpha);
       if (toggleAnimRafRef.current != null) window.cancelAnimationFrame(toggleAnimRafRef.current);
       setToggleAnimating(true);
+      // Seed knob at its current (released) position so the first animating render doesn't snap to a stale value.
+      setToggleKnobLeftPx(track.maxLeft - fromAlpha * (track.maxLeft - track.minLeft));
 
       const start = performance.now();
       const duration = 350;
@@ -246,6 +217,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         toggleAnimRafRef.current = null;
         setToggleAnimating(false);
         setToggleKnobLeftPx(null);
+        toggleBtnRef.current?.style.removeProperty('--toggle-knob-left');
         const nextMode = toAlpha > 0.5;
         setIsLiquidMode(nextMode);
         setToggleAlpha(toAlpha);
@@ -622,11 +594,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
                   }${toggleAnimating ? ' is-animating' : ''}`}
                   aria-pressed={displayIsLiquidMode}
                   aria-label="Toggle Liquid/Solid mode"
-                  style={
-                    toggleKnobLeftEffectivePx != null
-                      ? ({ ['--toggle-knob-left' as any]: `${toggleKnobLeftEffectivePx}px` } as React.CSSProperties)
-                      : undefined
-                  }
+                  style={liquidSolidToggleKnobStyle(toggleAnimating, toggleKnobLeftEffectivePx)}
                   onPointerDown={(e) => {
                     if (toggleAnimating) return;
                     const btn = e.currentTarget;
@@ -721,6 +689,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
                       toggleDragRef.current.raf = null;
                     }
                     setToggleKnobLeftPx(null);
+                    e.currentTarget.style.removeProperty('--toggle-knob-left');
                     setToggleAlpha(isLiquidMode ? 1 : 0);
                     try {
                       e.currentTarget.classList.remove('is-dragging');

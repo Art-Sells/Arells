@@ -37,6 +37,17 @@
 	-webkit-text-fill-color: rgb(0, 51, 173) !important;
 }
 
+/* Chainlink — /chainlink `.asset-header-title` uses --asset-line-color rgb(55, 91, 210) */
+#overlayy .home-asset-chainlink .home-asset-name,
+#overlayy .home-asset-chainlink .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-chainlink .home-asset-name,
+.home-asset-card.home-asset-chainlink .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-chainlink .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-chainlink .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(55, 91, 210) !important;
+	-webkit-text-fill-color: rgb(55, 91, 210) !important;
+}
+
 /* Stellar — /stellar `.asset-header-title` uses --asset-line-color rgb(0, 0, 0) */
 #overlayy .home-asset-stellar .home-asset-name,
 #overlayy .home-asset-stellar .asset-action-button.asset-action-button--home-asset-chip,

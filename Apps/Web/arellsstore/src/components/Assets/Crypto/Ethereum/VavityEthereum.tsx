@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffe
 import { flushSync } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useLiquidSolidToggleTrackSync } from '../../shared/useLiquidSolidToggleTrackSync';
+import { liquidSolidToggleKnobStyle } from '../../shared/liquidSolidToggleKnobStyle';
 import axios from 'axios';
 import { useVavity } from '../../../../context/VavityAggregator';
 import {
@@ -549,33 +551,24 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     setToggleAlpha(isLiquidMode ? 1 : 0);
   }, [isLiquidMode, toggleKnobLeftPx]);
 
-  useLayoutEffect(() => {
-    const btn = toggleBtnRef.current;
-    if (!btn) return;
-    measureToggleTrack();
-    let raf: number | null = null;
-    const ro = new ResizeObserver(() => {
-      if (raf != null) return;
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        measureToggleTrack();
-      });
-    });
-    ro.observe(btn);
-    return () => {
-      if (raf != null) cancelAnimationFrame(raf);
-      ro.disconnect();
-    };
-  }, [measureToggleTrack]);
+  useLiquidSolidToggleTrackSync(
+    toggleBtnRef,
+    toggleDragRef,
+    toggleAnimRafRef,
+    measureToggleTrack,
+    setToggleKnobLeftPx
+  );
 
   const animateToggleToAlpha = useCallback(
     (targetAlpha: number) => {
-      const track = toggleTrack ?? measureToggleTrack();
+      const track = measureToggleTrack();
       if (!track) return;
       const fromAlpha = toggleAlphaRef.current;
       const toAlpha = clamp01(targetAlpha);
       if (toggleAnimRafRef.current != null) cancelAnimationFrame(toggleAnimRafRef.current);
       setToggleAnimating(true);
+      // Seed knob at its current (released) position so the first animating render doesn't snap to a stale value.
+      setToggleKnobLeftPx(track.maxLeft - fromAlpha * (track.maxLeft - track.minLeft));
 
       const start = performance.now();
       const duration = 350;
@@ -593,6 +586,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
         toggleAnimRafRef.current = null;
         setToggleAnimating(false);
         setToggleKnobLeftPx(null);
+        toggleBtnRef.current?.style.removeProperty('--toggle-knob-left');
         const nextMode = toAlpha > 0.5;
         setIsLiquidMode(nextMode);
         setToggleAlpha(toAlpha);
@@ -3444,11 +3438,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                 aria-pressed={displayIsLiquidMode}
                 aria-label="Toggle Liquid/Solid mode"
                 disabled={toggleDisabled}
-                style={
-                  toggleKnobLeftEffectivePx != null
-                    ? ({ ['--toggle-knob-left' as any]: `${toggleKnobLeftEffectivePx}px` } as React.CSSProperties)
-                    : undefined
-                }
+                style={liquidSolidToggleKnobStyle(toggleAnimating, toggleKnobLeftEffectivePx)}
                 onPointerDown={(e) => {
                   if (toggleDisabled) return;
                   if (toggleAnimating) return;
@@ -3459,7 +3449,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                   const w = btn.getBoundingClientRect().width;
                   const minLeft = leftInset;
                   const maxLeft = Math.max(leftInset, w - rightInset);
-                  const currentLeft = toggleKnobLeftEffectivePx ?? (displayIsLiquidMode ? minLeft : maxLeft);
+                  const currentLeft = toggleKnobLeftPx ?? (displayIsLiquidMode ? minLeft : maxLeft);
                   setToggleTrack({ minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 });
 
                   toggleDragRef.current.active = true;
@@ -3548,6 +3538,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                     toggleDragRef.current.raf = null;
                   }
                   setToggleKnobLeftPx(null);
+                  e.currentTarget.style.removeProperty('--toggle-knob-left');
                   setToggleAlpha(isLiquidMode ? 1 : 0);
                   try {
                     e.currentTarget.classList.remove('is-dragging');

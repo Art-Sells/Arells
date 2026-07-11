@@ -13,7 +13,8 @@ type AssetTheme =
   | 'doge'
   | 'cardano'
   | 'stellar'
-  | 'bch';
+  | 'bch'
+  | 'chainlink';
 
 type Props = {
   value: string; // YYYY-MM-DD or ''
@@ -157,6 +158,12 @@ export default function CustomDatePicker({ value, onChange, className, placehold
           '--asset-line-color': 'rgb(10, 193, 142)',
           '--asset-slogan-color': 'rgb(8, 145, 106)',
           '--asset-border-color': 'rgba(10, 193, 142, 0.42)',
+        } as React.CSSProperties;
+      case 'chainlink':
+        return {
+          '--asset-line-color': 'rgb(55, 91, 210)',
+          '--asset-slogan-color': 'rgb(40, 66, 158)',
+          '--asset-border-color': 'rgba(55, 91, 210, 0.42)',
         } as React.CSSProperties;
       default:
         return {

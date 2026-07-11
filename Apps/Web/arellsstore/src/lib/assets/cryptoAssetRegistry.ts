@@ -21,7 +21,8 @@ export type CryptoAssetTheme =
   | 'doge'
   | 'cardano'
   | 'stellar'
-  | 'bch';
+  | 'bch'
+  | 'chainlink';
 
 export type CryptoAssetConfig = {
   id: string;
@@ -180,6 +181,20 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     metaTitle: 'Bitcoin Cash never loses value',
     faviconPath: '/images/favicons/BchBadge.svg',
     ogBannerPath: '/images/banners/assets/crypto/BitcoinCash/ArellsBCHBanner.jpg',
+  },
+  {
+    id: 'chainlink',
+    href: '/chainlink',
+    label: 'Chainlink',
+    ticker: 'LINK',
+    displayName: 'Chainlink',
+    theme: 'chainlink',
+    cssModifier: 'chainlink',
+    coingeckoId: 'chainlink',
+    s3VapaKey: 'vavity/chainlinkVAPA.json',
+    metaTitle: 'Chainlink never loses value',
+    faviconPath: '/images/favicons/LinkBadge.svg',
+    ogBannerPath: '/images/banners/assets/crypto/Chainlink/ArellsLINKBanner.jpg',
   },
 ] as const;
 

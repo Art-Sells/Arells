@@ -32,6 +32,7 @@
 #overlayy .home-asset-cardano,
 #overlayy .home-asset-stellar,
 #overlayy .home-asset-bch,
+#overlayy .home-asset-chainlink,
 #overlayy .home-asset-solana {
 	box-shadow: none !important;
 }
@@ -78,6 +79,9 @@
 
 #overlayy .home-asset-cardano {
 	--asset-line-color: rgb(0, 51, 173);
+}
+#overlayy .home-asset-chainlink {
+	--asset-line-color: rgb(55, 91, 210);
 }
 #overlayy .home-asset-stellar {
 	--asset-line-color: rgb(0, 0, 0);
@@ -809,6 +813,10 @@ body {
 .asset-page--cardano .asset-page-content *,
 .asset-page--cardano .asset-footer,
 .asset-page--cardano .asset-footer *,
+.asset-page--chainlink .asset-page-content,
+.asset-page--chainlink .asset-page-content *,
+.asset-page--chainlink .asset-footer,
+.asset-page--chainlink .asset-footer *,
 .asset-page--bch .asset-page-content,
 .asset-page--bch .asset-page-content *,
 .asset-page--bch .asset-footer,
@@ -935,6 +943,28 @@ body {
 	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(0, 38, 130)) !important;
 }
 
+/* Title pill + spot $/% (Chainlink) */
+.asset-page--chainlink .asset-page-content a.asset-title-badge--section.asset-title-badge--chainlink:link,
+.asset-page--chainlink .asset-page-content a.asset-title-badge--section.asset-title-badge--chainlink:visited,
+.asset-page--chainlink .asset-page-content a.asset-title-badge--section.asset-title-badge--chainlink:hover,
+.asset-page--chainlink .asset-page-content a.asset-title-badge--section.asset-title-badge--chainlink:active,
+.asset-page--chainlink .asset-page-content a.asset-title-badge--section.asset-title-badge--chainlink:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(40, 66, 158)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(40, 66, 158)) !important;
+}
+
+.asset-page--chainlink .asset-page-content a.asset-title-badge--section.asset-title-badge--chainlink .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(40, 66, 158)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(40, 66, 158)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--chainlink .asset-page-content .asset-price-panel span.asset-metric-symbol--chainlink,
+.asset-page--chainlink .asset-page-content .asset-price-panel span.asset-metric-percent-symbol--chainlink {
+	color: var(--asset-badge-spot-ink, rgb(40, 66, 158)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(40, 66, 158)) !important;
+}
+
 /* Title pill + spot $/% (Bitcoin Cash) */
 .asset-page--bch .asset-page-content a.asset-title-badge--section.asset-title-badge--bch:link,
 .asset-page--bch .asset-page-content a.asset-title-badge--section.asset-title-badge--bch:visited,
@@ -966,6 +996,7 @@ body {
 .asset-page--tron .asset-header-title,
 .asset-page--doge .asset-header-title,
 .asset-page--cardano .asset-header-title,
+.asset-page--chainlink .asset-header-title,
 .asset-page--bch .asset-header-title {
 	color: var(--asset-line-color);
 	opacity: 1;
@@ -989,6 +1020,9 @@ body {
 .asset-page--cardano .asset-metric-value,
 .asset-page--cardano .asset-metric-inline-value,
 .asset-page--cardano .asset-metric-number,
+.asset-page--chainlink .asset-metric-value,
+.asset-page--chainlink .asset-metric-inline-value,
+.asset-page--chainlink .asset-metric-number,
 .asset-page--bch .asset-metric-value,
 .asset-page--bch .asset-metric-inline-value,
 .asset-page--bch .asset-metric-number {
@@ -5064,6 +5098,11 @@ a.asset-action-button--myinv-asset-link {
 	background: rgba(0, 51, 173, 0.07);
 	border: 1px solid rgba(0, 51, 173, 0.28);
 	--asset-line-color: rgb(0, 51, 173);
+}
+.myinv-page .myinv-asset-home-card.home-asset-chainlink {
+	background: rgba(55, 91, 210, 0.07);
+	border: 1px solid rgba(55, 91, 210, 0.28);
+	--asset-line-color: rgb(55, 91, 210);
 }
 .myinv-page .myinv-asset-home-card.home-asset-stellar {
 	background: rgba(0, 0, 0, 0.04);
@@ -10352,6 +10391,26 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
+.asset-page--chainlink .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(55, 91, 210, 0.95) !important;
+	-webkit-text-fill-color: rgba(55, 91, 210, 0.95) !important;
+}
+
+.asset-page--chainlink .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(55, 91, 210, 0.95) !important;
+	-webkit-text-fill-color: rgba(55, 91, 210, 0.95) !important;
+	border-color: rgba(55, 91, 210, 0.38) !important;
+	background: rgba(55, 91, 210, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--chainlink .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(55, 91, 210, 0.3);
+	opacity: 1;
+}
+
 .asset-page--stellar .site-social-footer.site-social-footer--asset .site-social-footer-rule {
 	background: rgba(0, 0, 0, 0.3);
 	opacity: 1;
@@ -10919,6 +10978,10 @@ a.asset-action-button--save-signin {
 	background: rgba(0, 51, 173, 0.075);
 }
 
+.asset-page--chainlink .asset-guest-action-shell {
+	background: rgba(55, 91, 210, 0.075);
+}
+
 .asset-page--bch .asset-guest-action-shell {
 	background: rgba(10, 193, 142, 0.075);
 }
@@ -10962,6 +11025,10 @@ a.asset-action-button--save-signin {
 
 .asset-page--cardano .asset-guest-action-shell .shadow-border {
 	border-color: rgba(0, 51, 173, 0.3);
+	opacity: 1;
+}
+.asset-page--chainlink .asset-guest-action-shell .shadow-border {
+	border-color: rgba(55, 91, 210, 0.3);
 	opacity: 1;
 }
 .asset-page--bch .asset-guest-action-shell .shadow-border {
@@ -11080,6 +11147,9 @@ a.asset-action-button--save-signin {
 
 .asset-page--cardano .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(0, 38, 130)) !important;
+}
+.asset-page--chainlink .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(40, 66, 158)) !important;
 }
 .asset-page--bch .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(8, 145, 106)) !important;
