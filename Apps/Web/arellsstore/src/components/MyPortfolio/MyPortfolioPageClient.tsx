@@ -183,11 +183,15 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     <>
       <HomeAboutMountLoader />
       <div className="myinv-page myinv-page--accent myinv-page--portfolio">
-        <div className="myportfolio-mission-block page-slide-in">
-          <Link href="/" className="asset-action-button about-icon-button myportfolio-mission-icon-button" aria-label="Arells">
+        <div className="myportfolio-mission-block">
+          <Link
+            href="/"
+            className="asset-action-button about-icon-button myportfolio-mission-icon-button myportfolio-mission-icon-sticky"
+            aria-label="Arells"
+          >
             <span className="about-icon" aria-hidden="true" />
           </Link>
-          <p className="myportfolio-mission-tagline">
+          <p className="myportfolio-mission-tagline page-slide-in">
             on a mission to ensure
             <br />
             your investments never lose value

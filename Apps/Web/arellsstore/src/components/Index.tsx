@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import HomeAssetCategoryCard from './Home/HomeAssetCategoryCard';
+import HomeCryptoAssetRow, { type HomeCryptoAssetRowData } from './Home/HomeCryptoAssetRow';
+import HomeMarketSearchCard from './Home/HomeMarketSearchCard';
+import HomeStockRow from './Home/HomeStockRow';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
 import PortfolioWeeklyGuestPageView from './MyPortfolio/PortfolioWeeklyGuestPageView';
 import { usePublicEarningsGuestPitch } from './MyPortfolio/usePublicEarningsGuestPitch';
@@ -18,7 +21,8 @@ import {
   HOME_INITIAL_ASSET_COUNT,
   HOME_LOAD_MORE_BATCH,
 } from '../lib/assets/cryptoAssetRegistry';
-import { formatHomeAssetNumber } from '../lib/formatHomeAssetNumber';
+import type { MarketCatalogSnapshot } from '../lib/market/marketCatalogTypes';
+import { getTopStocks } from '../lib/market/marketCatalogTypes';
 
 type IndexProps = {
   initialPublicEarnings?: PublicEarningsPayload | null;
@@ -38,7 +42,8 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   const { getAsset, loadMoreAssets } = useVavity();
   const [visibleAssetCount, setVisibleAssetCount] = useState(0);
   const [cryptoCategoryOpen, setCryptoCategoryOpen] = useState(false);
-  const [stocksPhase, setStocksPhase] = useState<'button' | 'coming-soon'>('button');
+  const [stocksPhase, setStocksPhase] = useState<'button' | 'expanded'>('button');
+  const [marketCatalog, setMarketCatalog] = useState<MarketCatalogSnapshot | null>(null);
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
   const showGuestLanding = !email && !forceHomeInvestmentsPreview;
@@ -332,7 +337,25 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', schedule);
     };
-  }, [showSignedInHome, cryptoCategoryOpen, stocksPhase, visibleAssetCount]);
+  }, [showSignedInHome, cryptoCategoryOpen, stocksPhase, visibleAssetCount, marketCatalog]);
+
+  useEffect(() => {
+    if (!showSignedInHome) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/market/catalog', { cache: 'no-store' });
+        if (!res.ok) return;
+        const json = (await res.json()) as MarketCatalogSnapshot;
+        if (!cancelled) setMarketCatalog(json);
+      } catch {
+        // catalog optional; search works empty until S3 is seeded
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [showSignedInHome]);
 
   const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
     if (!history.length) return 0;
@@ -397,7 +420,12 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   }, [getAsset, visibleAssetCount]);
 
   const sortedRows = assetRows;
+  const topStocks = useMemo(() => getTopStocks(marketCatalog ?? { generatedAt: 0, crypto: [], stocks: [] }), [marketCatalog]);
   const canShowMoreAssets = visibleAssetCount < CRYPTO_ASSETS.length;
+
+  const stocksPanelTransition = stocksPhase === 'expanded'
+    ? 'max-height 1.5s ease-out'
+    : 'max-height 3.5s linear';
 
   const cryptoPanelTransition = cryptoCategoryOpen
     ? 'max-height 1.5s ease-out'
@@ -420,8 +448,53 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   }, [cryptoCategoryOpen, handleShowMoreAssets]);
 
   const handleStocksCategoryClick = useCallback(() => {
-    setStocksPhase('coming-soon');
+    setStocksPhase('expanded');
   }, []);
+
+  const handleEnsureCryptoLoaded = useCallback(
+    (assetIds: string[]) => {
+      void loadMoreAssets(assetIds);
+    },
+    [loadMoreAssets]
+  );
+
+  const getCryptoRow = useCallback(
+    (assetId: string): HomeCryptoAssetRowData | null => {
+      const asset = CRYPTO_ASSETS.find((a) => a.id === assetId);
+      if (!asset) return null;
+      const snapshot = getAsset(asset.id);
+      const solidHistory =
+        (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
+          ? snapshot.solidHistory
+          : Array.isArray(snapshot?.liquidHistory)
+            ? snapshot.liquidHistory
+            : []) ?? [];
+      const liquidHistory =
+        (Array.isArray(snapshot?.liquidHistory) && snapshot.liquidHistory.length > 0
+          ? snapshot.liquidHistory
+          : Array.isArray(snapshot?.solidHistory)
+            ? snapshot.solidHistory
+            : []) ?? [];
+      const solidPrice = snapshot?.vapa ?? 0;
+      const liquidPrice =
+        typeof snapshot?.price === 'number' ? snapshot.price : typeof snapshot?.vapa === 'number' ? snapshot.vapa : 0;
+      return {
+        id: asset.id,
+        label: asset.label,
+        ticker: asset.ticker,
+        href: asset.href,
+        solidPrice,
+        liquidPrice,
+        solidChange1w: getPercentChange(solidHistory, 7),
+        solidChange1y: getPercentChange(solidHistory, 365),
+        solidChangeAll: getPercentChange(solidHistory),
+        liquidChange1w: getPercentChange(liquidHistory, 7),
+        liquidChange1y: getPercentChange(liquidHistory, 365),
+        liquidChangeAll: getPercentChange(liquidHistory),
+      };
+    },
+    [getAsset]
+  );
 
   useEffect(() => {
     if (!cryptoCategoryOpen) return;
@@ -505,6 +578,14 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
       </div>
 
       <div ref={homeAssetsWrapRef} className="home-asset-category-stack">
+        <HomeMarketSearchCard
+          enabled={showSignedInHome}
+          catalog={marketCatalog}
+          displayIsLiquidMode={displayIsLiquidMode}
+          imageLoader={imageLoader}
+          getCryptoRow={getCryptoRow}
+          onEnsureCryptoLoaded={handleEnsureCryptoLoaded}
+        />
         <HomeAssetCategoryCard
           enabled={showSignedInHome}
           showButton={!cryptoCategoryOpen || canShowMoreAssets}
@@ -515,111 +596,17 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         >
           {cryptoCategoryOpen ? (
             <div className="home-assets-rows-shell">
-              {sortedRows.map((row) => {
-                const displayPrice = displayIsLiquidMode ? row.liquidPrice : row.solidPrice;
-                const change1w = displayIsLiquidMode ? row.liquidChange1w : row.solidChange1w;
-                const change1y = displayIsLiquidMode ? row.liquidChange1y : row.solidChange1y;
-                const changeAll = displayIsLiquidMode ? row.liquidChangeAll : row.solidChangeAll;
-                const hasData = row.liquidPrice > 0 || row.solidPrice > 0;
-                const numberFadeStyle = hasData ? cardFadeStyle : { opacity: 0 };
-                return (
-                  <div
-                    key={row.id}
-                    className="home-asset-row home-asset-row--appended"
-                  >
-                    <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
-                      <div className="home-assets-cell home-assets-asset">
-                        <span className={`home-asset-label home-asset-label-${row.id}`}>
-                          <span
-                            className={`home-asset-name asset-action-button asset-action-button--${row.id} asset-action-button--invest-add asset-action-button--home-asset-chip`}
-                          >
-                            {row.id === 'bch' ? (
-                              <>
-                                <span className="home-asset-name-bch-wide">{row.label}</span>
-                                <span className="home-asset-name-bch-narrow">{row.ticker}</span>
-                              </>
-                            ) : (
-                              row.label
-                            )}
-                          </span>
-                        </span>
-                      </div>
-                      <div className="home-assets-cell" style={{ position: 'relative' }}>
-                        {(!cardNumbersVisible || !hasData) && (
-                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-price${cardShimmersFading && hasData ? ' is-hidden' : ''}`} />
-                        )}
-                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
-                          <span className="home-assets-currency home-assets-currency-dollar">$</span>
-                          <span className="home-assets-number home-assets-price">{formatHomeAssetNumber(displayPrice)}</span>
-                        </span>
-                      </div>
-                      <div className="home-assets-cell home-assets-percent home-assets-1w" style={{ position: 'relative' }}>
-                        {(!cardNumbersVisible || !hasData) && (
-                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading && hasData ? ' is-hidden' : ''}`} />
-                        )}
-                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
-                          <Image
-                            loader={imageLoader}
-                            alt=""
-                            width={12}
-                            height={12}
-                            className="home-asset-arrow"
-                            src={change1w > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
-                          />
-                        </span>
-                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
-                          <span className="home-assets-number">
-                            {formatHomeAssetNumber(Math.abs(change1w))}
-                            <span className="home-assets-currency home-assets-currency-percent">%</span>
-                          </span>
-                        </span>
-                      </div>
-                      <div className="home-assets-cell home-assets-percent home-assets-1y" style={{ position: 'relative' }}>
-                        {(!cardNumbersVisible || !hasData) && (
-                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading && hasData ? ' is-hidden' : ''}`} />
-                        )}
-                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
-                          <Image
-                            loader={imageLoader}
-                            alt=""
-                            width={12}
-                            height={12}
-                            className="home-asset-arrow"
-                            src={change1y > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
-                          />
-                        </span>
-                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
-                          <span className="home-assets-number">
-                            {formatHomeAssetNumber(Math.abs(change1y))}
-                            <span className="home-assets-currency home-assets-currency-percent">%</span>
-                          </span>
-                        </span>
-                      </div>
-                      <div className="home-assets-cell home-assets-percent" style={{ position: 'relative' }}>
-                        {(!cardNumbersVisible || !hasData) && (
-                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading && hasData ? ' is-hidden' : ''}`} />
-                        )}
-                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
-                          <Image
-                            loader={imageLoader}
-                            alt=""
-                            width={12}
-                            height={12}
-                            className="home-asset-arrow"
-                            src={changeAll > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
-                          />
-                        </span>
-                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
-                          <span className="home-assets-number">
-                            {formatHomeAssetNumber(Math.abs(changeAll))}
-                            <span className="home-assets-currency home-assets-currency-percent">%</span>
-                          </span>
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
-                );
-              })}
+              {sortedRows.map((row) => (
+                <HomeCryptoAssetRow
+                  key={row.id}
+                  row={row}
+                  displayIsLiquidMode={displayIsLiquidMode}
+                  cardNumbersVisible={cardNumbersVisible}
+                  cardShimmersFading={cardShimmersFading}
+                  cardFadeStyle={cardFadeStyle}
+                  imageLoader={imageLoader}
+                />
+              ))}
             </div>
           ) : null}
         </HomeAssetCategoryCard>
@@ -630,8 +617,16 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
           categoryButton
           buttonLabel="company stocks"
           onButtonClick={handleStocksCategoryClick}
-          comingSoonText={stocksPhase === 'coming-soon' ? 'stocks coming soon' : null}
-        />
+          panelTransition={stocksPanelTransition}
+        >
+          {stocksPhase === 'expanded' ? (
+            <div className="home-assets-rows-shell home-stocks-rows-shell">
+              {topStocks.map((stock) => (
+                <HomeStockRow key={stock.symbol} stock={stock} />
+              ))}
+            </div>
+          ) : null}
+        </HomeAssetCategoryCard>
       </div>
       <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
         <div className="home-assets-footer-text">new assets added weekly</div>

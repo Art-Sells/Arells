@@ -203,6 +203,35 @@ export const CRYPTO_ASSET_BY_ID: Record<CryptoAssetId, CryptoAssetConfig> = Obje
   CRYPTO_ASSETS.map((a) => [a.id, a])
 ) as Record<CryptoAssetId, CryptoAssetConfig>;
 
+export const CRYPTO_BY_COINGECKO_ID: Record<string, CryptoAssetConfig> = Object.fromEntries(
+  CRYPTO_ASSETS.map((a) => [a.coingeckoId, a])
+);
+
+export const CRYPTO_BY_TICKER: Record<string, CryptoAssetConfig> = Object.fromEntries(
+  CRYPTO_ASSETS.map((a) => [a.ticker.toUpperCase(), a])
+);
+
+export type ArellsCryptoAvailability = {
+  available: boolean;
+  assetId?: CryptoAssetId;
+  href?: string;
+};
+
+export function getArellsCryptoAvailability(
+  coingeckoId: string,
+  ticker: string
+): ArellsCryptoAvailability {
+  const byId = CRYPTO_BY_COINGECKO_ID[coingeckoId];
+  if (byId) {
+    return { available: true, assetId: byId.id, href: byId.href };
+  }
+  const byTicker = CRYPTO_BY_TICKER[ticker.toUpperCase()];
+  if (byTicker) {
+    return { available: true, assetId: byTicker.id, href: byTicker.href };
+  }
+  return { available: false };
+}
+
 export const CRYPTO_VAPA_KEYS: Record<string, string> = Object.fromEntries(
   CRYPTO_ASSETS.map((a) => [a.id, a.s3VapaKey])
 );
