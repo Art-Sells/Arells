@@ -14,6 +14,7 @@ If sharing (organic) happens:
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*
 - - *Add in Terms/Conditions and future payout dynamics and Learn More: and the 65% is dependent on if they check their "investment" portfolio at least once weekly (this sill only be activated after 100k WAU)....*
 - *Add Search bar (for most/all stocks/cryptos), coming soon for company stocks, have them grayed out (coming soon)
+- Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first))
 
 
 ---------------------
