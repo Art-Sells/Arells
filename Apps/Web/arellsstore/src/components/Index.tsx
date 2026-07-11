@@ -18,6 +18,7 @@ import {
   HOME_INITIAL_ASSET_COUNT,
   HOME_LOAD_MORE_BATCH,
 } from '../lib/assets/cryptoAssetRegistry';
+import { formatHomeAssetNumber } from '../lib/formatHomeAssetNumber';
 
 type IndexProps = {
   initialPublicEarnings?: PublicEarningsPayload | null;
@@ -333,12 +334,6 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
     };
   }, [showSignedInHome, cryptoCategoryOpen, stocksPhase, visibleAssetCount]);
 
-  const formatCurrency = (value: number) =>
-    value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-  const formatPercent = (value: number) =>
-    `${Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
-
   const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
     if (!history.length) return 0;
     const latest = history[history.length - 1]?.price ?? 0;
@@ -404,12 +399,9 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   const sortedRows = assetRows;
   const canShowMoreAssets = visibleAssetCount < CRYPTO_ASSETS.length;
 
-  const cryptoPanelTransition = useMemo(() => {
-    if (cryptoCategoryOpen && visibleAssetCount > HOME_INITIAL_ASSET_COUNT) {
-      return 'max-height 1.5s ease-out';
-    }
-    return 'max-height 3.5s linear';
-  }, [cryptoCategoryOpen, visibleAssetCount]);
+  const cryptoPanelTransition = cryptoCategoryOpen
+    ? 'max-height 1.5s ease-out'
+    : 'max-height 3.5s linear';
 
   const handleShowMoreAssets = useCallback(() => {
     const nextCount = Math.min(visibleAssetCount + HOME_LOAD_MORE_BATCH, CRYPTO_ASSETS.length);
@@ -422,10 +414,6 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
     if (!cryptoCategoryOpen) {
       setCryptoCategoryOpen(true);
       setVisibleAssetCount(HOME_INITIAL_ASSET_COUNT);
-      cardNumbersDidMountRef.current = false;
-      setCardNumbersVisible(false);
-      setCardShimmersFading(false);
-      setCardFadeInDone(false);
       return;
     }
     handleShowMoreAssets();
@@ -527,15 +515,17 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         >
           {cryptoCategoryOpen ? (
             <div className="home-assets-rows-shell">
-              {sortedRows.map((row, index) => {
+              {sortedRows.map((row) => {
                 const displayPrice = displayIsLiquidMode ? row.liquidPrice : row.solidPrice;
                 const change1w = displayIsLiquidMode ? row.liquidChange1w : row.solidChange1w;
                 const change1y = displayIsLiquidMode ? row.liquidChange1y : row.solidChange1y;
                 const changeAll = displayIsLiquidMode ? row.liquidChangeAll : row.solidChangeAll;
+                const hasData = row.liquidPrice > 0 || row.solidPrice > 0;
+                const numberFadeStyle = hasData ? cardFadeStyle : { opacity: 0 };
                 return (
                   <div
                     key={row.id}
-                    className={`home-asset-row${index >= HOME_INITIAL_ASSET_COUNT ? ' home-asset-row--appended' : ''}`}
+                    className="home-asset-row home-asset-row--appended"
                   >
                     <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
                       <div className="home-assets-cell home-assets-asset">
@@ -555,19 +545,19 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
                         </span>
                       </div>
                       <div className="home-assets-cell" style={{ position: 'relative' }}>
-                        {!cardNumbersVisible && (
-                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-price${cardShimmersFading ? ' is-hidden' : ''}`} />
+                        {(!cardNumbersVisible || !hasData) && (
+                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-price${cardShimmersFading && hasData ? ' is-hidden' : ''}`} />
                         )}
-                        <span className="asset-header-switch-fade" style={cardFadeStyle}>
+                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
                           <span className="home-assets-currency home-assets-currency-dollar">$</span>
-                          <span className="home-assets-number home-assets-price">{formatCurrency(displayPrice)}</span>
+                          <span className="home-assets-number home-assets-price">{formatHomeAssetNumber(displayPrice)}</span>
                         </span>
                       </div>
                       <div className="home-assets-cell home-assets-percent home-assets-1w" style={{ position: 'relative' }}>
-                        {!cardNumbersVisible && (
-                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading ? ' is-hidden' : ''}`} />
+                        {(!cardNumbersVisible || !hasData) && (
+                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading && hasData ? ' is-hidden' : ''}`} />
                         )}
-                        <span className="asset-header-switch-fade" style={cardFadeStyle}>
+                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
                           <Image
                             loader={imageLoader}
                             alt=""
@@ -577,18 +567,18 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
                             src={change1w > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                           />
                         </span>
-                        <span className="asset-header-switch-fade" style={cardFadeStyle}>
+                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
                           <span className="home-assets-number">
-                            {formatPercent(change1w).replace('%', '')}
+                            {formatHomeAssetNumber(Math.abs(change1w))}
                             <span className="home-assets-currency home-assets-currency-percent">%</span>
                           </span>
                         </span>
                       </div>
                       <div className="home-assets-cell home-assets-percent home-assets-1y" style={{ position: 'relative' }}>
-                        {!cardNumbersVisible && (
-                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading ? ' is-hidden' : ''}`} />
+                        {(!cardNumbersVisible || !hasData) && (
+                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading && hasData ? ' is-hidden' : ''}`} />
                         )}
-                        <span className="asset-header-switch-fade" style={cardFadeStyle}>
+                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
                           <Image
                             loader={imageLoader}
                             alt=""
@@ -598,18 +588,18 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
                             src={change1y > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                           />
                         </span>
-                        <span className="asset-header-switch-fade" style={cardFadeStyle}>
+                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
                           <span className="home-assets-number">
-                            {formatPercent(change1y).replace('%', '')}
+                            {formatHomeAssetNumber(Math.abs(change1y))}
                             <span className="home-assets-currency home-assets-currency-percent">%</span>
                           </span>
                         </span>
                       </div>
                       <div className="home-assets-cell home-assets-percent" style={{ position: 'relative' }}>
-                        {!cardNumbersVisible && (
-                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading ? ' is-hidden' : ''}`} />
+                        {(!cardNumbersVisible || !hasData) && (
+                          <span className={`asset-number-loader asset-number-loader--card asset-number-loader--card-percent${cardShimmersFading && hasData ? ' is-hidden' : ''}`} />
                         )}
-                        <span className="asset-header-switch-fade" style={cardFadeStyle}>
+                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
                           <Image
                             loader={imageLoader}
                             alt=""
@@ -619,9 +609,9 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
                             src={changeAll > 0 ? 'images/icons/up-arrow-ebony.png' : 'images/icons/down-arrow-ebony.png'}
                           />
                         </span>
-                        <span className="asset-header-switch-fade" style={cardFadeStyle}>
+                        <span className="asset-header-switch-fade" style={numberFadeStyle}>
                           <span className="home-assets-number">
-                            {formatPercent(changeAll).replace('%', '')}
+                            {formatHomeAssetNumber(Math.abs(changeAll))}
                             <span className="home-assets-currency home-assets-currency-percent">%</span>
                           </span>
                         </span>
