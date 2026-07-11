@@ -34,7 +34,8 @@ const PortfolioLeaderboard: React.FC<Props> = ({ rows }) => {
 
   return (
     <>
-      <table className="myportfolio-leaderboard">
+      <div className="myportfolio-leaderboard-scroll">
+        <table className="myportfolio-leaderboard">
         <thead>
           <tr>
             <th>User</th>
@@ -56,6 +57,7 @@ const PortfolioLeaderboard: React.FC<Props> = ({ rows }) => {
           ))}
         </tbody>
       </table>
+      </div>
       {canPaginate ? (
         <button
           type="button"

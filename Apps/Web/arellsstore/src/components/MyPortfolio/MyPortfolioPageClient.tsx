@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
@@ -16,9 +16,6 @@ import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
-
-/** Matches inline `max-height` transition on `.myinv-slide` (fallback if `transitionend` is skipped). */
-const PORTFOLIO_SHELL_MAX_HEIGHT_MS = 2000;
 
 export type MyPortfolioPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
@@ -40,14 +37,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const showGuestLayout =
     guestPreview || (!authSessionLoading && !isSignedIn && !initialPortfolioMe);
   const showSignedInPanel = isSignedIn || !!initialPortfolioMe;
-  const [open, setOpen] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const shellSlideRef = useRef<HTMLDivElement | null>(null);
-  const shellRevealDoneRef = useRef(false);
-  const [showBelowPanels, setShowBelowPanels] = useState(false);
-  const [showBelowContent, setShowBelowContent] = useState(false);
-  const [shellMaxHeight, setShellMaxHeight] = useState(0);
   const [data, setData] = useState<PortfolioMePayload | null>(initialPortfolioMe);
   const [leaderboardRows, setLeaderboardRows] = useState<PortfolioLeaderboardRow[]>(
     initialLeaderboardRows
@@ -94,60 +84,8 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
   useEffect(() => {
     if (showGuestLayout) return;
-    setOpen(false);
-    setShowBelowPanels(false);
-    const raf = window.requestAnimationFrame(() => {
-      const h = wrapperRef.current?.scrollHeight ?? 0;
-      setShellMaxHeight(Math.max(0, h + 24));
-      window.requestAnimationFrame(() => setOpen(true));
-    });
-    return () => window.cancelAnimationFrame(raf);
-  }, [isSignedIn, data, leaderboardRows, guestPreview, showGuestLayout]);
-
-  useLayoutEffect(() => {
-    if (showGuestLayout) return;
-    const node = wrapperRef.current;
-    if (!node || typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver(() => {
-      setShellMaxHeight(Math.max(0, node.scrollHeight + 24));
-    });
-    ro.observe(node);
-    return () => ro.disconnect();
-  }, [data, leaderboardRows, isSignedIn, guestPreview, showGuestLayout]);
-
-  useEffect(() => {
-    if (open) {
-      setSlideIn(true);
-      setShowBelowPanels(true);
-    }
-  }, [open]);
-
-  const revealBelowContent = useCallback(() => {
-    if (shellRevealDoneRef.current) return;
-    shellRevealDoneRef.current = true;
-    setShowBelowContent(true);
-  }, []);
-
-  useEffect(() => {
-    if (showGuestLayout || shellRevealDoneRef.current) return;
-    if (!open || shellMaxHeight <= 0) return;
-
-    const el = shellSlideRef.current;
-    if (!el) return;
-
-    const onTransitionEnd = (e: TransitionEvent) => {
-      if (e.target !== el || e.propertyName !== 'max-height') return;
-      revealBelowContent();
-    };
-
-    const fallback = window.setTimeout(revealBelowContent, PORTFOLIO_SHELL_MAX_HEIGHT_MS);
-
-    el.addEventListener('transitionend', onTransitionEnd);
-    return () => {
-      el.removeEventListener('transitionend', onTransitionEnd);
-      window.clearTimeout(fallback);
-    };
-  }, [open, shellMaxHeight, showGuestLayout, revealBelowContent]);
+    setSlideIn(true);
+  }, [showGuestLayout, isSignedIn, data, leaderboardRows]);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
@@ -200,19 +138,14 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
         <div className="myinv-shell shadow-border-wrap">
           <span className="shadow-border" aria-hidden="true" />
-          <div
-            ref={shellSlideRef}
-            className={`asset-slide-panel myinv-slide${open ? ' is-open' : ''}`}
-            style={{ maxHeight: open ? `${shellMaxHeight}px` : '0px', transition: 'max-height 2s ease' }}
-          >
-            <div ref={wrapperRef} className="myinv-wrapper myportfolio-stack">
+          <div className="myportfolio-shell-body myportfolio-stack">
               {showSignedInPanel ? (
                 <>
                   {loadError ? (
                     <p className="myportfolio-body-copy">Unable to load portfolio. Try again later.</p>
                   ) : null}
 
-                  <div className={`myinv-summary-block myinv-accent-border myportfolio-metric-panel${slideIn ? ' page-slide-in' : ''}`}>
+                  <div className={`myinv-summary-block myinv-accent-border myportfolio-metric-panel${slideIn ? ' page-slide-in-no-opacity' : ''}`}>
                     <div className="myinv-summary-section">
                       <div className="myinv-summary-shell">
                         <p className="myportfolio-about-title">My Weekly Projected Earnings</p>
@@ -234,7 +167,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                     </div>
                   </div>
 
-                  <div className={`myinv-panel-group myinv-panel-group--bordered myportfolio-portfolio-share-group${slideIn ? ' page-slide-in' : ''}`}>
+                  <div className="myinv-panel-group myinv-panel-group--bordered myportfolio-portfolio-share-group">
                     <div className="myinv-panel-section myinv-accent-border">
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
                         <div className="myportfolio-share-copy-nested myinv-accent-border">
@@ -290,14 +223,13 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                   </div>
                 </>
               ) : null}
-            </div>
           </div>
         </div>
 
-        {showBelowPanels && showSignedInPanel ? (
+        {showSignedInPanel ? (
           <>
-          <div className="myportfolio-portfolio-below-shell myportfolio-stack page-slide-in">
-            <div className="myinv-panel-group myportfolio-portfolio-below-panel page-slide-in">
+          <div className="myportfolio-portfolio-below-shell myportfolio-stack">
+            <div className="myinv-panel-group myportfolio-portfolio-below-panel">
               <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Active Users</div>
               <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
                 <span className="shadow-border" aria-hidden="true" />
@@ -316,23 +248,19 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
             </div>
           </div>
 
-          <div className="myportfolio-questions-support-shell page-slide-in">
+          <div className="myportfolio-questions-support-shell">
             <div className="site-social-footer-rule myportfolio-questions-support-rule" aria-hidden="true" />
             <PortfolioQuestionsSupport />
           </div>
-          </>
-        ) : null}
 
-        {showBelowContent ? (
-          <>
-            <div className="myinv-about-wrap page-slide-in">
-              <Link className="myinv-about-button" href="/about">
-                <span className="myinv-about-button-bg" aria-hidden="true" />
-                <span className="myinv-about-button-text">about</span>
-              </Link>
-            </div>
+          <div className="myinv-about-wrap">
+            <Link className="myinv-about-button" href="/about">
+              <span className="myinv-about-button-bg" aria-hidden="true" />
+              <span className="myinv-about-button-text">about</span>
+            </Link>
+          </div>
 
-            <SiteSocialFooter variant="accent" />
+          <SiteSocialFooter variant="accent" />
           </>
         ) : null}
       </div>

@@ -473,6 +473,7 @@ body {
 	z-index: 2147483647 !important;
 	opacity: 1;
 	transition: opacity 1s ease;
+	pointer-events: none;
 }
 
 .home-loader-overlay.home-loader-overlay--about {
@@ -3393,6 +3394,11 @@ a.asset-action-button--myinv-asset-link {
 	animation: pageSlideUp 4s ease;
 	animation-fill-mode: both;
 	will-change: transform, opacity;
+}
+
+.page-slide-in-no-opacity {
+	animation: pageSlideUpNoOpacity 4s ease both;
+	will-change: transform;
 }
 
 .home-assets-footer-slide {
@@ -7251,76 +7257,25 @@ a.myinv-about-button:focus-visible {
 	margin-bottom: 0;
 }
 
-.home-market-search-shell {
-	padding: 10px;
-	box-sizing: border-box;
+.home-market-search-card .home-market-search-slide {
+	max-height: none !important;
+	overflow: visible;
 }
 
-.home-market-search-inner {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	width: 100%;
-	box-sizing: border-box;
-}
-
-.home-market-search-row {
-	display: flex;
+.home-market-search-row.home-assets-category-button-wrap {
 	flex-direction: row;
-	align-items: stretch;
 	justify-content: flex-start;
+	align-items: stretch;
 	gap: 8px;
-	width: 100%;
-	min-width: 0;
-	margin: 0;
+	margin-bottom: 8px;
 }
 
-.home-market-search-field-wrap {
+.home-market-search-field.auth-input {
 	flex: 1 1 0;
-	min-width: 0;
-	display: flex;
-	align-items: center;
-	min-height: 42px;
-	padding: 0;
-	border-radius: 8px;
-	background: #ffffff;
-	box-sizing: border-box;
-	position: relative;
-	isolation: isolate;
-	cursor: text;
-}
-
-.home-market-search-field-wrap.myinv-accent-border::before {
-	padding: 1px;
-	opacity: 0.75;
-}
-
-.home-market-search-field {
-	flex: 1 1 auto;
-	width: 100%;
+	width: auto;
 	min-width: 0;
 	margin: 0;
-	padding: 10px 14px;
-	border: none;
-	outline: none;
-	background: transparent;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	font-size: 14px;
-	line-height: 1.2;
-	box-sizing: border-box;
 	text-align: left;
-}
-
-.home-market-search-field::placeholder {
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	opacity: 0.55;
-}
-
-.home-market-search-field:focus,
-.home-market-search-field:focus-visible {
-	outline: none;
 }
 
 .home-market-search-submit {
@@ -7358,144 +7313,6 @@ a.myinv-about-button:focus-visible {
 	margin-top: 0;
 }
 
-.home-market-search-unavailable-card {
-	position: relative;
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	min-height: 52px;
-	cursor: default;
-	pointer-events: none;
-	background: color-mix(in srgb, var(--myinv-accent-color) 8%, #ffffff);
-	border-radius: 8px;
-	overflow: hidden;
-}
-
-.home-market-search-unavailable-label-cell {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	justify-content: center;
-	gap: 2px;
-	padding: 10px 14px;
-	opacity: 0.55;
-}
-
-.home-market-search-unavailable-symbol {
-	font-size: 14px;
-	font-weight: 800;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	line-height: 1.1;
-	text-transform: uppercase;
-}
-
-.home-market-search-unavailable-name {
-	font-size: 13px;
-	font-weight: 600;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	line-height: 1.2;
-	word-break: break-word;
-}
-
-.home-market-search-unavailable-overlay {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	pointer-events: none;
-}
-
-.home-market-search-unavailable-overlay span {
-	font-size: 16px;
-	font-weight: 800;
-	opacity: 0.75;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	text-transform: lowercase;
-}
-
-.home-market-search-unavailable-label,
-.home-stock-label {
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	line-height: 1.2;
-	word-break: break-word;
-}
-
-.home-market-search-empty {
-	padding: 8px 12px 12px;
-	font-size: 14px;
-	opacity: 0.6;
-	text-align: center;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-}
-
-.home-market-search-empty {
-	position: relative;
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	background: rgba(0, 0, 0, 0.03);
-	border: 1px solid rgba(0, 0, 0, 0.12);
-	border-radius: 8px;
-	min-height: 52px;
-	cursor: default;
-	pointer-events: none;
-}
-
-.home-stock-card-label-cell {
-	padding: 12px 14px;
-}
-
-.home-stock-coming-soon-overlay {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	pointer-events: none;
-}
-
-.home-stock-coming-soon-overlay span {
-	font-size: 16px;
-	font-weight: 600;
-	opacity: 0.6;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-	text-transform: lowercase;
-}
-
-.home-stocks-rows-shell .home-stock-row + .home-stock-row {
-	margin-top: 6px;
-}
-
-@media (max-width: 700px) {
-	.home-market-search-unavailable-symbol {
-		font-size: 12px;
-	}
-
-	.home-market-search-unavailable-name {
-		font-size: 11px;
-	}
-
-	.home-market-search-unavailable-overlay span {
-		font-size: 14px;
-	}
-
-	.home-market-search-unavailable-label,
-	.home-stock-label {
-		font-size: 12px;
-	}
-
-	.home-stock-coming-soon-overlay span {
-		font-size: 14px;
-	}
-}
-
 @media (min-width: 751px) {
 	.home-market-search-submit {
 		min-width: 88px;
@@ -7506,11 +7323,6 @@ a.myinv-about-button:focus-visible {
 }
 
 @media (max-width: 700px) {
-	.home-market-search-field {
-		font-size: 13px;
-		padding: 10px 12px;
-	}
-
 	.home-market-search-submit {
 		min-width: 64px;
 		padding: 10px 12px;
@@ -11352,6 +11164,43 @@ a.asset-action-button--save-signin {
 	position: sticky;
 	top: calc(env(safe-area-inset-top, 0px) + 12px);
 	z-index: 100;
+	background: var(--page-accent-tint);
+}
+
+/* Signed-in My Portfolio: full document scroll — no measured max-height shell clip. */
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) {
+	overflow: visible;
+	touch-action: pan-y;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myinv-shell,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-shell-body,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myinv-panel-section,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-nested,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-leaderboard-nested,
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-leaderboard-wrap {
+	overflow: visible;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-shell-body {
+	width: 100%;
+}
+
+.myportfolio-shell-body.myportfolio-stack > .page-slide-in-no-opacity:nth-of-type(1) {
+	animation-delay: 0s;
+}
+
+.myportfolio-shell-body.myportfolio-stack > .page-slide-in-no-opacity:nth-of-type(2) {
+	animation-delay: 0.2s;
+}
+
+.myportfolio-leaderboard-scroll {
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: visible;
+	-webkit-overflow-scrolling: touch;
 }
 
 .myportfolio-mission-block .about-icon {
@@ -11475,7 +11324,7 @@ a.asset-action-button--save-signin {
 
 .myportfolio-leaderboard-nested .myportfolio-leaderboard-wrap {
 	padding: 0;
-	overflow-x: auto;
+	overflow: visible;
 }
 
 .myportfolio-leaderboard-show-more,
@@ -11570,17 +11419,6 @@ a.asset-action-button--save-signin {
 }
 
 @media (min-width: 751px) {
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myinv-slide.is-open {
-		overflow: visible;
-	}
-
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myinv-panel-section,
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel,
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-nested,
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-row {
-		overflow: visible;
-	}
-
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-copy-row {
 		width: calc(100% + 100px);
 		max-width: calc(100% + 100px);
@@ -12260,8 +12098,8 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-leaderboard-wrap {
-	overflow-x: auto;
 	padding: 8px 4px 12px;
+	overflow: visible;
 }
 
 .myportfolio-leaderboard {

@@ -10,7 +10,6 @@ import { useUser } from '../context/UserContext';
 import HomeAssetCategoryCard from './Home/HomeAssetCategoryCard';
 import HomeCryptoAssetRow, { type HomeCryptoAssetRowData } from './Home/HomeCryptoAssetRow';
 import HomeMarketSearchCard from './Home/HomeMarketSearchCard';
-import HomeStockRow from './Home/HomeStockRow';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
 import PortfolioWeeklyGuestPageView from './MyPortfolio/PortfolioWeeklyGuestPageView';
 import { usePublicEarningsGuestPitch } from './MyPortfolio/usePublicEarningsGuestPitch';
@@ -21,8 +20,6 @@ import {
   HOME_INITIAL_ASSET_COUNT,
   HOME_LOAD_MORE_BATCH,
 } from '../lib/assets/cryptoAssetRegistry';
-import type { MarketCatalogSnapshot } from '../lib/market/marketCatalogTypes';
-import { getTopStocks } from '../lib/market/marketCatalogTypes';
 
 type IndexProps = {
   initialPublicEarnings?: PublicEarningsPayload | null;
@@ -42,8 +39,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   const { getAsset, loadMoreAssets } = useVavity();
   const [visibleAssetCount, setVisibleAssetCount] = useState(0);
   const [cryptoCategoryOpen, setCryptoCategoryOpen] = useState(false);
-  const [stocksPhase, setStocksPhase] = useState<'button' | 'expanded'>('button');
-  const [marketCatalog, setMarketCatalog] = useState<MarketCatalogSnapshot | null>(null);
+  const [stocksPhase, setStocksPhase] = useState<'button' | 'coming-soon'>('button');
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
   const showGuestLanding = !email && !forceHomeInvestmentsPreview;
@@ -337,25 +333,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', schedule);
     };
-  }, [showSignedInHome, cryptoCategoryOpen, stocksPhase, visibleAssetCount, marketCatalog]);
-
-  useEffect(() => {
-    if (!showSignedInHome) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch('/api/market/catalog', { cache: 'no-store' });
-        if (!res.ok) return;
-        const json = (await res.json()) as MarketCatalogSnapshot;
-        if (!cancelled) setMarketCatalog(json);
-      } catch {
-        // catalog optional; search works empty until S3 is seeded
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [showSignedInHome]);
+  }, [showSignedInHome, cryptoCategoryOpen, stocksPhase, visibleAssetCount]);
 
   const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
     if (!history.length) return 0;
@@ -420,12 +398,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   }, [getAsset, visibleAssetCount]);
 
   const sortedRows = assetRows;
-  const topStocks = useMemo(() => getTopStocks(marketCatalog ?? { generatedAt: 0, crypto: [], stocks: [] }), [marketCatalog]);
   const canShowMoreAssets = visibleAssetCount < CRYPTO_ASSETS.length;
-
-  const stocksPanelTransition = stocksPhase === 'expanded'
-    ? 'max-height 1.5s ease-out'
-    : 'max-height 3.5s linear';
 
   const cryptoPanelTransition = cryptoCategoryOpen
     ? 'max-height 1.5s ease-out'
@@ -448,7 +421,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   }, [cryptoCategoryOpen, handleShowMoreAssets]);
 
   const handleStocksCategoryClick = useCallback(() => {
-    setStocksPhase('expanded');
+    setStocksPhase('coming-soon');
   }, []);
 
   const handleEnsureCryptoLoaded = useCallback(
@@ -580,7 +553,6 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
       <div ref={homeAssetsWrapRef} className="home-asset-category-stack">
         <HomeMarketSearchCard
           enabled={showSignedInHome}
-          catalog={marketCatalog}
           displayIsLiquidMode={displayIsLiquidMode}
           imageLoader={imageLoader}
           getCryptoRow={getCryptoRow}
@@ -617,16 +589,8 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
           categoryButton
           buttonLabel="company stocks"
           onButtonClick={handleStocksCategoryClick}
-          panelTransition={stocksPanelTransition}
-        >
-          {stocksPhase === 'expanded' ? (
-            <div className="home-assets-rows-shell home-stocks-rows-shell">
-              {topStocks.map((stock) => (
-                <HomeStockRow key={stock.symbol} stock={stock} />
-              ))}
-            </div>
-          ) : null}
-        </HomeAssetCategoryCard>
+          comingSoonText={stocksPhase === 'coming-soon' ? 'stocks coming soon' : null}
+        />
       </div>
       <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
         <div className="home-assets-footer-text">new assets added weekly</div>
