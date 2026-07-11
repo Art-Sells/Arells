@@ -1,5 +1,4 @@
-# Same as repo-root amplify.yml. Prefer connecting Amplify to the repo root spec so appRoot applies.
-# Monorepo: Amplify cds into appRoot before preBuild/build — no manual cd.
+# Monorepo: set Amplify "App root" to Apps/Web/arellsstore (or use appRoot below if connected at repo root).
 #
 # Cache bust (Safari / mobile browsers):
 # Next.js CSS/JS use content-hashed filenames and are served with
