@@ -129,6 +129,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
           >
             <span className="about-icon" aria-hidden="true" />
           </Link>
+          <span className="myportfolio-mission-icon-spacer" aria-hidden="true" />
           <p className="myportfolio-mission-tagline page-slide-in">
             on a mission to ensure
             <br />

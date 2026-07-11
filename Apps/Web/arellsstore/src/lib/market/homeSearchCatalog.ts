@@ -24,38 +24,14 @@ function normalizeQuery(query: string): string {
   return query.trim().toLowerCase();
 }
 
-function entryHaystack(entry: HomeSearchEntry): string {
-  return `${entry.symbol} ${entry.name}`.toLowerCase();
-}
-
 function scoreEntry(entry: HomeSearchEntry, query: string): number {
   const symbol = entry.symbol.toLowerCase();
   const name = entry.name.toLowerCase();
-  const haystack = entryHaystack(entry);
-  const nameWords = name.split(/\s+/).filter(Boolean);
 
   if (symbol === query) return 1000;
   if (name === query) return 990;
   if (symbol.startsWith(query)) return 900 - symbol.length;
-
-  if (nameWords[0] === query) {
-    if (nameWords.length === 1) return 880 - name.length;
-    return 520 - name.length;
-  }
-
   if (name.startsWith(query)) return 800 - name.length;
-
-  const symbolIdx = symbol.indexOf(query);
-  if (symbolIdx >= 0) return 700 - symbolIdx;
-
-  const nameWordPrefix = nameWords.some((word) => word.startsWith(query));
-  if (nameWordPrefix) return 600;
-
-  const nameIdx = name.indexOf(query);
-  if (nameIdx >= 0) return 500 - nameIdx;
-
-  const hayIdx = haystack.indexOf(query);
-  if (hayIdx >= 0) return 400 - hayIdx;
 
   return -1;
 }

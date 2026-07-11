@@ -11155,16 +11155,53 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-mission-block .about-icon-button.myportfolio-mission-icon-button {
-	width: 41px;
-	height: 41px;
+	width: auto;
+	min-width: 56px;
+	height: 44px;
 	margin-bottom: 0;
+	padding: 14px 20px;
+	box-sizing: border-box;
+	border-radius: 5px !important;
+	background: var(--myinv-accent-color) !important;
 }
 
+/* Remove the accent border ring on the portfolio Arells icon (matches "view my investments" fill). */
+.myportfolio-mission-block .about-icon-button.myportfolio-mission-icon-button::before {
+	display: none;
+}
+
+.myportfolio-mission-block .about-icon-button.myportfolio-mission-icon-button:focus,
+.myportfolio-mission-block .about-icon-button.myportfolio-mission-icon-button:focus-visible,
+.myportfolio-mission-block .about-icon-button.myportfolio-mission-icon-button:active,
+.myportfolio-mission-block .about-icon-button.myportfolio-mission-icon-button:visited {
+	background: var(--myinv-accent-color) !important;
+}
+
+/* Float over the page like the home "View My Investments" CTA. */
 .myportfolio-mission-icon-sticky {
-	position: sticky;
-	top: calc(env(safe-area-inset-top, 0px) + 12px);
-	z-index: 100;
-	background: var(--page-accent-tint);
+	position: fixed;
+	top: calc(env(safe-area-inset-top, 0px) + 22px);
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 2000;
+}
+
+/* Keep centered on hover/active — base hover transform would drop the translateX(-50%). */
+.myportfolio-mission-icon-sticky.asset-action-button:active {
+	transform: translateX(-50%) translateY(-5px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.myportfolio-mission-icon-sticky.asset-action-button:hover {
+		transform: translateX(-50%) translateY(-5px);
+	}
+}
+
+/* Reserve the icon's space so the tagline doesn't jump when the icon leaves flow. */
+.myportfolio-mission-icon-spacer {
+	display: block;
+	width: 56px;
+	height: 44px;
 }
 
 /* Signed-in My Portfolio: full document scroll — no measured max-height shell clip. */
@@ -11204,9 +11241,9 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-mission-block .about-icon {
-	width: 27px;
-	height: 27px;
-	background: var(--myinv-accent-color);
+	width: 16px;
+	height: 16px;
+	background: #fff;
 	-webkit-mask-image: url('/images/Arells-Icon.png');
 	mask-image: url('/images/Arells-Icon.png');
 	-webkit-mask-size: contain;
@@ -11218,7 +11255,7 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-mission-tagline {
-	margin: 0;
+	margin: -5px 0 0;
 	padding: 0 16px;
 	text-align: center;
 	font-size: 15px;
@@ -11262,13 +11299,14 @@ a.asset-action-button--save-signin {
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-title {
-	font-size: 15px;
-	font-weight: 600;
+	font-size: 11.5px;
+	font-weight: 200;
 	line-height: 1.1;
 	letter-spacing: -0.2px;
 	word-spacing: -0.5px;
 	color: #000;
 	-webkit-text-fill-color: #000;
+	opacity: .5;
 }
 
 .myportfolio-about-nested,
@@ -11848,6 +11886,10 @@ a.asset-action-button--save-signin {
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-metric-panel.myinv-summary-block .myportfolio-usd-range-sep {
 		top: -3px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-title {
+		font-size: 10.5px;
 	}
 
 	.myportfolio-portfolio-below-shell {
