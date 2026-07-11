@@ -23,7 +23,8 @@ If sharing (organic) happens:
 
 - Minor Fixes:
 - - (about buton accent color flicker and toggle accent color issues [take pic for reference to fix])
-- - Fix Favicon issue on Yahoo and other Websearchers (minor fix)
+- - (My Portfolio) button in asset pages sometimes doesn't click after few interactions of deleting/adding investments
+- - Fix Favicon issue on Yahoo and other Websearchers
 
 
 ## 2-3 months after launch (if compounding begins)
