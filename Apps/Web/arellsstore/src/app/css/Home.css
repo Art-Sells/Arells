@@ -4249,6 +4249,8 @@ a.asset-action-button--myinv-asset-link {
 	padding-bottom: 60px;
 	font-family: Arial, sans-serif;
 	background: var(--page-accent-tint);
+	/* Match asset pages so the summary wait/expand circle sits in the same spot. */
+	--myinv-summary-circle-loader-bottom: 46vh;
 }
 
 .myinv-page--accent {
@@ -5694,6 +5696,14 @@ a.myinv-about-button:focus-visible {
 /* Stagger My Investments sections */
 .myinv-wrapper > * {
 	opacity: 0;
+}
+
+/* Summary reveals via max-height (not page-slide-in); keep visible while collapsed/expanding. */
+.myinv-wrapper > .myinv-summary-height-panel {
+	opacity: 1;
+	width: min(700px, 100%);
+	margin: 0 auto;
+	box-sizing: border-box;
 }
 
 .myinv-wrapper > .page-slide-in {
@@ -11282,12 +11292,15 @@ a.asset-action-button--save-signin {
 	appearance: none;
 	-webkit-appearance: none;
 	box-shadow: none !important;
+	cursor: pointer;
+	/* Keep transform so hover translateY eases like other .asset-action-button controls. */
 	transition:
+		transform 0.5s ease,
+		opacity 0.5s ease,
 		background-color 0.28s ease,
 		color 0.28s ease,
 		-webkit-text-fill-color 0.28s ease,
-		border-color 0.28s ease,
-		opacity 0.28s ease;
+		border-color 0.28s ease;
 }
 
 .asset-footer .asset-footer-portfolio-button:disabled,
@@ -11343,9 +11356,9 @@ a.asset-action-button--save-signin {
 }
 
 .asset-summary-circle-loader--myinv {
-	/* Sit over the summary area while Purchased/Current/Profit wait for prices. */
-	bottom: var(--myinv-summary-circle-loader-bottom, 52vh);
-	z-index: 90;
+	/* Same floating summary circle as asset pages (accent-colored ring). */
+	bottom: var(--myinv-summary-circle-loader-bottom, var(--asset-summary-circle-loader-bottom, 46vh));
+	z-index: 120;
 }
 
 .asset-summary-circle-loader--myinv .asset-summary-circle-loader-ring {
@@ -12358,12 +12371,14 @@ a.asset-action-button--save-signin {
 	appearance: none;
 	-webkit-appearance: none;
 	box-shadow: none !important;
+	cursor: pointer;
 	background: var(--myinv-accent-color) !important;
 	color: #fff !important;
 	-webkit-text-fill-color: #fff !important;
 	border: 1px solid var(--myinv-accent-color) !important;
 	transition:
-		transform 0.2s ease,
+		transform 0.5s ease,
+		opacity 0.5s ease,
 		background-color 0.28s ease,
 		color 0.28s ease,
 		-webkit-text-fill-color 0.28s ease,

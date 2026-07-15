@@ -119,7 +119,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
   return (
     <>
-      <HomeAboutMountLoader />
+      <HomeAboutMountLoader fadeStartMs={400} hideMs={900} />
       <div className="myinv-page myinv-page--accent myinv-page--portfolio">
         <div className="myportfolio-mission-block">
           <Link

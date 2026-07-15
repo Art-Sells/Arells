@@ -1,13 +1,7 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import MyPortfolioPageClient from '../../components/MyPortfolio/MyPortfolioPageClient';
-import { resolveAppOrigin } from '../../lib/auth/origin';
-import { readRequestHostHeaders } from '../../lib/auth/requestHostHeaders';
 import { getSessionFromAppCookies } from '../../lib/auth/session';
-import {
-  fetchPortfolioLeaderboardServer,
-  fetchPortfolioMeServer,
-} from '../../lib/portfolio/fetchPortfolioDataServer';
+import { fetchPortfolioPageServer } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarningsServer';
 import { HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
 
@@ -30,29 +24,18 @@ export const metadata: Metadata = {
 
 export default async function MyPortfolioPage() {
   const session = await getSessionFromAppCookies();
-  const requestHeaders = headers();
-  const origin = resolveAppOrigin(
-    requestHeaders.get('origin') ?? undefined,
-    undefined,
-    readRequestHostHeaders(requestHeaders)
-  );
 
-  const [initialPortfolioMe, initialLeaderboardRows, initialPublicEarnings] = session
-    ? await Promise.all([
-        fetchPortfolioMeServer(session.email, origin),
-        fetchPortfolioLeaderboardServer(),
-        Promise.resolve(null),
-      ])
+  const [signedInBundle, initialPublicEarnings] = session
+    ? await Promise.all([fetchPortfolioPageServer(session.email), Promise.resolve(null)])
     : await Promise.all([
-        Promise.resolve(null),
-        Promise.resolve([]),
+        Promise.resolve({ me: null, leaderboard: [] as Awaited<ReturnType<typeof fetchPortfolioPageServer>>['leaderboard'] }),
         fetchPublicEarningsServer(),
       ]);
 
   return (
     <MyPortfolioPageClient
-      initialPortfolioMe={initialPortfolioMe}
-      initialLeaderboardRows={initialLeaderboardRows ?? []}
+      initialPortfolioMe={signedInBundle.me}
+      initialLeaderboardRows={signedInBundle.leaderboard ?? []}
       initialPublicEarnings={initialPublicEarnings}
     />
   );

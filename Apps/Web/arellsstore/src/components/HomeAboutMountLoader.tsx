@@ -3,26 +3,35 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
-const FADE_START_MS = 1000;
-const HIDE_MS = 2000;
+const DEFAULT_FADE_START_MS = 1000;
+const DEFAULT_HIDE_MS = 2000;
 
-/** Same mount loader as `/about` — accent ring + Arells icon, 1s fade then unmount. */
-export default function HomeAboutMountLoader() {
+type HomeAboutMountLoaderProps = {
+  /** When data is already SSR’d, shorten the cosmetic splash. */
+  fadeStartMs?: number;
+  hideMs?: number;
+};
+
+/** Same mount loader as `/about` — accent ring + Arells icon. */
+export default function HomeAboutMountLoader({
+  fadeStartMs = DEFAULT_FADE_START_MS,
+  hideMs = DEFAULT_HIDE_MS,
+}: HomeAboutMountLoaderProps = {}) {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
     if (!showLoading) return;
-    const fadeTimer = window.setTimeout(() => setFadeOut(true), FADE_START_MS);
+    const fadeTimer = window.setTimeout(() => setFadeOut(true), fadeStartMs);
     const hideTimer = window.setTimeout(() => {
       setLoading(false);
       setFadeOut(false);
-    }, HIDE_MS);
+    }, hideMs);
     return () => {
       window.clearTimeout(fadeTimer);
       window.clearTimeout(hideTimer);
     };
-  }, [showLoading]);
+  }, [showLoading, fadeStartMs, hideMs]);
 
   if (!showLoading) return null;
 

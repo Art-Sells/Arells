@@ -23,8 +23,10 @@ import {
   type VapaAssetSnapshot,
 } from '../../lib/vavity/portfolioValuation';
 import { useMyInvEngagementEvent } from '../../hooks/useMyInvEngagementEvent';
+import { runAfterMaxHeightTransitionEnd } from '../../lib/client/documentScroll';
 
 const SUMMARY_VALUES_FORCE_READY_MS = 8000;
+const SUMMARY_HEIGHT_EXPAND_MS = 3000;
 
 const formatCurrencyParts = (value: number) => {
   const formatted = (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -184,9 +186,16 @@ const MyInvestmentsPageClient: React.FC = () => {
   const summaryQuickFadeEndRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [summaryAssetLoadAttempted, setSummaryAssetLoadAttempted] = useState(false);
   const [summaryForceReady, setSummaryForceReady] = useState(false);
-  const [summarySectionVisible, setSummarySectionVisible] = useState(false);
+  /** Mount summary once numbers are ready; height expands via max-height (asset-style), not slide-up. */
+  const [summaryMounted, setSummaryMounted] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [summaryHeight, setSummaryHeight] = useState(0);
+  const summaryPanelRef = useRef<HTMLDivElement | null>(null);
+  const summaryContentRef = useRef<HTMLDivElement | null>(null);
+  const pendingSummaryDismissCancelRef = useRef<(() => void) | null>(null);
   const summaryCircleLoader = useAssetSummaryCircleLoader();
-  const summaryKeysRef = useRef('');
+  /** Holdings key for which VAPA load finished successfully (survives Strict Mode cancel/retry). */
+  const summaryLoadDoneKeyRef = useRef('');
   const [summaryTotalsSnapshot, setSummaryTotalsSnapshot] = useState<{
     acVatop: number;
     acdVatop: number;
@@ -314,7 +323,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     };
     tick();
     requestAnimationFrame(tick);
-  }, [open, purchasedValueHeight, currentValueHeight, profitValueHeight, profitBlockHeight]);
+  }, [open, purchasedValueHeight, currentValueHeight, profitValueHeight, profitBlockHeight, summaryOpen, summaryHeight]);
 
   useEffect(() => {
     if (!open) return;
@@ -495,34 +504,54 @@ const MyInvestmentsPageClient: React.FC = () => {
     if (!hasAny) return false;
     if (summaryForceReady) return true;
     if (!summaryAssetLoadAttempted) return false;
+    // Prefer real snapshots; if load finished but some assets failed, still allow reveal (force timer also covers this).
     return heldAssetIds.every((id) => assetSnapshotUsable(id));
   }, [hasAny, summaryForceReady, summaryAssetLoadAttempted, heldAssetIds, assetSnapshotUsable]);
 
   useEffect(() => {
     const key = heldAssetIds.slice().sort().join(',');
     if (!effectiveSignedIn || !hasAny) {
-      summaryKeysRef.current = '';
+      summaryLoadDoneKeyRef.current = '';
       setSummaryAssetLoadAttempted(false);
       setSummaryForceReady(false);
-      setSummarySectionVisible(false);
+      setSummaryMounted(false);
+      setSummaryOpen(false);
+      setSummaryHeight(0);
+      pendingSummaryDismissCancelRef.current?.();
+      pendingSummaryDismissCancelRef.current = null;
       summaryCircleLoader.dismissImmediately();
       return;
     }
-    if (key === summaryKeysRef.current) return;
-    summaryKeysRef.current = key;
+
+    // Already finished for this holdings set — keep summary unlocked.
+    if (summaryLoadDoneKeyRef.current === key) {
+      setSummaryAssetLoadAttempted(true);
+      return;
+    }
+
     let cancelled = false;
     setSummaryAssetLoadAttempted(false);
     setSummaryForceReady(false);
-    setSummarySectionVisible(false);
+    setSummaryMounted(false);
+    setSummaryOpen(false);
+    setSummaryHeight(0);
+
     (async () => {
-      await ensureAssetsLoaded(heldAssetIds);
-      if (cancelled) return;
-      setSummaryAssetLoadAttempted(true);
+      try {
+        await ensureAssetsLoaded(heldAssetIds);
+      } finally {
+        // Retry after Strict Mode cancel: only mark done when this run wasn't cancelled.
+        if (!cancelled) {
+          summaryLoadDoneKeyRef.current = key;
+          setSummaryAssetLoadAttempted(true);
+        }
+      }
     })();
+
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dismissImmediately/show are stable enough; avoid re-fetch loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loader dismiss is stable; avoid re-fetch loops
   }, [effectiveSignedIn, hasAny, heldAssetIds, ensureAssetsLoaded]);
 
   useEffect(() => {
@@ -534,15 +563,82 @@ const MyInvestmentsPageClient: React.FC = () => {
   useEffect(() => {
     if (!effectiveSignedIn || !hasAny) return;
     if (showLoading) return;
-    if (summaryValuesReady) {
-      setSummarySectionVisible(true);
-      summaryCircleLoader.dismissOnSummaryExpandComplete();
+    // Same as assets: show the floating summary circle until the height-down finishes.
+    if (!summaryValuesReady) {
+      setSummaryMounted(false);
+      setSummaryOpen(false);
+      setSummaryHeight(0);
+      pendingSummaryDismissCancelRef.current?.();
+      pendingSummaryDismissCancelRef.current = null;
+      summaryCircleLoader.show();
       return;
     }
-    setSummarySectionVisible(false);
     summaryCircleLoader.show();
+    // Mount first; height expand runs in the layout effect once the panel is in the DOM.
+    setSummaryMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveSignedIn, hasAny, showLoading, summaryValuesReady]);
+
+  // After mount: start at max-height 0, then measure and height-down (asset summary pattern).
+  useLayoutEffect(() => {
+    if (!summaryMounted || !summaryValuesReady) return;
+
+    setSummaryOpen(true);
+    setSummaryHeight(0);
+
+    let cancelled = false;
+    let raf2 = 0;
+    const raf1 = globalThis.requestAnimationFrame(() => {
+      raf2 = globalThis.requestAnimationFrame(() => {
+        if (cancelled) return;
+        const h = summaryContentRef.current?.scrollHeight ?? 0;
+        setSummaryHeight(h);
+        pendingSummaryDismissCancelRef.current?.();
+        if (h > 0) {
+          pendingSummaryDismissCancelRef.current = runAfterMaxHeightTransitionEnd(
+            summaryPanelRef.current,
+            () => {
+              pendingSummaryDismissCancelRef.current = null;
+              summaryCircleLoader.dismissOnSummaryExpandComplete();
+            },
+            { timeoutMs: SUMMARY_HEIGHT_EXPAND_MS + 500 }
+          );
+        } else {
+          pendingSummaryDismissCancelRef.current = null;
+          summaryCircleLoader.dismissOnSummaryExpandComplete();
+        }
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      globalThis.cancelAnimationFrame(raf1);
+      if (raf2) globalThis.cancelAnimationFrame(raf2);
+      pendingSummaryDismissCancelRef.current?.();
+      pendingSummaryDismissCancelRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [summaryMounted, summaryValuesReady]);
+
+  // Keep measured summary height in sync while open (wrapped numbers, range changes, etc.).
+  useEffect(() => {
+    if (!summaryMounted || !summaryOpen || summaryHeight <= 0) return;
+    const node = summaryContentRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    let raf = 0;
+    const measure = () => {
+      raf = globalThis.requestAnimationFrame(() => {
+        const next = node.scrollHeight;
+        setSummaryHeight((prev) => (prev === next ? prev : next));
+      });
+    };
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) globalThis.cancelAnimationFrame(raf);
+    };
+  }, [summaryMounted, summaryOpen, summaryHeight > 0]);
 
   /** My Assets badge order: largest current holding first (follows liquid/solid mode). */
   const myAssetsSortedByHoldings = useMemo(() => {
@@ -808,7 +904,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     const value = summaryTotals?.acVatop || 0;
     const formatted = formatCurrencyParts(value);
     const key = `${formatted.integer}.${formatted.decimals}`;
-    if (!open || !hasAny || !summarySectionVisible || !purchasedValueRef.current) {
+    if (!open || !hasAny || !summaryOpen || !purchasedValueRef.current) {
       pendingPurchasedHeightRef.current = true;
       return;
     }
@@ -821,13 +917,13 @@ const MyInvestmentsPageClient: React.FC = () => {
     if (lastFormattedVatopRef.current === key) return;
     lastFormattedVatopRef.current = key;
     animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValueHeightRef, purchasedValueTimerRef);
-  }, [animateNumberHeight, open, hasAny, summarySectionVisible, summaryTotals.acVatop]);
+  }, [animateNumberHeight, open, hasAny, summaryOpen, summaryTotals.acVatop]);
 
   useLayoutEffect(() => {
     const value = summaryTotals?.acVact || 0;
     const formatted = formatCurrencyParts(value);
     const key = `${formatted.integer}.${formatted.decimals}`;
-    if (!open || !hasAny || !summarySectionVisible || !currentValueRef.current) {
+    if (!open || !hasAny || !summaryOpen || !currentValueRef.current) {
       pendingCurrentHeightRef.current = true;
       return;
     }
@@ -840,12 +936,12 @@ const MyInvestmentsPageClient: React.FC = () => {
     if (lastFormattedVactRef.current === key) return;
     lastFormattedVactRef.current = key;
     animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValueHeightRef, currentValueTimerRef);
-  }, [animateNumberHeight, open, hasAny, summarySectionVisible, summaryTotals.acVact]);
+  }, [animateNumberHeight, open, hasAny, summaryOpen, summaryTotals.acVact]);
 
   useLayoutEffect(() => {
     const formatted = formatCurrencyParts(Math.abs(totalProfit || 0));
     const key = `${profitLabel}|${formatted.integer}.${formatted.decimals}`;
-    if (!open || !hasAny || !summarySectionVisible || !profitValueRef.current) {
+    if (!open || !hasAny || !summaryOpen || !profitValueRef.current) {
       pendingProfitHeightRef.current = true;
       return;
     }
@@ -860,7 +956,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     lastFormattedProfitRef.current = key;
     animateNumberHeight(profitValueRef, setProfitValueHeight, profitValueHeightRef, profitValueTimerRef);
     animateNumberHeight(profitBlockRef, setProfitBlockHeight, profitBlockHeightRef, profitBlockTimerRef);
-  }, [animateNumberHeight, open, hasAny, summarySectionVisible, totalProfit, profitLabel]);
+  }, [animateNumberHeight, open, hasAny, summaryOpen, totalProfit, profitLabel]);
 
   useEffect(() => {
     if (rangeLoading) return;
@@ -964,8 +1060,17 @@ const MyInvestmentsPageClient: React.FC = () => {
                 </div>
               ) : effectiveSignedIn && hasAny ? (
                 <>
-                  {summarySectionVisible ? (
-                  <div className={`myinv-summary-block myinv-accent-border${slideIn ? ' page-slide-in' : ''}`}>
+                  {summaryMounted ? (
+                  <div
+                    ref={summaryPanelRef}
+                    className="asset-slide-panel myinv-summary-height-panel"
+                    style={{
+                      maxHeight: summaryOpen ? `${summaryHeight}px` : '0px',
+                      transition: `max-height ${SUMMARY_HEIGHT_EXPAND_MS}ms ease`,
+                      overflow: 'hidden',
+                    }}
+                  >
+                  <div ref={summaryContentRef} className="myinv-summary-block myinv-accent-border">
                     <div
                       className={`myinv-summary-section${summaryQuickFade ? ' is-quickfade' : ''}`}
                     >
@@ -1125,6 +1230,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                  </div>
                   ) : null}
 
                   {showLiquidityToggle && (
@@ -1271,7 +1377,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                                   setLoadingPortfolio(true);
                                   globalThis.setTimeout(() => {
                                     router.push('/my-portfolio');
-                                    router.refresh();
                                   }, 280);
                                 }}
                                 className="auth-submit auth-submit--accent auth-submit--signup-page myinv-mission-portfolio-button"

@@ -27,7 +27,6 @@ export default function AssetFooterPortfolioButton({ cssModifier }: AssetFooterP
     navTimerRef.current = globalThis.setTimeout(() => {
       navTimerRef.current = null;
       router.push('/my-portfolio');
-      router.refresh();
     }, PORTFOLIO_NAV_DELAY_MS);
   };
 

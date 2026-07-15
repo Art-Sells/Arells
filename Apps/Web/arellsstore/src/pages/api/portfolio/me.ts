@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSessionFromRequest } from '../../../lib/auth/session';
-import { buildPortfolioMePayload } from '../../../lib/portfolio/referralShares';
+import {
+  getPortfolioContextSnapshot,
+  portfolioMeFromSnapshot,
+} from '../../../lib/portfolio/portfolioContextSnapshot';
 import { getServerS3 } from '../../../lib/server/awsS3';
 
 const s3 = getServerS3();
@@ -26,8 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const payload = await buildPortfolioMePayload(s3, bucket(), session.email);
-    return res.status(200).json(payload);
+    const snapshot = await getPortfolioContextSnapshot(s3, bucket());
+    return res.status(200).json(portfolioMeFromSnapshot(session.email, snapshot));
   } catch (e) {
     console.error('[portfolio/me]', e);
     return res.status(500).json({ error: 'Failed to load portfolio' });
