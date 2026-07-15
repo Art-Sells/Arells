@@ -69,3 +69,25 @@
 	color: rgb(10, 193, 142) !important;
 	-webkit-text-fill-color: rgb(10, 193, 142) !important;
 }
+
+/* NVIDIA — /nvidia */
+#overlayy .home-asset-nvidia .home-asset-name,
+#overlayy .home-asset-nvidia .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-nvidia .home-asset-name,
+.home-asset-card.home-asset-nvidia .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-nvidia .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-nvidia .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(86, 138, 0) !important;
+	-webkit-text-fill-color: rgb(86, 138, 0) !important;
+}
+
+/* SpaceX — /spacex */
+#overlayy .home-asset-spacex .home-asset-name,
+#overlayy .home-asset-spacex .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-spacex .home-asset-name,
+.home-asset-card.home-asset-spacex .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-spacex .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-spacex .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(40, 48, 64) !important;
+	-webkit-text-fill-color: rgb(40, 48, 64) !important;
+}

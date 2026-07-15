@@ -11,4 +11,6 @@
 @import './assets/crypto/stellar-asset-rules.css';
 @import './assets/crypto/bch-asset-rules.css';
 @import './assets/crypto/chainlink-asset-rules.css';
+@import './assets/stocks/nvidia-asset-rules.css';
+@import './assets/stocks/spacex-asset-rules.css';
 @import './home-myinv-asset-chip-colors.css';

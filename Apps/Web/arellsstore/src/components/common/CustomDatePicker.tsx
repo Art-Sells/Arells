@@ -14,7 +14,9 @@ type AssetTheme =
   | 'cardano'
   | 'stellar'
   | 'bch'
-  | 'chainlink';
+  | 'chainlink'
+  | 'nvidia'
+  | 'spacex';
 
 type Props = {
   value: string; // YYYY-MM-DD or ''
@@ -164,6 +166,18 @@ export default function CustomDatePicker({ value, onChange, className, placehold
           '--asset-line-color': 'rgb(55, 91, 210)',
           '--asset-slogan-color': 'rgb(40, 66, 158)',
           '--asset-border-color': 'rgba(55, 91, 210, 0.42)',
+        } as React.CSSProperties;
+      case 'nvidia':
+        return {
+          '--asset-line-color': 'rgb(86, 138, 0)',
+          '--asset-slogan-color': 'rgb(58, 96, 0)',
+          '--asset-border-color': 'rgba(86, 138, 0, 0.42)',
+        } as React.CSSProperties;
+      case 'spacex':
+        return {
+          '--asset-line-color': 'rgb(40, 48, 64)',
+          '--asset-slogan-color': 'rgb(24, 30, 40)',
+          '--asset-border-color': 'rgba(40, 48, 64, 0.45)',
         } as React.CSSProperties;
       default:
         return {

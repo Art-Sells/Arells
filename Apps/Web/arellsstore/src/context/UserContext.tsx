@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { usePathname } from 'next/navigation';
 import { logFetchApiFailure } from '../lib/client/logClientApiError';
 import { SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
+import { SUPPORTED_STOCK_ASSET_IDS } from '../lib/assets/stockAssetRegistry';
 import { sumPortfolioTotalsFromEntries } from '../lib/vavity/portfolioValuation';
 
 const PREVIEW_SKIP_SESSION_DELETES = false;
@@ -319,7 +320,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, [email]);
 
-  const supportedAssets = useMemo(() => [...SUPPORTED_CRYPTO_ASSET_IDS], []);
+  const supportedAssets = useMemo(
+    () => [...SUPPORTED_CRYPTO_ASSET_IDS, ...SUPPORTED_STOCK_ASSET_IDS],
+    []
+  );
 
   const hasEmailInvestmentsForAsset = useCallback(
     (assetId: string) => {

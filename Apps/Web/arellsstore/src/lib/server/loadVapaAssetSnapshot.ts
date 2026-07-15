@@ -1,4 +1,5 @@
 import { CRYPTO_VAPA_KEYS } from '../assets/cryptoAssetRegistry';
+import { STOCK_VAPA_KEYS } from '../assets/stockAssetRegistry';
 import {
   applyRecalculatedFields,
   historyDayKey,
@@ -26,7 +27,7 @@ import { s3BucketNameOrThrow } from './s3Bucket';
 const s3 = getServerS3();
 
 export async function loadVapaAssetSnapshot(asset: string): Promise<VapaAssetSnapshot> {
-  const key = CRYPTO_VAPA_KEYS[asset] || CRYPTO_VAPA_KEYS.bitcoin;
+  const key = STOCK_VAPA_KEYS[asset] || CRYPTO_VAPA_KEYS[asset] || CRYPTO_VAPA_KEYS.bitcoin;
   try {
     const response = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
     const data = response.Body ? JSON.parse(response.Body.toString()) : {};

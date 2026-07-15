@@ -959,6 +959,36 @@ body {
 	opacity: 0.5;
 }
 
+.asset-page--nvidia .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia:link,
+.asset-page--nvidia .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia:visited,
+.asset-page--nvidia .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia:hover,
+.asset-page--nvidia .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia:active,
+.asset-page--nvidia .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(58, 96, 0)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(58, 96, 0)) !important;
+}
+
+.asset-page--nvidia .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(58, 96, 0)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(58, 96, 0)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--spacex .asset-page-content a.asset-title-badge--section.asset-title-badge--spacex:link,
+.asset-page--spacex .asset-page-content a.asset-title-badge--section.asset-title-badge--spacex:visited,
+.asset-page--spacex .asset-page-content a.asset-title-badge--section.asset-title-badge--spacex:hover,
+.asset-page--spacex .asset-page-content a.asset-title-badge--section.asset-title-badge--spacex:active,
+.asset-page--spacex .asset-page-content a.asset-title-badge--section.asset-title-badge--spacex:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(24, 30, 40)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(24, 30, 40)) !important;
+}
+
+.asset-page--spacex .asset-page-content a.asset-title-badge--section.asset-title-badge--spacex .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(24, 30, 40)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(24, 30, 40)) !important;
+	opacity: 0.5;
+}
+
 .asset-page--chainlink .asset-page-content .asset-price-panel span.asset-metric-symbol--chainlink,
 .asset-page--chainlink .asset-page-content .asset-price-panel span.asset-metric-percent-symbol--chainlink {
 	color: var(--asset-badge-spot-ink, rgb(40, 66, 158)) !important;
@@ -4607,11 +4637,13 @@ a.asset-action-button--myinv-asset-link {
 	}
 }
 
-.myinv-asset-hub-crypto.is-expanded .myinv-panel--asset-buttons {
+.myinv-asset-hub-crypto.is-expanded .myinv-panel--asset-buttons,
+.myinv-asset-hub-stocks.is-expanded .myinv-panel--asset-buttons {
 	padding: 8px 10px;
 }
 
-.myinv-asset-hub-crypto .myinv-panel--asset-buttons {
+.myinv-asset-hub-crypto .myinv-panel--asset-buttons,
+.myinv-asset-hub-stocks .myinv-panel--asset-buttons {
 	margin-top: 0;
 	padding: 10px;
 }

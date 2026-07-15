@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { getAssetSpotPriceEntries } from '../assets/cryptoAssetRegistry';
+import { getStockAssetSpotPriceEntries } from '../assets/stockAssetRegistry';
 
-const ASSET_PRICE = getAssetSpotPriceEntries();
+const ASSET_PRICE = {
+  ...getAssetSpotPriceEntries(),
+  ...getStockAssetSpotPriceEntries(),
+};
 
 export async function loadCurrentAssetSpotPrice(asset: string): Promise<number | null> {
   const cfg = ASSET_PRICE[asset] ?? ASSET_PRICE.bitcoin;

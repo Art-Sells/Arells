@@ -4,7 +4,8 @@ import axios from 'axios';
 import { logClientApiError } from '../lib/client/logClientApiError';
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useUser } from './UserContext';
-import { getHomeInitialAssetIds, SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
+import { getAssetVapaUrl } from '../lib/assets/assetKind';
+import { getHomeInitialAssetIds } from '../lib/assets/cryptoAssetRegistry';
 import { sumPortfolioTotalsFromEntries } from '../lib/vavity/portfolioValuation';
 
 interface Investment {
@@ -83,7 +84,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const refreshAsset = useCallback(async (assetId: string) => {
     try {
-      const response = await axios.get(`/api/assets/crypto/${assetId}/${assetId}vapa`);
+      const response = await axios.get(getAssetVapaUrl(assetId));
       const data = response.data || {};
       const snapshot: AssetSnapshot = {
         price: typeof data.price === 'number' ? data.price : 0,

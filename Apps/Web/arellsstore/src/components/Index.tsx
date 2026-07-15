@@ -22,6 +22,7 @@ import {
   HOME_INITIAL_ASSET_COUNT,
   HOME_LOAD_MORE_BATCH,
 } from '../lib/assets/cryptoAssetRegistry';
+import { STOCK_ASSETS } from '../lib/assets/stockAssetRegistry';
 
 type IndexProps = {
   initialPublicEarnings?: PublicEarningsPayload | null;
@@ -41,7 +42,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   const { getAsset, loadMoreAssets } = useVavity();
   const [visibleAssetCount, setVisibleAssetCount] = useState(0);
   const [cryptoCategoryOpen, setCryptoCategoryOpen] = useState(false);
-  const [stocksPhase, setStocksPhase] = useState<'button' | 'coming-soon'>('button');
+  const [stocksCategoryOpen, setStocksCategoryOpen] = useState(false);
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
   const showGuestLanding = !email && !forceHomeInvestmentsPreview;
@@ -305,7 +306,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', schedule);
     };
-  }, [showSignedInHome, cryptoCategoryOpen, stocksPhase, visibleAssetCount]);
+  }, [showSignedInHome, cryptoCategoryOpen, stocksCategoryOpen, visibleAssetCount]);
 
   const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
     if (!history.length) return 0;
@@ -393,8 +394,10 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   }, [cryptoCategoryOpen, handleShowMoreAssets]);
 
   const handleStocksCategoryClick = useCallback(() => {
-    setStocksPhase('coming-soon');
-  }, []);
+    if (stocksCategoryOpen) return;
+    setStocksCategoryOpen(true);
+    void loadMoreAssets(STOCK_ASSETS.map((a) => a.id));
+  }, [loadMoreAssets, stocksCategoryOpen]);
 
   const handleEnsureCryptoLoaded = useCallback(
     (assetIds: string[]) => {
@@ -403,9 +406,46 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
     [loadMoreAssets]
   );
 
+  const stockRows = useMemo(() => {
+    if (!stocksCategoryOpen) return [];
+    return STOCK_ASSETS.map((asset) => {
+      const snapshot = getAsset(asset.id);
+      const solidHistory =
+        (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
+          ? snapshot.solidHistory
+          : Array.isArray(snapshot?.liquidHistory)
+            ? snapshot.liquidHistory
+            : []) ?? [];
+      const liquidHistory =
+        (Array.isArray(snapshot?.liquidHistory) && snapshot.liquidHistory.length > 0
+          ? snapshot.liquidHistory
+          : Array.isArray(snapshot?.solidHistory)
+            ? snapshot.solidHistory
+            : []) ?? [];
+      const solidPrice = snapshot?.vapa ?? 0;
+      const liquidPrice =
+        typeof snapshot?.price === 'number' ? snapshot.price : typeof snapshot?.vapa === 'number' ? snapshot.vapa : 0;
+      return {
+        id: asset.id,
+        label: asset.label,
+        ticker: asset.ticker,
+        href: asset.href,
+        solidPrice,
+        liquidPrice,
+        solidChange1w: getPercentChange(solidHistory, 7),
+        solidChange1y: getPercentChange(solidHistory, 365),
+        solidChangeAll: getPercentChange(solidHistory),
+        liquidChange1w: getPercentChange(liquidHistory, 7),
+        liquidChange1y: getPercentChange(liquidHistory, 365),
+        liquidChangeAll: getPercentChange(liquidHistory),
+      } satisfies HomeCryptoAssetRowData;
+    });
+  }, [getAsset, stocksCategoryOpen]);
+
   const getCryptoRow = useCallback(
     (assetId: string): HomeCryptoAssetRowData | null => {
-      const asset = CRYPTO_ASSETS.find((a) => a.id === assetId);
+      const asset =
+        CRYPTO_ASSETS.find((a) => a.id === assetId) ?? STOCK_ASSETS.find((a) => a.id === assetId);
       if (!asset) return null;
       const snapshot = getAsset(asset.id);
       const solidHistory =
@@ -442,9 +482,11 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   );
 
   useEffect(() => {
-    if (!cryptoCategoryOpen) return;
+    if (!cryptoCategoryOpen && !stocksCategoryOpen) return;
     if (cardNumbersDidMountRef.current) return;
-    const hasData = sortedRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0);
+    const hasData =
+      sortedRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0) ||
+      stockRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0);
     if (!hasData) return;
     cardNumbersDidMountRef.current = true;
     setCardShimmersFading(true);
@@ -454,7 +496,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         setTimeout(() => setCardFadeInDone(true), 2100);
       });
     }, 600);
-  }, [sortedRows, cryptoCategoryOpen]);
+  }, [sortedRows, stockRows, cryptoCategoryOpen, stocksCategoryOpen]);
 
   const cardFadeStyle = useMemo<React.CSSProperties>(() => {
     if (!cardNumbersVisible) return { opacity: 0, transition: 'opacity 2s ease' };
@@ -557,12 +599,28 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
 
         <HomeAssetCategoryCard
           enabled={showSignedInHome}
-          showButton={stocksPhase === 'button'}
+          showButton={!stocksCategoryOpen}
           categoryButton
           buttonLabel="company stocks"
           onButtonClick={handleStocksCategoryClick}
-          comingSoonText={stocksPhase === 'coming-soon' ? 'stocks coming soon' : null}
-        />
+          panelTransition={stocksCategoryOpen ? 'max-height 1.5s ease-out' : 'max-height 3.5s linear'}
+        >
+          {stocksCategoryOpen ? (
+            <div className="home-assets-rows-shell">
+              {stockRows.map((row) => (
+                <HomeCryptoAssetRow
+                  key={row.id}
+                  row={row}
+                  displayIsLiquidMode={displayIsLiquidMode}
+                  cardNumbersVisible={cardNumbersVisible}
+                  cardShimmersFading={cardShimmersFading}
+                  cardFadeStyle={cardFadeStyle}
+                  imageLoader={imageLoader}
+                />
+              ))}
+            </div>
+          ) : null}
+        </HomeAssetCategoryCard>
       </div>
       <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
         <div className="home-assets-footer-text">new assets added weekly</div>

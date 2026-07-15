@@ -1,20 +1,32 @@
 import { CRYPTO_ASSETS } from '../assets/cryptoAssetRegistry';
+import { STOCK_ASSETS } from '../assets/stockAssetRegistry';
 
 export type HomeSearchEntry = {
   symbol: string;
   name: string;
   assetId: string;
   href: string;
+  kind: 'crypto' | 'stock';
 };
 
 const MAX_SEARCH_RESULTS = 10;
 
-const HOME_SEARCH_ENTRIES: HomeSearchEntry[] = CRYPTO_ASSETS.map((asset) => ({
-  symbol: asset.ticker,
-  name: asset.displayName,
-  assetId: asset.id,
-  href: asset.href,
-}));
+const HOME_SEARCH_ENTRIES: HomeSearchEntry[] = [
+  ...CRYPTO_ASSETS.map((asset) => ({
+    symbol: asset.ticker,
+    name: asset.displayName,
+    assetId: asset.id,
+    href: asset.href,
+    kind: 'crypto' as const,
+  })),
+  ...STOCK_ASSETS.map((asset) => ({
+    symbol: asset.ticker,
+    name: asset.displayName,
+    assetId: asset.id,
+    href: asset.href,
+    kind: 'stock' as const,
+  })),
+];
 
 export function getHomeSearchEntries(): readonly HomeSearchEntry[] {
   return HOME_SEARCH_ENTRIES;

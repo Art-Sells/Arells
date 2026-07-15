@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { CRYPTO_ASSETS } from '../lib/assets/cryptoAssetRegistry';
+import { STOCK_ASSETS } from '../lib/assets/stockAssetRegistry';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -25,6 +26,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: path === '' ? 1 : 0.8,
     })),
     ...CRYPTO_ASSETS.map((asset) => ({
+      url: `${base}${asset.href}`,
+      lastModified: now,
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    })),
+    ...STOCK_ASSETS.map((asset) => ({
       url: `${base}${asset.href}`,
       lastModified: now,
       changeFrequency: 'daily' as const,

@@ -19,6 +19,8 @@ const ASSET_BADGE_HREF: Record<string, string> = {
   chainlink: 'https://chain.link/',
   stellar: 'https://stellar.org/',
   bch: 'https://bitcoincash.org/',
+  nvidia: 'https://www.nvidia.com/',
+  spacex: 'https://www.spacex.com/',
 };
 
 type AssetGuestLandingProps = {

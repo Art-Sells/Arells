@@ -76,6 +76,16 @@ const nextConfig = {
         defs['process.env.AUTH_JWT_SECRET'] = JSON.stringify(authJwtSecret);
       }
 
+      const massiveApiKey = process.env.MASSIVE_API_KEY?.trim();
+      if (massiveApiKey) {
+        defs['process.env.MASSIVE_API_KEY'] = JSON.stringify(massiveApiKey);
+      }
+
+      const coingeckoApiKey = process.env.COINGECKO_API_KEY?.trim();
+      if (coingeckoApiKey) {
+        defs['process.env.COINGECKO_API_KEY'] = JSON.stringify(coingeckoApiKey);
+      }
+
       if (Object.keys(defs).length > 0) {
         config.plugins.push(new webpack.DefinePlugin(defs));
       }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { getCryptoAssetMeta } from '../../lib/assets/cryptoAssetRegistry';
+import { getAnyAssetMeta } from '../../lib/assets/assetKind';
 
 type MyInvAssetBadgeGridProps = {
   assets: string[];
@@ -15,7 +15,7 @@ const MyInvAssetBadgeGrid: React.FC<MyInvAssetBadgeGridProps> = ({ assets, linkK
       className={`myinv-asset-options${assets.length === 1 ? ' is-single' : ''}${assets.length > 2 ? ' is-many' : ''}`}
     >
       {assets.map((asset) => {
-        const meta = getCryptoAssetMeta(asset);
+        const meta = getAnyAssetMeta(asset);
         const href = meta?.href ?? '/';
         const label = meta?.label ?? asset;
         return (

@@ -8,7 +8,9 @@ import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
 import MyInvAssetHubPanel from './MyInvAssetHubPanel';
+import { getAnyAssetMeta, getAssetHistoricalPriceUrl } from '../../lib/assets/assetKind';
 import { SUPPORTED_CRYPTO_ASSET_IDS } from '../../lib/assets/cryptoAssetRegistry';
+import { SUPPORTED_STOCK_ASSET_IDS } from '../../lib/assets/stockAssetRegistry';
 import {
   liquidSpotOnUtcDay,
   recalculateInvestmentsWithSnapshots,
@@ -50,7 +52,10 @@ const MyInvestmentsPageClient: React.FC = () => {
   } = useVavity();
   const { recordEngagement } = useMyInvEngagementEvent();
   const forceSessionPreview = false;
-  const supportedAssets = useMemo(() => [...SUPPORTED_CRYPTO_ASSET_IDS], []);
+  const supportedAssets = useMemo(
+    () => [...SUPPORTED_CRYPTO_ASSET_IDS, ...SUPPORTED_STOCK_ASSET_IDS],
+    []
+  );
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
       (sessionInvestments || []).map((inv: any) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
@@ -147,7 +152,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [initialDataReady, setInitialDataReady] = useState(false);
   const [addInvestCryptoOpen, setAddInvestCryptoOpen] = useState(false);
   const [otherAssetsCryptoOpen, setOtherAssetsCryptoOpen] = useState(false);
-  const [addInvestStocksPhase, setAddInvestStocksPhase] = useState<'button' | 'coming-soon'>('button');
+  const [addInvestStocksOpen, setAddInvestStocksOpen] = useState(false);
   const initialFetchDoneRef = useRef(false);
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState(false);
@@ -452,6 +457,23 @@ const MyInvestmentsPageClient: React.FC = () => {
   const hasAny = effectiveInvestments.length > 0;
   const displayTotals = displayIsLiquidMode ? liquidSummaryTotals : solidSummaryTotals;
 
+  /** My Assets badge order: largest current holding first (follows liquid/solid mode). */
+  const myAssetsSortedByHoldings = useMemo(() => {
+    const totals = new Map<string, number>();
+    for (const inv of valuedInvestments) {
+      const id = String(inv?.asset || 'bitcoin').toLowerCase();
+      const value = displayIsLiquidMode ? Number(inv.lCVact) || 0 : Number(inv.cVact) || 0;
+      totals.set(id, (totals.get(id) || 0) + value);
+    }
+    return [...effectiveAssetsPresent].sort((a, b) => {
+      const diff = (totals.get(b) || 0) - (totals.get(a) || 0);
+      if (diff !== 0) return diff;
+      const la = getAnyAssetMeta(a)?.label ?? a;
+      const lb = getAnyAssetMeta(b)?.label ?? b;
+      return la.localeCompare(lb);
+    });
+  }, [valuedInvestments, effectiveAssetsPresent, displayIsLiquidMode]);
+
   const portfolioRanges = useMemo(
     () => [
       { label: '24 hrs', days: 1 },
@@ -488,7 +510,7 @@ const MyInvestmentsPageClient: React.FC = () => {
 
           if (!(liquidAtRange > 0)) {
             try {
-              const base = `/api/assets/crypto/${asset}/${asset}VapaHistoricalPrice`;
+              const base = getAssetHistoricalPriceUrl(asset);
               const params = new URLSearchParams({ date: isoDate, mode: 'liquid' });
               const liquidResp = await fetch(`${base}?${params.toString()}`);
               if (liquidResp.ok) {
@@ -1170,15 +1192,14 @@ const MyInvestmentsPageClient: React.FC = () => {
         </div>
         {effectiveSignedIn && initialDataReady && (
           <>
-            {effectiveAssetsPresent.length > 0 && (
+            {myAssetsSortedByHoldings.length > 0 && (
               <MyInvAssetHubPanel
                 title="My Assets"
                 slideIn={slideIn}
-                assets={effectiveAssetsPresent}
+                assets={myAssetsSortedByHoldings}
                 linkKeyPrefix="held"
                 cryptoMode="badges"
-                stocksPhase={addInvestStocksPhase}
-                onStocksClick={() => setAddInvestStocksPhase('coming-soon')}
+                showStocksSection={false}
               />
             )}
 
@@ -1194,8 +1215,11 @@ const MyInvestmentsPageClient: React.FC = () => {
                   setOtherAssetsCryptoOpen(true);
                   recordEngagement('section_expand');
                 }}
-                stocksPhase={addInvestStocksPhase}
-                onStocksClick={() => setAddInvestStocksPhase('coming-soon')}
+                stocksOpen={addInvestStocksOpen}
+                onStocksOpen={() => {
+                  setAddInvestStocksOpen(true);
+                  recordEngagement('section_expand');
+                }}
               />
             )}
 
@@ -1211,8 +1235,11 @@ const MyInvestmentsPageClient: React.FC = () => {
                   setAddInvestCryptoOpen(true);
                   recordEngagement('section_expand');
                 }}
-                stocksPhase={addInvestStocksPhase}
-                onStocksClick={() => setAddInvestStocksPhase('coming-soon')}
+                stocksOpen={addInvestStocksOpen}
+                onStocksOpen={() => {
+                  setAddInvestStocksOpen(true);
+                  recordEngagement('section_expand');
+                }}
               />
             )}
           </>
