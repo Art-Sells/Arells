@@ -11291,6 +11291,10 @@ a.asset-action-button--save-signin {
 	gap: 8px;
 	appearance: none;
 	-webkit-appearance: none;
+	/* Match footer <Link> buttons: native <button> UA font made weight 200 look thinner. */
+	font: inherit;
+	font-family: inherit;
+	letter-spacing: inherit;
 	box-shadow: none !important;
 	cursor: pointer;
 	/* Keep transform so hover translateY eases like other .asset-action-button controls. */
