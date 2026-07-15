@@ -45,7 +45,7 @@ export async function fetchMassivePrevClose(ticker: string): Promise<{
 
 /**
  * Daily closes as CoinGecko-style `[ms, price][]` pairs for VAPA builders.
- * Basic plan: up to ~2y history; SpaceX only exists from IPO.
+ * Starter plan: up to ~5y history (Massive truncates earlier dates); SpaceX only from IPO.
  */
 export async function fetchMassiveDailyCloses(
   ticker: string,
@@ -81,6 +81,7 @@ export async function fetchMassiveDailyCloses(
 export async function fetchMassiveTickerFundamentals(ticker: string): Promise<{
   marketCap: number | null;
   weightedSharesOutstanding: number | null;
+  listDate: string | null;
 }> {
   const apiKey = massiveApiKey();
   const { data } = await axios.get(`${MASSIVE_BASE}/v3/reference/tickers/${encodeURIComponent(ticker)}`, {
@@ -90,6 +91,7 @@ export async function fetchMassiveTickerFundamentals(ticker: string): Promise<{
   const results = (data?.results ?? null) as {
     market_cap?: number;
     weighted_shares_outstanding?: number;
+    list_date?: string;
   } | null;
   const marketCap =
     typeof results?.market_cap === 'number' && Number.isFinite(results.market_cap) && results.market_cap > 0
@@ -101,15 +103,36 @@ export async function fetchMassiveTickerFundamentals(ticker: string): Promise<{
     results.weighted_shares_outstanding > 0
       ? results.weighted_shares_outstanding
       : null;
-  return { marketCap, weightedSharesOutstanding };
+  const listDateRaw = typeof results?.list_date === 'string' ? results.list_date.trim() : '';
+  const listDate = /^\d{4}-\d{2}-\d{2}$/.test(listDateRaw) ? listDateRaw : null;
+  return { marketCap, weightedSharesOutstanding, listDate };
 }
+
+/** Lookback used for stock VAPA history refreshes (Massive Starter = 5 years). */
+export const STOCK_HISTORY_LOOKBACK_YEARS = 5;
 
 export function defaultHistoryFromDay(): string {
   const d = new Date();
-  d.setUTCFullYear(d.getUTCFullYear() - 2);
+  d.setUTCFullYear(d.getUTCFullYear() - STOCK_HISTORY_LOOKBACK_YEARS);
   return d.toISOString().slice(0, 10);
 }
 
 export function todayUtcDay(): string {
   return new Date().toISOString().slice(0, 10);
+}
+
+/** Lexicographic max for `YYYY-MM-DD` strings. */
+export function maxIsoDay(a: string, b: string): string {
+  return a >= b ? a : b;
+}
+
+/** Keep only bars on/after the exchange list date (drops recycled-ticker pre-IPO junk). */
+export function filterClosesFromListDate(
+  prices: [number, number][],
+  listDate: string | null | undefined
+): [number, number][] {
+  if (!listDate) return prices;
+  const floorMs = Date.parse(`${listDate}T00:00:00.000Z`);
+  if (!Number.isFinite(floorMs)) return prices;
+  return prices.filter(([ms]) => typeof ms === 'number' && ms >= floorMs);
 }

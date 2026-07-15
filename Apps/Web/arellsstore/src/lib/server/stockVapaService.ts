@@ -4,6 +4,8 @@ import {
   fetchMassiveDailyCloses,
   fetchMassivePrevClose,
   fetchMassiveTickerFundamentals,
+  filterClosesFromListDate,
+  maxIsoDay,
   todayUtcDay,
 } from './massiveStockQuotes';
 import { s3BucketNameOrThrow } from './s3Bucket';
@@ -15,6 +17,8 @@ export type StockVapaAssetConfig = {
   id: string;
   massiveTicker: string;
   s3Key: string;
+  /** Exchange list / IPO day — clamps history when Massive returns recycled pre-list bars. */
+  listDate?: string | null;
 };
 
 const isoDateFromDay = (day: string): string => `${day}T00:00:00.000Z`;
@@ -137,16 +141,23 @@ export async function refreshStockVapa(config: StockVapaAssetConfig) {
 
   let currentMarketCap: number | null = null;
   let sharesOutstanding: number | null = null;
+  let apiListDate: string | null = null;
   try {
     const fundamentals = await fetchMassiveTickerFundamentals(config.massiveTicker);
     currentMarketCap = fundamentals.marketCap;
     sharesOutstanding = fundamentals.weightedSharesOutstanding;
+    apiListDate = fundamentals.listDate;
     if (sharesOutstanding == null && currentMarketCap != null && currentPrice > 0) {
       sharesOutstanding = currentMarketCap / currentPrice;
     }
   } catch (err) {
     console.error(`[stock-vapa:${config.id}] fundamentals fetch failed`, err);
   }
+
+  const listDate =
+    (typeof config.listDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(config.listDate)
+      ? config.listDate
+      : null) ?? apiListDate;
 
   let highestPriceEver = 0;
   let highestPriceDate: string | null = null;
@@ -159,23 +170,34 @@ export async function refreshStockVapa(config: StockVapaAssetConfig) {
   const missingRealHistory = !Array.isArray(storedRealHistory) || storedRealHistory.length === 0;
   const missingMarketCaps = marketCapsAreEmpty(storedRealMarketCap) || marketCapsAreEmpty(storedVapaMarketCap);
   const today = todayUtcDay();
+  const planLookbackDay = defaultHistoryFromDay();
+  const historyFromDay = listDate ? maxIsoDay(planLookbackDay, listDate) : planLookbackDay;
   const lastHistoryDate = storedRealHistory.length ? storedRealHistory[storedRealHistory.length - 1].date : null;
+  const firstHistoryDate = storedRealHistory.length ? storedRealHistory[0].date : null;
   const historyStale = !lastHistoryDate || lastHistoryDate < today;
+  // Rebuild old 2y snapshots after a plan upgrade (first point far later than the desired lookback).
+  const HISTORY_DEPTH_SLACK_MS = 90 * 24 * 60 * 60 * 1000;
+  const historyShorterThanPlan =
+    !!firstHistoryDate &&
+    Date.parse(`${firstHistoryDate}T00:00:00.000Z`) - Date.parse(`${planLookbackDay}T00:00:00.000Z`) >
+      HISTORY_DEPTH_SLACK_MS;
+  // Massive sometimes returns recycled-ticker bars before list_date (e.g. SPCX pre-IPO junk).
+  const historyStartsBeforeListDate =
+    !!listDate && !!firstHistoryDate && firstHistoryDate < listDate;
   const shouldRefreshHistory =
     !storedHistory.length ||
     !storedHistoryLastUpdated ||
     Date.now() - storedHistoryLastUpdated > HISTORY_REFRESH_MS ||
     historyStale ||
     missingRealHistory ||
-    missingMarketCaps;
+    missingMarketCaps ||
+    historyShorterThanPlan ||
+    historyStartsBeforeListDate;
 
   if (shouldRefreshHistory) {
     try {
-      const prices = await fetchMassiveDailyCloses(
-        config.massiveTicker,
-        defaultHistoryFromDay(),
-        today
-      );
+      const rawPrices = await fetchMassiveDailyCloses(config.massiveTicker, historyFromDay, today);
+      const prices = filterClosesFromListDate(rawPrices, listDate);
       if (prices.length > 0) {
         const real = buildDailyHistory(prices, sharesOutstanding);
         const result = buildMonotonicHistory(prices, sharesOutstanding);

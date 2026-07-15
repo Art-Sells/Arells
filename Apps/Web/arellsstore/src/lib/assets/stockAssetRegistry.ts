@@ -15,6 +15,8 @@ export type StockAssetConfig = {
   cssModifier: string;
   massiveTicker: string;
   s3VapaKey: string;
+  /** Exchange list / IPO day (`YYYY-MM-DD`) — used to drop Massive pre-list junk bars. */
+  listDate?: string;
   metaTitle: string;
   faviconPath: string;
   ogBannerPath: string;
@@ -47,6 +49,7 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     cssModifier: 'spacex',
     massiveTicker: 'SPCX',
     s3VapaKey: 'vavity/spacexVAPA.json',
+    listDate: '2026-06-12',
     metaTitle: 'SpaceX never loses value',
     faviconPath: '/images/favicons/SpcxBadge.svg',
     ogBannerPath: '/images/banners/assets/stocks/SpaceX/ArellsSPCXBanner.jpg',

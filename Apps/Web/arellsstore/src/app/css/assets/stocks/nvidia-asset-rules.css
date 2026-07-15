@@ -226,8 +226,8 @@ a.asset-action-button--myinv-asset-link.asset-action-button--nvidia:visited {
 	border-color: rgba(86, 138, 0, 0.3);
 }
 .asset-date-popover--nvidia {
-	/* Same gold wash as NVDA title badge / panels (7.5% line gold on overscroll canvas). */
-	background: color-mix(in srgb, rgb(86, 138, 0) 7.5%, rgb(246, 248, 255));
+	/* Same green wash as NVDA title badge / panels (7.5% line on overscroll canvas). */
+	background: color-mix(in srgb, rgb(86, 138, 0) 7.5%, rgb(242, 246, 232));
 }
 .asset-date-popover--nvidia .asset-date-day:hover {
 	background: rgba(86, 138, 0, 0.14);
@@ -402,9 +402,9 @@ a.asset-action-button--myinv-asset-link.asset-action-button--nvidia:visited {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia:active,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia:focus-visible {
 	box-sizing: border-box;
-	/* Match `.asset-panel--nvidia` wash over NVDA canvas (NVIDIAPageClient overscroll rgb(246, 248, 255)) */
-	background: rgb(246, 248, 255) !important;
-	background: color-mix(in srgb, rgb(86, 138, 0) 7.5%, rgb(246, 248, 255)) !important;
+	/* Match `.asset-panel--nvidia` wash over NVDA canvas (NvidiaPageClient overscroll rgb(242, 246, 232)) */
+	background: rgb(242, 246, 232) !important;
+	background: color-mix(in srgb, rgb(86, 138, 0) 7.5%, rgb(242, 246, 232)) !important;
 	border: 1px solid rgba(86, 138, 0, 0.3);
 }
 .myinv-edit-card--nvidia {

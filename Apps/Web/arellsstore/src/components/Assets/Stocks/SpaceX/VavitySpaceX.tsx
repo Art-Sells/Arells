@@ -1955,6 +1955,25 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
     ],
     []
   );
+  /** Span from first stored bar → now; gates ranges that exceed available history (e.g. post-IPO SpaceX). */
+  const chartHistoryAgeDays = useMemo(() => {
+    const firstDates = [solidHistory[0]?.date, liquidHistory[0]?.date].filter(Boolean) as string[];
+    if (!firstDates.length) return 0;
+    const firstTimes = firstDates.map((d) => new Date(d).getTime()).filter((t) => Number.isFinite(t));
+    if (!firstTimes.length) return 0;
+    const firstMs = Math.min(...firstTimes);
+    const diffMs = Date.now() - firstMs;
+    return diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
+  }, [liquidHistory, solidHistory]);
+  useEffect(() => {
+    if (chartRangeDays == null) return;
+    if (chartHistoryAgeDays >= chartRangeDays) return;
+    const longestEnabled =
+      chartRanges
+        .filter((r) => r.days != null && chartHistoryAgeDays >= r.days)
+        .sort((a, b) => (b.days ?? 0) - (a.days ?? 0))[0]?.days ?? null;
+    setChartRangeDays(longestEnabled);
+  }, [chartHistoryAgeDays, chartRangeDays, chartRanges]);
 
   const formatMarketCap = useCallback((value: number | null) => {
     if (value == null || Number.isNaN(value)) return '0';
@@ -3333,15 +3352,17 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
               </div>
               <div className="asset-price-button-row">
                 {chartRanges.map((range) => {
+                  const isEnabled = range.days == null ? true : chartHistoryAgeDays >= range.days;
                   const isActive = chartRangeDays === range.days;
                   return (
                     <button
                       key={range.label}
                       type="button"
                       className={`asset-range-button asset-range-button--spacex${isActive ? ' is-active' : ''}`}
-                      disabled={isActive}
+                      disabled={!isEnabled || isActive}
+                      title={!isEnabled ? 'Not enough price history for this range' : undefined}
                       onClick={() => {
-                        if (isActive) return;
+                        if (!isEnabled || isActive) return;
                         // Trigger Bull/Bear/Sloth fade on range change.
                         rangeClickFadeRef.current = true;
                         setMarketWordHidden(true);

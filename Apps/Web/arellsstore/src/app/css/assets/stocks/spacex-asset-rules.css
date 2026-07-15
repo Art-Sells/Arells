@@ -226,8 +226,8 @@ a.asset-action-button--myinv-asset-link.asset-action-button--spacex:visited {
 	border-color: rgba(40, 48, 64, 0.3);
 }
 .asset-date-popover--spacex {
-	/* Same gold wash as SPCX title badge / panels (7.5% line gold on overscroll canvas). */
-	background: color-mix(in srgb, rgb(40, 48, 64) 7.5%, rgb(246, 248, 255));
+	/* Same charcoal wash as SPCX title badge / panels (7.5% line on overscroll canvas). */
+	background: color-mix(in srgb, rgb(40, 48, 64) 7.5%, rgb(244, 245, 247));
 }
 .asset-date-popover--spacex .asset-date-day:hover {
 	background: rgba(40, 48, 64, 0.14);
@@ -402,9 +402,9 @@ a.asset-action-button--myinv-asset-link.asset-action-button--spacex:visited {
 .asset-page-content a.asset-title-badge--section.asset-title-badge--spacex:active,
 .asset-page-content a.asset-title-badge--section.asset-title-badge--spacex:focus-visible {
 	box-sizing: border-box;
-	/* Match `.asset-panel--spacex` wash over SPCX canvas (SpaceXPageClient overscroll rgb(246, 248, 255)) */
-	background: rgb(246, 248, 255) !important;
-	background: color-mix(in srgb, rgb(40, 48, 64) 7.5%, rgb(246, 248, 255)) !important;
+	/* Match `.asset-panel--spacex` wash over SPCX canvas (SpaceXPageClient overscroll rgb(244, 245, 247)) */
+	background: rgb(244, 245, 247) !important;
+	background: color-mix(in srgb, rgb(40, 48, 64) 7.5%, rgb(244, 245, 247)) !important;
 	border: 1px solid rgba(40, 48, 64, 0.3);
 }
 .myinv-edit-card--spacex {

@@ -14,6 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       id: ASSET.id,
       massiveTicker: ASSET.massiveTicker,
       s3Key: ASSET.s3VapaKey,
+      listDate: ASSET.listDate ?? null,
     });
     return res.status(200).json(result);
   } catch (error: unknown) {

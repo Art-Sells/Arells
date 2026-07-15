@@ -820,7 +820,15 @@ body {
 .asset-page--bch .asset-page-content,
 .asset-page--bch .asset-page-content *,
 .asset-page--bch .asset-footer,
-.asset-page--bch .asset-footer * {
+.asset-page--bch .asset-footer *,
+.asset-page--nvidia .asset-page-content,
+.asset-page--nvidia .asset-page-content *,
+.asset-page--nvidia .asset-footer,
+.asset-page--nvidia .asset-footer *,
+.asset-page--spacex .asset-page-content,
+.asset-page--spacex .asset-page-content *,
+.asset-page--spacex .asset-footer,
+.asset-page--spacex .asset-footer * {
 	color: var(--asset-unified-text-color) !important;
 }
 
@@ -10443,6 +10451,46 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
+.asset-page--nvidia .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(86, 138, 0, 0.95) !important;
+	-webkit-text-fill-color: rgba(86, 138, 0, 0.95) !important;
+}
+
+.asset-page--nvidia .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(86, 138, 0, 0.95) !important;
+	-webkit-text-fill-color: rgba(86, 138, 0, 0.95) !important;
+	border-color: rgba(86, 138, 0, 0.38) !important;
+	background: rgba(86, 138, 0, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--nvidia .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(86, 138, 0, 0.3);
+	opacity: 1;
+}
+
+.asset-page--spacex .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(40, 48, 64, 0.95) !important;
+	-webkit-text-fill-color: rgba(40, 48, 64, 0.95) !important;
+}
+
+.asset-page--spacex .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(40, 48, 64, 0.95) !important;
+	-webkit-text-fill-color: rgba(40, 48, 64, 0.95) !important;
+	border-color: rgba(40, 48, 64, 0.38) !important;
+	background: rgba(40, 48, 64, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--spacex .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(40, 48, 64, 0.3);
+	opacity: 1;
+}
+
 .asset-page--stellar .site-social-footer.site-social-footer--asset .site-social-footer-rule {
 	background: rgba(0, 0, 0, 0.3);
 	opacity: 1;
@@ -11030,6 +11078,14 @@ a.asset-action-button--save-signin {
 	background: rgba(0, 0, 0, 0.04);
 }
 
+.asset-page--nvidia .asset-guest-action-shell {
+	background: rgba(86, 138, 0, 0.075);
+}
+
+.asset-page--spacex .asset-guest-action-shell {
+	background: rgba(40, 48, 64, 0.075);
+}
+
 .asset-page--bitcoin .asset-guest-action-shell .shadow-border {
 	border-color: rgba(248, 141, 0, 0.3);
 	opacity: 1;
@@ -11080,6 +11136,16 @@ a.asset-action-button--save-signin {
 
 .asset-page--stellar .asset-guest-action-shell .shadow-border {
 	border-color: rgba(0, 0, 0, 0.25);
+	opacity: 1;
+}
+
+.asset-page--nvidia .asset-guest-action-shell .shadow-border {
+	border-color: rgba(86, 138, 0, 0.3);
+	opacity: 1;
+}
+
+.asset-page--spacex .asset-guest-action-shell .shadow-border {
+	border-color: rgba(40, 48, 64, 0.3);
 	opacity: 1;
 }
 
@@ -11193,6 +11259,14 @@ a.asset-action-button--save-signin {
 
 .asset-page--xrp .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(35, 41, 47)) !important;
+}
+
+.asset-page--nvidia .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(58, 96, 0)) !important;
+}
+
+.asset-page--spacex .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(24, 30, 40)) !important;
 }
 
 .asset-page--stellar .asset-guest-landing .guest-landing-copyright--asset {

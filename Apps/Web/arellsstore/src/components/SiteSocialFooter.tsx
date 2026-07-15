@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { CRYPTO_ASSETS, type CryptoAssetTheme } from '../lib/assets/cryptoAssetRegistry';
+import { STOCK_ASSETS, type StockAssetTheme } from '../lib/assets/stockAssetRegistry';
 
 function footerHiddenForPath(pathname: string): boolean {
   if (pathname === '/about') return true;
@@ -13,15 +14,17 @@ function footerHiddenForPath(pathname: string): boolean {
   return false;
 }
 
-type FooterVariant = 'accent' | CryptoAssetTheme | 'default';
+type FooterVariant = 'accent' | CryptoAssetTheme | StockAssetTheme | 'default';
 
 function variantForPath(pathname: string): FooterVariant {
   const path = (pathname || '/').replace(/\/+$/, '') || '/';
   if (path === '/' || path === '/my-investments' || path === '/my-portfolio' || path === '/earn-money-weekly') {
     return 'accent';
   }
-  const asset = CRYPTO_ASSETS.find((a) => a.href === path);
-  if (asset) return asset.theme;
+  const crypto = CRYPTO_ASSETS.find((a) => a.href === path);
+  if (crypto) return crypto.theme;
+  const stock = STOCK_ASSETS.find((a) => a.href === path);
+  if (stock) return stock.theme;
   return 'default';
 }
 
