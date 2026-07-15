@@ -6,9 +6,6 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
-- Add MASSIVE_API_KEY to Amplify and prepare to switch to PRO (29.99 5 years historical data) after deployment
-- - Make brink1111111@outlook.com 
-
 - *switch from live to local testing false/true for myinv-engagement-v1 payments*
 -*brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
 
