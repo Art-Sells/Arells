@@ -11273,6 +11273,53 @@ a.asset-action-button--save-signin {
 	color: var(--asset-slogan-color, rgb(17, 17, 17)) !important;
 }
 
+.asset-footer .asset-footer-portfolio-button,
+.asset-page .asset-footer-portfolio-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	appearance: none;
+	-webkit-appearance: none;
+	box-shadow: none !important;
+	transition:
+		background-color 0.28s ease,
+		color 0.28s ease,
+		-webkit-text-fill-color 0.28s ease,
+		border-color 0.28s ease,
+		opacity 0.28s ease;
+}
+
+.asset-footer .asset-footer-portfolio-button:disabled,
+.asset-page .asset-footer-portfolio-button:disabled {
+	opacity: 1 !important;
+	cursor: not-allowed !important;
+	pointer-events: none !important;
+	transform: none !important;
+	color: var(--asset-line-color) !important;
+	-webkit-text-fill-color: var(--asset-line-color) !important;
+	background: color-mix(in srgb, var(--asset-line-color) 18%, transparent) !important;
+	border: 1px solid transparent !important;
+	border-color: transparent !important;
+}
+
+.asset-footer .asset-footer-portfolio-button:disabled .asset-footer-about-text,
+.asset-page .asset-footer-portfolio-button:disabled .asset-footer-about-text {
+	color: var(--asset-line-color) !important;
+	-webkit-text-fill-color: var(--asset-line-color) !important;
+}
+
+.asset-footer-portfolio-button-spinner {
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(in srgb, var(--asset-line-color) 28%, transparent);
+	border-top-color: var(--asset-line-color);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+}
+
 .asset-summary-circle-loader {
 	position: fixed;
 	bottom: var(--asset-summary-circle-loader-bottom);
@@ -11293,6 +11340,18 @@ a.asset-action-button--save-signin {
 .asset-summary-circle-loader.is-fading-out {
 	opacity: 0;
 	transition: opacity 2s ease;
+}
+
+.asset-summary-circle-loader--myinv {
+	/* Sit over the summary area while Purchased/Current/Profit wait for prices. */
+	bottom: var(--myinv-summary-circle-loader-bottom, 52vh);
+	z-index: 90;
+}
+
+.asset-summary-circle-loader--myinv .asset-summary-circle-loader-ring {
+	background: color-mix(in srgb, var(--myinv-accent-color) 20%, transparent);
+	border: var(--asset-chart-line-width, 6.5px) solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
 }
 
 .asset-summary-circle-loader-ring {
@@ -12292,11 +12351,46 @@ a.asset-action-button--save-signin {
 	width: 100%;
 	max-width: none;
 	text-transform: lowercase;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	appearance: none;
+	-webkit-appearance: none;
+	box-shadow: none !important;
 	background: var(--myinv-accent-color) !important;
 	color: #fff !important;
 	-webkit-text-fill-color: #fff !important;
-	border-color: var(--myinv-accent-color) !important;
-	transition: transform 0.2s ease;
+	border: 1px solid var(--myinv-accent-color) !important;
+	transition:
+		transform 0.2s ease,
+		background-color 0.28s ease,
+		color 0.28s ease,
+		-webkit-text-fill-color 0.28s ease,
+		border-color 0.28s ease;
+}
+
+.myinv-mission-portfolio-wrap .myinv-mission-portfolio-button:disabled {
+	opacity: 1;
+	cursor: not-allowed;
+	pointer-events: none;
+	transform: none !important;
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+	background: color-mix(in srgb, var(--myinv-accent-color) 18%, transparent) !important;
+	border: 1px solid transparent !important;
+	border-color: transparent !important;
+}
+
+.myinv-mission-portfolio-button-spinner {
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
 }
 
 .myinv-mission-portfolio-wrap .myinv-mission-portfolio-button:active {

@@ -22,6 +22,7 @@ type MyInvAssetHubPanelProps = {
 };
 
 const CRYPTO_ID_SET = new Set<string>(SUPPORTED_CRYPTO_ASSET_IDS);
+const STOCK_ID_SET = new Set<string>(SUPPORTED_STOCK_ASSET_IDS);
 
 const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
   title,
@@ -36,7 +37,7 @@ const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
   onStocksOpen,
 }) => {
   const cryptoAssets = useMemo(() => assets.filter((id) => CRYPTO_ID_SET.has(id)), [assets]);
-  const stockAssets = useMemo(() => [...SUPPORTED_STOCK_ASSET_IDS], []);
+  const stockAssets = useMemo(() => assets.filter((id) => STOCK_ID_SET.has(id)), [assets]);
 
   return (
     <div className={`myinv-panel-group myinv-panel-group--bordered myinv-asset-hub-group${slideIn ? ' page-slide-in' : ''}`}>
@@ -50,16 +51,16 @@ const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
               assets.length > 0 ? (
                 <MyInvAssetBadgeGrid assets={assets} linkKeyPrefix={`${linkKeyPrefix}-held`} />
               ) : null
-            ) : (
+            ) : cryptoAssets.length > 0 ? (
               <MyInvCryptoExpandableSection
                 assets={cryptoAssets}
                 linkKeyPrefix={`${linkKeyPrefix}-crypto`}
                 cryptoOpen={cryptoOpen}
                 onCryptoOpen={onCryptoOpen}
               />
-            )}
+            ) : null}
           </div>
-          {showStocksSection && onStocksOpen ? (
+          {showStocksSection && onStocksOpen && stockAssets.length > 0 ? (
             <div className={`myinv-accent-border myinv-asset-hub-stocks${stocksOpen ? ' is-expanded' : ''}`}>
               <MyInvStocksAction
                 assets={stockAssets}

@@ -7,6 +7,7 @@ const ASSET = CRYPTO_ASSET_BY_ID.ethereum;
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import SiteSocialFooter from '../../../SiteSocialFooter';
+import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
 import Ethereum from './ethereum';
 import { useUser } from '../../../../context/UserContext';
 
@@ -318,14 +319,7 @@ const EthereumPageClient: React.FC = () => {
           className={`asset-footer${sessionResetFooterHidden ? ' asset-footer--session-reset-hidden' : ''}`}
           aria-hidden={sessionResetFooterHidden ? true : undefined}
         >
-          {!!email && (
-            <Link
-              href="/my-portfolio"
-              className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
-            >
-              <span className="asset-footer-about-text">view my portfolio</span>
-            </Link>
-          )}
+          {!!email && <AssetFooterPortfolioButton cssModifier={ASSET.cssModifier} />}
           <Link
             href="/"
             className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-view-more-assets asset-view-more-assets--footer asset-footer-viewmore`}

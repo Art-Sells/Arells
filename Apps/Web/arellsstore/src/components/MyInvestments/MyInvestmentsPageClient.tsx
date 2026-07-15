@@ -2,8 +2,11 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { liquidSolidToggleKnobStyle } from '../Assets/shared/liquidSolidToggleKnobStyle';
 import { useLiquidSolidToggleTrackSync } from '../Assets/shared/useLiquidSolidToggleTrackSync';
+import AssetSummaryCircleLoader from '../Assets/shared/AssetSummaryCircleLoader';
+import { useAssetSummaryCircleLoader } from '../Assets/shared/useAssetSummaryCircleLoader';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
@@ -21,6 +24,8 @@ import {
 } from '../../lib/vavity/portfolioValuation';
 import { useMyInvEngagementEvent } from '../../hooks/useMyInvEngagementEvent';
 
+const SUMMARY_VALUES_FORCE_READY_MS = 8000;
+
 const formatCurrencyParts = (value: number) => {
   const formatted = (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const [integer, decimals = '00'] = formatted.split('.');
@@ -28,6 +33,8 @@ const formatCurrencyParts = (value: number) => {
 };
 
 const MyInvestmentsPageClient: React.FC = () => {
+  const router = useRouter();
+  const [loadingPortfolio, setLoadingPortfolio] = useState(false);
   const {
     isSignedIn,
     email,
@@ -83,6 +90,18 @@ const MyInvestmentsPageClient: React.FC = () => {
     ];
     void ensureAssetsLoaded(assetIds);
   }, [effectiveInvestments, ensureAssetsLoaded]);
+
+  const heldAssetIds = useMemo(
+    () =>
+      [
+        ...new Set(
+          effectiveInvestments.map((inv: { asset?: string }) =>
+            String(inv?.asset || 'bitcoin').toLowerCase()
+          )
+        ),
+      ],
+    [effectiveInvestments]
+  );
 
   const valuedInvestments = useMemo(() => {
     if (!effectiveInvestments.length) return [];
@@ -163,6 +182,11 @@ const MyInvestmentsPageClient: React.FC = () => {
   const summaryQuickFadeRef = useRef(false);
   const summaryQuickFadeTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const summaryQuickFadeEndRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const [summaryAssetLoadAttempted, setSummaryAssetLoadAttempted] = useState(false);
+  const [summaryForceReady, setSummaryForceReady] = useState(false);
+  const [summarySectionVisible, setSummarySectionVisible] = useState(false);
+  const summaryCircleLoader = useAssetSummaryCircleLoader();
+  const summaryKeysRef = useRef('');
   const [summaryTotalsSnapshot, setSummaryTotalsSnapshot] = useState<{
     acVatop: number;
     acdVatop: number;
@@ -457,6 +481,69 @@ const MyInvestmentsPageClient: React.FC = () => {
   const hasAny = effectiveInvestments.length > 0;
   const displayTotals = displayIsLiquidMode ? liquidSummaryTotals : solidSummaryTotals;
 
+  const assetSnapshotUsable = useCallback((assetId: string) => {
+    const snap = assets[assetId];
+    if (!snap) return false;
+    if (typeof snap.price === 'number' && snap.price > 0) return true;
+    if (typeof snap.vapa === 'number' && snap.vapa > 0) return true;
+    if (Array.isArray(snap.liquidHistory) && snap.liquidHistory.length > 0) return true;
+    if (Array.isArray(snap.solidHistory) && snap.solidHistory.length > 0) return true;
+    return false;
+  }, [assets]);
+
+  const summaryValuesReady = useMemo(() => {
+    if (!hasAny) return false;
+    if (summaryForceReady) return true;
+    if (!summaryAssetLoadAttempted) return false;
+    return heldAssetIds.every((id) => assetSnapshotUsable(id));
+  }, [hasAny, summaryForceReady, summaryAssetLoadAttempted, heldAssetIds, assetSnapshotUsable]);
+
+  useEffect(() => {
+    const key = heldAssetIds.slice().sort().join(',');
+    if (!effectiveSignedIn || !hasAny) {
+      summaryKeysRef.current = '';
+      setSummaryAssetLoadAttempted(false);
+      setSummaryForceReady(false);
+      setSummarySectionVisible(false);
+      summaryCircleLoader.dismissImmediately();
+      return;
+    }
+    if (key === summaryKeysRef.current) return;
+    summaryKeysRef.current = key;
+    let cancelled = false;
+    setSummaryAssetLoadAttempted(false);
+    setSummaryForceReady(false);
+    setSummarySectionVisible(false);
+    (async () => {
+      await ensureAssetsLoaded(heldAssetIds);
+      if (cancelled) return;
+      setSummaryAssetLoadAttempted(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dismissImmediately/show are stable enough; avoid re-fetch loops
+  }, [effectiveSignedIn, hasAny, heldAssetIds, ensureAssetsLoaded]);
+
+  useEffect(() => {
+    if (!hasAny || !summaryAssetLoadAttempted || summaryValuesReady) return;
+    const timer = globalThis.setTimeout(() => setSummaryForceReady(true), SUMMARY_VALUES_FORCE_READY_MS);
+    return () => globalThis.clearTimeout(timer);
+  }, [hasAny, summaryAssetLoadAttempted, summaryValuesReady]);
+
+  useEffect(() => {
+    if (!effectiveSignedIn || !hasAny) return;
+    if (showLoading) return;
+    if (summaryValuesReady) {
+      setSummarySectionVisible(true);
+      summaryCircleLoader.dismissOnSummaryExpandComplete();
+      return;
+    }
+    setSummarySectionVisible(false);
+    summaryCircleLoader.show();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveSignedIn, hasAny, showLoading, summaryValuesReady]);
+
   /** My Assets badge order: largest current holding first (follows liquid/solid mode). */
   const myAssetsSortedByHoldings = useMemo(() => {
     const totals = new Map<string, number>();
@@ -721,7 +808,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     const value = summaryTotals?.acVatop || 0;
     const formatted = formatCurrencyParts(value);
     const key = `${formatted.integer}.${formatted.decimals}`;
-    if (!open || !hasAny || !purchasedValueRef.current) {
+    if (!open || !hasAny || !summarySectionVisible || !purchasedValueRef.current) {
       pendingPurchasedHeightRef.current = true;
       return;
     }
@@ -734,13 +821,13 @@ const MyInvestmentsPageClient: React.FC = () => {
     if (lastFormattedVatopRef.current === key) return;
     lastFormattedVatopRef.current = key;
     animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValueHeightRef, purchasedValueTimerRef);
-  }, [animateNumberHeight, open, hasAny, summaryTotals.acVatop]);
+  }, [animateNumberHeight, open, hasAny, summarySectionVisible, summaryTotals.acVatop]);
 
   useLayoutEffect(() => {
     const value = summaryTotals?.acVact || 0;
     const formatted = formatCurrencyParts(value);
     const key = `${formatted.integer}.${formatted.decimals}`;
-    if (!open || !hasAny || !currentValueRef.current) {
+    if (!open || !hasAny || !summarySectionVisible || !currentValueRef.current) {
       pendingCurrentHeightRef.current = true;
       return;
     }
@@ -753,12 +840,12 @@ const MyInvestmentsPageClient: React.FC = () => {
     if (lastFormattedVactRef.current === key) return;
     lastFormattedVactRef.current = key;
     animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValueHeightRef, currentValueTimerRef);
-  }, [animateNumberHeight, open, hasAny, summaryTotals.acVact]);
+  }, [animateNumberHeight, open, hasAny, summarySectionVisible, summaryTotals.acVact]);
 
   useLayoutEffect(() => {
     const formatted = formatCurrencyParts(Math.abs(totalProfit || 0));
     const key = `${profitLabel}|${formatted.integer}.${formatted.decimals}`;
-    if (!open || !hasAny || !profitValueRef.current) {
+    if (!open || !hasAny || !summarySectionVisible || !profitValueRef.current) {
       pendingProfitHeightRef.current = true;
       return;
     }
@@ -773,7 +860,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     lastFormattedProfitRef.current = key;
     animateNumberHeight(profitValueRef, setProfitValueHeight, profitValueHeightRef, profitValueTimerRef);
     animateNumberHeight(profitBlockRef, setProfitBlockHeight, profitBlockHeightRef, profitBlockTimerRef);
-  }, [animateNumberHeight, open, hasAny, totalProfit, profitLabel]);
+  }, [animateNumberHeight, open, hasAny, summarySectionVisible, totalProfit, profitLabel]);
 
   useEffect(() => {
     if (rangeLoading) return;
@@ -877,6 +964,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                 </div>
               ) : effectiveSignedIn && hasAny ? (
                 <>
+                  {summarySectionVisible ? (
                   <div className={`myinv-summary-block myinv-accent-border${slideIn ? ' page-slide-in' : ''}`}>
                     <div
                       className={`myinv-summary-section${summaryQuickFade ? ' is-quickfade' : ''}`}
@@ -1037,6 +1125,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                       </div>
                     </div>
                   </div>
+                  ) : null}
 
                   {showLiquidityToggle && (
                     <div className={`myinv-toggle-shell myinv-accent-border${slideIn ? ' page-slide-in' : ''}`}>
@@ -1173,12 +1262,27 @@ const MyInvestmentsPageClient: React.FC = () => {
                           <div className="myinv-mission-accent-body">
                             <p className="myinv-mission-line">we are on a mission to ensure your investments never lose value</p>
                             <div className="myinv-mission-portfolio-wrap">
-                              <Link
-                                href="/my-portfolio"
+                              <button
+                                type="button"
+                                disabled={loadingPortfolio}
+                                aria-busy={loadingPortfolio || undefined}
+                                onClick={() => {
+                                  if (loadingPortfolio) return;
+                                  setLoadingPortfolio(true);
+                                  globalThis.setTimeout(() => {
+                                    router.push('/my-portfolio');
+                                    router.refresh();
+                                  }, 280);
+                                }}
                                 className="auth-submit auth-submit--accent auth-submit--signup-page myinv-mission-portfolio-button"
                               >
-                                view my portfolio
-                              </Link>
+                                {loadingPortfolio ? (
+                                  <span className="myinv-mission-portfolio-button-spinner" aria-hidden="true" />
+                                ) : null}
+                                <span>
+                                  {loadingPortfolio ? 'loading portfolio' : 'view my portfolio'}
+                                </span>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -1253,6 +1357,12 @@ const MyInvestmentsPageClient: React.FC = () => {
         </div>
         <SiteSocialFooter variant="accent" />
       </div>
+      <AssetSummaryCircleLoader
+        cssModifier="myinv"
+        mounted={summaryCircleLoader.mounted}
+        visible={summaryCircleLoader.visible}
+        fadingOut={summaryCircleLoader.fadingOut}
+      />
     </>
   );
 };
