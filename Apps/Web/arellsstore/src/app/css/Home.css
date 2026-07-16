@@ -9503,7 +9503,7 @@ a.growth-metrics-about-button:focus-visible {
 	color: #111;
 	/* 16px at all widths: iOS Safari avoids focus-zoom; no breakpoint jump vs 13px → 16px under 750px. */
 	font-size: 16px;
-	font-weight: 200;
+	font-weight: 400;
 	outline: none;
 	/* No transition on border/background: `:root` animates `--myinv-accent-color` (myInvAccentCycle).
 	   A 0.5s transition here made inputs lag behind the title and page tint, which use the same variable. */
