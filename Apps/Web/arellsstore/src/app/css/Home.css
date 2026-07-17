@@ -9910,7 +9910,7 @@ a.growth-metrics-about-button:focus-visible {
 
 .auth-verify-sent-email-accent {
 	color: var(--myinv-accent-color);
-	font-weight: 700;
+	font-weight: 400;
 	font-size: 15px;
 	overflow-wrap: anywhere;
 }
