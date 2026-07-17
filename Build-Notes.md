@@ -2,12 +2,14 @@
 
 ## Arells v1
 
+### Verify dmarc email aggregates daily/weekly
+
 ### Clean Up Cursor storage (monthly):
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
 - *switch from live to local testing false/true for myinv-engagement-v1 payments*
--*brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
+- *brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
 
 If sharing (organic) happens:
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*
