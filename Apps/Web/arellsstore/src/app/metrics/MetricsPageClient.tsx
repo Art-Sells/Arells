@@ -69,12 +69,6 @@ export default function MetricsPageClient() {
 
   return (
     <div className="growth-metrics-page">
-      <div className="growth-metrics-under-construction-float" aria-hidden="true">
-        <p className="growth-metrics-under-construction-inner">
-          <span className="growth-metrics-under-construction-word">under</span>{' '}
-          <span className="growth-metrics-under-construction-word">construction</span>
-        </p>
-      </div>
       <div className={`growth-metrics-page__stack${slideIn ? ' growth-metrics-page__stack--in' : ''}`}>
         <div className="growth-metrics-title-bar">
           <div className="growth-metrics-title-cluster">

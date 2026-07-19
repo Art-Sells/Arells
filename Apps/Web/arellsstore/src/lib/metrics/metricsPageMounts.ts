@@ -1,7 +1,5 @@
 import type AWS from 'aws-sdk';
-import type { AnalyticsSessionMeta } from '../analytics/types';
 import { hashEmailForAnalytics } from '../analytics/userHash';
-import { loadAllSessionMetasFromS3 } from '../analytics/loadSessionMetasFromS3';
 import { normalizeAnalyticsPath } from '../analytics/pathUtils';
 import { listVerifiedUserS3Touches, type UserTouchMap } from './listUserS3Touches';
 
@@ -13,7 +11,7 @@ const WAU_ROLLING_DAYS = 7;
 /** MAUt: distinct accounts active on any of the last 30 UTC days (inclusive). */
 const MAU_ROLLING_DAYS = 30;
 
-/** Per-day signed-in mounts from POST /api/metrics/page-mount (merged with beacon session-meta for DAUt/WAUt/MAUt). */
+/** Per-day signed-in mounts from POST /api/metrics/page-mount. */
 export const METRICS_PAGE_MOUNTS_PREFIX = 'analytics/metrics-page-mounts-v1/';
 
 /** Mount keys: `e:{canonicalEmailKey}` (current) or legacy `h:{hash}`. Anonymous `s:` mounts are ignored. */
@@ -84,23 +82,16 @@ export async function listMountDedupesForUtcDay(
   return set;
 }
 
-function sessionTouchesUtcDay(firstSeen: number, lastSeen: number, dayKey: string): boolean {
-  const d0 = Date.parse(`${dayKey}T00:00:00.000Z`);
-  const d1 = d0 + DAY_MS - 1;
-  return firstSeen <= d1 && lastSeen >= d0;
+/** Discrete Auth/Vavity LastModified calendar days only (no span-fill). */
+function userActivityDayKeys(ut: { authMs?: number; vavityMs?: number }): Set<string> {
+  const days = new Set<string>();
+  if (ut.authMs != null) days.add(isoDayKey(ut.authMs));
+  if (ut.vavityMs != null) days.add(isoDayKey(ut.vavityMs));
+  return days;
 }
 
-function userSpanMs(ut: { authMs?: number; vavityMs?: number }): { min: number; max: number } | null {
-  const times = [ut.authMs, ut.vavityMs].filter((t): t is number => t != null);
-  if (!times.length) return null;
-  return { min: Math.min(...times), max: Math.max(...times) };
-}
-
-/** S3 Auth/Vavity LastModified span overlaps this UTC calendar day (same rule for DAUt/WAUt/MAUt). */
 function userTouchesUtcDay(ut: { authMs?: number; vavityMs?: number }, dayKey: string): boolean {
-  const span = userSpanMs(ut);
-  if (!span) return false;
-  return sessionTouchesUtcDay(span.min, span.max, dayKey);
+  return userActivityDayKeys(ut).has(dayKey);
 }
 
 function collectAccountsActiveOnUtcDaySpan(touchMap: UserTouchMap, dayKey: string): Set<string> {
@@ -134,14 +125,13 @@ function mountDedupeToEmailKey(dedupe: string, hashToEmail: Map<string, string>)
 
 /**
  * Distinct accounts active on any of the given UTC days:
- * S3 touch span + signed-in page-mount + analytics session-meta (when enabled).
+ * discrete S3 Auth/Vavity touch days + signed-in page-mount.
  */
 async function collectAccountsActiveForUtcDays(
   s3: AWS.S3,
   bucket: string,
   touchMap: UserTouchMap,
   hashToEmail: Map<string, string>,
-  metas: AnalyticsSessionMeta[],
   dayKeys: string[]
 ): Promise<Set<string>> {
   const set = new Set<string>();
@@ -154,44 +144,19 @@ async function collectAccountsActiveForUtcDays(
       const emailKey = mountDedupeToEmailKey(dedupe, hashToEmail);
       if (emailKey && touchMap.has(emailKey)) set.add(emailKey);
     }
-    for (const m of metas) {
-      if (!m.userHash || !sessionMetaActiveOnUtcDay(m, dayKey)) continue;
-      const emailKey = hashToEmail.get(m.userHash);
-      if (emailKey && touchMap.has(emailKey)) set.add(emailKey);
-    }
-  }
-  return set;
-}
-
-/** Signed-in session active on a UTC day (open/pageview day keys, else firstSeen–lastSeen span). */
-function sessionMetaActiveOnUtcDay(m: AnalyticsSessionMeta, dayKey: string): boolean {
-  if (m.pageMountDayKeys?.includes(dayKey)) return true;
-  return sessionTouchesUtcDay(m.firstSeenAt, m.lastSeenAt, dayKey);
-}
-
-function distinctSignedInUserHashesOnUtcDay(metas: AnalyticsSessionMeta[], dayKey: string): Set<string> {
-  const set = new Set<string>();
-  for (const m of metas) {
-    const hash = m.userHash;
-    if (!hash) continue;
-    if (sessionMetaActiveOnUtcDay(m, dayKey)) set.add(hash);
   }
   return set;
 }
 
 /**
- * DAUt/WAUt/MAUt — same rules, different UTC windows (all from users/ + visits).
- * Active on a day = S3 Auth/Vavity span touches that day, or signed-in page-mount, or analytics meta.
+ * DAUt/WAUt/MAUt — verified accounts only (S3 touch days + page-mounts).
  */
 export async function aggregateSignedInUserTraffic(
   s3: AWS.S3,
   bucket: string,
   nowMs: number
 ): Promise<Omit<MetricsPageActivityPayload, 'generatedAt' | 'pagePath'>> {
-  const [touchMap, metas] = await Promise.all([
-    listVerifiedUserS3Touches(s3, bucket),
-    loadAllSessionMetasFromS3(s3, bucket),
-  ]);
+  const touchMap = await listVerifiedUserS3Touches(s3, bucket);
   const hashToEmail = buildHashToEmailKeyMap(touchMap);
 
   const todayKey = isoDayKey(nowMs);
@@ -201,12 +166,9 @@ export async function aggregateSignedInUserTraffic(
   const mauKeys = eachUtcDay(mauStartMs, nowMs);
 
   const [dauSet, wauSet, mauSet] = await Promise.all([
-    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, [
-      yesterdayKey,
-      todayKey,
-    ]),
-    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, wauKeys),
-    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, mauKeys),
+    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, [yesterdayKey, todayKey]),
+    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, wauKeys),
+    collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, mauKeys),
   ]);
 
   return {
@@ -225,13 +187,10 @@ export async function listVerifiedWauActiveEmailKeys(
   bucket: string,
   nowMs: number = Date.now()
 ): Promise<Set<string>> {
-  const [touchMap, metas] = await Promise.all([
-    listVerifiedUserS3Touches(s3, bucket),
-    loadAllSessionMetasFromS3(s3, bucket),
-  ]);
+  const touchMap = await listVerifiedUserS3Touches(s3, bucket);
   const hashToEmail = buildHashToEmailKeyMap(touchMap);
   const wauKeys = eachUtcDay(nowMs - (WAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
-  return collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, metas, wauKeys);
+  return collectAccountsActiveForUtcDays(s3, bucket, touchMap, hashToEmail, wauKeys);
 }
 
 export type MetricsActivityDebugAccount = {
@@ -302,46 +261,6 @@ export async function buildMetricsActivityDebug(
     wauRollingDays: WAU_ROLLING_DAYS,
     wauWindowDays: wauKeys,
     accounts,
-  };
-}
-
-/** Beacon session-meta only (no metrics-page-mount union). */
-export async function aggregateSignedInUserTrafficFromSessionMeta(
-  s3: AWS.S3,
-  bucket: string,
-  nowMs: number
-): Promise<Omit<MetricsPageActivityPayload, 'generatedAt' | 'pagePath'>> {
-  const metas = await loadAllSessionMetasFromS3(s3, bucket);
-  const signedIn = metas.filter((m) => Boolean(m.userHash));
-
-  const todayKey = isoDayKey(nowMs);
-  const wauKeys = eachUtcDay(nowMs - (WAU_ROLLING_DAYS - 1) * DAY_MS, nowMs);
-  const mauStartMs = nowMs - (MAU_ROLLING_DAYS - 1) * DAY_MS;
-  const mauKeys = eachUtcDay(mauStartMs, nowMs);
-
-  const dau = distinctSignedInUserHashesOnUtcDay(signedIn, todayKey).size;
-
-  const wauSet = new Set<string>();
-  for (const dayKey of wauKeys) {
-    for (const hash of distinctSignedInUserHashesOnUtcDay(signedIn, dayKey)) {
-      wauSet.add(hash);
-    }
-  }
-
-  const mauSet = new Set<string>();
-  for (const dayKey of mauKeys) {
-    for (const hash of distinctSignedInUserHashesOnUtcDay(signedIn, dayKey)) {
-      mauSet.add(hash);
-    }
-  }
-
-  return {
-    dau,
-    wau: wauSet.size,
-    mau: mauSet.size,
-    utcToday: todayKey,
-    wauRollingDays: WAU_ROLLING_DAYS,
-    mauMonthStart: isoDayKey(mauStartMs),
   };
 }
 

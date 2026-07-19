@@ -8169,36 +8169,6 @@ a.myinv-about-button:focus-visible {
 	background: var(--page-accent-tint);
 }
 
-/* Centered floating watermark (does not tint page background) */
-.growth-metrics-under-construction-float {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 100;
-	pointer-events: none;
-}
-
-.growth-metrics-under-construction-inner {
-	margin: 0;
-	padding: 0;
-	font-size: 15px;
-	font-weight: 200;
-	letter-spacing: -0.4px;
-	line-height: 1.2;
-	text-align: center;
-	white-space: nowrap;
-	opacity: 1;
-	/* Same source as .growth-metrics-title-bar / home button: :root myInvAccentCycle */
-	color: var(--myinv-accent-color);
-}
-
-.growth-metrics-under-construction-word {
-	display: inline-block;
-	color: inherit;
-}
-
 .growth-metrics-page__stack {
 	display: flex;
 	flex-direction: column;
@@ -8338,7 +8308,7 @@ a.myinv-about-button:focus-visible {
 	max-width: min(700px, calc(100% - 20px));
 	min-width: 350px;
 	margin: 0 auto;
-	padding: 1px 0 24px;
+	padding: 1px 0 14px;
 	box-sizing: border-box;
 	border-radius: 12px;
 	background: transparent;
@@ -8532,7 +8502,7 @@ a.growth-metrics-about-button:focus-visible {
 .growth-metrics-panels {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 12px;
 	width: 100%;
 	max-width: 100%;
 	text-align: left;
@@ -8548,27 +8518,58 @@ a.growth-metrics-about-button:focus-visible {
 	box-sizing: border-box;
 }
 
-/* Outer growth frame: equal padding on all sides (inside the border) so content sits centered in the card. */
+/* Inner bordered sections: same padding/gaps at all widths (was under-750 only). */
 .growth-metrics-panels .metrics-growth-outer.myinv-summary-block {
-	padding: 12px;
+	margin-bottom: 0;
+	padding: 10px;
 	box-sizing: border-box;
 }
 
 .growth-metrics-panels .metrics-growth-outer-column {
-	padding-left: 0;
-	padding-right: 0;
+	padding: 0;
+	gap: 10px;
 	min-width: 0;
+}
+
+.growth-metrics-panels .metrics-growth-panel {
+	gap: 10px;
 }
 
 .growth-metrics-panels .metrics-growth-tier.myinv-summary-block,
 .growth-metrics-panels .metrics-growth-toolbar-wrap.myinv-summary-block {
-	padding-left: 0;
-	padding-right: 0;
+	margin-bottom: 0;
+	padding: 0;
 }
 
 .growth-metrics-panels .metrics-growth-tier-inner {
-	padding: 12px;
+	padding: 10px;
 	min-width: 0;
+	box-sizing: border-box;
+}
+
+.growth-metrics-panels .metrics-activity-section.myinv-summary-block {
+	margin-bottom: 0;
+	padding: 9px 12px 16px;
+	box-sizing: border-box;
+}
+
+.growth-metrics-panels .metrics-growth-toolbar-inner {
+	padding: 10px;
+	gap: 10px;
+}
+
+.growth-metrics-panels .metrics-toolbar-block-inner {
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.growth-metrics-panels .metrics-growth-headlines.metrics-price-panel-inner {
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.growth-metrics-panels .metrics-kpi-card {
+	padding: 10px 8px;
 	box-sizing: border-box;
 }
 
@@ -8578,7 +8579,7 @@ a.growth-metrics-about-button:focus-visible {
 		width: min(340px, calc(100% - 20px));
 		max-width: min(340px, calc(100% - 20px));
 		min-width: 0;
-		padding: 1px 0 20px;
+		padding: 1px 0 10px;
 		box-sizing: border-box;
 	}
 
@@ -8599,6 +8600,10 @@ a.growth-metrics-about-button:focus-visible {
 	.growth-metrics-below {
 		width: min(340px, calc(100% - 20px));
 		max-width: min(340px, calc(100% - 20px));
+		min-width: 0;
+	}
+
+	.growth-metrics-about-row {
 		min-width: 0;
 	}
 
@@ -8634,60 +8639,6 @@ a.growth-metrics-about-button:focus-visible {
 		height: calc(17px * 30 / 35);
 	}
 
-	/*
-	 * Inside the main metrics card: match asset-page bordered children under 750px
-	 * (.asset-market-controls / .asset-invest-form-box padding 10px; .myinv-summary-block padding-top 0;
-	 * .asset-price-panel 10px; stacked sections ~10–12px gap).
-	 */
-	.growth-metrics-panels {
-		gap: 12px;
-	}
-
-	.growth-metrics-panels .metrics-growth-outer-column {
-		padding: 0;
-		gap: 10px;
-	}
-
-	.growth-metrics-panels .metrics-growth-panel {
-		gap: 10px;
-	}
-
-	.growth-metrics-panels .metrics-growth-tier-inner {
-		padding: 10px;
-		box-sizing: border-box;
-	}
-
-	/* Outer frame: uniform 10px inset inside border (matches tier-inner 10px). Tier/toolbar shells stay flush. */
-	.growth-metrics-panels .metrics-growth-outer.myinv-summary-block {
-		margin-bottom: 0;
-		padding: 10px;
-		box-sizing: border-box;
-	}
-
-	.growth-metrics-panels .metrics-growth-tier.myinv-summary-block,
-	.growth-metrics-panels .metrics-growth-toolbar-wrap.myinv-summary-block {
-		margin-bottom: 0;
-		padding: 0;
-	}
-
-	/* Activity block has no inner shell — match .myinv-summary-block under 750px (padding-top 0). */
-	.growth-metrics-panels .metrics-activity-section.myinv-summary-block {
-		margin-bottom: 0;
-		padding: 10px;
-		padding-top: 0;
-		box-sizing: border-box;
-	}
-
-	.growth-metrics-panels .metrics-growth-toolbar-inner {
-		padding: 10px;
-		gap: 10px;
-	}
-
-	.growth-metrics-panels .metrics-toolbar-block-inner {
-		padding: 10px;
-		box-sizing: border-box;
-	}
-
 	.growth-metrics-panels .metrics-growth-chart-shell-inner {
 		padding: 0;
 		box-sizing: border-box;
@@ -8701,16 +8652,6 @@ a.growth-metrics-about-button:focus-visible {
 
 	.growth-metrics-panels .metrics-chart-wrap-panel {
 		width: 100%;
-	}
-
-	.growth-metrics-panels .metrics-growth-headlines.metrics-price-panel-inner {
-		padding: 10px;
-		box-sizing: border-box;
-	}
-
-	.growth-metrics-panels .metrics-kpi-card {
-		padding: 10px 8px;
-		box-sizing: border-box;
 	}
 
 	.growth-metrics-card-content {
@@ -8738,7 +8679,51 @@ a.growth-metrics-about-button:focus-visible {
 }
 
 .metrics-activity-section {
+	position: relative;
 	width: 100%;
+}
+
+/* Overlay loader centered on the reserved KPI shell (avoids height jump on reveal). */
+.metrics-activity-loader-slot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.metrics-activity-loader-slot.is-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+}
+
+/* Same accent ring as My Investments; relative inside the slot (not fixed viewport). */
+.metrics-activity-loader-slot .asset-summary-circle-loader--metrics {
+	position: relative;
+	inset: auto;
+	left: auto;
+	top: auto;
+	bottom: auto;
+	transform: none;
+	z-index: 1;
+}
+
+.metrics-activity-loader-slot .asset-summary-circle-loader--metrics .asset-summary-circle-loader-ring {
+	background: color-mix(in srgb, var(--myinv-accent-color) 20%, transparent);
+	border: var(--asset-chart-line-width, 6.5px) solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
+}
+
+/* Crossfade with the loading circle (2s, same as My Investments dismiss). */
+.metrics-activity-section .asset-mount-fade-2s {
+	opacity: 0;
+	transition: opacity 2s ease;
+}
+
+.metrics-activity-section .asset-mount-fade-2s.is-visible {
+	opacity: 1;
 }
 
 .metrics-page-activity-intro {
@@ -8756,7 +8741,6 @@ a.growth-metrics-about-button:focus-visible {
 	margin-top: 4px;
 }
 
-/* DAUt / WAUt / MAUt: keep literal casing (lowercase t), unlike growth KPI labels which use uppercase. */
 .metrics-page-activity-kpis .metrics-kpi-label {
 	text-transform: none;
 }
@@ -8764,7 +8748,7 @@ a.growth-metrics-about-button:focus-visible {
 .metrics-growth-panel {
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
+	gap: 10px;
 }
 
 .metrics-growth-outer {
@@ -8776,8 +8760,8 @@ a.growth-metrics-about-button:focus-visible {
 .metrics-growth-outer-column {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	padding: 12px;
+	gap: 10px;
+	padding: 0;
 	box-sizing: border-box;
 }
 
@@ -8788,7 +8772,7 @@ a.growth-metrics-about-button:focus-visible {
 }
 
 .metrics-growth-tier-inner {
-	padding: 14px 12px 16px;
+	padding: 10px;
 	box-sizing: border-box;
 }
 
@@ -8803,7 +8787,7 @@ a.growth-metrics-about-button:focus-visible {
 	box-sizing: border-box;
 }
 
-/* DAUt / WAUt / MAUt: full-width stacked cards, centered copy. */
+/* DAU / WAU / MAU: full-width stacked cards, centered copy. */
 .metrics-page-activity-kpis.metrics-kpi-grid {
 	grid-template-columns: 1fr;
 	width: 100%;
@@ -8837,8 +8821,19 @@ a.growth-metrics-about-button:focus-visible {
 	text-align: center;
 }
 
-/* Auth/metrics shell is not .asset-page; without this, .asset-mount-fade-2s stays opacity:0 */
+.metrics-growth-panel .metrics-kpi-value-wrap {
+	min-width: 72px;
+	min-height: 1.2em;
+	justify-content: center;
+}
+
+/* Fade metrics headline/KPI digits in/out with is-visible (do not force opacity:1). */
 .metrics-growth-panel .asset-mount-fade-2s {
+	opacity: 0;
+	transition: opacity 0.45s ease;
+}
+
+.metrics-growth-panel .asset-mount-fade-2s.is-visible {
 	opacity: 1;
 }
 
@@ -8986,7 +8981,7 @@ a.growth-metrics-about-button:focus-visible {
 		grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
 		/* Both rows content-sized from the left column so the chart shell height matches headlines + toolbar */
 		grid-template-rows: auto auto;
-		gap: 16px;
+		gap: 14px;
 		align-items: start;
 	}
 
@@ -9026,6 +9021,20 @@ a.growth-metrics-about-button:focus-visible {
 
 	.metrics-growth-main-row:not(.metrics-growth-main-row--with-chart) .metrics-growth-toolbar-wrap {
 		max-width: 100%;
+	}
+}
+
+.metrics-kpi-metric-word--short {
+	display: none;
+}
+
+@media (max-width: 750px) {
+	.metrics-growth-panel .metrics-kpi-metric-word--full {
+		display: none;
+	}
+
+	.metrics-growth-panel .metrics-kpi-metric-word--short {
+		display: inline;
 	}
 }
 
@@ -9089,8 +9098,8 @@ a.growth-metrics-about-button:focus-visible {
 .metrics-growth-toolbar-inner {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	padding: 12px 12px 14px;
+	gap: 10px;
+	padding: 10px;
 	box-sizing: border-box;
 }
 
@@ -9105,7 +9114,7 @@ a.growth-metrics-about-button:focus-visible {
 }
 
 .metrics-toolbar-block-inner {
-	padding: 12px 12px 14px;
+	padding: 10px;
 	box-sizing: border-box;
 	border-radius: inherit;
 }
@@ -9132,7 +9141,7 @@ a.growth-metrics-about-button:focus-visible {
 .metrics-growth-headlines.metrics-price-panel-inner {
 	width: 100%;
 	max-width: 100%;
-	padding: 8px;
+	padding: 10px;
 	box-sizing: border-box;
 }
 
@@ -9168,7 +9177,7 @@ a.growth-metrics-about-button:focus-visible {
 }
 
 .metrics-kpi-card {
-	padding: 12px 10px;
+	padding: 10px 8px;
 	border-radius: 12px;
 	background: rgba(255, 255, 255, 0.95);
 	position: relative;

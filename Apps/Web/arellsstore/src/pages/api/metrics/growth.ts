@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { buildGrowthPayload } from '../../../lib/metrics/buildGrowthPayload';
 import type { MetricsGrowthResponse } from '../../../lib/metrics/types';
-import type { MetricsRange, MetricsSegment, MetricsView } from '../../../lib/metrics/types';
+import type { MetricsRange, MetricsView } from '../../../lib/metrics/types';
 import { getServerS3 } from '../../../lib/server/awsS3';
 
 const s3 = getServerS3();
@@ -30,21 +30,14 @@ function parseRange(q: string | string[] | undefined): MetricsRange {
   return 'all';
 }
 
-function parseSegment(q: string | string[] | undefined): MetricsSegment {
-  const v = Array.isArray(q) ? q[0] : q;
-  if (v === 'signed_in' || v === 'signed-in') return 'signed_in';
-  if (v === 'sessions') return 'sessions';
-  return 'all';
-}
-
 function parseView(q: string | string[] | undefined): MetricsView {
   const v = Array.isArray(q) ? q[0] : q;
   if (v === 'retention') return 'retention';
   return 'growth';
 }
 
-function growthCacheKey(range: MetricsRange, segment: MetricsSegment, view: MetricsView): string {
-  return `analytics/metrics-growth-v5/${range}_${segment}_${view}.json`;
+function growthCacheKey(range: MetricsRange, view: MetricsView): string {
+  return `analytics/metrics-growth-v11/${range}_accounts_${view}.json`;
 }
 
 function growthCacheTtlMs(): number {
@@ -71,7 +64,7 @@ async function tryReadGrowthCache(
       typeof parsed.generatedAt !== 'number' ||
       !Array.isArray(parsed.series) ||
       !parsed.headlines ||
-      typeof parsed.headlines.registeredCombined !== 'number' ||
+      typeof parsed.headlines.registeredUserKeys !== 'number' ||
       typeof parsed.metricsEpochStartMs !== 'number' ||
       !parsed.rangePresetsAvailable ||
       typeof parsed.rangePresetsAvailable['1w'] !== 'boolean'
@@ -108,7 +101,6 @@ const recomputeInflight = new Map<string, Promise<MetricsGrowthResponse>>();
 
 async function recomputeGrowth(
   range: MetricsRange,
-  segment: MetricsSegment,
   view: MetricsView,
   cacheKey: string
 ): Promise<MetricsGrowthResponse> {
@@ -116,7 +108,7 @@ async function recomputeGrowth(
   if (existing) return existing;
 
   const p = (async () => {
-    const payload = await buildGrowthPayload(s3, bucket(), range, segment, view);
+    const payload = await buildGrowthPayload(s3, bucket(), range, view);
     await writeGrowthCache(cacheKey, payload);
     return payload;
   })();
@@ -143,9 +135,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const range = parseRange(req.query.range);
-  const segment = parseSegment(req.query.segment);
   const view = parseView(req.query.view);
-  const cacheKey = growthCacheKey(range, segment, view);
+  const cacheKey = growthCacheKey(range, view);
   const ttlMs = growthCacheTtlMs();
   const skipCache =
     req.query.nocache === '1' || req.query.nocache === 'true' || req.query.refresh === '1';
@@ -158,7 +149,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    const payload = await recomputeGrowth(range, segment, view, cacheKey);
+    const payload = await recomputeGrowth(range, view, cacheKey);
     return res.status(200).json(payload);
   } catch (e) {
     console.error('[metrics/growth]', e);

@@ -6,7 +6,6 @@ import type {
   MetricsHeadlines,
   MetricsRange,
   MetricsRangePresetsAvailable,
-  MetricsSegment,
   MetricsView,
 } from '../../lib/metrics/types';
 
@@ -23,12 +22,7 @@ const GROWTH_POLL_MS = 60_000;
 
 const EMPTY_HEADLINES: MetricsHeadlines = {
   registeredUserKeys: 0,
-  registeredSessionKeys: 0,
-  registeredCombined: 0,
   aauUsers: 0,
-  aauSessionsAnonymous: 0,
-  aauSignedInSessions: 0,
-  aauCombined: 0,
   growthLabel: null,
   growthPct: null,
 };
@@ -38,6 +32,12 @@ function splitKpiPctParts(n: number | null | undefined): { sign: string; body: s
   if (n == null || Number.isNaN(n)) return { sign: '+', body: '0.00' };
   if (n >= 0) return { sign: '+', body: n.toFixed(2) };
   return { sign: '-', body: Math.abs(n).toFixed(2) };
+}
+
+/** Retention WoW/MoM are absolute 0–100 rates — no leading +. */
+function splitRetentionKpiPctParts(n: number | null | undefined): { sign: string; body: string } {
+  if (n == null || Number.isNaN(n)) return { sign: '', body: '0.00' };
+  return { sign: '', body: Math.max(0, n).toFixed(2) };
 }
 
 /** Sentence-style label for headings (e.g. row 1). */
@@ -83,14 +83,12 @@ type Props = {
 export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const [view, setView] = useState<MetricsView>('growth');
   const [range, setRange] = useState<MetricsRange>('all');
-  const [segment, setSegment] = useState<MetricsSegment>('all');
   const [apiKey, setApiKey] = useState(initialApiKey);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<MetricsGrowthResponse | null>(null);
   const [hoverPoint, setHoverPoint] = useState<{ x: Date; y: number } | null>(null);
   const alive = useRef(true);
-  const prevViewRef = useRef<MetricsView>('growth');
   const refreshOnNextLoadRef = useRef(true);
 
   useEffect(() => {
@@ -126,7 +124,6 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
       try {
         const params = new URLSearchParams({
           range,
-          segment,
           view,
         });
         if (key) params.set('key', key);
@@ -163,7 +160,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
         if (!silent) setLoading(false);
       }
     },
-    [apiKey, range, segment, view]
+    [apiKey, range, view]
   );
 
   useEffect(() => {
@@ -190,33 +187,50 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
 
   useEffect(() => {
     setHoverPoint(null);
-  }, [data?.generatedAt, segment, range, view]);
+  }, [data?.generatedAt, range, view]);
 
-  useEffect(() => {
-    if (view === 'retention') {
-      setSegment('signed_in');
-    } else if (prevViewRef.current === 'retention' && view === 'growth') {
-      setSegment('all');
-    }
-    prevViewRef.current = view;
-  }, [view]);
+  const selectView = useCallback(
+    (next: MetricsView) => {
+      if (next === view) return;
+      setHoverPoint(null);
+      setLoading(true);
+      setView(next);
+    },
+    [view]
+  );
+
+  const selectRange = useCallback(
+    (next: MetricsRange) => {
+      if (next === range) return;
+      setHoverPoint(null);
+      setLoading(true);
+      setRange(next);
+    },
+    [range]
+  );
 
   const rangePresetsAvailable = data?.rangePresetsAvailable ?? ALL_RANGE_PRESETS_TRUE;
 
   useEffect(() => {
     if (!data?.rangePresetsAvailable || range === 'all') return;
-    if (!data.rangePresetsAvailable[range]) setRange('all');
+    if (!data.rangePresetsAvailable[range]) {
+      setLoading(true);
+      setRange('all');
+    }
   }, [data?.generatedAt, data?.rangePresetsAvailable, range]);
 
+  const chartMatchesSelection =
+    data != null && data.view === view && data.range === range && !loading;
+
   const chartHistoryForChart = useMemo(() => {
-    if (!data?.series?.length) {
+    if (!chartMatchesSelection || !data?.series?.length) {
       const t = new Date().toISOString();
       return [
         { date: t, price: 0 },
         { date: t, price: 0 },
       ];
     }
-    const s = seriesToChartHistory(data.series, segment, view);
+    const s = seriesToChartHistory(data.series, view);
     if (s.length >= 2) return s;
     if (s.length === 1) {
       const p = s[0];
@@ -229,39 +243,21 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
       { date: t, price: 0 },
       { date: t, price: 0 },
     ];
-  }, [data, segment, view]);
+  }, [chartMatchesSelection, data, view]);
 
   const h = data?.headlines ?? EMPTY_HEADLINES;
 
-  const primaryTitle =
-    view === 'retention'
-      ? 'User Accounts'
-      : segment === 'all'
-        ? 'New User Traffic'
-        : segment === 'signed_in'
-          ? 'New User Accounts'
-          : 'New User Visits';
+  const primaryTitle = 'User Accounts';
   const timeframeHeading = rangeLabelHeading(range);
-  /** Retention + all-time: match product copy (“All-Time … Accounts”). */
   const primaryTimeframeHeading =
     view === 'retention' && range === 'all' ? 'All-Time' : timeframeHeading;
   const timeframeBeforeMetric = rangeLabelBeforeMetric(range);
   const primaryHeading = `${primaryTimeframeHeading} ${primaryTitle}`;
 
-  /**
-   * Visits: distinct anonymous sessions that touched the selected range (aauSessionsAnonymous).
-   * Chart hover still shows that bucket’s daily count (can be 0 on quiet days).
-   */
-  const basePrimary = useMemo(() => {
-    if (view === 'retention') return h.registeredUserKeys;
-    if (segment === 'all') return h.registeredCombined;
-    if (segment === 'signed_in') return h.registeredUserKeys;
-    return h.aauSessionsAnonymous;
-  }, [segment, h, view]);
+  const basePrimary = useMemo(() => h.registeredUserKeys, [h]);
 
   const displayPrimaryStr = useMemo(() => {
     if (hoverPoint && view === 'growth') {
-      // Chart hover uses pixel→value math; spline interpolation can yield tiny negatives → Math.round → -0 → "-0" in UI.
       const n = Math.max(0, Math.round(hoverPoint.y));
       return n.toLocaleString();
     }
@@ -272,7 +268,6 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   const growthPct = h.growthPct;
   const retentionPct = data?.kpis.retentionRatePct ?? null;
 
-  /** Headline growth %; fall back to WoW/MoM/YoY KPIs when series is too short for computeWowMom headline. */
   const effectiveGrowthPct = useMemo(() => {
     if (growthPct != null && !Number.isNaN(growthPct)) return growthPct;
     const k = data?.kpis;
@@ -305,7 +300,6 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
     });
   }, [headerReady, thirdRowPct, view]);
 
-  /** Growth headline row: gray ±, dark digits (retention uses thirdRowPctStr only). */
   const thirdRowGrowthSignBody = useMemo(() => {
     if (!headerReady || view !== 'growth') return null;
     const r = thirdRowPct ?? 0;
@@ -319,14 +313,30 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
   }, [headerReady, view, thirdRowPct]);
 
   const kpiMetricWord = view === 'growth' ? 'Growth' : 'Retention';
+  const kpiMetricWordShort = view === 'growth' ? 'Grwth' : 'Retention';
+
+  const renderKpiMetricWord = (opts?: { lower?: boolean }) => {
+    const full = opts?.lower ? kpiMetricWord.toLowerCase() : kpiMetricWord;
+    const short = opts?.lower ? kpiMetricWordShort.toLowerCase() : kpiMetricWordShort;
+    if (view !== 'growth') return full;
+    return (
+      <>
+        <span className="metrics-kpi-metric-word metrics-kpi-metric-word--full">{full}</span>
+        <span className="metrics-kpi-metric-word metrics-kpi-metric-word--short" aria-hidden="true">
+          {short}
+        </span>
+      </>
+    );
+  };
 
   const kpiPctParts = useMemo(() => {
     if (!data) return null;
+    const split = view === 'retention' ? splitRetentionKpiPctParts : splitKpiPctParts;
     return {
-      wow: splitKpiPctParts(data.kpis.wowPct),
-      mom: splitKpiPctParts(data.kpis.momPct),
+      wow: split(data.kpis.wowPct),
+      mom: split(data.kpis.momPct),
     };
-  }, [data]);
+  }, [data, view]);
 
   return (
     <div className="metrics-growth-panel">
@@ -336,31 +346,31 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
         <div className="metrics-growth-outer-column">
           <div className="metrics-growth-tier metrics-growth-tier--top myinv-summary-block myinv-accent-border">
             <div className="metrics-growth-tier-inner">
-              <div className={`metrics-growth-main-row${data ? ' metrics-growth-main-row--with-chart' : ''}`}>
-                {data ? (
+              <div className={`metrics-growth-main-row${loading || data ? ' metrics-growth-main-row--with-chart' : ''}`}>
+                {loading || data ? (
                   <div className="metrics-price-panel-inner metrics-growth-headlines">
                     <div className="asset-metric-row">
                       <span className="asset-metric-title--bitcoin metrics-growth-toolbar-tone">{primaryHeading}:</span>
                       <span className="asset-metric-value-wrap">
                         {!headerReady && (
-                          <span className="asset-number-loader metrics-number-loader--accent asset-number-loader--overlay" />
+                          <span className="asset-number-loader metrics-number-loader--accent metrics-number-loader--narrow asset-number-loader--overlay" />
                         )}
                         <span className={`asset-metric-value asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}>
-                          {displayPrimaryStr}
+                          {headerReady ? displayPrimaryStr : '\u00a0'}
                         </span>
                       </span>
                     </div>
                     <div className="asset-metric-row">
+                      <span
+                        className="asset-metric-inline-title--bitcoin metrics-growth-toolbar-tone"
+                        style={{ marginRight: 6 }}
+                      >
+                        {timeframeBeforeMetric} {view === 'growth' ? 'Growth' : 'Retention'}:
+                      </span>
                       <span className="asset-metric-value-wrap">
                         {!headerReady && (
                           <span className="asset-number-loader metrics-number-loader--accent metrics-number-loader--narrow asset-number-loader--overlay" />
                         )}
-                        <span
-                          className="asset-metric-inline-title--bitcoin metrics-growth-toolbar-tone"
-                          style={{ marginRight: 6 }}
-                        >
-                          {timeframeBeforeMetric} {view === 'growth' ? 'Growth' : 'Retention'}:
-                        </span>
                         <span
                           className={`asset-metric-value asset-percentage-value asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}
                         >
@@ -387,12 +397,12 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
                   </div>
                 ) : null}
 
-                {data ? (
+                {loading || data ? (
                   <div className="metrics-growth-chart-shell myinv-accent-border">
                     <div className="metrics-growth-chart-shell-inner">
                       <MetricsGrowthChart
                         history={chartHistoryForChart}
-                        loading={loading}
+                        loading={loading || !chartMatchesSelection}
                         onPointHover={setHoverPoint}
                       />
                     </div>
@@ -412,7 +422,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
                               type="button"
                               className={`metrics-toggle-btn${view === 'growth' ? ' is-active' : ''}`}
                               disabled={view === 'growth'}
-                              onClick={() => setView('growth')}
+                              onClick={() => selectView('growth')}
                             >
                               Growth
                             </button>
@@ -420,7 +430,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
                               type="button"
                               className={`metrics-toggle-btn${view === 'retention' ? ' is-active' : ''}`}
                               disabled={view === 'retention'}
-                              onClick={() => setView('retention')}
+                              onClick={() => selectView('retention')}
                             >
                               Retention
                             </button>
@@ -455,7 +465,7 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
                                   title={!presetOk ? 'Not enough history for this window yet' : undefined}
                                   onClick={() => {
                                     if (!presetOk || isCurrent) return;
-                                    setRange(r);
+                                    selectRange(r);
                                   }}
                                 >
                                   {label}
@@ -466,84 +476,70 @@ export default function GrowthMetricsPanel({ initialApiKey = '' }: Props) {
                         </div>
                       </div>
                     </div>
-                    {view !== 'retention' ? (
-                      <div className="metrics-toolbar-block myinv-accent-border">
-                        <div className="metrics-toolbar-block-inner">
-                          <div className="metrics-toolbar-row">
-                            <span className="asset-metric-title--bitcoin metrics-growth-toolbar-tone metrics-toolbar-section-title">
-                              {segment === 'all'
-                                ? 'New User Traffic'
-                                : segment === 'signed_in'
-                                  ? 'New User Accounts'
-                                  : 'New User Visits'}
-                            </span>
-                            <div className="metrics-toggle-group">
-                              {(
-                                [
-                                  ['all', 'All'],
-                                  ['signed_in', 'Accounts'],
-                                  ['sessions', 'Visits'],
-                                ] as const
-                              ).map(([s, label]) => {
-                                const isCurrent = segment === s;
-                                return (
-                                  <button
-                                    key={s}
-                                    type="button"
-                                    className={`metrics-toggle-btn${isCurrent ? ' is-active' : ''}`}
-                                    disabled={isCurrent}
-                                    onClick={() => {
-                                      if (isCurrent) return;
-                                      setSegment(s);
-                                    }}
-                                  >
-                                    {label}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {data && (
+          {(loading || data) && (
             <div className="metrics-growth-tier metrics-growth-tier--bottom myinv-summary-block myinv-accent-border">
               <div className="metrics-growth-tier-inner">
                 <div className="metrics-kpi-grid metrics-kpi-grid--two">
                   <div className="metrics-kpi-card myinv-accent-border">
-                    <div className="metrics-kpi-label metrics-growth-toolbar-tone">WoW {kpiMetricWord}</div>
+                    <div className="metrics-kpi-label metrics-growth-toolbar-tone">
+                      WoW {renderKpiMetricWord()}
+                    </div>
                     <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">
-                      {`Week over Week ${kpiMetricWord.toLowerCase()}`}
+                      Week over Week {renderKpiMetricWord({ lower: true })}
                     </div>
                     <div className="metrics-kpi-value">
-                      {kpiPctParts ? (
-                        <>
-                          <span className="metrics-growth-toolbar-tone">{kpiPctParts.wow.sign}</span>
-                          <span className="metrics-kpi-value-num">{kpiPctParts.wow.body}</span>
-                          <span className="metrics-growth-toolbar-tone">%</span>
-                        </>
-                      ) : null}
+                      <span className="asset-metric-value-wrap metrics-kpi-value-wrap">
+                        {!headerReady && (
+                          <span className="asset-number-loader metrics-number-loader--accent metrics-number-loader--narrow asset-number-loader--overlay" />
+                        )}
+                        <span className={`asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}>
+                          {headerReady && kpiPctParts ? (
+                            <>
+                              {kpiPctParts.wow.sign ? (
+                                <span className="metrics-growth-toolbar-tone">{kpiPctParts.wow.sign}</span>
+                              ) : null}
+                              <span className="metrics-kpi-value-num">{kpiPctParts.wow.body}</span>
+                              <span className="metrics-growth-toolbar-tone">%</span>
+                            </>
+                          ) : (
+                            '\u00a0'
+                          )}
+                        </span>
+                      </span>
                     </div>
                   </div>
                   <div className="metrics-kpi-card myinv-accent-border">
-                    <div className="metrics-kpi-label metrics-growth-toolbar-tone">MoM {kpiMetricWord}</div>
+                    <div className="metrics-kpi-label metrics-growth-toolbar-tone">
+                      MoM {renderKpiMetricWord()}
+                    </div>
                     <div className="metrics-kpi-sublabel metrics-growth-toolbar-tone">
-                      {`Month over Month ${kpiMetricWord.toLowerCase()}`}
+                      Month over Month {renderKpiMetricWord({ lower: true })}
                     </div>
                     <div className="metrics-kpi-value">
-                      {kpiPctParts ? (
-                        <>
-                          <span className="metrics-growth-toolbar-tone">{kpiPctParts.mom.sign}</span>
-                          <span className="metrics-kpi-value-num">{kpiPctParts.mom.body}</span>
-                          <span className="metrics-growth-toolbar-tone">%</span>
-                        </>
-                      ) : null}
+                      <span className="asset-metric-value-wrap metrics-kpi-value-wrap">
+                        {!headerReady && (
+                          <span className="asset-number-loader metrics-number-loader--accent metrics-number-loader--narrow asset-number-loader--overlay" />
+                        )}
+                        <span className={`asset-mount-fade-2s${headerReady ? ' is-visible' : ''}`}>
+                          {headerReady && kpiPctParts ? (
+                            <>
+                              {kpiPctParts.mom.sign ? (
+                                <span className="metrics-growth-toolbar-tone">{kpiPctParts.mom.sign}</span>
+                              ) : null}
+                              <span className="metrics-kpi-value-num">{kpiPctParts.mom.body}</span>
+                              <span className="metrics-growth-toolbar-tone">%</span>
+                            </>
+                          ) : (
+                            '\u00a0'
+                          )}
+                        </span>
+                      </span>
                     </div>
                   </div>
                 </div>

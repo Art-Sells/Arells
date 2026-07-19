@@ -6,17 +6,16 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useUser } from './UserContext';
 import { getAssetVapaUrl } from '../lib/assets/assetKind';
 import { getHomeInitialAssetIds } from '../lib/assets/cryptoAssetRegistry';
-import { sumPortfolioTotalsFromEntries } from '../lib/vavity/portfolioValuation';
 
 interface Investment {
-  cVatop: number;   // Value at time of purchase
-  cpVatop: number;  // VAPA at purchase
-  cVact: number;    // Current value (cVactTaa * cpVact)
-  cpVact: number;   // Current price (tracks VAPA)
-  cVactTaa: number; // Token amount
-  cdVatop: number;  // cVact - cVatop
-  date?: string;    // Optional date purchased
-  asset?: string;   // Asset identifier (e.g., bitcoin)
+  cVatop: number;
+  cpVatop: number;
+  cVact: number;
+  cpVact: number;
+  cVactTaa: number;
+  cdVatop: number;
+  date?: string;
+  asset?: string;
 }
 
 interface TotalsState {
@@ -37,8 +36,6 @@ type AssetSnapshot = {
   historyLastUpdated: number | null;
 };
 
-const PREVIEW_SKIP_SESSION_DELETES = false;
-
 interface VavityaggregatorType {
   assets: Record<string, AssetSnapshot>;
   getAsset: (assetId: string) => AssetSnapshot | undefined;
@@ -50,6 +47,7 @@ interface VavityaggregatorType {
   totals: TotalsState;
   totalsLiquid: TotalsState;
   sessionId: string;
+  /** No-op stubs: anonymous session portfolio APIs removed; signed-in flows use UserContext email APIs. */
   fetchVavityAggregator: (sessionId: string, asset?: string) => Promise<any>;
   fetchVavityAggregatorAll: (sessionId: string) => Promise<any>;
   addVavityAggregator: (sessionId: string, newInvestments: any[], asset?: string) => Promise<any>;
@@ -60,27 +58,22 @@ const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefin
 
 const emptySessionTotals = { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
 
+const emptySessionPayload = () => ({
+  investments: [] as Investment[],
+  totals: { ...emptySessionTotals },
+  totalsLiquid: { ...emptySessionTotals },
+  createdAt: Date.now(),
+  expiresAt: Date.now() + 60_000,
+});
+
 export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { sessionId, email, isSignedIn } = useUser();
+  const { sessionId } = useUser();
   const [assets, setAssets] = useState<Record<string, AssetSnapshot>>({});
-  const [investments, setInvestments] = useState<Investment[]>([]);
-  const [totals, setTotals] = useState<TotalsState>({
-    acVatop: 0,
-    acdVatop: 0,
-    acVact: 0,
-    acVactTaa: 0,
-  });
-  const [totalsLiquid, setTotalsLiquid] = useState<TotalsState>({
-    acVatop: 0,
-    acdVatop: 0,
-    acVact: 0,
-    acVactTaa: 0,
-  });
+  const [investments] = useState<Investment[]>([]);
+  const [totals] = useState<TotalsState>({ ...emptySessionTotals });
+  const [totalsLiquid] = useState<TotalsState>({ ...emptySessionTotals });
   const initialLoadedIds = useMemo(() => getHomeInitialAssetIds(), []);
   const loadedIdsRef = useRef<Set<string>>(new Set(initialLoadedIds));
-  const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
-  const sessionExpiryTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
-  const lastSessionAssetRef = useRef<string>('bitcoin');
 
   const refreshAsset = useCallback(async (assetId: string) => {
     try {
@@ -90,11 +83,26 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         price: typeof data.price === 'number' ? data.price : 0,
         vapa: typeof data.vapa === 'number' ? data.vapa : 0,
         vapaDate: data.vapaDate ?? null,
-        // Prefer Liquid/Solid keys; fall back to legacy keys.
-        solidHistory: Array.isArray(data.solidHistory) ? data.solidHistory : (Array.isArray(data.history) ? data.history : []),
-        liquidHistory: Array.isArray(data.liquidHistory) ? data.liquidHistory : (Array.isArray(data.realHistory) ? data.realHistory : []),
-        solidMarketCap: Array.isArray(data.solidMarketCap) ? data.solidMarketCap : (Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : []),
-        liquidMarketCap: Array.isArray(data.liquidMarketCap) ? data.liquidMarketCap : (Array.isArray(data.realMarketCap) ? data.realMarketCap : []),
+        solidHistory: Array.isArray(data.solidHistory)
+          ? data.solidHistory
+          : Array.isArray(data.history)
+            ? data.history
+            : [],
+        liquidHistory: Array.isArray(data.liquidHistory)
+          ? data.liquidHistory
+          : Array.isArray(data.realHistory)
+            ? data.realHistory
+            : [],
+        solidMarketCap: Array.isArray(data.solidMarketCap)
+          ? data.solidMarketCap
+          : Array.isArray(data.vapaMarketCap)
+            ? data.vapaMarketCap
+            : [],
+        liquidMarketCap: Array.isArray(data.liquidMarketCap)
+          ? data.liquidMarketCap
+          : Array.isArray(data.realMarketCap)
+            ? data.realMarketCap
+            : [],
         historyLastUpdated: typeof data.historyLastUpdated === 'number' ? data.historyLastUpdated : null,
       };
       setAssets((prev) => ({ ...prev, [assetId]: snapshot }));
@@ -145,225 +153,30 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const getAsset = useCallback((assetId: string) => assets[assetId], [assets]);
 
-  useEffect(() => {
-    if (!email) return;
-    setInvestments([]);
-    setTotals({ ...emptySessionTotals });
-    setTotalsLiquid({ ...emptySessionTotals });
-    setSessionExpiresAt(null);
-  }, [email]);
+  const fetchVavityAggregator = useCallback(async (_currentSessionId: string, asset = 'bitcoin'): Promise<any> => {
+    void ensureAssetsLoaded([asset]);
+    return emptySessionPayload();
+  }, [ensureAssetsLoaded]);
 
-  // While the user is active, auto-trigger a fetch right when the session TTL expires so the session investments clear at ~60s.
-  useEffect(() => {
-    if (email) {
-      if (sessionExpiryTimerRef.current) {
-        globalThis.clearTimeout(sessionExpiryTimerRef.current);
-        sessionExpiryTimerRef.current = null;
-      }
-      return;
-    }
-    if (PREVIEW_SKIP_SESSION_DELETES) {
-      if (sessionExpiryTimerRef.current) {
-        globalThis.clearTimeout(sessionExpiryTimerRef.current);
-        sessionExpiryTimerRef.current = null;
-      }
-      return;
-    }
-    if (!sessionId) return;
-    if (sessionExpiresAt == null) return;
-    if (investments.length === 0) {
-      if (sessionExpiryTimerRef.current) {
-        globalThis.clearTimeout(sessionExpiryTimerRef.current);
-        sessionExpiryTimerRef.current = null;
-      }
-      return;
-    }
-    if (sessionExpiryTimerRef.current) {
-      globalThis.clearTimeout(sessionExpiryTimerRef.current);
-      sessionExpiryTimerRef.current = null;
-    }
-    const delay = sessionExpiresAt - Date.now();
-    const safeDelay = Math.max(delay, 0) + 25; // small buffer
-    sessionExpiryTimerRef.current = globalThis.setTimeout(async () => {
-      try {
-        if (email) return;
-        if (typeof window !== 'undefined' && !email && !isSignedIn) {
-          window.dispatchEvent(
-            new CustomEvent('vavity:session-expired', {
-              detail: { holdMs: 5000, expiresAt: sessionExpiresAt },
-            })
-          );
-          await new Promise((r) => globalThis.setTimeout(r, 1100));
-        }
-        const response = await axios.get(`/api/fetchVavityAggregator`, {
-          params: {
-            sessionId,
-            asset: lastSessionAssetRef.current || 'bitcoin',
-            ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: '1' } : {}),
-          },
-        });
-        const data = response.data || {};
-        setInvestments(Array.isArray(data.investments) ? data.investments : []);
-        setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
-        setTotalsLiquid(data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
-        const nextExpiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
-        setSessionExpiresAt(nextExpiresAt);
-      } catch (err) {
-        logClientApiError('VavityProvider session-expiry refetch', err);
-      }
-    }, safeDelay);
-    return () => {
-      if (sessionExpiryTimerRef.current) {
-        globalThis.clearTimeout(sessionExpiryTimerRef.current);
-        sessionExpiryTimerRef.current = null;
-      }
-    };
-  }, [sessionExpiresAt, sessionId, email, isSignedIn, investments.length]);
+  const fetchVavityAggregatorAll = useCallback(async (_currentSessionId: string): Promise<any> => {
+    return emptySessionPayload();
+  }, []);
 
-  const fetchVavityAggregator = useCallback(async (currentSessionId: string, asset = 'bitcoin'): Promise<any> => {
-    if (email) {
-      return {
-        investments: [],
-        totals: { ...emptySessionTotals },
-        totalsLiquid: { ...emptySessionTotals },
-      };
-    }
-    if (!currentSessionId) throw new Error('Session ID is required');
-    try {
-      const response = await axios.get(`/api/fetchVavityAggregator`, {
-        params: {
-          sessionId: currentSessionId,
-          asset,
-          ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: '1' } : {}),
-        },
-      });
-      const data = response.data || {};
-      const hasCreatedAt = typeof data.createdAt === 'number' && Number.isFinite(data.createdAt);
-      const hasExpiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt);
-      if (!hasCreatedAt || !hasExpiresAt) {
-        try {
-          await saveVavityAggregator(currentSessionId, [], asset);
-          const refreshed = await axios.get(`/api/fetchVavityAggregator`, {
-            params: {
-              sessionId: currentSessionId,
-              asset,
-              ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: '1' } : {}),
-            },
-          });
-          Object.assign(data, refreshed.data || {});
-        } catch (err) {
-          logClientApiError(`fetchVavityAggregator session-init:${asset}`, err);
-        }
-      }
-      const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
-      setInvestments(fetchedInvestments);
-      setTotals(sumPortfolioTotalsFromEntries(fetchedInvestments as unknown as Record<string, unknown>[], false));
-      setTotalsLiquid(sumPortfolioTotalsFromEntries(fetchedInvestments as unknown as Record<string, unknown>[], true));
-      lastSessionAssetRef.current = asset;
-      const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
-      setSessionExpiresAt(expiresAt);
+  const addVavityAggregator = useCallback(
+    async (_currentSessionId: string, _newInvestments: any[], asset = 'bitcoin'): Promise<any> => {
       void ensureAssetsLoaded([asset]);
-      return data;
-    } catch (err) {
-      logClientApiError(`fetchVavityAggregator:${asset}`, err);
-      throw err;
-    }
-  }, [email, ensureAssetsLoaded]);
+      return { data: emptySessionPayload() };
+    },
+    [ensureAssetsLoaded]
+  );
 
-  const fetchVavityAggregatorAll = useCallback(async (currentSessionId: string): Promise<any> => {
-    if (email) {
-      return {
-        investments: [],
-        totals: { ...emptySessionTotals },
-        totalsLiquid: { ...emptySessionTotals },
-      };
-    }
-    if (!currentSessionId) throw new Error('Session ID is required');
-    try {
-      const response = await axios.get(`/api/fetchVavityAggregator`, {
-        params: {
-          sessionId: currentSessionId,
-          ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: '1' } : {}),
-        },
-      });
-      const data = response.data || {};
-      const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
-      setInvestments(fetchedInvestments);
-      setTotals(sumPortfolioTotalsFromEntries(fetchedInvestments as unknown as Record<string, unknown>[], false));
-      setTotalsLiquid(sumPortfolioTotalsFromEntries(fetchedInvestments as unknown as Record<string, unknown>[], true));
-      const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
-      setSessionExpiresAt(expiresAt);
-      const invAssets = [
-        ...new Set(
-          fetchedInvestments.map((inv) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
-        ),
-      ];
-      if (invAssets.length) void ensureAssetsLoaded(invAssets);
-      return data;
-    } catch (err) {
-      logClientApiError('fetchVavityAggregatorAll', err);
-      throw err;
-    }
-  }, [email, ensureAssetsLoaded]);
-
-  const addVavityAggregator = useCallback(async (currentSessionId: string, newInvestments: any[], asset = 'bitcoin'): Promise<any> => {
-    if (email) {
-      return { data: { investments: [], totals: { ...emptySessionTotals }, totalsLiquid: { ...emptySessionTotals } } };
-    }
-    if (!currentSessionId || !Array.isArray(newInvestments) || newInvestments.length === 0) {
-      throw new Error('Session ID and non-empty newInvestments array are required');
-    }
-    try {
-      const response = await axios.post('/api/addVavityAggregator', {
-        sessionId: currentSessionId,
-        newInvestments,
-        asset,
-        ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: true } : {}),
-      });
-      const data = response.data?.data || {};
-      const nextInvestments = data.investments || [];
-      setInvestments(nextInvestments);
-      setTotals(sumPortfolioTotalsFromEntries(nextInvestments as unknown as Record<string, unknown>[], false));
-      setTotalsLiquid(sumPortfolioTotalsFromEntries(nextInvestments as unknown as Record<string, unknown>[], true));
-      lastSessionAssetRef.current = asset;
-      const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
-      setSessionExpiresAt(expiresAt);
+  const saveVavityAggregator = useCallback(
+    async (_currentSessionId: string, _updatedInvestments: any[], asset = 'bitcoin'): Promise<any> => {
       void ensureAssetsLoaded([asset]);
-      return response.data;
-    } catch (err) {
-      logClientApiError(`addVavityAggregator:${asset}`, err);
-      throw err;
-    }
-  }, [email, ensureAssetsLoaded]);
-
-  const saveVavityAggregator = useCallback(async (currentSessionId: string, updatedInvestments: any[], asset = 'bitcoin'): Promise<any> => {
-    if (email) {
-      return { data: { investments: updatedInvestments || [], totals: { ...emptySessionTotals }, totalsLiquid: { ...emptySessionTotals } } };
-    }
-    if (!currentSessionId) {
-      throw new Error('Session ID is required');
-    }
-    try {
-      const response = await axios.post('/api/saveVavityAggregator', {
-        sessionId: currentSessionId,
-        investments: updatedInvestments,
-        asset,
-        ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: true } : {}),
-      });
-      const data = response.data?.data || {};
-      setInvestments(data.investments || updatedInvestments || []);
-      setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
-      setTotalsLiquid(data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
-      lastSessionAssetRef.current = asset;
-      const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
-      setSessionExpiresAt(expiresAt);
-      void ensureAssetsLoaded([asset]);
-      return response.data;
-    } catch (err) {
-      logClientApiError(`saveVavityAggregator:${asset}`, err);
-      throw err;
-    }
-  }, [email, ensureAssetsLoaded]);
+      return { data: emptySessionPayload() };
+    },
+    [ensureAssetsLoaded]
+  );
 
   return (
     <Vavityaggregator.Provider
@@ -381,7 +194,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         fetchVavityAggregator,
         fetchVavityAggregatorAll,
         addVavityAggregator,
-        saveVavityAggregator
+        saveVavityAggregator,
       }}
     >
       {children}

@@ -106,6 +106,7 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
   useEffect(() => {
     if (loading) {
       setChartReady(false);
+      setHoverUi(null);
       return;
     }
     const t = window.setTimeout(() => setChartReady(true), 150);
@@ -136,6 +137,8 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
     [handleHover]
   );
 
+  const showLine = chartReady && !loading;
+
   return (
     <div
       ref={wrapRef}
@@ -149,7 +152,7 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
         boxSizing: 'border-box',
       }}
     >
-      {hoverUi != null && (
+      {showLine && hoverUi != null && (
         <div className="asset-chart-date-badge asset-chart-date-badge--bitcoin metrics-chart-date-badge">
           <span className="asset-metric-inline-title--bitcoin metrics-growth-toolbar-tone">Date:</span>{' '}
           <span className="asset-metric-inline-value">
@@ -157,7 +160,7 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
           </span>
         </div>
       )}
-      <div className={`asset-chart-loader metrics-chart-loader${chartReady && !loading ? ' is-hidden' : ''}`}>
+      <div className={`asset-chart-loader metrics-chart-loader${showLine ? ' is-hidden' : ''}`}>
         <div className="asset-chart-grid-shimmer asset-chart-grid-shimmer--metrics">
           <div className="asset-chart-grid-shimmer-thin" />
           <div className="asset-chart-grid-shimmer-thick" />
@@ -165,8 +168,8 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
       </div>
       <div
         className={`asset-chart-fade asset-chart-interactive metrics-chart-interactive${
-          chartReady && !loading ? ' is-visible' : ''
-        }${chartReady && !loading ? '' : ' is-disabled'}`}
+          showLine ? ' is-visible' : ''
+        }${showLine ? '' : ' is-disabled'}`}
         style={{
           position: 'relative',
           flex: '1 1 auto',
@@ -190,21 +193,23 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
           }}
         />
         <div style={{ position: 'relative', zIndex: 1, flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-          <MetricsStandaloneLineChart
-            points={history.map((h) => ({
-              date: h.date,
-              y: h.price,
-              utcLabel: h.utcLabel,
-            }))}
-            color={accent.color}
-            markerColor={accent.markerColor}
-            backgroundColor={accent.backgroundColor}
-            markerShadow={accent.markerShadow}
-            height={plotPx}
-            interactiveHeight={plotPx}
-            canvasOffsetTop={0}
-            onPointHover={onChartPoint}
-          />
+          {showLine ? (
+            <MetricsStandaloneLineChart
+              points={history.map((h) => ({
+                date: h.date,
+                y: h.price,
+                utcLabel: h.utcLabel,
+              }))}
+              color={accent.color}
+              markerColor={accent.markerColor}
+              backgroundColor={accent.backgroundColor}
+              markerShadow={accent.markerShadow}
+              height={plotPx}
+              interactiveHeight={plotPx}
+              canvasOffsetTop={0}
+              onPointHover={onChartPoint}
+            />
+          ) : null}
         </div>
       </div>
     </div>
@@ -212,19 +217,11 @@ export default function MetricsGrowthChart({ history, loading, onPointHover }: P
 }
 
 export function seriesToChartHistory(
-  series: Array<{ label: string; sessions: number; signedInUsers: number; combined: number; retentionPct?: number | null }>,
-  segment: 'all' | 'signed_in' | 'sessions',
+  series: Array<{ label: string; signedInUsers: number; retentionPct?: number | null }>,
   view: 'growth' | 'retention'
 ): MetricsChartHistoryPoint[] {
   return series.map((p) => {
-    const rawY =
-      view === 'retention'
-        ? p.retentionPct ?? 0
-        : segment === 'sessions'
-          ? p.sessions
-          : segment === 'signed_in'
-            ? p.signedInUsers
-            : p.combined;
+    const rawY = view === 'retention' ? p.retentionPct ?? 0 : p.signedInUsers;
     const y = view === 'growth' ? Math.max(0, rawY) : rawY;
     let dateIso: string;
     const utcLabel = p.label;
