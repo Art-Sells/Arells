@@ -31,7 +31,11 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   initialPublicEarnings = null,
 }) => {
   const router = useRouter();
-  const { isSignedIn, authSessionLoading, emailInvestments } = useUser();
+  const { isSignedIn, authSessionLoading, emailInvestments, emailInvestmentsReady } = useUser();
+  // Holdings are not in the portfolio earnings SSR snapshot — they load via UserContext.
+  // Wait until that fetch finishes so we don't flash the empty-portfolio title/layout.
+  const investmentsPending =
+    (!!initialPortfolioMe || isSignedIn) && !emailInvestmentsReady;
   const hasInvestments = emailInvestments.length > 0;
   const showGuestLayout =
     guestPreview || (!authSessionLoading && !isSignedIn && !initialPortfolioMe);
@@ -216,7 +220,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
           <div className="myportfolio-portfolio-below-shell myportfolio-stack">
             <div className="myinv-panel-group myportfolio-portfolio-below-panel">
               <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">
-                {hasInvestments ? 'My Investment Updates' : 'Investment Updates'}
+                {investmentsPending || hasInvestments
+                  ? 'My Investment Updates'
+                  : 'Investment Updates'}
               </div>
               <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
                 <span className="shadow-border" aria-hidden="true" />

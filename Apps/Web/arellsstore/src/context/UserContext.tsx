@@ -23,6 +23,8 @@ interface UserContextType {
   emailTotals: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number };
   emailTotalsLiquid: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number };
   emailLoading: boolean;
+  /** True after the first holdings fetch for the current signed-in email has finished. */
+  emailInvestmentsReady: boolean;
   refreshEmailAggregator: (asset?: string) => Promise<any>;
   addEmailInvestments: (asset: string, newInvestments: any[]) => Promise<any>;
   saveEmailInvestments: (asset: string, investments: any[]) => Promise<any>;
@@ -52,6 +54,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmailState] = useState<string>('');
   const [authSessionLoading, setAuthSessionLoading] = useState<boolean>(true);
   const [emailLoading, setEmailLoading] = useState<boolean>(false);
+  const [emailInvestmentsReady, setEmailInvestmentsReady] = useState<boolean>(false);
   const [emailInvestments, setEmailInvestments] = useState<any[]>([]);
   const [emailTotals, setEmailTotals] = useState<{ acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }>(
     { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
@@ -85,6 +88,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     void fetch('/api/auth/logout', { method: 'POST', ...fetchOpts }).finally(() => {
       setEmailState('');
       setEmailInvestments([]);
+      setEmailInvestmentsReady(false);
       setEmailTotals({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
       setEmailTotalsLiquid({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
     });
@@ -159,14 +163,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     async (asset?: string) => {
       if (!email) return { investments: [], totals: { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 } };
       setEmailLoading(true);
+      let signedOut = false;
       try {
         const params = new URLSearchParams({ email });
         if (asset) params.set('asset', asset);
         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`, fetchOpts);
         if (res.status === 401) {
+          signedOut = true;
           void fetch('/api/auth/logout', { method: 'POST', ...fetchOpts });
           setEmailState('');
           setEmailInvestments([]);
+          setEmailInvestmentsReady(false);
           setEmailTotals({ acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 });
           setEmailTotalsLiquid({ acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 });
           return { investments: [], totals: { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 } };
@@ -184,6 +191,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         return data;
       } finally {
         setEmailLoading(false);
+        if (!signedOut) setEmailInvestmentsReady(true);
       }
     },
     [email]
@@ -236,8 +244,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!email) {
       emailBootstrapRef.current = null;
+      setEmailInvestmentsReady(false);
       return;
     }
+    setEmailInvestmentsReady(false);
     refreshEmailAggregator();
   }, [email, refreshEmailAggregator]);
 
@@ -317,6 +327,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         emailTotals,
         emailTotalsLiquid,
         emailLoading,
+        emailInvestmentsReady,
         refreshEmailAggregator,
         addEmailInvestments,
         saveEmailInvestments,

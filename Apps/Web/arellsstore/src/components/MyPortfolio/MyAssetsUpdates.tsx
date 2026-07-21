@@ -24,7 +24,7 @@ type AssetNewsGroup = {
 };
 
 const MyAssetsUpdates: React.FC = () => {
-  const { emailInvestments } = useUser();
+  const { emailInvestments, emailInvestmentsReady, isSignedIn } = useUser();
   const [articlesByAsset, setArticlesByAsset] = useState<Record<string, AssetNewsArticle[]> | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [visibleAssetCount, setVisibleAssetCount] = useState(ASSET_NEWS_INITIAL_ASSETS);
@@ -32,6 +32,9 @@ const MyAssetsUpdates: React.FC = () => {
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelHeight, setPanelHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  // Same race as the page title: don't pick empty-portfolio (discover) mode until holdings are known.
+  const investmentsPending = isSignedIn && !emailInvestmentsReady;
+  const hasInvestments = emailInvestments.length > 0;
 
   useEffect(() => {
     let cancelled = false;
@@ -73,8 +76,6 @@ const MyAssetsUpdates: React.FC = () => {
       .map(([assetId]) => assetId);
   }, [emailInvestments]);
 
-  const hasInvestments = emailInvestments.length > 0;
-
   /** One group per held asset (badge + its stories); only assets with zero articles are skipped. */
   const assetGroups = useMemo<AssetNewsGroup[]>(() => {
     if (!articlesByAsset || !hasInvestments) return [];
@@ -92,7 +93,7 @@ const MyAssetsUpdates: React.FC = () => {
    * story first, then every #2, then every #3) so one asset never stacks over another.
    */
   const discoverArticles = useMemo<AssetNewsArticle[]>(() => {
-    if (!articlesByAsset || hasInvestments) return [];
+    if (!articlesByAsset || investmentsPending || hasInvestments) return [];
     const perAsset = Object.values(articlesByAsset)
       .map((articles) => (articles ?? []).slice(0, ASSET_NEWS_ARTICLES_PER_ASSET))
       .filter((articles) => articles.length > 0)
@@ -104,7 +105,7 @@ const MyAssetsUpdates: React.FC = () => {
       }
     }
     return interleaved;
-  }, [articlesByAsset, hasInvestments]);
+  }, [articlesByAsset, investmentsPending, hasInvestments]);
 
   useEffect(() => {
     setVisibleAssetCount(ASSET_NEWS_INITIAL_ASSETS);
@@ -112,7 +113,9 @@ const MyAssetsUpdates: React.FC = () => {
   }, [assetGroups.length, discoverArticles.length]);
 
   const contentReady =
-    articlesByAsset !== null && (hasInvestments ? assetGroups.length > 0 : discoverArticles.length > 0);
+    !investmentsPending &&
+    articlesByAsset !== null &&
+    (hasInvestments ? assetGroups.length > 0 : discoverArticles.length > 0);
 
   // After content mounts: start at max-height 0, then measure and height-down (summary pattern).
   useLayoutEffect(() => {
@@ -159,7 +162,10 @@ const MyAssetsUpdates: React.FC = () => {
   if (loadError) {
     return <p className="myportfolio-leaderboard-empty">Unable to load updates. Try again later.</p>;
   }
-  if (articlesByAsset && !contentReady) {
+  if (investmentsPending || articlesByAsset === null) {
+    return null;
+  }
+  if (!contentReady) {
     return <p className="myportfolio-leaderboard-empty">No updates yet.</p>;
   }
 
