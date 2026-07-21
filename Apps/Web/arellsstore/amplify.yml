@@ -25,6 +25,9 @@ applications:
             - npx --yes yarn@1.22.22 install --frozen-lockfile
         build:
           commands:
+            # Amplify console env vars are build-time only for SSR; bake NEWS_API_KEY into the
+            # server runtime via .env.production (|| true so a missing var can't fail the build).
+            - env | grep -e '^NEWS_API_KEY=' >> .env.production || true
             - echo "🚀 next build..."
             - npx --yes yarn@1.22.22 run build
             - echo "✅ Deploy complete — Safari/iOS may show stale CSS until hard refresh (see amplify.yml cache-bust note)"
