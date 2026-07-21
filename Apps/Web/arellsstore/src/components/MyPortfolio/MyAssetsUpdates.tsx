@@ -148,7 +148,7 @@ const MyAssetsUpdates: React.FC = () => {
     >
       <div ref={contentRef}>
         {visibleGroups.map((group) => (
-          <div key={group.assetId} className="myportfolio-news-group">
+          <div key={group.assetId} className="myportfolio-news-group myinv-accent-border">
             <div className="myportfolio-news-group-badge">
               <MyInvAssetBadgeGrid assets={[group.assetId]} linkKeyPrefix={`news-${group.assetId}`} />
             </div>

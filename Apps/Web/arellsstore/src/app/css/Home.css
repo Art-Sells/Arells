@@ -11628,15 +11628,18 @@ a.asset-action-button--save-signin {
 
 /* My Investment Updates: asset groups (badge + bordered top stories) in their own below-shell section */
 .myportfolio-news-group + .myportfolio-news-group {
-	margin-top: 20px;
+	margin-top: 10px;
+}
+
+/* Outer border around each asset's whole news section (badge + stories). */
+.myportfolio-news-group.myinv-accent-border {
+	padding: 14px 12px 16px;
+	border-radius: 14px;
+	box-sizing: border-box;
 }
 
 .myportfolio-news-group-badge {
 	margin-bottom: 16px;
-}
-
-.myportfolio-news-group-badge .myinv-asset-home-card {
-	margin-top: 5px;
 }
 
 /* Bordered wrap around each asset's stories (same nested pattern as other panels). */
