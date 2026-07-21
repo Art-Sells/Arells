@@ -1,20 +1,20 @@
 import { CRYPTO_ASSETS } from '../assets/cryptoAssetRegistry';
 import { STOCK_ASSETS } from '../assets/stockAssetRegistry';
 
-/** S3 cache key for the asset news snapshot (v3 = /news/top + US locale; mirrors analytics/portfolio-context-v1). */
-export const ASSET_NEWS_SNAPSHOT_KEY = 'analytics/asset-news-v3/latest.json';
+/** S3 cache key for the asset news snapshot (v4 = /news/all + domain allowlist; mirrors analytics/portfolio-context-v1). */
+export const ASSET_NEWS_SNAPSHOT_KEY = 'analytics/asset-news-v4/latest.json';
 
 /** Refresh cadence. Paid Basic plan = 2,500 req/day; 13 assets hourly = 312/day. */
 export const ASSET_NEWS_TTL_MS = 60 * 60 * 1000;
 
-/** Top stories shown (and fetched) per asset. */
+/** Stories shown per asset. */
 export const ASSET_NEWS_ARTICLES_PER_ASSET = 3;
+
+/** Fetched per asset before the title relevance gate trims to ASSET_NEWS_ARTICLES_PER_ASSET. */
+export const ASSET_NEWS_FETCH_LIMIT = 10;
 
 /** Only surface articles from the last 7 days. */
 export const ASSET_NEWS_MAX_AGE_DAYS = 7;
-
-/** Restrict top stories to US sources (comma-separated country codes, e.g. 'us,ca,gb'). */
-export const ASSET_NEWS_LOCALE = 'us';
 
 /** My Investment Updates pagination is by asset group (badge + stories). */
 export const ASSET_NEWS_INITIAL_ASSETS = 3;
@@ -22,22 +22,42 @@ export const ASSET_NEWS_LOAD_MORE_ASSETS = 3;
 
 /**
  * TheNewsAPI search per asset. `+` = AND, `|` = OR, `-` = NOT.
- * Kept tight so generic words (e.g. "stellar", "tron") don't pull unrelated news.
+ * No bare short tickers (eth, ada, doge) — they false-match unrelated words.
  */
 export const ASSET_NEWS_QUERIES: Record<string, string> = {
-  bitcoin: 'bitcoin | btc',
-  ethereum: 'ethereum | eth',
+  bitcoin: 'bitcoin -"bitcoin cash"',
+  ethereum: 'ethereum',
   xrp: 'xrp | ripple',
   bnb: 'bnb | binance',
   solana: 'solana',
   tron: 'tron + crypto',
-  doge: 'dogecoin | doge',
-  cardano: 'cardano | ada',
-  stellar: 'stellar + (crypto | xlm)',
-  bch: '"bitcoin cash" | bch',
+  doge: 'dogecoin',
+  cardano: 'cardano',
+  stellar: 'stellar + (crypto | lumens)',
+  bch: '"bitcoin cash"',
   chainlink: 'chainlink',
   nvidia: 'nvidia | nvda',
-  spacex: 'spacex',
+  spacex: 'spacex | starlink | starship',
+};
+
+/**
+ * Title relevance gate: a headline must match one of these word-boundary keywords
+ * to count as "about the asset". Articles that fail only fill leftover slots.
+ */
+export const ASSET_NEWS_TITLE_KEYWORDS: Record<string, string[]> = {
+  bitcoin: ['bitcoin', 'btc'],
+  ethereum: ['ethereum', 'ether', 'eth'],
+  xrp: ['xrp', 'ripple'],
+  bnb: ['bnb', 'binance'],
+  solana: ['solana', 'sol'],
+  tron: ['tron', 'trx'],
+  doge: ['dogecoin', 'doge'],
+  cardano: ['cardano', 'ada'],
+  stellar: ['stellar', 'xlm', 'lumens'],
+  bch: ['bitcoin cash', 'bch'],
+  chainlink: ['chainlink', 'link token'],
+  nvidia: ['nvidia', 'nvda'],
+  spacex: ['spacex', 'starlink', 'starship', 'falcon'],
 };
 
 export const NEWS_SUPPORTED_ASSET_IDS: readonly string[] = [
@@ -72,6 +92,12 @@ export const NEWS_SOURCE_WEIGHTS: Record<string, number> = {
 };
 
 export const DEFAULT_SOURCE_WEIGHT = 0.6;
+
+/**
+ * Domain allowlist sent to /news/all (it has no `locale` filter; this keeps results
+ * to reputable US/international outlets instead of high-volume junk sources).
+ */
+export const ASSET_NEWS_DOMAINS = Object.keys(NEWS_SOURCE_WEIGHTS).join(',');
 
 /** Recency half-life used by the popularity score (hours). */
 export const NEWS_RECENCY_HALF_LIFE_HOURS = 48;

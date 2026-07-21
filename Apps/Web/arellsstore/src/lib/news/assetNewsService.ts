@@ -1,10 +1,12 @@
 import type AWS from 'aws-sdk';
 import {
   ASSET_NEWS_ARTICLES_PER_ASSET,
-  ASSET_NEWS_LOCALE,
+  ASSET_NEWS_DOMAINS,
+  ASSET_NEWS_FETCH_LIMIT,
   ASSET_NEWS_MAX_AGE_DAYS,
   ASSET_NEWS_QUERIES,
   ASSET_NEWS_SNAPSHOT_KEY,
+  ASSET_NEWS_TITLE_KEYWORDS,
   ASSET_NEWS_TTL_MS,
   NEWS_SUPPORTED_ASSET_IDS,
   type AssetNewsArticle,
@@ -12,8 +14,8 @@ import {
 } from './assetNewsConfig';
 import { buildMockAssetNewsSnapshot } from './mockAssetNews';
 
-/** Top stories endpoint: only articles TheNewsAPI designates as top stories. */
-const THENEWSAPI_BASE = 'https://api.thenewsapi.com/v1/news/top';
+/** /news/all with per-asset search: asset-specific coverage (top stories was too sparse/off-topic). */
+const THENEWSAPI_BASE = 'https://api.thenewsapi.com/v1/news/all';
 
 let memoryCache: AssetNewsSnapshot | null = null;
 let refreshInFlight: Promise<AssetNewsSnapshot> | null = null;
@@ -38,7 +40,19 @@ type ProviderArticle = {
   relevance_score?: number | null;
 };
 
-async function fetchProviderArticlesForAsset(assetId: string, nowMs: number): Promise<AssetNewsArticle[]> {
+/** Word-boundary headline match so short tickers (eth, ada) can't match inside other words. */
+function headlineMentionsAsset(headline: string, assetId: string): boolean {
+  const keywords = ASSET_NEWS_TITLE_KEYWORDS[assetId] ?? [assetId];
+  return keywords.some((keyword) =>
+    new RegExp(`\\b${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(headline)
+  );
+}
+
+async function queryProvider(
+  assetId: string,
+  nowMs: number,
+  domains: string | null
+): Promise<AssetNewsArticle[]> {
   const publishedAfter = new Date(nowMs - ASSET_NEWS_MAX_AGE_DAYS * 24 * 60 * 60 * 1000)
     .toISOString()
     .slice(0, 10);
@@ -46,13 +60,12 @@ async function fetchProviderArticlesForAsset(assetId: string, nowMs: number): Pr
     api_token: apiToken(),
     search: ASSET_NEWS_QUERIES[assetId] ?? assetId,
     search_fields: 'title,description,keywords',
-    // Without a locale filter, /news/top skews to high-volume international English outlets (e.g. India).
-    locale: ASSET_NEWS_LOCALE,
     language: 'en',
     published_after: publishedAfter,
     sort: 'relevance_score',
-    limit: String(ASSET_NEWS_ARTICLES_PER_ASSET),
+    limit: String(ASSET_NEWS_FETCH_LIMIT),
   });
+  if (domains) params.set('domains', domains);
 
   const res = await fetch(`${THENEWSAPI_BASE}?${params.toString()}`);
   if (!res.ok) {
@@ -61,7 +74,7 @@ async function fetchProviderArticlesForAsset(assetId: string, nowMs: number): Pr
   const json = (await res.json()) as { data?: ProviderArticle[] };
   const items = Array.isArray(json.data) ? json.data : [];
 
-  // Preserve the provider's order: top stories ranked by relevance_score.
+  // Preserve the provider's relevance order.
   const articles: AssetNewsArticle[] = [];
   items.forEach((item, index) => {
     const headline = (item.title || '').trim();
@@ -80,6 +93,24 @@ async function fetchProviderArticlesForAsset(assetId: string, nowMs: number): Pr
     });
   });
   return articles;
+}
+
+async function fetchProviderArticlesForAsset(assetId: string, nowMs: number): Promise<AssetNewsArticle[]> {
+  // Pass 1: reputable-domain allowlist (/news/all has no locale filter, so this keeps junk sources out).
+  // Headlines mentioning the asset rank first; off-topic results only fill leftover slots.
+  const fromAllowlist = await queryProvider(assetId, nowMs, ASSET_NEWS_DOMAINS);
+  if (fromAllowlist.length > 0) {
+    const onTopic = fromAllowlist.filter((a) => headlineMentionsAsset(a.headline, assetId));
+    const offTopic = fromAllowlist.filter((a) => !headlineMentionsAsset(a.headline, assetId));
+    return [...onTopic, ...offTopic].slice(0, ASSET_NEWS_ARTICLES_PER_ASSET);
+  }
+
+  // Pass 2 (sparse assets, e.g. bitcoin cash/chainlink): any source, but strictly
+  // on-topic headlines only — unvetted domains don't get the off-topic fill.
+  const fromAnywhere = await queryProvider(assetId, nowMs, null);
+  return fromAnywhere
+    .filter((a) => headlineMentionsAsset(a.headline, assetId))
+    .slice(0, ASSET_NEWS_ARTICLES_PER_ASSET);
 }
 
 async function buildSnapshotFromProvider(nowMs: number): Promise<AssetNewsSnapshot> {
@@ -139,7 +170,7 @@ function isFresh(snapshot: AssetNewsSnapshot, nowMs: number): boolean {
 /**
  * Cached asset news for all supported assets, most popular first per asset.
  * No NEWS_API_KEY (e.g. localhost) → deterministic mock articles.
- * With a key → provider articles cached in memory + S3 (analytics/asset-news-v1) for ASSET_NEWS_TTL_MS.
+ * With a key → provider articles cached in memory + S3 (ASSET_NEWS_SNAPSHOT_KEY) for ASSET_NEWS_TTL_MS.
  */
 export async function getAssetNewsSnapshot(
   s3: AWS.S3 | null,

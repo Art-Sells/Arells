@@ -48,28 +48,36 @@ const MyAssetsUpdates: React.FC = () => {
     };
   }, []);
 
-  /** Largest current holding first (same source values as My Investments badge order). */
-  const holdingsUsdByAsset = useMemo(() => {
-    const totals: Record<string, number> = {};
+  /**
+   * Every held asset, largest current value first (same source values as the
+   * My Investments badge order). Assets whose lots have no cVact yet still count:
+   * units (cVactTaa), then lot count, break ties so nothing is dropped.
+   */
+  const heldAssetsSorted = useMemo(() => {
+    const byAsset = new Map<string, { usd: number; units: number; lots: number }>();
     for (const inv of emailInvestments) {
       const id = String(inv?.asset || 'bitcoin').toLowerCase();
-      totals[id] = (totals[id] || 0) + (Number(inv?.cVact) || 0);
+      const entry = byAsset.get(id) ?? { usd: 0, units: 0, lots: 0 };
+      entry.usd += Number(inv?.cVact) || 0;
+      entry.units += Number(inv?.cVactTaa) || 0;
+      entry.lots += 1;
+      byAsset.set(id, entry);
     }
-    return totals;
+    return [...byAsset.entries()]
+      .sort((a, b) => b[1].usd - a[1].usd || b[1].units - a[1].units || b[1].lots - a[1].lots)
+      .map(([assetId]) => assetId);
   }, [emailInvestments]);
 
-  /** One group per held asset (badge + its top stories), ranked by holding value. */
+  /** One group per held asset (badge + its stories); only assets with zero articles are skipped. */
   const assetGroups = useMemo<AssetNewsGroup[]>(() => {
     if (!articlesByAsset) return [];
-    return Object.entries(holdingsUsdByAsset)
-      .filter(([, value]) => value > 0)
-      .sort((a, b) => b[1] - a[1])
-      .map(([assetId]) => ({
+    return heldAssetsSorted
+      .map((assetId) => ({
         assetId,
         articles: (articlesByAsset[assetId] ?? []).slice(0, ASSET_NEWS_ARTICLES_PER_ASSET),
       }))
       .filter((group) => group.articles.length > 0);
-  }, [articlesByAsset, holdingsUsdByAsset]);
+  }, [articlesByAsset, heldAssetsSorted]);
 
   useEffect(() => {
     setVisibleAssetCount(ASSET_NEWS_INITIAL_ASSETS);
