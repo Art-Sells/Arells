@@ -213,21 +213,21 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
         {showSignedInPanel ? (
           <>
-          {hasInvestments ? (
-            <div className="myportfolio-portfolio-below-shell myportfolio-stack">
-              <div className="myinv-panel-group myportfolio-portfolio-below-panel">
-                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">My Investment Updates</div>
-                <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
-                  <span className="shadow-border" aria-hidden="true" />
-                  <div className="myinv-panel-section myinv-accent-border myportfolio-metric-panel">
-                    <div className="myinv-panel myinv-panel--shell">
-                      <MyAssetsUpdates />
-                    </div>
+          <div className="myportfolio-portfolio-below-shell myportfolio-stack">
+            <div className="myinv-panel-group myportfolio-portfolio-below-panel">
+              <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">
+                {hasInvestments ? 'My Investment Updates' : 'Investment Updates'}
+              </div>
+              <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
+                <span className="shadow-border" aria-hidden="true" />
+                <div className="myinv-panel-section myinv-accent-border myportfolio-metric-panel">
+                  <div className="myinv-panel myinv-panel--shell">
+                    <MyAssetsUpdates />
                   </div>
                 </div>
               </div>
             </div>
-          ) : null}
+          </div>
 
           <div className="myportfolio-portfolio-below-shell myportfolio-stack">
             <div className="myinv-panel-group myportfolio-portfolio-below-panel">

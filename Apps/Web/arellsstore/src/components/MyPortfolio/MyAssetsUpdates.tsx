@@ -14,6 +14,10 @@ import {
 /** Mount height-down duration (matches My Investments summary SUMMARY_HEIGHT_EXPAND_MS). */
 const NEWS_HEIGHT_EXPAND_MS = 3000;
 
+/** Empty-portfolio mode paginates by headline (same visual total as 3 asset groups x 3 stories). */
+const NEWS_DISCOVER_INITIAL_HEADLINES = 9;
+const NEWS_DISCOVER_LOAD_MORE_HEADLINES = 9;
+
 type AssetNewsGroup = {
   assetId: string;
   articles: AssetNewsArticle[];
@@ -24,6 +28,7 @@ const MyAssetsUpdates: React.FC = () => {
   const [articlesByAsset, setArticlesByAsset] = useState<Record<string, AssetNewsArticle[]> | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [visibleAssetCount, setVisibleAssetCount] = useState(ASSET_NEWS_INITIAL_ASSETS);
+  const [visibleHeadlineCount, setVisibleHeadlineCount] = useState(NEWS_DISCOVER_INITIAL_HEADLINES);
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelHeight, setPanelHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -68,22 +73,46 @@ const MyAssetsUpdates: React.FC = () => {
       .map(([assetId]) => assetId);
   }, [emailInvestments]);
 
+  const hasInvestments = emailInvestments.length > 0;
+
   /** One group per held asset (badge + its stories); only assets with zero articles are skipped. */
   const assetGroups = useMemo<AssetNewsGroup[]>(() => {
-    if (!articlesByAsset) return [];
+    if (!articlesByAsset || !hasInvestments) return [];
     return heldAssetsSorted
       .map((assetId) => ({
         assetId,
         articles: (articlesByAsset[assetId] ?? []).slice(0, ASSET_NEWS_ARTICLES_PER_ASSET),
       }))
       .filter((group) => group.articles.length > 0);
-  }, [articlesByAsset, heldAssetsSorted]);
+  }, [articlesByAsset, heldAssetsSorted, hasInvestments]);
+
+  /**
+   * Empty portfolio: flat headline list across ALL assets, interleaved for diversity —
+   * assets ordered by their most popular story, then round-robin (every asset's #1
+   * story first, then every #2, then every #3) so one asset never stacks over another.
+   */
+  const discoverArticles = useMemo<AssetNewsArticle[]>(() => {
+    if (!articlesByAsset || hasInvestments) return [];
+    const perAsset = Object.values(articlesByAsset)
+      .map((articles) => (articles ?? []).slice(0, ASSET_NEWS_ARTICLES_PER_ASSET))
+      .filter((articles) => articles.length > 0)
+      .sort((a, b) => (b[0]?.popularityScore ?? 0) - (a[0]?.popularityScore ?? 0));
+    const interleaved: AssetNewsArticle[] = [];
+    for (let round = 0; round < ASSET_NEWS_ARTICLES_PER_ASSET; round += 1) {
+      for (const articles of perAsset) {
+        if (articles[round]) interleaved.push(articles[round]);
+      }
+    }
+    return interleaved;
+  }, [articlesByAsset, hasInvestments]);
 
   useEffect(() => {
     setVisibleAssetCount(ASSET_NEWS_INITIAL_ASSETS);
-  }, [assetGroups.length]);
+    setVisibleHeadlineCount(NEWS_DISCOVER_INITIAL_HEADLINES);
+  }, [assetGroups.length, discoverArticles.length]);
 
-  const contentReady = articlesByAsset !== null && assetGroups.length > 0;
+  const contentReady =
+    articlesByAsset !== null && (hasInvestments ? assetGroups.length > 0 : discoverArticles.length > 0);
 
   // After content mounts: start at max-height 0, then measure and height-down (summary pattern).
   useLayoutEffect(() => {
@@ -130,13 +159,30 @@ const MyAssetsUpdates: React.FC = () => {
   if (loadError) {
     return <p className="myportfolio-leaderboard-empty">Unable to load updates. Try again later.</p>;
   }
-  if (articlesByAsset && assetGroups.length === 0) {
+  if (articlesByAsset && !contentReady) {
     return <p className="myportfolio-leaderboard-empty">No updates yet.</p>;
   }
 
-  const canPaginate = assetGroups.length > ASSET_NEWS_INITIAL_ASSETS;
+  const canPaginate = hasInvestments
+    ? assetGroups.length > ASSET_NEWS_INITIAL_ASSETS
+    : discoverArticles.length > NEWS_DISCOVER_INITIAL_HEADLINES;
   const visibleGroups = canPaginate ? assetGroups.slice(0, visibleAssetCount) : assetGroups;
-  const hasMore = visibleAssetCount < assetGroups.length;
+  const visibleDiscover = canPaginate ? discoverArticles.slice(0, visibleHeadlineCount) : discoverArticles;
+  const hasMore = hasInvestments
+    ? visibleAssetCount < assetGroups.length
+    : visibleHeadlineCount < discoverArticles.length;
+
+  const renderHeadlineCard = (article: AssetNewsArticle) => (
+    <a
+      key={`${article.assetId}-${article.url}-${article.headline}`}
+      href={article.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`myinv-asset-home-card home-asset-${article.assetId} myportfolio-news-card`}
+    >
+      <span className="myportfolio-news-headline">{article.headline}</span>
+    </a>
+  );
 
   return (
     <div
@@ -147,39 +193,39 @@ const MyAssetsUpdates: React.FC = () => {
       }}
     >
       <div ref={contentRef}>
-        {visibleGroups.map((group) => (
-          <div key={group.assetId} className="myportfolio-news-group myinv-accent-border">
-            <div className="myportfolio-news-group-badge">
-              <MyInvAssetBadgeGrid assets={[group.assetId]} linkKeyPrefix={`news-${group.assetId}`} />
-            </div>
-            <div className="myportfolio-news-nested myinv-accent-border">
-              <div className="myportfolio-news-list">
-                {group.articles.map((article) => (
-                  <a
-                    key={`${group.assetId}-${article.url}-${article.headline}`}
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`myinv-asset-home-card home-asset-${group.assetId} myportfolio-news-card`}
-                  >
-                    <span className="myportfolio-news-headline">{article.headline}</span>
-                  </a>
-                ))}
+        {hasInvestments ? (
+          visibleGroups.map((group) => (
+            <div key={group.assetId} className="myportfolio-news-group myinv-accent-border">
+              <div className="myportfolio-news-group-badge">
+                <MyInvAssetBadgeGrid assets={[group.assetId]} linkKeyPrefix={`news-${group.assetId}`} />
+              </div>
+              <div className="myportfolio-news-nested myinv-accent-border">
+                <div className="myportfolio-news-list">{group.articles.map(renderHeadlineCard)}</div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div className="myportfolio-news-list">{visibleDiscover.map(renderHeadlineCard)}</div>
+        )}
         {canPaginate ? (
           <button
             type="button"
             className="asset-range-button myinv-range-button about-cta-button myportfolio-leaderboard-show-more"
             onClick={() => {
               if (hasMore) {
-                setVisibleAssetCount((count) =>
-                  Math.min(count + ASSET_NEWS_LOAD_MORE_ASSETS, assetGroups.length)
-                );
-              } else {
+                if (hasInvestments) {
+                  setVisibleAssetCount((count) =>
+                    Math.min(count + ASSET_NEWS_LOAD_MORE_ASSETS, assetGroups.length)
+                  );
+                } else {
+                  setVisibleHeadlineCount((count) =>
+                    Math.min(count + NEWS_DISCOVER_LOAD_MORE_HEADLINES, discoverArticles.length)
+                  );
+                }
+              } else if (hasInvestments) {
                 setVisibleAssetCount(ASSET_NEWS_INITIAL_ASSETS);
+              } else {
+                setVisibleHeadlineCount(NEWS_DISCOVER_INITIAL_HEADLINES);
               }
             }}
           >
