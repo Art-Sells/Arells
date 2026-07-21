@@ -1,6 +1,7 @@
 import type AWS from 'aws-sdk';
 import {
   ASSET_NEWS_ARTICLES_PER_ASSET,
+  ASSET_NEWS_LOCALE,
   ASSET_NEWS_MAX_AGE_DAYS,
   ASSET_NEWS_QUERIES,
   ASSET_NEWS_SNAPSHOT_KEY,
@@ -45,6 +46,8 @@ async function fetchProviderArticlesForAsset(assetId: string, nowMs: number): Pr
     api_token: apiToken(),
     search: ASSET_NEWS_QUERIES[assetId] ?? assetId,
     search_fields: 'title,description,keywords',
+    // Without a locale filter, /news/top skews to high-volume international English outlets (e.g. India).
+    locale: ASSET_NEWS_LOCALE,
     language: 'en',
     published_after: publishedAfter,
     sort: 'relevance_score',

@@ -1,8 +1,8 @@
 import { CRYPTO_ASSETS } from '../assets/cryptoAssetRegistry';
 import { STOCK_ASSETS } from '../assets/stockAssetRegistry';
 
-/** S3 cache key for the asset news snapshot (v2 = /news/top ranking; mirrors analytics/portfolio-context-v1). */
-export const ASSET_NEWS_SNAPSHOT_KEY = 'analytics/asset-news-v2/latest.json';
+/** S3 cache key for the asset news snapshot (v3 = /news/top + US locale; mirrors analytics/portfolio-context-v1). */
+export const ASSET_NEWS_SNAPSHOT_KEY = 'analytics/asset-news-v3/latest.json';
 
 /** Refresh cadence. Paid Basic plan = 2,500 req/day; 13 assets hourly = 312/day. */
 export const ASSET_NEWS_TTL_MS = 60 * 60 * 1000;
@@ -12,6 +12,9 @@ export const ASSET_NEWS_ARTICLES_PER_ASSET = 3;
 
 /** Only surface articles from the last 7 days. */
 export const ASSET_NEWS_MAX_AGE_DAYS = 7;
+
+/** Restrict top stories to US sources (comma-separated country codes, e.g. 'us,ca,gb'). */
+export const ASSET_NEWS_LOCALE = 'us';
 
 /** My Investment Updates pagination is by asset group (badge + stories). */
 export const ASSET_NEWS_INITIAL_ASSETS = 3;
