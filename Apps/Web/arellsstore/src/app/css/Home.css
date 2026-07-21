@@ -11575,6 +11575,7 @@ a.asset-action-button--save-signin {
 .myportfolio-projected-earnings-nested,
 .myportfolio-referral-network-nested,
 .myportfolio-share-copy-nested,
+.myportfolio-wau-countdown-nested,
 .myportfolio-weekly-uara-intro-nested {
 	margin-top: 16px;
 	padding: 12px 10px 14px;
@@ -11585,6 +11586,65 @@ a.asset-action-button--save-signin {
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-metric-panel.myinv-summary-block .myportfolio-projected-earnings-nested {
 	margin-top: 10px;
 	padding: 10px;
+}
+
+.myportfolio-wau-countdown-nested .myportfolio-count-value {
+	opacity: 0.5;
+}
+
+.myportfolio-wau-share-nested {
+	margin-top: 14px;
+	padding: 12px 10px 14px;
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+/* Keep the copy row inside this nested border (desktop rule widens it with negative margins),
+   and stretch the link pill to match the copy button height. */
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-wau-share-nested .myportfolio-share-copy-row {
+	width: 100%;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	align-items: stretch;
+}
+
+/* Over 750px: keep the copy button and link pill at their mobile sizes (undo desktop widening). */
+@media (min-width: 751px) {
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-wau-share-nested .myportfolio-share-copy-button {
+		min-width: 80px;
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-wau-share-nested .myportfolio-share-url-display {
+		flex: 0 1 auto;
+		width: auto;
+		max-width: calc(100% - var(--myportfolio-share-url-reserved, 72px));
+	}
+}
+
+/* Matches the "Email us:" text in Questions/Concerns (13px, black, 800 weight). */
+.myportfolio-wau-share-note {
+	margin: 0 0 10px;
+	text-align: center;
+	font-size: 13px;
+	line-height: 1.45;
+	font-weight: 800;
+	color: #000;
+	-webkit-text-fill-color: #000;
+}
+
+.myportfolio-wau-share-note-tail {
+	display: block;
+}
+
+@media (max-width: 750px) {
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-wau-share-nested .myportfolio-share-copy-button {
+		min-width: 76px;
+		padding-left: 24px;
+		padding-right: 24px;
+	}
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-portfolio-share-group .myportfolio-share-copy-nested {

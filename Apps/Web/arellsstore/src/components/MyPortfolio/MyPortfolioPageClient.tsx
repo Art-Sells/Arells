@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
@@ -16,6 +16,16 @@ import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
 import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
+
+/** Plain site link for the WAU share row (not a referral link). */
+const PORTFOLIO_SHARE_URL = 'https://arells.com';
+
+/** 99,981 → "99.981k"; values under 1,000 stay as-is. */
+function formatCountK(value: number): string {
+  if (value < 1000) return value.toLocaleString('en-US');
+  const thousands = value / 1000;
+  return `${Number.isInteger(thousands) ? thousands : thousands.toFixed(3).replace(/0+$/, '').replace(/\.$/, '')}k`;
+}
 
 export type MyPortfolioPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
@@ -43,8 +53,34 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const [slideIn, setSlideIn] = useState(false);
   const [data, setData] = useState<PortfolioMePayload | null>(initialPortfolioMe);
   const [loadError, setLoadError] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+  const shareResetRef = useRef<number | null>(null);
   const { guestMaxLabel, loadError: guestPitchLoadError } =
     usePublicEarningsGuestPitch(showGuestLayout, initialPublicEarnings);
+
+  useEffect(() => {
+    return () => {
+      if (shareResetRef.current !== null) {
+        window.clearTimeout(shareResetRef.current);
+      }
+    };
+  }, []);
+
+  const onCopyShareUrl = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(PORTFOLIO_SHARE_URL);
+      setShareCopied(true);
+      if (shareResetRef.current !== null) {
+        window.clearTimeout(shareResetRef.current);
+      }
+      shareResetRef.current = window.setTimeout(() => {
+        setShareCopied(false);
+        shareResetRef.current = null;
+      }, 3000);
+    } catch {
+      // Clipboard unavailable — button label unchanged.
+    }
+  }, []);
 
   useEffect(() => {
     if (showGuestLayout) {
@@ -155,7 +191,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                             ) : null}
                           </div>
                           <p className="myinv-metric-title myportfolio-benefits-sublabel">
-                            per week at ~100k WAU
+                            per week at ~100k Weekly Active Users
                           </p>
                         </div>
                       </div>
@@ -248,6 +284,38 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                           {data ? data.wau.toLocaleString('en-US') : '—'}
                         </span>
                       </span>
+                    </div>
+                    <div className="myportfolio-wau-countdown-nested myinv-accent-border">
+                      <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                        <span className="myinv-metric-value myportfolio-count-value">
+                          <span className="myinv-metric-integer">
+                            {data ? formatCountK(data.usersUntilActivation) : '—'}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="myinv-metric-title myportfolio-benefits-sublabel">
+                        Weekly Active Users
+                        <br />
+                        until your weekly earnings are unlocked
+                      </p>
+                      <div className="myportfolio-wau-share-nested myinv-accent-border">
+                        <p className="myportfolio-wau-share-note">
+                          Help others join{' '}
+                          <span className="myportfolio-wau-share-note-tail">our mission by sharing Arells:</span>
+                        </p>
+                        <div className="myportfolio-share-copy-row">
+                          <button
+                            type="button"
+                            className="auth-submit auth-submit--accent asset-range-button myportfolio-share-copy-button"
+                            onClick={onCopyShareUrl}
+                          >
+                            {shareCopied ? 'copied' : 'copy'}
+                          </button>
+                          <div className="myportfolio-share-url-display myinv-accent-border" title={PORTFOLIO_SHARE_URL}>
+                            {PORTFOLIO_SHARE_URL}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
