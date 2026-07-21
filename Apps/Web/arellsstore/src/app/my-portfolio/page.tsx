@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import MyPortfolioPageClient from '../../components/MyPortfolio/MyPortfolioPageClient';
 import { getSessionFromAppCookies } from '../../lib/auth/session';
-import { fetchPortfolioPageServer } from '../../lib/portfolio/fetchPortfolioDataServer';
+import { fetchPortfolioMeServer } from '../../lib/portfolio/fetchPortfolioDataServer';
 import { fetchPublicEarningsServer } from '../../lib/portfolio/fetchPublicEarningsServer';
 import { HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
 
@@ -25,17 +25,13 @@ export const metadata: Metadata = {
 export default async function MyPortfolioPage() {
   const session = await getSessionFromAppCookies();
 
-  const [signedInBundle, initialPublicEarnings] = session
-    ? await Promise.all([fetchPortfolioPageServer(session.email), Promise.resolve(null)])
-    : await Promise.all([
-        Promise.resolve({ me: null, leaderboard: [] as Awaited<ReturnType<typeof fetchPortfolioPageServer>>['leaderboard'] }),
-        fetchPublicEarningsServer(),
-      ]);
+  const [initialPortfolioMe, initialPublicEarnings] = session
+    ? await Promise.all([fetchPortfolioMeServer(session.email), Promise.resolve(null)])
+    : await Promise.all([Promise.resolve(null), fetchPublicEarningsServer()]);
 
   return (
     <MyPortfolioPageClient
-      initialPortfolioMe={signedInBundle.me}
-      initialLeaderboardRows={signedInBundle.leaderboard ?? []}
+      initialPortfolioMe={initialPortfolioMe}
       initialPublicEarnings={initialPublicEarnings}
     />
   );

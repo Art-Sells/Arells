@@ -8,7 +8,7 @@ import SiteSocialFooter from '../SiteSocialFooter';
 import HomeAboutMountLoader from '../HomeAboutMountLoader';
 import UsdRangeMetric from './UsdRangeMetric';
 import PortfolioUsdAmount from './PortfolioUsdAmount';
-import PortfolioLeaderboard, { type PortfolioLeaderboardRow } from './PortfolioLeaderboard';
+import MyAssetsUpdates from './MyAssetsUpdates';
 import PortfolioQuestionsSupport from './PortfolioQuestionsSupport';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
@@ -21,7 +21,6 @@ export type MyPortfolioPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
   guestPreview?: boolean;
   initialPortfolioMe?: PortfolioMePayload | null;
-  initialLeaderboardRows?: PortfolioLeaderboardRow[];
   /** SSR public earnings for guest pitch (skips client wait when present). */
   initialPublicEarnings?: PublicEarningsPayload | null;
 };
@@ -29,19 +28,16 @@ export type MyPortfolioPageClientProps = {
 const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   guestPreview = false,
   initialPortfolioMe = null,
-  initialLeaderboardRows = [],
   initialPublicEarnings = null,
 }) => {
   const router = useRouter();
-  const { isSignedIn, authSessionLoading } = useUser();
+  const { isSignedIn, authSessionLoading, emailInvestments } = useUser();
+  const hasInvestments = emailInvestments.length > 0;
   const showGuestLayout =
     guestPreview || (!authSessionLoading && !isSignedIn && !initialPortfolioMe);
   const showSignedInPanel = isSignedIn || !!initialPortfolioMe;
   const [slideIn, setSlideIn] = useState(false);
   const [data, setData] = useState<PortfolioMePayload | null>(initialPortfolioMe);
-  const [leaderboardRows, setLeaderboardRows] = useState<PortfolioLeaderboardRow[]>(
-    initialLeaderboardRows
-  );
   const [loadError, setLoadError] = useState(false);
   const { guestMaxLabel, loadError: guestPitchLoadError } =
     usePublicEarningsGuestPitch(showGuestLayout, initialPublicEarnings);
@@ -49,7 +45,6 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   useEffect(() => {
     if (showGuestLayout) {
       setData(null);
-      setLeaderboardRows([]);
       return;
     }
 
@@ -61,16 +56,11 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     let cancelled = false;
     (async () => {
       try {
-        const [meRes, lbRes] = await Promise.all([
-          fetch('/api/portfolio/me', { credentials: 'include', cache: 'no-store' }),
-          fetch('/api/portfolio/leaderboard', { credentials: 'include', cache: 'no-store' }),
-        ]);
-        if (!meRes.ok || !lbRes.ok) throw new Error('fetch failed');
+        const meRes = await fetch('/api/portfolio/me', { credentials: 'include', cache: 'no-store' });
+        if (!meRes.ok) throw new Error('fetch failed');
         const json = (await meRes.json()) as PortfolioMePayload;
-        const lbJson = (await lbRes.json()) as { rows: PortfolioLeaderboardRow[] };
         if (!cancelled) {
           setData(json);
-          setLeaderboardRows(Array.isArray(lbJson.rows) ? lbJson.rows : []);
           setLoadError(false);
         }
       } catch {
@@ -85,7 +75,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   useEffect(() => {
     if (showGuestLayout) return;
     setSlideIn(true);
-  }, [showGuestLayout, isSignedIn, data, leaderboardRows]);
+  }, [showGuestLayout, isSignedIn, data]);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
@@ -204,12 +194,6 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                           </div>
                         </div>
 
-                        <div className="myportfolio-leaderboard-nested myinv-accent-border">
-                          <div className="myportfolio-leaderboard-wrap">
-                            <PortfolioLeaderboard rows={leaderboardRows} />
-                          </div>
-                        </div>
-
                         <div className="myportfolio-about-nested myinv-accent-border">
                           <button
                             type="button"
@@ -229,6 +213,22 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
         {showSignedInPanel ? (
           <>
+          {hasInvestments ? (
+            <div className="myportfolio-portfolio-below-shell myportfolio-stack">
+              <div className="myinv-panel-group myportfolio-portfolio-below-panel">
+                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">My Investment Updates</div>
+                <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
+                  <span className="shadow-border" aria-hidden="true" />
+                  <div className="myinv-panel-section myinv-accent-border myportfolio-metric-panel">
+                    <div className="myinv-panel myinv-panel--shell">
+                      <MyAssetsUpdates />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
           <div className="myportfolio-portfolio-below-shell myportfolio-stack">
             <div className="myinv-panel-group myportfolio-portfolio-below-panel">
               <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Active Users</div>

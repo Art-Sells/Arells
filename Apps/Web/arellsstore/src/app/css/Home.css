@@ -11626,6 +11626,50 @@ a.asset-action-button--save-signin {
 	overflow: visible;
 }
 
+/* My Investment Updates: asset groups (badge + bordered top stories) in their own below-shell section */
+.myportfolio-news-group + .myportfolio-news-group {
+	margin-top: 20px;
+}
+
+.myportfolio-news-group-badge {
+	margin-bottom: 16px;
+}
+
+.myportfolio-news-group-badge .myinv-asset-home-card {
+	margin-top: 5px;
+}
+
+/* Bordered wrap around each asset's stories (same nested pattern as other panels). */
+.myportfolio-news-nested.myinv-accent-border {
+	padding: 12px 10px 14px;
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+.myportfolio-news-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.myinv-page .myinv-asset-home-card.myportfolio-news-card {
+	padding: 14px 22px;
+}
+
+/* Headline text mirrors the My Investments badge letter color (per-asset --asset-line-color). */
+.myportfolio-news-headline {
+	display: block;
+	width: 100%;
+	text-align: center;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 1.5;
+	color: var(--asset-line-color, #222);
+	-webkit-text-fill-color: var(--asset-line-color, #222);
+}
+
 .myportfolio-leaderboard-show-more,
 .myportfolio-learn-more {
 	display: inline-flex;
