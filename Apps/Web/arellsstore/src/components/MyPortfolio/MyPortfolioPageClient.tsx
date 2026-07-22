@@ -160,11 +160,11 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
             <span className="about-icon" aria-hidden="true" />
           </Link>
           <span className="myportfolio-mission-icon-spacer" aria-hidden="true" />
-          <p className="myportfolio-mission-tagline page-slide-in">
+          <span className="myportfolio-mission-tagline page-slide-in">
             on a mission to ensure
             <br />
             your investments never lose value
-          </p>
+          </span>
         </div>
 
         <div className="myinv-shell shadow-border-wrap">
@@ -173,13 +173,13 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
               {showSignedInPanel ? (
                 <>
                   {loadError ? (
-                    <p className="myportfolio-body-copy">Unable to load portfolio. Try again later.</p>
+                    <span className="myportfolio-body-copy">Unable to load portfolio. Try again later.</span>
                   ) : null}
 
                   <div className={`myinv-summary-block myinv-accent-border myportfolio-metric-panel${slideIn ? ' page-slide-in-no-opacity' : ''}`}>
                     <div className="myinv-summary-section">
                       <div className="myinv-summary-shell">
-                        <p className="myportfolio-about-title">My Weekly Projected Earnings</p>
+                        <span className="myportfolio-about-title">My Weekly Projected Earnings</span>
                         <div className="myportfolio-projected-earnings-nested myinv-accent-border">
                           <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                             {!loadError ? (
@@ -190,9 +190,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                               />
                             ) : null}
                           </div>
-                          <p className="myinv-metric-title myportfolio-benefits-sublabel">
+                          <span className="myinv-metric-title myportfolio-benefits-sublabel">
                             per week at ~100k Weekly Active Users
-                          </p>
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -202,7 +202,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                     <div className="myinv-panel-section myinv-accent-border">
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
                         <div className="myportfolio-share-copy-nested myinv-accent-border">
-                          <p className="myportfolio-share-invite-copy">
+                          <span className="myportfolio-share-invite-copy">
                             <span className="myportfolio-share-invite-line-one">
                               <span className="myportfolio-share-invite-signup">
                                 Build your portfolio
@@ -221,7 +221,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                             <span className="myportfolio-share-invite-tail">
                               a week by engaging with your investments.
                             </span>
-                          </p>
+                          </span>
                           <div className="myinv-panel-section myportfolio-cta-panel">
                             <div className="myinv-panel myinv-panel--shell">
                               <Link
@@ -293,16 +293,16 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                           </span>
                         </span>
                       </div>
-                      <p className="myinv-metric-title myportfolio-benefits-sublabel">
+                      <span className="myinv-metric-title myportfolio-benefits-sublabel">
                         Weekly Active Users
                         <br />
                         until your weekly earnings are unlocked
-                      </p>
+                      </span>
                       <div className="myportfolio-wau-share-nested myinv-accent-border">
-                        <p className="myportfolio-wau-share-note">
+                        <span className="myportfolio-wau-share-note">
                           Help others join{' '}
                           <span className="myportfolio-wau-share-note-tail">our mission by sharing Arells:</span>
-                        </p>
+                        </span>
                         <div className="myportfolio-share-copy-row">
                           <button
                             type="button"

@@ -11504,6 +11504,7 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-mission-tagline {
+	display: block;
 	margin: -5px 0 0;
 	padding: 0 16px;
 	text-align: center;
@@ -11540,6 +11541,7 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-body-copy {
+	display: block;
 	margin: 0 0 12px;
 	text-align: center;
 	font-size: 14px;
@@ -11547,6 +11549,7 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-about-title {
+	display: block;
 	font-weight: 700;
 	margin: 0 0 10px;
 	text-align: center;
@@ -11625,6 +11628,7 @@ a.asset-action-button--save-signin {
 
 /* Matches the "Email us:" text in Questions/Concerns; under-750 size at all widths. */
 .myportfolio-wau-share-note {
+	display: block;
 	margin: 0 0 10px;
 	text-align: center;
 	font-size: 11px;
@@ -12915,6 +12919,7 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-email-support-copy-text {
+	display: block;
 	margin: 0;
 	color: #000;
 	-webkit-text-fill-color: #000;
