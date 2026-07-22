@@ -11535,7 +11535,8 @@ a.asset-action-button--save-signin {
 .myportfolio-wau-share-note.myportfolio-text-chunks,
 .myportfolio-share-invite-copy.myportfolio-text-chunks,
 .myportfolio-body-copy.myportfolio-text-chunks,
-.myportfolio-weekly-uara-revenue-copy.myportfolio-text-chunks {
+.myportfolio-weekly-uara-revenue-copy.myportfolio-text-chunks,
+.myportfolio-news-headline.myportfolio-text-chunks {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -11846,7 +11847,7 @@ a.asset-action-button--save-signin {
 }
 
 /* Headline text mirrors the My Investments badge letter color (per-asset --asset-line-color).
-   Inner spans are inline word-groups (Safari clusters) that still wrap as one paragraph. */
+   Flex text-chunks (row + wrap only — never force column) so each 3-word group is its own Safari box. */
 .myportfolio-news-headline {
 	display: block;
 	width: 100%;
@@ -11860,8 +11861,24 @@ a.asset-action-button--save-signin {
 	text-size-adjust: none;
 }
 
-.myportfolio-news-headline > span {
-	display: inline;
+.myportfolio-news-headline.myportfolio-text-chunks {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: baseline;
+	column-gap: 0.35em;
+	row-gap: 0;
+}
+
+@media (max-width: 750px) {
+	/* Headlines stay row+wrap at all widths (do not inherit invite/body column stacking). */
+	.myportfolio-news-headline.myportfolio-text-chunks {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: 0.35em;
+	}
 }
 
 .myportfolio-leaderboard-show-more,

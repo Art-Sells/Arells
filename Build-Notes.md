@@ -8,6 +8,8 @@
 - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
 - find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
 
+- Fix Google Search Console links....
+
 - *switch from live to local testing false/true for myinv-engagement-v1 payments*
 - *brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
 
@@ -16,7 +18,7 @@ If sharing (organic) happens:
 - - *Add in Terms/Conditions and future payout dynamics and Learn More: and the 65% is dependent on if they check their "investment" portfolio at least once weekly (this sill only be activated after 100k WAU)....*
 - - Upgrsade thenewsapi
 - - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
-- - Add Sesion/User location/etc
+- - Add User location/etc
 
 ---------------------
 

@@ -23,23 +23,23 @@ const NEWS_FETCH_TIMEOUT_MS = 12_000;
 /** Empty-portfolio mode paginates by headline (same visual total as 3 asset groups x 3 stories). */
 const NEWS_DISCOVER_INITIAL_HEADLINES = 9;
 const NEWS_DISCOVER_LOAD_MORE_HEADLINES = 9;
-/** Inline word groups for Safari text clusters — keep flowing like one paragraph (no flex stack). */
-const NEWS_HEADLINE_INLINE_WORDS = 3;
+/** Flex-item word groups — match working portfolio text-chunks (short separate boxes for Safari). */
+const NEWS_HEADLINE_FLEX_WORDS = 3;
 
 type AssetNewsGroup = {
   assetId: string;
   articles: AssetNewsArticle[];
 };
 
-/** Split an API headline into short inline spans that still wrap as normal text. */
+/** Split an API headline into short flex children (same cluster break as pre-rendered text-chunks). */
 function splitHeadlineChunks(headline: string): string[] {
   const words = headline.trim().split(/\s+/).filter(Boolean);
-  if (words.length <= NEWS_HEADLINE_INLINE_WORDS) {
+  if (words.length <= NEWS_HEADLINE_FLEX_WORDS) {
     return words.length ? [words.join(' ')] : [];
   }
   const chunks: string[] = [];
-  for (let i = 0; i < words.length; i += NEWS_HEADLINE_INLINE_WORDS) {
-    chunks.push(words.slice(i, i + NEWS_HEADLINE_INLINE_WORDS).join(' '));
+  for (let i = 0; i < words.length; i += NEWS_HEADLINE_FLEX_WORDS) {
+    chunks.push(words.slice(i, i + NEWS_HEADLINE_FLEX_WORDS).join(' '));
   }
   return chunks;
 }
@@ -276,12 +276,9 @@ const MyAssetsUpdates: React.FC = () => {
         rel="noopener noreferrer"
         className={`myinv-asset-home-card home-asset-${article.assetId} myportfolio-news-card`}
       >
-        <span className="myportfolio-news-headline">
+        <span className="myportfolio-news-headline myportfolio-text-chunks">
           {chunks.map((chunk, index) => (
-            <span key={`${article.url}-${index}`}>
-              {index > 0 ? ' ' : ''}
-              {chunk}
-            </span>
+            <span key={`${article.url}-${index}`}>{chunk}</span>
           ))}
         </span>
       </a>
