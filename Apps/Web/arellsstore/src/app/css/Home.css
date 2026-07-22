@@ -11845,7 +11845,8 @@ a.asset-action-button--save-signin {
 	padding: 14px 22px;
 }
 
-/* Headline text mirrors the My Investments badge letter color (per-asset --asset-line-color). */
+/* Headline text mirrors the My Investments badge letter color (per-asset --asset-line-color).
+   Inner spans are inline word-groups (Safari clusters) that still wrap as one paragraph. */
 .myportfolio-news-headline {
 	display: block;
 	width: 100%;
@@ -11857,6 +11858,10 @@ a.asset-action-button--save-signin {
 	-webkit-text-fill-color: var(--asset-line-color, #222);
 	-webkit-text-size-adjust: none;
 	text-size-adjust: none;
+}
+
+.myportfolio-news-headline > span {
+	display: inline;
 }
 
 .myportfolio-leaderboard-show-more,
