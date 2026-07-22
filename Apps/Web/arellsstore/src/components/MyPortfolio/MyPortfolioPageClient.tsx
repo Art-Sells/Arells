@@ -203,7 +203,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                     <div className="myinv-panel-section myinv-accent-border">
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
                         <div className="myportfolio-share-copy-nested myinv-accent-border">
-                          <span className="myportfolio-share-invite-copy myportfolio-text-chunks myportfolio-text-chunks--stack">
+                          <span className="myportfolio-share-invite-copy myportfolio-text-chunks">
                             <span className="myportfolio-share-invite-line-one">
                               <span className="myportfolio-share-invite-signup">
                                 Build your portfolio

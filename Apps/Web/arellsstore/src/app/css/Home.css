@@ -12175,23 +12175,11 @@ a.asset-action-button--save-signin {
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy.myportfolio-text-chunks {
 	display: flex;
-	flex-direction: column;
-	flex-wrap: nowrap;
+	flex-direction: row;
+	flex-wrap: wrap;
 	justify-content: center;
-	align-items: center;
-	column-gap: 0;
-}
-
-.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy.myportfolio-text-chunks .myportfolio-share-invite-line-one {
-	display: block;
-	margin: 0;
-	padding: 0;
-}
-
-.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy.myportfolio-text-chunks .myportfolio-share-invite-tail {
-	display: block;
-	margin: 0;
-	padding: 0;
+	align-items: baseline;
+	column-gap: 0.35em;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-line-one,
@@ -12431,6 +12419,12 @@ a.asset-action-button--save-signin {
 		max-width: calc(100% - var(--myportfolio-share-url-reserved, 72px));
 	}
 
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy.myportfolio-text-chunks {
+		flex-direction: column;
+		align-items: center;
+		column-gap: 0;
+	}
+
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-line-one {
 		display: block;
 		margin: 0;
@@ -12438,7 +12432,7 @@ a.asset-action-button--save-signin {
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-tail {
-		display: inline;
+		display: block;
 		margin: 0;
 		padding: 0;
 	}

@@ -1,8 +1,8 @@
 import { CRYPTO_ASSETS } from '../assets/cryptoAssetRegistry';
 import { STOCK_ASSETS } from '../assets/stockAssetRegistry';
 
-/** S3 cache key for the asset news snapshot (v4 = /news/all + domain allowlist; mirrors analytics/portfolio-context-v1). */
-export const ASSET_NEWS_SNAPSHOT_KEY = 'analytics/asset-news-v4/latest.json';
+/** S3 cache key for the asset news snapshot (v5 = published_at fetch + recency popularity; mirrors analytics/portfolio-context-v1). */
+export const ASSET_NEWS_SNAPSHOT_KEY = 'analytics/asset-news-v5/latest.json';
 
 /** Refresh cadence. Paid Basic plan = 2,500 req/day; 13 assets hourly = 312/day. */
 export const ASSET_NEWS_TTL_MS = 60 * 60 * 1000;
