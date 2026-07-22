@@ -4251,9 +4251,6 @@ a.asset-action-button--myinv-asset-link {
 	background: var(--page-accent-tint);
 	/* Match asset pages so the summary wait/expand circle sits in the same spot. */
 	--myinv-summary-circle-loader-bottom: 46vh;
-	/* Lock iOS text inflation at all widths (was only under 750px, so >750 mobile diverged from desktop). */
-	-webkit-text-size-adjust: 100%;
-	text-size-adjust: 100%;
 }
 
 .myinv-page--accent {
@@ -12304,6 +12301,23 @@ a.asset-action-button--save-signin {
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-title {
+		font-size: 10.5px;
+	}
+
+	/* Same ≤750 label step as .myinv-metric-title / asset metric titles (12 → 10.5). */
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-body-copy {
+		font-size: 10.5px;
+	}
+
+	/* Same ≤750 step as .asset-signin-believe-prompt (13 → 11). */
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-wau-share-note {
+		font-size: 11px;
+	}
+
+	/* Earn-weekly body / revenue: same 12 → 10.5 label step. */
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-intro-copy .myportfolio-body-copy,
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-copy {
 		font-size: 10.5px;
 	}
 
