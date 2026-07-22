@@ -11535,8 +11535,7 @@ a.asset-action-button--save-signin {
 .myportfolio-wau-share-note.myportfolio-text-chunks,
 .myportfolio-share-invite-copy.myportfolio-text-chunks,
 .myportfolio-body-copy.myportfolio-text-chunks,
-.myportfolio-weekly-uara-revenue-copy.myportfolio-text-chunks,
-.myportfolio-news-headline.myportfolio-text-chunks {
+.myportfolio-weekly-uara-revenue-copy.myportfolio-text-chunks {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -11847,38 +11846,20 @@ a.asset-action-button--save-signin {
 }
 
 /* Headline text mirrors the My Investments badge letter color (per-asset --asset-line-color).
-   Flex text-chunks (row + wrap only — never force column) so each 3-word group is its own Safari box. */
+   16px at all widths so iOS is less likely to inflate; weight 400; class lives on the card <a>. */
+.myinv-page .myinv-asset-home-card.myportfolio-news-card.myportfolio-news-headline,
 .myportfolio-news-headline {
 	display: block;
 	width: 100%;
 	text-align: center;
-	font-size: 11px;
-	font-weight: 700;
+	font-size: 16px;
+	font-weight: 400;
 	line-height: 1.5;
 	color: var(--asset-line-color, #222);
 	-webkit-text-fill-color: var(--asset-line-color, #222);
 	-webkit-text-size-adjust: none;
 	text-size-adjust: none;
-}
-
-.myportfolio-news-headline.myportfolio-text-chunks {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: center;
-	align-items: baseline;
-	column-gap: 0.35em;
-	row-gap: 0;
-}
-
-@media (max-width: 750px) {
-	/* Headlines stay row+wrap at all widths (do not inherit invite/body column stacking). */
-	.myportfolio-news-headline.myportfolio-text-chunks {
-		flex-direction: row;
-		flex-wrap: wrap;
-		align-items: baseline;
-		column-gap: 0.35em;
-	}
+	text-decoration: none;
 }
 
 .myportfolio-leaderboard-show-more,

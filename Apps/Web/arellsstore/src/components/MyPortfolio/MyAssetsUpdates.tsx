@@ -23,25 +23,27 @@ const NEWS_FETCH_TIMEOUT_MS = 12_000;
 /** Empty-portfolio mode paginates by headline (same visual total as 3 asset groups x 3 stories). */
 const NEWS_DISCOVER_INITIAL_HEADLINES = 9;
 const NEWS_DISCOVER_LOAD_MORE_HEADLINES = 9;
-/** Flex-item word groups — match working portfolio text-chunks (short separate boxes for Safari). */
-const NEWS_HEADLINE_FLEX_WORDS = 3;
 
 type AssetNewsGroup = {
   assetId: string;
   articles: AssetNewsArticle[];
 };
 
-/** Split an API headline into short flex children (same cluster break as pre-rendered text-chunks). */
-function splitHeadlineChunks(headline: string): string[] {
-  const words = headline.trim().split(/\s+/).filter(Boolean);
-  if (words.length <= NEWS_HEADLINE_FLEX_WORDS) {
-    return words.length ? [words.join(' ')] : [];
-  }
-  const chunks: string[] = [];
-  for (let i = 0; i < words.length; i += NEWS_HEADLINE_FLEX_WORDS) {
-    chunks.push(words.slice(i, i + NEWS_HEADLINE_FLEX_WORDS).join(' '));
-  }
-  return chunks;
+/** Card label: "Jul 21, 2026 · 3:42 PM" from article.publishedAt. */
+function formatArticlePublishedAt(publishedAt: string): string {
+  const ms = Date.parse(publishedAt);
+  if (!Number.isFinite(ms)) return '—';
+  const date = new Date(ms);
+  const day = date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  const time = date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+  return `${day} · ${time}`;
 }
 
 const MyAssetsUpdates: React.FC = () => {
@@ -266,24 +268,18 @@ const MyAssetsUpdates: React.FC = () => {
     }
   }, [hasMore, hasInvestments, assetGroups.length, discoverArticles.length]);
 
-  const renderHeadlineCard = (article: AssetNewsArticle) => {
-    const chunks = splitHeadlineChunks(article.headline);
-    return (
-      <a
-        key={`${article.assetId}-${article.url}-${article.headline}`}
-        href={article.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`myinv-asset-home-card home-asset-${article.assetId} myportfolio-news-card`}
-      >
-        <span className="myportfolio-news-headline myportfolio-text-chunks">
-          {chunks.map((chunk, index) => (
-            <span key={`${article.url}-${index}`}>{chunk}</span>
-          ))}
-        </span>
-      </a>
-    );
-  };
+  const renderHeadlineCard = (article: AssetNewsArticle) => (
+    <a
+      key={`${article.assetId}-${article.url}-${article.headline}`}
+      href={article.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`myinv-asset-home-card home-asset-${article.assetId} myportfolio-news-card myportfolio-news-headline`}
+      title={article.headline}
+    >
+      {formatArticlePublishedAt(article.publishedAt)}
+    </a>
+  );
 
   if (loadError) {
     return (
