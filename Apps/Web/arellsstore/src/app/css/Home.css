@@ -11525,6 +11525,8 @@ a.asset-action-button--save-signin {
 .myportfolio-benefits-sublabel {
 	text-align: center;
 	margin: 4px 0 0;
+	/* Match under-750 metric-title size at all widths (wrapping label copy). */
+	font-size: 10.5px;
 	/* Stop mobile WebKit from inflating wrapping label copy (same lock as #overlayy). */
 	-webkit-text-size-adjust: none;
 	text-size-adjust: none;
@@ -11621,11 +11623,11 @@ a.asset-action-button--save-signin {
 	}
 }
 
-/* Matches the "Email us:" text in Questions/Concerns (13px, black, 800 weight). */
+/* Matches the "Email us:" text in Questions/Concerns; under-750 size at all widths. */
 .myportfolio-wau-share-note {
 	margin: 0 0 10px;
 	text-align: center;
-	font-size: 13px;
+	font-size: 11px;
 	line-height: 1.45;
 	font-weight: 800;
 	color: #000;
@@ -12092,7 +12094,7 @@ a.asset-action-button--save-signin {
 	display: block;
 	margin: 0 0 8px;
 	text-align: center;
-	font-size: 12px;
+	font-size: 10.5px;
 	line-height: 1.2;
 	color: #444;
 	-webkit-text-fill-color: #444;
@@ -12115,7 +12117,7 @@ a.asset-action-button--save-signin {
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-body-copy {
-	font-size: 12px;
+	font-size: 10.5px;
 	line-height: 1.35;
 	color: #000;
 	-webkit-text-fill-color: #000;
@@ -12281,7 +12283,7 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-weekly-uara-intro-copy .myportfolio-body-copy {
-	font-size: 12px;
+	font-size: 10.5px;
 	line-height: 1.35;
 	color: #444;
 	margin: 0 0 8px;
@@ -12314,23 +12316,6 @@ a.asset-action-button--save-signin {
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-title {
-		font-size: 10.5px;
-	}
-
-	/* Same ≤750 label step as .myinv-metric-title / asset metric titles (12 → 10.5). */
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy,
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-body-copy {
-		font-size: 10.5px;
-	}
-
-	/* Same ≤750 step as .asset-signin-believe-prompt (13 → 11). */
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-wau-share-note {
-		font-size: 11px;
-	}
-
-	/* Earn-weekly body / revenue: same 12 → 10.5 label step. */
-	.myinv-page--earn-weekly .myportfolio-weekly-uara-intro-copy .myportfolio-body-copy,
-	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-copy {
 		font-size: 10.5px;
 	}
 
@@ -12529,6 +12514,7 @@ a.asset-action-button--save-signin {
 .myportfolio-weekly-uara-revenue-copy {
 	color: #000;
 	-webkit-text-fill-color: #000;
+	font-size: 10.5px;
 	-webkit-text-size-adjust: none;
 	text-size-adjust: none;
 }
