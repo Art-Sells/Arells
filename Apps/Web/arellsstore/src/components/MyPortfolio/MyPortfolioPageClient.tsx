@@ -43,9 +43,10 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const router = useRouter();
   const { isSignedIn, authSessionLoading, emailInvestments, emailInvestmentsReady } = useUser();
   // Holdings are not in the portfolio earnings SSR snapshot — they load via UserContext.
-  // Wait until that fetch finishes so we don't flash the empty-portfolio title/layout.
-  const investmentsPending =
-    (!!initialPortfolioMe || isSignedIn) && !emailInvestmentsReady;
+  // Wait for auth + aggregator so we don't flash empty-portfolio title/layout.
+  const holdingsPending =
+    authSessionLoading ||
+    ((!!initialPortfolioMe || isSignedIn) && !emailInvestmentsReady);
   const hasInvestments = emailInvestments.length > 0;
   const showGuestLayout =
     guestPreview || (!authSessionLoading && !isSignedIn && !initialPortfolioMe);
@@ -257,7 +258,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
           <div className="myportfolio-portfolio-below-shell myportfolio-stack">
             <div className="myinv-panel-group myportfolio-portfolio-below-panel">
               <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">
-                {investmentsPending || hasInvestments
+                {holdingsPending || hasInvestments
                   ? 'My Investment Updates'
                   : 'Investment Updates'}
               </div>
@@ -265,7 +266,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                 <span className="shadow-border" aria-hidden="true" />
                 <div className="myinv-panel-section myinv-accent-border myportfolio-metric-panel">
                   <div className="myinv-panel myinv-panel--shell">
-                    <MyAssetsUpdates />
+                    <MyAssetsUpdates holdingsPending={holdingsPending} />
                   </div>
                 </div>
               </div>

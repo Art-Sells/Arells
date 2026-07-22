@@ -19,6 +19,8 @@ const NEWS_HEIGHT_EXPAND_MS = 3000;
 const NEWS_LOADER_SECTION_HEIGHT_PX = 50;
 /** Safety: never leave the in-panel circle spinning if news/holdings stall. */
 const NEWS_FETCH_TIMEOUT_MS = 12_000;
+/** Minimum circle time so mode (My vs discover) never flashes in before holdings settle. */
+const NEWS_MIN_LOADER_MS = 2000;
 
 /** Empty-portfolio mode paginates by headline (same visual total as 3 asset groups x 3 stories). */
 const NEWS_DISCOVER_INITIAL_HEADLINES = 9;
@@ -27,6 +29,11 @@ const NEWS_DISCOVER_LOAD_MORE_HEADLINES = 9;
 type AssetNewsGroup = {
   assetId: string;
   articles: AssetNewsArticle[];
+};
+
+type MyAssetsUpdatesProps = {
+  /** Parent gate: auth/SSR/aggregator still resolving — do not pick My vs discover yet. */
+  holdingsPending?: boolean;
 };
 
 /** Card label: "Jul 21, 2026 · 3:42 PM" from article.publishedAt. */
@@ -46,8 +53,8 @@ function formatArticlePublishedAt(publishedAt: string): string {
   return `${day} · ${time}`;
 }
 
-const MyAssetsUpdates: React.FC = () => {
-  const { emailInvestments, emailInvestmentsReady, isSignedIn } = useUser();
+const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = false }) => {
+  const { emailInvestments } = useUser();
   const [articlesByAsset, setArticlesByAsset] = useState<Record<string, AssetNewsArticle[]> | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [visibleAssetCount, setVisibleAssetCount] = useState(ASSET_NEWS_INITIAL_ASSETS);
@@ -55,6 +62,7 @@ const MyAssetsUpdates: React.FC = () => {
   const [panelOpen, setPanelOpen] = useState(true);
   const [panelHeight, setPanelHeight] = useState(NEWS_LOADER_SECTION_HEIGHT_PX);
   const [contentReveal, setContentReveal] = useState(false);
+  const [minLoaderElapsed, setMinLoaderElapsed] = useState(false);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const showedLoaderRef = useRef(false);
   const {
@@ -66,10 +74,15 @@ const MyAssetsUpdates: React.FC = () => {
     dismissImmediately: dismissCircleLoaderNow,
   } = useAssetSummaryCircleLoader();
 
-  // Same race as the page title: don't pick empty-portfolio (discover) mode until holdings are known.
-  const investmentsPending = isSignedIn && !emailInvestmentsReady;
   const hasInvestments = emailInvestments.length > 0;
-  const gathering = !loadError && (investmentsPending || articlesByAsset === null);
+  // Gate mode until holdings are known; also keep the circle up for a minimum mount time.
+  const gathering =
+    !loadError && (holdingsPending || articlesByAsset === null || !minLoaderElapsed);
+
+  useEffect(() => {
+    const timeoutId = globalThis.setTimeout(() => setMinLoaderElapsed(true), NEWS_MIN_LOADER_MS);
+    return () => globalThis.clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -127,14 +140,14 @@ const MyAssetsUpdates: React.FC = () => {
 
   /** One group per held asset (badge + its stories); only assets with zero articles are skipped. */
   const assetGroups = useMemo<AssetNewsGroup[]>(() => {
-    if (!articlesByAsset || !hasInvestments) return [];
+    if (!articlesByAsset || holdingsPending || !hasInvestments) return [];
     return heldAssetsSorted
       .map((assetId) => ({
         assetId,
         articles: (articlesByAsset[assetId] ?? []).slice(0, ASSET_NEWS_ARTICLES_PER_ASSET),
       }))
       .filter((group) => group.articles.length > 0);
-  }, [articlesByAsset, heldAssetsSorted, hasInvestments]);
+  }, [articlesByAsset, heldAssetsSorted, hasInvestments, holdingsPending]);
 
   /**
    * Empty portfolio: flat headline list across ALL assets, interleaved for diversity —
@@ -142,7 +155,7 @@ const MyAssetsUpdates: React.FC = () => {
    * story first, then every #2, then every #3) so one asset never stacks over another.
    */
   const discoverArticles = useMemo<AssetNewsArticle[]>(() => {
-    if (!articlesByAsset || investmentsPending || hasInvestments) return [];
+    if (!articlesByAsset || holdingsPending || hasInvestments) return [];
     const perAsset = Object.values(articlesByAsset)
       .map((articles) => (articles ?? []).slice(0, ASSET_NEWS_ARTICLES_PER_ASSET))
       .filter((articles) => articles.length > 0)
@@ -154,7 +167,7 @@ const MyAssetsUpdates: React.FC = () => {
       }
     }
     return interleaved;
-  }, [articlesByAsset, investmentsPending, hasInvestments]);
+  }, [articlesByAsset, holdingsPending, hasInvestments]);
 
   useEffect(() => {
     setVisibleAssetCount(ASSET_NEWS_INITIAL_ASSETS);
@@ -162,7 +175,8 @@ const MyAssetsUpdates: React.FC = () => {
   }, [assetGroups.length, discoverArticles.length]);
 
   const contentReady =
-    !investmentsPending &&
+    !holdingsPending &&
+    minLoaderElapsed &&
     articlesByAsset !== null &&
     (hasInvestments ? assetGroups.length > 0 : discoverArticles.length > 0);
 
