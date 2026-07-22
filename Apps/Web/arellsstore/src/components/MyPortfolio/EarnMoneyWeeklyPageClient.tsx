@@ -157,7 +157,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
             {showSignedInPanel ? (
               <>
                 {loadError ? (
-                  <p className="myportfolio-body-copy">Unable to load weekly earnings. Try again later.</p>
+                  <span className="myportfolio-body-copy">Unable to load weekly earnings. Try again later.</span>
                 ) : null}
 
                 <div className={`myinv-summary-block myinv-accent-border myportfolio-explainer${slideIn ? ' page-slide-in' : ''}`}>
@@ -165,7 +165,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                     <div className="myinv-summary-shell">
                       <div className="myportfolio-weekly-uara-intro-nested myinv-accent-border">
                         <div className="myportfolio-weekly-uara-intro-copy">
-                          <p className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy">
+                          <span className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy">
                             <span className="myportfolio-weekly-uara-earnings-lead-group">
                               <span className="myportfolio-weekly-uara-earnings-refer-lead">
                                 Engaging with your investments,
@@ -231,7 +231,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                                 </span>
                               </span>
                             </span>
-                          </p>
+                          </span>
                         </div>
                       </div>
                     </div>

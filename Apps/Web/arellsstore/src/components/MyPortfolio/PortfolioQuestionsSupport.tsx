@@ -12,7 +12,7 @@ const PortfolioQuestionsSupport: React.FC = () => (
       <div className="myinv-panel-section myinv-accent-border myportfolio-email-support-panel">
         <div className="myinv-panel myinv-panel--shell">
           <div className="myportfolio-email-support-copy">
-            <p className="myportfolio-email-support-copy-text">Email us:</p>
+            <span className="myportfolio-email-support-copy-text">Email us:</span>
             <a
               href={`mailto:${PORTFOLIO_SUPPORT_EMAIL}`}
               className="site-social-footer-link site-social-footer-link--accent"
