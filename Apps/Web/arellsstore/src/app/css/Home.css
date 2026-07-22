@@ -4251,6 +4251,9 @@ a.asset-action-button--myinv-asset-link {
 	background: var(--page-accent-tint);
 	/* Match asset pages so the summary wait/expand circle sits in the same spot. */
 	--myinv-summary-circle-loader-bottom: 46vh;
+	/* Lock iOS text inflation at all widths (was only under 750px, so >750 mobile diverged from desktop). */
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
 .myinv-page--accent {
@@ -5802,11 +5805,8 @@ a.myinv-about-button:focus-visible {
 
 
 @media (max-width: 750px) {
-	/* Match desktop narrow-window text metrics: iOS otherwise boosts body text and shifts the title vs icons. */
 	.myinv-page {
 		min-width: 0;
-		-webkit-text-size-adjust: 100%;
-		text-size-adjust: 100%;
 	}
 
 	.myinv-header-inner .myinv-title {

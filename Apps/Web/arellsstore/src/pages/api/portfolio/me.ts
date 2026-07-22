@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSessionFromRequest } from '../../../lib/auth/session';
+import { getMetricsPageActivity } from '../../../lib/metrics/pageActivityCache';
 import {
   getPortfolioContextSnapshot,
   portfolioMeFromSnapshot,
@@ -29,8 +30,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const snapshot = await getPortfolioContextSnapshot(s3, bucket());
-    return res.status(200).json(portfolioMeFromSnapshot(session.email, snapshot));
+    const b = bucket();
+    const [snapshot, activity] = await Promise.all([
+      getPortfolioContextSnapshot(s3, b),
+      getMetricsPageActivity(s3, b),
+    ]);
+    return res.status(200).json(portfolioMeFromSnapshot(session.email, snapshot, activity.wau));
   } catch (e) {
     console.error('[portfolio/me]', e);
     return res.status(500).json({ error: 'Failed to load portfolio' });

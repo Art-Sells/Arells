@@ -180,7 +180,12 @@ export async function getPortfolioContextSnapshot(
   return recomputePortfolioContextSnapshot(s3, bucket);
 }
 
-export function portfolioMeFromSnapshot(email: string, snapshot: PortfolioContextSnapshot): PortfolioMePayload {
+export function portfolioMeFromSnapshot(
+  email: string,
+  snapshot: PortfolioContextSnapshot,
+  /** Prefer metrics page-activity WAU so portfolio matches /metrics. */
+  wauOverride?: number
+): PortfolioMePayload {
   const emailKey = emailKeyFromEmail(normalizeEmail(email));
   const engagementScore = snapshot.scoresByEmailKey[emailKey] ?? 0;
   const totalScore = snapshot.totalEngagementScore;
@@ -191,6 +196,7 @@ export function portfolioMeFromSnapshot(email: string, snapshot: PortfolioContex
     PROJECTED_ENGAGEMENT_ADD_MIN,
     PROJECTED_ENGAGEMENT_ADD_MAX
   );
+  const wau = typeof wauOverride === 'number' ? wauOverride : snapshot.wau;
   return {
     engagementScore,
     earningsUsdMin: min,
@@ -198,8 +204,8 @@ export function portfolioMeFromSnapshot(email: string, snapshot: PortfolioContex
     projectedEarningsUsdMin: projected.min,
     projectedEarningsUsdMax: projected.max,
     topEngagerMaxUsd: snapshot.usersPoolWeeklyMax,
-    wau: snapshot.wau,
-    usersUntilActivation: Math.max(0, snapshot.wauActivationTarget - snapshot.wau),
+    wau,
+    usersUntilActivation: Math.max(0, snapshot.wauActivationTarget - wau),
     wauActivationTarget: snapshot.wauActivationTarget,
     engagementRollingDays: snapshot.engagementRollingDays,
   };

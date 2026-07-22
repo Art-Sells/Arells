@@ -1,3 +1,4 @@
+import { getMetricsPageActivity } from '../metrics/pageActivityCache';
 import { getServerS3 } from '../server/awsS3';
 import {
   getPortfolioContextSnapshot,
@@ -14,8 +15,11 @@ export async function fetchPortfolioMeServer(
   if (!bucket) return null;
   try {
     const s3 = getServerS3();
-    const snapshot = await getPortfolioContextSnapshot(s3, bucket);
-    return portfolioMeFromSnapshot(email, snapshot);
+    const [snapshot, activity] = await Promise.all([
+      getPortfolioContextSnapshot(s3, bucket),
+      getMetricsPageActivity(s3, bucket),
+    ]);
+    return portfolioMeFromSnapshot(email, snapshot, activity.wau);
   } catch {
     return null;
   }
@@ -42,9 +46,12 @@ export async function fetchPortfolioPageServer(email: string): Promise<{
   if (!bucket) return { me: null, leaderboard: [] };
   try {
     const s3 = getServerS3();
-    const snapshot = await getPortfolioContextSnapshot(s3, bucket);
+    const [snapshot, activity] = await Promise.all([
+      getPortfolioContextSnapshot(s3, bucket),
+      getMetricsPageActivity(s3, bucket),
+    ]);
     return {
-      me: portfolioMeFromSnapshot(email, snapshot),
+      me: portfolioMeFromSnapshot(email, snapshot, activity.wau),
       leaderboard: leaderboardFromSnapshot(snapshot),
     };
   } catch {
