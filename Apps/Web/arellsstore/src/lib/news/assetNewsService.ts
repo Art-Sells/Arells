@@ -171,6 +171,9 @@ function isFresh(snapshot: AssetNewsSnapshot, nowMs: number): boolean {
  * Cached asset news for all supported assets, most popular first per asset.
  * No NEWS_API_KEY (e.g. localhost) → deterministic mock articles.
  * With a key → provider articles cached in memory + S3 (ASSET_NEWS_SNAPSHOT_KEY) for ASSET_NEWS_TTL_MS.
+ *
+ * Never blocks the HTTP request on a full provider rebuild (that is sequential across every
+ * supported asset and can take minutes). Serve memory/S3/mock immediately and refresh in background.
  */
 export async function getAssetNewsSnapshot(
   s3: AWS.S3 | null,
@@ -183,24 +186,40 @@ export async function getAssetNewsSnapshot(
 
   if (memoryCache && isFresh(memoryCache, nowMs)) return memoryCache;
 
+  let stored: AssetNewsSnapshot | null = null;
   if (s3 && bucket) {
-    const stored = await tryReadSnapshotFromS3(s3, bucket);
+    stored = await tryReadSnapshotFromS3(s3, bucket);
     if (stored && isFresh(stored, nowMs)) {
       memoryCache = stored;
       return stored;
     }
   }
 
-  if (refreshInFlight) return refreshInFlight;
+  const stale = memoryCache ?? stored;
+  scheduleBackgroundRefresh(s3, bucket, nowMs);
+
+  if (stale) {
+    memoryCache = stale;
+    return stale;
+  }
+
+  // Cold start: return mock now so the Investment Updates panel can leave the loader.
+  return buildMockAssetNewsSnapshot(nowMs);
+}
+
+function scheduleBackgroundRefresh(
+  s3: AWS.S3 | null,
+  bucket: string | null,
+  nowMs: number
+): void {
+  if (refreshInFlight) return;
   refreshInFlight = (async () => {
     const snapshot = await buildSnapshotFromProvider(nowMs);
     memoryCache = snapshot;
     if (s3 && bucket) await writeSnapshotToS3(s3, bucket, snapshot);
     return snapshot;
   })();
-  try {
-    return await refreshInFlight;
-  } finally {
+  void refreshInFlight.finally(() => {
     refreshInFlight = null;
-  }
+  });
 }

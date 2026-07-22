@@ -206,7 +206,6 @@ const MyInvestmentsPageClient: React.FC = () => {
   const currentValueRef = useRef<HTMLDivElement>(null);
   const profitValueRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
   const purchasedValueHeightRef = useRef<number | null>(null);
   const currentValueHeightRef = useRef<number | null>(null);
   const profitValueHeightRef = useRef<number | null>(null);
@@ -432,35 +431,6 @@ const MyInvestmentsPageClient: React.FC = () => {
       if (toggleAnimRafRef.current != null) window.cancelAnimationFrame(toggleAnimRafRef.current);
     };
   }, []);
-
-  const updateTitleShift = useCallback(() => {
-    if (!headerRef.current || !titleRef.current) return;
-    const headerWidth = headerRef.current.clientWidth;
-    const titleWidth = titleRef.current.offsetWidth;
-    const currentLeft = titleRef.current.offsetLeft;
-    const targetLeft = (headerWidth - titleWidth) / 2;
-    const shift = targetLeft - currentLeft;
-    headerRef.current.style.setProperty('--myinv-title-shift', `${shift}px`);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    updateTitleShift();
-    const handleResize = () => updateTitleShift();
-    window.addEventListener('resize', handleResize);
-    const headerEl = headerRef.current;
-    const titleEl = titleRef.current;
-    let resizeObserver: ResizeObserver | null = null;
-    if (headerEl && titleEl && 'ResizeObserver' in window) {
-      resizeObserver = new ResizeObserver(handleResize);
-      resizeObserver.observe(headerEl);
-      resizeObserver.observe(titleEl);
-    }
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (resizeObserver) resizeObserver.disconnect();
-    };
-  }, [updateTitleShift]);
 
   useEffect(() => {
     if (!initialDataReady) return;
@@ -1027,7 +997,7 @@ const MyInvestmentsPageClient: React.FC = () => {
           ref={headerRef}
           className={`myinv-header-inner${slideIn ? ' page-slide-in' : ''}${displayIsLiquidMode ? ' is-liquid' : ''}`}
         >
-          <div ref={titleRef} className="myinv-title">my investments</div>
+          <div className="myinv-title">my investments</div>
         </div>
         <div className={`myinv-slogan-layer${slideIn ? ' page-slide-in' : ''}`}>
           <div className="myinv-descriptioner-wrapper">

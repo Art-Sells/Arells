@@ -430,10 +430,6 @@ a.asset-action-button--myinv-asset-link.asset-action-button--nvidia:visited {
 	}
 
 
-	.myinv-header-inner.is-liquid .myinv-title {
-		transform: translateX(54.5px);
-	}
-
 	.home-asset-card .asset-action-button--home-asset-chip,
 	.myinv-page .myinv-asset-home-card .asset-action-button--home-asset-chip,
 	a.asset-action-button--myinv-asset-link {

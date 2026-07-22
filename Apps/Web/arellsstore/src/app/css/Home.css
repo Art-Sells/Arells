@@ -4342,8 +4342,13 @@ a.asset-action-button--myinv-asset-link {
 	margin-bottom: -33px;
 	white-space: nowrap;
 	top: 0;
-	transition: transform 1s ease;
+	transform: none;
 	z-index: 3;
+}
+
+/* Liquid toggle must not slide/shift the My Investments title (asset CSS used to override this). */
+.myinv-header-inner.is-liquid .myinv-title {
+	transform: none;
 }
 
 .myinv-slogan-layer {
@@ -4391,10 +4396,6 @@ a.asset-action-button--myinv-asset-link {
 
 .myinv-descriptioner.myinv-slogan-text.is-hidden {
 	opacity: 0;
-}
-
-.myinv-header-inner.is-liquid .myinv-title {
-	transform: translateX( 197px);
 }
 
 .myinv-wrapper {
@@ -5818,20 +5819,11 @@ a.myinv-about-button:focus-visible {
 		margin-bottom: 13px;
 	}
 
-
-	.myinv-header-inner.is-liquid .myinv-title {
-		transform: translateX(54.5px);
-	}
-
 	.myinv-page--earn-weekly .myinv-header-inner .myinv-title {
 		margin-right: 3px;
 		margin-bottom: 10px;
 		width: 100%;
 		text-align: center;
-	}
-
-	.myinv-page--earn-weekly .myinv-header-inner.is-liquid .myinv-title {
-		transform: translateX(-2px);
 	}
 
 	.home-asset-card .asset-action-button--home-asset-chip,
@@ -7065,12 +7057,11 @@ a.myinv-about-button:focus-visible {
 
 #word-logoo {
 	transform: translateX(0);
-	transition: transform 1s ease;
 }
 
 .home-header-inner.is-liquid #word-logoo {
-	/* Compensate header row `translate(10px, 1px)` so liquid centering matches viewport; logo-only so slide transition stays smooth */
-	transform: translateX(calc(var(--home-logo-shift, 0px) - 10px));
+	/* No title slide on liquid toggle — keep logo at resting position. */
+	transform: translateX(0);
 }
 
 			.home-divider {
@@ -7891,7 +7882,7 @@ a.myinv-about-button:focus-visible {
 	  }
 
 	  .home-header-inner.is-liquid #word-logoo {
-		  transform: translate(calc(var(--home-logo-shift, 0px) - 10px), -2px);
+		  transform: translateY(-2px);
 	  }
 	  
 	  #descriptioner-wrapper {
@@ -11575,9 +11566,15 @@ a.asset-action-button--save-signin {
 .myportfolio-projected-earnings-nested,
 .myportfolio-referral-network-nested,
 .myportfolio-share-copy-nested,
-.myportfolio-wau-countdown-nested,
 .myportfolio-weekly-uara-intro-nested {
 	margin-top: 16px;
+	padding: 12px 10px 14px;
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+.myportfolio-wau-countdown-nested {
+	margin-top: 10px;
 	padding: 12px 10px 14px;
 	border-radius: 12px;
 	box-sizing: border-box;
@@ -11687,6 +11684,56 @@ a.asset-action-button--save-signin {
 }
 
 /* My Investment Updates: asset groups (badge + bordered top stories) in their own below-shell section */
+.myportfolio-news-panel {
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* Gathering + reveal: 50px loader band (circle centered); height-down expands the panel from here. */
+.myportfolio-news-loader-slot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 50px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.myportfolio-news-loader-slot.is-overlay {
+	position: absolute;
+	inset: 0;
+	height: auto;
+	z-index: 2;
+	pointer-events: none;
+}
+
+/* Same accent ring as My Investments; relative inside the updates panel (not fixed viewport). */
+.myportfolio-news-loader-slot .asset-summary-circle-loader--portfolio-news {
+	position: relative;
+	inset: auto;
+	left: auto;
+	top: auto;
+	bottom: auto;
+	transform: none;
+	z-index: 1;
+}
+
+.myportfolio-news-loader-slot .asset-summary-circle-loader--portfolio-news .asset-summary-circle-loader-ring {
+	background: color-mix(in srgb, var(--myinv-accent-color) 20%, transparent);
+	border: var(--asset-chart-line-width, 6.5px) solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
+}
+
+.myportfolio-news-panel .asset-mount-fade-2s {
+	opacity: 0;
+	transition: opacity 2s ease;
+}
+
+.myportfolio-news-panel .asset-mount-fade-2s.is-visible {
+	opacity: 1;
+}
+
 .myportfolio-news-group + .myportfolio-news-group {
 	margin-top: 10px;
 }

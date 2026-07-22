@@ -4,6 +4,12 @@
  * Loaded after *-asset-rules.css so these win over `.asset-action-button--{asset}` tints.
  */
 
+/* My Investments title must never slide/shift on liquid toggle (beats leftover asset-rules). */
+.myinv-header-inner .myinv-title,
+.myinv-header-inner.is-liquid .myinv-title {
+	transform: none !important;
+}
+
 /* BNB — /bnb `.asset-header-title` uses --asset-line-color rgb(243, 186, 47) */
 #overlayy .home-asset-bnb .home-asset-name,
 #overlayy .home-asset-bnb .asset-action-button.asset-action-button--home-asset-chip,
