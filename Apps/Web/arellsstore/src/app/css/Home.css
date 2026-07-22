@@ -11524,11 +11524,11 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-benefits-sublabel {
+	display: block;
+	width: min(500px, 100%);
+	max-width: 500px;
+	margin: 4px auto 0;
 	text-align: center;
-	margin: 4px 0 0;
-	/* Match under-750 metric-title size at all widths (wrapping label copy). */
-	font-size: 10.5px;
-	/* Stop mobile WebKit from inflating wrapping label copy (same lock as #overlayy). */
 	-webkit-text-size-adjust: none;
 	text-size-adjust: none;
 }
@@ -11626,12 +11626,14 @@ a.asset-action-button--save-signin {
 	}
 }
 
-/* Matches the "Email us:" text in Questions/Concerns; under-750 size at all widths. */
+/* Matches the "Email us:" text in Questions/Concerns (13px, black, 800 weight). */
 .myportfolio-wau-share-note {
 	display: block;
-	margin: 0 0 10px;
+	width: min(500px, 100%);
+	max-width: 500px;
+	margin: 0 auto 10px;
 	text-align: center;
-	font-size: 11px;
+	font-size: 13px;
 	line-height: 1.45;
 	font-weight: 800;
 	color: #000;
@@ -11779,7 +11781,10 @@ a.asset-action-button--save-signin {
 /* Headline text mirrors the My Investments badge letter color (per-asset --asset-line-color). */
 .myportfolio-news-headline {
 	display: block;
-	width: 100%;
+	width: min(500px, 100%);
+	max-width: 500px;
+	margin-left: auto;
+	margin-right: auto;
 	text-align: center;
 	font-size: 11px;
 	font-weight: 700;
@@ -12096,9 +12101,11 @@ a.asset-action-button--save-signin {
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy {
 	display: block;
-	margin: 0 0 8px;
+	width: min(500px, 100%);
+	max-width: 500px;
+	margin: 0 auto 8px;
 	text-align: center;
-	font-size: 10.5px;
+	font-size: 12px;
 	line-height: 1.2;
 	color: #444;
 	-webkit-text-fill-color: #444;
@@ -12121,7 +12128,7 @@ a.asset-action-button--save-signin {
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-body-copy {
-	font-size: 10.5px;
+	font-size: 12px;
 	line-height: 1.35;
 	color: #000;
 	-webkit-text-fill-color: #000;
@@ -12282,12 +12289,15 @@ a.asset-action-button--save-signin {
 
 .myportfolio-weekly-uara-intro-copy {
 	text-align: center;
-	width: 100%;
+	width: min(500px, 100%);
+	max-width: 500px;
+	margin-left: auto;
+	margin-right: auto;
 	box-sizing: border-box;
 }
 
 .myportfolio-weekly-uara-intro-copy .myportfolio-body-copy {
-	font-size: 10.5px;
+	font-size: 12px;
 	line-height: 1.35;
 	color: #444;
 	margin: 0 0 8px;
@@ -12320,6 +12330,20 @@ a.asset-action-button--save-signin {
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-title {
+		font-size: 10.5px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-body-copy {
+		font-size: 10.5px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-wau-share-note {
+		font-size: 11px;
+	}
+
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-intro-copy .myportfolio-body-copy,
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-copy {
 		font-size: 10.5px;
 	}
 
