@@ -165,7 +165,7 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                     <div className="myinv-summary-shell">
                       <div className="myportfolio-weekly-uara-intro-nested myinv-accent-border">
                         <div className="myportfolio-weekly-uara-intro-copy">
-                          <span className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy">
+                          <span className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy myportfolio-text-chunks">
                             <span className="myportfolio-weekly-uara-earnings-lead-group">
                               <span className="myportfolio-weekly-uara-earnings-refer-lead">
                                 Engaging with your investments,
@@ -204,30 +204,29 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                                 (Weekly Active Users).
                               </span>
                             </span>
-                            <span className="myportfolio-weekly-uara-revenue-stack">
-                              <span className="myportfolio-weekly-uara-revenue-block">
-                                <span
-                                  className="site-social-footer-rule myportfolio-weekly-uara-revenue-rule"
-                                  aria-hidden="true"
-                                />
-                                <span className="myportfolio-weekly-uara-revenue-copy">
-                                  Your weekly earnings will be dependent on how active you are with your
-                                  investments.
-                                </span>
+                          </span>
+                          <span className="myportfolio-weekly-uara-revenue-stack">
+                            <span className="myportfolio-weekly-uara-revenue-block">
+                              <span
+                                className="site-social-footer-rule myportfolio-weekly-uara-revenue-rule"
+                                aria-hidden="true"
+                              />
+                              <span className="myportfolio-weekly-uara-revenue-copy myportfolio-text-chunks">
+                                <span>Your weekly earnings will be dependent on how active you are</span>
+                                <span>with your investments.</span>
                               </span>
-                              <span className="myportfolio-weekly-uara-revenue-block">
-                                <span
-                                  className="site-social-footer-rule myportfolio-weekly-uara-revenue-rule"
-                                  aria-hidden="true"
-                                />
-                                <span className="myportfolio-weekly-uara-revenue-copy">
-                                  <span className="myportfolio-weekly-uara-revenue-lead">
-                                    Your weekly earnings will be derived from the 65% of advertising revenue
-                                  </span>
-                                  <span className="myportfolio-weekly-uara-revenue-tail">
-                                    {' '}
-                                    (User Ad Revenue (UAR)) Arells generates, Arells will keep 35%.
-                                  </span>
+                            </span>
+                            <span className="myportfolio-weekly-uara-revenue-block">
+                              <span
+                                className="site-social-footer-rule myportfolio-weekly-uara-revenue-rule"
+                                aria-hidden="true"
+                              />
+                              <span className="myportfolio-weekly-uara-revenue-copy myportfolio-text-chunks">
+                                <span className="myportfolio-weekly-uara-revenue-lead">
+                                  Your weekly earnings will be derived from the 65% of advertising revenue
+                                </span>
+                                <span className="myportfolio-weekly-uara-revenue-tail">
+                                  (User Ad Revenue (UAR)) Arells generates, Arells will keep 35%.
                                 </span>
                               </span>
                             </span>

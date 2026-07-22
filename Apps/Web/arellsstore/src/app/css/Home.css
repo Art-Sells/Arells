@@ -11524,13 +11524,71 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-benefits-sublabel {
-	display: block;
-	width: min(500px, 100%);
-	max-width: 500px;
-	margin: 4px auto 0;
 	text-align: center;
-	-webkit-text-size-adjust: none;
-	text-size-adjust: none;
+	margin: 4px 0 0;
+}
+
+/* Short flex chunks: side-by-side over 750, stacked under 750 — separate items for Safari clusters.
+   Higher specificity so display:flex wins over .myinv-metric-title / .myportfolio-wau-share-note display:block. */
+.myportfolio-text-chunks.myportfolio-text-chunks,
+.myinv-metric-title.myportfolio-text-chunks,
+.myportfolio-wau-share-note.myportfolio-text-chunks,
+.myportfolio-share-invite-copy.myportfolio-text-chunks,
+.myportfolio-body-copy.myportfolio-text-chunks,
+.myportfolio-weekly-uara-revenue-copy.myportfolio-text-chunks {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: baseline;
+	column-gap: 0.35em;
+	row-gap: 0;
+}
+
+.myportfolio-text-chunks > * {
+	flex: 0 1 auto;
+	min-width: 0;
+}
+
+/* Earn-weekly earnings blurb + WAU unlock/share note: always stacked. */
+.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks,
+.myportfolio-text-chunks.myportfolio-text-chunks--stack {
+	flex-direction: column;
+	align-items: center;
+	row-gap: 0;
+	column-gap: 0;
+}
+
+.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks {
+	row-gap: 8px;
+}
+
+/* "per week at ~100k Weekly Active Users" — never stack (stay one row at all widths). */
+.myportfolio-benefits-sublabel.myportfolio-text-chunks:not(.myportfolio-text-chunks--stack) {
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: baseline;
+	column-gap: 0.35em;
+}
+
+@media (max-width: 750px) {
+	.myportfolio-share-invite-copy.myportfolio-text-chunks,
+	.myportfolio-body-copy.myportfolio-text-chunks,
+	.myportfolio-weekly-uara-revenue-copy.myportfolio-text-chunks,
+	.myportfolio-text-chunks.myportfolio-text-chunks--stack {
+		flex-direction: column;
+		align-items: center;
+		column-gap: 0;
+	}
+
+	.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks {
+		row-gap: 8px;
+	}
+
+	.myportfolio-benefits-sublabel.myportfolio-text-chunks:not(.myportfolio-text-chunks--stack) {
+		flex-direction: row;
+		flex-wrap: nowrap;
+	}
 }
 
 .myportfolio-pct-value,
@@ -11629,21 +11687,30 @@ a.asset-action-button--save-signin {
 /* Matches the "Email us:" text in Questions/Concerns (13px, black, 800 weight). */
 .myportfolio-wau-share-note {
 	display: block;
-	width: min(500px, 100%);
-	max-width: 500px;
-	margin: 0 auto 10px;
+	margin: 0 0 10px;
 	text-align: center;
 	font-size: 13px;
 	line-height: 1.45;
 	font-weight: 800;
 	color: #000;
 	-webkit-text-fill-color: #000;
-	-webkit-text-size-adjust: none;
-	text-size-adjust: none;
+}
+
+.myportfolio-wau-share-note.myportfolio-text-chunks {
+	display: flex;
+}
+
+/* After display:block overrides — force WAU unlock / share note to always stack. */
+.myinv-metric-title.myportfolio-text-chunks.myportfolio-text-chunks--stack,
+.myportfolio-wau-share-note.myportfolio-text-chunks.myportfolio-text-chunks--stack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	column-gap: 0;
 }
 
 .myportfolio-wau-share-note-tail {
-	display: block;
+	display: inline;
 }
 
 @media (max-width: 750px) {
@@ -11781,10 +11848,7 @@ a.asset-action-button--save-signin {
 /* Headline text mirrors the My Investments badge letter color (per-asset --asset-line-color). */
 .myportfolio-news-headline {
 	display: block;
-	width: min(500px, 100%);
-	max-width: 500px;
-	margin-left: auto;
-	margin-right: auto;
+	width: 100%;
 	text-align: center;
 	font-size: 11px;
 	font-weight: 700;
@@ -12101,16 +12165,33 @@ a.asset-action-button--save-signin {
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy {
 	display: block;
-	width: min(500px, 100%);
-	max-width: 500px;
-	margin: 0 auto 8px;
+	margin: 0 0 8px;
 	text-align: center;
 	font-size: 12px;
 	line-height: 1.2;
 	color: #444;
 	-webkit-text-fill-color: #444;
-	-webkit-text-size-adjust: none;
-	text-size-adjust: none;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy.myportfolio-text-chunks {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	column-gap: 0;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy.myportfolio-text-chunks .myportfolio-share-invite-line-one {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy.myportfolio-text-chunks .myportfolio-share-invite-tail {
+	display: block;
+	margin: 0;
+	padding: 0;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-line-one,
@@ -12133,8 +12214,6 @@ a.asset-action-button--save-signin {
 	color: #000;
 	-webkit-text-fill-color: #000;
 	margin: 0 0 8px;
-	-webkit-text-size-adjust: none;
-	text-size-adjust: none;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-about-earnings-wau,
@@ -12289,10 +12368,7 @@ a.asset-action-button--save-signin {
 
 .myportfolio-weekly-uara-intro-copy {
 	text-align: center;
-	width: min(500px, 100%);
-	max-width: 500px;
-	margin-left: auto;
-	margin-right: auto;
+	width: 100%;
 	box-sizing: border-box;
 }
 
@@ -12302,8 +12378,6 @@ a.asset-action-button--save-signin {
 	color: #444;
 	margin: 0 0 8px;
 	text-align: center;
-	-webkit-text-size-adjust: none;
-	text-size-adjust: none;
 }
 
 .myportfolio-weekly-uara-intro-copy .myportfolio-body-copy:last-child {
@@ -12330,20 +12404,6 @@ a.asset-action-button--save-signin {
 	}
 
 	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-title {
-		font-size: 10.5px;
-	}
-
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy,
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-body-copy {
-		font-size: 10.5px;
-	}
-
-	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-wau-share-note {
-		font-size: 11px;
-	}
-
-	.myinv-page--earn-weekly .myportfolio-weekly-uara-intro-copy .myportfolio-body-copy,
-	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-copy {
 		font-size: 10.5px;
 	}
 
@@ -12381,6 +12441,19 @@ a.asset-action-button--save-signin {
 		display: inline;
 		margin: 0;
 		padding: 0;
+	}
+
+	/* Match ≤750 metric-title step (12 → 10.5). */
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-copy {
+		font-size: 10.5px;
+	}
+
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-range > .myinv-metric-symbol,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-range .myinv-metric-integer,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-amount > .myinv-metric-symbol,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-usd-amount .myinv-metric-integer,
+	.myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel .myportfolio-metric-number-wrap {
+		font-size: 14px;
 	}
 
 	.myportfolio-weekly-uara-earnings-copy {
@@ -12457,6 +12530,12 @@ a.asset-action-button--save-signin {
 		margin-left: auto;
 		margin-right: auto;
 		box-sizing: border-box;
+	}
+
+	.myinv-page--earn-weekly .myportfolio-weekly-uara-revenue-copy.myportfolio-text-chunks {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 }
 
@@ -12542,9 +12621,6 @@ a.asset-action-button--save-signin {
 .myportfolio-weekly-uara-revenue-copy {
 	color: #000;
 	-webkit-text-fill-color: #000;
-	font-size: 10.5px;
-	-webkit-text-size-adjust: none;
-	text-size-adjust: none;
 }
 
 .myportfolio-weekly-uara-revenue-stack > .myportfolio-weekly-uara-revenue-block:first-child .myportfolio-weekly-uara-revenue-copy {

@@ -190,8 +190,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                               />
                             ) : null}
                           </div>
-                          <span className="myinv-metric-title myportfolio-benefits-sublabel">
-                            per week at ~100k Weekly Active Users
+                          <span className="myinv-metric-title myportfolio-benefits-sublabel myportfolio-text-chunks">
+                            <span>per week at ~100k</span>
+                            <span>Weekly Active Users</span>
                           </span>
                         </div>
                       </div>
@@ -202,7 +203,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                     <div className="myinv-panel-section myinv-accent-border">
                       <div className="myinv-panel myinv-panel--shell myportfolio-share-panel">
                         <div className="myportfolio-share-copy-nested myinv-accent-border">
-                          <span className="myportfolio-share-invite-copy">
+                          <span className="myportfolio-share-invite-copy myportfolio-text-chunks myportfolio-text-chunks--stack">
                             <span className="myportfolio-share-invite-line-one">
                               <span className="myportfolio-share-invite-signup">
                                 Build your portfolio
@@ -217,7 +218,7 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                                   />
                                 ) : null}
                               </span>
-                            </span>{' '}
+                            </span>
                             <span className="myportfolio-share-invite-tail">
                               a week by engaging with your investments.
                             </span>
@@ -293,15 +294,14 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                           </span>
                         </span>
                       </div>
-                      <span className="myinv-metric-title myportfolio-benefits-sublabel">
-                        Weekly Active Users
-                        <br />
-                        until your weekly earnings are unlocked
+                      <span className="myinv-metric-title myportfolio-benefits-sublabel myportfolio-text-chunks myportfolio-text-chunks--stack">
+                        <span>Weekly Active Users</span>
+                        <span>until your weekly earnings are unlocked</span>
                       </span>
                       <div className="myportfolio-wau-share-nested myinv-accent-border">
-                        <span className="myportfolio-wau-share-note">
-                          Help others join{' '}
-                          <span className="myportfolio-wau-share-note-tail">our mission by sharing Arells:</span>
+                        <span className="myportfolio-wau-share-note myportfolio-text-chunks myportfolio-text-chunks--stack">
+                          <span>Help others join</span>
+                          <span>our mission by sharing Arells:</span>
                         </span>
                         <div className="myportfolio-share-copy-row">
                           <button
