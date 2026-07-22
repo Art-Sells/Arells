@@ -11525,6 +11525,9 @@ a.asset-action-button--save-signin {
 .myportfolio-benefits-sublabel {
 	text-align: center;
 	margin: 4px 0 0;
+	/* Stop mobile WebKit from inflating wrapping label copy (same lock as #overlayy). */
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 }
 
 .myportfolio-pct-value,
@@ -11627,6 +11630,8 @@ a.asset-action-button--save-signin {
 	font-weight: 800;
 	color: #000;
 	-webkit-text-fill-color: #000;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 }
 
 .myportfolio-wau-share-note-tail {
@@ -11775,6 +11780,8 @@ a.asset-action-button--save-signin {
 	line-height: 1.5;
 	color: var(--asset-line-color, #222);
 	-webkit-text-fill-color: var(--asset-line-color, #222);
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 }
 
 .myportfolio-leaderboard-show-more,
@@ -12089,6 +12096,8 @@ a.asset-action-button--save-signin {
 	line-height: 1.2;
 	color: #444;
 	-webkit-text-fill-color: #444;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-invite-line-one,
@@ -12111,6 +12120,8 @@ a.asset-action-button--save-signin {
 	color: #000;
 	-webkit-text-fill-color: #000;
 	margin: 0 0 8px;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-about-nested .myportfolio-about-earnings-wau,
@@ -12275,6 +12286,8 @@ a.asset-action-button--save-signin {
 	color: #444;
 	margin: 0 0 8px;
 	text-align: center;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 }
 
 .myportfolio-weekly-uara-intro-copy .myportfolio-body-copy:last-child {
@@ -12516,6 +12529,8 @@ a.asset-action-button--save-signin {
 .myportfolio-weekly-uara-revenue-copy {
 	color: #000;
 	-webkit-text-fill-color: #000;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
 }
 
 .myportfolio-weekly-uara-revenue-stack > .myportfolio-weekly-uara-revenue-block:first-child .myportfolio-weekly-uara-revenue-copy {
