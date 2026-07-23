@@ -9898,6 +9898,25 @@ a.growth-metrics-about-button:focus-visible {
 	color: var(--myinv-accent-color);
 }
 
+/* Under email on OTP sent: match .auth-label (“enter code”) color/opacity; only spam/junk bold */
+.auth-verify-sent-sub.auth-verify-sent-sub--spam-hint {
+	width: 150px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
+	font-weight: 400;
+	font-size: 12px;
+	letter-spacing: -0.3px;
+	text-align: center;
+	color: #111;
+	opacity: 1;
+}
+
+.auth-verify-sent-sub.auth-verify-sent-sub--spam-hint strong {
+	font-weight: 800;
+}
+
 /* Body line only: match home slogan (#descriptioner.home-slogan-text) — not "Check your email" */
 .auth-verify-sent-sub.auth-verify-sent-sub--forgot-sent {
 	color: gray;
@@ -10214,6 +10233,8 @@ a.asset-action-button--save-signin {
 .auth-otp-form .auth-otp-label {
 	text-transform: none;
 	margin-bottom: 5px;
+	color: #111;
+	opacity: 1;
 }
 
 .auth-verify-sent .auth-otp-form {

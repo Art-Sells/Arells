@@ -323,6 +323,9 @@ const ForgotPasswordPageClient: React.FC = () => {
                   <p className="auth-verify-sent-email-row">
                     <span className="auth-verify-sent-email-accent">{sentTo}</span>
                   </p>
+                  <p className="auth-verify-sent-sub auth-verify-sent-sub--spam-hint">
+                    Check your <strong>spam/junk</strong> folder in case you didn&apos;t receive.
+                  </p>
                   <AuthOtpCodeForm
                     email={sentTo}
                     resendUrl="/api/auth/resend-password-reset"
