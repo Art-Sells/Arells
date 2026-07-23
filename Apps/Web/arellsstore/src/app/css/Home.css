@@ -10183,7 +10183,8 @@ a.asset-action-button--save-signin {
 }
 
 .auth-page .auth-forgot-link:link,
-.auth-page .auth-forgot-link:visited {
+.auth-page .auth-forgot-link:visited,
+.auth-page button.auth-forgot-link {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -10207,6 +10208,117 @@ a.asset-action-button--save-signin {
 .auth-page .auth-forgot-link:focus-visible {
 	opacity: 0.88;
 	outline: none;
+}
+
+/* OTP code entry (signup + forgot password) */
+.auth-otp-form .auth-otp-label {
+	text-transform: none;
+	margin-bottom: 5px;
+}
+
+.auth-verify-sent .auth-otp-form {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.auth-otp-boxes {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.auth-otp-box.auth-input {
+	flex: 1 1 0;
+	width: auto;
+	min-width: 0;
+	max-width: 40px;
+	height: 44px;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 0;
+	box-sizing: border-box;
+}
+
+/* ~10px under the boxes before error / submit (override reserved auth-message-slot band). */
+.auth-otp-form .auth-message-slot {
+	margin: 10px 0 0;
+	min-height: 0;
+}
+
+.auth-otp-form .auth-message-slot:has(.auth-message) {
+	min-height: calc(12px * 1.35);
+}
+
+.auth-otp-resend-row {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin: 0;
+	text-align: center;
+}
+
+.auth-otp-resend-prompt {
+	margin-top: 10px;
+	font-size: 12px;
+	line-height: 1.3;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
+.auth-page .auth-otp-resend-button {
+	appearance: none;
+	-webkit-appearance: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	align-self: center;
+	margin: 0 auto;
+	padding: 15px 5px;
+	width: 120px;
+	box-sizing: border-box;
+	font-family: inherit;
+	font-weight: 700;
+	font-size: 12px;
+	letter-spacing: -0.2px;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	border-radius: 5px;
+	border: none;
+	border-color: transparent;
+	background: var(--myinv-accent-color);
+	color: #fff;
+	-webkit-text-fill-color: #fff;
+}
+
+.auth-page .auth-otp-resend-button:hover:not(:disabled),
+.auth-page .auth-otp-resend-button:focus-visible:not(:disabled) {
+	opacity: 0.88;
+	outline: none;
+}
+
+.auth-page .auth-otp-resend-button:disabled,
+.auth-page .auth-otp-resend-button.is-code-sent {
+	cursor: not-allowed;
+	pointer-events: none;
+	opacity: 1;
+	border: 1px solid transparent;
+	border-color: transparent;
+	background: color-mix(in srgb, var(--myinv-accent-color) 18%, transparent);
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
 @media screen and (max-height: 600px) {

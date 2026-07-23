@@ -29,16 +29,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const auth = await getUserAuthByEmail(email);
-    if (!auth) {
+    if (!auth || !auth.verified) {
       return res.status(401).json({
         error: 'account does not exist, sign up',
         code: 'NO_ACCOUNT',
-      });
-    }
-    if (!auth.verified) {
-      return res.status(403).json({
-        error: 'Verify your email before signing in.',
-        code: 'NOT_VERIFIED',
       });
     }
 

@@ -3,17 +3,16 @@ import { sesFormattedFrom } from './sesFormattedFrom';
 
 export async function sendPasswordResetEmail(opts: {
   to: string;
-  resetUrl: string;
-  logoUrl: string;
+  code: string;
 }): Promise<{ sent: boolean; skippedReason?: string }> {
   if (process.env.AUTH_EMAIL_DISABLED === '1') {
-    console.info('[auth] AUTH_EMAIL_DISABLED: reset URL for', opts.to, opts.resetUrl);
+    console.info('[auth] AUTH_EMAIL_DISABLED: reset code for', opts.to, opts.code);
     return { sent: false, skippedReason: 'AUTH_EMAIL_DISABLED' };
   }
 
   const fromAddr = process.env.PASSWORD_RESET_FROM?.trim();
   if (!fromAddr) {
-    console.warn('[auth] PASSWORD_RESET_FROM not set; cannot send reset email. URL:', opts.resetUrl);
+    console.warn('[auth] PASSWORD_RESET_FROM not set; cannot send reset email. Code:', opts.code);
     return { sent: false, skippedReason: 'PASSWORD_RESET_FROM' };
   }
   const from = sesFormattedFrom('Arells Password Reset', fromAddr);
@@ -34,15 +33,16 @@ export async function sendPasswordResetEmail(opts: {
       : {}),
   });
 
-  const subject = 'Arells Password Reset';
-  const text = `Click this link to reset your password:\n\n${opts.resetUrl}\n`;
+  const subject = 'Your Arells verification code';
+  const text = `Enter this code to reset your password:\n\n${opts.code}\n\nThis code expires in 5 minutes. Never share it with anyone. If you weren't expecting this, you can ignore this email.\n\nOn a mission to ensure your investments never lose value.\nhttps://arells.com\n`;
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${subject}</title></head><body style="font-family:Arial,sans-serif;background:#f6f6f6;padding:24px;">
   <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:24px;border:1px solid #e0e0e0;">
-    <img src="${opts.logoUrl}" alt="Arells" width="50" height="50" style="display:block;width:50px;height:50px;margin-bottom:16px;" />
-    <h1 style="font-size:18px;margin:0 0 12px;">Arells Password Reset</h1>
-    <p style="margin:0 0 16px;color:#333;">Click this link to reset your password</p>
-    <p style="margin:0;"><a href="${opts.resetUrl}" style="display:inline-block;padding:12px 20px;background:#222;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;border:1px solid #fff;">Reset password</a></p>
-    <p style="margin:16px 0 0;font-size:12px;color:#666;">If you did not request a password reset, you can ignore this message.</p>
+    <p style="margin:0;color:#333;font-size:11px;line-height:1.5;">Enter this code to reset your password:</p>
+    <p style="margin:12px 0 0;color:#333;font-size:22px;line-height:1.3;"><strong style="font-weight:700;letter-spacing:0.12em;">${opts.code}</strong></p>
+    <p style="margin:16px 0 0;font-size:12px;color:#666;">This code expires in 5 minutes. Never share it with anyone. If you weren't expecting this, you can ignore this email.</p>
+    <hr style="border:none;border-top:1px solid #e0e0e0;margin:16px 0;" />
+    <p style="margin:0;font-size:12px;color:#666;line-height:1.5;">On a mission to ensure your investments never lose value.</p>
+    <p style="margin:8px 0 0;font-size:12px;"><a href="https://arells.com" style="color:#666;">https://arells.com</a></p>
   </div></body></html>`;
 
   try {

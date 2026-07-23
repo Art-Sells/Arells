@@ -1,11 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
-import { randomBytes } from 'crypto';
 import { EMAIL_RE, normalizeEmail } from '../../../lib/auth/normalize';
 import { validateAuthPassword } from '../../../lib/auth/validateAuthPassword';
 import { attachReferrerOnRegister } from '../../../lib/auth/referral';
 import { getUserAuthByEmail, putPendingVerification, putUserAuth } from '../../../lib/auth/s3UserAuth';
-import { resolveAppOrigin, resolveEmailLogoUrl } from '../../../lib/auth/origin';
+import { generateOtpCode, OTP_TTL_MS } from '../../../lib/auth/otpCode';
 import { sendVerificationEmail } from '../../../lib/auth/sendVerificationEmail';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -13,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email: rawEmail, password, passwordConfirm, origin: bodyOrigin, referralCode } = req.body || {};
+  const { email: rawEmail, password, passwordConfirm, referralCode } = req.body || {};
   if (typeof rawEmail !== 'string' || typeof password !== 'string' || typeof passwordConfirm !== 'string') {
     return res.status(400).json({ error: 'Invalid request', code: 'INVALID_BODY' });
   }
@@ -37,8 +36,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-    const token = randomBytes(32).toString('hex');
-    const verificationExpiresAt = Date.now() + 48 * 60 * 60 * 1000;
+    const code = generateOtpCode();
+    const verificationExpiresAt = Date.now() + OTP_TTL_MS;
     const now = Date.now();
 
     const existingReferral = existing?.referredByEmail
@@ -49,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       email,
       passwordHash,
       verified: false,
-      verificationToken: token,
+      verificationToken: code,
       verificationExpiresAt,
       updatedAt: now,
       ...existingReferral,
@@ -59,19 +58,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       await attachReferrerOnRegister(email, referralCode);
     }
 
-    await putPendingVerification(token, { email, expiresAt: verificationExpiresAt });
+    await putPendingVerification(code, { email, expiresAt: verificationExpiresAt });
 
-    const appOrigin = resolveAppOrigin(req.headers.origin, bodyOrigin);
-    const verifyUrl = `${appOrigin}/verified/${token}`;
-    const logoUrl = resolveEmailLogoUrl(appOrigin);
-
-    const sendResult = await sendVerificationEmail({ to: email, verifyUrl, logoUrl });
+    const sendResult = await sendVerificationEmail({ to: email, code });
 
     return res.status(200).json({
       ok: true,
       email,
       emailDispatched: sendResult.sent,
       emailDispatchNote: sendResult.skippedReason,
+      codeExpiresInMs: OTP_TTL_MS,
     });
   } catch (e) {
     console.error('[auth] register error:', e);

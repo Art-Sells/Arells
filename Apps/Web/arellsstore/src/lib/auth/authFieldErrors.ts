@@ -7,7 +7,11 @@ export function isEmailRelatedAuthError(code: string | null): boolean {
     code === 'NO_ACCOUNT' ||
     code === 'NOT_VERIFIED' ||
     code === 'REQUIRED_EMAIL' ||
-    code === 'SIGN_IN_COMBO'
+    code === 'SIGN_IN_COMBO' ||
+    code === 'BAD_CODE' ||
+    code === 'EXPIRED' ||
+    code === 'INVALID_CODE' ||
+    code === 'ALREADY_VERIFIED'
   );
 }
 
