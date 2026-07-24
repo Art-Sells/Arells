@@ -13,19 +13,25 @@ const BASE_PREFIX = 'analytics/myinv-engagement-v1';
  */
 export const MYINV_ENGAGEMENT_LIVE_STORAGE = true;
 
-export type MyInvEngagementEventType = 'range_select' | 'toggle_flip' | 'section_expand';
+export type MyInvEngagementEventType =
+  | 'range_select'
+  | 'toggle_flip'
+  | 'section_expand'
+  | 'investment_update_click';
 
 /** Points per event — summed over rolling UTC window for earnings score. */
 export const MYINV_ENGAGEMENT_EVENT_WEIGHTS: Record<MyInvEngagementEventType, number> = {
   range_select: 1,
   toggle_flip: 2,
   section_expand: 1,
+  investment_update_click: 1,
 };
 
 export type MyInvEngagementDayCounts = {
   range_select: number;
   toggle_flip: number;
   section_expand: number;
+  investment_update_click: number;
   updatedAt: number;
 };
 
@@ -72,7 +78,13 @@ function dayObjectKey(dayKey: string, emailKey: string): string {
 }
 
 function emptyCounts(updatedAt = Date.now()): MyInvEngagementDayCounts {
-  return { range_select: 0, toggle_flip: 0, section_expand: 0, updatedAt };
+  return {
+    range_select: 0,
+    toggle_flip: 0,
+    section_expand: 0,
+    investment_update_click: 0,
+    updatedAt,
+  };
 }
 
 export async function readEngagementDayCounts(
@@ -90,6 +102,7 @@ export async function readEngagementDayCounts(
       range_select: Math.max(0, Number(parsed.range_select) || 0),
       toggle_flip: Math.max(0, Number(parsed.toggle_flip) || 0),
       section_expand: Math.max(0, Number(parsed.section_expand) || 0),
+      investment_update_click: Math.max(0, Number(parsed.investment_update_click) || 0),
       updatedAt: typeof parsed.updatedAt === 'number' ? parsed.updatedAt : Date.now(),
     };
   } catch (err: unknown) {
@@ -136,7 +149,8 @@ function scoreFromCounts(counts: MyInvEngagementDayCounts): number {
   return (
     counts.range_select * MYINV_ENGAGEMENT_EVENT_WEIGHTS.range_select +
     counts.toggle_flip * MYINV_ENGAGEMENT_EVENT_WEIGHTS.toggle_flip +
-    counts.section_expand * MYINV_ENGAGEMENT_EVENT_WEIGHTS.section_expand
+    counts.section_expand * MYINV_ENGAGEMENT_EVENT_WEIGHTS.section_expand +
+    counts.investment_update_click * MYINV_ENGAGEMENT_EVENT_WEIGHTS.investment_update_click
   );
 }
 
@@ -174,6 +188,7 @@ export async function buildEngagementScoresByEmail(
         totals.range_select += counts.range_select;
         totals.toggle_flip += counts.toggle_flip;
         totals.section_expand += counts.section_expand;
+        totals.investment_update_click += counts.investment_update_click;
         totals.updatedAt = Math.max(totals.updatedAt, counts.updatedAt);
       }
       scores.set(emailKey, scoreFromCounts(totals));

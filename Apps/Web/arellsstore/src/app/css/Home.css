@@ -12749,6 +12749,8 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-weekly-uara-revenue-copy {
+	font-size: 12px;
+	line-height: 1.35;
 	color: #000;
 	-webkit-text-fill-color: #000;
 }

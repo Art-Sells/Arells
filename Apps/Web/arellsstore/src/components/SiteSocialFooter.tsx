@@ -7,8 +7,6 @@ import { STOCK_ASSETS, type StockAssetTheme } from '../lib/assets/stockAssetRegi
 function footerHiddenForPath(pathname: string): boolean {
   if (pathname === '/about') return true;
   if (pathname === '/signin' || pathname === '/signup' || pathname === '/forgot-password') return true;
-  if (pathname.startsWith('/reset-password')) return true;
-  if (pathname.startsWith('/verified')) return true;
   if (pathname === '/metrics' || pathname.startsWith('/metrics/')) return true;
   if (pathname.startsWith('/vavity')) return true;
   return false;
@@ -33,7 +31,7 @@ export const SOCIAL_TELEGRAM = 'https://t.me/+FauIWiryMRRjMjZh';
 
 export type SiteSocialFooterProps = {
   variant?: FooterVariant;
-  /** Show on routes that normally hide the footer (e.g. `/verified/*`) when embedded in page content. */
+  /** Show on routes that normally hide the footer when embedded in page content. */
   forceShow?: boolean;
 };
 

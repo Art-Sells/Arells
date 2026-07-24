@@ -9,27 +9,8 @@ import {
   putUserAuth,
 } from '../../../lib/auth/s3UserAuth';
 
+/** Set new password after OTP confirmation (session token from confirm-reset-code). */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
-    const { token } = req.query;
-    if (typeof token !== 'string' || token.length < 16 || token.length > 128) {
-      return res.status(400).json({ error: 'Invalid token', code: 'INVALID_TOKEN' });
-    }
-    try {
-      const pending = await getPendingReset(token);
-      if (!pending) {
-        return res.status(400).json({ error: 'This reset link is invalid or already used.', code: 'BAD_TOKEN' });
-      }
-      if (pending.expiresAt < Date.now()) {
-        return res.status(400).json({ error: 'This reset link has expired.', code: 'EXPIRED' });
-      }
-      return res.status(200).json({ ok: true, email: normalizeEmail(pending.email) });
-    } catch (e) {
-      console.error('[auth] reset-password GET error:', e);
-      return res.status(500).json({ error: 'Something went wrong.' });
-    }
-  }
-
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -52,10 +33,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const pending = await getPendingReset(token);
     if (!pending) {
-      return res.status(400).json({ error: 'This reset link is invalid or already used.', code: 'BAD_TOKEN' });
+      return res.status(400).json({ error: 'This reset session is invalid or already used.', code: 'BAD_TOKEN' });
     }
     if (pending.expiresAt < Date.now()) {
-      return res.status(400).json({ error: 'This reset link has expired.', code: 'EXPIRED' });
+      return res.status(400).json({ error: 'This reset session has expired.', code: 'EXPIRED' });
     }
 
     const email = normalizeEmail(pending.email);
@@ -64,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Account not found.', code: 'NO_ACCOUNT' });
     }
     if (auth.resetToken !== token) {
-      return res.status(400).json({ error: 'This reset link is invalid.', code: 'BAD_TOKEN' });
+      return res.status(400).json({ error: 'This reset session is invalid.', code: 'BAD_TOKEN' });
     }
 
     const samePassword = await bcrypt.compare(password, auth.passwordHash);

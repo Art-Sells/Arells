@@ -168,7 +168,10 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                           <span className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy myportfolio-text-chunks">
                             <span className="myportfolio-weekly-uara-earnings-lead-group">
                               <span className="myportfolio-weekly-uara-earnings-refer-lead">
-                                Engaging with your investments,
+                                Engaging with your investments
+                              </span>
+                              <span className="myportfolio-weekly-uara-earnings-refer-lead">
+                                and investment updates,
                               </span>
                               <span className="myportfolio-weekly-uara-earnings-projected-lead">
                                 {' '}
@@ -213,7 +216,8 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                               />
                               <span className="myportfolio-weekly-uara-revenue-copy myportfolio-text-chunks">
                                 <span>Your weekly earnings will be dependent on how active you are</span>
-                                <span>with your investments.</span>
+                                <span>with your investments</span>
+                                <span>and investment updates.</span>
                               </span>
                             </span>
                             <span className="myportfolio-weekly-uara-revenue-block">

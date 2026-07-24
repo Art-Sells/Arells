@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useUser } from '../../context/UserContext';
+import { useMyInvEngagementEvent } from '../../hooks/useMyInvEngagementEvent';
 import AssetSummaryCircleLoader from '../Assets/shared/AssetSummaryCircleLoader';
 import { useAssetSummaryCircleLoader } from '../Assets/shared/useAssetSummaryCircleLoader';
 import MyInvAssetBadgeGrid from '../MyInvestments/MyInvAssetBadgeGrid';
@@ -54,7 +55,8 @@ function formatArticlePublishedAt(publishedAt: string): string {
 }
 
 const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = false }) => {
-  const { emailInvestments } = useUser();
+  const { emailInvestments, isSignedIn } = useUser();
+  const { recordEngagement } = useMyInvEngagementEvent();
   const [articlesByAsset, setArticlesByAsset] = useState<Record<string, AssetNewsArticle[]> | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [visibleAssetCount, setVisibleAssetCount] = useState(ASSET_NEWS_INITIAL_ASSETS);
@@ -290,6 +292,9 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
       rel="noopener noreferrer"
       className={`myinv-asset-home-card home-asset-${article.assetId} myportfolio-news-card myportfolio-news-headline`}
       title={article.headline}
+      onClick={() => {
+        if (isSignedIn) recordEngagement('investment_update_click');
+      }}
     >
       {formatArticlePublishedAt(article.publishedAt)}
     </a>

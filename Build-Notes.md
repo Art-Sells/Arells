@@ -2,11 +2,18 @@
 
 ## Arells v1
 
-### Verify dmarc email aggregates daily/weekly
+### Daily:
+- Verify dmarc email aggregates daily/weekly
+- Check Articles (both in main account and test accounts)
 
-### Clean Up Cursor storage (monthly):
-- find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 -mtime +2 -delete
-- find ~/Library/Application\ Support/Cursor/User/globalStorage -mindepth 1 -mtime +2 -delete
+### Monthly: 
+- Clean Up Cursor storage
+- - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 - - mtime +2 -delete
+- - find ~/Library/Application\ Support/Cursor/User/globalStorage
+- - mindepth 1 -mtime +2 
+- - delete
+
+
 
 - Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))
 - Fix Google Search Console links....
@@ -17,7 +24,8 @@
 If sharing (organic) happens:
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*
 - - *Add in Terms/Conditions and future payout dynamics and Learn More: and the 65% is dependent on if they check their "investment" portfolio at least once weekly (this sill only be activated after 100k WAU)....*
-- - Upgrsade thenewsapi
+- - Add  (phone number verification) for adding bank account information/etc...
+- - Upgrade thenewsapi
 - - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
 - - Add User location/etc
 

@@ -7,7 +7,7 @@ export const emailVerifiedWelcomeCopy = {
   paragraphs: ['You are now part of a mission to ensure investments never lose value.'],
 } as const;
 
-/** Rendered below the paragraph above; nested borders in `VerifiedPageClient` + `.auth-verified-welcome-phases--stacked`. */
+/** Rendered below the paragraph above; nested borders in signup verified UI + `.auth-verified-welcome-phases--stacked`. */
 export const emailVerifiedWelcomePhaseCopy = {
   missionPhaseIntroLines: {
     line1: 'We are currently in',

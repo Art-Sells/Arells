@@ -221,7 +221,10 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                               </span>
                             </span>
                             <span className="myportfolio-share-invite-tail">
-                              a week by engaging with your investments.
+                              a week by engaging with your investments
+                            </span>
+                            <span className="myportfolio-share-invite-tail">
+                              and investment updates.
                             </span>
                           </span>
                           <div className="myinv-panel-section myportfolio-cta-panel">
