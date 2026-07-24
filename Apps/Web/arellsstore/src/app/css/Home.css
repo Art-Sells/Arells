@@ -11692,15 +11692,18 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks {
-	/* Lead phrases share a row over 750; range / after-range break to full-width lines. */
+	/* Lead + after phrases share a row over 750; range breaks to its own full-width line. */
 	column-gap: 0.35em;
 	row-gap: 0;
 }
 
-.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks > .myportfolio-weekly-uara-earnings-range,
-.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks > .myportfolio-weekly-uara-earnings-after-range {
+.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks > .myportfolio-weekly-uara-earnings-range {
 	flex-basis: 100%;
 	width: 100%;
+	margin-top: 8px;
+}
+
+.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks > .myportfolio-weekly-uara-earnings-week {
 	margin-top: 8px;
 }
 
@@ -12607,19 +12610,8 @@ a.asset-action-button--save-signin {
 	.myportfolio-weekly-uara-earnings-refer-lead,
 	.myportfolio-weekly-uara-earnings-projected-lead,
 	.myportfolio-weekly-uara-earnings-range,
-	.myportfolio-weekly-uara-earnings-after-range {
-		display: block;
-		width: 100%;
-	}
-
-	.myportfolio-weekly-uara-earnings-after-range {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0;
-	}
-
-	.myportfolio-weekly-uara-earnings-week-based,
+	.myportfolio-weekly-uara-earnings-week,
+	.myportfolio-weekly-uara-earnings-based-on,
 	.myportfolio-weekly-uara-earnings-tail-wau,
 	.myportfolio-weekly-uara-earnings-tail-label {
 		display: block;
@@ -12687,20 +12679,19 @@ a.asset-action-button--save-signin {
 	}
 
 	.myportfolio-weekly-uara-earnings-refer-lead,
-	.myportfolio-weekly-uara-earnings-projected-lead {
+	.myportfolio-weekly-uara-earnings-projected-lead,
+	.myportfolio-weekly-uara-earnings-week,
+	.myportfolio-weekly-uara-earnings-based-on,
+	.myportfolio-weekly-uara-earnings-tail-wau,
+	.myportfolio-weekly-uara-earnings-tail-label {
 		display: inline;
 		width: auto;
 	}
 
-	.myportfolio-weekly-uara-earnings-range,
-	.myportfolio-weekly-uara-earnings-after-range {
+	.myportfolio-weekly-uara-earnings-range {
 		display: block;
 		flex-basis: 100%;
 		width: 100%;
-	}
-
-	.myportfolio-weekly-uara-earnings-after-range {
-		display: block;
 	}
 }
 

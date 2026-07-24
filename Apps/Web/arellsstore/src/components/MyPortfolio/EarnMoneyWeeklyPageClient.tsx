@@ -184,25 +184,17 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                                 />
                               </span>
                             ) : null}
-                            <span className="myportfolio-weekly-uara-earnings-after-range">
-                              <span className="myportfolio-weekly-uara-earnings-week-based">
-                                <span className="myportfolio-weekly-uara-earnings-week">
-                                  {' '}
-                                  a week
-                                </span>
-                                <span className="myportfolio-weekly-uara-earnings-based-on">
-                                  {' '}
-                                  based on
-                                </span>
-                              </span>
-                              <span className="myportfolio-weekly-uara-earnings-tail-wau">
-                                {' '}
-                                100,000~ WAU
-                              </span>
-                              <span className="myportfolio-weekly-uara-earnings-tail-label">
-                                {' '}
-                                (Weekly Active Users).
-                              </span>
+                            <span className="myportfolio-weekly-uara-earnings-week">
+                              a week
+                            </span>
+                            <span className="myportfolio-weekly-uara-earnings-based-on">
+                              based on
+                            </span>
+                            <span className="myportfolio-weekly-uara-earnings-tail-wau">
+                              100,000~ WAU
+                            </span>
+                            <span className="myportfolio-weekly-uara-earnings-tail-label">
+                              (Weekly Active Users).
                             </span>
                           </span>
                           <span className="myportfolio-weekly-uara-revenue-stack">
