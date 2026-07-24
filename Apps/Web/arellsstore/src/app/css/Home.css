@@ -11683,8 +11683,7 @@ a.asset-action-button--save-signin {
 	min-width: 0;
 }
 
-/* Earn-weekly earnings blurb + WAU unlock/share note: always stacked. */
-.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks,
+/* WAU unlock/share note: always stacked. Earnings blurb stacks only under 750. */
 .myportfolio-text-chunks.myportfolio-text-chunks--stack {
 	flex-direction: column;
 	align-items: center;
@@ -11693,7 +11692,16 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks {
-	row-gap: 8px;
+	/* Lead phrases share a row over 750; range / after-range break to full-width lines. */
+	column-gap: 0.35em;
+	row-gap: 0;
+}
+
+.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks > .myportfolio-weekly-uara-earnings-range,
+.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks > .myportfolio-weekly-uara-earnings-after-range {
+	flex-basis: 100%;
+	width: 100%;
+	margin-top: 8px;
 }
 
 /* "per week at ~100k Weekly Active Users" — never stack (stay one row at all widths). */
@@ -11715,7 +11723,10 @@ a.asset-action-button--save-signin {
 	}
 
 	.myportfolio-weekly-uara-earnings-copy.myportfolio-text-chunks {
-		row-gap: 8px;
+		flex-direction: column;
+		align-items: center;
+		column-gap: 0;
+		row-gap: 0;
 	}
 
 	.myportfolio-benefits-sublabel.myportfolio-text-chunks:not(.myportfolio-text-chunks--stack) {
@@ -12590,25 +12601,13 @@ a.asset-action-button--save-signin {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 8px;
-	}
-
-	.myportfolio-weekly-uara-earnings-lead-group,
-	.myportfolio-weekly-uara-earnings-range,
-	.myportfolio-weekly-uara-earnings-after-range {
-		display: block;
-		width: 100%;
-	}
-
-	.myportfolio-weekly-uara-earnings-lead-group {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
 		gap: 0;
 	}
 
 	.myportfolio-weekly-uara-earnings-refer-lead,
-	.myportfolio-weekly-uara-earnings-projected-lead {
+	.myportfolio-weekly-uara-earnings-projected-lead,
+	.myportfolio-weekly-uara-earnings-range,
+	.myportfolio-weekly-uara-earnings-after-range {
 		display: block;
 		width: 100%;
 	}
@@ -12679,15 +12678,24 @@ a.asset-action-button--save-signin {
 
 	.myportfolio-weekly-uara-earnings-copy {
 		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 8px;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: baseline;
+		gap: 0;
+		column-gap: 0.35em;
 	}
 
-	.myportfolio-weekly-uara-earnings-lead-group,
+	.myportfolio-weekly-uara-earnings-refer-lead,
+	.myportfolio-weekly-uara-earnings-projected-lead {
+		display: inline;
+		width: auto;
+	}
+
 	.myportfolio-weekly-uara-earnings-range,
 	.myportfolio-weekly-uara-earnings-after-range {
 		display: block;
+		flex-basis: 100%;
 		width: 100%;
 	}
 

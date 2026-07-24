@@ -166,17 +166,14 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                       <div className="myportfolio-weekly-uara-intro-nested myinv-accent-border">
                         <div className="myportfolio-weekly-uara-intro-copy">
                           <span className="myportfolio-body-copy myportfolio-weekly-uara-earnings-copy myportfolio-text-chunks">
-                            <span className="myportfolio-weekly-uara-earnings-lead-group">
-                              <span className="myportfolio-weekly-uara-earnings-refer-lead">
-                                Engaging with your investments
-                              </span>
-                              <span className="myportfolio-weekly-uara-earnings-refer-lead">
-                                and investment updates,
-                              </span>
-                              <span className="myportfolio-weekly-uara-earnings-projected-lead">
-                                {' '}
-                                projects you to earn{' '}
-                              </span>
+                            <span className="myportfolio-weekly-uara-earnings-refer-lead">
+                              Engaging with your investments
+                            </span>
+                            <span className="myportfolio-weekly-uara-earnings-refer-lead">
+                              and investment updates,
+                            </span>
+                            <span className="myportfolio-weekly-uara-earnings-projected-lead">
+                              projects you to earn
                             </span>
                             {!loadError ? (
                               <span className="myportfolio-weekly-uara-earnings-range">
