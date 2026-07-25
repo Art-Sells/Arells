@@ -10,11 +10,11 @@ import PortfolioQuestionsSupport from './PortfolioQuestionsSupport';
 import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
-import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
+import {
+  WEEKLY_EARNINGS_FLOOR_USD,
+  WEEKLY_USERS_POOL_USD,
+} from '../../lib/portfolio/financialBenefits';
 import HomeAboutMountLoader from '../HomeAboutMountLoader';
-
-/** Low end of the engage pitch range on /earn-money-weekly (not live engagement math). */
-const WEEKLY_EARNINGS_EXPLAINER_MIN_USD = 0.01;
 
 type PortfolioMe = Pick<PortfolioMePayload, 'earningsUsdMin' | 'earningsUsdMax'>;
 
@@ -126,8 +126,8 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
     };
   }, []);
 
-  const explainerMinUsd = WEEKLY_EARNINGS_EXPLAINER_MIN_USD;
-  const explainerMaxUsd = USERS_POOL_WEEKLY_MAX;
+  const explainerMinUsd = WEEKLY_EARNINGS_FLOOR_USD;
+  const explainerMaxUsd = WEEKLY_USERS_POOL_USD;
 
   if (showGuestLayout) {
     return (
@@ -187,14 +187,8 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                             <span className="myportfolio-weekly-uara-earnings-week">
                               a week
                             </span>
-                            <span className="myportfolio-weekly-uara-earnings-based-on">
-                              based on
-                            </span>
-                            <span className="myportfolio-weekly-uara-earnings-tail-wau">
-                              100,000~ WAU
-                            </span>
                             <span className="myportfolio-weekly-uara-earnings-tail-label">
-                              (Weekly Active Users).
+                              shared by everyone who interacts.
                             </span>
                           </span>
                           <span className="myportfolio-weekly-uara-revenue-stack">
@@ -204,9 +198,11 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                                 aria-hidden="true"
                               />
                               <span className="myportfolio-weekly-uara-revenue-copy myportfolio-text-chunks">
-                                <span>Your weekly earnings will be dependent on how active you are</span>
+                                <span>Your weekly earnings depend</span>
+                                <span>on how active you are</span>
                                 <span>with your investments</span>
                                 <span>and investment updates.</span>
+                                <span>Interact more to earn more.</span>
                               </span>
                             </span>
                             <span className="myportfolio-weekly-uara-revenue-block">
@@ -216,10 +212,10 @@ const EarnMoneyWeeklyPageClient: React.FC<EarnMoneyWeeklyPageClientProps> = ({
                               />
                               <span className="myportfolio-weekly-uara-revenue-copy myportfolio-text-chunks">
                                 <span className="myportfolio-weekly-uara-revenue-lead">
-                                  Your weekly earnings will be derived from the 65% of advertising revenue
+                                  The $20 pool is split among people who interact every week.
                                 </span>
                                 <span className="myportfolio-weekly-uara-revenue-tail">
-                                  (User Ad Revenue (UAR)) Arells generates, Arells will keep 35%.
+                                  Payouts go to your connected account (coming soon).
                                 </span>
                               </span>
                             </span>

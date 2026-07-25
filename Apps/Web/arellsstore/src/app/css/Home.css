@@ -11631,6 +11631,87 @@ a.asset-action-button--save-signin {
 	display: none;
 }
 
+.myportfolio-payouts-overlay {
+	position: fixed;
+	inset: 0;
+	min-width: 370px;
+	background: rgba(255, 255, 255, 0.86);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 10px 16px;
+	overflow-y: auto;
+	z-index: 2500;
+	box-sizing: border-box;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.5s ease;
+	font-family: Arial, sans-serif;
+}
+
+.myportfolio-payouts-overlay.is-visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.myportfolio-payouts-modal-wrap.shadow-border-wrap {
+	width: 200px;
+	max-width: 100%;
+	padding: 10px;
+	border-radius: 12px;
+	box-sizing: border-box;
+	background: #fff;
+	margin: auto;
+	flex-shrink: 0;
+}
+
+.myportfolio-payouts-modal {
+	width: 100%;
+	background: #fff;
+	border-radius: 12px;
+	padding: 22px 18px 18px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	text-align: center;
+}
+
+.myportfolio-payouts-arells-icon {
+	width: 28px;
+	height: 28px;
+	flex-shrink: 0;
+	background: var(--myinv-accent-color);
+	-webkit-mask-image: url('/images/Arells-Icon.png');
+	mask-image: url('/images/Arells-Icon.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+
+/* Same size as “Build your portfolio”; color/opacity match “My Weekly Projected Earnings”. */
+.myportfolio-payouts-message.myportfolio-text-chunks {
+	margin: 10px 0 15px;
+	width: 200px;
+	max-width: 100%;
+	font-size: 12px;
+	line-height: 1.2;
+	color: #000;
+	-webkit-text-fill-color: #000;
+	opacity: .5;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+.myportfolio-payouts-ok {
+	min-width: 100px;
+	width: 100px;
+}
+
 .myportfolio-mission-block {
 	margin-top: 30px;
 	margin-bottom: 10px;
@@ -11904,7 +11985,7 @@ a.asset-action-button--save-signin {
 }
 
 .myportfolio-wau-share-nested {
-	margin-top: 14px;
+	margin-top: 0px;
 	padding: 12px 10px 14px;
 	border-radius: 12px;
 	box-sizing: border-box;

@@ -1,21 +1,29 @@
-/** Site-wide WAU target before benefits copy treats revenue as “activated”. */
-export const WAU_ACTIVATION_TARGET = 100_000;
+/**
+ * Fixed weekly users pool distributed by engagement share.
+ * Floor illustration: pool ÷ PAYOUT_FLOOR_DENOMINATOR (not an unlock gate).
+ */
+export const WEEKLY_USERS_POOL_USD = 20;
 
-/** Estimated total weekly user ad revenue band at ~100k WAU. */
-export const WEEKLY_UAR_MIN = 3_000;
-export const WEEKLY_UAR_MAX = 7_000;
+/** Marketing / floor reference: equal split across this many “slots”. */
+export const PAYOUT_FLOOR_DENOMINATOR = 100_000;
 
-/** Arells keeps 35%; 65% is the users pool. */
-export const USERS_POOL_SHARE = 0.65;
-
-export const USERS_POOL_WEEKLY_MIN = WEEKLY_UAR_MIN * USERS_POOL_SHARE;
-export const USERS_POOL_WEEKLY_MAX = WEEKLY_UAR_MAX * USERS_POOL_SHARE;
+/** $20 ÷ 100,000 — illustrated minimum if everyone got an equal slot. */
+export const WEEKLY_EARNINGS_FLOOR_USD = WEEKLY_USERS_POOL_USD / PAYOUT_FLOOR_DENOMINATOR;
 
 /**
- * Personal min/max as a proportional slice of the users pool: your share of the
- * *total* engagement across all verified users this week, not a per-user 100k cap.
- * The sum of every user's max, across everyone with score > 0, is at most
- * USERS_POOL_WEEKLY_MAX (never more, regardless of how many people engage heavily).
+ * @deprecated Use WEEKLY_USERS_POOL_USD. Kept as alias so older imports keep compiling during transition.
+ */
+export const USERS_POOL_WEEKLY_MAX = WEEKLY_USERS_POOL_USD;
+
+/**
+ * @deprecated Pool is now a single fixed amount; min equals max.
+ */
+export const USERS_POOL_WEEKLY_MIN = WEEKLY_USERS_POOL_USD;
+
+/**
+ * Personal weekly earnings as a proportional slice of the fixed $20 pool.
+ * Sum of every engager’s payout is at most WEEKLY_USERS_POOL_USD.
+ * min === max (fixed pool; no UAR band).
  */
 export function weeklyEarningsUsdRangeFromEngagementShare(
   engagementScore: number,
@@ -28,13 +36,11 @@ export function weeklyEarningsUsdRangeFromEngagementShare(
     return { min: 0, max: 0 };
   }
   const share = Math.min(1, engagementScore / totalEngagementScore);
-  return {
-    min: share * USERS_POOL_WEEKLY_MIN,
-    max: share * USERS_POOL_WEEKLY_MAX,
-  };
+  const amount = share * WEEKLY_USERS_POOL_USD;
+  return { min: amount, max: amount };
 }
 
-/** Projection: add engagement points (e.g. +10 / +20 typical weekly interactions) to your share of the pool. */
+/** Projection: add engagement points to your share of the pool (min/max differ by add band). */
 export function projectedWeeklyRangeIfAddedEngagement(
   currentEngagementScore: number,
   totalEngagementScore: number,

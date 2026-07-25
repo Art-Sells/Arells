@@ -9,8 +9,7 @@ import {
 } from './referralShares';
 import {
   projectedWeeklyRangeIfAddedEngagement,
-  USERS_POOL_WEEKLY_MAX,
-  WAU_ACTIVATION_TARGET,
+  WEEKLY_USERS_POOL_USD,
   weeklyEarningsUsdRangeFromEngagementShare,
 } from './financialBenefits';
 import {
@@ -21,15 +20,15 @@ import {
 import { maskEmailForLeaderboard } from './maskEmailForLeaderboard';
 import { isUserAuthVerified } from '../metrics/listUserS3Touches';
 
-export const PORTFOLIO_CONTEXT_SNAPSHOT_KEY = 'analytics/portfolio-context-v1/latest.json';
+/** v2 = fixed $20 weekly pool (no WAU unlock). */
+export const PORTFOLIO_CONTEXT_SNAPSHOT_KEY = 'analytics/portfolio-context-v2/latest.json';
 
 export type PortfolioContextSnapshot = {
   generatedAt: number;
   engagementPrefix: string;
   engagementRollingDays: number;
   wau: number;
-  wauActivationTarget: number;
-  usersPoolWeeklyMax: number;
+  usersPoolWeeklyUsd: number;
   totalEngagementScore: number;
   /** emailKey → score */
   scoresByEmailKey: Record<string, number>;
@@ -54,6 +53,7 @@ function isValidSnapshot(value: unknown): value is PortfolioContextSnapshot {
     typeof v.generatedAt === 'number' &&
     typeof v.wau === 'number' &&
     typeof v.totalEngagementScore === 'number' &&
+    typeof v.usersPoolWeeklyUsd === 'number' &&
     v.scoresByEmailKey != null &&
     typeof v.scoresByEmailKey === 'object' &&
     Array.isArray(v.leaderboardRows)
@@ -133,8 +133,7 @@ export async function buildPortfolioContextSnapshot(
     engagementPrefix: myInvEngagementS3Prefix(),
     engagementRollingDays: ENGAGEMENT_ROLLING_DAYS_EXPORT,
     wau,
-    wauActivationTarget: WAU_ACTIVATION_TARGET,
-    usersPoolWeeklyMax: USERS_POOL_WEEKLY_MAX,
+    usersPoolWeeklyUsd: WEEKLY_USERS_POOL_USD,
     totalEngagementScore,
     scoresByEmailKey,
     leaderboardRows,
@@ -203,10 +202,8 @@ export function portfolioMeFromSnapshot(
     earningsUsdMax: max,
     projectedEarningsUsdMin: projected.min,
     projectedEarningsUsdMax: projected.max,
-    topEngagerMaxUsd: snapshot.usersPoolWeeklyMax,
+    topEngagerMaxUsd: snapshot.usersPoolWeeklyUsd,
     wau,
-    usersUntilActivation: Math.max(0, snapshot.wauActivationTarget - wau),
-    wauActivationTarget: snapshot.wauActivationTarget,
     engagementRollingDays: snapshot.engagementRollingDays,
   };
 }

@@ -13,19 +13,13 @@ import PortfolioQuestionsSupport from './PortfolioQuestionsSupport';
 import PortfolioWeeklyGuestPageView from './PortfolioWeeklyGuestPageView';
 import { usePublicEarningsGuestPitch } from './usePublicEarningsGuestPitch';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
-import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
+import { WEEKLY_USERS_POOL_USD } from '../../lib/portfolio/financialBenefits';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 import type { PortfolioMePayload } from '../../lib/portfolio/fetchPortfolioDataServer';
 
-/** Plain site link for the WAU share row (not a referral link). */
+/** Plain site link for the share row (not a referral link). */
 const PORTFOLIO_SHARE_URL = 'https://arells.com';
-
-/** 99,981 → "99.981k"; values under 1,000 stay as-is. */
-function formatCountK(value: number): string {
-  if (value < 1000) return value.toLocaleString('en-US');
-  const thousands = value / 1000;
-  return `${Number.isInteger(thousands) ? thousands : thousands.toFixed(3).replace(/0+$/, '').replace(/\.$/, '')}k`;
-}
+const PAYOUTS_MODAL_FADE_MS = 500;
 
 export type MyPortfolioPageClientProps = {
   /** Renders signed-out layout without signing out (preview route only). */
@@ -55,7 +49,13 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const [data, setData] = useState<PortfolioMePayload | null>(initialPortfolioMe);
   const [loadError, setLoadError] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  /** null = not loaded yet; false = should show Stripe payouts intro modal. */
+  const [payoutsMessageChecked, setPayoutsMessageChecked] = useState<boolean | null>(null);
+  const [payoutsModalMounted, setPayoutsModalMounted] = useState(false);
+  const [payoutsModalVisible, setPayoutsModalVisible] = useState(false);
+  const [payoutsAckSaving, setPayoutsAckSaving] = useState(false);
   const shareResetRef = useRef<number | null>(null);
+  const payoutsFadeTimerRef = useRef<number | null>(null);
   const { guestMaxLabel, loadError: guestPitchLoadError } =
     usePublicEarningsGuestPitch(showGuestLayout, initialPublicEarnings);
 
@@ -63,6 +63,9 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     return () => {
       if (shareResetRef.current !== null) {
         window.clearTimeout(shareResetRef.current);
+      }
+      if (payoutsFadeTimerRef.current !== null) {
+        window.clearTimeout(payoutsFadeTimerRef.current);
       }
     };
   }, []);
@@ -82,6 +85,31 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
       // Clipboard unavailable — button label unchanged.
     }
   }, []);
+
+  const onAcknowledgePayoutsMessage = useCallback(() => {
+    if (payoutsAckSaving || !payoutsModalVisible) return;
+    setPayoutsAckSaving(true);
+    setPayoutsModalVisible(false);
+
+    void fetch('/api/user/prefs', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payoutsMessageChecked: true }),
+    }).catch(() => {
+      // Keep dismissed locally; next visit will re-check S3 if write failed.
+    });
+
+    if (payoutsFadeTimerRef.current !== null) {
+      window.clearTimeout(payoutsFadeTimerRef.current);
+    }
+    payoutsFadeTimerRef.current = window.setTimeout(() => {
+      setPayoutsMessageChecked(true);
+      setPayoutsModalMounted(false);
+      setPayoutsAckSaving(false);
+      payoutsFadeTimerRef.current = null;
+    }, PAYOUTS_MODAL_FADE_MS);
+  }, [payoutsAckSaving, payoutsModalVisible]);
 
   useEffect(() => {
     if (showGuestLayout) {
@@ -114,6 +142,52 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   }, [showGuestLayout, showSignedInPanel, guestPreview, data]);
 
   useEffect(() => {
+    if (guestPreview || showGuestLayout || !showSignedInPanel) {
+      setPayoutsMessageChecked(null);
+      setPayoutsModalMounted(false);
+      setPayoutsModalVisible(false);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/user/prefs', { credentials: 'include', cache: 'no-store' });
+        if (!res.ok) throw new Error('prefs fetch failed');
+        const json = (await res.json()) as { payoutsMessageChecked?: boolean };
+        if (!cancelled) {
+          setPayoutsMessageChecked(json.payoutsMessageChecked === true);
+        }
+      } catch {
+        // Leave null — don't block the page or flash the modal on a failed prefs read.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [guestPreview, showGuestLayout, showSignedInPanel]);
+
+  useEffect(() => {
+    if (payoutsMessageChecked !== false) return;
+    setPayoutsModalMounted(true);
+  }, [payoutsMessageChecked]);
+
+  useEffect(() => {
+    if (!payoutsModalMounted || payoutsMessageChecked !== false) return;
+    let rafOuter = 0;
+    let rafInner = 0;
+    rafOuter = window.requestAnimationFrame(() => {
+      rafInner = window.requestAnimationFrame(() => {
+        setPayoutsModalVisible(true);
+      });
+    });
+    return () => {
+      window.cancelAnimationFrame(rafOuter);
+      window.cancelAnimationFrame(rafInner);
+    };
+  }, [payoutsModalMounted, payoutsMessageChecked]);
+
+  useEffect(() => {
     if (showGuestLayout) return;
     setSlideIn(true);
   }, [showGuestLayout, isSignedIn, data]);
@@ -135,8 +209,8 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const portfolioMetricsReady = !!data && !loadError;
 
   const interactEarnUpToLabel = formatUsdRangeDisplay(
-    USERS_POOL_WEEKLY_MAX,
-    USERS_POOL_WEEKLY_MAX
+    WEEKLY_USERS_POOL_USD,
+    WEEKLY_USERS_POOL_USD
   ).max;
 
   if (showGuestLayout) {
@@ -148,9 +222,45 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     );
   }
 
+  const showPayoutsMessageModal =
+    showSignedInPanel && !guestPreview && payoutsModalMounted;
+
   return (
     <>
       <HomeAboutMountLoader fadeStartMs={400} hideMs={900} />
+      {showPayoutsMessageModal ? (
+        <div
+          className={`myportfolio-payouts-overlay${payoutsModalVisible ? ' is-visible' : ''}`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="myportfolio-payouts-message-title"
+        >
+          <div className="myportfolio-payouts-modal-wrap shadow-border-wrap">
+            <span className="shadow-border" aria-hidden="true" />
+            <div className="myportfolio-payouts-modal myinv-accent-border">
+              <span className="myportfolio-payouts-arells-icon" aria-hidden="true" />
+              <p
+                id="myportfolio-payouts-message-title"
+                className="myportfolio-payouts-message myportfolio-text-chunks myportfolio-text-chunks--stack"
+              >
+                <span>We&apos;ll be sending you</span>
+                <span>an e-mail to connect</span>
+                <span>your Stripe account</span>
+                <span>to get payments</span>
+                <span>from Arells soon.</span>
+              </p>
+              <button
+                type="button"
+                className="auth-submit auth-submit--accent asset-range-button myportfolio-payouts-ok"
+                onClick={onAcknowledgePayoutsMessage}
+                disabled={payoutsAckSaving}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className="myinv-page myinv-page--accent myinv-page--portfolio">
         <div className="myportfolio-mission-block">
           <Link
@@ -191,10 +301,6 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                               />
                             ) : null}
                           </div>
-                          <span className="myinv-metric-title myportfolio-benefits-sublabel myportfolio-text-chunks">
-                            <span>per week at ~100k</span>
-                            <span>Weekly Active Users</span>
-                          </span>
                         </div>
                       </div>
                     </div>
@@ -278,46 +384,24 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
 
           <div className="myportfolio-portfolio-below-shell myportfolio-stack">
             <div className="myinv-panel-group myportfolio-portfolio-below-panel">
-              <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Active Users</div>
+              <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">
+                Help others join our mission
+              </div>
               <div className="myportfolio-portfolio-below-panel-wrap shadow-border-wrap">
                 <span className="shadow-border" aria-hidden="true" />
                 <div className="myinv-panel-section myinv-accent-border myportfolio-metric-panel">
                   <div className="myinv-panel myinv-panel--shell">
-                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                      <span className="myinv-metric-value myportfolio-count-value">
-                        <span className="myinv-metric-integer">
-                          {data ? data.wau.toLocaleString('en-US') : '—'}
-                        </span>
-                      </span>
-                    </div>
-                    <div className="myportfolio-wau-countdown-nested myinv-accent-border">
-                      <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                        <span className="myinv-metric-value myportfolio-count-value">
-                          <span className="myinv-metric-integer">
-                            {data ? formatCountK(data.usersUntilActivation) : '—'}
-                          </span>
-                        </span>
-                      </div>
-                      <span className="myinv-metric-title myportfolio-benefits-sublabel myportfolio-text-chunks myportfolio-text-chunks--stack">
-                        <span>Weekly Active Users</span>
-                        <span>until your weekly earnings are unlocked</span>
-                      </span>
-                      <div className="myportfolio-wau-share-nested myinv-accent-border">
-                        <span className="myportfolio-wau-share-note myportfolio-text-chunks myportfolio-text-chunks--stack">
-                          <span>Help others join</span>
-                          <span>our mission by sharing Arells:</span>
-                        </span>
-                        <div className="myportfolio-share-copy-row">
-                          <button
-                            type="button"
-                            className="auth-submit auth-submit--accent asset-range-button myportfolio-share-copy-button"
-                            onClick={onCopyShareUrl}
-                          >
-                            {shareCopied ? 'copied' : 'copy'}
-                          </button>
-                          <div className="myportfolio-share-url-display myinv-accent-border" title={PORTFOLIO_SHARE_URL}>
-                            {PORTFOLIO_SHARE_URL}
-                          </div>
+                    <div className="myportfolio-wau-share-nested myinv-accent-border">
+                      <div className="myportfolio-share-copy-row">
+                        <button
+                          type="button"
+                          className="auth-submit auth-submit--accent asset-range-button myportfolio-share-copy-button"
+                          onClick={onCopyShareUrl}
+                        >
+                          {shareCopied ? 'copied' : 'copy'}
+                        </button>
+                        <div className="myportfolio-share-url-display myinv-accent-border" title={PORTFOLIO_SHARE_URL}>
+                          {PORTFOLIO_SHARE_URL}
                         </div>
                       </div>
                     </div>

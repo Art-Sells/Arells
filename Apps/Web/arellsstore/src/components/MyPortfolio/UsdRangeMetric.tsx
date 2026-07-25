@@ -26,6 +26,7 @@ const UsdRangeMetric: React.FC<Props> = ({
 }) => {
   const isReady = !loading;
   const { min: minStr, max: maxStr } = formatUsdRangeDisplay(min, max);
+  const isSingleAmount = Math.abs(min - max) < 0.0000001;
 
   return (
     <span className={`asset-money-wrap myportfolio-usd-range ${className}`.trim()}>
@@ -36,14 +37,18 @@ const UsdRangeMetric: React.FC<Props> = ({
         fadeClassName={fadeClassName}
         revealTiming={revealTiming}
       />
-      <span className="myportfolio-usd-range-sep">–</span>
-      <span className="myinv-metric-symbol">$</span>
-      <PortfolioMetricNumberSlot
-        value={maxStr}
-        isReady={isReady}
-        fadeClassName={fadeClassName}
-        revealTiming={revealTiming}
-      />
+      {!isSingleAmount ? (
+        <>
+          <span className="myportfolio-usd-range-sep">–</span>
+          <span className="myinv-metric-symbol">$</span>
+          <PortfolioMetricNumberSlot
+            value={maxStr}
+            isReady={isReady}
+            fadeClassName={fadeClassName}
+            revealTiming={revealTiming}
+          />
+        </>
+      ) : null}
     </span>
   );
 };

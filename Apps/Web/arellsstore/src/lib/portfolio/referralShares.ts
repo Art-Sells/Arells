@@ -3,9 +3,7 @@ import { normalizeEmail, normalizeEmailKey } from '../auth/normalize';
 import { aggregateSignedInUserTraffic } from '../metrics/metricsPageMounts';
 import {
   projectedWeeklyRangeIfAddedEngagement,
-  USERS_POOL_WEEKLY_MIN,
-  USERS_POOL_WEEKLY_MAX,
-  WAU_ACTIVATION_TARGET,
+  WEEKLY_USERS_POOL_USD,
   weeklyEarningsUsdRangeFromEngagementShare,
 } from './financialBenefits';
 import {
@@ -34,9 +32,8 @@ export type PortfolioMePayload = PortfolioEconomics & {
   projectedEarningsUsdMin: number;
   projectedEarningsUsdMax: number;
   topEngagerMaxUsd: number;
+  /** Ops metric only — not used for earnings unlock. */
   wau: number;
-  usersUntilActivation: number;
-  wauActivationTarget: number;
   engagementRollingDays: number;
 };
 
@@ -65,9 +62,7 @@ export type EarningsPreviewPayload = {
   engagementPrefix: string;
   engagementRollingDays: number;
   wau: number;
-  wauActivationTarget: number;
-  usersPoolWeeklyMin: number;
-  usersPoolWeeklyMax: number;
+  usersPoolWeeklyUsd: number;
   topEngagerMaxUsd: number;
   /** Sum of every verified user's engagement score this rolling window — the proportional split denominator. */
   totalEngagementScore: number;
@@ -141,8 +136,8 @@ export async function buildPublicEarningsPayload(
   _nowMs: number = Date.now()
 ): Promise<PublicEarningsPayload> {
   return {
-    topEngagerMaxUsd: USERS_POOL_WEEKLY_MAX,
-    fallbackProjectionMaxUsd: USERS_POOL_WEEKLY_MAX,
+    topEngagerMaxUsd: WEEKLY_USERS_POOL_USD,
+    fallbackProjectionMaxUsd: WEEKLY_USERS_POOL_USD,
   };
 }
 
@@ -166,10 +161,8 @@ export async function buildPortfolioMePayload(
     ...economics,
     projectedEarningsUsdMin: projected.min,
     projectedEarningsUsdMax: projected.max,
-    topEngagerMaxUsd: USERS_POOL_WEEKLY_MAX,
+    topEngagerMaxUsd: WEEKLY_USERS_POOL_USD,
     wau,
-    usersUntilActivation: Math.max(0, WAU_ACTIVATION_TARGET - wau),
-    wauActivationTarget: WAU_ACTIVATION_TARGET,
     engagementRollingDays: ENGAGEMENT_ROLLING_DAYS_EXPORT,
   };
 }
@@ -240,10 +233,8 @@ export async function buildEarningsPreviewPayload(
     engagementPrefix: myInvEngagementS3Prefix(),
     engagementRollingDays: ENGAGEMENT_ROLLING_DAYS_EXPORT,
     wau,
-    wauActivationTarget: WAU_ACTIVATION_TARGET,
-    usersPoolWeeklyMin: USERS_POOL_WEEKLY_MIN,
-    usersPoolWeeklyMax: USERS_POOL_WEEKLY_MAX,
-    topEngagerMaxUsd: USERS_POOL_WEEKLY_MAX,
+    usersPoolWeeklyUsd: WEEKLY_USERS_POOL_USD,
+    topEngagerMaxUsd: WEEKLY_USERS_POOL_USD,
     totalEngagementScore: totalScore,
     rows,
   };

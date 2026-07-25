@@ -2,6 +2,14 @@
 
 ## Arells v1
 
+### Trigger Organic Growth
+- add a check... if Stripe isn't connected a modal pops up showing" connect your stripe account to get payments from Arells"
+- Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))
+- Fix Google Search Console links....
+
+- *switch from live to local testing false/true for myinv-engagement-v1 payments*
+- *brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
+
 ### Daily:
 - Verify dmarc email aggregates daily/weekly
 - Check Articles (both in main account and test accounts)
@@ -11,15 +19,7 @@
 - - find ~/Library/Application\ Support/Cursor/snapshots/roots -mindepth 1 - - mtime +2 -delete
 - - find ~/Library/Application\ Support/Cursor/User/globalStorage
 - - mindepth 1 -mtime +2 
-- - delete
-
-
-
-- Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))
-- Fix Google Search Console links....
-
-- *switch from live to local testing false/true for myinv-engagement-v1 payments*
-- *brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
+- - delet
 
 If sharing (organic) happens:
 -*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { formatUsdRangeDisplay } from '../../lib/portfolio/formatUsdRange';
-import { USERS_POOL_WEEKLY_MAX } from '../../lib/portfolio/financialBenefits';
+import { WEEKLY_USERS_POOL_USD } from '../../lib/portfolio/financialBenefits';
 import type { PublicEarningsPayload } from '../../lib/portfolio/referralShares';
 
 export function usePublicEarningsGuestPitch(
@@ -39,7 +39,7 @@ export function usePublicEarningsGuestPitch(
 
   const guestMaxLabel = useMemo(() => {
     if (!enabled) return '';
-    return formatUsdRangeDisplay(USERS_POOL_WEEKLY_MAX, USERS_POOL_WEEKLY_MAX).max;
+    return formatUsdRangeDisplay(WEEKLY_USERS_POOL_USD, WEEKLY_USERS_POOL_USD).max;
   }, [enabled]);
 
   return { guestMaxLabel, loadError };
