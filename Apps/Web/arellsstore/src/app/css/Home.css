@@ -11695,7 +11695,34 @@ a.asset-action-button--save-signin {
 
 /* Same size as “Build your portfolio”; color/opacity match “My Weekly Projected Earnings”. */
 .myportfolio-payouts-message.myportfolio-text-chunks {
-	margin: 10px 0 15px;
+	margin: 10px 0 0;
+	width: 200px;
+	max-width: 100%;
+	font-size: 12px;
+	line-height: 1.2;
+	color: #000;
+	-webkit-text-fill-color: #000;
+	opacity: 1;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+.myportfolio-payouts-divider {
+	width: 120px;
+	max-width: 100%;
+	height: 1px;
+	margin: 0;
+	flex-shrink: 0;
+	background: color-mix(in srgb, var(--myinv-accent-color, #222) 45%, transparent);
+}
+
+.myportfolio-payouts-ok {
+	min-width: 100px;
+	width: 100px;
+}
+
+.myportfolio-payouts-spam-note.myportfolio-text-chunks {
+	margin: 0 0 15px;
 	width: 200px;
 	max-width: 100%;
 	font-size: 12px;
@@ -11707,10 +11734,10 @@ a.asset-action-button--save-signin {
 	text-size-adjust: none;
 }
 
-.myportfolio-payouts-ok {
-	min-width: 100px;
-	width: 100px;
+.myportfolio-payouts-spam-emphasis {
+	font-weight: 700;
 }
+
 
 .myportfolio-mission-block {
 	margin-top: 30px;

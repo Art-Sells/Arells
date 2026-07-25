@@ -249,6 +249,20 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                 <span>to get payments</span>
                 <span>from Arells soon.</span>
               </p>
+              <span
+                className="site-social-footer-rule myportfolio-payouts-divider"
+                aria-hidden="true"
+              />
+              <p className="myportfolio-payouts-spam-note myportfolio-text-chunks myportfolio-text-chunks--stack">
+                <span>Check your</span>
+                <span className="myportfolio-payouts-spam-emphasis">spam/junk</span>
+                <span>folder in the</span>
+                <span>next few</span>
+                <span>days/weeks</span>
+                <span>in case you</span>
+                <span>don&apos;t receive it</span>
+                <span>in your inbox.</span>
+              </p>
               <button
                 type="button"
                 className="auth-submit auth-submit--accent asset-range-button myportfolio-payouts-ok"
