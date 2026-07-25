@@ -6,6 +6,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useUser } from './UserContext';
 import { getAssetVapaUrl } from '../lib/assets/assetKind';
 import { getHomeInitialAssetIds } from '../lib/assets/cryptoAssetRegistry';
+import { SUPPORTED_STOCK_ASSET_IDS } from '../lib/assets/stockAssetRegistry';
 
 interface Investment {
   cVatop: number;
@@ -72,7 +73,11 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [investments] = useState<Investment[]>([]);
   const [totals] = useState<TotalsState>({ ...emptySessionTotals });
   const [totalsLiquid] = useState<TotalsState>({ ...emptySessionTotals });
-  const initialLoadedIds = useMemo(() => getHomeInitialAssetIds(), []);
+  /** Prefetch home crypto batch + all stocks so category panels open already market-cap sorted. */
+  const initialLoadedIds = useMemo(
+    () => [...getHomeInitialAssetIds(), ...SUPPORTED_STOCK_ASSET_IDS],
+    []
+  );
   const loadedIdsRef = useRef<Set<string>>(new Set(initialLoadedIds));
 
   const refreshAsset = useCallback(async (assetId: string) => {
