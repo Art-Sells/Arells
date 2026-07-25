@@ -23,6 +23,7 @@ import {
   HOME_LOAD_MORE_BATCH,
 } from '../lib/assets/cryptoAssetRegistry';
 import { STOCK_ASSETS } from '../lib/assets/stockAssetRegistry';
+import { compareByMarketCapDesc, latestLiquidMarketCap } from '../lib/assets/marketCapSort';
 
 type IndexProps = {
   initialPublicEarnings?: PublicEarningsPayload | null;
@@ -332,14 +333,13 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   };
 
   const assetRows = useMemo(() => {
-    const assets = CRYPTO_ASSETS.slice(0, visibleAssetCount).map((a) => ({
-      id: a.id,
-      label: a.label,
-      ticker: a.ticker,
-      href: a.href,
-    }));
-
-    return assets.map((asset) => {
+    const rows = CRYPTO_ASSETS.map((a, registryIndex) => {
+      const asset = {
+        id: a.id,
+        label: a.label,
+        ticker: a.ticker,
+        href: a.href,
+      };
       const snapshot = getAsset(asset.id);
       const solidHistory =
         (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
@@ -358,6 +358,8 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         typeof snapshot?.price === 'number' ? snapshot.price : typeof snapshot?.vapa === 'number' ? snapshot.vapa : 0;
       return {
         ...asset,
+        registryIndex,
+        marketCap: latestLiquidMarketCap(snapshot),
         solidPrice,
         liquidPrice,
         solidChange1w: getPercentChange(solidHistory, 7),
@@ -368,6 +370,9 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         liquidChangeAll: getPercentChange(liquidHistory),
       };
     });
+
+    rows.sort(compareByMarketCapDesc);
+    return rows.slice(0, visibleAssetCount);
   }, [getAsset, visibleAssetCount]);
 
   const sortedRows = assetRows;
@@ -379,19 +384,18 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
 
   const handleShowMoreAssets = useCallback(() => {
     const nextCount = Math.min(visibleAssetCount + HOME_LOAD_MORE_BATCH, CRYPTO_ASSETS.length);
-    const newIds = CRYPTO_ASSETS.slice(visibleAssetCount, nextCount).map((a) => a.id);
-    void loadMoreAssets(newIds);
     setVisibleAssetCount(nextCount);
-  }, [loadMoreAssets, visibleAssetCount]);
+  }, [visibleAssetCount]);
 
   const handleCryptoCategoryClick = useCallback(() => {
     if (!cryptoCategoryOpen) {
       setCryptoCategoryOpen(true);
       setVisibleAssetCount(HOME_INITIAL_ASSET_COUNT);
+      void loadMoreAssets(CRYPTO_ASSETS.map((a) => a.id));
       return;
     }
     handleShowMoreAssets();
-  }, [cryptoCategoryOpen, handleShowMoreAssets]);
+  }, [cryptoCategoryOpen, handleShowMoreAssets, loadMoreAssets]);
 
   const handleStocksCategoryClick = useCallback(() => {
     if (stocksCategoryOpen) return;
@@ -408,7 +412,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
 
   const stockRows = useMemo(() => {
     if (!stocksCategoryOpen) return [];
-    return STOCK_ASSETS.map((asset) => {
+    const rows = STOCK_ASSETS.map((asset, registryIndex) => {
       const snapshot = getAsset(asset.id);
       const solidHistory =
         (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
@@ -430,6 +434,8 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         label: asset.label,
         ticker: asset.ticker,
         href: asset.href,
+        registryIndex,
+        marketCap: latestLiquidMarketCap(snapshot),
         solidPrice,
         liquidPrice,
         solidChange1w: getPercentChange(solidHistory, 7),
@@ -438,8 +444,10 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         liquidChange1w: getPercentChange(liquidHistory, 7),
         liquidChange1y: getPercentChange(liquidHistory, 365),
         liquidChangeAll: getPercentChange(liquidHistory),
-      } satisfies HomeCryptoAssetRowData;
+      } satisfies HomeCryptoAssetRowData & { registryIndex: number; marketCap: number };
     });
+    rows.sort(compareByMarketCapDesc);
+    return rows;
   }, [getAsset, stocksCategoryOpen]);
 
   const getCryptoRow = useCallback(

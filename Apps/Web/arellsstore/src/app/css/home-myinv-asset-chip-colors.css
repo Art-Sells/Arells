@@ -87,6 +87,28 @@
 	-webkit-text-fill-color: rgb(86, 138, 0) !important;
 }
 
+/* Apple — /apple */
+#overlayy .home-asset-apple .home-asset-name,
+#overlayy .home-asset-apple .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-apple .home-asset-name,
+.home-asset-card.home-asset-apple .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-apple .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-apple .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(85, 85, 85) !important;
+	-webkit-text-fill-color: rgb(85, 85, 85) !important;
+}
+
+/* Alphabet — /alphabet */
+#overlayy .home-asset-alphabet .home-asset-name,
+#overlayy .home-asset-alphabet .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-alphabet .home-asset-name,
+.home-asset-card.home-asset-alphabet .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-alphabet .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-alphabet .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(37, 99, 200) !important;
+	-webkit-text-fill-color: rgb(37, 99, 200) !important;
+}
+
 /* SpaceX — /spacex */
 #overlayy .home-asset-spacex .home-asset-name,
 #overlayy .home-asset-spacex .asset-action-button.asset-action-button--home-asset-chip,

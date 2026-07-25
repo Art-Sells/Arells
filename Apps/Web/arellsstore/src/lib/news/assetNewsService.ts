@@ -18,6 +18,8 @@ import {
 const THENEWSAPI_BASE = 'https://api.thenewsapi.com/v1/news/all';
 
 let memoryCache: AssetNewsSnapshot | null = null;
+/** Tracks which S3 snapshot key `memoryCache` was loaded for — bumps invalidate in-process cache. */
+let memoryCacheKey: string | null = null;
 let refreshInFlight: Promise<AssetNewsSnapshot> | null = null;
 
 function apiToken(): string {
@@ -212,13 +214,20 @@ export async function getAssetNewsSnapshot(
     return emptySnapshot(nowMs);
   }
 
-  if (memoryCache && isFresh(memoryCache, nowMs)) return memoryCache;
+  if (memoryCache && memoryCacheKey === ASSET_NEWS_SNAPSHOT_KEY && isFresh(memoryCache, nowMs)) {
+    return memoryCache;
+  }
+  if (memoryCacheKey !== ASSET_NEWS_SNAPSHOT_KEY) {
+    memoryCache = null;
+    memoryCacheKey = ASSET_NEWS_SNAPSHOT_KEY;
+  }
 
   let stored: AssetNewsSnapshot | null = null;
   if (s3 && bucket) {
     stored = await tryReadSnapshotFromS3(s3, bucket);
     if (stored && isFresh(stored, nowMs)) {
       memoryCache = stored;
+      memoryCacheKey = ASSET_NEWS_SNAPSHOT_KEY;
       return stored;
     }
   }
@@ -227,6 +236,7 @@ export async function getAssetNewsSnapshot(
   if (stale) {
     scheduleBackgroundRefresh(s3, bucket, nowMs);
     memoryCache = stale;
+    memoryCacheKey = ASSET_NEWS_SNAPSHOT_KEY;
     return stale;
   }
 
@@ -242,6 +252,7 @@ function ensureProviderSnapshot(
     const pending = (async () => {
       const snapshot = await buildSnapshotFromProvider(nowMs);
       memoryCache = snapshot;
+      memoryCacheKey = ASSET_NEWS_SNAPSHOT_KEY;
       if (s3 && bucket) await writeSnapshotToS3(s3, bucket, snapshot);
       return snapshot;
     })();

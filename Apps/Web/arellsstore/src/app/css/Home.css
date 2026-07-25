@@ -825,6 +825,14 @@ body {
 .asset-page--nvidia .asset-page-content *,
 .asset-page--nvidia .asset-footer,
 .asset-page--nvidia .asset-footer *,
+.asset-page--apple .asset-page-content,
+.asset-page--apple .asset-page-content *,
+.asset-page--apple .asset-footer,
+.asset-page--apple .asset-footer *,
+.asset-page--alphabet .asset-page-content,
+.asset-page--alphabet .asset-page-content *,
+.asset-page--alphabet .asset-footer,
+.asset-page--alphabet .asset-footer *,
 .asset-page--spacex .asset-page-content,
 .asset-page--spacex .asset-page-content *,
 .asset-page--spacex .asset-footer,
@@ -979,6 +987,36 @@ body {
 .asset-page--nvidia .asset-page-content a.asset-title-badge--section.asset-title-badge--nvidia .asset-title-badge-label {
 	color: var(--asset-badge-spot-ink, rgb(58, 96, 0)) !important;
 	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(58, 96, 0)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--apple .asset-page-content a.asset-title-badge--section.asset-title-badge--apple:link,
+.asset-page--apple .asset-page-content a.asset-title-badge--section.asset-title-badge--apple:visited,
+.asset-page--apple .asset-page-content a.asset-title-badge--section.asset-title-badge--apple:hover,
+.asset-page--apple .asset-page-content a.asset-title-badge--section.asset-title-badge--apple:active,
+.asset-page--apple .asset-page-content a.asset-title-badge--section.asset-title-badge--apple:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(51, 51, 51)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(51, 51, 51)) !important;
+}
+
+.asset-page--apple .asset-page-content a.asset-title-badge--section.asset-title-badge--apple .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(51, 51, 51)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(51, 51, 51)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--alphabet .asset-page-content a.asset-title-badge--section.asset-title-badge--alphabet:link,
+.asset-page--alphabet .asset-page-content a.asset-title-badge--section.asset-title-badge--alphabet:visited,
+.asset-page--alphabet .asset-page-content a.asset-title-badge--section.asset-title-badge--alphabet:hover,
+.asset-page--alphabet .asset-page-content a.asset-title-badge--section.asset-title-badge--alphabet:active,
+.asset-page--alphabet .asset-page-content a.asset-title-badge--section.asset-title-badge--alphabet:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(21, 82, 170)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(21, 82, 170)) !important;
+}
+
+.asset-page--alphabet .asset-page-content a.asset-title-badge--section.asset-title-badge--alphabet .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(21, 82, 170)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(21, 82, 170)) !important;
 	opacity: 0.5;
 }
 
@@ -10611,6 +10649,46 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
+.asset-page--apple .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(85, 85, 85, 0.95) !important;
+	-webkit-text-fill-color: rgba(85, 85, 85, 0.95) !important;
+}
+
+.asset-page--apple .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(85, 85, 85, 0.95) !important;
+	-webkit-text-fill-color: rgba(85, 85, 85, 0.95) !important;
+	border-color: rgba(85, 85, 85, 0.38) !important;
+	background: rgba(85, 85, 85, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--apple .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(85, 85, 85, 0.3);
+	opacity: 1;
+}
+
+.asset-page--alphabet .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(37, 99, 200, 0.95) !important;
+	-webkit-text-fill-color: rgba(37, 99, 200, 0.95) !important;
+}
+
+.asset-page--alphabet .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(37, 99, 200, 0.95) !important;
+	-webkit-text-fill-color: rgba(37, 99, 200, 0.95) !important;
+	border-color: rgba(37, 99, 200, 0.38) !important;
+	background: rgba(66, 133, 244, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--alphabet .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(37, 99, 200, 0.3);
+	opacity: 1;
+}
+
 .asset-page--spacex .site-social-footer.site-social-footer--asset .site-social-footer-label {
 	color: rgba(40, 48, 64, 0.95) !important;
 	-webkit-text-fill-color: rgba(40, 48, 64, 0.95) !important;
@@ -11222,6 +11300,14 @@ a.asset-action-button--save-signin {
 	background: rgba(86, 138, 0, 0.075);
 }
 
+.asset-page--apple .asset-guest-action-shell {
+	background: rgba(85, 85, 85, 0.075);
+}
+
+.asset-page--alphabet .asset-guest-action-shell {
+	background: rgba(66, 133, 244, 0.075);
+}
+
 .asset-page--spacex .asset-guest-action-shell {
 	background: rgba(40, 48, 64, 0.075);
 }
@@ -11281,6 +11367,16 @@ a.asset-action-button--save-signin {
 
 .asset-page--nvidia .asset-guest-action-shell .shadow-border {
 	border-color: rgba(86, 138, 0, 0.3);
+	opacity: 1;
+}
+
+.asset-page--apple .asset-guest-action-shell .shadow-border {
+	border-color: rgba(85, 85, 85, 0.3);
+	opacity: 1;
+}
+
+.asset-page--alphabet .asset-guest-action-shell .shadow-border {
+	border-color: rgba(37, 99, 200, 0.3);
 	opacity: 1;
 }
 
@@ -11403,6 +11499,14 @@ a.asset-action-button--save-signin {
 
 .asset-page--nvidia .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(58, 96, 0)) !important;
+}
+
+.asset-page--apple .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(51, 51, 51)) !important;
+}
+
+.asset-page--alphabet .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(21, 82, 170)) !important;
 }
 
 .asset-page--spacex .asset-guest-landing .guest-landing-copyright--asset {

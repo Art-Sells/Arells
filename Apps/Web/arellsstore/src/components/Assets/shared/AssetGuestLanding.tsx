@@ -20,6 +20,8 @@ const ASSET_BADGE_HREF: Record<string, string> = {
   stellar: 'https://stellar.org/',
   bch: 'https://bitcoincash.org/',
   nvidia: 'https://www.nvidia.com/',
+  apple: 'https://www.apple.com/',
+  alphabet: 'https://abc.xyz/',
   spacex: 'https://www.spacex.com/',
 };
 

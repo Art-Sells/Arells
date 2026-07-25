@@ -3,7 +3,7 @@ import { iconAssetUrl as u } from '../iconAssetUrl';
 import type { PageSeoFields } from '../pageWebPageJsonLd';
 import { buildAssetMetaDescription } from '../siteMetaDescriptions';
 
-export type StockAssetTheme = 'nvidia' | 'spacex';
+export type StockAssetTheme = 'nvidia' | 'spacex' | 'apple' | 'alphabet';
 
 export type StockAssetConfig = {
   id: string;
@@ -38,6 +38,36 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     faviconPath: '/images/favicons/NvdaBadge.svg',
     ogBannerPath: '/images/banners/assets/stocks/Nvidia/ArellsNVDABanner.jpg',
     companyUrl: 'https://www.nvidia.com/',
+  },
+  {
+    id: 'apple',
+    href: '/apple',
+    label: 'Apple',
+    ticker: 'AAPL',
+    displayName: 'Apple',
+    theme: 'apple',
+    cssModifier: 'apple',
+    massiveTicker: 'AAPL',
+    s3VapaKey: 'vavity/appleVAPA.json',
+    metaTitle: 'Apple never loses value',
+    faviconPath: '/images/favicons/AaplBadge.svg',
+    ogBannerPath: '/images/banners/assets/stocks/Apple/ArellsAAPLBanner.jpg',
+    companyUrl: 'https://www.apple.com/',
+  },
+  {
+    id: 'alphabet',
+    href: '/alphabet',
+    label: 'Alphabet',
+    ticker: 'GOOGL',
+    displayName: 'Alphabet',
+    theme: 'alphabet',
+    cssModifier: 'alphabet',
+    massiveTicker: 'GOOGL',
+    s3VapaKey: 'vavity/alphabetVAPA.json',
+    metaTitle: 'Alphabet never loses value',
+    faviconPath: '/images/favicons/GooglBadge.svg',
+    ogBannerPath: '/images/banners/assets/stocks/Alphabet/ArellsGOOGLBanner.jpg',
+    companyUrl: 'https://abc.xyz/',
   },
   {
     id: 'spacex',
