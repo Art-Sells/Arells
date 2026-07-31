@@ -11738,6 +11738,99 @@ a.asset-action-button--save-signin {
 	font-weight: 700;
 }
 
+.myportfolio-connect-bank-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+.myportfolio-connect-bank-button:disabled {
+	opacity: 1 !important;
+	cursor: not-allowed;
+	pointer-events: none;
+	transform: none !important;
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+	background: color-mix(in srgb, var(--myinv-accent-color) 18%, transparent) !important;
+	border: 1px solid transparent !important;
+	border-color: transparent !important;
+}
+
+.myportfolio-connect-bank-reveal {
+	display: grid;
+	grid-template-rows: 0fr;
+	opacity: 0;
+	transition:
+		grid-template-rows 0.45s ease,
+		opacity 0.45s ease;
+}
+
+.myportfolio-connect-bank-reveal.is-open {
+	grid-template-rows: 1fr;
+	opacity: 1;
+}
+
+.myportfolio-connect-bank-reveal-inner {
+	overflow: hidden;
+	min-height: 0;
+}
+
+.myportfolio-connect-bank-nested.myinv-accent-border {
+	margin-top: 10px;
+	padding: 12px 10px 14px;
+	border-radius: 12px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+
+.myportfolio-connect-bank-title.myportfolio-text-chunks {
+	margin: 0;
+	width: 200px;
+	max-width: 100%;
+	font-size: 12px;
+	line-height: 1.2;
+	color: #444;
+	-webkit-text-fill-color: #444;
+	text-align: center;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+@media (max-width: 750px) {
+	.myportfolio-connect-bank-title.myportfolio-text-chunks {
+		font-size: 10.5px;
+	}
+}
+
+@media (min-width: 751px) {
+	.myportfolio-connect-bank-title.myportfolio-text-chunks.myportfolio-text-chunks--stack {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: baseline;
+		column-gap: 0.35em;
+		width: auto;
+		max-width: 100%;
+	}
+}
+
+.myportfolio-connect-bank-cta {
+	width: 100%;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.myportfolio-connect-bank-cta .myinv-panel--shell {
+	padding: 0;
+}
+
+.myportfolio-connect-bank-cta .auth-submit {
+	border-radius: 7px;
+	width: 100%;
+}
 
 .myportfolio-mission-block {
 	margin-top: 30px;

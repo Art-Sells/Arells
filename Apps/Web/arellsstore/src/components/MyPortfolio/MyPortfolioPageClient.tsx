@@ -54,6 +54,8 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
   const [payoutsModalMounted, setPayoutsModalMounted] = useState(false);
   const [payoutsModalVisible, setPayoutsModalVisible] = useState(false);
   const [payoutsAckSaving, setPayoutsAckSaving] = useState(false);
+  const [connectSectionOpen, setConnectSectionOpen] = useState(false);
+  const [connectComingSoon, setConnectComingSoon] = useState(false);
   const shareResetRef = useRef<number | null>(null);
   const payoutsFadeTimerRef = useRef<number | null>(null);
   const { guestMaxLabel, loadError: guestPitchLoadError } =
@@ -84,6 +86,25 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
     } catch {
       // Clipboard unavailable — button label unchanged.
     }
+  }, []);
+
+  const onConnectBankComingSoon = useCallback(() => {
+    if (connectComingSoon) return;
+    setConnectComingSoon(true);
+  }, [connectComingSoon]);
+
+  useEffect(() => {
+    let rafOuter = 0;
+    let rafInner = 0;
+    rafOuter = window.requestAnimationFrame(() => {
+      rafInner = window.requestAnimationFrame(() => {
+        setConnectSectionOpen(true);
+      });
+    });
+    return () => {
+      window.cancelAnimationFrame(rafOuter);
+      window.cancelAnimationFrame(rafInner);
+    };
   }, []);
 
   const onAcknowledgePayoutsMessage = useCallback(() => {
@@ -355,6 +376,33 @@ const MyPortfolioPageClient: React.FC<MyPortfolioPageClientProps> = ({
                               >
                                 view my investments
                               </Link>
+                            </div>
+                          </div>
+
+                          <div
+                            className={`myportfolio-connect-bank-reveal${connectSectionOpen ? ' is-open' : ''}`}
+                          >
+                            <div className="myportfolio-connect-bank-reveal-inner">
+                              <div className="myportfolio-connect-bank-nested myinv-accent-border">
+                                <span className="myportfolio-connect-bank-title myportfolio-text-chunks myportfolio-text-chunks--stack">
+                                  <span>Connect your</span>
+                                  <span>Bank Account to get payments.</span>
+                                </span>
+                                <div className="myinv-panel-section myportfolio-cta-panel myportfolio-connect-bank-cta">
+                                  <div className="myinv-panel myinv-panel--shell">
+                                    <button
+                                      type="button"
+                                      className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button myportfolio-connect-bank-button"
+                                      onClick={onConnectBankComingSoon}
+                                      disabled={connectComingSoon}
+                                    >
+                                      <span>
+                                        {connectComingSoon ? 'coming soon' : 'Connect Bank Account'}
+                                      </span>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
