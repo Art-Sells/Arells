@@ -6,6 +6,7 @@ import { useMyInvEngagementEvent } from '../../hooks/useMyInvEngagementEvent';
 import AssetSummaryCircleLoader from '../Assets/shared/AssetSummaryCircleLoader';
 import { useAssetSummaryCircleLoader } from '../Assets/shared/useAssetSummaryCircleLoader';
 import MyInvAssetBadgeGrid from '../MyInvestments/MyInvAssetBadgeGrid';
+import { getAnyAssetMeta } from '../../lib/assets/assetKind';
 import {
   ASSET_NEWS_ARTICLES_PER_ASSET,
   ASSET_NEWS_INITIAL_ASSETS,
@@ -300,6 +301,35 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
     </a>
   );
 
+  /** Discover / Investment Updates: asset badge left of the published date. */
+  const renderDiscoverCard = (article: AssetNewsArticle) => {
+    const label = getAnyAssetMeta(article.assetId)?.label ?? article.assetId;
+    return (
+      <a
+        key={`${article.assetId}-${article.url}-${article.headline}`}
+        href={article.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`myinv-asset-home-card home-asset-${article.assetId} myportfolio-news-card myportfolio-news-headline myportfolio-news-headline--with-badge`}
+        title={article.headline}
+        onClick={() => {
+          if (isSignedIn) recordEngagement('investment_update_click');
+        }}
+      >
+        <span className="myportfolio-news-headline-badge" aria-hidden="true">
+          <span
+            className={`home-asset-name asset-action-button asset-action-button--${article.assetId} asset-action-button--home-asset-chip`}
+          >
+            {label}
+          </span>
+        </span>
+        <span className="myportfolio-news-headline-date">
+          {formatArticlePublishedAt(article.publishedAt)}
+        </span>
+      </a>
+    );
+  };
+
   if (loadError) {
     return (
       <button
@@ -347,7 +377,7 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
               </div>
             ))
           ) : (
-            <div className="myportfolio-news-list">{visibleDiscover.map(renderHeadlineCard)}</div>
+            <div className="myportfolio-news-list">{visibleDiscover.map(renderDiscoverCard)}</div>
           )}
           {canPaginate ? (
             <button

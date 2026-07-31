@@ -12294,7 +12294,7 @@ a.asset-action-button--save-signin {
 }
 
 .myinv-page .myinv-asset-home-card.myportfolio-news-card {
-	padding: 14px 22px;
+	padding: 14px 12px;
 }
 
 /* Headline text mirrors the My Investments badge letter color (per-asset --asset-line-color).
@@ -12312,6 +12312,32 @@ a.asset-action-button--save-signin {
 	-webkit-text-size-adjust: none;
 	text-size-adjust: none;
 	text-decoration: none;
+}
+
+.myinv-page .myinv-asset-home-card.myportfolio-news-card.myportfolio-news-headline--with-badge,
+.myportfolio-news-headline--with-badge {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 17px;
+	text-align: left;
+}
+
+.myportfolio-news-headline-badge {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	pointer-events: none;
+}
+
+.myportfolio-news-headline-badge .asset-action-button--home-asset-chip {
+	pointer-events: none;
+}
+
+.myportfolio-news-headline-date {
+	flex: 0 1 auto;
+	min-width: 0;
 }
 
 .myportfolio-leaderboard-show-more,
