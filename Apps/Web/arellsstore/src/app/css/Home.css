@@ -12293,6 +12293,12 @@ a.asset-action-button--save-signin {
 	box-sizing: border-box;
 }
 
+/* Discover Investment Updates only: extra space above first update card.
+   Use padding (not margin) so panel maxHeight from scrollHeight includes it. */
+.myportfolio-news-panel > .asset-mount-fade-2s > .myportfolio-news-list {
+	padding-top: 5px;
+}
+
 .myinv-page .myinv-asset-home-card.myportfolio-news-card {
 	padding: 14px 12px;
 }
