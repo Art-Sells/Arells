@@ -16,3 +16,23 @@ export function compareByMarketCapDesc(
   if (a.marketCap !== b.marketCap) return b.marketCap - a.marketCap;
   return a.registryIndex - b.registryIndex;
 }
+
+/**
+ * Sort asset ids by latest liquid market cap (desc).
+ * `registryOrder` supplies stable tiebreaks while snapshots are still loading (cap 0).
+ */
+export function sortAssetIdsByMarketCapDesc(
+  ids: readonly string[],
+  getSnapshot: (id: string) => { liquidMarketCap?: number[] | null } | null | undefined,
+  registryOrder: readonly string[]
+): string[] {
+  const indexById = new Map(registryOrder.map((id, index) => [id, index]));
+  return [...ids]
+    .map((id) => ({
+      id,
+      marketCap: latestLiquidMarketCap(getSnapshot(id)),
+      registryIndex: indexById.get(id) ?? Number.MAX_SAFE_INTEGER,
+    }))
+    .sort(compareByMarketCapDesc)
+    .map((row) => row.id);
+}

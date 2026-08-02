@@ -14,6 +14,7 @@ import MyInvAssetHubPanel from './MyInvAssetHubPanel';
 import { getAnyAssetMeta, getAssetHistoricalPriceUrl } from '../../lib/assets/assetKind';
 import { SUPPORTED_CRYPTO_ASSET_IDS } from '../../lib/assets/cryptoAssetRegistry';
 import { SUPPORTED_STOCK_ASSET_IDS } from '../../lib/assets/stockAssetRegistry';
+import { sortAssetIdsByMarketCapDesc } from '../../lib/assets/marketCapSort';
 import {
   liquidSpotOnUtcDay,
   recalculateInvestmentsWithSnapshots,
@@ -81,17 +82,20 @@ const MyInvestmentsPageClient: React.FC = () => {
   const effectiveAssetsPresent = forceSessionPreview ? sessionAssetsPresent : assetsPresentInEmail;
   const effectiveAssetsMissing = forceSessionPreview ? sessionAssetsMissing : assetsMissingInEmail;
 
+  // Prefetch all supported VAPA snapshots so Other Assets / Add Investments can sort by market cap.
   useEffect(() => {
-    if (!effectiveInvestments.length) return;
-    const assetIds = [
-      ...new Set(
-        effectiveInvestments.map((inv: { asset?: string }) =>
-          String(inv?.asset || 'bitcoin').toLowerCase()
-        )
+    void ensureAssetsLoaded(supportedAssets);
+  }, [ensureAssetsLoaded, supportedAssets]);
+
+  const missingAssetsByMarketCap = useMemo(
+    () =>
+      sortAssetIdsByMarketCapDesc(
+        effectiveAssetsMissing,
+        (id) => getAsset(id),
+        supportedAssets
       ),
-    ];
-    void ensureAssetsLoaded(assetIds);
-  }, [effectiveInvestments, ensureAssetsLoaded]);
+    [effectiveAssetsMissing, getAsset, assets, supportedAssets]
+  );
 
   const heldAssetIds = useMemo(
     () =>
@@ -1382,11 +1386,11 @@ const MyInvestmentsPageClient: React.FC = () => {
               />
             )}
 
-            {effectiveAssetsMissing.length > 0 && effectiveAssetsPresent.length > 0 && (
+            {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length > 0 && (
               <MyInvAssetHubPanel
                 title="Other Assets"
                 slideIn={slideIn}
-                assets={effectiveAssetsMissing}
+                assets={missingAssetsByMarketCap}
                 linkKeyPrefix="missing"
                 cryptoMode="expandable"
                 cryptoOpen={otherAssetsCryptoOpen}
@@ -1402,11 +1406,11 @@ const MyInvestmentsPageClient: React.FC = () => {
               />
             )}
 
-            {effectiveAssetsMissing.length > 0 && effectiveAssetsPresent.length === 0 && (
+            {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length === 0 && (
               <MyInvAssetHubPanel
                 title="Add Investments"
                 slideIn={slideIn}
-                assets={effectiveAssetsMissing}
+                assets={missingAssetsByMarketCap}
                 linkKeyPrefix="add-missing"
                 cryptoMode="expandable"
                 cryptoOpen={addInvestCryptoOpen}
