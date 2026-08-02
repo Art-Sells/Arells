@@ -1,10 +1,10 @@
 import { CRYPTO_ASSETS } from '../assets/cryptoAssetRegistry';
 import { STOCK_ASSETS } from '../assets/stockAssetRegistry';
 
-/** S3 cache key for the asset news snapshot (v6 = apple + alphabet stocks; mirrors analytics/portfolio-context-v1). */
-export const ASSET_NEWS_SNAPSHOT_KEY = 'analytics/asset-news-v6/latest.json';
+/** S3 cache key for the asset news snapshot (v7 = microsoft + amazon stocks). */
+export const ASSET_NEWS_SNAPSHOT_KEY = 'analytics/asset-news-v7/latest.json';
 
-/** Refresh cadence. Paid Basic plan = 2,500 req/day; 15 assets hourly = 360/day. */
+/** Refresh cadence. Paid Basic plan = 2,500 req/day; 17 assets hourly = 408/day. */
 export const ASSET_NEWS_TTL_MS = 60 * 60 * 1000;
 
 /** Stories shown per asset. */
@@ -39,6 +39,8 @@ export const ASSET_NEWS_QUERIES: Record<string, string> = {
   nvidia: 'nvidia | nvda',
   apple: 'apple + (aapl | iphone | stock)',
   alphabet: '"alphabet" | google | googl',
+  microsoft: 'microsoft | msft',
+  amazon: 'amazon | amzn | aws',
   spacex: 'spacex | starlink | starship',
 };
 
@@ -61,6 +63,8 @@ export const ASSET_NEWS_TITLE_KEYWORDS: Record<string, string[]> = {
   nvidia: ['nvidia', 'nvda'],
   apple: ['apple', 'aapl', 'iphone'],
   alphabet: ['alphabet', 'google', 'googl'],
+  microsoft: ['microsoft', 'msft', 'azure'],
+  amazon: ['amazon', 'amzn', 'aws'],
   spacex: ['spacex', 'starlink', 'starship', 'falcon'],
 };
 

@@ -55,18 +55,46 @@ function formatArticlePublishedAt(publishedAt: string): string {
   return `${day} · ${time}`;
 }
 
+function elementOuterHeight(el: HTMLElement): number {
+  const cs = globalThis.getComputedStyle(el);
+  return (
+    el.offsetHeight +
+    (Number.parseFloat(cs.marginTop) || 0) +
+    (Number.parseFloat(cs.marginBottom) || 0)
+  );
+}
+
+/** Height of the first `initialCount` items inside `content` (relative to content top). */
+function measureInitialItemsHeight(
+  content: HTMLElement,
+  itemSelector: string,
+  initialCount: number
+): number {
+  const items = content.querySelectorAll(itemSelector);
+  const n = Math.min(initialCount, items.length);
+  if (n <= 0) return 0;
+  const contentTop = content.getBoundingClientRect().top;
+  const last = items[n - 1] as HTMLElement;
+  return Math.ceil(last.getBoundingClientRect().bottom - contentTop);
+}
+
 const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = false }) => {
   const { emailInvestments, isSignedIn } = useUser();
   const { recordEngagement } = useMyInvEngagementEvent();
   const [articlesByAsset, setArticlesByAsset] = useState<Record<string, AssetNewsArticle[]> | null>(null);
   const [loadError, setLoadError] = useState(false);
-  const [visibleAssetCount, setVisibleAssetCount] = useState(ASSET_NEWS_INITIAL_ASSETS);
-  const [visibleHeadlineCount, setVisibleHeadlineCount] = useState(NEWS_DISCOVER_INITIAL_HEADLINES);
+  /** How many items are mounted — only grows on "show more"; never shrinks on "show less". */
+  const [revealedAssetCount, setRevealedAssetCount] = useState(ASSET_NEWS_INITIAL_ASSETS);
+  const [revealedHeadlineCount, setRevealedHeadlineCount] = useState(NEWS_DISCOVER_INITIAL_HEADLINES);
+  /** False = height-clipped to the first page; extras stay mounted under overflow. */
+  const [listExpanded, setListExpanded] = useState(true);
   const [panelOpen, setPanelOpen] = useState(true);
   const [panelHeight, setPanelHeight] = useState(NEWS_LOADER_SECTION_HEIGHT_PX);
   const [contentReveal, setContentReveal] = useState(false);
   const [minLoaderElapsed, setMinLoaderElapsed] = useState(false);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const showMoreBtnRef = useRef<HTMLButtonElement | null>(null);
+  const listExpandedRef = useRef(true);
   const showedLoaderRef = useRef(false);
   const {
     mounted: circleMounted,
@@ -173,8 +201,10 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
   }, [articlesByAsset, holdingsPending, hasInvestments]);
 
   useEffect(() => {
-    setVisibleAssetCount(ASSET_NEWS_INITIAL_ASSETS);
-    setVisibleHeadlineCount(NEWS_DISCOVER_INITIAL_HEADLINES);
+    setRevealedAssetCount(ASSET_NEWS_INITIAL_ASSETS);
+    setRevealedHeadlineCount(NEWS_DISCOVER_INITIAL_HEADLINES);
+    listExpandedRef.current = true;
+    setListExpanded(true);
   }, [assetGroups.length, discoverArticles.length]);
 
   const contentReady =
@@ -182,6 +212,40 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
     minLoaderElapsed &&
     articlesByAsset !== null &&
     (hasInvestments ? assetGroups.length > 0 : discoverArticles.length > 0);
+
+  const canPaginate = hasInvestments
+    ? assetGroups.length > ASSET_NEWS_INITIAL_ASSETS
+    : discoverArticles.length > NEWS_DISCOVER_INITIAL_HEADLINES;
+  const revealedGroups = canPaginate ? assetGroups.slice(0, revealedAssetCount) : assetGroups;
+  const revealedDiscover = canPaginate
+    ? discoverArticles.slice(0, revealedHeadlineCount)
+    : discoverArticles;
+  const hasUnrevealed = hasInvestments
+    ? revealedAssetCount < assetGroups.length
+    : revealedHeadlineCount < discoverArticles.length;
+  /** Collapsed, or expanded with more batches left → "show more"; fully expanded → "show less". */
+  const showMoreLabel = !listExpanded || hasUnrevealed;
+
+  const measurePanelHeight = useCallback(
+    (expanded: boolean) => {
+      const content = contentRef.current;
+      if (!content) return NEWS_LOADER_SECTION_HEIGHT_PX;
+      const btn = showMoreBtnRef.current;
+      const btnH = btn ? elementOuterHeight(btn) : 0;
+      if (expanded) {
+        return Math.max(NEWS_LOADER_SECTION_HEIGHT_PX, content.scrollHeight + btnH);
+      }
+      const initialCount = hasInvestments
+        ? ASSET_NEWS_INITIAL_ASSETS
+        : NEWS_DISCOVER_INITIAL_HEADLINES;
+      const itemSelector = hasInvestments
+        ? '.myportfolio-news-group'
+        : '.myportfolio-news-list > .myportfolio-news-headline';
+      const itemsH = measureInitialItemsHeight(content, itemSelector, initialCount);
+      return Math.max(NEWS_LOADER_SECTION_HEIGHT_PX, itemsH + btnH);
+    },
+    [hasInvestments]
+  );
 
   useEffect(() => {
     if (gathering) {
@@ -218,6 +282,8 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
       return;
     }
 
+    listExpandedRef.current = true;
+    setListExpanded(true);
     setPanelOpen(true);
     setPanelHeight(NEWS_LOADER_SECTION_HEIGHT_PX);
 
@@ -226,8 +292,7 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
     const raf1 = globalThis.requestAnimationFrame(() => {
       raf2 = globalThis.requestAnimationFrame(() => {
         if (cancelled) return;
-        const next = contentRef.current?.scrollHeight ?? NEWS_LOADER_SECTION_HEIGHT_PX;
-        setPanelHeight(Math.max(NEWS_LOADER_SECTION_HEIGHT_PX, next));
+        setPanelHeight(measurePanelHeight(true));
       });
     });
     return () => {
@@ -235,9 +300,9 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
       globalThis.cancelAnimationFrame(raf1);
       if (raf2) globalThis.cancelAnimationFrame(raf2);
     };
-  }, [contentReady]);
+  }, [contentReady, measurePanelHeight]);
 
-  // Keep measured height in sync while open (show more / show less, wrapped headlines).
+  // Keep measured height in sync (wrap/font changes). Respect collapsed clip.
   useEffect(() => {
     if (!contentReady || !panelOpen) return;
     const node = contentRef.current;
@@ -245,7 +310,7 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
     let raf = 0;
     const measure = () => {
       raf = globalThis.requestAnimationFrame(() => {
-        const next = Math.max(NEWS_LOADER_SECTION_HEIGHT_PX, node.scrollHeight);
+        const next = measurePanelHeight(listExpandedRef.current);
         setPanelHeight((prev) => (prev === next ? prev : next));
       });
     };
@@ -255,35 +320,49 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
       ro.disconnect();
       if (raf) globalThis.cancelAnimationFrame(raf);
     };
-  }, [contentReady, panelOpen]);
+  }, [contentReady, panelOpen, measurePanelHeight, revealedAssetCount, revealedHeadlineCount]);
 
   const showCircle = gathering || circleMounted;
   const circleIsVisible = gathering || circleVisible;
 
-  const canPaginate = hasInvestments
-    ? assetGroups.length > ASSET_NEWS_INITIAL_ASSETS
-    : discoverArticles.length > NEWS_DISCOVER_INITIAL_HEADLINES;
-  const visibleGroups = canPaginate ? assetGroups.slice(0, visibleAssetCount) : assetGroups;
-  const visibleDiscover = canPaginate ? discoverArticles.slice(0, visibleHeadlineCount) : discoverArticles;
-  const hasMore = hasInvestments
-    ? visibleAssetCount < assetGroups.length
-    : visibleHeadlineCount < discoverArticles.length;
-
   const onPaginateClick = useCallback(() => {
-    if (hasMore) {
+    if (!listExpandedRef.current) {
+      // Re-expand; keep every already-revealed update mounted.
+      listExpandedRef.current = true;
+      setListExpanded(true);
+      setPanelHeight(measurePanelHeight(true));
+      return;
+    }
+    if (hasUnrevealed) {
       if (hasInvestments) {
-        setVisibleAssetCount((count) => Math.min(count + ASSET_NEWS_LOAD_MORE_ASSETS, assetGroups.length));
+        setRevealedAssetCount((count) =>
+          Math.min(count + ASSET_NEWS_LOAD_MORE_ASSETS, assetGroups.length)
+        );
       } else {
-        setVisibleHeadlineCount((count) =>
+        setRevealedHeadlineCount((count) =>
           Math.min(count + NEWS_DISCOVER_LOAD_MORE_HEADLINES, discoverArticles.length)
         );
       }
-    } else if (hasInvestments) {
-      setVisibleAssetCount(ASSET_NEWS_INITIAL_ASSETS);
-    } else {
-      setVisibleHeadlineCount(NEWS_DISCOVER_INITIAL_HEADLINES);
+      return;
     }
-  }, [hasMore, hasInvestments, assetGroups.length, discoverArticles.length]);
+    // Show less: clip height only — do not unmount revealed updates.
+    const full = measurePanelHeight(true);
+    const collapsed = measurePanelHeight(false);
+    setPanelHeight(full);
+    listExpandedRef.current = false;
+    setListExpanded(false);
+    globalThis.requestAnimationFrame(() => {
+      globalThis.requestAnimationFrame(() => {
+        setPanelHeight(collapsed);
+      });
+    });
+  }, [
+    hasUnrevealed,
+    hasInvestments,
+    assetGroups.length,
+    discoverArticles.length,
+    measurePanelHeight,
+  ]);
 
   const renderHeadlineCard = (article: AssetNewsArticle) => (
     <a
@@ -352,43 +431,50 @@ const MyAssetsUpdates: React.FC<MyAssetsUpdatesProps> = ({ holdingsPending = fal
     <div
       className={`myportfolio-news-panel${gathering ? ' is-gathering' : ''}${
         showCircle && contentReady ? ' is-revealing' : ''
-      }`}
+      }${!listExpanded ? ' is-collapsed' : ''}`}
       style={{
+        display: 'flex',
+        flexDirection: 'column',
         overflow: 'hidden',
-        maxHeight: panelOpen ? `${panelHeight}px` : `${NEWS_LOADER_SECTION_HEIGHT_PX}px`,
-        transition: `max-height ${NEWS_HEIGHT_EXPAND_MS}ms ease`,
+        height: panelOpen ? `${panelHeight}px` : `${NEWS_LOADER_SECTION_HEIGHT_PX}px`,
+        transition: `height ${NEWS_HEIGHT_EXPAND_MS}ms ease`,
       }}
     >
       {contentReady ? (
-        <div
-          ref={contentRef}
-          className={`asset-mount-fade-2s${contentReveal ? ' is-visible' : ''}`}
-          aria-hidden={!contentReveal}
-        >
-          {hasInvestments ? (
-            visibleGroups.map((group) => (
-              <div key={group.assetId} className="myportfolio-news-group myinv-accent-border">
-                <div className="myportfolio-news-group-badge">
-                  <MyInvAssetBadgeGrid assets={[group.assetId]} linkKeyPrefix={`news-${group.assetId}`} />
-                </div>
-                <div className="myportfolio-news-nested myinv-accent-border">
-                  <div className="myportfolio-news-list">{group.articles.map(renderHeadlineCard)}</div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="myportfolio-news-list">{visibleDiscover.map(renderDiscoverCard)}</div>
-          )}
+        <>
+          <div className="myportfolio-news-clip">
+            <div
+              ref={contentRef}
+              className={`asset-mount-fade-2s${contentReveal ? ' is-visible' : ''}`}
+              aria-hidden={!contentReveal}
+            >
+              {hasInvestments ? (
+                revealedGroups.map((group) => (
+                  <div key={group.assetId} className="myportfolio-news-group myinv-accent-border">
+                    <div className="myportfolio-news-group-badge">
+                      <MyInvAssetBadgeGrid assets={[group.assetId]} linkKeyPrefix={`news-${group.assetId}`} />
+                    </div>
+                    <div className="myportfolio-news-nested myinv-accent-border">
+                      <div className="myportfolio-news-list">{group.articles.map(renderHeadlineCard)}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="myportfolio-news-list">{revealedDiscover.map(renderDiscoverCard)}</div>
+              )}
+            </div>
+          </div>
           {canPaginate ? (
             <button
+              ref={showMoreBtnRef}
               type="button"
               className="asset-range-button myinv-range-button about-cta-button myportfolio-leaderboard-show-more"
               onClick={onPaginateClick}
             >
-              {hasMore ? 'show more' : 'show less'}
+              {showMoreLabel ? 'show more' : 'show less'}
             </button>
           ) : null}
-        </div>
+        </>
       ) : null}
       {showCircle ? (
         <div

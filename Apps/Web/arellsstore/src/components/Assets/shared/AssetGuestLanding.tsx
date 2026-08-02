@@ -22,6 +22,8 @@ const ASSET_BADGE_HREF: Record<string, string> = {
   nvidia: 'https://www.nvidia.com/',
   apple: 'https://www.apple.com/',
   alphabet: 'https://abc.xyz/',
+  microsoft: 'https://www.microsoft.com/',
+  amazon: 'https://www.amazon.com/',
   spacex: 'https://www.spacex.com/',
 };
 
@@ -41,7 +43,7 @@ export default function AssetGuestLanding({
   const badgeHref = ASSET_BADGE_HREF[cssModifier] ?? '#';
   const initialPublicEarnings = useInitialPublicEarnings();
   const { guestMaxLabel, loadError } = usePublicEarningsGuestPitch(true, initialPublicEarnings);
-  const showEarnPitch = Boolean(guestMaxLabel || loadError);
+  const showEarnPitch = Boolean(guestMaxLabel && !loadError);
 
   return (
     <div className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing`}>

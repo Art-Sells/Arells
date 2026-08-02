@@ -3,7 +3,7 @@ import { iconAssetUrl as u } from '../iconAssetUrl';
 import type { PageSeoFields } from '../pageWebPageJsonLd';
 import { buildAssetMetaDescription } from '../siteMetaDescriptions';
 
-export type StockAssetTheme = 'nvidia' | 'spacex' | 'apple' | 'alphabet';
+export type StockAssetTheme = 'nvidia' | 'spacex' | 'apple' | 'alphabet' | 'microsoft' | 'amazon';
 
 export type StockAssetConfig = {
   id: string;
@@ -68,6 +68,36 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     faviconPath: '/images/favicons/GooglBadge.svg',
     ogBannerPath: '/images/banners/assets/stocks/Alphabet/ArellsGOOGLBanner.jpg',
     companyUrl: 'https://abc.xyz/',
+  },
+  {
+    id: 'microsoft',
+    href: '/microsoft',
+    label: 'Microsoft',
+    ticker: 'MSFT',
+    displayName: 'Microsoft',
+    theme: 'microsoft',
+    cssModifier: 'microsoft',
+    massiveTicker: 'MSFT',
+    s3VapaKey: 'vavity/microsoftVAPA.json',
+    metaTitle: 'Microsoft never loses value',
+    faviconPath: '/images/favicons/MsftBadge.svg',
+    ogBannerPath: '/images/banners/assets/stocks/Microsoft/ArellsMSFTBanner.jpg',
+    companyUrl: 'https://www.microsoft.com/',
+  },
+  {
+    id: 'amazon',
+    href: '/amazon',
+    label: 'Amazon',
+    ticker: 'AMZN',
+    displayName: 'Amazon',
+    theme: 'amazon',
+    cssModifier: 'amazon',
+    massiveTicker: 'AMZN',
+    s3VapaKey: 'vavity/amazonVAPA.json',
+    metaTitle: 'Amazon never loses value',
+    faviconPath: '/images/favicons/AmznBadge.svg',
+    ogBannerPath: '/images/banners/assets/stocks/Amazon/ArellsAMZNBanner.jpg',
+    companyUrl: 'https://www.amazon.com/',
   },
   {
     id: 'spacex',

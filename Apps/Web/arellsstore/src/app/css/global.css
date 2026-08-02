@@ -14,5 +14,7 @@
 @import './assets/stocks/nvidia-asset-rules.css';
 @import './assets/stocks/apple-asset-rules.css';
 @import './assets/stocks/alphabet-asset-rules.css';
+@import './assets/stocks/microsoft-asset-rules.css';
+@import './assets/stocks/amazon-asset-rules.css';
 @import './assets/stocks/spacex-asset-rules.css';
 @import './home-myinv-asset-chip-colors.css';

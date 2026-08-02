@@ -833,6 +833,14 @@ body {
 .asset-page--alphabet .asset-page-content *,
 .asset-page--alphabet .asset-footer,
 .asset-page--alphabet .asset-footer *,
+.asset-page--microsoft .asset-page-content,
+.asset-page--microsoft .asset-page-content *,
+.asset-page--microsoft .asset-footer,
+.asset-page--microsoft .asset-footer *,
+.asset-page--amazon .asset-page-content,
+.asset-page--amazon .asset-page-content *,
+.asset-page--amazon .asset-footer,
+.asset-page--amazon .asset-footer *,
 .asset-page--spacex .asset-page-content,
 .asset-page--spacex .asset-page-content *,
 .asset-page--spacex .asset-footer,
@@ -1017,6 +1025,36 @@ body {
 .asset-page--alphabet .asset-page-content a.asset-title-badge--section.asset-title-badge--alphabet .asset-title-badge-label {
 	color: var(--asset-badge-spot-ink, rgb(21, 82, 170)) !important;
 	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(21, 82, 170)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--microsoft .asset-page-content a.asset-title-badge--section.asset-title-badge--microsoft:link,
+.asset-page--microsoft .asset-page-content a.asset-title-badge--section.asset-title-badge--microsoft:visited,
+.asset-page--microsoft .asset-page-content a.asset-title-badge--section.asset-title-badge--microsoft:hover,
+.asset-page--microsoft .asset-page-content a.asset-title-badge--section.asset-title-badge--microsoft:active,
+.asset-page--microsoft .asset-page-content a.asset-title-badge--section.asset-title-badge--microsoft:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(0, 90, 158)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(0, 90, 158)) !important;
+}
+
+.asset-page--microsoft .asset-page-content a.asset-title-badge--section.asset-title-badge--microsoft .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(0, 90, 158)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(0, 90, 158)) !important;
+	opacity: 0.5;
+}
+
+.asset-page--amazon .asset-page-content a.asset-title-badge--section.asset-title-badge--amazon:link,
+.asset-page--amazon .asset-page-content a.asset-title-badge--section.asset-title-badge--amazon:visited,
+.asset-page--amazon .asset-page-content a.asset-title-badge--section.asset-title-badge--amazon:hover,
+.asset-page--amazon .asset-page-content a.asset-title-badge--section.asset-title-badge--amazon:active,
+.asset-page--amazon .asset-page-content a.asset-title-badge--section.asset-title-badge--amazon:focus-visible {
+	color: var(--asset-badge-spot-ink, rgb(204, 102, 0)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(204, 102, 0)) !important;
+}
+
+.asset-page--amazon .asset-page-content a.asset-title-badge--section.asset-title-badge--amazon .asset-title-badge-label {
+	color: var(--asset-badge-spot-ink, rgb(204, 102, 0)) !important;
+	-webkit-text-fill-color: var(--asset-badge-spot-ink, rgb(204, 102, 0)) !important;
 	opacity: 0.5;
 }
 
@@ -10689,6 +10727,46 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
+.asset-page--microsoft .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(0, 120, 212, 0.95) !important;
+	-webkit-text-fill-color: rgba(0, 120, 212, 0.95) !important;
+}
+
+.asset-page--microsoft .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(0, 120, 212, 0.95) !important;
+	-webkit-text-fill-color: rgba(0, 120, 212, 0.95) !important;
+	border-color: rgba(0, 120, 212, 0.38) !important;
+	background: rgba(0, 120, 212, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--microsoft .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(0, 120, 212, 0.3);
+	opacity: 1;
+}
+
+.asset-page--amazon .site-social-footer.site-social-footer--asset .site-social-footer-label {
+	color: rgba(255, 153, 0, 0.95) !important;
+	-webkit-text-fill-color: rgba(255, 153, 0, 0.95) !important;
+}
+
+.asset-page--amazon .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	color: rgba(255, 153, 0, 0.95) !important;
+	-webkit-text-fill-color: rgba(255, 153, 0, 0.95) !important;
+	border-color: rgba(255, 153, 0, 0.38) !important;
+	background: rgba(255, 153, 0, 0.08) !important;
+	border-radius: 6px !important;
+	box-shadow: none !important;
+	opacity: 1;
+}
+
+.asset-page--amazon .site-social-footer.site-social-footer--asset .site-social-footer-rule {
+	background: rgba(255, 153, 0, 0.3);
+	opacity: 1;
+}
+
 .asset-page--spacex .site-social-footer.site-social-footer--asset .site-social-footer-label {
 	color: rgba(40, 48, 64, 0.95) !important;
 	-webkit-text-fill-color: rgba(40, 48, 64, 0.95) !important;
@@ -11308,6 +11386,14 @@ a.asset-action-button--save-signin {
 	background: rgba(66, 133, 244, 0.075);
 }
 
+.asset-page--microsoft .asset-guest-action-shell {
+	background: rgba(0, 120, 212, 0.075);
+}
+
+.asset-page--amazon .asset-guest-action-shell {
+	background: rgba(255, 153, 0, 0.075);
+}
+
 .asset-page--spacex .asset-guest-action-shell {
 	background: rgba(40, 48, 64, 0.075);
 }
@@ -11377,6 +11463,16 @@ a.asset-action-button--save-signin {
 
 .asset-page--alphabet .asset-guest-action-shell .shadow-border {
 	border-color: rgba(37, 99, 200, 0.3);
+	opacity: 1;
+}
+
+.asset-page--microsoft .asset-guest-action-shell .shadow-border {
+	border-color: rgba(0, 120, 212, 0.3);
+	opacity: 1;
+}
+
+.asset-page--amazon .asset-guest-action-shell .shadow-border {
+	border-color: rgba(160, 85, 0, 0.3);
 	opacity: 1;
 }
 
@@ -11507,6 +11603,14 @@ a.asset-action-button--save-signin {
 
 .asset-page--alphabet .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(21, 82, 170)) !important;
+}
+
+.asset-page--microsoft .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(0, 90, 158)) !important;
+}
+
+.asset-page--amazon .asset-guest-landing .guest-landing-copyright--asset {
+	color: var(--asset-slogan-color, rgb(204, 102, 0)) !important;
 }
 
 .asset-page--spacex .asset-guest-landing .guest-landing-copyright--asset {
@@ -12219,6 +12323,18 @@ a.asset-action-button--save-signin {
 	box-sizing: border-box;
 }
 
+/* Clips overflow updates while show-less heights up; button sits below this shell. */
+.myportfolio-news-panel .myportfolio-news-clip {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+	width: 100%;
+}
+
+.myportfolio-news-panel > .myportfolio-leaderboard-show-more {
+	flex: 0 0 auto;
+}
+
 /* Gathering + reveal: 50px loader band (circle centered); height-down expands the panel from here. */
 .myportfolio-news-loader-slot {
 	display: flex;
@@ -12294,8 +12410,8 @@ a.asset-action-button--save-signin {
 }
 
 /* Discover Investment Updates only: extra space above first update card.
-   Use padding (not margin) so panel maxHeight from scrollHeight includes it. */
-.myportfolio-news-panel > .asset-mount-fade-2s > .myportfolio-news-list {
+   Use padding (not margin) so panel height from scrollHeight includes it. */
+.myportfolio-news-panel .myportfolio-news-clip > .asset-mount-fade-2s > .myportfolio-news-list {
 	padding-top: 5px;
 }
 
@@ -12377,6 +12493,11 @@ a.asset-action-button--save-signin {
 
 .myportfolio-leaderboard-show-more {
 	margin-top: 14px;
+}
+
+/* My Investment Updates: extra space under show more / show less */
+.myportfolio-news-panel .myportfolio-leaderboard-show-more.about-cta-button {
+	margin-bottom: 5px;
 }
 
 .myportfolio-learn-more {

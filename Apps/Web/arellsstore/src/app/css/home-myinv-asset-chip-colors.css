@@ -109,6 +109,28 @@
 	-webkit-text-fill-color: rgb(37, 99, 200) !important;
 }
 
+/* Microsoft — /microsoft */
+#overlayy .home-asset-microsoft .home-asset-name,
+#overlayy .home-asset-microsoft .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-microsoft .home-asset-name,
+.home-asset-card.home-asset-microsoft .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-microsoft .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-microsoft .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(0, 120, 212) !important;
+	-webkit-text-fill-color: rgb(0, 120, 212) !important;
+}
+
+/* Amazon — /amazon */
+#overlayy .home-asset-amazon .home-asset-name,
+#overlayy .home-asset-amazon .asset-action-button.asset-action-button--home-asset-chip,
+.home-asset-card.home-asset-amazon .home-asset-name,
+.home-asset-card.home-asset-amazon .asset-action-button.asset-action-button--home-asset-chip,
+.myinv-page .myinv-asset-home-card.home-asset-amazon .home-asset-name,
+.myinv-page .myinv-asset-home-card.home-asset-amazon .asset-action-button.asset-action-button--home-asset-chip {
+	color: rgb(255, 153, 0) !important;
+	-webkit-text-fill-color: rgb(255, 153, 0) !important;
+}
+
 /* SpaceX — /spacex */
 #overlayy .home-asset-spacex .home-asset-name,
 #overlayy .home-asset-spacex .asset-action-button.asset-action-button--home-asset-chip,

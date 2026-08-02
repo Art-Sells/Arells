@@ -13,9 +13,22 @@ export function usePublicEarningsGuestPitch(
     initialPublicEarnings
   );
   const [loadError, setLoadError] = useState(false);
+  // Local preview only: /?forceEarningsError=1 hides the earn pitch (failed-load state).
+  const [forceEarningsError, setForceEarningsError] = useState(false);
+
+  useEffect(() => {
+    try {
+      setForceEarningsError(
+        new URLSearchParams(window.location.search).get('forceEarningsError') === '1'
+      );
+    } catch {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
     if (!enabled) return;
+    if (forceEarningsError) return;
     if (publicEarnings) return;
 
     let cancelled = false;
@@ -35,12 +48,12 @@ export function usePublicEarningsGuestPitch(
     return () => {
       cancelled = true;
     };
-  }, [enabled, publicEarnings]);
+  }, [enabled, forceEarningsError, publicEarnings]);
 
   const guestMaxLabel = useMemo(() => {
     if (!enabled) return '';
     return formatUsdRangeDisplay(WEEKLY_USERS_POOL_USD, WEEKLY_USERS_POOL_USD).max;
   }, [enabled]);
 
-  return { guestMaxLabel, loadError };
+  return { guestMaxLabel, loadError: forceEarningsError || loadError };
 }

@@ -18,6 +18,8 @@ type AssetTheme =
   | 'nvidia'
   | 'apple'
   | 'alphabet'
+  | 'microsoft'
+  | 'amazon'
   | 'spacex';
 
 type Props = {
@@ -186,6 +188,18 @@ export default function CustomDatePicker({ value, onChange, className, placehold
           '--asset-line-color': 'rgb(66, 133, 244)',
           '--asset-slogan-color': 'rgb(21, 82, 170)',
           '--asset-border-color': 'rgba(37, 99, 200, 0.42)',
+        } as React.CSSProperties;
+      case 'microsoft':
+        return {
+          '--asset-line-color': 'rgb(0, 120, 212)',
+          '--asset-slogan-color': 'rgb(0, 90, 158)',
+          '--asset-border-color': 'rgba(0, 120, 212, 0.42)',
+        } as React.CSSProperties;
+      case 'amazon':
+        return {
+          '--asset-line-color': 'rgb(255, 153, 0)',
+          '--asset-slogan-color': 'rgb(204, 102, 0)',
+          '--asset-border-color': 'rgba(160, 85, 0, 0.42)',
         } as React.CSSProperties;
       case 'spacex':
         return {
