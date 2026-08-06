@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Vavity - Virtual Autonomous Volatility Immunizing Tethering Yielder",
-  description: "An autonomous pricing system that anchors asset prices before they fall.",
+  description: "An anti-gravity pricing system that anchors asset prices before they fall.",
   keywords: "Vavity, autonomous financial system, bear markets, asset prices, financial technology, DeFi, cryptocurrency, blockchain, price anchoring",
   authors: [{ name: "Vavity" }],
   creator: "Vavity",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Vavity - Virtual Autonomous Volatility Immunizing Tethering Yielder",
-    description: "An autonomous pricing system that anchors asset prices before they fall.",
+    description: "An anti-gravity pricing system that anchors asset prices before they fall.",
     url: "/vavity",
     siteName: "Vavity",
     images: [
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
         url: "/images/vavity/Banner.jpg",
         width: 1200,
         height: 1200,
-        alt: "Vavity - An autonomous pricing system that anchors asset prices before they fall.",
+        alt: "Vavity - An anti-gravity pricing system that anchors asset prices before they fall.",
       },
     ],
     locale: "en_US",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Vavity - Virtual Autonomous Volatility Immunizing Tethering Yielder",
-    description: "An autonomous pricing system that anchors asset prices before they fall.",
+    description: "An anti-gravity pricing system that anchors asset prices before they fall.",
     images: ["/images/vavity/Banner.jpg"],
   },
   robots: {
@@ -65,7 +65,7 @@ export default function VavityLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Vavity",
-    "description": "An autonomous pricing system that anchors asset prices before they fall.",
+    "description": "An anti-gravity pricing system that anchors asset prices before they fall.",
     "url": "https://vavity.info",
     "logo": "https://vavity.info/images/Vavity-Icon-Ivory.png",
     "sameAs": [

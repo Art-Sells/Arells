@@ -83,7 +83,7 @@ export default function VavityHome() {
           
           <div className={styles.contentSection}>
             <p className={styles.description}>
-            An autonomous pricing system that anchors asset prices before they fall.
+            An anti-gravity pricing system that anchors asset prices before they fall.
             </p>
             
             <div className={styles.marketplaceContent}>
@@ -133,8 +133,6 @@ export default function VavityHome() {
 
               <p className={styles.psychologyText}>
                 <strong>Laying the foundations for the financial infrastructure for space.</strong>
-                <br />
-                In space, we are free from the constraints of falling, and with Vavity, so will finance be free from falling.
               </p>
             </div>
           </div>
