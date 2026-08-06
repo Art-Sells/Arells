@@ -132,7 +132,9 @@ export default function VavityHome() {
               </div>
 
               <p className={styles.psychologyText}>
-                Just like the invention of clocks and calendars, Vavity is both a psychological and technological invention.
+                <strong>Laying the foundations for the financial infrastructure for space.</strong>
+                <br />
+                In space, we are free from the constraints of falling, and with Vavity, so will finance be free from falling.
               </p>
             </div>
           </div>

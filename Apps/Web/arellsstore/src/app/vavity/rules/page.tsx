@@ -121,12 +121,12 @@ export default function Rules() {
             <h2 className={`${styles.sectionTitle} ${styles.longTitle}`}>Why Previous Bear Market Obfuscating Financial Architectures Failed</h2>
             
             <p className={styles.paragraph}>
-              Every failed monetary invention created to eliminate (or limit) investment losses was human dependent:
+              Every failed monetary invention created to eliminate (or limit) investment losses was human and gravity dependent:
             </p>
             
             <ul className={styles.bulletList}>
               <li>human trust → issuance → risk</li>
-              <li>human hype → exposure → greater collapse potential</li>
+              <li>gravity → falling → loss as default</li>
             </ul>
             
             <p className={styles.paragraph}>Vavity is:</p>
@@ -136,6 +136,7 @@ export default function Rules() {
               <li><strong>bounded</strong>: prices cannot exceed external reference or fall below imports</li>
               <li><strong>self-limiting</strong>: no endogenous loops that spiral out of control</li>
               <li><strong>non-manipulable</strong>: irrational behavior cannot damage the architecture</li>
+              <li><strong>gravity-independent</strong>: free from the constraints of falling</li>
             </ul>
           </section>
         </div>
