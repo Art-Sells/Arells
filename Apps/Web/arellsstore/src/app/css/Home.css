@@ -1428,16 +1428,43 @@ body {
 }
 
 .asset-bitcoin-season-teaser-frame {
+	position: relative;
 	width: 100%;
+	aspect-ratio: 2000 / 2303;
 	border-radius: 12px;
 	overflow: hidden;
+	background: rgba(248, 141, 0, 0.06);
+}
+
+.asset-bitcoin-season-teaser-loader {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+}
+
+.asset-bitcoin-season-teaser-loader-ring {
+	width: 44px;
+	height: 44px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 6px solid rgba(248, 141, 0, 0.2);
+	border-top-color: rgba(248, 141, 0, 0.75);
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
 }
 
 .asset-bitcoin-season-teaser-img {
-	display: block;
-	width: 100%;
-	height: auto;
+	object-fit: cover;
 	border-radius: 12px;
+	opacity: 0;
+	transition: opacity 0.9s ease;
+}
+
+.asset-bitcoin-season-teaser-img.is-visible {
+	opacity: 1;
 }
 
 .asset-bitcoin-season-teaser-storyline {

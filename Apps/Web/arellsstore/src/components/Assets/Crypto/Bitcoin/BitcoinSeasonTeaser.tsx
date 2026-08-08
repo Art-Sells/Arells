@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import StorylineOpening from '../../../StorylineOpening';
 
 const TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/BTCS1TeaserPoster.jpg';
@@ -18,6 +18,8 @@ export default function BitcoinSeasonTeaser({
   showAssetBadge = false,
   animateOnMount = false,
 }: BitcoinSeasonTeaserProps) {
+  const [posterLoaded, setPosterLoaded] = useState(false);
+
   const slide = (phase: 'storyline' | 'poster' | 'badge') =>
     animateOnMount
       ? ` asset-guest-mount-slide bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--${phase}`
@@ -29,14 +31,23 @@ export default function BitcoinSeasonTeaser({
         <StorylineOpening assetName="Bitcoin" className="storyline-opening--bitcoin-teaser" />
       </div>
       <div className={`asset-bitcoin-season-teaser-poster${slide('poster')}`}>
-        <div className="asset-bitcoin-season-teaser-frame">
+        <div
+          className={`asset-bitcoin-season-teaser-frame${posterLoaded ? ' is-loaded' : ''}`}
+        >
+          {!posterLoaded ? (
+            <div className="asset-bitcoin-season-teaser-loader" aria-hidden="true">
+              <div className="asset-bitcoin-season-teaser-loader-ring" />
+            </div>
+          ) : null}
           <Image
             src={TEASER_SRC}
             alt="Bitcoin Season 1 teaser"
-            width={2000}
-            height={2303}
-            className="asset-bitcoin-season-teaser-img"
+            fill
             sizes="(max-width: 750px) 92vw, 340px"
+            className={`asset-bitcoin-season-teaser-img${posterLoaded ? ' is-visible' : ''}`}
+            onLoad={() => setPosterLoaded(true)}
+            onLoadingComplete={() => setPosterLoaded(true)}
+            priority
           />
         </div>
       </div>

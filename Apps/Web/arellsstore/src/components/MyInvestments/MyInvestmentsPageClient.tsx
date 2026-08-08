@@ -59,7 +59,17 @@ const MyInvestmentsPageClient: React.FC = () => {
   } = useVavity();
   const { recordEngagement } = useMyInvEngagementEvent();
   const forceSessionPreview = false;
+  const [myInvEmptyPreview, setMyInvEmptyPreview] = useState(false);
   const supportedAssets = useMemo(() => ['bitcoin'], []);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const v = (new URLSearchParams(window.location.search).get('myInvEmptyPreview') || '').toLowerCase();
+      setMyInvEmptyPreview(v === '1' || v === 'true' || v === 'yes' || v === 'on');
+    } catch {
+      setMyInvEmptyPreview(false);
+    }
+  }, []);
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
       (sessionInvestments || []).map((inv: any) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
@@ -70,11 +80,23 @@ const MyInvestmentsPageClient: React.FC = () => {
     () => supportedAssets.filter((asset) => !sessionAssetsPresent.includes(asset)),
     [sessionAssetsPresent, supportedAssets]
   );
-  const effectiveSignedIn = forceSessionPreview ? true : isSignedIn;
-  const effectiveEmail = forceSessionPreview ? 'session' : email;
-  const effectiveInvestments = forceSessionPreview ? sessionInvestments : emailInvestments;
-  const effectiveAssetsPresent = forceSessionPreview ? sessionAssetsPresent : assetsPresentInEmail;
-  const effectiveAssetsMissing = forceSessionPreview ? sessionAssetsMissing : assetsMissingInEmail;
+  const effectiveSignedIn = myInvEmptyPreview || forceSessionPreview ? true : isSignedIn;
+  const effectiveEmail = myInvEmptyPreview ? 'preview' : forceSessionPreview ? 'session' : email;
+  const effectiveInvestments = myInvEmptyPreview
+    ? []
+    : forceSessionPreview
+      ? sessionInvestments
+      : emailInvestments;
+  const effectiveAssetsPresent = myInvEmptyPreview
+    ? []
+    : forceSessionPreview
+      ? sessionAssetsPresent
+      : assetsPresentInEmail;
+  const effectiveAssetsMissing = myInvEmptyPreview
+    ? supportedAssets
+    : forceSessionPreview
+      ? sessionAssetsMissing
+      : assetsMissingInEmail;
 
   // Prefetch all supported VAPA snapshots so Other Assets / Add Investments can sort by market cap.
   useEffect(() => {
@@ -233,6 +255,13 @@ const MyInvestmentsPageClient: React.FC = () => {
   const lastFormattedProfitRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (myInvEmptyPreview) {
+      if (!initialFetchDoneRef.current) {
+        initialFetchDoneRef.current = true;
+        setInitialDataReady(true);
+      }
+      return;
+    }
     const shouldPoll = forceSessionPreview ? Boolean(sessionId) : Boolean(effectiveEmail);
     if (!shouldPoll) {
       const stillWaiting = forceSessionPreview
@@ -270,6 +299,7 @@ const MyInvestmentsPageClient: React.FC = () => {
       window.clearInterval(id);
     };
   }, [
+    myInvEmptyPreview,
     forceSessionPreview,
     fetchVavityAggregatorAll,
     refreshEmailAggregator,
@@ -450,16 +480,16 @@ const MyInvestmentsPageClient: React.FC = () => {
   }, [initialDataReady]);
 
   useEffect(() => {
-    if (forceSessionPreview) return;
+    if (myInvEmptyPreview || forceSessionPreview) return;
     if (!isSignedIn) return;
     refreshEmailAggregator();
-  }, [forceSessionPreview, isSignedIn, refreshEmailAggregator]);
+  }, [myInvEmptyPreview, forceSessionPreview, isSignedIn, refreshEmailAggregator]);
 
   useEffect(() => {
-    if (!forceSessionPreview) return;
+    if (myInvEmptyPreview || !forceSessionPreview) return;
     if (!sessionId) return;
     fetchVavityAggregatorAll(sessionId).catch(() => undefined);
-  }, [forceSessionPreview, sessionId, fetchVavityAggregatorAll]);
+  }, [myInvEmptyPreview, forceSessionPreview, sessionId, fetchVavityAggregatorAll]);
 
   const hasAny = bitcoinOnlyInvestments.length > 0;
   const displayTotals = displayIsLiquidMode ? liquidSummaryTotals : solidSummaryTotals;
