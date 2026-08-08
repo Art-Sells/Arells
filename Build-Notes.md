@@ -4,24 +4,23 @@
 
 -Send follow-up emails(mailmeteor [get verified emails])
 
-### remove
- - local testing false/true for myinv-engagement-v1 payments (and their s3's)
- - Simplify (New episodes every friday, 2 assets (crypto/stocks (hide the others from view or loading in UI/including their s3 values until i say otherwise)) and remove (my-portfolio should re-direct  into my-investments))
+- remove local testing false/true for myinv-engagement-v1 payments (and their s3's) and my portfolio and the api for getting and loading news articles (show me what i need to delete/remove from my news APIs as well as the stripe apis from local and deployed)
+ - Simplify (replace "New assets every week" with: New episodes every  Saturday, 2 assets (crypto/stocks (hide the others from view or loading in UI/including their s3 values until i say otherwise)) and remove (my-portfolio should re-direct  into my-investments))
+ - replace "view porftolio" in asset pages with "view investments"
+ - my-investments "Add Investments to Unlock Episodes"
+ "Add Other Investments To Unlock Episodes"
+ Storyline:
+- In our universe, your(Bitcoin) investments are lifeless… But in another universe, they are alive, and are on a mission to live forever.
+
+Race = (Bitcoin) (human eyeris same color pallete as bitcoin)
+Planet = (unique name)
+Language = (unique name and writing)
+- Season 1 (name): Episode 1: Coming Soon
 
 
 ### Trigger Organic Growth
-- Unlock Nvidia episodes by adding investments.
-
-- In our universe, our(Bitcoin) investments are lifeless… But in another universe, they are alive, and are on a mission to live forever.
-
-Desc:
-
-Species = (Bitcoin)
-Types = Products (Cryptocurrency, DeFi)
-Planet = (unique name)
-Language = (unique name and writing)
-
-Add investments to unlock episodes.
+- All openings:
+In our universe, your(Bitcoin) investments are lifeless… But in another universe, they are alive, and are on a mission to live forever.
 
 - Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))
 
