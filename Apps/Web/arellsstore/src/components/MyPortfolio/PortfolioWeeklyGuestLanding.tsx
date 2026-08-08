@@ -25,9 +25,9 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
           />
         </span>
         <p className="home-guest-slogan myportfolio-weekly-guest-mission home-guest-mount-slide home-guest-mount-slide--logo">
-          on a mission to ensure investments
+          on a mission to ensure
           <br />
-          never lose value
+          investments never lose value
         </p>
         <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--slogan">
           <span className="shadow-border" aria-hidden="true" />
