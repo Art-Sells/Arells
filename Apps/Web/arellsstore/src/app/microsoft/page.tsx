@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import MicrosoftPageClient from '../../components/Assets/Stocks/Microsoft/MicrosoftPageClient';
-import { PublicEarningsGuestProvider } from '../../components/MyPortfolio/PublicEarningsGuestContext';
 import {
   buildStockAssetPageMetadata,
   getStockAssetPageSeo,
 } from '../../lib/assets/stockAssetRegistry';
 import { buildWebPageJsonLd } from '../../lib/pageWebPageJsonLd';
-import { loadGuestPublicEarnings } from '../../lib/portfolio/loadGuestPublicEarnings';
 
 const assetId = 'microsoft' as const;
 const { title, description, path } = getStockAssetPageSeo(assetId);
@@ -14,7 +12,6 @@ const { title, description, path } = getStockAssetPageSeo(assetId);
 export const metadata: Metadata = buildStockAssetPageMetadata(assetId);
 
 const MicrosoftPage = async () => {
-  const initialPublicEarnings = await loadGuestPublicEarnings();
 
   return (
     <>
@@ -23,10 +20,8 @@ const MicrosoftPage = async () => {
           <h1>{title}</h1>
           <p>{description}</p>
         </div>
-        <PublicEarningsGuestProvider value={initialPublicEarnings}>
-          <MicrosoftPageClient />
-        </PublicEarningsGuestProvider>
-      </main>
+        <MicrosoftPageClient />
+</main>
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger -- JSON-LD requires raw script injection

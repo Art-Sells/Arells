@@ -3,6 +3,8 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/analytics-internal', destination: '/metrics', permanent: true },
+      { source: '/my-portfolio', destination: '/my-investments', permanent: true },
+      { source: '/earn-money-weekly', destination: '/my-investments', permanent: true },
     ];
   },
   async headers() {

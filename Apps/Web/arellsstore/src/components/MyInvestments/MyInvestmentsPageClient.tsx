@@ -12,8 +12,6 @@ import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
 import MyInvAssetHubPanel from './MyInvAssetHubPanel';
 import { getAnyAssetMeta, getAssetHistoricalPriceUrl } from '../../lib/assets/assetKind';
-import { SUPPORTED_CRYPTO_ASSET_IDS } from '../../lib/assets/cryptoAssetRegistry';
-import { SUPPORTED_STOCK_ASSET_IDS } from '../../lib/assets/stockAssetRegistry';
 import { sortAssetIdsByMarketCapDesc } from '../../lib/assets/marketCapSort';
 import {
   liquidSpotOnUtcDay,
@@ -37,7 +35,6 @@ const formatCurrencyParts = (value: number) => {
 
 const MyInvestmentsPageClient: React.FC = () => {
   const router = useRouter();
-  const [loadingPortfolio, setLoadingPortfolio] = useState(false);
   const {
     isSignedIn,
     email,
@@ -62,10 +59,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   } = useVavity();
   const { recordEngagement } = useMyInvEngagementEvent();
   const forceSessionPreview = false;
-  const supportedAssets = useMemo(
-    () => [...SUPPORTED_CRYPTO_ASSET_IDS, ...SUPPORTED_STOCK_ASSET_IDS],
-    []
-  );
+  const supportedAssets = useMemo(() => ['bitcoin'], []);
   const sessionAssetsPresent = useMemo(() => {
     const present = new Set(
       (sessionInvestments || []).map((inv: any) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
@@ -97,26 +91,33 @@ const MyInvestmentsPageClient: React.FC = () => {
     [effectiveAssetsMissing, getAsset, assets, supportedAssets]
   );
 
+  const bitcoinOnlyInvestments = useMemo(
+    () =>
+      effectiveInvestments.filter(
+        (inv: { asset?: string }) => String(inv?.asset || 'bitcoin').toLowerCase() === 'bitcoin'
+      ),
+    [effectiveInvestments]
+  );
+
   const heldAssetIds = useMemo(
     () =>
       [
         ...new Set(
-          effectiveInvestments.map((inv: { asset?: string }) =>
+          bitcoinOnlyInvestments.map((inv: { asset?: string }) =>
             String(inv?.asset || 'bitcoin').toLowerCase()
           )
         ),
       ],
-    [effectiveInvestments]
+    [bitcoinOnlyInvestments]
   );
-
   const valuedInvestments = useMemo(() => {
-    if (!effectiveInvestments.length) return [];
+    if (!bitcoinOnlyInvestments.length) return [];
     return recalculateInvestmentsWithSnapshots(
-      effectiveInvestments as Record<string, unknown>[],
+      bitcoinOnlyInvestments as Record<string, unknown>[],
       (assetId) => toVapaAssetSnapshot(getAsset(assetId)),
       (assetId) => getAsset(assetId)?.price
     );
-  }, [effectiveInvestments, getAsset, assets]);
+  }, [bitcoinOnlyInvestments, getAsset, assets]);
 
   const solidSummaryTotals = useMemo(
     () => sumPortfolioTotalsFromEntries(valuedInvestments, false),
@@ -177,7 +178,6 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [initialDataReady, setInitialDataReady] = useState(false);
   const [addInvestCryptoOpen, setAddInvestCryptoOpen] = useState(false);
   const [otherAssetsCryptoOpen, setOtherAssetsCryptoOpen] = useState(false);
-  const [addInvestStocksOpen, setAddInvestStocksOpen] = useState(false);
   const initialFetchDoneRef = useRef(false);
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState(false);
@@ -461,7 +461,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     fetchVavityAggregatorAll(sessionId).catch(() => undefined);
   }, [forceSessionPreview, sessionId, fetchVavityAggregatorAll]);
 
-  const hasAny = effectiveInvestments.length > 0;
+  const hasAny = bitcoinOnlyInvestments.length > 0;
   const displayTotals = displayIsLiquidMode ? liquidSummaryTotals : solidSummaryTotals;
 
   const assetSnapshotUsable = useCallback((assetId: string) => {
@@ -1333,43 +1333,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                   )}
                 </>
               ) : null}
-              {effectiveSignedIn && initialDataReady && (
-                <div className={`myinv-panel-group myinv-panel-group--bordered myinv-mission-group${slideIn ? ' page-slide-in' : ''}`}>
-                  <div className="myinv-panel-section myinv-accent-border myinv-mission-outer">
-                    <div className="myinv-panel myinv-panel--shell myinv-mission-outer-shell">
-                      <div className="myinv-panel-section myinv-accent-border myinv-mission-inner-card">
-                        <div className="myinv-panel myinv-panel--shell myinv-mission-inner-shell">
-                          <div className="myinv-mission-accent-body">
-                            <p className="myinv-mission-line">we are on a mission to ensure your investments never lose value</p>
-                            <div className="myinv-mission-portfolio-wrap">
-                              <button
-                                type="button"
-                                disabled={loadingPortfolio}
-                                aria-busy={loadingPortfolio || undefined}
-                                onClick={() => {
-                                  if (loadingPortfolio) return;
-                                  setLoadingPortfolio(true);
-                                  globalThis.setTimeout(() => {
-                                    router.push('/my-portfolio');
-                                  }, 280);
-                                }}
-                                className="auth-submit auth-submit--accent auth-submit--signup-page myinv-mission-portfolio-button"
-                              >
-                                {loadingPortfolio ? (
-                                  <span className="myinv-mission-portfolio-button-spinner" aria-hidden="true" />
-                                ) : null}
-                                <span>
-                                  {loadingPortfolio ? 'loading portfolio' : 'view my portfolio'}
-                                </span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+
             </div>
           </div>
         </div>
@@ -1398,11 +1362,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                   setOtherAssetsCryptoOpen(true);
                   recordEngagement('section_expand');
                 }}
-                stocksOpen={addInvestStocksOpen}
-                onStocksOpen={() => {
-                  setAddInvestStocksOpen(true);
-                  recordEngagement('section_expand');
-                }}
               />
             )}
 
@@ -1416,11 +1375,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                 cryptoOpen={addInvestCryptoOpen}
                 onCryptoOpen={() => {
                   setAddInvestCryptoOpen(true);
-                  recordEngagement('section_expand');
-                }}
-                stocksOpen={addInvestStocksOpen}
-                onStocksOpen={() => {
-                  setAddInvestStocksOpen(true);
                   recordEngagement('section_expand');
                 }}
               />

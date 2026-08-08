@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next';
 import { CRYPTO_ASSETS } from '../lib/assets/cryptoAssetRegistry';
-import { STOCK_ASSETS } from '../lib/assets/stockAssetRegistry';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -13,8 +12,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/signup',
     '/about',
     '/my-investments',
-    '/my-portfolio',
-    '/earn-money-weekly',
     '/vavity',
   ];
 
@@ -25,13 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily' as const,
       priority: path === '' ? 1 : 0.8,
     })),
-    ...CRYPTO_ASSETS.map((asset) => ({
-      url: `${base}${asset.href}`,
-      lastModified: now,
-      changeFrequency: 'daily' as const,
-      priority: 0.8,
-    })),
-    ...STOCK_ASSETS.map((asset) => ({
+    ...CRYPTO_ASSETS.filter((asset) => asset.id === 'bitcoin').map((asset) => ({
       url: `${base}${asset.href}`,
       lastModified: now,
       changeFrequency: 'daily' as const,

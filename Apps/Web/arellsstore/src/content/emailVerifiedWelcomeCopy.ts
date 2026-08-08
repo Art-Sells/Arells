@@ -1,5 +1,5 @@
 /**
- * Email verified success screen — copy above “View Portfolio”.
+ * Email verified success screen — copy above “View Investments”.
  * Edit this file to change wording (styling is in Home.css: `.auth-verified-welcome*`).
  */
 export const emailVerifiedWelcomeCopy = {
@@ -14,7 +14,7 @@ export const emailVerifiedWelcomePhaseCopy = {
     line2: 'Phase One',
     line3: 'of our mission.',
   },
-  portfolioBenefitLine: 'view portfolio to see how you can earn money weekly',
+  portfolioBenefitLine: 'view investments to continue',
   phaseOneTitle: 'Phase One:',
   phaseOneLead: 'Expand our mission by...',
   phaseOneBullets: [

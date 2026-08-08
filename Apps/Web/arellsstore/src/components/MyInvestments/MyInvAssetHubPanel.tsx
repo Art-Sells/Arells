@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { SUPPORTED_CRYPTO_ASSET_IDS } from '../../lib/assets/cryptoAssetRegistry';
 import { SUPPORTED_STOCK_ASSET_IDS } from '../../lib/assets/stockAssetRegistry';
 import MyInvAssetBadgeGrid from './MyInvAssetBadgeGrid';
 import MyInvCryptoExpandableSection from './MyInvCryptoExpandableSection';
@@ -21,7 +20,7 @@ type MyInvAssetHubPanelProps = {
   onStocksOpen?: () => void;
 };
 
-const CRYPTO_ID_SET = new Set<string>(SUPPORTED_CRYPTO_ASSET_IDS);
+const CRYPTO_ID_SET = new Set<string>(['bitcoin']);
 const STOCK_ID_SET = new Set<string>(SUPPORTED_STOCK_ASSET_IDS);
 
 const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
@@ -32,7 +31,7 @@ const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
   cryptoMode,
   cryptoOpen = false,
   onCryptoOpen,
-  showStocksSection = true,
+  showStocksSection = false,
   stocksOpen = false,
   onStocksOpen,
 }) => {

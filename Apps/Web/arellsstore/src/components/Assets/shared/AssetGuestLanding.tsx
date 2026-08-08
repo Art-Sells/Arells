@@ -3,9 +3,6 @@
 import Link from 'next/link';
 import React from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
-import GuestWeeklyEarnPitch from '../../MyPortfolio/GuestWeeklyEarnPitch';
-import { useInitialPublicEarnings } from '../../MyPortfolio/PublicEarningsGuestContext';
-import { usePublicEarningsGuestPitch } from '../../MyPortfolio/usePublicEarningsGuestPitch';
 
 const ASSET_BADGE_HREF: Record<string, string> = {
   bitcoin: 'https://bitcoin.org/en/',
@@ -41,9 +38,6 @@ export default function AssetGuestLanding({
   slogan = 'never loses value',
 }: AssetGuestLandingProps) {
   const badgeHref = ASSET_BADGE_HREF[cssModifier] ?? '#';
-  const initialPublicEarnings = useInitialPublicEarnings();
-  const { guestMaxLabel, loadError } = usePublicEarningsGuestPitch(true, initialPublicEarnings);
-  const showEarnPitch = Boolean(guestMaxLabel && !loadError);
 
   return (
     <div className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing`}>
@@ -80,14 +74,6 @@ export default function AssetGuestLanding({
             </div>
           </div>
         </div>
-        {showEarnPitch ? (
-          <GuestWeeklyEarnPitch
-            guestMaxLabel={guestMaxLabel}
-            loadError={loadError}
-            layout="inline"
-            className="asset-guest-earn-pitch asset-guest-mount-slide asset-guest-mount-slide--earn"
-          />
-        ) : null}
         <GuestLandingCopyright
           variant="asset"
           cssModifier={cssModifier}

@@ -19,6 +19,7 @@ import AssetGuestLanding from '../../shared/AssetGuestLanding';
 import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import BitcoinChart from './BitcoinChart';
+import BitcoinSeasonTeaser from './BitcoinSeasonTeaser';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 import {
   ASSET_PRICE_CHART_MOUNT_SLIDE_MS,
@@ -53,7 +54,8 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
     void ensureAssetsLoaded([ASSET.id]);
   }, [ensureAssetsLoaded]);
   const { email, isSignedIn, authSessionLoading, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
-  const isGuestView = !isSignedIn && !email;
+  const [bitcoinEmptyPreview, setBitcoinEmptyPreview] = useState(false);
+  const isGuestView = !bitcoinEmptyPreview && !isSignedIn && !email;
   const summaryCircleLoader = useAssetSummaryCircleLoader();
   const summaryCircleLoaderDismissRef = useRef<(() => void) | null>(null);
   summaryCircleLoaderDismissRef.current = summaryCircleLoader.dismissOnSummaryExpandComplete;
@@ -740,8 +742,13 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
       const params = new URLSearchParams(window.location.search);
       const v = (params.get('previewSubmit') || '').toLowerCase();
       setPreviewSubmit(v === '1' || v === 'true' || v === 'yes' || v === 'on');
+      const emptyPreview = (params.get('bitcoinEmptyPreview') || '').toLowerCase();
+      setBitcoinEmptyPreview(
+        emptyPreview === '1' || emptyPreview === 'true' || emptyPreview === 'yes' || emptyPreview === 'on'
+      );
     } catch {
       setPreviewSubmit(false);
+      setBitcoinEmptyPreview(false);
     }
   }, []);
 
@@ -913,9 +920,14 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
     { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
   const displayTotals = displayIsLiquidMode ? totalsLiquid : totals;
   const suppressInvestmentsUI = isSubmitCollapsing && submitTargetRef.current === 'add';
-  const hasInvestmentsUI = (investments.length > 0 || isClearingInvestments) && !suppressInvestmentsUI;
-  const showInvestmentsHeader = investments.length > 0;
-  const shouldFetchInitialData = isSignedIn ? Boolean(email) : Boolean(sessionReady && sessionId && fetchVavityAggregator);
+  const hasInvestmentsUI =
+    !bitcoinEmptyPreview && (investments.length > 0 || isClearingInvestments) && !suppressInvestmentsUI;
+  const showInvestmentsHeader = !bitcoinEmptyPreview && investments.length > 0;
+  const shouldFetchInitialData = bitcoinEmptyPreview
+    ? false
+    : isSignedIn
+      ? Boolean(email)
+      : Boolean(sessionReady && sessionId && fetchVavityAggregator);
   const showInitialFetchLoader = shouldFetchInitialData && !initialFetchDone;
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
@@ -3110,7 +3122,13 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
   }, [emptyActionsMountPhase]);
 
   useEffect(() => {
+    if (!bitcoinEmptyPreview) return;
+    setEmptyActionsMountPhase('done');
+  }, [bitcoinEmptyPreview]);
+
+  useEffect(() => {
     if (isGuestView) return;
+    if (bitcoinEmptyPreview) return;
     if (hasInvestmentsUI) return;
     if (showInitialFetchLoader) return;
     if (emptyActionsMountPhase !== 'hidden') return;
@@ -3124,7 +3142,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
       globalThis.clearTimeout(revealTimer);
       globalThis.clearTimeout(doneTimer);
     };
-  }, [isGuestView, hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
+  }, [isGuestView, bitcoinEmptyPreview, hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
 
   useEffect(() => {
     if (isGuestView) return;
@@ -3567,6 +3585,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
       >
         {!hasInvestmentsUI && !showInitialFetchLoader ? (
           <>
+            <BitcoinSeasonTeaser />
             <div
               ref={emptyActionsRef}
               className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
@@ -3637,6 +3656,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
               }}
             >
               <div ref={investmentsWholeContentRef}>
+                <BitcoinSeasonTeaser />
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
                     <span className="asset-portfolio-title-muted">my bitcoin</span>

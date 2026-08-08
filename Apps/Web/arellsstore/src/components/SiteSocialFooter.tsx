@@ -16,7 +16,7 @@ type FooterVariant = 'accent' | CryptoAssetTheme | StockAssetTheme | 'default';
 
 function variantForPath(pathname: string): FooterVariant {
   const path = (pathname || '/').replace(/\/+$/, '') || '/';
-  if (path === '/' || path === '/my-investments' || path === '/my-portfolio' || path === '/earn-money-weekly') {
+  if (path === '/' || path === '/my-investments') {
     return 'accent';
   }
   const crypto = CRYPTO_ASSETS.find((a) => a.href === path);

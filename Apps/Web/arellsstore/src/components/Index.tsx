@@ -14,22 +14,15 @@ import HomeCryptoAssetRow, { type HomeCryptoAssetRowData } from './Home/HomeCryp
 import HomeMarketSearchCard from './Home/HomeMarketSearchCard';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
 import PortfolioWeeklyGuestPageView from './MyPortfolio/PortfolioWeeklyGuestPageView';
-import { usePublicEarningsGuestPitch } from './MyPortfolio/usePublicEarningsGuestPitch';
 import SiteSocialFooter from './SiteSocialFooter';
-import type { PublicEarningsPayload } from '../lib/portfolio/referralShares';
 import {
   CRYPTO_ASSETS,
-  HOME_INITIAL_ASSET_COUNT,
-  HOME_LOAD_MORE_BATCH,
 } from '../lib/assets/cryptoAssetRegistry';
-import { STOCK_ASSETS } from '../lib/assets/stockAssetRegistry';
 import { compareByMarketCapDesc, latestLiquidMarketCap } from '../lib/assets/marketCapSort';
 
-type IndexProps = {
-  initialPublicEarnings?: PublicEarningsPayload | null;
-};
+const VISIBLE_HOME_CRYPTO = CRYPTO_ASSETS.filter((a) => a.id === 'bitcoin');
 
-const Index = ({ initialPublicEarnings = null }: IndexProps) => {
+const Index = () => {
   // Loader Functions
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
@@ -43,14 +36,11 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   const { getAsset, loadMoreAssets } = useVavity();
   const [visibleAssetCount, setVisibleAssetCount] = useState(0);
   const [cryptoCategoryOpen, setCryptoCategoryOpen] = useState(false);
-  const [stocksCategoryOpen, setStocksCategoryOpen] = useState(false);
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
   const showGuestLanding = !email && !forceHomeInvestmentsPreview;
   const showSignedInHome = !!email || forceHomeInvestmentsPreview;
   const showHomeLoader = showLoading && showSignedInHome;
-  const { guestMaxLabel, loadError: guestPitchLoadError } =
-    usePublicEarningsGuestPitch(showGuestLanding, initialPublicEarnings);
   const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
   const [cardShimmersFading, setCardShimmersFading] = useState(false);
   const [cardFadeInDone, setCardFadeInDone] = useState(false);
@@ -307,7 +297,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', schedule);
     };
-  }, [showSignedInHome, cryptoCategoryOpen, stocksCategoryOpen, visibleAssetCount]);
+  }, [showSignedInHome, cryptoCategoryOpen, visibleAssetCount]);
 
   const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
     if (!history.length) return 0;
@@ -333,7 +323,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   };
 
   const assetRows = useMemo(() => {
-    const rows = CRYPTO_ASSETS.map((a, registryIndex) => {
+    const rows = VISIBLE_HOME_CRYPTO.map((a, registryIndex) => {
       const asset = {
         id: a.id,
         label: a.label,
@@ -376,32 +366,18 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   }, [getAsset, visibleAssetCount]);
 
   const sortedRows = assetRows;
-  const canShowMoreAssets = visibleAssetCount < CRYPTO_ASSETS.length;
 
   const cryptoPanelTransition = cryptoCategoryOpen
     ? 'max-height 1.5s ease-out'
     : 'max-height 3.5s linear';
 
-  const handleShowMoreAssets = useCallback(() => {
-    const nextCount = Math.min(visibleAssetCount + HOME_LOAD_MORE_BATCH, CRYPTO_ASSETS.length);
-    setVisibleAssetCount(nextCount);
-  }, [visibleAssetCount]);
-
   const handleCryptoCategoryClick = useCallback(() => {
     if (!cryptoCategoryOpen) {
       setCryptoCategoryOpen(true);
-      setVisibleAssetCount(HOME_INITIAL_ASSET_COUNT);
-      void loadMoreAssets(CRYPTO_ASSETS.map((a) => a.id));
-      return;
+      setVisibleAssetCount(VISIBLE_HOME_CRYPTO.length);
+      void loadMoreAssets(VISIBLE_HOME_CRYPTO.map((a) => a.id));
     }
-    handleShowMoreAssets();
-  }, [cryptoCategoryOpen, handleShowMoreAssets, loadMoreAssets]);
-
-  const handleStocksCategoryClick = useCallback(() => {
-    if (stocksCategoryOpen) return;
-    setStocksCategoryOpen(true);
-    void loadMoreAssets(STOCK_ASSETS.map((a) => a.id));
-  }, [loadMoreAssets, stocksCategoryOpen]);
+  }, [cryptoCategoryOpen, loadMoreAssets]);
 
   const handleEnsureCryptoLoaded = useCallback(
     (assetIds: string[]) => {
@@ -410,50 +386,10 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
     [loadMoreAssets]
   );
 
-  const stockRows = useMemo(() => {
-    if (!stocksCategoryOpen) return [];
-    const rows = STOCK_ASSETS.map((asset, registryIndex) => {
-      const snapshot = getAsset(asset.id);
-      const solidHistory =
-        (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
-          ? snapshot.solidHistory
-          : Array.isArray(snapshot?.liquidHistory)
-            ? snapshot.liquidHistory
-            : []) ?? [];
-      const liquidHistory =
-        (Array.isArray(snapshot?.liquidHistory) && snapshot.liquidHistory.length > 0
-          ? snapshot.liquidHistory
-          : Array.isArray(snapshot?.solidHistory)
-            ? snapshot.solidHistory
-            : []) ?? [];
-      const solidPrice = snapshot?.vapa ?? 0;
-      const liquidPrice =
-        typeof snapshot?.price === 'number' ? snapshot.price : typeof snapshot?.vapa === 'number' ? snapshot.vapa : 0;
-      return {
-        id: asset.id,
-        label: asset.label,
-        ticker: asset.ticker,
-        href: asset.href,
-        registryIndex,
-        marketCap: latestLiquidMarketCap(snapshot),
-        solidPrice,
-        liquidPrice,
-        solidChange1w: getPercentChange(solidHistory, 7),
-        solidChange1y: getPercentChange(solidHistory, 365),
-        solidChangeAll: getPercentChange(solidHistory),
-        liquidChange1w: getPercentChange(liquidHistory, 7),
-        liquidChange1y: getPercentChange(liquidHistory, 365),
-        liquidChangeAll: getPercentChange(liquidHistory),
-      } satisfies HomeCryptoAssetRowData & { registryIndex: number; marketCap: number };
-    });
-    rows.sort(compareByMarketCapDesc);
-    return rows;
-  }, [getAsset, stocksCategoryOpen]);
-
   const getCryptoRow = useCallback(
     (assetId: string): HomeCryptoAssetRowData | null => {
       const asset =
-        CRYPTO_ASSETS.find((a) => a.id === assetId) ?? STOCK_ASSETS.find((a) => a.id === assetId);
+        VISIBLE_HOME_CRYPTO.find((a) => a.id === assetId);
       if (!asset) return null;
       const snapshot = getAsset(asset.id);
       const solidHistory =
@@ -490,11 +426,9 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
   );
 
   useEffect(() => {
-    if (!cryptoCategoryOpen && !stocksCategoryOpen) return;
+    if (!cryptoCategoryOpen) return;
     if (cardNumbersDidMountRef.current) return;
-    const hasData =
-      sortedRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0) ||
-      stockRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0);
+    const hasData = sortedRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0);
     if (!hasData) return;
     cardNumbersDidMountRef.current = true;
     setCardShimmersFading(true);
@@ -504,7 +438,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         setTimeout(() => setCardFadeInDone(true), 2100);
       });
     }, 600);
-  }, [sortedRows, stockRows, cryptoCategoryOpen, stocksCategoryOpen]);
+  }, [sortedRows, cryptoCategoryOpen]);
 
   const cardFadeStyle = useMemo<React.CSSProperties>(() => {
     if (!cardNumbersVisible) return { opacity: 0, transition: 'opacity 2s ease' };
@@ -582,9 +516,9 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
         />
         <HomeAssetCategoryCard
           enabled={showSignedInHome}
-          showButton={!cryptoCategoryOpen || canShowMoreAssets}
-          categoryButton={!cryptoCategoryOpen}
-          buttonLabel={!cryptoCategoryOpen ? 'cryptocurrencies' : 'show more assets'}
+          showButton={!cryptoCategoryOpen}
+          categoryButton
+          buttonLabel="cryptocurrencies"
           onButtonClick={handleCryptoCategoryClick}
           panelTransition={cryptoPanelTransition}
         >
@@ -605,33 +539,9 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
           ) : null}
         </HomeAssetCategoryCard>
 
-        <HomeAssetCategoryCard
-          enabled={showSignedInHome}
-          showButton={!stocksCategoryOpen}
-          categoryButton
-          buttonLabel="company stocks"
-          onButtonClick={handleStocksCategoryClick}
-          panelTransition={stocksCategoryOpen ? 'max-height 1.5s ease-out' : 'max-height 3.5s linear'}
-        >
-          {stocksCategoryOpen ? (
-            <div className="home-assets-rows-shell">
-              {stockRows.map((row) => (
-                <HomeCryptoAssetRow
-                  key={row.id}
-                  row={row}
-                  displayIsLiquidMode={displayIsLiquidMode}
-                  cardNumbersVisible={cardNumbersVisible}
-                  cardShimmersFading={cardShimmersFading}
-                  cardFadeStyle={cardFadeStyle}
-                  imageLoader={imageLoader}
-                />
-              ))}
-            </div>
-          ) : null}
-        </HomeAssetCategoryCard>
       </div>
       <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
-        <div className="home-assets-footer-text">new assets added weekly</div>
+        <div className="home-assets-footer-text">New episodes every Saturday</div>
       </div>
 
       <div
@@ -782,10 +692,7 @@ const Index = ({ initialPublicEarnings = null }: IndexProps) => {
       )}
 
       {showGuestLanding ? (
-        <PortfolioWeeklyGuestPageView
-          guestMaxLabel={guestMaxLabel}
-          loadError={guestPitchLoadError}
-        />
+        <PortfolioWeeklyGuestPageView />
       ) : null}
 
       {!showLoading && showSignedInHome && <HomeInvestmentsSlideUpCTA />}

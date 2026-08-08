@@ -45,9 +45,12 @@ const SignUpPageClient: React.FC = () => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (new URLSearchParams(window.location.search).get('signupPreview') === 'sent') {
+    const preview = new URLSearchParams(window.location.search).get('signupPreview');
+    if (preview === 'sent') {
       setSentTo('preview@arells.app');
       setPhase('sent');
+    } else if (preview === 'verified') {
+      setPhase('verified');
     }
   }, []);
 
@@ -183,7 +186,7 @@ const SignUpPageClient: React.FC = () => {
     if (loadingPortfolio) return;
     setLoadingPortfolio(true);
     circleLoader.show();
-    router.push('/my-portfolio');
+    router.push('/my-investments');
     router.refresh();
   };
 
@@ -236,7 +239,7 @@ const SignUpPageClient: React.FC = () => {
                         disabled={loadingPortfolio}
                         className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
                       >
-                        {loadingPortfolio ? 'Loading Portfolio' : 'View Portfolio'}
+                        {loadingPortfolio ? 'Loading Investments' : 'View Investments'}
                       </button>
                     </div>
                   </div>

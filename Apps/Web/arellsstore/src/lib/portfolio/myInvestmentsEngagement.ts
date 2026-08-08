@@ -11,7 +11,7 @@ const BASE_PREFIX = 'analytics/myinv-engagement-v1';
  * Engagement S3 storage: `false` = preview prefix (safe local + pre-launch deploys).
  * Set to `true` and deploy when real user earnings should read/write live data.
  */
-export const MYINV_ENGAGEMENT_LIVE_STORAGE = true;
+export const MYINV_ENGAGEMENT_LIVE_STORAGE = false;
 
 export type MyInvEngagementEventType =
   | 'range_select'

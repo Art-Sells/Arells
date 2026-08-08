@@ -2,8 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { SUPPORTED_CRYPTO_ASSET_IDS } from '../lib/assets/cryptoAssetRegistry';
-import { SUPPORTED_STOCK_ASSET_IDS } from '../lib/assets/stockAssetRegistry';
 import { sumPortfolioTotalsFromEntries } from '../lib/vavity/portfolioValuation';
 
 interface UserContextType {
@@ -282,10 +280,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, [email]);
 
-  const supportedAssets = useMemo(
-    () => [...SUPPORTED_CRYPTO_ASSET_IDS, ...SUPPORTED_STOCK_ASSET_IDS],
-    []
-  );
+  const supportedAssets = useMemo(() => ['bitcoin'], []);
 
   const hasEmailInvestmentsForAsset = useCallback(
     (assetId: string) => {

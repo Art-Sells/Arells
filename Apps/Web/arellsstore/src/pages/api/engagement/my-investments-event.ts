@@ -6,7 +6,6 @@ import {
   MYINV_ENGAGEMENT_EVENT_WEIGHTS,
   recordMyInvEngagementEvent,
 } from '../../../lib/portfolio/myInvestmentsEngagement';
-import { schedulePortfolioContextSnapshotRefresh } from '../../../lib/portfolio/portfolioContextSnapshot';
 import { getServerS3 } from '../../../lib/server/awsS3';
 import { allowAnalyticsIp } from '../../../lib/analytics/ipRateLimit';
 import { isLikelyAutomatedClient, userAgentFromHeaders } from '../../../lib/analytics/isLikelyAutomatedClient';
@@ -66,8 +65,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       normalizeEmailKey(email),
       eventRaw as MyInvEngagementEventType
     );
-    // Debounced background rebuild of portfolio leaderboard/me snapshot — never blocks UX.
-    schedulePortfolioContextSnapshotRefresh(s3, bucket());
     return res.status(200).json(result);
   } catch (e) {
     console.error('[engagement/my-investments-event]', e);

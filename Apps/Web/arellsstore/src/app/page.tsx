@@ -4,7 +4,6 @@
 import Index from '../components/Index';
 import React from 'react';
 import type { Metadata } from 'next';
-import { loadGuestPublicEarnings } from '../lib/portfolio/loadGuestPublicEarnings';
 import { buildWebPageJsonLd } from '../lib/pageWebPageJsonLd';
 import { HOME_OG_BANNER } from '../lib/siteMetaDescriptions';
 
@@ -43,8 +42,6 @@ export const metadata: Metadata = {
 };
 
 const Home = async () => {
-  const initialPublicEarnings = await loadGuestPublicEarnings();
-
   return (
     <div id="overlayy">
       <main>
@@ -52,7 +49,7 @@ const Home = async () => {
           <h1>{title}</h1>
           <p>{description}</p>
         </div>
-        <Index initialPublicEarnings={initialPublicEarnings} />
+        <Index />
       </main>
       <script
         type="application/ld+json"

@@ -26,7 +26,7 @@ export default function AssetFooterPortfolioButton({ cssModifier }: AssetFooterP
     if (navTimerRef.current) globalThis.clearTimeout(navTimerRef.current);
     navTimerRef.current = globalThis.setTimeout(() => {
       navTimerRef.current = null;
-      router.push('/my-portfolio');
+      router.push('/my-investments');
     }, PORTFOLIO_NAV_DELAY_MS);
   };
 
@@ -42,7 +42,7 @@ export default function AssetFooterPortfolioButton({ cssModifier }: AssetFooterP
         <span className="asset-footer-portfolio-button-spinner" aria-hidden="true" />
       ) : null}
       <span className="asset-footer-about-text">
-        {loadingPortfolio ? 'loading portfolio' : 'view my portfolio'}
+        {loadingPortfolio ? 'loading investments' : 'view my investments'}
       </span>
     </button>
   );
