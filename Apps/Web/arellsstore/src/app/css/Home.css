@@ -13721,8 +13721,8 @@ a.asset-action-button--save-signin {
 .myinv-page--weekly-guest .home-guest-slogan.myportfolio-weekly-guest-mission {
 	font-size: 15px;
 	letter-spacing: -.5px;
-	color: #222;
-	-webkit-text-fill-color: #222;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
 .myinv-page--weekly-guest .myportfolio-weekly-guest-copyright.guest-landing-copyright--home {

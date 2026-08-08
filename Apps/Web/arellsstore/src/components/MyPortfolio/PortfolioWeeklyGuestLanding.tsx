@@ -24,12 +24,21 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
             priority
           />
         </span>
-        <p className="home-guest-slogan myportfolio-weekly-guest-mission home-guest-mount-slide home-guest-mount-slide--logo">
+        <Image
+          loader={imageLoader}
+          alt="Arells"
+          width={70}
+          height={23}
+          className="home-guest-logo home-guest-mount-slide home-guest-mount-slide--logo"
+          src="images/Arells-Logo-Ebony.png"
+          priority
+        />
+        <p className="home-guest-slogan myportfolio-weekly-guest-mission home-guest-mount-slide home-guest-mount-slide--slogan">
           on a mission to ensure
           <br />
           investments never lose value
         </p>
-        <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--slogan">
+        <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--signin">
           <span className="shadow-border" aria-hidden="true" />
           <div className="home-guest-signin-panel myinv-accent-border">
             <div className="home-guest-signin-inner">
