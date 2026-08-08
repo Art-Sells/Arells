@@ -2,17 +2,35 @@
 
 ## Arells v1
 
-### Trigger Organic Growth
-- add a check... if Stripe isn't connected a modal pops up showing" connect your stripe account to get payments from Arells"
-- Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))
-- Fix Google Search Console links....
+-Send follow-up emails(mailmeteor [get verified emails])
 
-- *switch from live to local testing false/true for myinv-engagement-v1 payments*
-- *brink1111111@outlook.com and j6767677@outlook.com test emails for incentives*
+### remove
+ - local testing false/true for myinv-engagement-v1 payments (and their s3's)
+ - Simplify (New episodes every friday, 2 assets (crypto/stocks (hide the others from view or loading in UI/including their s3 values until i say otherwise)) and remove (my-portfolio should re-direct  into my-investments))
+
+
+### Trigger Organic Growth
+- Unlock Nvidia episodes by adding investments.
+
+- In our universe, our(Bitcoin) investments are lifeless… But in another universe, they are alive, and are on a mission to live forever.
+
+Desc:
+
+Species = (Bitcoin)
+Types = Products (Cryptocurrency, DeFi)
+Planet = (unique name)
+Language = (unique name and writing)
+
+Add investments to unlock episodes.
+
+- Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))
+
+
+
+- *brink1111111@outlook.com and j6767677@outlook.com test emails*
 
 ### Daily:
 - Verify dmarc email aggregates daily/weekly
-- Check Articles (both in main account and test accounts)
 
 ### Monthly: 
 - Clean Up Cursor storage
@@ -21,11 +39,8 @@
 - - mindepth 1 -mtime +2 
 - - delet
 
-If sharing (organic) happens:
--*Add Terms/Conditions in sign/up agreement checklist if sharing begins Add legal disclaimer at the bottom of each asset, and add Terms of Service "sign up" (by signing up you agree to our terms of service)*
-- - *Add in Terms/Conditions and future payout dynamics and Learn More: and the 65% is dependent on if they check their "investment" portfolio at least once weekly (this sill only be activated after 100k WAU)....*
-- - Add  (phone number verification) for adding bank account information/etc...
-- - Upgrade thenewsapi
+#### If sharing (organic) happens:
+- Add Worst Case Scenarios (in notes)
 - - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
 - - Add User location/etc
 
