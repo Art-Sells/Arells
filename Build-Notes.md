@@ -4,7 +4,7 @@
 
 -Send follow-up emails(mailmeteor [get verified emails])
 
-
+-remove /bitcoinalienrace
 
 - https://fal.ai/assets
 - remove local testing false/true for myinv-engagement-v1 payments (and their s3's) and my portfolio and the api for getting and loading news articles (show me what i need to delete/remove from my news APIs as well as the stripe apis from local and deployed)
