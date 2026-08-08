@@ -13242,6 +13242,18 @@ a.asset-action-button--save-signin {
 	width: 100%;
 }
 
+.myportfolio-questions-support-shell .myportfolio-portfolio-below-panel-wrap .myinv-panel-section {
+	width: 100%;
+	min-width: 0;
+	margin: 0;
+	padding: 10px;
+	background: #fff;
+}
+
+.myportfolio-questions-support-shell .myportfolio-portfolio-below-panel-wrap .myinv-panel--shell {
+	padding: 0 0 10px;
+}
+
 .myportfolio-questions-panel .myinv-panel-title--add {
 	font-size: 26px;
 	letter-spacing: -1.5px;

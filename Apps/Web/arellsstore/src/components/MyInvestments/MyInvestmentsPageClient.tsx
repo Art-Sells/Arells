@@ -11,6 +11,7 @@ import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
 import MyInvAssetHubPanel from './MyInvAssetHubPanel';
+import PortfolioQuestionsSupport from '../MyPortfolio/PortfolioQuestionsSupport';
 import { getAnyAssetMeta, getAssetHistoricalPriceUrl } from '../../lib/assets/assetKind';
 import { sortAssetIdsByMarketCapDesc } from '../../lib/assets/marketCapSort';
 import {
@@ -1412,6 +1413,10 @@ const MyInvestmentsPageClient: React.FC = () => {
           </>
         )}
         {/* No page-slide-in: that animation’s backwards fill (opacity 0) flashed when slideIn turned on. */}
+        <div className="myportfolio-questions-support-shell">
+          <div className="site-social-footer-rule myportfolio-questions-support-rule" aria-hidden="true" />
+          <PortfolioQuestionsSupport />
+        </div>
         <div className="myinv-about-wrap">
           <Link className="myinv-about-button" href="/about">
             <span className="myinv-about-button-bg" aria-hidden="true" />
