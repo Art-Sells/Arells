@@ -27,6 +27,8 @@ New episode every saturday
 -remove /bitcoinalienrace
 
 
+- reach out to D/M/D/N
+
 - *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
 - *brink1111111@outlook.com and j6767677@outlook.com test emails*
 
