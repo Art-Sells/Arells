@@ -2,11 +2,9 @@
 
 ## Arells v1
 
--Send follow-up emails(mailmeteor [get verified emails])
 
--remove /bitcoinalienrace
 
-- https://fal.ai/assets
+### Trigger Organic Growth
 - remove local testing false/true for myinv-engagement-v1 payments (and their s3's) and my portfolio and the api for getting and loading news articles (show me what i need to delete/remove from my news APIs as well as the stripe apis from local and deployed)
  - Simplify (replace "New assets every week" with: New episodes every  Saturday, 1 asset (crypto(Bitcoin) (hide the others from view (hide company stocks) or loading in UI/including their s3 values until i say otherwise)) and remove (my-portfolio should re-direct  into my-investments))
  - replace "view porftolio" in asset pages with "view investments"
@@ -15,19 +13,21 @@ In our universe, your(Bitcoin) investments are lifeless… But in another univer
 
 The Bitcoin Alien Race [video playing over]
 - Season 1 (name): Episode 1: Coming Soon
-New episode every friday
+New episode every saturday
 
+ - my-investments "Add Investments to Unlock Episodes"
+ "Add Other Investments To Unlock Episodes"
+
+- https://fal.ai/assets
 - Default prompt: focal 800mm Seeddance 2.5
 
 
-### Trigger Organic Growth
- - my-investments "Add Investments to Unlock Episodes"
- "Add Other Investments To Unlock Episodes"
- Storyline:
-- Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))
+-Send follow-up emails(mailmeteor [get verified emails])
+
+-remove /bitcoinalienrace
 
 
-
+- *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
 - *brink1111111@outlook.com and j6767677@outlook.com test emails*
 
 ### Daily:
