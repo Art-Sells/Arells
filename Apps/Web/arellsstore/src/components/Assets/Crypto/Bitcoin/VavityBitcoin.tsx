@@ -682,6 +682,11 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
   }, [rangeLoading, selectedRangeDays]);
 
   useEffect(() => {
+    if (bitcoinEmptyPreview) {
+      setInitialFetchDone(true);
+      setLoading(false);
+      return;
+    }
     if (isSignedIn) {
       if (!email) return;
     } else {
@@ -734,7 +739,16 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
       isMounted = false;
       clearInterval(interval);
     };
-  }, [fetchVavityAggregator, sessionId, sessionReady, isSignedIn, email, deleteInFlight, isClearingInvestments]);
+  }, [
+    bitcoinEmptyPreview,
+    fetchVavityAggregator,
+    sessionId,
+    sessionReady,
+    isSignedIn,
+    email,
+    deleteInFlight,
+    isClearingInvestments,
+  ]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -3124,7 +3138,8 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
   useEffect(() => {
     if (!bitcoinEmptyPreview) return;
     setEmptyActionsMountPhase('done');
-  }, [bitcoinEmptyPreview]);
+    summaryCircleLoader.dismissImmediately();
+  }, [bitcoinEmptyPreview, summaryCircleLoader.dismissImmediately]);
 
   useEffect(() => {
     if (isGuestView) return;
@@ -3184,12 +3199,14 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
 
   useEffect(() => {
     if (isGuestView) return;
+    if (bitcoinEmptyPreview) return;
     if (!initialFetchDone) return;
     if (liveInvestments.length === 0) return;
     if (investmentsWholeHeight > 0 && summaryOpen) return;
     summaryCircleLoader.show();
   }, [
     isGuestView,
+    bitcoinEmptyPreview,
     initialFetchDone,
     liveInvestments.length,
     investmentsWholeHeight,

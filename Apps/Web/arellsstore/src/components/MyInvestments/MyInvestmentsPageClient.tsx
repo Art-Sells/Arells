@@ -1364,6 +1364,23 @@ const MyInvestmentsPageClient: React.FC = () => {
                   )}
                 </>
               ) : null}
+              {effectiveSignedIn && initialDataReady && (
+                <div className={`myinv-panel-group myinv-panel-group--bordered myinv-mission-group${slideIn ? ' page-slide-in' : ''}`}>
+                  <div className="myinv-panel-section myinv-accent-border myinv-mission-outer">
+                    <div className="myinv-panel myinv-panel--shell myinv-mission-outer-shell">
+                      <div className="myinv-panel-section myinv-accent-border myinv-mission-inner-card">
+                        <div className="myinv-panel myinv-panel--shell myinv-mission-inner-shell">
+                          <div className="myinv-mission-accent-body">
+                            <p className="myinv-mission-line">
+                              we are on a mission to ensure your investments never lose value
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
             </div>
           </div>

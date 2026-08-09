@@ -4908,7 +4908,7 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .myinv-mission-group .myinv-mission-outer-shell {
-	padding: 16px 16px 21px;
+	padding: 16px;
 }
 
 .myinv-mission-group .myinv-mission-inner-card {
@@ -4921,7 +4921,7 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .myinv-mission-group .myinv-mission-inner-shell {
-	padding: 16px 16px 21px;
+	padding: 16px;
 }
 
 .myinv-mission-group .myinv-mission-phase-card {
@@ -5092,17 +5092,17 @@ a.asset-action-button--myinv-asset-link {
 	opacity: 0.95;
 }
 
-/* “we are on a mission…” — black; not `.myinv-mission-sub` (“currently in”). */
+/* “we are on a mission…” — accent; not `.myinv-mission-sub` (“currently in”). */
 .myinv-mission-line {
-	margin: 5px 0 10px;
+	margin: 0;
 	font-size: 15px;
 	font-weight: 600;
 	/* Same as About inner copy (`.about-text--inner` / `--about-lead-copy-line-height`). */
 	line-height: 1.1;
 	letter-spacing: -0.2px;
 	word-spacing: -0.5px;
-	color: #222;
-	-webkit-text-fill-color: #222;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
 .myinv-mission-about-wrap {
@@ -6348,8 +6348,8 @@ a.myinv-about-button:focus-visible {
 		box-sizing: border-box;
 		font-size: 13.5px;
 		line-height: 1.1;
-		color: #222;
-		-webkit-text-fill-color: #222;
+		color: var(--myinv-accent-color);
+		-webkit-text-fill-color: var(--myinv-accent-color);
 	}
 
 	.myinv-mission-group .myinv-about-button {
