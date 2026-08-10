@@ -6,6 +6,17 @@
 
 ### Trigger Organic Growth
 
+Arells Guest
+-Icon
+-Mission
+-Trailer
+-SignIn
+Bitcoin Guest
+-Badge
+-Title
+-Never Loses Value
+-Trailer
+-SignIn
 
 The Bitcoin Alien Race [video playing over]
 - Season 1 (name): Episode 1: Coming Soon
@@ -13,10 +24,6 @@ New episode every saturday
 
  - my-investments "Add Investments to Unlock Episodes"
  "Add Other Investments To Unlock Episodes"
-
-- https://fal.ai/assets
-- Default prompt: focal 800mm Seeddance 2.5
-
 
 -Send follow-up emails(mailmeteor [get verified emails])
 
@@ -39,6 +46,7 @@ New episode every saturday
 - - delet
 
 #### If sharing (organic) happens:
+- Purchase MDR for: Binaural Frequency Meditation - Positive Relaxing Dreamy Peaceful Ambient
 - Add Worst Case Scenarios (in notes)
 - - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
 - - Add User location/etc
