@@ -6,37 +6,39 @@
 
 ### Trigger Organic Growth
 
+3 trailers 
+- Online (Sign in to Arells.com to leanr more)
+- On Guest Pages (Sign in to learn more)
+- On Bitcoin Page (Coming Soon)
+
 Arells Guest
 -Icon
 -Mission
--Trailer
+-Trailer (sign in to learn more)
 -SignIn
 Bitcoin Guest
 -Arells Icon
 -Mission (replace investments with {asset name})
--Trailer (only for bitcoin, the others leave blank)
+-Trailer (only for bitcoin, the others leave blank (sign in to learn more))
 -SignIn
 
-_ YouTube/LinkedIn/Twitter (Coming Soon (sign in to learn more))
+- Change Phase One in About Page.
 
-Change Phase One in About Page.
-
-
-After trailer:
-
-
-Update notes for when to change trailer words in  landing pages after episode one is complete.and when to change asset page landing pages..
-
-
-The Bitcoin Alien Race [video playing over]
+The Bitcoin Alien Race 
+(Trailer (coming soon))
 - Season One (one eye): 
 Episode 1: Coming Soon
 New episode every saturday
 
+After Trailer and Announcement pages are done:
 
-- Send Follow-up emails (for everyone about Trailer)
+- Post everywhere (YouTube/LinkedIn/Twitter)
+- Send Follow-up emails (for everyone linking trailer)
+- Begin working on Episode one
 
 After Episode One is done:
+
+- Change (Remove trailer from main Bitcoin page)
 
  - my-investments "Add Investments to Unlock Episodes"
  "Add Other Investments To Unlock Episodes"
