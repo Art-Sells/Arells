@@ -1,28 +1,13 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
+import GuestTrailerPlayer from '../../GuestTrailerPlayer';
 
-const ASSET_BADGE_HREF: Record<string, string> = {
-  bitcoin: 'https://bitcoin.org/en/',
-  ethereum: 'https://ethereum.org/',
-  xrp: 'https://xrpl.org/',
-  bnb: 'https://www.binance.com/en/bnb',
-  solana: 'https://solana.org/en/',
-  tron: 'https://tron.network/',
-  doge: 'https://dogecoin.com/',
-  cardano: 'https://cardano.org/',
-  chainlink: 'https://chain.link/',
-  stellar: 'https://stellar.org/',
-  bch: 'https://bitcoincash.org/',
-  nvidia: 'https://www.nvidia.com/',
-  apple: 'https://www.apple.com/',
-  alphabet: 'https://abc.xyz/',
-  microsoft: 'https://www.microsoft.com/',
-  amazon: 'https://www.amazon.com/',
-  spacex: 'https://www.spacex.com/',
-};
+const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
+  `/${src}?w=${width}&q=${quality || 100}`;
 
 type AssetGuestLandingProps = {
   cssModifier: string;
@@ -33,35 +18,49 @@ type AssetGuestLandingProps = {
 
 export default function AssetGuestLanding({
   cssModifier,
-  ticker,
   title,
-  slogan = 'never loses value',
 }: AssetGuestLandingProps) {
-  const badgeHref = ASSET_BADGE_HREF[cssModifier] ?? '#';
+  const showTrailer = cssModifier === 'bitcoin';
 
   return (
     <div className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing`}>
       <div className="asset-guest-landing-stack">
-        <a
-          className={`asset-title-badge asset-title-badge--section asset-title-badge--${cssModifier} asset-guest-landing-badge asset-guest-mount-slide asset-guest-mount-slide--badge`}
-          href={badgeHref}
-          target="_blank"
-          rel="noreferrer"
+        <span
+          className="home-guest-icon-wrap asset-guest-icon-wrap asset-guest-mount-slide asset-guest-mount-slide--badge"
+          aria-hidden="true"
         >
-          <span className="asset-title-badge-label">{ticker}</span>
-        </a>
-        <div className="asset-guest-landing-title asset-guest-mount-slide asset-guest-mount-slide--title">
-          {title}
-        </div>
-        <div
-          className={`asset-guest-landing-slogan asset-guest-landing-slogan--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
+          <span className="home-guest-icon-tint asset-guest-icon-tint" aria-hidden="true" />
+          <Image
+            loader={imageLoader}
+            alt=""
+            width={60}
+            height={60}
+            className="home-guest-icon-img"
+            src="images/Arells-Icon.png"
+            priority
+          />
+        </span>
+        <span
+          className="asset-guest-wordmark asset-guest-mount-slide asset-guest-mount-slide--title"
+          role="img"
+          aria-label="Arells"
+        />
+        <p
+          className={`home-guest-slogan asset-guest-landing-mission asset-guest-landing-mission--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
         >
-          {slogan}
-        </div>
+          On a mission to ensure
+          <br />
+          <span className="asset-guest-landing-mission-tail">
+            {title} never loses value.
+          </span>
+        </p>
         <div
-          className={`asset-guest-action-shell shadow-border-wrap asset-guest-action-shell--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--signin`}
+          className={`asset-guest-action-shell shadow-border-wrap asset-guest-action-shell--${cssModifier}${
+            showTrailer ? ' asset-guest-trailer-shell' : ''
+          } asset-guest-mount-slide asset-guest-mount-slide--signin`}
         >
           <span className="shadow-border" aria-hidden="true" />
+          {showTrailer ? <GuestTrailerPlayer theme="bitcoin" /> : null}
           <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
               <p className="asset-signin-believe-prompt">Sign in to get involved</p>

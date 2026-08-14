@@ -1,6 +1,7 @@
 /* Sitewide styles — import order matters (chip colors must stay last). */
 @import './server-seo-summary.css';
 @import './Home.css';
+@import './guest-trailer.css';
 @import './HomeLoaderOverrides.css';
 @import './assets/crypto/xrp-asset-rules.css';
 @import './assets/crypto/bnb-asset-rules.css';

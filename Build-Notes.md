@@ -6,47 +6,39 @@
 
 ### Trigger Organic Growth
 
-3 trailers 
-- Online (Sign in to Arells.com to leanr more)
-- On Guest Pages (Sign in to learn more)
-- On Bitcoin Page (Coming Soon)
 
-Arells Guest
--Icon
--Mission
--Trailer (sign in to learn more)
--SignIn
-Bitcoin Guest
--Arells Icon
--Mission (replace investments with {asset name})
--Trailer (only for bitcoin, the others leave blank (sign in to learn more))
--SignIn
 
-- Change Phase One in About Page.
 
+- Change Phase One in About Page... replace "Share blab lab lab la advertising revenue..." with "Tell the story of our investments' journey to never lose value."
+
+
+Bitcoin Signed In Layout:
+
+Under the blab lab lal:
 The Bitcoin Alien Race 
 (Trailer (coming soon))
 - Season One (one eye): 
 Episode 1: Coming Soon
 New episode every saturday
 
+
 After Trailer and Announcement pages are done:
 
-- Post everywhere (YouTube/LinkedIn/Twitter)
+- Post everywhere (YouTube/Twitter)
 - Send Follow-up emails (for everyone linking trailer)
 - Begin working on Episode one
 
 After Episode One is done:
 
-- Change (Remove trailer from main Bitcoin page)
-
- - my-investments "Add Investments to Unlock Episodes"
+- Change (Change (all guest home page and guest Bitcoin page trailers to "Sign In to Learn More" remove Coming Soon), remove trailer from signed in Bitcoin page) (upload 3 types)
+- Upload 3 types of Episode One
+- my-investments "Add Investments to Unlock Episodes"
  "Add Other Investments To Unlock Episodes"
- - Add (long rounded image below the title).
+- Add (long rounded image below the title).
 
-Post on YouTube (Sign In to Arells.com to get involved).
+- Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine) on Bitcoin Reddit Page, X (remove coming soon and change to "now playing on arells")
 
--Send follow-up emails(mailmeteor [get verified emails])
+-Send follow-up emails(mailmeteor [get verified emails]) [with poster]
 
 -remove /bitcoinalienrace
 

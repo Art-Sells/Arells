@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import GuestLandingCopyright from '../GuestLandingCopyright';
+import GuestTrailerPlayer from '../GuestTrailerPlayer';
 
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
@@ -38,8 +39,9 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
           <br />
           investments never lose value
         </p>
-        <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--signin">
+        <div className="home-guest-signin-shell home-guest-trailer-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--signin">
           <span className="shadow-border" aria-hidden="true" />
+          <GuestTrailerPlayer theme="home" />
           <div className="home-guest-signin-panel myinv-accent-border">
             <div className="home-guest-signin-inner">
               <p className="home-guest-signin-lead">Sign In to learn more</p>

@@ -11365,6 +11365,45 @@ a.asset-action-button--save-signin {
 	background: color-mix(in srgb, var(--myinv-accent-color) 6%, var(--page-accent-tint, #fff));
 }
 
+.home-guest-trailer-shell,
+.asset-guest-trailer-shell {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.asset-guest-icon-wrap {
+	margin-top: 20px;
+}
+
+@media screen and (min-height: 501px) {
+	.asset-guest-icon-wrap {
+		margin-top: 100px;
+	}
+}
+
+.asset-guest-icon-tint {
+	background: var(--asset-line-color);
+}
+
+.asset-guest-landing .asset-guest-landing-mission {
+	color: var(--asset-line-color);
+	-webkit-text-fill-color: var(--asset-line-color);
+	margin-top: 0;
+	font-size: 15px;
+	letter-spacing: -0.5px;
+}
+
+.asset-guest-wordmark {
+	width: 70px;
+	height: 23px;
+	max-width: 100px;
+	display: block;
+	background-color: var(--asset-line-color);
+	mask: url("/images/Arells-Logo-Ebony.png") no-repeat center / contain;
+	-webkit-mask: url("/images/Arells-Logo-Ebony.png") no-repeat center / contain;
+}
+
 .home-guest-signin-panel {
 	width: 100%;
 	box-sizing: border-box;
@@ -11506,6 +11545,7 @@ a.asset-action-button--save-signin {
 /* Guest landing reuses `.asset-page-content` — reset its fixed 20px top padding so badge margin drives vertical offset. */
 .asset-page-content.asset-guest-landing {
 	width: min(340px, calc(100% - 20px));
+	min-width: 0;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 0 0 24px;
