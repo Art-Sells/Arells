@@ -2,25 +2,7 @@
 
 ## Arells v1
 
-
-
 ### Trigger Organic Growth
-
-
-
-
-- Change Phase One in About Page... replace "Share blab lab lab la advertising revenue..." with "Tell the story of our investments' journey to never lose value."
-
-
-Bitcoin Signed In Layout:
-
-Under the blab lab lal:
-The Bitcoin Alien Race 
-(Trailer (coming soon))
-- Season One (one eye): 
-Episode 1: Coming Soon
-New episode every saturday
-
 
 After Trailer and Announcement pages are done:
 

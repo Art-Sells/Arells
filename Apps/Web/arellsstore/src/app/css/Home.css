@@ -1294,146 +1294,113 @@ body {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	border-radius: 14px;
-	border: 1px solid rgba(248, 141, 0, 0.3);
 	background: transparent;
-	padding: 10px;
+	padding: 0;
 }
 
-.bitcoin-alien-race-page {
-	width: 100%;
-	box-sizing: border-box;
-	padding: 24px 10px 40px;
-	display: flex;
-	justify-content: center;
-	min-height: 100vh;
+.asset-bitcoin-season-teaser-show-title,
+.asset-bitcoin-season-teaser-season-title {
+	font-weight: 700;
+	font-size: 27px;
+	letter-spacing: -1px;
+	line-height: 1.15;
+	text-align: center;
+	color: var(--asset-line-color, rgb(209, 142, 55));
+	-webkit-text-fill-color: var(--asset-line-color, rgb(209, 142, 55));
+	margin: 0;
 }
 
-.bitcoin-alien-race-page-inner {
-	width: min(340px, calc(100% - 20px));
-	max-width: min(340px, calc(100% - 20px));
-	box-sizing: border-box;
-}
-
-.bitcoin-alien-race-page-inner .asset-bitcoin-season-teaser {
+.asset-bitcoin-season-teaser-season-title {
 	margin-bottom: 0;
 }
 
-.asset-bitcoin-season-teaser-badge {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.asset-bitcoin-season-teaser-show {
 	width: 100%;
 	box-sizing: border-box;
 	border-radius: 14px;
 	border: 1px solid rgba(248, 141, 0, 0.3);
 	background: transparent;
 	padding: 10px;
-}
-
-.bitcoin-alien-race-asset-card.myinv-asset-home-card {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
+	gap: 12px;
+}
+
+.asset-bitcoin-season-teaser-trailer,
+.asset-bitcoin-season-teaser-season {
 	width: 100%;
-	min-width: 0;
 	box-sizing: border-box;
-	background: rgba(248, 141, 0, 0.06);
-	border: 1px solid rgba(236, 131, 0, 0.34);
-	border-radius: 17px;
-	padding: 8px 12px;
-	text-decoration: none;
-	color: inherit;
-	position: relative;
-	box-shadow: none !important;
-	--asset-line-color: rgb(209, 142, 55);
-	cursor: pointer;
-	transition: transform 0.2s ease;
 }
 
-.bitcoin-alien-race-asset-card.myinv-asset-home-card:active {
-	transform: translateY(-2px);
-	box-shadow: none !important;
+.asset-bitcoin-season-teaser-trailer {
+	margin-top: -3px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-	.bitcoin-alien-race-asset-card.myinv-asset-home-card:hover {
-		transform: translateY(-2px);
-		box-shadow: none !important;
-	}
-}
-
-.bitcoin-alien-race-asset-card .home-assets-cell {
+.asset-bitcoin-season-teaser-season {
+	border-radius: 14px;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	background: transparent;
+	padding: 10px;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+	gap: 10px;
+}
+
+.asset-bitcoin-season-teaser-cadence-wrap {
+	display: none;
 	width: 100%;
-	max-width: 100%;
-	gap: 8px;
-	padding: 0;
+	box-sizing: border-box;
+	border-radius: 14px;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	background: transparent;
+	padding: 8px 10px 12px;
+}
+
+.asset-bitcoin-season-teaser-cadence {
+	font-weight: 800;
+	font-size: 32px;
+	letter-spacing: -2px;
+	line-height: 1;
+	text-align: center;
 	margin: 0;
-	font-weight: 700;
-	box-sizing: border-box;
-}
-
-.bitcoin-alien-race-asset-card .home-asset-label {
+	color: var(--asset-slogan-color, rgb(172, 97, 0));
+	opacity: .7;
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
-	width: 100%;
+	column-gap: 0.3em;
+	row-gap: 0;
 }
 
-.bitcoin-alien-race-asset-card .asset-action-button--home-asset-chip {
-	pointer-events: none;
-	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
-	font-size: 10px !important;
-	font-weight: 400;
-	padding: 8px 15px !important;
-	line-height: 1.2;
-	box-shadow: none !important;
-	margin: 0 auto !important;
-	transform: none !important;
-	text-align: center;
-}
+@media (max-width: 750px) {
+	.asset-bitcoin-season-teaser-show-title,
+	.asset-bitcoin-season-teaser-season-title {
+		font-size: 17px;
+	}
 
-.bitcoin-alien-race-asset-card .asset-action-button--home-asset-chip.asset-action-button--bitcoin {
-	color: var(--asset-line-color, rgb(209, 142, 55)) !important;
-	-webkit-text-fill-color: var(--asset-line-color, rgb(209, 142, 55)) !important;
-}
+	.asset-bitcoin-season-teaser-cadence {
+		font-size: 23.5px;
+		letter-spacing: -1.4px;
+		flex-direction: column;
+		column-gap: 0;
+	}
 
-.bitcoin-alien-race-mount-slide--storyline {
-	animation-delay: 0s;
-}
-
-.bitcoin-alien-race-mount-slide--poster {
-	animation-delay: 0.12s;
-}
-
-.bitcoin-alien-race-mount-slide--badge {
-	animation-delay: 0.24s;
-}
-
-.asset-bitcoin-season-teaser-poster {
-	width: 100%;
-	box-sizing: border-box;
-	border-radius: 14px;
-	border: 1px solid rgba(248, 141, 0, 0.3);
-	background: transparent;
-	padding: 10px;
-	overflow: hidden;
+	.asset-bitcoin-season-teaser-cadence span:last-child {
+		margin-top: 0px;
+	}
 }
 
 .asset-bitcoin-season-teaser-frame {
 	position: relative;
 	width: 100%;
-	aspect-ratio: 2000 / 2303;
+	line-height: 0;
 	border-radius: 12px;
 	overflow: hidden;
 	background: rgba(248, 141, 0, 0.06);
+}
+
+.asset-bitcoin-season-teaser-frame:not(.is-loaded) {
+	aspect-ratio: 2341 / 590;
 }
 
 .asset-bitcoin-season-teaser-loader {
@@ -1457,7 +1424,9 @@ body {
 }
 
 .asset-bitcoin-season-teaser-img {
-	object-fit: cover;
+	width: 100%;
+	height: auto;
+	display: block;
 	border-radius: 12px;
 	opacity: 0;
 	transition: opacity 0.9s ease;

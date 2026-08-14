@@ -20,7 +20,7 @@ export const emailVerifiedWelcomePhaseCopy = {
   phaseOneBullets: [
     'Adding assets we plan on impacting.',
     'Signing up supporters & believers.',
-    "Tell the story of our investments' journey to never lose value.",
+    "Telling the story of our investments' journey to never lose value.",
   ] as const,
   phaseTwoTitle: 'Phase Two:',
   phaseTwoLead: 'Implement our mission by...',

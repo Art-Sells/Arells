@@ -1,73 +1,54 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
 import React, { useState } from 'react';
+import GuestTrailerPlayer from '../../../GuestTrailerPlayer';
 import StorylineOpening from '../../../StorylineOpening';
+import { GUEST_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/guestTrailer';
 
-const TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/BTCS1TeaserPoster.jpg';
+const SEASON_ONE_TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/SeasonOneTeaser.jpg';
 
-type BitcoinSeasonTeaserProps = {
-  /** My Investments–style Bitcoin card under the poster (Alien Race page). */
-  showAssetBadge?: boolean;
-  /** Staggered slide-up like Bitcoin guest landing (Alien Race page). */
-  animateOnMount?: boolean;
-};
-
-export default function BitcoinSeasonTeaser({
-  showAssetBadge = false,
-  animateOnMount = false,
-}: BitcoinSeasonTeaserProps) {
-  const [posterLoaded, setPosterLoaded] = useState(false);
-
-  const slide = (phase: 'storyline' | 'poster' | 'badge') =>
-    animateOnMount
-      ? ` asset-guest-mount-slide bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--${phase}`
-      : '';
+export default function BitcoinSeasonTeaser() {
+  const [teaserLoaded, setTeaserLoaded] = useState(false);
 
   return (
     <div className="asset-bitcoin-season-teaser">
-      <div className={`asset-bitcoin-season-teaser-storyline${slide('storyline')}`}>
+      <div className="asset-bitcoin-season-teaser-storyline">
         <StorylineOpening assetName="Bitcoin" className="storyline-opening--bitcoin-teaser" />
       </div>
-      <div className={`asset-bitcoin-season-teaser-poster${slide('poster')}`}>
-        <div
-          className={`asset-bitcoin-season-teaser-frame${posterLoaded ? ' is-loaded' : ''}`}
-        >
-          {!posterLoaded ? (
-            <div className="asset-bitcoin-season-teaser-loader" aria-hidden="true">
-              <div className="asset-bitcoin-season-teaser-loader-ring" />
-            </div>
-          ) : null}
-          <Image
-            src={TEASER_SRC}
-            alt="Bitcoin Season 1 teaser"
-            fill
-            sizes="(max-width: 750px) 92vw, 340px"
-            className={`asset-bitcoin-season-teaser-img${posterLoaded ? ' is-visible' : ''}`}
-            onLoad={() => setPosterLoaded(true)}
-            onLoadingComplete={() => setPosterLoaded(true)}
-            priority
+      <div className="asset-bitcoin-season-teaser-show">
+        <h2 className="asset-bitcoin-season-teaser-show-title">The Bitcoin Alien Race</h2>
+        <div className="asset-bitcoin-season-teaser-trailer">
+          <GuestTrailerPlayer
+            theme="bitcoin"
+            sources={SIGNED_IN_TRAILER_SOURCES}
+            poster={GUEST_TRAILER_POSTER}
           />
         </div>
-      </div>
-      {showAssetBadge ? (
-        <div className={`asset-bitcoin-season-teaser-badge${slide('badge')}`}>
-          <Link
-            href="/bitcoin"
-            className="myinv-asset-home-card home-asset-bitcoin bitcoin-alien-race-asset-card"
-            aria-label="Bitcoin"
-          >
-            <div className="home-assets-cell home-assets-asset">
-              <span className="home-asset-label home-asset-label-bitcoin">
-                <span className="home-asset-name asset-action-button asset-action-button--bitcoin asset-action-button--home-asset-chip">
-                  Bitcoin
-                </span>
-              </span>
-            </div>
-          </Link>
+        <div className="asset-bitcoin-season-teaser-season">
+          <h3 className="asset-bitcoin-season-teaser-season-title">Season One</h3>
+          <div className={`asset-bitcoin-season-teaser-frame${teaserLoaded ? ' is-loaded' : ''}`}>
+            {!teaserLoaded ? (
+              <div className="asset-bitcoin-season-teaser-loader" aria-hidden="true">
+                <div className="asset-bitcoin-season-teaser-loader-ring" />
+              </div>
+            ) : null}
+            <img
+              src={SEASON_ONE_TEASER_SRC}
+              alt="Season One coming soon"
+              width={2341}
+              height={590}
+              className={`asset-bitcoin-season-teaser-img${teaserLoaded ? ' is-visible' : ''}`}
+              onLoad={() => setTeaserLoaded(true)}
+            />
+          </div>
         </div>
-      ) : null}
+        <div className="asset-bitcoin-season-teaser-cadence-wrap">
+          <p className="asset-bitcoin-season-teaser-cadence">
+            <span>New Episode</span>
+            <span>every Saturday</span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

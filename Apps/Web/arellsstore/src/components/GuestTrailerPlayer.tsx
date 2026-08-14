@@ -4,8 +4,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   GUEST_TRAILER_POSTER,
   GUEST_TRAILER_QUALITY_OPTIONS,
-  guestTrailerSrcForQuality,
+  GUEST_TRAILER_SOURCES,
+  trailerSrcForQuality,
   type GuestTrailerQuality,
+  type TrailerSources,
 } from '../lib/guestTrailer';
 import {
   enterPlayerFullscreen,
@@ -16,12 +18,18 @@ import {
 
 type GuestTrailerPlayerProps = {
   theme: 'home' | 'bitcoin';
+  sources?: TrailerSources;
+  poster?: string | null;
 };
 
 const CHROME_HIDE_MS = 2800;
 const FULLSCREEN_CHROME_HIDE_MS = 1000;
 
-export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
+export default function GuestTrailerPlayer({
+  theme,
+  sources = GUEST_TRAILER_SOURCES,
+  poster = GUEST_TRAILER_POSTER,
+}: GuestTrailerPlayerProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -46,6 +54,11 @@ export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
   const [isCoarse, setIsCoarse] = useState(false);
   const [freezeUrl, setFreezeUrl] = useState<string | null>(null);
   const [seekRatio, setSeekRatio] = useState(0);
+
+  const srcForQuality = useCallback(
+    (next: GuestTrailerQuality) => trailerSrcForQuality(next, sources),
+    [sources]
+  );
 
   const showChrome = settingsOpen
     ? true
@@ -138,16 +151,17 @@ export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
     setHasStarted(true);
     setIsLoading(true);
     setPosterVisible(false);
+    if (!poster) setIdlePlayMounted(false);
     revealChrome();
     if (!video.getAttribute('src')) {
-      video.src = guestTrailerSrcForQuality(quality);
+      video.src = srcForQuality(quality);
     }
     try {
       await video.play();
     } catch {
       setIsLoading(false);
     }
-  }, [quality, revealChrome]);
+  }, [poster, quality, revealChrome, srcForQuality]);
 
   const pauseVideo = useCallback(() => {
     videoRef.current?.pause();
@@ -191,7 +205,7 @@ export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
     (next: GuestTrailerQuality) => {
       const video = videoRef.current;
       if (!video) return;
-      const nextSrc = guestTrailerSrcForQuality(next);
+      const nextSrc = srcForQuality(next);
       const currentSrc = video.getAttribute('src') || '';
       if (currentSrc.endsWith(nextSrc) || currentSrc === nextSrc) {
         setQuality(next);
@@ -213,7 +227,7 @@ export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
       video.src = nextSrc;
       video.load();
     },
-    [hasStarted, isPlaying]
+    [hasStarted, isPlaying, srcForQuality]
   );
 
   const resumeAfterQualityChange = useCallback(() => {
@@ -345,8 +359,9 @@ export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
       }
       setHasStarted(true);
       setPosterVisible(false);
+      if (!poster) setIdlePlayMounted(false);
       if (!video.getAttribute('src')) {
-        video.src = guestTrailerSrcForQuality(quality);
+        video.src = srcForQuality(quality);
       }
       try {
         if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
@@ -369,7 +384,7 @@ export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
         }, 800);
       }
     },
-    [quality]
+    [poster, quality, srcForQuality]
   );
 
   const showPausedPlay = hasStarted && !isPlaying && !isLoading && !posterVisible;
@@ -378,7 +393,9 @@ export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
   return (
     <div
       ref={rootRef}
-      className={`guest-trailer-frame guest-trailer-frame--${theme}`}
+      className={`guest-trailer-frame guest-trailer-frame--${theme}${
+        poster ? '' : ' guest-trailer-frame--no-poster'
+      }`}
     >
       <div className="guest-trailer-sizer" aria-hidden="true" />
       <div
@@ -453,15 +470,17 @@ export default function GuestTrailerPlayer({ theme }: GuestTrailerPlayerProps) {
             setFreezeUrl(null);
           }}
         />
-        <img
-          className={`guest-trailer-poster${posterVisible ? ' is-visible' : ''}`}
-          src={GUEST_TRAILER_POSTER}
-          alt=""
-          draggable={false}
-          onTransitionEnd={() => {
-            if (!posterVisible) setIdlePlayMounted(false);
-          }}
-        />
+        {poster ? (
+          <img
+            className={`guest-trailer-poster${posterVisible ? ' is-visible' : ''}`}
+            src={poster}
+            alt=""
+            draggable={false}
+            onTransitionEnd={() => {
+              if (!posterVisible) setIdlePlayMounted(false);
+            }}
+          />
+        ) : null}
         {freezeUrl ? (
           <img className="guest-trailer-freeze" src={freezeUrl} alt="" draggable={false} />
         ) : null}
