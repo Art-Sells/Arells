@@ -1,4 +1,5 @@
-export const GUEST_TRAILER_POSTER = '/images/guest-trailer-poster.jpg';
+export const GUEST_TRAILER_POSTER =
+  '/images/banners/assets/crypto/Bitcoin/guest-trailer-poster.jpg';
 
 export type TrailerSources = {
   '480': string;
