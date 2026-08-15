@@ -526,7 +526,7 @@ const Index = () => {
 
       </div>
       <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
-        <div className="home-assets-footer-text">New episodes every Saturday</div>
+        <div className="home-assets-footer-text">New Episodes every Saturday</div>
       </div>
 
       <div

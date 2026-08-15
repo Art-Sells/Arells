@@ -25,6 +25,7 @@ type GuestTrailerPlayerProps = {
 const CHROME_HIDE_MS = 2800;
 const FULLSCREEN_CHROME_HIDE_MS = 1000;
 const PLAYBACK_CLOCK_EPS = 0.04;
+const STALL_SPINNER_MS = 300;
 
 type VideoFrameCallbackVideo = HTMLVideoElement & {
   requestVideoFrameCallback?: (cb: () => void) => number;
@@ -51,6 +52,9 @@ export default function GuestTrailerPlayer({
   const playbackOriginRef = useRef(0);
   const frameCallbackIdRef = useRef<number | null>(null);
   const bufferPollRef = useRef<number | null>(null);
+  const playbackStartedRef = useRef(false);
+  const stallTimerRef = useRef<number | null>(null);
+  const stallClockRef = useRef(0);
 
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -171,6 +175,13 @@ export default function GuestTrailerPlayer({
     }
   }, []);
 
+  const clearStallTimer = useCallback(() => {
+    if (stallTimerRef.current != null) {
+      window.clearTimeout(stallTimerRef.current);
+      stallTimerRef.current = null;
+    }
+  }, []);
+
   const syncBuffering = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -188,19 +199,22 @@ export default function GuestTrailerPlayer({
       return;
     }
     if (video.paused) {
-      setIsLoading(true);
+      if (!playbackStartedRef.current) setIsLoading(true);
       return;
     }
     const moved = video.currentTime > playbackOriginRef.current + PLAYBACK_CLOCK_EPS;
+    const stallMoved = video.currentTime > stallClockRef.current + PLAYBACK_CLOCK_EPS;
     const ready = video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA;
     if (firstFrameRef.current || (moved && ready) || moved) {
+      playbackStartedRef.current = true;
+      if (stallMoved) clearStallTimer();
       setIsLoading(false);
       setFreezeUrl(null);
       stopBufferPoll();
       return;
     }
-    setIsLoading(true);
-  }, [stopBufferPoll]);
+    if (!playbackStartedRef.current) setIsLoading(true);
+  }, [clearStallTimer, stopBufferPoll]);
 
   const watchFirstFrame = useCallback(
     (video: HTMLVideoElement) => {
@@ -220,23 +234,54 @@ export default function GuestTrailerPlayer({
   const beginPlaybackWait = useCallback(
     (video: HTMLVideoElement) => {
       wantPlaybackRef.current = true;
+      playbackStartedRef.current = false;
       firstFrameRef.current = false;
       playbackOriginRef.current = video.currentTime;
+      clearStallTimer();
       setIsLoading(true);
       watchFirstFrame(video);
       if (bufferPollRef.current == null) {
         bufferPollRef.current = window.setInterval(syncBuffering, 100);
       }
     },
-    [syncBuffering, watchFirstFrame]
+    [clearStallTimer, syncBuffering, watchFirstFrame]
+  );
+
+  const scheduleStallSpinner = useCallback(
+    (video: HTMLVideoElement) => {
+      if (!playbackStartedRef.current) {
+        beginPlaybackWait(video);
+        return;
+      }
+      if (stallTimerRef.current != null) return;
+      stallClockRef.current = video.currentTime;
+      stallTimerRef.current = window.setTimeout(() => {
+        stallTimerRef.current = null;
+        const current = videoRef.current;
+        if (!current || !wantPlaybackRef.current) return;
+        if (
+          fullscreenSuppressLoaderRef.current ||
+          isPlayerFullscreen(playerRef.current, current)
+        ) {
+          return;
+        }
+        if (current.ended) return;
+        if (!current.paused && current.currentTime > stallClockRef.current + PLAYBACK_CLOCK_EPS) {
+          return;
+        }
+        beginPlaybackWait(current);
+      }, STALL_SPINNER_MS);
+    },
+    [beginPlaybackWait]
   );
 
   useEffect(() => {
     return () => {
       stopFrameWatch();
       stopBufferPoll();
+      clearStallTimer();
     };
-  }, [stopBufferPoll, stopFrameWatch]);
+  }, [clearStallTimer, stopBufferPoll, stopFrameWatch]);
 
   const playVideo = useCallback(async () => {
     const video = videoRef.current;
@@ -260,19 +305,21 @@ export default function GuestTrailerPlayer({
       wantPlaybackRef.current = false;
       stopBufferPoll();
       stopFrameWatch();
+      clearStallTimer();
       setIsLoading(false);
     }
-  }, [beginPlaybackWait, quality, revealChrome, srcForQuality, stopBufferPoll, stopFrameWatch]);
+  }, [beginPlaybackWait, clearStallTimer, quality, revealChrome, srcForQuality, stopBufferPoll, stopFrameWatch]);
 
   const pauseVideo = useCallback(() => {
     wantPlaybackRef.current = false;
     stopBufferPoll();
     stopFrameWatch();
+    clearStallTimer();
     setIsLoading(false);
     videoRef.current?.pause();
     setChromePinned(true);
     clearHideTimer();
-  }, [clearHideTimer, stopBufferPoll, stopFrameWatch]);
+  }, [clearHideTimer, clearStallTimer, stopBufferPoll, stopFrameWatch]);
 
   const togglePlay = useCallback(() => {
     if (!hasStarted) {
@@ -294,6 +341,7 @@ export default function GuestTrailerPlayer({
     wantPlaybackRef.current = false;
     stopBufferPoll();
     stopFrameWatch();
+    clearStallTimer();
     setIsLoading(false);
     setHasStarted(true);
     setPosterVisible(false);
@@ -306,7 +354,7 @@ export default function GuestTrailerPlayer({
       seekRef.current?.style.setProperty('--seek-ratio', '1');
     }
     void exitPlayerFullscreen(video ?? null);
-  }, [stopBufferPoll, stopFrameWatch]);
+  }, [clearStallTimer, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
     (next: GuestTrailerQuality) => {
@@ -551,7 +599,7 @@ export default function GuestTrailerPlayer({
             ) {
               return;
             }
-            beginPlaybackWait(video);
+            scheduleStallSpinner(video);
           }}
           onStalled={() => {
             const video = videoRef.current;
@@ -563,7 +611,7 @@ export default function GuestTrailerPlayer({
             ) {
               return;
             }
-            beginPlaybackWait(video);
+            scheduleStallSpinner(video);
           }}
           onEnded={handleEnded}
           onProgress={() => {
@@ -593,6 +641,7 @@ export default function GuestTrailerPlayer({
             wantPlaybackRef.current = false;
             stopBufferPoll();
             stopFrameWatch();
+            clearStallTimer();
             setIsLoading(false);
             setFreezeUrl(null);
           }}

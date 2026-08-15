@@ -1,13 +1,24 @@
 .guest-trailer-frame {
 	position: relative;
 	width: 100%;
+	box-sizing: border-box;
+	border-radius: 13px;
+	background: color-mix(in srgb, var(--guest-trailer-accent, var(--myinv-accent-color)) 30%, transparent);
+}
+
+.guest-trailer-frame--home {
+	--guest-trailer-accent: var(--myinv-accent-color);
+}
+
+.guest-trailer-frame--bitcoin {
+	--guest-trailer-accent: rgba(248, 141, 0, 1);
+	background: rgba(248, 141, 0, 0.3);
 }
 
 .guest-trailer {
 	--guest-trailer-accent: var(--myinv-accent-color);
 	position: absolute;
-	inset: 0;
-	width: 100%;
+	inset: 1px;
 	border-radius: 12px;
 	overflow: visible;
 	isolation: isolate;
