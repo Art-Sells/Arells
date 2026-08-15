@@ -16,7 +16,7 @@ After Episode One is done:
 - Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine) on Bitcoin Reddit Page ("Storyline: In our universe,
 your Bitcoin investments are lifeless…
 But in another universe, they are alive,
-and are on a mission to live forever. I made this series to hopefully bring some hope into this community during this bear market (because we all need hope). I also know how hostile some of you can be so before anyone knocks this, watch Episode One first! If you hate this show after that, then it's totally understandable! Don't lose hope!"), X (remove coming soon and change to "now playing on arells")
+and are on a mission to live forever. I made this series to hopefully bring some hope into this community during this bear market (because we all need hope). I also know how hostile some of you can be so before anyone knocks this, watch Episode One first! If you hate this show after that, then it's totally understandable! Don't lose hope!")---Redit | X/LinkedIn (remove coming soon and change to "now playing on arells")
 
 -Send follow-up emails(mailmeteor [get verified emails]) [with poster]
 
