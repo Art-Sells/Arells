@@ -24,6 +24,12 @@ type GuestTrailerPlayerProps = {
 
 const CHROME_HIDE_MS = 2800;
 const FULLSCREEN_CHROME_HIDE_MS = 1000;
+const PLAYBACK_CLOCK_EPS = 0.04;
+
+type VideoFrameCallbackVideo = HTMLVideoElement & {
+  requestVideoFrameCallback?: (cb: () => void) => number;
+  cancelVideoFrameCallback?: (id: number) => void;
+};
 
 export default function GuestTrailerPlayer({
   theme,
@@ -40,6 +46,11 @@ export default function GuestTrailerPlayer({
   const seekRef = useRef<HTMLDivElement | null>(null);
   const seekDraggingRef = useRef(false);
   const fullscreenSuppressLoaderRef = useRef(false);
+  const wantPlaybackRef = useRef(false);
+  const firstFrameRef = useRef(false);
+  const playbackOriginRef = useRef(0);
+  const frameCallbackIdRef = useRef<number | null>(null);
+  const bufferPollRef = useRef<number | null>(null);
 
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -145,11 +156,92 @@ export default function GuestTrailerPlayer({
     scheduleChromeHide();
   }, [scheduleChromeHide]);
 
+  const stopFrameWatch = useCallback(() => {
+    const video = videoRef.current as VideoFrameCallbackVideo | null;
+    if (video && frameCallbackIdRef.current != null && video.cancelVideoFrameCallback) {
+      video.cancelVideoFrameCallback(frameCallbackIdRef.current);
+    }
+    frameCallbackIdRef.current = null;
+  }, []);
+
+  const stopBufferPoll = useCallback(() => {
+    if (bufferPollRef.current != null) {
+      window.clearInterval(bufferPollRef.current);
+      bufferPollRef.current = null;
+    }
+  }, []);
+
+  const syncBuffering = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (
+      fullscreenSuppressLoaderRef.current ||
+      isPlayerFullscreen(playerRef.current, video)
+    ) {
+      setIsLoading(false);
+      stopBufferPoll();
+      return;
+    }
+    if (!wantPlaybackRef.current || video.ended) {
+      setIsLoading(false);
+      stopBufferPoll();
+      return;
+    }
+    if (video.paused) {
+      setIsLoading(true);
+      return;
+    }
+    const moved = video.currentTime > playbackOriginRef.current + PLAYBACK_CLOCK_EPS;
+    const ready = video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA;
+    if (firstFrameRef.current || (moved && ready) || moved) {
+      setIsLoading(false);
+      setFreezeUrl(null);
+      stopBufferPoll();
+      return;
+    }
+    setIsLoading(true);
+  }, [stopBufferPoll]);
+
+  const watchFirstFrame = useCallback(
+    (video: HTMLVideoElement) => {
+      stopFrameWatch();
+      const frameVideo = video as VideoFrameCallbackVideo;
+      if (typeof frameVideo.requestVideoFrameCallback !== 'function') return;
+      frameCallbackIdRef.current = frameVideo.requestVideoFrameCallback(() => {
+        frameCallbackIdRef.current = null;
+        if (!wantPlaybackRef.current) return;
+        firstFrameRef.current = true;
+        syncBuffering();
+      });
+    },
+    [stopFrameWatch, syncBuffering]
+  );
+
+  const beginPlaybackWait = useCallback(
+    (video: HTMLVideoElement) => {
+      wantPlaybackRef.current = true;
+      firstFrameRef.current = false;
+      playbackOriginRef.current = video.currentTime;
+      setIsLoading(true);
+      watchFirstFrame(video);
+      if (bufferPollRef.current == null) {
+        bufferPollRef.current = window.setInterval(syncBuffering, 100);
+      }
+    },
+    [syncBuffering, watchFirstFrame]
+  );
+
+  useEffect(() => {
+    return () => {
+      stopFrameWatch();
+      stopBufferPoll();
+    };
+  }, [stopBufferPoll, stopFrameWatch]);
+
   const playVideo = useCallback(async () => {
     const video = videoRef.current;
     if (!video) return;
     setHasStarted(true);
-    setIsLoading(true);
     setPosterVisible(false);
     setIdlePlayMounted(false);
     revealChrome();
@@ -160,19 +252,27 @@ export default function GuestTrailerPlayer({
     if (video.ended || (Number.isFinite(duration) && duration > 0 && video.currentTime >= duration - 0.25)) {
       video.currentTime = 0;
     }
+    beginPlaybackWait(video);
     try {
       await video.play();
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return;
+      wantPlaybackRef.current = false;
+      stopBufferPoll();
+      stopFrameWatch();
       setIsLoading(false);
     }
-  }, [quality, revealChrome, srcForQuality]);
+  }, [beginPlaybackWait, quality, revealChrome, srcForQuality, stopBufferPoll, stopFrameWatch]);
 
   const pauseVideo = useCallback(() => {
+    wantPlaybackRef.current = false;
+    stopBufferPoll();
+    stopFrameWatch();
+    setIsLoading(false);
     videoRef.current?.pause();
     setChromePinned(true);
     clearHideTimer();
-  }, [clearHideTimer]);
+  }, [clearHideTimer, stopBufferPoll, stopFrameWatch]);
 
   const togglePlay = useCallback(() => {
     if (!hasStarted) {
@@ -191,6 +291,9 @@ export default function GuestTrailerPlayer({
       return;
     }
     setIsPlaying(false);
+    wantPlaybackRef.current = false;
+    stopBufferPoll();
+    stopFrameWatch();
     setIsLoading(false);
     setHasStarted(true);
     setPosterVisible(false);
@@ -203,7 +306,7 @@ export default function GuestTrailerPlayer({
       seekRef.current?.style.setProperty('--seek-ratio', '1');
     }
     void exitPlayerFullscreen(video ?? null);
-  }, []);
+  }, [stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
     (next: GuestTrailerQuality) => {
@@ -227,11 +330,11 @@ export default function GuestTrailerPlayer({
       }
       const freeze = captureVideoFrame(video);
       if (freeze) setFreezeUrl(freeze);
-      setIsLoading(true);
+      beginPlaybackWait(video);
       video.src = nextSrc;
       video.load();
     },
-    [hasStarted, isPlaying, srcForQuality]
+    [beginPlaybackWait, hasStarted, isPlaying, srcForQuality]
   );
 
   const resumeAfterQualityChange = useCallback(() => {
@@ -244,12 +347,15 @@ export default function GuestTrailerPlayer({
       pendingSeekRef.current = null;
       pendingPlayRef.current = false;
       if (!shouldPlay) {
+        wantPlaybackRef.current = false;
         setIsLoading(false);
         setFreezeUrl(null);
         return;
       }
+      beginPlaybackWait(video);
       void video.play().catch((err) => {
         if (err instanceof DOMException && err.name === 'AbortError') return;
+        wantPlaybackRef.current = false;
         setIsLoading(false);
       });
     };
@@ -268,7 +374,7 @@ export default function GuestTrailerPlayer({
     }
 
     playIfNeeded();
-  }, []);
+  }, [beginPlaybackWait]);
 
   const seekRatioFromClientX = useCallback((clientX: number) => {
     const el = seekRef.current;
@@ -426,25 +532,43 @@ export default function GuestTrailerPlayer({
           crossOrigin="anonymous"
           onPlay={() => {
             setIsPlaying(true);
+            syncBuffering();
           }}
           onPlaying={() => {
             setIsPlaying(true);
-            setIsLoading(false);
             setPosterVisible(false);
             setIdlePlayMounted(false);
-            setFreezeUrl(null);
+            syncBuffering();
           }}
           onPause={() => setIsPlaying(false)}
           onWaiting={() => {
+            const video = videoRef.current;
             if (
-              hasStarted &&
-              !fullscreenSuppressLoaderRef.current &&
-              !isPlayerFullscreen(playerRef.current, videoRef.current)
+              !video ||
+              !wantPlaybackRef.current ||
+              fullscreenSuppressLoaderRef.current ||
+              isPlayerFullscreen(playerRef.current, video)
             ) {
-              setIsLoading(true);
+              return;
             }
+            beginPlaybackWait(video);
+          }}
+          onStalled={() => {
+            const video = videoRef.current;
+            if (
+              !video ||
+              !wantPlaybackRef.current ||
+              fullscreenSuppressLoaderRef.current ||
+              isPlayerFullscreen(playerRef.current, video)
+            ) {
+              return;
+            }
+            beginPlaybackWait(video);
           }}
           onEnded={handleEnded}
+          onProgress={() => {
+            syncBuffering();
+          }}
           onTimeUpdate={() => {
             if (seekDraggingRef.current) return;
             const video = videoRef.current;
@@ -452,15 +576,23 @@ export default function GuestTrailerPlayer({
             const next = video.currentTime / video.duration;
             setSeekRatio(next);
             seekRef.current?.style.setProperty('--seek-ratio', String(next));
+            syncBuffering();
           }}
           onLoadedMetadata={() => {
             resumeAfterQualityChange();
+            syncBuffering();
           }}
-          onLoadedData={resumeAfterQualityChange}
+          onLoadedData={() => {
+            resumeAfterQualityChange();
+            syncBuffering();
+          }}
           onError={() => {
             qualityChangeRef.current = false;
             pendingPlayRef.current = false;
             pendingSeekRef.current = null;
+            wantPlaybackRef.current = false;
+            stopBufferPoll();
+            stopFrameWatch();
             setIsLoading(false);
             setFreezeUrl(null);
           }}

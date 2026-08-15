@@ -6,15 +6,11 @@ import MyInvAssetBadgeGrid from './MyInvAssetBadgeGrid';
 type MyInvCryptoExpandableSectionProps = {
   assets: string[];
   linkKeyPrefix: string;
-  cryptoOpen: boolean;
-  onCryptoOpen?: () => void;
 };
 
 const MyInvCryptoExpandableSection: React.FC<MyInvCryptoExpandableSectionProps> = ({
   assets,
   linkKeyPrefix,
-  cryptoOpen,
-  onCryptoOpen,
 }) => {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [contentHeight, setContentHeight] = useState<number | null>(null);
@@ -39,11 +35,11 @@ const MyInvCryptoExpandableSection: React.FC<MyInvCryptoExpandableSectionProps> 
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [cryptoOpen, assets]);
+  }, [assets]);
 
   return (
     <div
-      className={`myinv-asset-hub-crypto-collapsible${cryptoOpen ? ' is-expanded' : ''}`}
+      className="myinv-asset-hub-crypto-collapsible is-expanded"
       style={
         contentHeight != null
           ? { maxHeight: `${contentHeight}px` }
@@ -51,21 +47,7 @@ const MyInvCryptoExpandableSection: React.FC<MyInvCryptoExpandableSectionProps> 
       }
     >
       <div ref={contentRef} className="myinv-asset-hub-crypto-collapsible-inner">
-        {cryptoOpen ? (
-          <MyInvAssetBadgeGrid assets={assets} linkKeyPrefix={linkKeyPrefix} />
-        ) : (
-          <div className="myinv-panel myinv-panel--shell myinv-asset-hub-crypto-shell">
-            <div className="home-assets-category-button-wrap myinv-asset-hub-crypto-action">
-              <button
-                type="button"
-                className="auth-submit asset-range-button myinv-range-button myinv-hub-action-button home-assets-show-more-button"
-                onClick={onCryptoOpen}
-              >
-                cryptocurrencies
-              </button>
-            </div>
-          </div>
-        )}
+        <MyInvAssetBadgeGrid assets={assets} linkKeyPrefix={linkKeyPrefix} />
       </div>
     </div>
   );

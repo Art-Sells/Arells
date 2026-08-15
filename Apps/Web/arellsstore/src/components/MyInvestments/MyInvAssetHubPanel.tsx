@@ -12,8 +12,6 @@ type MyInvAssetHubPanelProps = {
   assets: string[];
   linkKeyPrefix: string;
   cryptoMode: 'badges' | 'expandable';
-  cryptoOpen?: boolean;
-  onCryptoOpen?: () => void;
   /** When false (My Assets), hide the company-stocks section entirely. */
   showStocksSection?: boolean;
   stocksOpen?: boolean;
@@ -29,8 +27,6 @@ const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
   assets,
   linkKeyPrefix,
   cryptoMode,
-  cryptoOpen = false,
-  onCryptoOpen,
   showStocksSection = false,
   stocksOpen = false,
   onStocksOpen,
@@ -44,7 +40,7 @@ const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
       <div className="myinv-panel-section myinv-accent-border myinv-asset-hub-outer">
         <div className="myinv-panel myinv-panel--shell myinv-asset-hub-outer-shell">
           <div
-            className={`myinv-accent-border myinv-asset-hub-crypto${cryptoMode === 'expandable' && cryptoOpen ? ' is-expanded' : ''}`}
+            className={`myinv-accent-border myinv-asset-hub-crypto${cryptoMode === 'expandable' ? ' is-expanded' : ''}`}
           >
             {cryptoMode === 'badges' ? (
               assets.length > 0 ? (
@@ -54,8 +50,6 @@ const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
               <MyInvCryptoExpandableSection
                 assets={cryptoAssets}
                 linkKeyPrefix={`${linkKeyPrefix}-crypto`}
-                cryptoOpen={cryptoOpen}
-                onCryptoOpen={onCryptoOpen}
               />
             ) : null}
           </div>

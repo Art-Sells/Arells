@@ -4,16 +4,13 @@
 
 ### Trigger Organic Growth
 
-- Post everywhere (YouTube/Twitter)
 - Begin working on Episode one
 
 After Episode One is done:
 
 - Unhide (new episode every saturday)
-- Change (Change (all guest home page and guest Bitcoin page trailers to "Sign In to Learn More" remove Coming Soon), remove trailer from signed in Bitcoin page) (upload 3 types)
+- Change (Change (all guest home page and guest Bitcoin page trailers to "Now Playing" "Sign In to Learn More" remove Coming Soon), change trailer from signed in Bitcoin page to "Season One" "Now Playing") (upload 3 types)
 - Upload 3 types of Episode One
-- my-investments "Add Investments to Unlock Episodes"
- "Add Other Investments To Unlock Episodes"
 - Add (long rounded image below the title).
 
 - Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine) on Bitcoin Reddit Page ("I made this series to hopefully bring some hope into this community during this bear market (becsue we all need hope). I also know how hostile this community can be so before anyone knocks this, watch Episode One first! If you hate it after that, then it's totally understandable. Don't lose hope."), X (remove coming soon and change to "now playing on arells")

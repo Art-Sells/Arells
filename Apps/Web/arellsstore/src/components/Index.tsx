@@ -34,8 +34,7 @@ const Index = () => {
     wordLogo: false,
   });
   const { getAsset, loadMoreAssets } = useVavity();
-  const [visibleAssetCount, setVisibleAssetCount] = useState(0);
-  const [cryptoCategoryOpen, setCryptoCategoryOpen] = useState(false);
+  const visibleAssetCount = VISIBLE_HOME_CRYPTO.length;
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
   const showGuestLanding = !email && !forceHomeInvestmentsPreview;
@@ -297,7 +296,7 @@ const Index = () => {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', schedule);
     };
-  }, [showSignedInHome, cryptoCategoryOpen, visibleAssetCount]);
+  }, [showSignedInHome, visibleAssetCount]);
 
   const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
     if (!history.length) return 0;
@@ -367,17 +366,10 @@ const Index = () => {
 
   const sortedRows = assetRows;
 
-  const cryptoPanelTransition = cryptoCategoryOpen
-    ? 'max-height 1.5s ease-out'
-    : 'max-height 3.5s linear';
-
-  const handleCryptoCategoryClick = useCallback(() => {
-    if (!cryptoCategoryOpen) {
-      setCryptoCategoryOpen(true);
-      setVisibleAssetCount(VISIBLE_HOME_CRYPTO.length);
-      void loadMoreAssets(VISIBLE_HOME_CRYPTO.map((a) => a.id));
-    }
-  }, [cryptoCategoryOpen, loadMoreAssets]);
+  useEffect(() => {
+    if (!showSignedInHome) return;
+    void loadMoreAssets(VISIBLE_HOME_CRYPTO.map((a) => a.id));
+  }, [showSignedInHome, loadMoreAssets]);
 
   const handleEnsureCryptoLoaded = useCallback(
     (assetIds: string[]) => {
@@ -426,7 +418,6 @@ const Index = () => {
   );
 
   useEffect(() => {
-    if (!cryptoCategoryOpen) return;
     if (cardNumbersDidMountRef.current) return;
     const hasData = sortedRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0);
     if (!hasData) return;
@@ -438,7 +429,7 @@ const Index = () => {
         setTimeout(() => setCardFadeInDone(true), 2100);
       });
     }, 600);
-  }, [sortedRows, cryptoCategoryOpen]);
+  }, [sortedRows]);
 
   const cardFadeStyle = useMemo<React.CSSProperties>(() => {
     if (!cardNumbersVisible) return { opacity: 0, transition: 'opacity 2s ease' };
@@ -516,27 +507,21 @@ const Index = () => {
         />
         <HomeAssetCategoryCard
           enabled={showSignedInHome}
-          showButton={!cryptoCategoryOpen}
-          categoryButton
-          buttonLabel="cryptocurrencies"
-          onButtonClick={handleCryptoCategoryClick}
-          panelTransition={cryptoPanelTransition}
+          panelTransition="max-height 1.5s ease-out"
         >
-          {cryptoCategoryOpen ? (
-            <div className="home-assets-rows-shell">
-              {sortedRows.map((row) => (
-                <HomeCryptoAssetRow
-                  key={row.id}
-                  row={row}
-                  displayIsLiquidMode={displayIsLiquidMode}
-                  cardNumbersVisible={cardNumbersVisible}
-                  cardShimmersFading={cardShimmersFading}
-                  cardFadeStyle={cardFadeStyle}
-                  imageLoader={imageLoader}
-                />
-              ))}
-            </div>
-          ) : null}
+          <div className="home-assets-rows-shell">
+            {sortedRows.map((row) => (
+              <HomeCryptoAssetRow
+                key={row.id}
+                row={row}
+                displayIsLiquidMode={displayIsLiquidMode}
+                cardNumbersVisible={cardNumbersVisible}
+                cardShimmersFading={cardShimmersFading}
+                cardFadeStyle={cardFadeStyle}
+                imageLoader={imageLoader}
+              />
+            ))}
+          </div>
         </HomeAssetCategoryCard>
 
       </div>

@@ -199,8 +199,6 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
   const [initialDataReady, setInitialDataReady] = useState(false);
-  const [addInvestCryptoOpen, setAddInvestCryptoOpen] = useState(false);
-  const [otherAssetsCryptoOpen, setOtherAssetsCryptoOpen] = useState(false);
   const initialFetchDoneRef = useRef(false);
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState(false);
@@ -1405,11 +1403,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                 assets={missingAssetsByMarketCap}
                 linkKeyPrefix="missing"
                 cryptoMode="expandable"
-                cryptoOpen={otherAssetsCryptoOpen}
-                onCryptoOpen={() => {
-                  setOtherAssetsCryptoOpen(true);
-                  recordEngagement('section_expand');
-                }}
               />
             )}
 
@@ -1420,11 +1413,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                 assets={missingAssetsByMarketCap}
                 linkKeyPrefix="add-missing"
                 cryptoMode="expandable"
-                cryptoOpen={addInvestCryptoOpen}
-                onCryptoOpen={() => {
-                  setAddInvestCryptoOpen(true);
-                  recordEngagement('section_expand');
-                }}
               />
             )}
           </>
