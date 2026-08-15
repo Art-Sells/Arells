@@ -151,17 +151,22 @@ export default function GuestTrailerPlayer({
     setHasStarted(true);
     setIsLoading(true);
     setPosterVisible(false);
-    if (!poster) setIdlePlayMounted(false);
+    setIdlePlayMounted(false);
     revealChrome();
     if (!video.getAttribute('src')) {
       video.src = srcForQuality(quality);
     }
+    const duration = video.duration;
+    if (video.ended || (Number.isFinite(duration) && duration > 0 && video.currentTime >= duration - 0.25)) {
+      video.currentTime = 0;
+    }
     try {
       await video.play();
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
       setIsLoading(false);
     }
-  }, [poster, quality, revealChrome, srcForQuality]);
+  }, [quality, revealChrome, srcForQuality]);
 
   const pauseVideo = useCallback(() => {
     videoRef.current?.pause();
@@ -178,27 +183,26 @@ export default function GuestTrailerPlayer({
     else void playVideo();
   }, [hasStarted, isPlaying, pauseVideo, playVideo]);
 
-  const stopToIdle = useCallback(() => {
+  const handleEnded = useCallback(() => {
     const video = videoRef.current;
-    if (video) {
-      video.pause();
-      video.currentTime = 0;
+    const duration = video?.duration ?? 0;
+    const current = video?.currentTime ?? 0;
+    if (Number.isFinite(duration) && duration > 0 && current < duration - 0.35) {
+      return;
     }
-    setHasStarted(false);
     setIsPlaying(false);
     setIsLoading(false);
-    setPosterVisible(true);
-    setIdlePlayMounted(true);
-    setExpanded(false);
+    setHasStarted(true);
+    setPosterVisible(false);
+    setIdlePlayMounted(false);
     setSettingsOpen(false);
-    setChromePinned(false);
-    pendingSeekRef.current = null;
-    pendingPlayRef.current = false;
-    qualityChangeRef.current = false;
-    seekDraggingRef.current = false;
-    setSeekRatio(0);
+    setChromePinned(true);
     setFreezeUrl(null);
-    void exitPlayerFullscreen(video);
+    if (Number.isFinite(duration) && duration > 0) {
+      setSeekRatio(1);
+      seekRef.current?.style.setProperty('--seek-ratio', '1');
+    }
+    void exitPlayerFullscreen(video ?? null);
   }, []);
 
   const applyQuality = useCallback(
@@ -244,7 +248,8 @@ export default function GuestTrailerPlayer({
         setFreezeUrl(null);
         return;
       }
-      void video.play().catch(() => {
+      void video.play().catch((err) => {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
         setIsLoading(false);
       });
     };
@@ -359,7 +364,7 @@ export default function GuestTrailerPlayer({
       }
       setHasStarted(true);
       setPosterVisible(false);
-      if (!poster) setIdlePlayMounted(false);
+      setIdlePlayMounted(false);
       if (!video.getAttribute('src')) {
         video.src = srcForQuality(quality);
       }
@@ -384,7 +389,7 @@ export default function GuestTrailerPlayer({
         }, 800);
       }
     },
-    [poster, quality, srcForQuality]
+    [quality, srcForQuality]
   );
 
   const showPausedPlay = hasStarted && !isPlaying && !isLoading && !posterVisible;
@@ -421,13 +426,12 @@ export default function GuestTrailerPlayer({
           crossOrigin="anonymous"
           onPlay={() => {
             setIsPlaying(true);
-            setIsLoading(false);
-            setFreezeUrl(null);
           }}
           onPlaying={() => {
             setIsPlaying(true);
             setIsLoading(false);
             setPosterVisible(false);
+            setIdlePlayMounted(false);
             setFreezeUrl(null);
           }}
           onPause={() => setIsPlaying(false)}
@@ -440,7 +444,7 @@ export default function GuestTrailerPlayer({
               setIsLoading(true);
             }
           }}
-          onEnded={stopToIdle}
+          onEnded={handleEnded}
           onTimeUpdate={() => {
             if (seekDraggingRef.current) return;
             const video = videoRef.current;
@@ -453,15 +457,6 @@ export default function GuestTrailerPlayer({
             resumeAfterQualityChange();
           }}
           onLoadedData={resumeAfterQualityChange}
-          onCanPlay={() => {
-            if (!videoRef.current?.paused) {
-              setIsLoading(false);
-              return;
-            }
-            if (!pendingPlayRef.current && !qualityChangeRef.current) {
-              setIsLoading(false);
-            }
-          }}
           onError={() => {
             qualityChangeRef.current = false;
             pendingPlayRef.current = false;

@@ -14,15 +14,15 @@ const SIGNED_IN_TRAILER_S3_BASE =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn';
 
 export const GUEST_TRAILER_SOURCES: TrailerSources = {
-  '480': `${GUEST_TRAILER_S3_BASE}/TheBitcoinAlienRace(GuestLandingPagesTrailer)480.mp4`,
-  '720': `${GUEST_TRAILER_S3_BASE}/TheBitcoinAlienRace(GuestLandingPagesTrailer)720.mp4`,
-  '1080': `${GUEST_TRAILER_S3_BASE}/TheBitcoinAlienRace(GuestLandingPagesTrailer)1080.mp4`,
+  '480': `${GUEST_TRAILER_S3_BASE}/TheBitcoinAlienRaceTrailerAndOpener(Guest)480p.mp4`,
+  '720': `${GUEST_TRAILER_S3_BASE}/TheBitcoinAlienRaceTrailerAndOpener(Guest)720p.mp4`,
+  '1080': `${GUEST_TRAILER_S3_BASE}/TheBitcoinAlienRaceTrailerAndOpener(Guest)1080p.mp4`,
 };
 
 export const SIGNED_IN_TRAILER_SOURCES: TrailerSources = {
-  '480': `${SIGNED_IN_TRAILER_S3_BASE}/TheBitcoinAlienRace(SignedInTrailer)480.mp4`,
-  '720': `${SIGNED_IN_TRAILER_S3_BASE}/TheBitcoinAlienRace(SignedInTrailer)720.mp4`,
-  '1080': `${SIGNED_IN_TRAILER_S3_BASE}/TheBitcoinAlienRace(SignedInTrailer)1080.mp4`,
+  '480': `${SIGNED_IN_TRAILER_S3_BASE}/TheBitcoinAlienRaceTrailerAndOpener(SignedIn)480p.mp4`,
+  '720': `${SIGNED_IN_TRAILER_S3_BASE}/TheBitcoinAlienRaceTrailerAndOpener(SignedIn)720p.mp4`,
+  '1080': `${SIGNED_IN_TRAILER_S3_BASE}/TheBitcoinAlienRaceTrailerAndOpener(SignedIn)1080p.mp4`,
 };
 
 export type GuestTrailerQuality = 'auto' | '480' | '720' | '1080';
