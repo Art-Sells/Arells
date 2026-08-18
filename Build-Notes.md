@@ -6,14 +6,12 @@
 
 - Begin working on Episode one
 
-After Episode One is done:
+After Episode One-Three is done:
 
 - Unhide (new episode every saturday)
-- Change (Change (all guest home page and guest Bitcoin page trailers to "Now Playing" "Sign In to Learn More" remove Coming Soon), change trailer from signed in Bitcoin page to "Season One" "Now Playing") (upload 3 types)
-- Upload 3 types of Episode One
-- Add (long rounded image below the title).
+- Update all guest home page and guest Bitcoin page trailers (use scenes from Episode One-Thee) to "Now Playing" "Sign In to Learn More" remove Coming Soon, change trailer from signed in Bitcoin page to "Season One" "Now Playing" (upload 3 types)
 
-- Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine) on Bitcoin Reddit Page ("Storyline: In our universe,
+- Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine(reset every week usage)) on Bitcoin Reddit Page ("Storyline: In our universe,
 your Bitcoin investments are lifeless…
 But in another universe, they are alive,
 and are on a mission to live forever. I made this series to hopefully bring some hope into this community during this bear market (because we all need hope). I also know how hostile some of you can be so before anyone knocks this, watch Episode One first! If you hate this show after that, then it's totally understandable! Don't lose hope!")---Redit | X/LinkedIn (remove coming soon and change to "now playing on arells")
