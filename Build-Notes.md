@@ -4,6 +4,17 @@
 
 ### Trigger Organic Growth
 
+- Daily Updates (My Inv)
+(put back (the Bitcoin Alien Race link
+And the updates individually by date link to the /thebitcoinalienrace/{datehere}))
+- The Bitcoin Alien Race
+- Storyline
+- Characters
+- Scrollable Music Player
+- - Main Theme
+- - A Daughter's Father
+
+
 - Begin working on Episode one
 
 After Episode One is done:
