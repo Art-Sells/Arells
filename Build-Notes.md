@@ -11,7 +11,7 @@ And the updates individually by date link to the /thebitcoinalienrace/{datehere}
 - Storyline
 - Characters
 - Scrollable Music Player
-- - Main Theme
+- - Main Theme (Compress)
 - - A Daughter's Father
 
 
