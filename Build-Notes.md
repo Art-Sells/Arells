@@ -4,6 +4,7 @@
 
 ### Trigger Organic Growth
 
+- Generate Character Profile.
 - Daily Updates (My Inv)
 (put back (the Bitcoin Alien Race link
 And the updates individually by date link to the /thebitcoinalienrace/{datehere}))
