@@ -4,7 +4,6 @@
 
 ### Trigger Organic Growth
 
-- Generate Character Profile.
 - Daily Updates (My Inv)
 (put back (the Bitcoin Alien Race link
 And the updates individually by date link to the /thebitcoinalienrace/{datehere}))
@@ -15,8 +14,8 @@ And the updates individually by date link to the /thebitcoinalienrace/{datehere}
 - - Main Theme (Compress)
 - - A Daughter's Father
 
-
 - Begin working on Episode one
+(Add Human Translation Layer)
 
 After Episode One is done:
 
