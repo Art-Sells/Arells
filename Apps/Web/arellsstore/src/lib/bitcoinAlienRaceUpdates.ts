@@ -116,7 +116,7 @@ function isPreviewPath(name: string): boolean {
 function pairingKey(name: string): string {
   const file = name.split('/').filter(Boolean).pop() || name;
   const stem = file.replace(/\.[^.]+$/, '').toLowerCase();
-  return stem.replace(/(characterprofile|preview)$/i, '');
+  return stem.replace(/characterprofile.*$/i, '').replace(/preview$/i, '');
 }
 
 /** Collapse 480/720/1080 files of the same video into one player, like the trailer. */
