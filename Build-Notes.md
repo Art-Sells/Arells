@@ -4,18 +4,11 @@
 
 ### Trigger Organic Growth
 
-- Daily Updates (My Inv)
-(put back (the Bitcoin Alien Race link
-And the updates individually by date link to the /thebitcoinalienrace/{datehere}))
-- The Bitcoin Alien Race
-- Storyline
-- Characters
-- Scrollable Music Player
-- - Main Theme (Compress)
-- - A Daughter's Father
-
 - Begin working on Episode one
 (Add Human Translation Layer)
+- Scrollable Music Player on The Bitcoin Alien Race Page
+- - Main Theme (Compress)
+- - A Daughter's Father
 
 After Episode One is done:
 
