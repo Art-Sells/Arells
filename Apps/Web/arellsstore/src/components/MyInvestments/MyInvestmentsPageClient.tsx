@@ -11,6 +11,7 @@ import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
 import MyInvAssetHubPanel from './MyInvAssetHubPanel';
+import MyInvDailyUpdatesPanel from './MyInvDailyUpdatesPanel';
 import PortfolioQuestionsSupport from '../MyPortfolio/PortfolioQuestionsSupport';
 import { getAnyAssetMeta, getAssetHistoricalPriceUrl } from '../../lib/assets/assetKind';
 import { sortAssetIdsByMarketCapDesc } from '../../lib/assets/marketCapSort';
@@ -1385,6 +1386,7 @@ const MyInvestmentsPageClient: React.FC = () => {
         </div>
         {effectiveSignedIn && initialDataReady && (
           <>
+            <MyInvDailyUpdatesPanel slideIn={slideIn} />
             {myAssetsSortedByHoldings.length > 0 && (
               <MyInvAssetHubPanel
                 title="My Assets"
