@@ -19,6 +19,7 @@ export default function StorylineOpening({ assetName, className }: StorylineOpen
       <span className="site-social-footer-rule storyline-opening-rule" aria-hidden="true" />
       <span className="storyline-opening-body myportfolio-text-chunks">
         <span>In our universe,</span>
+        <span className="storyline-opening-row-break" aria-hidden="true" />
         <span>{investmentsPhrase} are lifeless…</span>
         <span className="storyline-opening-row-break" aria-hidden="true" />
         <span>But in another universe, they are alive,</span>

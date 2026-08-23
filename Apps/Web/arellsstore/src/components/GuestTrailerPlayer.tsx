@@ -15,11 +15,13 @@ import {
   isPlayerFullscreen,
   waitForVideoMetadata,
 } from '../lib/guestTrailerFullscreen';
+import { captureVideoFrame, midVideoFrameTime } from '../lib/captureVideoFrame';
 
 type GuestTrailerPlayerProps = {
   theme: 'home' | 'bitcoin';
   sources?: TrailerSources;
   poster?: string | null;
+  useVideoThumbnail?: boolean;
 };
 
 const CHROME_HIDE_MS = 2800;
@@ -36,6 +38,7 @@ export default function GuestTrailerPlayer({
   theme,
   sources = GUEST_TRAILER_SOURCES,
   poster = GUEST_TRAILER_POSTER,
+  useVideoThumbnail = false,
 }: GuestTrailerPlayerProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<HTMLDivElement | null>(null);
@@ -55,6 +58,7 @@ export default function GuestTrailerPlayer({
   const playbackStartedRef = useRef(false);
   const stallTimerRef = useRef<number | null>(null);
   const stallClockRef = useRef(0);
+  const hasStartedRef = useRef(false);
 
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -309,6 +313,48 @@ export default function GuestTrailerPlayer({
       setIsLoading(false);
     }
   }, [beginPlaybackWait, clearStallTimer, quality, revealChrome, srcForQuality, stopBufferPoll, stopFrameWatch]);
+
+  useEffect(() => {
+    hasStartedRef.current = hasStarted;
+  }, [hasStarted]);
+
+  useEffect(() => {
+    if (!useVideoThumbnail) return;
+    const video = videoRef.current;
+    if (!video) return;
+    let captured = false;
+    if (!video.getAttribute('src')) {
+      video.src = srcForQuality(quality);
+    }
+    const grab = () => {
+      if (hasStartedRef.current || captured) return;
+      const url = captureVideoFrame(video);
+      if (!url) return;
+      captured = true;
+      setFreezeUrl(url);
+      try {
+        video.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+    };
+    const seekMid = () => {
+      if (hasStartedRef.current || captured) return;
+      const target = midVideoFrameTime(video);
+      try {
+        video.currentTime = target;
+      } catch {
+        /* ignore */
+      }
+    };
+    video.addEventListener('loadeddata', seekMid);
+    video.addEventListener('seeked', grab);
+    video.load();
+    return () => {
+      video.removeEventListener('loadeddata', seekMid);
+      video.removeEventListener('seeked', grab);
+    };
+  }, [quality, srcForQuality, useVideoThumbnail]);
 
   const pauseVideo = useCallback(() => {
     wantPlaybackRef.current = false;
@@ -576,7 +622,7 @@ export default function GuestTrailerPlayer({
           ref={videoRef}
           className={`guest-trailer-video${hasStarted ? ' is-on' : ''}`}
           playsInline
-          preload="none"
+          preload={useVideoThumbnail ? 'auto' : 'none'}
           crossOrigin="anonymous"
           onPlay={() => {
             setIsPlaying(true);
@@ -668,7 +714,9 @@ export default function GuestTrailerPlayer({
         {idlePlayMounted ? (
           <button
             type="button"
-            className={`guest-trailer-ctrl guest-trailer-ctrl--center${posterVisible && !isLoading ? ' is-visible' : ''}`}
+            className={`guest-trailer-ctrl guest-trailer-ctrl--center${
+              !isLoading && (posterVisible || (useVideoThumbnail && Boolean(freezeUrl))) ? ' is-visible' : ''
+            }`}
             aria-label="Play trailer"
             onClick={(event) => {
               event.stopPropagation();
@@ -774,21 +822,6 @@ export default function GuestTrailerPlayer({
       </div>
     </div>
   );
-}
-
-function captureVideoFrame(video: HTMLVideoElement): string | null {
-  if (!video.videoWidth || !video.videoHeight) return null;
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return null;
-  ctx.drawImage(video, 0, 0);
-  try {
-    return canvas.toDataURL('image/jpeg', 0.72);
-  } catch {
-    return null;
-  }
 }
 
 function PlayIcon() {

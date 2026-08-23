@@ -5,7 +5,7 @@ const nextConfig = {
       { source: '/analytics-internal', destination: '/metrics', permanent: true },
       { source: '/my-portfolio', destination: '/my-investments', permanent: true },
       { source: '/earn-money-weekly', destination: '/my-investments', permanent: true },
-      { source: '/thebitcoinalienrace', destination: '/bitcoin', permanent: true },
+      { source: '/thebitcoinalienrace/:date', destination: '/thebitcoinalienrace', permanent: false },
     ];
   },
   async headers() {

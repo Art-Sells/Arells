@@ -5,6 +5,10 @@
 ### Trigger Organic Growth
 
 - Begin working on Episode one
+(Add Human Translation Layer)
+- Scrollable Music Player on The Bitcoin Alien Race Page
+- - Main Theme (Compress)
+- - A Daughter's Father
 
 After Episode One-Three is done:
 
