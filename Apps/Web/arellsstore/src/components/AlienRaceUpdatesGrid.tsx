@@ -55,7 +55,7 @@ export default function AlienRaceUpdatesGrid({
               ) : (
                 <AlienRaceUpdateImage
                   key={item.key}
-                  src={item.url}
+                  src={theme === 'myinv' && item.previewUrl ? item.previewUrl : item.url}
                   theme={theme}
                   href={imageHref}
                   label={`${day.label} update`}

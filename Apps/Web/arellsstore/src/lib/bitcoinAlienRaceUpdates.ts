@@ -9,6 +9,7 @@ export type AlienRaceMedia = {
   url: string;
   name: string;
   kind: AlienRaceMediaKind;
+  previewUrl?: string;
   sources?: {
     '480': string;
     '720': string;
@@ -107,8 +108,25 @@ function fillVideoSources(
   };
 }
 
+function isPreviewPath(name: string): boolean {
+  const parts = name.split('/').filter(Boolean);
+  return parts.length > 1 && parts[0].toLowerCase() === 'previews';
+}
+
+function pairingKey(name: string): string {
+  const file = name.split('/').filter(Boolean).pop() || name;
+  const stem = file.replace(/\.[^.]+$/, '').toLowerCase();
+  return stem.replace(/(characterprofile|preview)$/i, '');
+}
+
 /** Collapse 480/720/1080 files of the same video into one player, like the trailer. */
 export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
+  const previewByKey = new Map<string, string>();
+  for (const item of files) {
+    if (item.kind !== 'image' || !isPreviewPath(item.name)) continue;
+    previewByKey.set(pairingKey(item.name), item.url);
+  }
+
   const images: AlienRaceMedia[] = [];
   const ungrouped: AlienRaceMedia[] = [];
   const groups = new Map<
@@ -117,8 +135,10 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
   >();
 
   files.forEach((item, index) => {
+    if (isPreviewPath(item.name)) return;
     if (item.kind !== 'video') {
-      images.push(item);
+      const previewUrl = previewByKey.get(pairingKey(item.name));
+      images.push(previewUrl ? { ...item, previewUrl } : item);
       return;
     }
     const parsed = parseVideoQualityName(item.name);
