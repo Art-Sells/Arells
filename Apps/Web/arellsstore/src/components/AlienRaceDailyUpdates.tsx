@@ -33,7 +33,7 @@ export default function AlienRaceDailyUpdates({ variant, mountExpand = true }: A
     if (!ready) return null;
     return (
       <div className="asset-bitcoin-season-teaser-updates">
-        <h3 className="asset-bitcoin-season-teaser-season-title">Daily Updates</h3>
+        <h3 className="asset-bitcoin-season-teaser-season-title">Updates</h3>
         {body}
       </div>
     );
@@ -46,7 +46,7 @@ export default function AlienRaceDailyUpdates({ variant, mountExpand = true }: A
       }${ready && !hasContent ? ' is-collapsing' : ''}`}
     >
       <div className="myinv-daily-updates-height">
-      <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Daily Updates</div>
+      <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Updates</div>
       <div className="myinv-panel-section myinv-daily-updates-frame myinv-asset-hub-outer">
         <div className="myinv-panel myinv-panel--shell myinv-asset-hub-outer-shell">{body}</div>
       </div>

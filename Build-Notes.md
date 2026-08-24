@@ -22,8 +22,6 @@ and are on a mission to live forever. I made this series to hopefully bring some
 
 -Send follow-up emails(mailmeteor [get verified emails]) [with poster]
 
--remove /bitcoinalienrace
-
 - reach out to D/M/D/N/ABTC
 
 - *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
