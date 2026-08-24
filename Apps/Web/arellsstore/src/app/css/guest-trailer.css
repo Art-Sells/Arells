@@ -196,6 +196,16 @@
 	margin-left: 0;
 }
 
+.guest-trailer-frame--compact .guest-trailer-ctrl--center {
+	width: 46px;
+	height: 46px;
+}
+
+.guest-trailer-frame--compact .guest-trailer-ctrl--center svg {
+	width: 21px;
+	height: 21px;
+}
+
 .guest-trailer-chrome {
 	position: absolute;
 	inset: 0;
@@ -253,6 +263,38 @@
 	touch-action: none;
 	cursor: pointer;
 	box-sizing: border-box;
+}
+
+.guest-trailer--compact .guest-trailer-seek {
+	width: 161px;
+}
+
+.asset-bitcoin-season-teaser-updates .guest-trailer--compact .guest-trailer-seek {
+	width: 176px;
+}
+
+@media (max-width: 750px) {
+	.alien-race-updates-thumb--player .guest-trailer-ctrl--center {
+		width: 46px;
+		height: 46px;
+	}
+
+	.alien-race-updates-thumb--player .guest-trailer-ctrl--center svg {
+		width: 21px;
+		height: 21px;
+	}
+
+	.alien-race-updates-thumb--player .guest-trailer-seek:not(.guest-trailer-seek--forced) {
+		width: 161px !important;
+		--seek-inset: 22.5px;
+	}
+
+	.asset-page-content--bitcoin .asset-bitcoin-season-teaser-updates .guest-trailer-seek {
+		width: 100px !important;
+		max-width: 100px !important;
+		min-width: 0 !important;
+		--seek-inset: 8px;
+	}
 }
 
 .guest-trailer-seek::before {

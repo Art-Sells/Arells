@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   GUEST_TRAILER_POSTER,
   GUEST_TRAILER_QUALITY_OPTIONS,
@@ -22,12 +22,20 @@ type GuestTrailerPlayerProps = {
   sources?: TrailerSources;
   poster?: string | null;
   useVideoThumbnail?: boolean;
+  compact?: boolean;
+  seekWidthPx?: number;
+  hideSeek?: boolean;
 };
 
 const CHROME_HIDE_MS = 2800;
 const FULLSCREEN_CHROME_HIDE_MS = 1000;
 const PLAYBACK_CLOCK_EPS = 0.04;
 const STALL_SPINNER_MS = 300;
+const GUEST_TRAILER_PLAY_EVENT = 'arells:guest-trailer-play';
+
+function claimGuestTrailerPlayback(token: object) {
+  window.dispatchEvent(new CustomEvent(GUEST_TRAILER_PLAY_EVENT, { detail: token }));
+}
 
 type VideoFrameCallbackVideo = HTMLVideoElement & {
   requestVideoFrameCallback?: (cb: () => void) => number;
@@ -39,6 +47,9 @@ export default function GuestTrailerPlayer({
   sources = GUEST_TRAILER_SOURCES,
   poster = GUEST_TRAILER_POSTER,
   useVideoThumbnail = false,
+  compact = false,
+  seekWidthPx,
+  hideSeek = false,
 }: GuestTrailerPlayerProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<HTMLDivElement | null>(null);
@@ -59,6 +70,7 @@ export default function GuestTrailerPlayer({
   const stallTimerRef = useRef<number | null>(null);
   const stallClockRef = useRef(0);
   const hasStartedRef = useRef(false);
+  const playbackTokenRef = useRef({});
 
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -290,6 +302,7 @@ export default function GuestTrailerPlayer({
   const playVideo = useCallback(async () => {
     const video = videoRef.current;
     if (!video) return;
+    claimGuestTrailerPlayback(playbackTokenRef.current);
     setHasStarted(true);
     setPosterVisible(false);
     setIdlePlayMounted(false);
@@ -375,6 +388,15 @@ export default function GuestTrailerPlayer({
     if (isPlaying) pauseVideo();
     else void playVideo();
   }, [hasStarted, isPlaying, pauseVideo, playVideo]);
+
+  useEffect(() => {
+    const onOtherPlay = (event: Event) => {
+      if ((event as CustomEvent).detail === playbackTokenRef.current) return;
+      pauseVideo();
+    };
+    window.addEventListener(GUEST_TRAILER_PLAY_EVENT, onOtherPlay);
+    return () => window.removeEventListener(GUEST_TRAILER_PLAY_EVENT, onOtherPlay);
+  }, [pauseVideo]);
 
   const handleEnded = useCallback(() => {
     const video = videoRef.current;
@@ -574,10 +596,12 @@ export default function GuestTrailerPlayer({
           await waitForVideoMetadata(video);
         }
         if (video.paused) {
+          claimGuestTrailerPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
         await enterPlayerFullscreen(player, video);
         if (video.paused) {
+          claimGuestTrailerPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
       } catch {
@@ -595,19 +619,47 @@ export default function GuestTrailerPlayer({
   const showPausedPlay = hasStarted && !isPlaying && !isLoading && !posterVisible;
   const showDock = showChrome || (!hasStarted && hovering && !isCoarse);
 
+  useLayoutEffect(() => {
+    if (hideSeek || seekWidthPx == null) return;
+    const apply = () => {
+      const el = seekRef.current;
+      if (!el) return;
+      const under750 = window.matchMedia('(max-width: 750px)').matches;
+      if (under750) {
+        el.style.setProperty('width', `${seekWidthPx}px`, 'important');
+        el.style.setProperty('max-width', `${seekWidthPx}px`, 'important');
+        el.style.setProperty('min-width', '0', 'important');
+      } else {
+        el.style.removeProperty('width');
+        el.style.removeProperty('max-width');
+        el.style.removeProperty('min-width');
+      }
+    };
+    apply();
+    const frame = rootRef.current;
+    const observer = frame ? new ResizeObserver(apply) : null;
+    if (frame) observer?.observe(frame);
+    const mq = window.matchMedia('(max-width: 750px)');
+    mq.addEventListener('change', apply);
+    return () => {
+      observer?.disconnect();
+      mq.removeEventListener('change', apply);
+    };
+  }, [hideSeek, seekWidthPx, hasStarted, showDock]);
+
   return (
     <div
       ref={rootRef}
       className={`guest-trailer-frame guest-trailer-frame--${theme}${
         poster ? '' : ' guest-trailer-frame--no-poster'
-      }`}
+      }${compact ? ' guest-trailer-frame--compact' : ''}`}
     >
       <div className="guest-trailer-sizer" aria-hidden="true" />
       <div
         ref={playerRef}
-        className={`guest-trailer guest-trailer--${theme}${expanded ? ' is-expanded' : ''}${
-          showDock ? ' is-chrome' : ''
-        }`}
+        className={`guest-trailer guest-trailer--${theme}${compact ? ' guest-trailer--compact' : ''}${
+          expanded ? ' is-expanded' : ''
+        }${showDock ? ' is-chrome' : ''}`}
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => {
           setHovering(false);
@@ -788,10 +840,10 @@ export default function GuestTrailerPlayer({
                 </div>
               ) : null}
             </div>
-            {hasStarted ? (
+            {hasStarted && !hideSeek ? (
               <div
                 ref={seekRef}
-                className="guest-trailer-seek"
+                className={`guest-trailer-seek${seekWidthPx != null ? ' guest-trailer-seek--forced' : ''}`}
                 style={{ ['--seek-ratio' as string]: String(seekRatio) }}
                 role="slider"
                 aria-label="Trailer position"

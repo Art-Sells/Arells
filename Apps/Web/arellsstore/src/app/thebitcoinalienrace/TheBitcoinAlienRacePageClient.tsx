@@ -90,11 +90,17 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           </div>
         </div>
         <div className="bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--updates asset-guest-mount-slide">
-          <div className={`bitcoin-alien-race-updates-wrap${ready && !hasContent ? ' is-collapsing' : ''}`}>
+          <div
+            className={`bitcoin-alien-race-updates-wrap${
+              ready && hasContent ? ' is-open' : ''
+            }${ready && !hasContent ? ' is-collapsing' : ''}`}
+          >
+            <div className="bitcoin-alien-race-updates-height">
             <h2 className="asset-bitcoin-season-teaser-season-title">Updates</h2>
             <AlienRaceLoadReveal ready={ready} hasContent={hasContent} theme="bitcoin">
               <AlienRaceUpdatesGrid days={days} theme="bitcoin" />
             </AlienRaceLoadReveal>
+            </div>
           </div>
         </div>
       </div>

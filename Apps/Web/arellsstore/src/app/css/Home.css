@@ -1634,23 +1634,28 @@ body {
 }
 
 .bitcoin-alien-race-updates-wrap {
+	display: grid;
+	grid-template-rows: 0fr;
+	overflow: hidden;
+	background: transparent;
+	isolation: auto;
+	transition: grid-template-rows 2s ease;
+}
+
+.bitcoin-alien-race-updates-wrap.is-open {
+	grid-template-rows: 1fr;
+}
+
+.bitcoin-alien-race-updates-height {
+	min-height: 0;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	overflow: visible;
-	max-height: none;
-	background: transparent;
-	isolation: auto;
 }
 
 .bitcoin-alien-race-updates-wrap.is-collapsing {
-	overflow: hidden;
-	max-height: 0;
-	padding-top: 0;
-	padding-bottom: 0;
-	box-shadow: none;
-	margin: 0;
-	transition: max-height 2s ease, padding 2s ease, margin 2s ease;
+	grid-template-rows: 0fr;
 }
 
 .bitcoin-alien-race-day-label {
@@ -1694,8 +1699,10 @@ body {
 	animation-delay: 0.24s;
 }
 
-.bitcoin-alien-race-mount-slide--updates {
-	animation-delay: 0.36s;
+.bitcoin-alien-race-page .bitcoin-alien-race-mount-slide--updates.asset-guest-mount-slide {
+	animation: none;
+	opacity: 1;
+	transform: none;
 }
 
 .alien-race-load-reveal-loader {
@@ -1747,13 +1754,19 @@ body {
 }
 
 .myinv-daily-updates-group {
+	display: grid;
+	grid-template-rows: 0fr;
 	overflow: hidden;
-	max-height: 220px;
-	transition: max-height 2s ease, margin 2s ease;
+	transition: grid-template-rows 2s ease;
 }
 
-.myinv-daily-updates-group:not(.is-loading):not(.is-collapsing) {
-	max-height: 8000px;
+.myinv-daily-updates-group.is-open {
+	grid-template-rows: 1fr;
+}
+
+.myinv-daily-updates-height {
+	min-height: 0;
+	overflow: hidden;
 }
 
 .myinv-daily-updates-frame {
@@ -1767,7 +1780,7 @@ body {
 }
 
 .myinv-daily-updates-group.is-collapsing {
-	max-height: 0;
+	grid-template-rows: 0fr;
 	margin-top: 0;
 	margin-bottom: 0;
 }
@@ -1789,7 +1802,8 @@ body {
 }
 
 .alien-race-updates-grid--bitcoin .alien-race-updates-day {
-	box-shadow: 0 0 0 1px rgba(248, 141, 0, 0.3);
+	box-shadow: none;
+	border: 1px solid rgba(248, 141, 0, 0.3);
 }
 
 .alien-race-updates-grid--myinv .alien-race-updates-day {
@@ -1837,7 +1851,13 @@ body {
 }
 
 .alien-race-updates-grid--bitcoin .alien-race-updates-thumb {
-	box-shadow: 0 0 0 1px rgba(248, 141, 0, 0.3);
+	box-shadow: none;
+}
+
+.alien-race-updates-grid--bitcoin .alien-race-updates-thumb:not(.alien-race-updates-thumb--player) {
+	padding: 1px;
+	background: rgba(248, 141, 0, 0.3);
+	overflow: hidden;
 }
 
 .alien-race-updates-thumb--player {
@@ -1890,6 +1910,42 @@ body {
 	height: auto;
 	object-fit: contain;
 	background: transparent;
+}
+
+.alien-race-updates-grid--bitcoin.alien-race-updates-grid--thumbs .alien-race-updates-thumb.is-loaded .alien-race-updates-thumb-img {
+	aspect-ratio: 2 / 1;
+	height: auto;
+	object-fit: cover;
+	background: rgba(0, 0, 0, 0.08);
+}
+
+.asset-bitcoin-season-teaser-updates {
+	border-radius: 14px;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	background: transparent;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+@media (max-width: 750px) {
+	.asset-bitcoin-season-teaser-updates .guest-trailer-ctrl--center {
+		width: 46px !important;
+		height: 46px !important;
+	}
+
+	.asset-bitcoin-season-teaser-updates .guest-trailer-ctrl--center svg {
+		width: 21px !important;
+		height: 21px !important;
+	}
+
+	.asset-bitcoin-season-teaser-updates .guest-trailer-seek {
+		width: 100px !important;
+		max-width: 100px !important;
+		min-width: 0 !important;
+		--seek-inset: 8px;
+	}
 }
 
 .alien-race-updates-more {
@@ -6506,8 +6562,8 @@ a.myinv-about-button:focus-visible {
 .myinv-wrapper > .page-slide-in:has(.myinv-daily-updates-group) {
 	will-change: auto;
 	transform: none;
-	animation-name: bitcoinAlienRaceFadeIn;
-	animation-duration: 0.7s;
+	opacity: 1;
+	animation: none;
 }
 
 .myinv-wrapper > .page-slide-in:nth-of-type(1) {
