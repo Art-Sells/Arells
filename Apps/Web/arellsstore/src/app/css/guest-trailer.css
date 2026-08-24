@@ -173,8 +173,8 @@
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	width: 56px;
-	height: 56px;
+	width: 41px;
+	height: 41px;
 	transform: translate(-50%, -50%);
 	opacity: 0;
 	pointer-events: none;
@@ -187,8 +187,8 @@
 }
 
 .guest-trailer-ctrl--center svg {
-	width: 26px;
-	height: 26px;
+	width: 19px;
+	height: 19px;
 	margin-left: 2px;
 }
 
@@ -197,13 +197,13 @@
 }
 
 .guest-trailer-frame--compact .guest-trailer-ctrl--center {
-	width: 46px;
-	height: 46px;
+	width: 41px;
+	height: 41px;
 }
 
 .guest-trailer-frame--compact .guest-trailer-ctrl--center svg {
-	width: 21px;
-	height: 21px;
+	width: 19px;
+	height: 19px;
 }
 
 .guest-trailer-chrome {
@@ -254,12 +254,13 @@
 	--seek-inset: 15px;
 	--seek-line-width: 6.5px;
 	--seek-ratio: 0;
-	position: absolute;
-	left: 50%;
-	top: 50%;
+	position: relative;
+	left: auto;
+	top: auto;
 	width: 176px;
 	height: 34px;
-	transform: translate(-50%, -50%);
+	transform: none;
+	flex: 0 0 176px;
 	touch-action: none;
 	cursor: pointer;
 	box-sizing: border-box;
@@ -275,13 +276,13 @@
 
 @media (max-width: 750px) {
 	.alien-race-updates-thumb--player .guest-trailer-ctrl--center {
-		width: 46px;
-		height: 46px;
+		width: 41px;
+		height: 41px;
 	}
 
 	.alien-race-updates-thumb--player .guest-trailer-ctrl--center svg {
-		width: 21px;
-		height: 21px;
+		width: 19px;
+		height: 19px;
 	}
 
 	.alien-race-updates-thumb--player .guest-trailer-seek:not(.guest-trailer-seek--forced) {
@@ -343,7 +344,6 @@
 .guest-trailer-settings-wrap {
 	position: relative;
 	flex-shrink: 0;
-	top: -3px;
 }
 
 .guest-trailer-ctrl--settings,
@@ -354,9 +354,7 @@
 }
 
 .guest-trailer-ctrl--expand {
-	margin-left: auto;
 	position: relative;
-	top: -3px;
 }
 
 .guest-trailer-ctrl--settings svg,
