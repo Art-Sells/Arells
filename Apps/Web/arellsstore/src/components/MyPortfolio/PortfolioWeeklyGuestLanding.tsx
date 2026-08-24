@@ -41,7 +41,7 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
         </p>
         <div className="home-guest-signin-shell home-guest-trailer-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--signin">
           <span className="shadow-border" aria-hidden="true" />
-          <GuestTrailerPlayer theme="home" hideSeek />
+          <GuestTrailerPlayer theme="home" />
           <div className="home-guest-signin-panel myinv-accent-border">
             <div className="home-guest-signin-inner">
               <p className="home-guest-signin-lead">Sign In to learn more</p>
