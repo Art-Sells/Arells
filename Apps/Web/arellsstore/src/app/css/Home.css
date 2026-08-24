@@ -1931,13 +1931,13 @@ body {
 
 @media (max-width: 750px) {
 	.asset-bitcoin-season-teaser-updates .guest-trailer-ctrl--center {
-		width: 46px !important;
-		height: 46px !important;
+		width: 41px !important;
+		height: 41px !important;
 	}
 
 	.asset-bitcoin-season-teaser-updates .guest-trailer-ctrl--center svg {
-		width: 21px !important;
-		height: 21px !important;
+		width: 19px !important;
+		height: 19px !important;
 	}
 
 	.asset-bitcoin-season-teaser-updates .guest-trailer-seek {
