@@ -16,6 +16,8 @@ type AlienRaceUpdatesGridProps = {
   theme: 'myinv' | 'bitcoin';
   imageHref?: string;
   showMoreClassName?: string;
+  usePreviewThumbs?: boolean;
+  seekWidthPx?: number;
 };
 
 function videoSources(url: string): TrailerSources {
@@ -27,6 +29,8 @@ export default function AlienRaceUpdatesGrid({
   theme,
   imageHref,
   showMoreClassName,
+  usePreviewThumbs,
+  seekWidthPx,
 }: AlienRaceUpdatesGridProps) {
   const [visibleCount, setVisibleCount] = useState(ALIEN_RACE_UPDATES_PAGE_SIZE);
   const total = alienRaceThumbCount(days);
@@ -37,7 +41,11 @@ export default function AlienRaceUpdatesGrid({
   if (total === 0) return null;
 
   return (
-    <div className={`alien-race-updates-grid alien-race-updates-grid--${theme}`}>
+    <div
+      className={`alien-race-updates-grid alien-race-updates-grid--${theme}${
+        usePreviewThumbs ? ' alien-race-updates-grid--thumbs' : ''
+      }`}
+    >
       {visibleDays.map((day) => (
         <div key={day.folder} className="alien-race-updates-day">
           <h3 className="alien-race-updates-date">{day.label}</h3>
@@ -50,12 +58,14 @@ export default function AlienRaceUpdatesGrid({
                     sources={item.sources || videoSources(item.url)}
                     poster={null}
                     useVideoThumbnail
+                    compact
+                    hideSeek
                   />
                 </div>
               ) : (
                 <AlienRaceUpdateImage
                   key={item.key}
-                  src={theme === 'myinv' && item.previewUrl ? item.previewUrl : item.url}
+                  src={usePreviewThumbs && item.previewUrl ? item.previewUrl : item.url}
                   theme={theme}
                   href={imageHref}
                   label={`${day.label} update`}

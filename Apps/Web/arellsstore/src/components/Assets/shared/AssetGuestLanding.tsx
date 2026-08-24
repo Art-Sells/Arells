@@ -60,7 +60,7 @@ export default function AssetGuestLanding({
           } asset-guest-mount-slide asset-guest-mount-slide--signin`}
         >
           <span className="shadow-border" aria-hidden="true" />
-          {showTrailer ? <GuestTrailerPlayer theme="bitcoin" /> : null}
+          {showTrailer ? <GuestTrailerPlayer theme="bitcoin" hideSeek /> : null}
           <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
               <p className="asset-signin-believe-prompt">Sign in to get involved</p>
