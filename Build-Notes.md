@@ -4,7 +4,7 @@
 
 ### Trigger Organic Growth
 
-- Begin working on Episode one
+- Begin working on Episode one (calculate how long it takes, then then send updates (we're posting updates that give information about each new and upcoming episodes almost everyday!)
 (Add Human Translation Layer)
 - Scrollable Music Player on The Bitcoin Alien Race Page
 - - Main Theme (Compress)
