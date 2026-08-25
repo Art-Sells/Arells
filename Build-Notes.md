@@ -4,8 +4,7 @@
 
 ### Trigger Organic Growth
 
-- Begin working on Episode one (calculate how long it takes, then then send updates (we're posting updates that give information about each new and upcoming episodes almost everyday!)
-(Add Human Translation Layer)
+- Begin working on Episode one (calculate how long it takes, then send updates (we're posting updates that give information about each new and upcoming episodes almost everyday!)
 - Scrollable Music Player on The Bitcoin Alien Race Page
 - - Main Theme (Compress)
 - - A Daughter's Father
@@ -14,6 +13,7 @@ After Episode One-Three is done:
 
 - Unhide (new episode every saturday)
 - Update all guest home page and guest Bitcoin page trailers (use scenes from Episode One-Thee) to "Now Playing" "Sign In to Learn More" remove Coming Soon, change trailer from signed in Bitcoin page to "Season One" "Now Playing" (upload 3 types)
+- Change coming soon to generate new ultra high def image of Leila ref looking like the girl with her eye high definition for "Season One" image
 
 - Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine(reset every week usage)) on Bitcoin Reddit Page ("Storyline: In our universe,
 your Bitcoin investments are lifeless…

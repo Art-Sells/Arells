@@ -1833,6 +1833,27 @@ body {
 	gap: 10px;
 }
 
+.alien-race-memoriam-section {
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 14px;
+	padding: 10px;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.alien-race-memoriam-copy {
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 14px;
+	padding: 10px;
+	padding-bottom: 10px;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	line-height: normal;
+}
+
 .alien-race-updates-thumb {
 	display: block;
 	position: relative;
@@ -2052,6 +2073,25 @@ body {
 	font-size: 13px;
 	font-weight: 400;
 	line-height: 1.35;
+}
+
+.storyline-opening--memoriam .storyline-opening-label {
+	font-weight: 600;
+}
+
+.storyline-opening--memoriam > .storyline-opening-rule.site-social-footer-rule {
+	height: 2px;
+	border-radius: 50px;
+}
+
+.storyline-opening--memoriam .storyline-opening-mid-rule.site-social-footer-rule {
+	height: 2px;
+	border-radius: 50px;
+	margin: 12px 0;
+}
+
+.storyline-opening--memoriam .storyline-opening-body--memoriam-close.myportfolio-text-chunks {
+	margin-bottom: 5px;
 }
 
 .asset-portfolio-summary-box--ethereum {
