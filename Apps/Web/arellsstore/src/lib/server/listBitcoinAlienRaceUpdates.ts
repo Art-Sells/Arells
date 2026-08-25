@@ -1,7 +1,9 @@
 import { s3BucketNameOrThrow } from './s3Bucket';
-import { getServerS3 } from './awsS3';
 import {
-  ALIEN_RACE_UPDATES_PREFIX,
+  ALIEN_RACE_UPDATES_CATALOG,
+  alienRaceUpdatesObjectKey,
+} from '../alienRaceUpdatesCatalog';
+import {
   fileKind,
   formatAlienRaceDayLabel,
   groupAlienRaceMedia,
@@ -28,56 +30,35 @@ export async function listBitcoinAlienRaceUpdates(): Promise<AlienRaceDay[]> {
     return [];
   }
 
-  const s3 = getServerS3();
   const region = s3Region();
-  const byFolder = new Map<string, AlienRaceMedia[]>();
-  let token: string | undefined;
+  const days: AlienRaceDay[] = [];
 
-  do {
-    const out = await s3
-      .listObjectsV2({
-        Bucket: bucket,
-        Prefix: ALIEN_RACE_UPDATES_PREFIX,
-        ContinuationToken: token,
-        MaxKeys: 1000,
-      })
-      .promise();
+  for (const entry of ALIEN_RACE_UPDATES_CATALOG) {
+    if (!parseAlienRaceFolder(entry.folder)) continue;
+    const label = formatAlienRaceDayLabel(entry.folder);
+    if (!label) continue;
 
-    for (const obj of out.Contents || []) {
-      if (!obj.Key || obj.Key.endsWith('/')) continue;
-      const rest = obj.Key.slice(ALIEN_RACE_UPDATES_PREFIX.length);
-      const slash = rest.indexOf('/');
-      if (slash <= 0) continue;
-      const folder = rest.slice(0, slash);
-      if (!parseAlienRaceFolder(folder)) continue;
-      const relative = rest.slice(slash + 1);
-      if (!relative) continue;
-      const name = relative.split('/').filter(Boolean).pop() || relative;
-      const kind = fileKind(name);
+    const files: AlienRaceMedia[] = [];
+    for (const relative of entry.files) {
+      const name = relative.replace(/^\/+/, '');
+      if (!name) continue;
+      const fileName = name.split('/').filter(Boolean).pop() || name;
+      const kind = fileKind(fileName);
       if (!kind) continue;
-      const list = byFolder.get(folder) || [];
-      list.push({
-        key: obj.Key,
-        url: publicS3ObjectUrl(bucket, region, obj.Key),
-        name: relative,
+      const key = alienRaceUpdatesObjectKey(entry.folder, name);
+      files.push({
+        key,
+        url: publicS3ObjectUrl(bucket, region, key),
+        name,
         kind,
       });
-      byFolder.set(folder, list);
     }
 
-    token = out.IsTruncated ? out.NextContinuationToken : undefined;
-  } while (token);
-
-  const days: AlienRaceDay[] = [];
-  for (const [folder, files] of byFolder) {
-    const label = formatAlienRaceDayLabel(folder);
-    if (!label) continue;
     const media = groupAlienRaceMedia(files);
-    const images = media.filter((item) => item.kind === 'image');
     days.push({
-      folder,
+      folder: entry.folder,
       label,
-      images,
+      images: media.filter((item) => item.kind === 'image'),
       media,
     });
   }

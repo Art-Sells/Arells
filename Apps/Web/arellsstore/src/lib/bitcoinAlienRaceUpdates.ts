@@ -127,8 +127,8 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
     previewByKey.set(pairingKey(item.name), item.url);
   }
 
-  const images: AlienRaceMedia[] = [];
-  const ungrouped: AlienRaceMedia[] = [];
+  const images: { item: AlienRaceMedia; order: number }[] = [];
+  const ungrouped: { item: AlienRaceMedia; order: number }[] = [];
   const groups = new Map<
     string,
     { parts: Partial<Record<'480' | '720' | '1080', AlienRaceMedia>>; order: number }
@@ -138,12 +138,12 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
     if (isPreviewPath(item.name)) return;
     if (item.kind !== 'video') {
       const previewUrl = previewByKey.get(pairingKey(item.name));
-      images.push(previewUrl ? { ...item, previewUrl } : item);
+      images.push({ item: previewUrl ? { ...item, previewUrl } : item, order: index });
       return;
     }
     const parsed = parseVideoQualityName(item.name);
     if (!parsed) {
-      ungrouped.push(item);
+      ungrouped.push({ item, order: index });
       return;
     }
     const existing = groups.get(parsed.base) || { parts: {}, order: index };
@@ -151,7 +151,7 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
     groups.set(parsed.base, existing);
   });
 
-  const grouped: AlienRaceMedia[] = [];
+  const grouped: { item: AlienRaceMedia; order: number }[] = [];
   for (const [, group] of groups) {
     const chosen = group.parts['720'] || group.parts['1080'] || group.parts['480']!;
     const urls: Partial<Record<'480' | '720' | '1080', string>> = {};
@@ -159,14 +159,19 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
       if (group.parts[q]) urls[q] = group.parts[q]!.url;
     });
     grouped.push({
-      ...chosen,
-      key: Object.values(group.parts)
-        .map((part) => part.key)
-        .sort()
-        .join('|'),
-      sources: fillVideoSources(urls, chosen.url),
+      order: group.order,
+      item: {
+        ...chosen,
+        key: Object.values(group.parts)
+          .map((part) => part.key)
+          .sort()
+          .join('|'),
+        sources: fillVideoSources(urls, chosen.url),
+      },
     });
   }
 
-  return [...images, ...ungrouped, ...grouped].sort((a, b) => a.name.localeCompare(b.name, 'en'));
+  return [...images, ...ungrouped, ...grouped]
+    .sort((a, b) => a.order - b.order)
+    .map((entry) => entry.item);
 }
