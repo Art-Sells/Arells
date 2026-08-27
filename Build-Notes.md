@@ -7,7 +7,7 @@
 - Begin working on Episode one (calculate how long it takes, then send updates (we're posting updates that give information about each new and upcoming episodes almost everyday!)
 - Scrollable Music Player on The Bitcoin Alien Race Page
 - - Main Theme (Compress)
-- - A Daughter's Father
+- - A Daughter's Father (Increase volume)
 
 After Episode One-Three is done:
 
@@ -38,7 +38,8 @@ and are on a mission to live forever. I made this series to hopefully bring some
 - - delet
 
 #### If sharing (organic) happens:
-- Purchase MDR for: Binaural Frequency Meditation - Positive Relaxing Dreamy Peaceful Ambient
+- Purchase MDR for: Binaural Frequency Meditation - Positive Relaxing Dreamy Peaceful Ambient 
+- Purchase MDR for: Cinematic Ambient Piano - amadasounds
 - Add Worst Case Scenarios (in notes)
 - - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
 - - Add User location/etc

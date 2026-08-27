@@ -527,7 +527,7 @@ export async function buildGrowthPayload(
       ? 'Growth headline (All / 3M / 1Y): % change from first non-zero cumulative point in the window to the latest point. WoW/MoM cards remain short-lookback deltas.'
       : 'Growth headline (1W / 1M): prefers WoW, then MoM, then YoY on the cumulative series.',
     halfHeadline
-      ? 'Retention chart (All / 3M / 1Y): same classic downward survival as 1M, computed on a trailing 30-day window (long full-range curves spike then flatline with only Auth/Vavity timestamps). Headline = first-half → second-half return over the full selected range.'
+      ? 'Retention chart (All / 3M / 1Y): classic cohort survival over the full selected range (weekly buckets when span > 120 days). Headline = first-half → second-half return over the full selected range.'
       : 'Retention chart (1W / 1M): classic cohort survival — accounts active on the first activity day in the window; later points = % still span-active. Single-timestamp accounts are stretched to range end. Headline = last chart point.',
     'WoW/MoM retention KPIs use rolling 7 / 30 day return rates on account spans (absolute rates, not signed deltas).',
     'DAUt/WAUt/MAUt (activity panel): verified accounts via S3 Auth/Vavity touch days and/or signed-in page-mounts.',
@@ -539,27 +539,20 @@ export async function buildGrowthPayload(
   const { start: rangeStart, end: rangeEnd } = computeRangeBounds(range);
   const aauUsers = countAauUsersS3(touchMap, rangeStart, rangeEnd);
 
-  /**
-   * Long windows cannot draw a meaningful full-range survival curve from 1–2 S3 timestamps
-   * (needle spike then ~0%). Chart those ranges on a trailing 30d window like 1M.
-   */
-  const chartRangeStart = halfHeadline
-    ? Math.max(rangeStart, rangeEnd - 30 * DAY_MS)
-    : rangeStart;
-  const chartSpanDays = Math.max(1, (rangeEnd - chartRangeStart) / DAY_MS);
+  const chartSpanDays = Math.max(1, (rangeEnd - rangeStart) / DAY_MS);
   const useWeekBuckets = chartSpanDays > 120;
   const bucketType: 'day' | 'week' = useWeekBuckets ? 'week' : 'day';
 
   const touchMapForClassicRetention =
     view === 'retention'
-      ? widenSingleInstantUserTouchesForRetention(touchMap, chartRangeStart, rangeEnd)
+      ? widenSingleInstantUserTouchesForRetention(touchMap, rangeStart, rangeEnd)
       : touchMap;
 
   let series: MetricsGrowthSeriesPoint[];
   if (view === 'retention') {
     series = buildClassicRetentionSeries(
       touchMapForClassicRetention,
-      chartRangeStart,
+      rangeStart,
       rangeEnd,
       bucketType
     );
