@@ -1397,16 +1397,6 @@ const MyInvestmentsPageClient: React.FC = () => {
               />
             )}
 
-            {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length > 0 && (
-              <MyInvAssetHubPanel
-                title="Other Assets"
-                slideIn={slideIn}
-                assets={missingAssetsByMarketCap}
-                linkKeyPrefix="missing"
-                cryptoMode="expandable"
-              />
-            )}
-
             {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length === 0 && (
               <MyInvAssetHubPanel
                 title="Add Investments"
@@ -1418,6 +1408,16 @@ const MyInvestmentsPageClient: React.FC = () => {
             )}
 
             <MyInvDailyUpdatesPanel slideIn={slideIn} />
+
+            {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length > 0 && (
+              <MyInvAssetHubPanel
+                title="Other Assets"
+                slideIn={slideIn}
+                assets={missingAssetsByMarketCap}
+                linkKeyPrefix="missing"
+                cryptoMode="expandable"
+              />
+            )}
           </>
         )}
         {/* No page-slide-in: that animation’s backwards fill (opacity 0) flashed when slideIn turned on. */}
