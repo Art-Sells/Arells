@@ -1386,7 +1386,6 @@ const MyInvestmentsPageClient: React.FC = () => {
         </div>
         {effectiveSignedIn && initialDataReady && (
           <>
-            <MyInvDailyUpdatesPanel slideIn={slideIn} />
             {myAssetsSortedByHoldings.length > 0 && (
               <MyInvAssetHubPanel
                 title="My Assets"
@@ -1417,6 +1416,8 @@ const MyInvestmentsPageClient: React.FC = () => {
                 cryptoMode="expandable"
               />
             )}
+
+            <MyInvDailyUpdatesPanel slideIn={slideIn} />
           </>
         )}
         {/* No page-slide-in: that animation’s backwards fill (opacity 0) flashed when slideIn turned on. */}
