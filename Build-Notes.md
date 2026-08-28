@@ -6,8 +6,8 @@
 
 - Begin working on Episode one (calculate how long it takes, then send updates (we're posting updates that give information about each new and upcoming episodes almost everyday!)
 - Scrollable Music Player on The Bitcoin Alien Race Page
-- - Main Theme (Compress)
-- - A Daughter's Father (Increase volume)
+- - Main Theme (Compress (Increase volume and replace {check headphones for drizzle))
+- - A Daughter's Father (Increase volume and replace {check headphones for drizzle)
 
 After Episode One-Three is done:
 
