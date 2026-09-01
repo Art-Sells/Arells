@@ -12,6 +12,15 @@ export type AlienRaceUpdatesDayCatalog = {
  */
 export const ALIEN_RACE_UPDATES_CATALOG: AlienRaceUpdatesDayCatalog[] = [
   {
+    folder: '08.31.26',
+    files: [
+      'SneakPeak3Preview.jpg',
+      'SneakPeak3(480p).mp4',
+      'SneakPeak3(720p).mp4',
+      'SneakPeak3(1080p).mp4',
+    ],
+  },
+  {
     folder: '08.24.26',
     files: ['TheBitcoinMemoriam.jpg'],
   },

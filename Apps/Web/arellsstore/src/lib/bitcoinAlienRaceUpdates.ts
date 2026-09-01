@@ -84,13 +84,14 @@ export function alienRaceThumbCount(days: AlienRaceDay[]): number {
   return days.reduce((sum, day) => sum + day.media.length, 0);
 }
 
-const VIDEO_QUALITY_RE = /^(.+?)(480|720|1080)p?(\.[^.]+)$/i;
+const VIDEO_QUALITY_PAREN_RE = /^(.+?)\((480|720|1080)p?\)(\.[^.]+)$/i;
+const VIDEO_QUALITY_SUFFIX_RE = /^(.+?)(480|720|1080)p?(\.[^.]+)$/i;
 
 export function parseVideoQualityName(
   name: string
 ): { base: string; quality: '480' | '720' | '1080'; ext: string } | null {
   const file = name.split('/').filter(Boolean).pop() || name;
-  const match = file.match(VIDEO_QUALITY_RE);
+  const match = file.match(VIDEO_QUALITY_PAREN_RE) || file.match(VIDEO_QUALITY_SUFFIX_RE);
   if (!match) return null;
   const quality = match[2] as '480' | '720' | '1080';
   return { base: `${match[1]}${match[3]}`.toLowerCase(), quality, ext: match[3] };
@@ -113,17 +114,29 @@ function isPreviewPath(name: string): boolean {
   return parts.length > 1 && parts[0].toLowerCase() === 'previews';
 }
 
+function isPreviewAsset(name: string): boolean {
+  if (isPreviewPath(name)) return true;
+  const file = name.split('/').filter(Boolean).pop() || name;
+  return /preview\.(jpe?g|png|webp|gif)$/i.test(file);
+}
+
 function pairingKey(name: string): string {
   const file = name.split('/').filter(Boolean).pop() || name;
   const stem = file.replace(/\.[^.]+$/, '').toLowerCase();
   return stem.replace(/characterprofile.*$/i, '').replace(/preview$/i, '');
 }
 
+function videoPairingKey(name: string): string | null {
+  const parsed = parseVideoQualityName(name);
+  if (!parsed) return null;
+  return parsed.base.replace(/\.[^.]+$/, '');
+}
+
 /** Collapse 480/720/1080 files of the same video into one player, like the trailer. */
 export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
   const previewByKey = new Map<string, string>();
   for (const item of files) {
-    if (item.kind !== 'image' || !isPreviewPath(item.name)) continue;
+    if (item.kind !== 'image' || !isPreviewAsset(item.name)) continue;
     previewByKey.set(pairingKey(item.name), item.url);
   }
 
@@ -135,7 +148,7 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
   >();
 
   files.forEach((item, index) => {
-    if (isPreviewPath(item.name)) return;
+    if (isPreviewAsset(item.name)) return;
     if (item.kind !== 'video') {
       const previewUrl = previewByKey.get(pairingKey(item.name));
       images.push({ item: previewUrl ? { ...item, previewUrl } : item, order: index });
@@ -158,6 +171,8 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
     (['480', '720', '1080'] as const).forEach((q) => {
       if (group.parts[q]) urls[q] = group.parts[q]!.url;
     });
+    const previewKey = videoPairingKey(chosen.name);
+    const previewUrl = previewKey ? previewByKey.get(previewKey) : undefined;
     grouped.push({
       order: group.order,
       item: {
@@ -167,6 +182,7 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
           .sort()
           .join('|'),
         sources: fillVideoSources(urls, chosen.url),
+        ...(previewUrl ? { previewUrl } : {}),
       },
     });
   }

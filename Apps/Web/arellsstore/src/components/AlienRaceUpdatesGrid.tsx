@@ -83,8 +83,8 @@ export default function AlienRaceUpdatesGrid({
                     <GuestTrailerPlayer
                       theme={playerTheme}
                       sources={item.sources || videoSources(item.url)}
-                      poster={null}
-                      useVideoThumbnail
+                      poster={item.previewUrl ?? null}
+                      useVideoThumbnail={!item.previewUrl}
                       compact
                       hideSeek
                     />
