@@ -120,16 +120,20 @@ function isPreviewAsset(name: string): boolean {
   return /preview\.(jpe?g|png|webp|gif)$/i.test(file);
 }
 
+function normalizePairingKey(key: string): string {
+  return key.replace(/peak/g, 'peek');
+}
+
 function pairingKey(name: string): string {
   const file = name.split('/').filter(Boolean).pop() || name;
   const stem = file.replace(/\.[^.]+$/, '').toLowerCase();
-  return stem.replace(/characterprofile.*$/i, '').replace(/preview$/i, '');
+  return normalizePairingKey(stem.replace(/characterprofile.*$/i, '').replace(/preview$/i, ''));
 }
 
 function videoPairingKey(name: string): string | null {
   const parsed = parseVideoQualityName(name);
   if (!parsed) return null;
-  return parsed.base.replace(/\.[^.]+$/, '');
+  return normalizePairingKey(parsed.base.replace(/\.[^.]+$/, ''));
 }
 
 /** Collapse 480/720/1080 files of the same video into one player, like the trailer. */
