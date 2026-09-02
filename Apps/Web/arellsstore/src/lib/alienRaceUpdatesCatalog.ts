@@ -15,9 +15,9 @@ export const ALIEN_RACE_UPDATES_CATALOG: AlienRaceUpdatesDayCatalog[] = [
     folder: '08.31.26',
     files: [
       'SneakPeak3Preview.jpg',
-      'SneakPeek3(480).mp4',
-      'SneakPeek3(720).mp4',
-      'SneakPeek3(1080).mp4',
+      'SneakPeek3(480p).mp4',
+      'SneakPeek3(720p).mp4',
+      'SneakPeek3(1080p).mp4',
     ],
   },
   {
