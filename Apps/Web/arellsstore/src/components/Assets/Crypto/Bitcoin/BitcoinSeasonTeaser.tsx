@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import GuestTrailerPlayer from '../../../GuestTrailerPlayer';
 import StorylineOpening from '../../../StorylineOpening';
 import AlienRaceDailyUpdates from '../../../AlienRaceDailyUpdates';
-import { GUEST_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/guestTrailer';
+import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/guestTrailer';
 
 const SEASON_ONE_TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/SeasonOneTeaser.jpg';
 
@@ -22,7 +22,7 @@ export default function BitcoinSeasonTeaser() {
           <GuestTrailerPlayer
             theme="bitcoin"
             sources={SIGNED_IN_TRAILER_SOURCES}
-            poster={GUEST_TRAILER_POSTER}
+            poster={SIGNED_IN_TRAILER_POSTER}
           />
         </div>
         <div className="asset-bitcoin-season-teaser-season">
