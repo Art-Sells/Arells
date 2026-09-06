@@ -67,15 +67,10 @@ export default function AlienRaceThemeMusicPlayer() {
     audio.pause();
   }, [clearReadyHandler]);
 
-  const playAudioElement = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    claimMediaPlayback(playbackTokenRef.current);
-    setIsPlaying(true);
-    void audio.play().catch(() => setIsPlaying(false));
-  }, []);
-
-  /** Load `song` if needed, then play. Always starts playback (no toggle). */
+  /**
+   * Mobile Safari only allows play() inside the user-gesture turn.
+   * Set src if needed, then call play() synchronously — never wait for canplay.
+   */
   const playSong = useCallback(
     (song: AlienRaceThemeSong) => {
       const audio = audioRef.current;
@@ -88,23 +83,23 @@ export default function AlienRaceThemeMusicPlayer() {
 
       if (!audioSrcMatches(audio, song.src)) {
         audio.src = song.src;
-        audio.load();
       }
 
-      if (audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
-        playAudioElement();
-        return;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        void playPromise.catch(() => {
+          // Rare: still not buffered — retry once when data arrives (may fail on strict iOS).
+          const retry = () => {
+            clearReadyHandler();
+            claimMediaPlayback(playbackTokenRef.current);
+            void audio.play().catch(() => setIsPlaying(false));
+          };
+          readyHandlerRef.current = retry;
+          audio.addEventListener('canplay', retry, { once: true });
+        });
       }
-
-      const onReady = () => {
-        clearReadyHandler();
-        playAudioElement();
-      };
-      readyHandlerRef.current = onReady;
-      audio.addEventListener('canplay', onReady);
-      audio.addEventListener('loadeddata', onReady);
     },
-    [clearReadyHandler, playAudioElement]
+    [clearReadyHandler]
   );
 
   useEffect(() => {
@@ -245,7 +240,12 @@ export default function AlienRaceThemeMusicPlayer() {
           : undefined
       }
     >
-      <audio ref={audioRef} preload="metadata" src={track.src} />
+      <audio
+        ref={audioRef}
+        preload="auto"
+        playsInline
+        src={track.src}
+      />
       <div className="alien-race-theme-player-shell">
         <div className="alien-race-theme-player-row">
           <button
