@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
 import GuestTrailerPlayer from '../../GuestTrailerPlayer';
 
@@ -14,13 +14,24 @@ type AssetGuestLandingProps = {
   ticker: string;
   title: string;
   slogan?: string;
+  /** When set, shows this image instead of the Bitcoin guest trailer. */
+  posterSrc?: string;
+  posterWidth?: number;
+  posterHeight?: number;
+  posterAlt?: string;
 };
 
 export default function AssetGuestLanding({
   cssModifier,
   title,
+  posterSrc,
+  posterWidth = 3000,
+  posterHeight = 2688,
+  posterAlt = '',
 }: AssetGuestLandingProps) {
-  const showTrailer = cssModifier === 'bitcoin';
+  const showTrailer = cssModifier === 'bitcoin' && !posterSrc;
+  const showPoster = Boolean(posterSrc);
+  const [posterLoaded, setPosterLoaded] = useState(false);
 
   return (
     <div className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing`}>
@@ -56,11 +67,31 @@ export default function AssetGuestLanding({
         </p>
         <div
           className={`asset-guest-action-shell shadow-border-wrap asset-guest-action-shell--${cssModifier}${
-            showTrailer ? ' asset-guest-trailer-shell' : ''
+            showTrailer || showPoster ? ' asset-guest-trailer-shell' : ''
           } asset-guest-mount-slide asset-guest-mount-slide--signin`}
         >
           <span className="shadow-border" aria-hidden="true" />
           {showTrailer ? <GuestTrailerPlayer theme="bitcoin" /> : null}
+          {showPoster && posterSrc ? (
+            <div
+              className={`asset-guest-poster-frame${posterLoaded ? ' is-loaded' : ''}`}
+              style={{ aspectRatio: `${posterWidth} / ${posterHeight}` }}
+            >
+              {!posterLoaded ? (
+                <div className="asset-guest-poster-loader" aria-hidden="true">
+                  <div className="asset-guest-poster-loader-ring" />
+                </div>
+              ) : null}
+              <img
+                src={posterSrc}
+                alt={posterAlt}
+                width={posterWidth}
+                height={posterHeight}
+                className={`asset-guest-poster-img${posterLoaded ? ' is-visible' : ''}`}
+                onLoad={() => setPosterLoaded(true)}
+              />
+            </div>
+          ) : null}
           <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
               <p className="asset-signin-believe-prompt">Sign in to get involved</p>

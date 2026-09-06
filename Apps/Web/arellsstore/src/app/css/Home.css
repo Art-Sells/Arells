@@ -12010,6 +12010,54 @@ a.asset-action-button--save-signin {
 	gap: 10px;
 }
 
+.asset-guest-poster-frame {
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 1px;
+	line-height: 0;
+	border-radius: 13px;
+	overflow: hidden;
+	background: rgba(248, 141, 0, 0.3);
+}
+
+.asset-guest-poster-frame:not(.is-loaded) {
+	min-height: 120px;
+}
+
+.asset-guest-poster-loader {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+}
+
+.asset-guest-poster-loader-ring {
+	width: 44px;
+	height: 44px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 6px solid rgba(248, 141, 0, 0.2);
+	border-top-color: rgba(248, 141, 0, 0.75);
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+.asset-guest-poster-img {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 12px;
+	opacity: 0;
+	transition: opacity 0.9s ease;
+}
+
+.asset-guest-poster-img.is-visible {
+	opacity: 1;
+}
+
 .asset-guest-icon-wrap {
 	margin-top: 20px;
 }
