@@ -6,7 +6,7 @@ import StorylineOpening from '../../../StorylineOpening';
 import AlienRaceDailyUpdates from '../../../AlienRaceDailyUpdates';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/guestTrailer';
 
-const SEASON_ONE_TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/SeasonOneTeaser.jpg';
+const SEASON_ONE_TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/PremierBTCS1.jpg';
 
 export default function BitcoinSeasonTeaser() {
   const [teaserLoaded, setTeaserLoaded] = useState(false);
@@ -36,8 +36,8 @@ export default function BitcoinSeasonTeaser() {
             <img
               src={SEASON_ONE_TEASER_SRC}
               alt="Season One coming soon"
-              width={2341}
-              height={590}
+              width={3000}
+              height={2688}
               className={`asset-bitcoin-season-teaser-img${teaserLoaded ? ' is-visible' : ''}`}
               onLoad={() => setTeaserLoaded(true)}
             />
