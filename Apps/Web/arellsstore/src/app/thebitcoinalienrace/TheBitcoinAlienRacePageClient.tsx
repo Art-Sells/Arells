@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import AlienRaceLoadReveal from '../../components/AlienRaceLoadReveal';
+import AlienRaceThemeMusicPlayer from '../../components/AlienRaceThemeMusicPlayer';
 import AlienRaceUpdatesGrid from '../../components/AlienRaceUpdatesGrid';
 import StorylineOpening from '../../components/StorylineOpening';
 import AssetSummaryCircleLoader from '../../components/Assets/shared/AssetSummaryCircleLoader';
@@ -111,6 +112,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
       visible={pageLoader.visible}
       fadingOut={pageLoader.fadingOut}
     />
+    <AlienRaceThemeMusicPlayer />
     </>
   );
 };

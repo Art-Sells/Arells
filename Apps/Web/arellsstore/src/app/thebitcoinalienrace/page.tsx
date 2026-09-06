@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import TheBitcoinAlienRacePageClient from './TheBitcoinAlienRacePageClient';
-import { HOME_OG_BANNER } from '../../lib/siteMetaDescriptions';
 
 const path = '/thebitcoinalienrace';
 const title = 'The Bitcoin Alien Race';
 const description =
   'In our universe, your Bitcoin investments are lifeless… But in another universe, they are alive, and are on a mission to live forever.';
+const banner = '/images/banners/assets/crypto/Bitcoin/PremierBTCS1.jpg';
 
 export const metadata: Metadata = {
   title,
@@ -19,13 +19,13 @@ export const metadata: Metadata = {
     description,
     url: path,
     type: 'website',
-    images: [{ url: HOME_OG_BANNER }],
+    images: [{ url: banner }],
   },
   twitter: {
     title,
     description,
     card: 'summary_large_image',
-    images: [{ url: HOME_OG_BANNER }],
+    images: [{ url: banner }],
   },
 };
 

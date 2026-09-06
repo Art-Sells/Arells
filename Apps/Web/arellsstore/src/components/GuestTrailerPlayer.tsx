@@ -16,6 +16,7 @@ import {
   waitForVideoMetadata,
 } from '../lib/guestTrailerFullscreen';
 import { captureVideoFrame, midVideoFrameTime } from '../lib/captureVideoFrame';
+import { claimMediaPlayback, MEDIA_PLAYBACK_CLAIM_EVENT } from '../lib/mediaPlaybackClaim';
 
 type GuestTrailerPlayerProps = {
   theme: 'home' | 'bitcoin';
@@ -31,11 +32,6 @@ const CHROME_HIDE_MS = 2800;
 const FULLSCREEN_CHROME_HIDE_MS = 1000;
 const PLAYBACK_CLOCK_EPS = 0.04;
 const STALL_SPINNER_MS = 300;
-const GUEST_TRAILER_PLAY_EVENT = 'arells:guest-trailer-play';
-
-function claimGuestTrailerPlayback(token: object) {
-  window.dispatchEvent(new CustomEvent(GUEST_TRAILER_PLAY_EVENT, { detail: token }));
-}
 
 type VideoFrameCallbackVideo = HTMLVideoElement & {
   requestVideoFrameCallback?: (cb: () => void) => number;
@@ -302,7 +298,7 @@ export default function GuestTrailerPlayer({
   const playVideo = useCallback(async () => {
     const video = videoRef.current;
     if (!video) return;
-    claimGuestTrailerPlayback(playbackTokenRef.current);
+    claimMediaPlayback(playbackTokenRef.current);
     setHasStarted(true);
     setPosterVisible(false);
     setIdlePlayMounted(false);
@@ -394,8 +390,8 @@ export default function GuestTrailerPlayer({
       if ((event as CustomEvent).detail === playbackTokenRef.current) return;
       pauseVideo();
     };
-    window.addEventListener(GUEST_TRAILER_PLAY_EVENT, onOtherPlay);
-    return () => window.removeEventListener(GUEST_TRAILER_PLAY_EVENT, onOtherPlay);
+    window.addEventListener(MEDIA_PLAYBACK_CLAIM_EVENT, onOtherPlay);
+    return () => window.removeEventListener(MEDIA_PLAYBACK_CLAIM_EVENT, onOtherPlay);
   }, [pauseVideo]);
 
   const handleEnded = useCallback(() => {
@@ -596,12 +592,12 @@ export default function GuestTrailerPlayer({
           await waitForVideoMetadata(video);
         }
         if (video.paused) {
-          claimGuestTrailerPlayback(playbackTokenRef.current);
+          claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
         await enterPlayerFullscreen(player, video);
         if (video.paused) {
-          claimGuestTrailerPlayback(playbackTokenRef.current);
+          claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
       } catch {
