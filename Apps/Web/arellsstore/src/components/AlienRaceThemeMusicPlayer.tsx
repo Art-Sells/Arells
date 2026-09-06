@@ -117,15 +117,19 @@ export default function AlienRaceThemeMusicPlayer() {
     if (!mounted || typeof window === 'undefined') return;
 
     const measure = () => {
-      const inner = document.querySelector<HTMLElement>('.bitcoin-alien-race-page-inner');
+      const inner = document.querySelector<HTMLElement>(
+        '.bitcoin-alien-race-page-inner, .asset-page-content--bitcoin'
+      );
       if (!inner) {
         setLayout(null);
         return;
       }
       const r = inner.getBoundingClientRect();
+      // Keep the sticky player at Alien Race column width even on the wider Bitcoin asset page.
+      const width = Math.min(r.width, 340);
       setLayout({
         left: r.left + r.width / 2,
-        width: r.width,
+        width,
       });
     };
 

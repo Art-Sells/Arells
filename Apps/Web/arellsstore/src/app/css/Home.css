@@ -1470,6 +1470,11 @@ body {
 	min-height: 100vh;
 }
 
+/* Clear sticky theme player on signed-in Bitcoin asset page */
+body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-page) {
+	padding-bottom: calc(24px + var(--alien-race-theme-player-offset, 0px));
+}
+
 .bitcoin-alien-race-page-inner {
 	width: min(340px, calc(100% - 20px));
 	max-width: min(340px, calc(100% - 20px));
