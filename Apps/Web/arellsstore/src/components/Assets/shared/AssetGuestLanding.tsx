@@ -14,7 +14,7 @@ type AssetGuestLandingProps = {
   ticker: string;
   title: string;
   slogan?: string;
-  /** When set, shows this image instead of the Bitcoin guest trailer. */
+  /** When set on Bitcoin guest landing, shown above the trailer. */
   posterSrc?: string;
   posterWidth?: number;
   posterHeight?: number;
@@ -29,7 +29,7 @@ export default function AssetGuestLanding({
   posterHeight = 2688,
   posterAlt = '',
 }: AssetGuestLandingProps) {
-  const showTrailer = cssModifier === 'bitcoin' && !posterSrc;
+  const showTrailer = cssModifier === 'bitcoin';
   const showPoster = Boolean(posterSrc);
   const [posterLoaded, setPosterLoaded] = useState(false);
 
@@ -71,7 +71,6 @@ export default function AssetGuestLanding({
           } asset-guest-mount-slide asset-guest-mount-slide--signin`}
         >
           <span className="shadow-border" aria-hidden="true" />
-          {showTrailer ? <GuestTrailerPlayer theme="bitcoin" /> : null}
           {showPoster && posterSrc ? (
             <div
               className={`asset-guest-poster-frame${posterLoaded ? ' is-loaded' : ''}`}
@@ -92,6 +91,7 @@ export default function AssetGuestLanding({
               />
             </div>
           ) : null}
+          {showTrailer ? <GuestTrailerPlayer theme="bitcoin" /> : null}
           <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
               <p className="asset-signin-believe-prompt">Sign in to get involved</p>

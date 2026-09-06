@@ -6,7 +6,7 @@
 
 After Episode One-Three is done:
 
--Replace TheBitcoinAlienRace page poster with Season One poster (as well as he metadata poster)
+-Replace TheBitcoinAlienRace page poster/trailer with Season One poster/trailer(as well as he metadata poster)
 - Unhide (new episode every saturday)
 - Update all guest home page and guest Bitcoin page trailers (use scenes from Episode One-Thee) to "Now Playing" "Sign In to Learn More" remove Coming Soon, change trailer from signed in Bitcoin page to "Season One" "Now Playing" (upload 3 types)
 - Change coming soon to generate new ultra high def image of Leila ref looking like the girl with her eye high definition for "Season One" image
