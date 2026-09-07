@@ -193,6 +193,7 @@ export default function AlienRaceThemeMusicPlayer() {
   }, [visible, layout]);
 
   useEffect(() => {
+    if (!mounted) return;
     const audio = audioRef.current;
     if (!audio) return;
     const onPlay = () => {
@@ -200,7 +201,14 @@ export default function AlienRaceThemeMusicPlayer() {
       setIsPlaying(true);
     };
     const onPause = () => setIsPlaying(false);
-    const onEnded = () => setIsPlaying(false);
+    const onEnded = () => {
+      setIsPlaying(false);
+      try {
+        audio.currentTime = 0;
+      } catch {
+        /* ignore seek errors on ended */
+      }
+    };
     audio.addEventListener('play', onPlay);
     audio.addEventListener('pause', onPause);
     audio.addEventListener('ended', onEnded);
@@ -211,7 +219,7 @@ export default function AlienRaceThemeMusicPlayer() {
       audio.removeEventListener('ended', onEnded);
       audio.pause();
     };
-  }, [clearReadyHandler]);
+  }, [clearReadyHandler, mounted]);
 
   useEffect(() => {
     const onOtherPlay = (event: Event) => {
