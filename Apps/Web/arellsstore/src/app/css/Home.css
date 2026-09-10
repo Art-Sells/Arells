@@ -2097,6 +2097,11 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	text-transform: lowercase;
 }
 
+/* My Investments View More Updates: −5px top padding vs default show-more (18px) */
+.alien-race-updates-grid--myinv .alien-race-updates-more--hub-link a.home-assets-show-more-button {
+	padding-top: 13px;
+}
+
 /* Bitcoin Updates: match guest/portfolio Sign In CTA */
 .asset-page--bitcoin .asset-page-content .alien-race-updates-more--hub-link a.asset-action-button--save-signin {
 	width: 100%;
