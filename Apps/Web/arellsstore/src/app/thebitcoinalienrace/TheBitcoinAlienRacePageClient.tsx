@@ -115,7 +115,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
               <div className="bitcoin-alien-race-updates-height">
                 <h2 className="asset-bitcoin-season-teaser-season-title">Updates</h2>
                 <AlienRaceLoadReveal ready={ready} hasContent={hasContent} theme="bitcoin">
-                  <AlienRaceUpdatesGrid days={days} theme="bitcoin" />
+                  <AlienRaceUpdatesGrid days={days} theme="bitcoin" pageSize={6} />
                 </AlienRaceLoadReveal>
               </div>
             </div>

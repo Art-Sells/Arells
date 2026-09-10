@@ -432,13 +432,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     };
   }, []);
 
-  useEffect(() => {
-    if (!summaryAnimating) return;
-    requestAnimationFrame(() => {
-      scrollToBottomAfterMaxHeightOn(investmentsWholePanelRef.current, 4000);
-    });
-  }, [scrollToBottomAfterMaxHeightOn, summaryAnimating]);
-
   const clearPulseTimers = useCallback(() => {
     pulseTimersRef.current.forEach((t) => globalThis.clearTimeout(t));
     pulseTimersRef.current = [];
@@ -962,7 +955,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
               );
             }
           }
-          scrollToBottomAfterMaxHeightOn(investmentsWholePanelRef.current, 4000);
         });
       });
     };
@@ -980,7 +972,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     } else {
       openInvestmentsDeferTimerRef.current = globalThis.setTimeout(run, waitMs);
     }
-  }, [scrollToBottomAfterMaxHeightOn]);
+  }, []);
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptyActionsMountPhase('done');
     setEmptySigninGone(false);
@@ -998,16 +990,13 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
       emptyActionsExpandTimerRef.current = null;
     }, 1000);
     requestAnimationFrame(() => {
-      scrollToBottomAfterMaxHeightOn(emptyActionsRef.current, 4000);
-    });
-    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setEmptyAddFadeIn(true);
         setEmptySigninHiding(false);
         setEmptyAddHiding(false);
       });
     });
-  }, [scrollToBottomAfterMaxHeightOn]);
+  }, []);
   useEffect(() => {
     if (!emptyActionsHoldRef.current) return;
     if (investments.length > 0 && !isSubmitCollapsing) {

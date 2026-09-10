@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useMemo, useState } from 'react';
 import GuestTrailerPlayer from './GuestTrailerPlayer';
 import AlienRaceUpdateImage from './AlienRaceUpdateImage';
@@ -19,6 +20,10 @@ type AlienRaceUpdatesGridProps = {
   showMoreClassName?: string;
   usePreviewThumbs?: boolean;
   seekWidthPx?: number;
+  /** When set, footer is a link instead of in-place expand. */
+  viewMoreHref?: string;
+  /** How many date folders to show before the footer control. */
+  pageSize?: number;
 };
 
 function videoSources(url: string): TrailerSources {
@@ -37,12 +42,23 @@ export default function AlienRaceUpdatesGrid({
   showMoreClassName,
   usePreviewThumbs,
   seekWidthPx,
+  viewMoreHref,
+  pageSize = ALIEN_RACE_UPDATES_PAGE_SIZE,
 }: AlienRaceUpdatesGridProps) {
-  const [visibleCount, setVisibleCount] = useState(ALIEN_RACE_UPDATES_PAGE_SIZE);
+  const [visibleDayCount, setVisibleDayCount] = useState(pageSize);
   const total = alienRaceThumbCount(days);
-  const visibleDays = useMemo(() => visibleAlienRaceDays(days, visibleCount), [days, visibleCount]);
-  const canShowMore = visibleCount < total;
+  const daysWithMedia = useMemo(
+    () => days.filter((day) => day.media.length > 0),
+    [days]
+  );
+  const totalDays = daysWithMedia.length;
+  const visibleDays = useMemo(
+    () => visibleAlienRaceDays(daysWithMedia, visibleDayCount),
+    [daysWithMedia, visibleDayCount]
+  );
+  const canShowMore = visibleDayCount < totalDays;
   const playerTheme = theme === 'bitcoin' ? 'bitcoin' : 'home';
+  const moreLabel = theme === 'bitcoin' && !viewMoreHref ? 'show more' : 'View More Updates';
 
   if (total === 0) return null;
 
@@ -104,17 +120,41 @@ export default function AlienRaceUpdatesGrid({
         );
       })}
       {canShowMore ? (
-        <div className="home-assets-show-more-wrap alien-race-updates-more">
-          <button
-            type="button"
-            className={
-              showMoreClassName ||
-              'auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button'
-            }
-            onClick={() => setVisibleCount((n) => n + ALIEN_RACE_UPDATES_PAGE_SIZE)}
-          >
-            show more
-          </button>
+        <div
+          className={`home-assets-show-more-wrap alien-race-updates-more${
+            viewMoreHref ? ' alien-race-updates-more--hub-link' : ''
+          }`}
+        >
+          {viewMoreHref ? (
+            <Link
+              href={viewMoreHref}
+              className={
+                showMoreClassName ||
+                (theme === 'bitcoin'
+                  ? 'asset-action-button asset-action-button--save-signin asset-action-button--bitcoin'
+                  : 'auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button')
+              }
+            >
+              {theme === 'bitcoin' ? (
+                <span className="asset-save-signin-text">{moreLabel}</span>
+              ) : (
+                <span className="alien-race-updates-more-label">{moreLabel}</span>
+              )}
+            </Link>
+          ) : (
+            <button
+              type="button"
+              className={
+                showMoreClassName ||
+                (theme === 'bitcoin'
+                  ? 'auth-submit asset-range-button asset-range-button--bitcoin home-assets-show-more-button'
+                  : 'auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button')
+              }
+              onClick={() => setVisibleDayCount((n) => n + pageSize)}
+            >
+              {moreLabel}
+            </button>
+          )}
         </div>
       ) : null}
     </div>

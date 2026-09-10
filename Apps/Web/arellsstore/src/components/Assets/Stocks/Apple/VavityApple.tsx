@@ -431,13 +431,6 @@ const VavityApple: React.FC<VavityAppleProps> = ({ sessionMountClearGuardRef }) 
     };
   }, []);
 
-  useEffect(() => {
-    if (!summaryAnimating) return;
-    requestAnimationFrame(() => {
-      scrollToBottomAfterMaxHeightOn(investmentsWholePanelRef.current, 4000);
-    });
-  }, [scrollToBottomAfterMaxHeightOn, summaryAnimating]);
-
   const clearPulseTimers = useCallback(() => {
     pulseTimersRef.current.forEach((t) => globalThis.clearTimeout(t));
     pulseTimersRef.current = [];
@@ -971,7 +964,6 @@ const VavityApple: React.FC<VavityAppleProps> = ({ sessionMountClearGuardRef }) 
               );
             }
           }
-          scrollToBottomAfterMaxHeightOn(investmentsWholePanelRef.current, 4000);
         });
       });
     };
@@ -989,7 +981,7 @@ const VavityApple: React.FC<VavityAppleProps> = ({ sessionMountClearGuardRef }) 
     } else {
       openInvestmentsDeferTimerRef.current = globalThis.setTimeout(run, waitMs);
     }
-  }, [scrollToBottomAfterMaxHeightOn]);
+  }, []);
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptyActionsMountPhase('done');
     setEmptySigninGone(false);
@@ -1007,16 +999,13 @@ const VavityApple: React.FC<VavityAppleProps> = ({ sessionMountClearGuardRef }) 
       emptyActionsExpandTimerRef.current = null;
     }, 1000);
     requestAnimationFrame(() => {
-      scrollToBottomAfterMaxHeightOn(emptyActionsRef.current, 4000);
-    });
-    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setEmptyAddFadeIn(true);
         setEmptySigninHiding(false);
         setEmptyAddHiding(false);
       });
     });
-  }, [scrollToBottomAfterMaxHeightOn]);
+  }, []);
   useEffect(() => {
     if (!emptyActionsHoldRef.current) return;
     if (investments.length > 0 && !isSubmitCollapsing) {

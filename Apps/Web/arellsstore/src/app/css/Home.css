@@ -1535,13 +1535,15 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	justify-content: center;
 	cursor: pointer;
 	background: rgba(248, 141, 0, 1);
-	color: #fff;
-	-webkit-text-fill-color: #fff;
+	/* Match Sign In / trailer control icon tint on orange */
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%);
+	-webkit-text-fill-color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%);
 	box-shadow: none;
 }
 
 .alien-race-theme-player-play svg {
 	display: block;
+	fill: currentColor;
 }
 
 .alien-race-theme-player-tracks {
@@ -2085,10 +2087,67 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	margin-right: 0;
 }
 
+.alien-race-updates-more--hub-link {
+	margin-top: 12px;
+	margin-bottom: 4px;
+}
+
+.alien-race-updates-more--hub-link a.asset-action-button--save-signin,
+.alien-race-updates-more--hub-link a.home-assets-show-more-button {
+	text-transform: lowercase;
+}
+
+/* Bitcoin Updates: match guest/portfolio Sign In CTA */
+.asset-page--bitcoin .asset-page-content .alien-race-updates-more--hub-link a.asset-action-button--save-signin {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.asset-page--bitcoin .asset-page-content .alien-race-updates-more--hub-link a.asset-action-button--save-signin:link,
+.asset-page--bitcoin .asset-page-content .alien-race-updates-more--hub-link a.asset-action-button--save-signin:visited,
+.asset-page--bitcoin .asset-page-content .alien-race-updates-more--hub-link a.asset-action-button--save-signin:hover,
+.asset-page--bitcoin .asset-page-content .alien-race-updates-more--hub-link a.asset-action-button--save-signin:active,
+.asset-page--bitcoin .asset-page-content .alien-race-updates-more--hub-link a.asset-action-button--save-signin:focus-visible {
+	background: rgba(248, 141, 0, 1) !important;
+	border-color: rgba(248, 141, 0, 1) !important;
+	/* Same word tint as `.asset-action-button--save-signin` on Bitcoin */
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+	-webkit-text-fill-color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+}
+
+.asset-page--bitcoin .asset-page-content .alien-race-updates-more--hub-link a.asset-action-button--save-signin .asset-save-signin-text {
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+	-webkit-text-fill-color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+	opacity: var(--asset-save-signin-text-opacity, 0.8);
+}
+
+@media screen and (max-width: 750px) {
+	.alien-race-updates-more--hub-link a.asset-action-button--save-signin {
+		padding-top: 15px; /* 20px save-signin − 5px */
+	}
+
+	.alien-race-updates-more--hub-link a.home-assets-show-more-button {
+		padding-top: 13px; /* 18px show-more − 5px */
+	}
+
+	.alien-race-updates-more--hub-link a.asset-action-button--save-signin .asset-save-signin-text,
+	.alien-race-updates-more--hub-link .alien-race-updates-more-label {
+		display: inline-block;
+		transform: translateY(3px);
+	}
+}
+
 .alien-race-updates-grid--bitcoin .home-assets-show-more-button {
-	color: rgb(209, 142, 55) !important;
-	-webkit-text-fill-color: rgb(209, 142, 55) !important;
-	border-color: rgba(248, 141, 0, 0.3) !important;
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55)) !important;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(209, 142, 55)) !important;
+	border-color: rgba(248, 141, 0, 0.9) !important;
+	background: rgba(248, 141, 0, 0.18) !important;
+	text-transform: lowercase;
 }
 
 .storyline-opening {
@@ -3602,6 +3661,12 @@ a.asset-action-button--myinv-asset-link {
 }
 .asset-page .asset-page-content .asset-action-button--save-signin .asset-save-signin-text {
 	color: #fff !important;
+}
+
+/* Bitcoin Sign In / View More Updates: cream word tint (matches save-signin button color) */
+.asset-page--bitcoin .asset-page-content .asset-action-button--save-signin .asset-save-signin-text {
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+	-webkit-text-fill-color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
 }
 
 /* Liquid/Solid toggle (asset pages, under chart) */

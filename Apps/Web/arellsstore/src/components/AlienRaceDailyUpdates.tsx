@@ -4,7 +4,7 @@ import React from 'react';
 import AlienRaceLoadReveal from './AlienRaceLoadReveal';
 import AlienRaceUpdatesGrid from './AlienRaceUpdatesGrid';
 import { useAlienRaceUpdates } from '../hooks/useAlienRaceUpdates';
-import { alienRaceThumbCount } from '../lib/bitcoinAlienRaceUpdates';
+import { ALIEN_RACE_UPDATES_PAGE_SIZE, alienRaceThumbCount } from '../lib/bitcoinAlienRaceUpdates';
 
 type AlienRaceDailyUpdatesProps = {
   variant: 'myinv' | 'bitcoin';
@@ -24,6 +24,8 @@ export default function AlienRaceDailyUpdates({ variant, mountExpand = true }: A
         imageHref="/thebitcoinalienrace"
         usePreviewThumbs
         seekWidthPx={variant === 'bitcoin' ? 100 : undefined}
+        viewMoreHref="/thebitcoinalienrace"
+        pageSize={ALIEN_RACE_UPDATES_PAGE_SIZE}
       />
     </AlienRaceLoadReveal>
   );

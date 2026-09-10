@@ -31,13 +31,14 @@
 }
 
 .asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl {
-	color: rgb(255, 247, 236) !important;
+	/* Match Sign In / View More Updates word tint on orange controls */
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
 }
 
 .asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl svg,
 .asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl path {
-	color: rgb(255, 247, 236) !important;
-	fill: rgb(255, 247, 236) !important;
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+	fill: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
 }
 
 .guest-trailer-sizer {

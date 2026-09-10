@@ -1,5 +1,6 @@
 export const ALIEN_RACE_UPDATES_PREFIX = 'marketing/assets/crypto/bitcoin/Updates/';
-export const ALIEN_RACE_UPDATES_PAGE_SIZE = 6;
+/** How many date folders to show before "show more" / "View More Updates" on My Inv & Bitcoin. */
+export const ALIEN_RACE_UPDATES_PAGE_SIZE = 1;
 export const ALIEN_RACE_DATE_FOLDER_RE = /^(\d{2})\.(\d{2})\.(\d{2})$/;
 
 export type AlienRaceMediaKind = 'image' | 'video';
@@ -67,17 +68,9 @@ export function publicS3ObjectUrl(bucket: string, region: string, key: string): 
   return `https://${bucket}.s3.${region}.amazonaws.com/${encoded}`;
 }
 
-export function visibleAlienRaceDays(days: AlienRaceDay[], visibleCount: number): AlienRaceDay[] {
-  let remaining = visibleCount;
-  const out: AlienRaceDay[] = [];
-  for (const day of days) {
-    if (remaining <= 0) break;
-    if (day.media.length === 0) continue;
-    const slice = day.media.slice(0, remaining);
-    remaining -= slice.length;
-    out.push({ ...day, media: slice, images: slice.filter((item) => item.kind === 'image') });
-  }
-  return out;
+export function visibleAlienRaceDays(days: AlienRaceDay[], visibleDayCount: number): AlienRaceDay[] {
+  const withMedia = days.filter((day) => day.media.length > 0);
+  return withMedia.slice(0, Math.max(0, visibleDayCount));
 }
 
 export function alienRaceThumbCount(days: AlienRaceDay[]): number {
