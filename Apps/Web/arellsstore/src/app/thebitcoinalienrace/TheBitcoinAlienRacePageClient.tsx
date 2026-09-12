@@ -113,7 +113,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
               }${ready && !hasContent ? ' is-collapsing' : ''}`}
             >
               <div className="bitcoin-alien-race-updates-height">
-                <h2 className="asset-bitcoin-season-teaser-season-title">Updates</h2>
+                <h2 className="asset-bitcoin-season-teaser-season-title">Weekly Updates</h2>
                 <AlienRaceLoadReveal ready={ready} hasContent={hasContent} theme="bitcoin">
                   <AlienRaceUpdatesGrid days={days} theme="bitcoin" pageSize={6} />
                 </AlienRaceLoadReveal>

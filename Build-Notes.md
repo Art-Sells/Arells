@@ -6,9 +6,9 @@
 
 After Episode One-Three is done:
 
--Replace TheBitcoinAlienRace page poster/trailer with Season One poster/trailer(as well as he metadata poster) Add YouTube preview to guest Bitcoin main and alien race pages only (the main Bitcoin page trailer preview stays the same [but has Trailer over the preview image with the play button below it like episode one])
+-Replace TheBitcoinAlienRace page/YouTube/X poster/trailer with Season One poster/trailer(as well as the metadata poster (use date announcement for preview on trailers) (the main Bitcoin page trailer preview has no words (centered TrailerRef image))
 - Unhide (new episode every saturday and change to date of Episode Two)
-- Update all guest home page and guest Bitcoin page trailers (use scenes from Episode One and voices also) to "Now Playing (On Arells<Online Version))" "Sign In to Learn More" remove Coming Soon, change trailer from signed in Bitcoin page to "Season One" "Now Playing" (upload 3 types)
+- Update all guest home page and guest Bitcoin page trailers to "Now Playing (On Arells<Online Version))" "Sign In to Learn More" remove Coming Soon, change trailer from signed in Bitcoin page to "Season One" "Now Playing" (upload 3 types)
 - Change coming soon to generate new ultra high def image of Leila ref looking like the girl with her eye high definition for "Season One" image
 
 - Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine(reset every week usage)) on Bitcoin Reddit ---Reddit (post-commenters) | X/LinkedIn (remove coming soon and change to "now playing on arells")
