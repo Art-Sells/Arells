@@ -110,7 +110,8 @@ function isPreviewPath(name: string): boolean {
 function isPreviewAsset(name: string): boolean {
   if (isPreviewPath(name)) return true;
   const file = name.split('/').filter(Boolean).pop() || name;
-  return /preview\.(jpe?g|png|webp|gif)$/i.test(file);
+  // `NamePreview.jpg` or `Name(preview).jpg`
+  return /(?:preview|\(preview\))\.(jpe?g|png|webp|gif)$/i.test(file);
 }
 
 function normalizePairingKey(key: string): string {
@@ -120,7 +121,9 @@ function normalizePairingKey(key: string): string {
 function pairingKey(name: string): string {
   const file = name.split('/').filter(Boolean).pop() || name;
   const stem = file.replace(/\.[^.]+$/, '').toLowerCase();
-  return normalizePairingKey(stem.replace(/characterprofile.*$/i, '').replace(/preview$/i, ''));
+  return normalizePairingKey(
+    stem.replace(/characterprofile.*$/i, '').replace(/\(preview\)$/i, '').replace(/preview$/i, '')
+  );
 }
 
 function videoPairingKey(name: string): string | null {
