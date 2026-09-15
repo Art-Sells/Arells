@@ -15,7 +15,7 @@ After Episode One is done:
 
 - Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine(reset every week usage)) on Bitcoin Reddit ---Reddit (post-commenters) | X/LinkedIn (remove coming soon and change to "now playing on arells")
 
--Send follow-up emails(mailmeteor [get verified emails]) [with poster]
+-Snd follow-ups (announce new trailer on page) (mailmeteor [get verified emails]) [with poster]
 
 - reach out to D/M/D/N/ABTC
 
