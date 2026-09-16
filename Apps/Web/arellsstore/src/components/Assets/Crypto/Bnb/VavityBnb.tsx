@@ -17,6 +17,7 @@ import {
 import { useUser } from '../../../../context/UserContext';
 import AssetGuestLanding from '../../shared/AssetGuestLanding';
 import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
+import LifeForceInfoBadge from '../../shared/LifeForceInfoBadge';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import BnbChart from './BnbChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
@@ -2889,7 +2890,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
             <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--bnb">
               <div className="asset-invest-form-metrics">
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--bnb asset-invest-form-metric-title">Purchased Value</span>
+                  <span className="asset-metric-title--bnb asset-invest-form-metric-title life-force-metric-label">Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${
                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
@@ -2912,7 +2913,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                 </div>
 
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--bnb asset-invest-form-metric-title">Current Value</span>
+                  <span className="asset-metric-title--bnb asset-invest-form-metric-title life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}
                     style={{
@@ -2962,7 +2963,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
             <div className="asset-invest-form-controls asset-invest-form-controls--bnb">
               <div className="asset-invest-form-field">
                 <div className="asset-metric-row asset-invest-form-field-label">
-                  <span className="asset-metric-title--bnb">BNB amount</span>
+                  <span className="asset-metric-title--bnb life-force-metric-label">BNB <LifeForceInfoBadge assetName={ASSET.displayName} /> amount</span>
                 </div>
                 <div className="asset-invest-form-field-control">
                   <input
@@ -2998,7 +2999,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                 disabled={submitLoading || deleteInFlight || deleteLocked || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
-                {submitLoading ? 'Submitting...' : 'Submit'}
+                {submitLoading ? 'Submitting...' : (label === 'Add My Alien' ? 'Add My Alien' : 'Submit')}
               </button>
             </div>
           </div>
@@ -3608,7 +3609,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                     requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
                   }}
                 >
-                  Add Investments
+                  Add My Alien
                 </button>
               </div>
             </div>
@@ -3630,7 +3631,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
               <div ref={investmentsWholeContentRef}>
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">my bnb</span>
+                    <span className="asset-portfolio-title-muted">my bnb alien</span>
                   </h2>
                 )}
                 <div
@@ -3644,9 +3645,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                   >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--bnb" style={{ display: 'inline-block', marginTop: 30 }}>
-                  Purchased Value
-                </span>
+                <span className="asset-metric-title--bnb life-force-metric-label" style={{ marginTop: 30 }}>Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={purchasedValueRef}
                   style={{
@@ -3669,9 +3668,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                 </div>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--bnb">
-                  Current Value
-                </span>
+                <span className="asset-metric-title--bnb life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={currentValueRef}
                   style={{
@@ -3722,8 +3719,9 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                             style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                           >
                             <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                              <span className="asset-metric-inline-title--bnb">
+                              <span className="asset-metric-inline-title--bnb life-force-metric-label">
                                 {formatRangeLabel(selectedRangeDays)}{' '}
+                                <LifeForceInfoBadge assetName={ASSET.displayName} />{' '}
                                 <span
                                   style={{
                                     opacity:
@@ -3771,9 +3769,10 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                           style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                         >
                           <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                            <span className="asset-metric-inline-title--bnb">
+                            <span className="asset-metric-inline-title--bnb life-force-metric-label">
                               {formatRangeLabel(null)}{' '}
-                              <span
+                              <LifeForceInfoBadge assetName={ASSET.displayName} />{' '}
+                                <span
                                 style={{
                                   opacity:
                                     (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
@@ -3861,7 +3860,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                     requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
                   }}
                 >
-                  {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
+                  {addMoreOpen ? 'Hide add more life force' : 'Add more life force'}
                 </button>
               </div>
               {showAddMoreForm && (
@@ -3888,7 +3887,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                   <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                     <div className="asset-invest-form-box asset-invest-form-box--bnb">
                       {renderAddForm(
-                        'Add more investments',
+                        'Add more life force',
                         closeAddMoreForm,
                         'asset-action-button asset-action-button--bnb'
                       )}
@@ -3900,7 +3899,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
               disabled
               tabIndex={-1}
             >
-              Add Investments
+              Add My Alien
             </button>
           </div>
         </div>
@@ -4046,9 +4045,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                               </div>
                               <div className="asset-investment-metrics">
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--bnb" style={{ marginTop: 20 }}>
-                                      Purchased Value
-                                    </span>
+                                    <span className="asset-metric-title--bnb life-force-metric-label" style={{ marginTop: 20 }}>Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-symbol--bnb">$</span>
                                       <span className="asset-metric-value">
@@ -4057,7 +4054,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                                     </span>
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--bnb">Current Value</span>
+                                    <span className="asset-metric-title--bnb life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-symbol--bnb">$</span>
                                       <span className="asset-metric-value">
@@ -4087,7 +4084,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                                     })()}
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--bnb">BNB amount</span>
+                                    <span className="asset-metric-title--bnb life-force-metric-label">BNB <LifeForceInfoBadge assetName={ASSET.displayName} /> amount</span>
                                     <span className="asset-metric-value">
                                       {Number(amount).toLocaleString('en-US', {
                                         minimumFractionDigits: 0,
@@ -4222,7 +4219,7 @@ const VavityBnb: React.FC<VavityBnbProps> = ({ sessionMountClearGuardRef }) => {
                 <div ref={addFormBoxRef} className="asset-slide-panel-inner">
                   <div className="asset-invest-form-box asset-invest-form-box--bnb">
                     {renderAddForm(
-                      'Add Investments',
+                      'Add My Alien',
                       closeAddForm,
                       'asset-action-button asset-action-button--bnb'
                     )}

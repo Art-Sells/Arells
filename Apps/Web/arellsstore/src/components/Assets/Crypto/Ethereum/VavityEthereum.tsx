@@ -17,6 +17,7 @@ import {
 import { useUser } from '../../../../context/UserContext';
 import AssetGuestLanding from '../../shared/AssetGuestLanding';
 import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
+import LifeForceInfoBadge from '../../shared/LifeForceInfoBadge';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import EthereumChart from './EthereumChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
@@ -2895,7 +2896,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
             <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--ethereum">
               <div className="asset-invest-form-metrics">
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title">Purchased Value</span>
+                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title life-force-metric-label">Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${
                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
@@ -2918,7 +2919,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                 </div>
 
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title">Current Value</span>
+                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}
                     style={{
@@ -2968,7 +2969,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
             <div className="asset-invest-form-controls asset-invest-form-controls--ethereum">
               <div className="asset-invest-form-field">
                 <div className="asset-metric-row asset-invest-form-field-label">
-                  <span className="asset-metric-title--ethereum">Ethereum amount</span>
+                  <span className="asset-metric-title--ethereum life-force-metric-label">Ethereum <LifeForceInfoBadge assetName={ASSET.displayName} /> amount</span>
                 </div>
                 <div className="asset-invest-form-field-control">
                   <input
@@ -3004,7 +3005,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                 disabled={submitLoading || deleteInFlight || deleteLocked || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
-                {submitLoading ? 'Submitting...' : 'Submit'}
+                {submitLoading ? 'Submitting...' : (label === 'Add My Alien' ? 'Add My Alien' : 'Submit')}
               </button>
             </div>
           </div>
@@ -3611,7 +3612,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                     requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
                   }}
                 >
-                  Add Investments
+                  Add My Alien
                 </button>
               </div>
             </div>
@@ -3633,7 +3634,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
               <div ref={investmentsWholeContentRef}>
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">my ethereum</span>
+                    <span className="asset-portfolio-title-muted">my ethereum alien</span>
                   </h2>
                 )}
                 <div
@@ -3647,9 +3648,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                   >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--ethereum" style={{ display: 'inline-block', marginTop: 30 }}>
-                  Purchased Value
-                </span>
+                <span className="asset-metric-title--ethereum life-force-metric-label" style={{ marginTop: 30 }}>Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={purchasedValueRef}
                   style={{
@@ -3672,9 +3671,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                 </div>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--ethereum">
-                  Current Value
-                </span>
+                <span className="asset-metric-title--ethereum life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={currentValueRef}
                   style={{
@@ -3724,8 +3721,9 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                             style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                           >
                             <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                              <span className="asset-metric-inline-title--ethereum">
+                              <span className="asset-metric-inline-title--ethereum life-force-metric-label">
                                 {formatRangeLabel(selectedRangeDays)}{' '}
+                                <LifeForceInfoBadge assetName={ASSET.displayName} />{' '}
                                 <span
                                   style={{
                                     opacity:
@@ -3773,9 +3771,10 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                           style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                         >
                           <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                            <span className="asset-metric-inline-title--ethereum">
+                            <span className="asset-metric-inline-title--ethereum life-force-metric-label">
                               {formatRangeLabel(null)}{' '}
-                              <span
+                              <LifeForceInfoBadge assetName={ASSET.displayName} />{' '}
+                                <span
                                 style={{
                                   opacity:
                                     (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
@@ -3863,7 +3862,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                     requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
                   }}
                 >
-                  {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
+                  {addMoreOpen ? 'Hide add more life force' : 'Add more life force'}
                 </button>
               </div>
                 {showAddMoreForm && (
@@ -3890,7 +3889,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                     <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                       <div className="asset-invest-form-box asset-invest-form-box--ethereum">
                         {renderAddForm(
-                          'Add more investments',
+                          'Add more life force',
                           closeAddMoreForm,
                         'asset-action-button asset-action-button--ethereum'
                         )}
@@ -3906,7 +3905,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                               disabled
                               tabIndex={-1}
                             >
-                              Add Investments
+                              Add My Alien
                             </button>
                           </div>
                         </div>
@@ -4055,9 +4054,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                                 </div>
                                 <div className="asset-investment-metrics">
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                      <span className="asset-metric-title--ethereum" style={{ marginTop: 20 }}>
-                                        Purchased Value
-                                      </span>
+                                      <span className="asset-metric-title--ethereum life-force-metric-label" style={{ marginTop: 20 }}>Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                                       <span className="asset-money-wrap">
                                         <span className="asset-metric-symbol--ethereum">$</span>
                                         <span className="asset-metric-value">
@@ -4068,7 +4065,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                                       </span>
                                     </div>
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                      <span className="asset-metric-title--ethereum">Current Value</span>
+                                      <span className="asset-metric-title--ethereum life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                                       <span className="asset-money-wrap">
                                         <span className="asset-metric-symbol--ethereum">$</span>
                                         <span className="asset-metric-value">
@@ -4100,7 +4097,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                                       })()}
                                     </div>
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                      <span className="asset-metric-title--ethereum">Ethereum amount</span>
+                                      <span className="asset-metric-title--ethereum life-force-metric-label">Ethereum <LifeForceInfoBadge assetName={ASSET.displayName} /> amount</span>
                                       <span className="asset-metric-value">
                                         {Number(amount).toLocaleString('en-US', {
                                           minimumFractionDigits: 0,
@@ -4236,7 +4233,7 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                 <div ref={addFormBoxRef} className="asset-slide-panel-inner">
                   <div className="asset-invest-form-box asset-invest-form-box--ethereum">
                     {renderAddForm(
-                      'Add Investments',
+                      'Add My Alien',
                       closeAddForm,
                       'asset-action-button asset-action-button--ethereum'
                     )}

@@ -1287,6 +1287,111 @@ body {
 	border: 1px solid rgba(248, 141, 0, 0.3);
 }
 
+.asset-alien-photo-slot {
+	width: 92%;
+	margin: 0 auto 8px;
+	padding: 10px;
+	box-sizing: border-box;
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 180px;
+	position: relative;
+	transition: transform 0.2s ease;
+}
+
+.asset-alien-photo-slot--bitcoin {
+	background: rgba(248, 141, 0, 0.06);
+	border: 1px solid rgba(248, 141, 0, 0.3);
+}
+
+.asset-alien-photo-slot:active:not(.is-busy) {
+	transform: translateY(-4px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.asset-alien-photo-slot:hover:not(.is-busy) {
+		transform: translateY(-4px);
+	}
+}
+
+.asset-alien-photo-input {
+	display: none;
+}
+
+.asset-alien-photo-hit {
+	appearance: none;
+	-webkit-appearance: none;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+	width: 100%;
+	min-height: 160px;
+	margin: 0;
+	padding: 16px 12px;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	font-family: Arial, sans-serif;
+}
+
+.asset-alien-photo-slot.is-busy .asset-alien-photo-hit {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.asset-alien-photo-plus {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 44px;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	border-radius: 12px;
+	border: 1px solid rgba(248, 141, 0, 0.9);
+	background: rgba(248, 141, 0, 0.18);
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+}
+
+.asset-alien-photo-plus svg {
+	display: block;
+	fill: currentColor;
+}
+
+.asset-alien-photo-label {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	color: var(--asset-line-color, rgb(209, 142, 55));
+	-webkit-text-fill-color: var(--asset-line-color, rgb(209, 142, 55));
+	font-size: 21px;
+	font-weight: 800;
+	letter-spacing: -0.5px;
+	line-height: 1.25;
+	text-align: center;
+	text-wrap: balance;
+	opacity: 0.7;
+}
+
+@media screen and (max-width: 750px) {
+	.asset-alien-photo-label {
+		font-size: 18px;
+	}
+}
+
+.asset-alien-photo-img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 240px;
+	object-fit: contain;
+	border-radius: 10px;
+}
+
 .asset-bitcoin-season-teaser {
 	width: 100%;
 	box-sizing: border-box;
@@ -1880,6 +1985,8 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 .myinv-daily-updates-height {
 	min-height: 0;
 	overflow: hidden;
+	/* Room for .myinv-daily-updates-frame’s 1px outer ring; overflow:hidden otherwise clips it. */
+	padding-bottom: 2px;
 }
 
 .myinv-daily-updates-frame {
@@ -6319,6 +6426,172 @@ a.asset-action-button--myinv-asset-link {
 	transform: translateY(-4px);
 }
 
+.life-force-metric-label {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 5px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.asset-profit-block .life-force-metric-label,
+.myinv-profit-row .myinv-metric-title,
+.asset-invest-form-metrics .asset-invest-form-row:nth-child(3) .asset-invest-form-metric-title,
+.asset-investment-metrics .asset-money-row:nth-child(3) > span:first-child {
+	margin-top: 4px;
+}
+
+.life-force-badge {
+	appearance: none;
+	-webkit-appearance: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding: 2px 7px;
+	border-radius: 6px;
+	border: 1px solid color-mix(in srgb, var(--asset-line-color, var(--myinv-accent-color)) 38%, transparent);
+	background: transparent;
+	color: var(--asset-line-color, var(--myinv-accent-color));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color));
+	font-family: Arial, sans-serif;
+	font-size: 8px;
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 1.2;
+	white-space: nowrap;
+	cursor: pointer;
+	position: relative;
+	top: -2px;
+	box-shadow: none;
+	transition: transform 0.2s ease;
+}
+
+.life-force-badge:active {
+	transform: translateY(-2px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.life-force-badge:hover {
+		transform: translateY(-2px);
+	}
+}
+
+.myinv-page .life-force-badge {
+	border-color: color-mix(in srgb, var(--myinv-accent-color) 38%, transparent);
+	background: transparent;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
+.life-force-overlay {
+	position: fixed;
+	inset: 0;
+	min-width: 370px;
+	background: rgba(255, 255, 255, 0.86);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 16px;
+	overflow-y: auto;
+	z-index: 2500;
+	box-sizing: border-box;
+	font-family: Arial, sans-serif;
+}
+
+.life-force-overlay-card {
+	width: 200px;
+	height: 270px;
+	background: color-mix(in srgb, var(--asset-hover-dot-color, var(--myinv-accent-color)) 6%, #ffffff);
+	border: 1px solid color-mix(in srgb, var(--asset-hover-dot-color, var(--myinv-accent-color)) 30%, transparent);
+	border-radius: 10px;
+	padding: 30px;
+	box-sizing: border-box;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 16px;
+	animation: pageSlideUp 1s ease both;
+	will-change: transform, opacity;
+}
+
+.life-force-overlay-card--coming-soon {
+	height: 300px;
+}
+
+.life-force-overlay-card.myinv-accent-border {
+	border: none;
+	background: #fff;
+}
+
+.life-force-overlay-icon {
+	width: 30px;
+	height: 30px;
+	flex-shrink: 0;
+	opacity: 0.5;
+	background: var(--asset-line-color);
+	-webkit-mask-image: url('/images/Arells-Icon.png');
+	mask-image: url('/images/Arells-Icon.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+
+.life-force-overlay-icon--investments {
+	background: var(--myinv-accent-color);
+}
+
+.life-force-overlay-copy {
+	margin: 0;
+	padding: 0;
+	flex: 0 0 auto;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 13px;
+	line-height: 15px;
+	font-weight: 400;
+	letter-spacing: -0.3px;
+	color: #111;
+	opacity: 0.7;
+	text-align: center;
+}
+
+.life-force-overlay-card:not(.myinv-accent-border) .life-force-overlay-copy {
+	color: var(--asset-line-color);
+	-webkit-text-fill-color: var(--asset-line-color);
+}
+
+.life-force-overlay-line {
+	display: block;
+}
+
+.life-force-ok {
+	width: 80px;
+	height: 40px;
+	margin-top: 10px;
+	padding: 0;
+	box-sizing: border-box;
+	border-color: color-mix(in srgb, var(--asset-hover-dot-color, var(--asset-line-color)) 90%, transparent);
+	background: color-mix(in srgb, var(--asset-hover-dot-color, var(--asset-line-color)) 18%, transparent);
+	color: var(--asset-range-button-label-color, var(--asset-line-color));
+	-webkit-text-fill-color: var(--asset-range-button-label-color, var(--asset-line-color));
+	flex-shrink: 0;
+}
+
+.life-force-overlay .myinv-range-button {
+	width: 80px;
+	height: 40px;
+	margin-top: 10px;
+	padding: 0;
+	box-sizing: border-box;
+	flex-shrink: 0;
+}
+
 @media (hover: hover) and (pointer: fine) {
 	.asset-title-badge:hover {
 		transform: translateY(-4px);
@@ -6819,6 +7092,10 @@ a.myinv-about-button:focus-visible {
 	opacity: 1;
 	display: block;
 	text-align: center;
+}
+
+.myinv-metric-title.life-force-metric-label {
+	display: inline-flex;
 }
 
 .myinv-metric-symbol,

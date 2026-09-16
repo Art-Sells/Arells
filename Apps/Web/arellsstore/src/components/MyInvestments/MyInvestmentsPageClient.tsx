@@ -7,6 +7,7 @@ import { liquidSolidToggleKnobStyle } from '../Assets/shared/liquidSolidToggleKn
 import { useLiquidSolidToggleTrackSync } from '../Assets/shared/useLiquidSolidToggleTrackSync';
 import AssetSummaryCircleLoader from '../Assets/shared/AssetSummaryCircleLoader';
 import { useAssetSummaryCircleLoader } from '../Assets/shared/useAssetSummaryCircleLoader';
+import LifeForceInfoBadge from '../Assets/shared/LifeForceInfoBadge';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
@@ -1081,7 +1082,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                       <div className="myinv-summary-shell">
                         <div className="myinv-totals">
                           <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
-                            <span className="myinv-metric-title">Purchased Value</span>
+                            <span className="myinv-metric-title life-force-metric-label">Purchased <LifeForceInfoBadge variant="investments" /> Value</span>
                             <div
                               ref={purchasedValueRef}
                               style={{
@@ -1115,7 +1116,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                             </div>
                           </div>
                           <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
-                            <span className="myinv-metric-title">Current Value</span>
+                            <span className="myinv-metric-title life-force-metric-label">Current <LifeForceInfoBadge variant="investments" /> Value</span>
                             <div
                               ref={currentValueRef}
                               style={{
@@ -1163,8 +1164,9 @@ const MyInvestmentsPageClient: React.FC = () => {
                     >
                       <div className="myinv-profit-summary myinv-profit-inner">
                         <div className="asset-metric-row asset-money-row myinv-profit-row">
-                          <span className="myinv-metric-title">
+                          <span className="myinv-metric-title life-force-metric-label">
                             {formatRangeLabel(selectedRangeDays)}{' '}
+                            <LifeForceInfoBadge variant="investments" />{' '}
                             <span
                               className="asset-profit-range-anim"
                               style={{
@@ -1388,7 +1390,7 @@ const MyInvestmentsPageClient: React.FC = () => {
           <>
             {myAssetsSortedByHoldings.length > 0 && (
               <MyInvAssetHubPanel
-                title="My Assets"
+                title="My Alien Race"
                 slideIn={slideIn}
                 assets={myAssetsSortedByHoldings}
                 linkKeyPrefix="held"
@@ -1399,7 +1401,7 @@ const MyInvestmentsPageClient: React.FC = () => {
 
             {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length === 0 && (
               <MyInvAssetHubPanel
-                title="Add Investments"
+                title="Add My Alien Race"
                 slideIn={slideIn}
                 assets={missingAssetsByMarketCap}
                 linkKeyPrefix="add-missing"
@@ -1411,7 +1413,7 @@ const MyInvestmentsPageClient: React.FC = () => {
 
             {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length > 0 && (
               <MyInvAssetHubPanel
-                title="Other Assets"
+                title="Other Alien Races"
                 slideIn={slideIn}
                 assets={missingAssetsByMarketCap}
                 linkKeyPrefix="missing"
