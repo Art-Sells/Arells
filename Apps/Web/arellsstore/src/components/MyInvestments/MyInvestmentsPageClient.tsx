@@ -1405,7 +1405,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                                         const accents =
                                           emailVerifiedWelcomePhaseCopy.myInvPhaseOneDetailDesktop.accentPhrases;
                                         const parts: React.ReactNode[] = [];
-                                        let rest = line;
+                                        let rest: string = line;
                                         let key = 0;
                                         while (rest.length > 0) {
                                           let nextIndex = -1;
