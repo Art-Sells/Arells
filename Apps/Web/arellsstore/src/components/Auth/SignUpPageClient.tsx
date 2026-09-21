@@ -22,6 +22,7 @@ import {
   emailVerifiedWelcomeCopy,
   emailVerifiedWelcomePhaseCopy,
 } from '../../content/emailVerifiedWelcomeCopy';
+import PhaseOneBitcoinAlienRaceButton from '../shared/PhaseOneBitcoinAlienRaceButton';
 
 const COLLAPSE_MS = 1500;
 
@@ -186,7 +187,7 @@ const SignUpPageClient: React.FC = () => {
     if (loadingPortfolio) return;
     setLoadingPortfolio(true);
     circleLoader.show();
-    router.push('/my-investments');
+    router.push('/bitcoin');
     router.refresh();
   };
 
@@ -229,6 +230,32 @@ const SignUpPageClient: React.FC = () => {
                         {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line3}
                       </p>
                     </div>
+                    <div className="auth-verified-phase-section auth-verified-phase-section--detail myinv-accent-border">
+                      <p className="auth-verified-welcome-phase-heading">
+                        {emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.title}
+                      </p>
+                      <div className="auth-verified-welcome-phase-detail-lines">
+                        {emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.lines.map((line) => {
+                          const isAccent =
+                            emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.accentLines.includes(
+                              line as (typeof emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.accentLines)[number]
+                            );
+                          return (
+                            <p
+                              key={line}
+                              className={`auth-verified-welcome-phase-line${
+                                isAccent
+                                  ? ' auth-verified-welcome-phase-line--stack-accent'
+                                  : ' auth-verified-welcome-phase-line--stack-muted'
+                              }`}
+                            >
+                              {line}
+                            </p>
+                          );
+                        })}
+                        <PhaseOneBitcoinAlienRaceButton className="phase-one-bitcoin-alien-race-button--verified" />
+                      </div>
+                    </div>
                     <div className="auth-verified-phase-section myinv-accent-border">
                       <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--portfolio-cta">
                         {emailVerifiedWelcomePhaseCopy.portfolioBenefitLine}
@@ -239,7 +266,9 @@ const SignUpPageClient: React.FC = () => {
                         disabled={loadingPortfolio}
                         className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
                       >
-                        {loadingPortfolio ? 'Loading Investments' : 'View Investments'}
+                        {loadingPortfolio
+                          ? emailVerifiedWelcomePhaseCopy.portfolioCtaLoadingLabel
+                          : emailVerifiedWelcomePhaseCopy.portfolioCtaLabel}
                       </button>
                     </div>
                   </div>

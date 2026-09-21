@@ -26,6 +26,8 @@ import {
 } from '../../lib/vavity/portfolioValuation';
 import { useMyInvEngagementEvent } from '../../hooks/useMyInvEngagementEvent';
 import { runAfterMaxHeightTransitionEnd } from '../../lib/client/documentScroll';
+import { emailVerifiedWelcomePhaseCopy } from '../../content/emailVerifiedWelcomeCopy';
+import PhaseOneBitcoinAlienRaceButton from '../shared/PhaseOneBitcoinAlienRaceButton';
 
 const SUMMARY_VALUES_FORCE_READY_MS = 8000;
 const SUMMARY_HEIGHT_EXPAND_MS = 3000;
@@ -1375,6 +1377,91 @@ const MyInvestmentsPageClient: React.FC = () => {
                             <p className="myinv-mission-line">
                               we are on a mission to ensure your investments never lose value
                             </p>
+                            <div className="myinv-panel-section myinv-accent-border myinv-mission-phase-card">
+                              <div className="myinv-panel myinv-panel--shell myinv-mission-phase-shell">
+                                <p className="myinv-mission-phase-intro myinv-mission-phase-intro--desktop">
+                                  We are currently in{' '}
+                                  <span className="myinv-mission-phase-line--accent">Phase One</span> of our
+                                  mission.
+                                </p>
+                                <div className="myinv-mission-phase-intro myinv-mission-phase-intro--mobile">
+                                  <p className="myinv-mission-phase-line myinv-mission-phase-line--muted">
+                                    {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line1}
+                                  </p>
+                                  <p className="myinv-mission-phase-line myinv-mission-phase-line--accent">
+                                    {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line2}
+                                  </p>
+                                  <p className="myinv-mission-phase-line myinv-mission-phase-line--muted">
+                                    {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line3}
+                                  </p>
+                                </div>
+                                <div className="myinv-panel-section myinv-accent-border myinv-mission-phase-detail">
+                                  <div className="myinv-mission-phase-detail-inner">
+                                    <p className="myinv-mission-phase-heading">
+                                      {emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.title}
+                                    </p>
+                                    <div className="myinv-mission-phase-detail-lines myinv-mission-phase-detail-lines--desktop">
+                                      {emailVerifiedWelcomePhaseCopy.myInvPhaseOneDetailDesktop.lines.map((line) => {
+                                        const accents =
+                                          emailVerifiedWelcomePhaseCopy.myInvPhaseOneDetailDesktop.accentPhrases;
+                                        const parts: React.ReactNode[] = [];
+                                        let rest = line;
+                                        let key = 0;
+                                        while (rest.length > 0) {
+                                          let nextIndex = -1;
+                                          let nextPhrase = '';
+                                          for (const phrase of accents) {
+                                            const idx = rest.indexOf(phrase);
+                                            if (idx !== -1 && (nextIndex === -1 || idx < nextIndex)) {
+                                              nextIndex = idx;
+                                              nextPhrase = phrase;
+                                            }
+                                          }
+                                          if (nextIndex === -1) {
+                                            parts.push(rest);
+                                            break;
+                                          }
+                                          if (nextIndex > 0) parts.push(rest.slice(0, nextIndex));
+                                          parts.push(
+                                            <span key={key++} className="myinv-mission-phase-line--accent">
+                                              {nextPhrase}
+                                            </span>
+                                          );
+                                          rest = rest.slice(nextIndex + nextPhrase.length);
+                                        }
+                                        return (
+                                          <p key={line} className="myinv-mission-phase-line myinv-mission-phase-line--muted">
+                                            {parts}
+                                          </p>
+                                        );
+                                      })}
+                                      <PhaseOneBitcoinAlienRaceButton className="phase-one-bitcoin-alien-race-button--myinv" />
+                                    </div>
+                                    <div className="myinv-mission-phase-detail-lines myinv-mission-phase-detail-lines--mobile">
+                                      {emailVerifiedWelcomePhaseCopy.myInvPhaseOneDetailMobile.lines.map((line) => {
+                                        const isAccent =
+                                          emailVerifiedWelcomePhaseCopy.myInvPhaseOneDetailMobile.accentLines.includes(
+                                            line as (typeof emailVerifiedWelcomePhaseCopy.myInvPhaseOneDetailMobile.accentLines)[number]
+                                          );
+                                        return (
+                                          <p
+                                            key={line}
+                                            className={`myinv-mission-phase-line${
+                                              isAccent
+                                                ? ' myinv-mission-phase-line--accent'
+                                                : ' myinv-mission-phase-line--muted'
+                                            }`}
+                                          >
+                                            {line}
+                                          </p>
+                                        );
+                                      })}
+                                      <PhaseOneBitcoinAlienRaceButton className="phase-one-bitcoin-alien-race-button--myinv" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1401,7 +1488,7 @@ const MyInvestmentsPageClient: React.FC = () => {
 
             {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length === 0 && (
               <MyInvAssetHubPanel
-                title="Add My Alien Race"
+                title="View Asset"
                 slideIn={slideIn}
                 assets={missingAssetsByMarketCap}
                 linkKeyPrefix="add-missing"
@@ -1413,7 +1500,7 @@ const MyInvestmentsPageClient: React.FC = () => {
 
             {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length > 0 && (
               <MyInvAssetHubPanel
-                title="Other Alien Races"
+                title="Other Assets"
                 slideIn={slideIn}
                 assets={missingAssetsByMarketCap}
                 linkKeyPrefix="missing"

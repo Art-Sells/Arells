@@ -5752,8 +5752,202 @@ a.asset-action-button--myinv-asset-link {
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
-	gap: 8px;
-	padding: 16px 16px 21px;
+	gap: 12px;
+	padding: 16px;
+}
+
+.myinv-mission-phase-intro {
+	margin: 0;
+	width: min(280px, 100%);
+	box-sizing: border-box;
+	text-align: center;
+	font-weight: 800;
+	font-size: 12px;
+	line-height: 1.25;
+	letter-spacing: -0.5px;
+	color: #000;
+	-webkit-text-fill-color: #000;
+}
+
+.myinv-mission-phase-intro--desktop {
+	display: block;
+}
+
+.myinv-mission-phase-intro--mobile {
+	display: none;
+	width: min(170px, 100%);
+}
+
+.myinv-mission-phase-intro--mobile .myinv-mission-phase-line {
+	margin: 0;
+	width: 100%;
+}
+
+.myinv-mission-phase-intro--mobile .myinv-mission-phase-line + .myinv-mission-phase-line {
+	margin-top: 2px;
+}
+
+.myinv-mission-group .myinv-mission-phase-detail {
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.myinv-mission-phase-detail-inner {
+	padding: 16px 14px;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.myinv-mission-phase-heading {
+	margin: 0 0 6px;
+	font-weight: 800;
+	font-size: 12px;
+	line-height: 1.25;
+	letter-spacing: -0.5px;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+	opacity: 0.9;
+}
+
+.myinv-mission-phase-detail-lines {
+	width: min(280px, 100%);
+	max-width: 100%;
+	margin: 0 auto;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.myinv-mission-phase-detail-lines--desktop {
+	display: block;
+	width: min(520px, 100%);
+}
+
+.myinv-mission-phase-detail-lines--mobile {
+	display: none;
+	width: min(170px, 100%);
+}
+
+.myinv-mission-phase-line {
+	margin: 0;
+	width: 100%;
+	font-weight: 800;
+	font-size: 12px;
+	line-height: 1.25;
+	letter-spacing: -0.5px;
+	box-sizing: border-box;
+}
+
+.myinv-mission-phase-detail-lines .myinv-mission-phase-line + .myinv-mission-phase-line {
+	margin-top: 2px;
+}
+
+.myinv-mission-phase-line--muted {
+	color: #000;
+	-webkit-text-fill-color: #000;
+}
+
+.myinv-mission-phase-line--accent {
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+	opacity: 0.9;
+}
+
+.phase-one-bitcoin-alien-race-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: fit-content;
+	margin: 8px auto 0;
+	padding: 8px 12px;
+	box-sizing: border-box;
+	max-width: 100%;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	background: transparent;
+	border: none;
+	border-radius: 10px;
+	position: relative;
+	isolation: isolate;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+	transition: transform 0.2s ease;
+}
+
+a.phase-one-bitcoin-alien-race-button:link,
+a.phase-one-bitcoin-alien-race-button:visited,
+a.phase-one-bitcoin-alien-race-button:hover,
+a.phase-one-bitcoin-alien-race-button:active,
+a.phase-one-bitcoin-alien-race-button:focus-visible {
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+	text-decoration: none;
+}
+
+.phase-one-bitcoin-alien-race-button::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	padding: 1px;
+	border-radius: inherit;
+	background: var(--myinv-accent-color);
+	opacity: 0.9;
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.phase-one-bitcoin-alien-race-button-text {
+	position: relative;
+	z-index: 2;
+	font-family: Arial, sans-serif;
+	font-weight: 800;
+	font-size: 12px;
+	line-height: 1.25;
+	letter-spacing: -0.5px;
+	white-space: nowrap;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .phase-one-bitcoin-alien-race-button,
+.auth-verify-sent.auth-verify-sent--verified-success .phase-one-bitcoin-alien-race-button-text,
+.auth-page.auth-page--verified-email a.phase-one-bitcoin-alien-race-button:link,
+.auth-page.auth-page--verified-email a.phase-one-bitcoin-alien-race-button:visited,
+.auth-page.auth-page--verified-email a.phase-one-bitcoin-alien-race-button:hover,
+.auth-page.auth-page--verified-email a.phase-one-bitcoin-alien-race-button:active,
+.auth-page.auth-page--verified-email a.phase-one-bitcoin-alien-race-button:focus-visible {
+	color: var(--myinv-accent-color) !important;
+	-webkit-text-fill-color: var(--myinv-accent-color) !important;
+}
+
+.phase-one-bitcoin-alien-race-button:active {
+	transform: translateY(-2px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.phase-one-bitcoin-alien-race-button:hover {
+		transform: translateY(-2px);
+	}
+}
+
+@media (max-width: 750px) {
+	.myinv-mission-phase-intro--desktop,
+	.myinv-mission-phase-detail-lines--desktop {
+		display: none;
+	}
+
+	.myinv-mission-phase-intro--mobile,
+	.myinv-mission-phase-detail-lines--mobile {
+		display: block;
+	}
 }
 
 .myinv-mission-accent-body {
@@ -7326,7 +7520,7 @@ a.myinv-about-button:focus-visible {
 	}
 
 	.myinv-mission-group .myinv-mission-phase-shell {
-		gap: 6px;
+		gap: 10px;
 	}
 
 	.myinv-mission-sub {
@@ -11466,6 +11660,23 @@ a.growth-metrics-about-button:focus-visible {
 	text-align: center;
 }
 
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-phase-section--detail .auth-verified-welcome-phase-detail-lines {
+	width: 170px;
+	max-width: 100%;
+	margin: 0 auto;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-phase-section--detail .auth-verified-welcome-phase-detail-lines .auth-verified-welcome-phase-line {
+	margin: 0;
+	width: 100%;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-phase-section--detail .auth-verified-welcome-phase-detail-lines .auth-verified-welcome-phase-line + .auth-verified-welcome-phase-line {
+	margin-top: 2px;
+}
+
 .auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phase-heading {
 	margin: 0 0 6px;
 	font-weight: 800;
@@ -11735,6 +11946,28 @@ a.asset-action-button--save-signin {
 	margin-left: auto;
 	margin-right: auto;
 	box-sizing: border-box;
+}
+
+.about-card .about-phase-copy-column .about-phase-detail-lines {
+	width: 130px;
+	max-width: 100%;
+	margin: 0 auto 25px;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.about-card .about-phase-copy-column .about-phase-detail-lines .about-phase-detail-line {
+	margin: 0;
+	width: 100%;
+}
+
+.about-card .about-phase-copy-column .about-phase-detail-lines .about-phase-detail-line + .about-phase-detail-line {
+	margin-top: 2px;
+}
+
+.about-card .about-phase-copy-column .about-phase-detail-line--accent {
+	color: var(--myinv-accent-color);
+	opacity: 0.9;
 }
 
 .about-card .about-phase-copy-column .about-phase-list {

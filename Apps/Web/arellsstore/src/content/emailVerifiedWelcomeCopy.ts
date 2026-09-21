@@ -1,5 +1,5 @@
 /**
- * Email verified success screen — copy above “View Investments”.
+ * Email verified success screen — copy above the Bitcoin CTA.
  * Edit this file to change wording (styling is in Home.css: `.auth-verified-welcome*`).
  */
 export const emailVerifiedWelcomeCopy = {
@@ -7,21 +7,71 @@ export const emailVerifiedWelcomeCopy = {
   paragraphs: ['You are now part of a mission to ensure investments never lose value.'],
 } as const;
 
-/** Rendered below the paragraph above; nested borders in signup verified UI + `.auth-verified-welcome-phases--stacked`. */
+/** Shared Phase One mission copy (verified, About, My Investments). */
 export const emailVerifiedWelcomePhaseCopy = {
   missionPhaseIntroLines: {
     line1: 'We are currently in',
     line2: 'Phase One',
     line3: 'of our mission.',
   },
-  portfolioBenefitLine: 'view investments to continue',
+  /** ≥750px My Investments intro (single line). */
+  missionPhaseIntroDesktop: 'We are currently in Phase One of our mission.',
+  bitcoinAlienRaceButton: {
+    label: 'The Bitcoin Alien Race',
+    href: '/thebitcoinalienrace',
+  },
+  /** Nested Phase One detail — verified stacked lines. */
+  verifiedPhaseOneDetail: {
+    title: 'Phase One:',
+    lines: [
+      'Entertain and educate',
+      'you on how we plan',
+      'to achieve our mission',
+      'by releasing',
+      'Episodic Content',
+      'based on each asset',
+      'starting with',
+    ] as const,
+    accentLines: ['Episodic Content'] as const,
+  },
+  /** ≥750px My Investments Phase One body (fewer line breaks). */
+  myInvPhaseOneDetailDesktop: {
+    title: 'Phase One:',
+    lines: [
+      'Entertain and educate you on how we plan to achieve our mission by releasing',
+      'Episodic Content based on each asset starting with',
+    ] as const,
+    accentPhrases: ['Episodic Content'] as const,
+  },
+  /** &lt;750px My Investments Phase One body. */
+  myInvPhaseOneDetailMobile: {
+    title: 'Phase One:',
+    lines: [
+      'Entertain and educate',
+      'you on how we plan',
+      'to achieve our mission',
+      'by releasing',
+      'Episodic Content',
+      'based on each asset',
+      'starting with',
+    ] as const,
+    accentLines: ['Episodic Content'] as const,
+  },
+  portfolioBenefitLine: 'view Bitcoin to continue',
+  portfolioCtaLabel: 'view Bitcoin',
+  portfolioCtaLoadingLabel: 'Loading Bitcoin',
   phaseOneTitle: 'Phase One:',
-  phaseOneLead: 'Expand our mission by...',
-  phaseOneBullets: [
-    'Adding assets we plan on impacting.',
-    'Signing up supporters & believers.',
-    "Telling the story of our investments' journey to never lose value.",
+  /** About page Phase One body (stacked lines). */
+  aboutPhaseOneLines: [
+    'Entertain and educate',
+    'supporters and believers',
+    'on how we plan',
+    'to achieve our mission',
+    'by releasing',
+    'Episodic Content',
+    'based on each asset.',
   ] as const,
+  aboutPhaseOneAccentLines: ['Episodic Content'] as const,
   phaseTwoTitle: 'Phase Two:',
   phaseTwoLead: 'Implement our mission by...',
   phaseTwoBullets: [

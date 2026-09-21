@@ -80,12 +80,24 @@ const AboutPageClient = () => {
                     <p className="about-text about-text--mid">
                       <strong>{emailVerifiedWelcomePhaseCopy.phaseOneTitle}</strong>
                     </p>
-                    <p className="about-text about-text--mid">{emailVerifiedWelcomePhaseCopy.phaseOneLead}</p>
-                    <ul className="about-phase-list">
-                      {emailVerifiedWelcomePhaseCopy.phaseOneBullets.map((bullet) => (
-                        <li key={bullet}>{bullet}</li>
-                      ))}
-                    </ul>
+                    <div className="about-phase-detail-lines">
+                      {emailVerifiedWelcomePhaseCopy.aboutPhaseOneLines.map((line) => {
+                        const isAccent =
+                          emailVerifiedWelcomePhaseCopy.aboutPhaseOneAccentLines.includes(
+                            line as (typeof emailVerifiedWelcomePhaseCopy.aboutPhaseOneAccentLines)[number]
+                          );
+                        return (
+                          <p
+                            key={line}
+                            className={`about-text about-text--mid about-phase-detail-line${
+                              isAccent ? ' about-phase-detail-line--accent' : ''
+                            }`}
+                          >
+                            {line}
+                          </p>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
                 <div className="about-section about-section--mid-body myinv-accent-border">
