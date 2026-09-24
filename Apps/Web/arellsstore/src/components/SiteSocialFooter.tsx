@@ -27,13 +27,18 @@ function variantForPath(pathname: string): FooterVariant {
 }
 
 const SOCIAL_X = 'https://x.com/arellsinc';
-export const SOCIAL_TELEGRAM = 'https://t.me/+FauIWiryMRRjMjZh';
+const SOCIAL_INSTAGRAM_BITCOIN = 'https://instagram.com/thebitcoinalienrace';
+const SOCIAL_TIKTOK_BITCOIN = 'https://www.tiktok.com/@thebitcoinalienrace';
 
 export type SiteSocialFooterProps = {
   variant?: FooterVariant;
   /** Show on routes that normally hide the footer when embedded in page content. */
   forceShow?: boolean;
 };
+
+function isAssetTheme(variant: FooterVariant): variant is CryptoAssetTheme | StockAssetTheme {
+  return variant !== 'accent' && variant !== 'default';
+}
 
 export default function SiteSocialFooter({ variant: variantProp, forceShow }: SiteSocialFooterProps = {}) {
   const pathname = usePathname() || '';
@@ -48,6 +53,8 @@ export default function SiteSocialFooter({ variant: variantProp, forceShow }: Si
         : `site-social-footer--asset site-social-footer--${variant}`;
 
   const linkClassName = 'site-social-footer-link site-social-footer-link--accent';
+  const isBitcoin = variant === 'bitcoin';
+  const isOtherAsset = isAssetTheme(variant) && !isBitcoin;
 
   return (
     <footer className={`site-social-footer ${variantClass}`} aria-label="Social links">
@@ -55,24 +62,60 @@ export default function SiteSocialFooter({ variant: variantProp, forceShow }: Si
         <div className="site-social-footer-rule" aria-hidden="true" />
         <p className="site-social-footer-label">Follow us:</p>
         <div className="site-social-footer-buttons">
-          <a
-            href={SOCIAL_X}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={linkClassName}
-            aria-label="Arells on X"
-          >
-            <span className="site-social-footer-icon site-social-footer-icon--x" aria-hidden />
-          </a>
-          <a
-            href={SOCIAL_TELEGRAM}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={linkClassName}
-            aria-label="Arells on Telegram"
-          >
-            <span className="site-social-footer-icon site-social-footer-icon--telegram" aria-hidden />
-          </a>
+          {isBitcoin || isOtherAsset ? (
+            <>
+              {isBitcoin ? (
+                <a
+                  href={SOCIAL_INSTAGRAM_BITCOIN}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClassName}
+                  aria-label="The Bitcoin Alien Race on Instagram"
+                >
+                  <span className="site-social-footer-icon site-social-footer-icon--instagram" aria-hidden />
+                </a>
+              ) : (
+                <span
+                  className={`${linkClassName} site-social-footer-link--placeholder`}
+                  aria-label="Instagram coming soon"
+                  aria-disabled="true"
+                  role="link"
+                >
+                  <span className="site-social-footer-icon site-social-footer-icon--instagram" aria-hidden />
+                </span>
+              )}
+              {isBitcoin ? (
+                <a
+                  href={SOCIAL_TIKTOK_BITCOIN}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClassName}
+                  aria-label="The Bitcoin Alien Race on TikTok"
+                >
+                  <span className="site-social-footer-icon site-social-footer-icon--tiktok" aria-hidden />
+                </a>
+              ) : (
+                <span
+                  className={`${linkClassName} site-social-footer-link--placeholder`}
+                  aria-label="TikTok coming soon"
+                  aria-disabled="true"
+                  role="link"
+                >
+                  <span className="site-social-footer-icon site-social-footer-icon--tiktok" aria-hidden />
+                </span>
+              )}
+            </>
+          ) : (
+            <a
+              href={SOCIAL_X}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={linkClassName}
+              aria-label="Arells on X"
+            >
+              <span className="site-social-footer-icon site-social-footer-icon--x" aria-hidden />
+            </a>
+          )}
         </div>
       </div>
     </footer>

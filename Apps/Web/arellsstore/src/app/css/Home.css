@@ -12049,7 +12049,7 @@ a.asset-action-button--save-signin {
 	color: rgba(248, 141, 0, 0.95) !important;
 	-webkit-text-fill-color: rgba(248, 141, 0, 0.95) !important;
 	border-color: rgba(248, 141, 0, 0.9) !important;
-	background: rgba(248, 141, 0, 0.18) !important;
+	background: rgba(248, 141, 0, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12069,7 +12069,7 @@ a.asset-action-button--save-signin {
 	color: rgba(107, 114, 168, 0.95) !important;
 	-webkit-text-fill-color: rgba(107, 114, 168, 0.95) !important;
 	border-color: rgba(107, 114, 168, 0.9) !important;
-	background: rgba(107, 114, 168, 0.18) !important;
+	background: rgba(107, 114, 168, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12089,7 +12089,7 @@ a.asset-action-button--save-signin {
 	color: rgba(243, 186, 47, 0.95) !important;
 	-webkit-text-fill-color: rgba(243, 186, 47, 0.95) !important;
 	border-color: rgba(243, 186, 47, 0.9) !important;
-	background: rgba(243, 186, 47, 0.18) !important;
+	background: rgba(243, 186, 47, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12109,7 +12109,7 @@ a.asset-action-button--save-signin {
 	color: rgba(255, 0, 19, 0.95) !important;
 	-webkit-text-fill-color: rgba(255, 0, 19, 0.95) !important;
 	border-color: rgba(255, 0, 19, 0.38) !important;
-	background: rgba(255, 0, 19, 0.08) !important;
+	background: rgba(255, 0, 19, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12129,7 +12129,7 @@ a.asset-action-button--save-signin {
 	color: rgba(194, 166, 51, 0.95) !important;
 	-webkit-text-fill-color: rgba(194, 166, 51, 0.95) !important;
 	border-color: rgba(194, 166, 51, 0.38) !important;
-	background: rgba(194, 166, 51, 0.08) !important;
+	background: rgba(194, 166, 51, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12144,7 +12144,7 @@ a.asset-action-button--save-signin {
 	color: rgba(0, 51, 173, 0.95) !important;
 	-webkit-text-fill-color: rgba(0, 51, 173, 0.95) !important;
 	border-color: rgba(0, 51, 173, 0.38) !important;
-	background: rgba(0, 51, 173, 0.08) !important;
+	background: rgba(0, 51, 173, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12164,7 +12164,7 @@ a.asset-action-button--save-signin {
 	color: rgba(55, 91, 210, 0.95) !important;
 	-webkit-text-fill-color: rgba(55, 91, 210, 0.95) !important;
 	border-color: rgba(55, 91, 210, 0.38) !important;
-	background: rgba(55, 91, 210, 0.08) !important;
+	background: rgba(55, 91, 210, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12184,7 +12184,7 @@ a.asset-action-button--save-signin {
 	color: rgba(86, 138, 0, 0.95) !important;
 	-webkit-text-fill-color: rgba(86, 138, 0, 0.95) !important;
 	border-color: rgba(86, 138, 0, 0.38) !important;
-	background: rgba(86, 138, 0, 0.08) !important;
+	background: rgba(86, 138, 0, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12204,7 +12204,7 @@ a.asset-action-button--save-signin {
 	color: rgba(85, 85, 85, 0.95) !important;
 	-webkit-text-fill-color: rgba(85, 85, 85, 0.95) !important;
 	border-color: rgba(85, 85, 85, 0.38) !important;
-	background: rgba(85, 85, 85, 0.08) !important;
+	background: rgba(85, 85, 85, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12224,7 +12224,7 @@ a.asset-action-button--save-signin {
 	color: rgba(37, 99, 200, 0.95) !important;
 	-webkit-text-fill-color: rgba(37, 99, 200, 0.95) !important;
 	border-color: rgba(37, 99, 200, 0.38) !important;
-	background: rgba(66, 133, 244, 0.08) !important;
+	background: rgba(66, 133, 244, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12244,7 +12244,7 @@ a.asset-action-button--save-signin {
 	color: rgba(0, 120, 212, 0.95) !important;
 	-webkit-text-fill-color: rgba(0, 120, 212, 0.95) !important;
 	border-color: rgba(0, 120, 212, 0.38) !important;
-	background: rgba(0, 120, 212, 0.08) !important;
+	background: rgba(0, 120, 212, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12264,7 +12264,7 @@ a.asset-action-button--save-signin {
 	color: rgba(255, 153, 0, 0.95) !important;
 	-webkit-text-fill-color: rgba(255, 153, 0, 0.95) !important;
 	border-color: rgba(255, 153, 0, 0.38) !important;
-	background: rgba(255, 153, 0, 0.08) !important;
+	background: rgba(255, 153, 0, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12284,7 +12284,7 @@ a.asset-action-button--save-signin {
 	color: rgba(40, 48, 64, 0.95) !important;
 	-webkit-text-fill-color: rgba(40, 48, 64, 0.95) !important;
 	border-color: rgba(40, 48, 64, 0.38) !important;
-	background: rgba(40, 48, 64, 0.08) !important;
+	background: rgba(40, 48, 64, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12309,7 +12309,7 @@ a.asset-action-button--save-signin {
 	color: rgba(0, 0, 0, 0.95) !important;
 	-webkit-text-fill-color: rgba(0, 0, 0, 0.95) !important;
 	border-color: rgba(0, 0, 0, 0.4) !important;
-	background: rgba(0, 0, 0, 0.08) !important;
+	background: rgba(0, 0, 0, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12329,7 +12329,7 @@ a.asset-action-button--save-signin {
 	color: rgba(10, 193, 142, 0.95) !important;
 	-webkit-text-fill-color: rgba(10, 193, 142, 0.95) !important;
 	border-color: rgba(10, 193, 142, 0.38) !important;
-	background: rgba(10, 193, 142, 0.08) !important;
+	background: rgba(10, 193, 142, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12349,7 +12349,7 @@ a.asset-action-button--save-signin {
 	color: rgba(0, 208, 168, 0.95) !important;
 	-webkit-text-fill-color: rgba(0, 208, 168, 0.95) !important;
 	border-color: rgba(0, 208, 168, 0.9) !important;
-	background: rgba(0, 208, 168, 0.18) !important;
+	background: rgba(0, 208, 168, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12369,7 +12369,7 @@ a.asset-action-button--save-signin {
 	color: rgba(30, 41, 59, 0.95) !important;
 	-webkit-text-fill-color: rgba(30, 41, 59, 0.95) !important;
 	border-color: rgba(30, 41, 59, 0.4) !important;
-	background: rgba(30, 41, 59, 0.08) !important;
+	background: rgba(30, 41, 59, 0.04) !important;
 	border-radius: 6px !important;
 	box-shadow: none !important;
 	opacity: 1;
@@ -12437,6 +12437,12 @@ a.asset-action-button--save-signin {
 	min-height: 44px !important;
 }
 
+.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link.site-social-footer-link--accent {
+	padding: 5px !important;
+	min-width: 0 !important;
+	min-height: 0 !important;
+}
+
 /* PNG → mask so glyph fills with same accent as border (`currentColor` on link) */
 .site-social-footer.site-social-footer--accent .site-social-footer-link--accent .site-social-footer-icon,
 .site-social-footer.site-social-footer--default .site-social-footer-link--accent .site-social-footer-icon,
@@ -12455,6 +12461,11 @@ a.asset-action-button--save-signin {
 	mask-size: contain;
 }
 
+.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link--accent .site-social-footer-icon {
+	width: 30px;
+	height: 30px;
+}
+
 .site-social-footer.site-social-footer--accent .site-social-footer-link--accent .site-social-footer-icon--x,
 .site-social-footer.site-social-footer--default .site-social-footer-link--accent .site-social-footer-icon--x,
 .asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link--accent .site-social-footer-icon--x {
@@ -12462,11 +12473,25 @@ a.asset-action-button--save-signin {
 	mask-image: url('/images/icons/socials/X.png');
 }
 
-.site-social-footer.site-social-footer--accent .site-social-footer-link--accent .site-social-footer-icon--telegram,
-.site-social-footer.site-social-footer--default .site-social-footer-link--accent .site-social-footer-icon--telegram,
-.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link--accent .site-social-footer-icon--telegram {
-	-webkit-mask-image: url('/images/icons/socials/Telegram.png');
-	mask-image: url('/images/icons/socials/Telegram.png');
+.site-social-footer.site-social-footer--accent .site-social-footer-link--accent .site-social-footer-icon--instagram,
+.site-social-footer.site-social-footer--default .site-social-footer-link--accent .site-social-footer-icon--instagram,
+.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link--accent .site-social-footer-icon--instagram {
+	-webkit-mask-image: url('/images/icons/socials/Instagram.png');
+	mask-image: url('/images/icons/socials/Instagram.png');
+}
+
+.site-social-footer.site-social-footer--accent .site-social-footer-link--accent .site-social-footer-icon--tiktok,
+.site-social-footer.site-social-footer--default .site-social-footer-link--accent .site-social-footer-icon--tiktok,
+.asset-page .site-social-footer.site-social-footer--asset .site-social-footer-link--accent .site-social-footer-icon--tiktok {
+	-webkit-mask-image: url('/images/icons/socials/TikTok.png');
+	mask-image: url('/images/icons/socials/TikTok.png');
+}
+
+.site-social-footer .site-social-footer-link.site-social-footer-link--placeholder {
+	cursor: default;
+	opacity: 0.45;
+	pointer-events: none;
+	user-select: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
