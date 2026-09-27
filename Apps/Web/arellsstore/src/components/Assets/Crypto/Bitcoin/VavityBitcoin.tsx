@@ -22,6 +22,7 @@ import AlienPhotoSlot from '../../shared/AlienPhotoSlot';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import BitcoinChart from './BitcoinChart';
 import BitcoinSeasonTeaser from './BitcoinSeasonTeaser';
+import AlienRaceDailyUpdates from '../../../AlienRaceDailyUpdates';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 import {
   ASSET_PRICE_CHART_MOUNT_SLIDE_MS,
@@ -2566,13 +2567,6 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
         setAddFormOuterSubmitMaxHeight(nextOuterStart);
       }
     });
-    requestAnimationFrame(() => {
-      if (isAddMore) {
-        scrollToBottomAfterMaxHeightOn(panelRef, 2500);
-      } else {
-        scrollToBottomAfterMaxHeightOn(addFormPanelRef.current, 2500);
-      }
-    });
     if (isAddMore) {
       if (panelRef) {
         void panelRef.offsetHeight;
@@ -2929,6 +2923,9 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
           <div className="asset-invest-form-body asset-invest-form-body--bitcoin">
             <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--bitcoin">
               <div className="asset-invest-form-metrics">
+                {isSignedIn && email && label === 'Add My Character' ? (
+                  <AlienPhotoSlot assetId={ASSET.id} assetName={ASSET.displayName} />
+                ) : null}
                 <div className="asset-metric-row asset-invest-form-row">
                   <span className="asset-metric-title--bitcoin asset-invest-form-metric-title life-force-metric-label">Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
@@ -3039,7 +3036,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                 disabled={submitLoading || deleteInFlight || deleteLocked || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
-                {submitLoading ? 'Submitting...' : (label === 'Add My Alien' ? 'Add My Alien' : 'Submit')}
+                {submitLoading ? 'Submitting...' : (label === 'Add My Character' ? 'Add My Character' : 'Submit')}
               </button>
             </div>
           </div>
@@ -3163,6 +3160,48 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
       globalThis.clearTimeout(doneTimer);
     };
   }, [isGuestView, bitcoinEmptyPreview, hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
+
+  const openEmptyAddForm = useCallback(() => {
+    setShowEmptyAddForm(true);
+    setShowAddForm(true);
+    setSubmitPhase('idle');
+    requestAnimationFrame(() => {
+      const h = addFormBoxRef.current?.scrollHeight ?? 0;
+      const next = Math.max(0, h + 24);
+      setAddFormPanelHeight((prev) => (prev === next ? prev : next));
+      requestAnimationFrame(() => setAddFormOpen(true));
+    });
+    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
+  }, [scrollToBottomAfterDocumentStable]);
+
+  const addFormBusy = submitLoading || isSubmitCollapsing || addFormSubmitAnimating || addFormSubmitCollapsing;
+
+  useEffect(() => {
+    if (isGuestView || addFormBusy) return;
+    if (hasInvestmentsUI) {
+      if (showEmptyAddForm || showAddForm || addFormOpen) {
+        setAddFormOpen(false);
+        setShowAddForm(false);
+        setShowEmptyAddForm(false);
+      }
+      return;
+    }
+    if (showInitialFetchLoader || isClearingInvestments) return;
+    if (emptyActionsMountPhase === 'hidden') return;
+    if (showEmptyAddForm) return;
+    openEmptyAddForm();
+  }, [
+    isGuestView,
+    addFormBusy,
+    hasInvestmentsUI,
+    showEmptyAddForm,
+    showAddForm,
+    addFormOpen,
+    showInitialFetchLoader,
+    isClearingInvestments,
+    emptyActionsMountPhase,
+    openEmptyAddForm,
+  ]);
 
   useEffect(() => {
     if (isGuestView) return;
@@ -3608,60 +3647,6 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
         {!hasInvestmentsUI && !showInitialFetchLoader ? (
           <>
             <BitcoinSeasonTeaser />
-            <div
-              ref={emptyActionsRef}
-              className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
-              style={
-                hideEmptyActionsOnSubmit
-                  ? { display: 'none' }
-                  : emptyActionsMountPhase === 'hidden'
-                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 3s ease' }
-                    : emptyActionsMountPhase === 'revealing'
-                      ? { maxHeight: `${emptyActionsHeight || 200}px`, overflow: 'hidden', transition: 'max-height 3s ease' }
-                      : undefined
-              }
-            >
-              <div
-                className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
-              >
-                <button
-                  className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
-                  disabled={showEmptyAddForm || emptyAddHiding}
-                  style={{
-                    ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
-                  }}
-                  onClick={() => {
-                    if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
-                    clearEmptyButtonsSequenceTimers();
-                    if (clearInvestmentsAnimTimerRef.current) {
-                      globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
-                      clearInvestmentsAnimTimerRef.current = null;
-                    }
-                    setEmptySigninHiding(true);
-                    setEmptySigninGone(false);
-                    setEmptyAddHiding(false);
-                    setEmptyAddGone(false);
-                    emptyButtonsSequenceTimersRef.current.push(
-                      globalThis.setTimeout(() => {
-                        setEmptyAddHiding(true);
-                      }, 500)
-                    );
-                    setShowEmptyAddForm(true);
-                    setShowAddForm(true);
-                    setSubmitPhase('idle');
-                    requestAnimationFrame(() => {
-                      const h = addFormBoxRef.current?.scrollHeight ?? 0;
-                      const next = Math.max(0, h + 24);
-                      setAddFormPanelHeight((prev) => (prev === next ? prev : next));
-                      requestAnimationFrame(() => setAddFormOpen(true));
-                    });
-                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
-                  }}
-                >
-                  Add My Alien
-                </button>
-              </div>
-            </div>
           </>
         ) : (
           <>
@@ -3681,7 +3666,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                 <BitcoinSeasonTeaser />
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">my bitcoin alien</span>
+                    <span className="asset-portfolio-title-muted">my character</span>
                   </h2>
                 )}
                 <div
@@ -3695,7 +3680,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                   >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px', paddingTop: isSignedIn && email ? 30 : 0 }}>
               {isSignedIn && email ? (
-                <AlienPhotoSlot email={email} assetId={ASSET.id} assetName={ASSET.displayName} />
+                <AlienPhotoSlot assetId={ASSET.id} assetName={ASSET.displayName} />
               ) : null}
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
                 <span className="asset-metric-title--bitcoin life-force-metric-label" style={{ marginTop: isSignedIn && email ? 16 : 30 }}>Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
@@ -3910,7 +3895,6 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                     setSubmitPhase('idle');
                     setShowAddMoreForm(true);
                     setTimeout(() => setAddMoreOpen(true), 0);
-                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
                   }}
                 >
                   {addMoreOpen ? 'Hide add more life force' : 'Add more life force'}
@@ -3944,18 +3928,6 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                         closeAddMoreForm,
                         'asset-action-button asset-action-button--bitcoin'
                       )}
-        <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
-          <div className="asset-empty-addinvest">
-            <button
-              className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
-              type="button"
-              disabled
-              tabIndex={-1}
-            >
-              Add My Alien
-            </button>
-          </div>
-        </div>
                     </div>
                   </div>
                 </div>
@@ -3987,9 +3959,6 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                       }
                       setShowInvestmentsList(true);
                       setTimeout(() => setInvestmentsListOpen(true), 0);
-                      requestAnimationFrame(() =>
-                        scrollToBottomAfterMaxHeightOn(investmentsListOuterRef.current, 2500)
-                      );
                     }}
                   >
                   {investmentsListOpen ? 'Hide investments' : 'Show investments'}
@@ -4225,7 +4194,6 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                           className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-show"
                           onClick={() => {
                             setVisibleInvestments((prev) => prev + 3);
-                            requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
                           }}
                         >
                           Show 3 More
@@ -4272,7 +4240,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
                 <div ref={addFormBoxRef} className="asset-slide-panel-inner">
                   <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
                     {renderAddForm(
-                      'Add My Alien',
+                      'Add My Character',
                       closeAddForm,
                       'asset-action-button asset-action-button--bitcoin'
                     )}
@@ -4282,6 +4250,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
             </div>
           </div>
         )}
+        {!showInitialFetchLoader ? <AlienRaceDailyUpdates variant="bitcoin" /> : null}
         </div>
       </div>
     </div>

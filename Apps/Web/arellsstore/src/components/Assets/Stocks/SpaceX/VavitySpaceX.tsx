@@ -2544,13 +2544,6 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
         setAddFormOuterSubmitMaxHeight(nextOuterStart);
       }
     });
-    requestAnimationFrame(() => {
-      if (isAddMore) {
-        scrollToBottomAfterMaxHeightOn(panelRef, 2500);
-      } else {
-        scrollToBottomAfterMaxHeightOn(addFormPanelRef.current, 2500);
-      }
-    });
     if (isAddMore) {
       if (panelRef) {
         void panelRef.offsetHeight;
@@ -3017,7 +3010,7 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
                 disabled={submitLoading || deleteInFlight || deleteLocked || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
-                {submitLoading ? 'Submitting...' : (label === 'Add My Alien' ? 'Add My Alien' : 'Submit')}
+                {submitLoading ? 'Submitting...' : (label === 'Add My Character' ? 'Add My Character' : 'Submit')}
               </button>
             </div>
           </div>
@@ -3134,6 +3127,48 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
       globalThis.clearTimeout(doneTimer);
     };
   }, [isGuestView, hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
+
+  const openEmptyAddForm = useCallback(() => {
+    setShowEmptyAddForm(true);
+    setShowAddForm(true);
+    setSubmitPhase('idle');
+    requestAnimationFrame(() => {
+      const h = addFormBoxRef.current?.scrollHeight ?? 0;
+      const next = Math.max(0, h + 24);
+      setAddFormPanelHeight((prev) => (prev === next ? prev : next));
+      requestAnimationFrame(() => setAddFormOpen(true));
+    });
+    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
+  }, [scrollToBottomAfterDocumentStable]);
+
+  const addFormBusy = submitLoading || isSubmitCollapsing || addFormSubmitAnimating || addFormSubmitCollapsing;
+
+  useEffect(() => {
+    if (isGuestView || addFormBusy) return;
+    if (hasInvestmentsUI) {
+      if (showEmptyAddForm || showAddForm || addFormOpen) {
+        setAddFormOpen(false);
+        setShowAddForm(false);
+        setShowEmptyAddForm(false);
+      }
+      return;
+    }
+    if (showInitialFetchLoader || isClearingInvestments) return;
+    if (emptyActionsMountPhase === 'hidden') return;
+    if (showEmptyAddForm) return;
+    openEmptyAddForm();
+  }, [
+    isGuestView,
+    addFormBusy,
+    hasInvestmentsUI,
+    showEmptyAddForm,
+    showAddForm,
+    addFormOpen,
+    showInitialFetchLoader,
+    isClearingInvestments,
+    emptyActionsMountPhase,
+    openEmptyAddForm,
+  ]);
 
   useEffect(() => {
     if (isGuestView) return;
@@ -3577,64 +3612,7 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
           ...(!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : {}),
         }}
       >
-        {!hasInvestmentsUI && !showInitialFetchLoader ? (
-          <>
-            <div
-              ref={emptyActionsRef}
-              className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
-              style={
-                hideEmptyActionsOnSubmit
-                  ? { display: 'none' }
-                  : emptyActionsMountPhase === 'hidden'
-                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 3s ease' }
-                    : emptyActionsMountPhase === 'revealing'
-                      ? { maxHeight: `${emptyActionsHeight || 200}px`, overflow: 'hidden', transition: 'max-height 3s ease' }
-                      : undefined
-              }
-            >
-              <div
-                className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
-              >
-                <button
-                  className="asset-action-button asset-action-button--spacex asset-action-button--invest-add asset-action-button--add-investments"
-                  disabled={showEmptyAddForm || emptyAddHiding}
-                  style={{
-                    ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
-                  }}
-                  onClick={() => {
-                    if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
-                    clearEmptyButtonsSequenceTimers();
-                    if (clearInvestmentsAnimTimerRef.current) {
-                      globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
-                      clearInvestmentsAnimTimerRef.current = null;
-                    }
-                    setEmptySigninHiding(true);
-                    setEmptySigninGone(false);
-                    setEmptyAddHiding(false);
-                    setEmptyAddGone(false);
-                    emptyButtonsSequenceTimersRef.current.push(
-                      globalThis.setTimeout(() => {
-                        setEmptyAddHiding(true);
-                      }, 500)
-                    );
-                    setShowEmptyAddForm(true);
-                    setShowAddForm(true);
-                    setSubmitPhase('idle');
-                    requestAnimationFrame(() => {
-                      const h = addFormBoxRef.current?.scrollHeight ?? 0;
-                      const next = Math.max(0, h + 24);
-                      setAddFormPanelHeight((prev) => (prev === next ? prev : next));
-                      requestAnimationFrame(() => setAddFormOpen(true));
-                    });
-                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
-                  }}
-                >
-                  Add My Alien
-                </button>
-              </div>
-            </div>
-          </>
-        ) : (
+        {!hasInvestmentsUI && !showInitialFetchLoader ? null : (
           <>
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation
                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
@@ -3651,7 +3629,7 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
               <div ref={investmentsWholeContentRef}>
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">my spacex alien</span>
+                    <span className="asset-portfolio-title-muted">my character</span>
                   </h2>
                 )}
                 <div
@@ -3877,7 +3855,6 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
                     setSubmitPhase('idle');
                     setShowAddMoreForm(true);
                     setTimeout(() => setAddMoreOpen(true), 0);
-                    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
                   }}
                 >
                   {addMoreOpen ? 'Hide add more life force' : 'Add more life force'}
@@ -3911,18 +3888,6 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
                         closeAddMoreForm,
                         'asset-action-button asset-action-button--spacex'
                       )}
-        <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
-          <div className="asset-empty-addinvest">
-            <button
-              className="asset-action-button asset-action-button--spacex asset-action-button--invest-add asset-action-button--add-investments"
-              type="button"
-              disabled
-              tabIndex={-1}
-            >
-              Add My Alien
-            </button>
-          </div>
-        </div>
                     </div>
                   </div>
                 </div>
@@ -3954,9 +3919,6 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
                       }
                       setShowInvestmentsList(true);
                       setTimeout(() => setInvestmentsListOpen(true), 0);
-                      requestAnimationFrame(() =>
-                        scrollToBottomAfterMaxHeightOn(investmentsListOuterRef.current, 2500)
-                      );
                     }}
                   >
                   {investmentsListOpen ? 'Hide investments' : 'Show investments'}
@@ -4192,7 +4154,6 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
                           className="asset-action-button asset-action-button--spacex asset-action-button--invest-show"
                           onClick={() => {
                             setVisibleInvestments((prev) => prev + 3);
-                            requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
                           }}
                         >
                           Show 3 More
@@ -4239,7 +4200,7 @@ const VavitySpaceX: React.FC<VavitySpaceXProps> = ({ sessionMountClearGuardRef }
                 <div ref={addFormBoxRef} className="asset-slide-panel-inner">
                   <div className="asset-invest-form-box asset-invest-form-box--spacex">
                     {renderAddForm(
-                      'Add My Alien',
+                      'Add My Character',
                       closeAddForm,
                       'asset-action-button asset-action-button--spacex'
                     )}

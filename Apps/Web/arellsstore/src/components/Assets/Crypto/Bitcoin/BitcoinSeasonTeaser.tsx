@@ -3,10 +3,9 @@
 import React, { useState } from 'react';
 import GuestTrailerPlayer from '../../../GuestTrailerPlayer';
 import StorylineOpening from '../../../StorylineOpening';
-import AlienRaceDailyUpdates from '../../../AlienRaceDailyUpdates';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/guestTrailer';
 
-const SEASON_ONE_TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/PremierBTCS1.jpg';
+const SEASON_ONE_TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/Posters/BTCBaseAnnouncementPoster.jpg';
 
 export default function BitcoinSeasonTeaser() {
   const [teaserLoaded, setTeaserLoaded] = useState(false);
@@ -36,14 +35,13 @@ export default function BitcoinSeasonTeaser() {
             <img
               src={SEASON_ONE_TEASER_SRC}
               alt="Season One coming soon"
-              width={3000}
-              height={2688}
+              width={1408}
+              height={901}
               className={`asset-bitcoin-season-teaser-img${teaserLoaded ? ' is-visible' : ''}`}
               onLoad={() => setTeaserLoaded(true)}
             />
           </div>
         </div>
-        <AlienRaceDailyUpdates variant="bitcoin" />
         <div className="asset-bitcoin-season-teaser-cadence-wrap">
           <p className="asset-bitcoin-season-teaser-cadence">
             <span>New Episode</span>

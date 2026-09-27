@@ -1289,7 +1289,7 @@ body {
 
 .asset-alien-photo-slot {
 	width: 92%;
-	margin: 0 auto 8px;
+	margin: 0 auto 10px;
 	padding: 10px;
 	box-sizing: border-box;
 	border-radius: 14px;
@@ -1299,6 +1299,10 @@ body {
 	min-height: 180px;
 	position: relative;
 	transition: transform 0.2s ease;
+}
+
+.asset-invest-form .asset-alien-photo-slot {
+	margin-bottom: 30px;
 }
 
 .asset-alien-photo-slot--bitcoin {
@@ -1314,10 +1318,6 @@ body {
 	.asset-alien-photo-slot:hover:not(.is-busy) {
 		transform: translateY(-4px);
 	}
-}
-
-.asset-alien-photo-input {
-	display: none;
 }
 
 .asset-alien-photo-hit {
@@ -1336,11 +1336,6 @@ body {
 	background: transparent;
 	cursor: pointer;
 	font-family: Arial, sans-serif;
-}
-
-.asset-alien-photo-slot.is-busy .asset-alien-photo-hit {
-	opacity: 0.6;
-	cursor: default;
 }
 
 .asset-alien-photo-plus {
@@ -1362,6 +1357,23 @@ body {
 	fill: currentColor;
 }
 
+.asset-alien-photo-slot-placeholder-wrap {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 10px;
+	overflow: hidden;
+	background: rgba(248, 141, 0, 0.08);
+	flex-shrink: 0;
+}
+
+.asset-alien-photo-slot-placeholder {
+	display: block;
+	width: 100%;
+	height: auto;
+	object-fit: contain;
+}
+
 .asset-alien-photo-label {
 	display: block;
 	width: 100%;
@@ -1381,15 +1393,6 @@ body {
 	.asset-alien-photo-label {
 		font-size: 18px;
 	}
-}
-
-.asset-alien-photo-img {
-	display: block;
-	width: 100%;
-	height: auto;
-	max-height: 240px;
-	object-fit: contain;
-	border-radius: 10px;
 }
 
 .asset-bitcoin-season-teaser {
@@ -1516,7 +1519,7 @@ body {
 }
 
 .asset-bitcoin-season-teaser-frame:not(.is-loaded) {
-	aspect-ratio: 3000 / 2688;
+	aspect-ratio: 1408 / 901;
 }
 
 .asset-bitcoin-season-teaser-loader {
@@ -2168,6 +2171,10 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+}
+
+.asset-portfolio-center > .asset-bitcoin-season-teaser-updates {
+	margin-top: 14px;
 }
 
 @media (max-width: 750px) {
@@ -6633,6 +6640,10 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 .asset-invest-form-metrics .asset-invest-form-row:nth-child(3) .asset-invest-form-metric-title,
 .asset-investment-metrics .asset-money-row:nth-child(3) > span:first-child {
 	margin-top: 4px;
+}
+
+.asset-profit-block .asset-profit-inline-wrap .life-force-metric-label {
+	padding-bottom: 3px;
 }
 
 .life-force-badge {

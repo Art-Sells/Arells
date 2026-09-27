@@ -13,7 +13,7 @@ import { useUser } from '../../context/UserContext';
 import { useAlienRaceUpdates } from '../../hooks/useAlienRaceUpdates';
 import { alienRaceThumbCount } from '../../lib/bitcoinAlienRaceUpdates';
 
-const PREMIER_POSTER = '/images/banners/assets/crypto/Bitcoin/PremierPoster.jpg';
+const PREMIER_POSTER = '/images/banners/assets/crypto/Bitcoin/Posters/BTCBaseAnnouncementPoster.jpg';
 
 const TheBitcoinAlienRacePageClient: React.FC = () => {
   const { isSignedIn, authSessionLoading } = useUser();
