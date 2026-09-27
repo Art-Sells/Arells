@@ -13,9 +13,9 @@ After Episode One is done:
 - Update all guest home page and guest Bitcoin page trailers to "Now Playing (On Arells<Online Version))" "Sign In to Learn More" remove Coming Soon, change trailer from signed in Bitcoin page to "Season One" "Now Playing" (upload 3 types)
 - Change coming soon to generate new ultra high def image of Leila ref looking like the girl with her eye high definition for "Season One" image
 
-- Create and Post Season One Posters (no image to image editing, create brand new ultra realistic images from image references on GrokImagine(reset every week usage)) on Bitcoin Reddit ---Reddit (post-commenters) | X/LinkedIn (remove coming soon and change to "now playing on arells")
+- Create and Post Season One Posters (no image to image editing(reset every week usage)) on Bitcoin Reddit ---Reddit ("You will be a main character in the show" post-commenters) | X/LinkedIn (remove coming soon and change to "now playing on arells")
 
--Snd follow-ups (announce new trailer on page as well as {working on ability to add yourself as a character in the Episodes}) (mailmeteor [get verified emails]) [with poster]
+-Snd follow-ups ({As you probably already know, you will be a main character in the Bitcoin Alien Race! You'll be able to add a photo of yourself and you'll be able to see yourself interacting with the other characters in the show... announce new trailer on page as well as}) (mailmeteor [get verified emails]) [with poster]
 
 - reach out to D/M/D/N/ABTC
 
