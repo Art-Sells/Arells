@@ -1484,7 +1484,7 @@ const MyInvestmentsPageClient: React.FC = () => {
           <>
             {myAssetsSortedByHoldings.length > 0 && (
               <MyInvAssetHubPanel
-                title="My Alien Race"
+                title="My Assets"
                 slideIn={slideIn}
                 assets={myAssetsSortedByHoldings}
                 linkKeyPrefix="held"
