@@ -5971,7 +5971,8 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	margin: 0 auto;
 }
 
-.phase-one-bitcoin-alien-race-group--desktop .phase-one-bitcoin-alien-race-button {
+.phase-one-bitcoin-alien-race-group--desktop .phase-one-bitcoin-alien-race-button,
+.phase-one-bitcoin-alien-race-group .phase-one-bitcoin-alien-race-button--verified {
 	width: 100%;
 }
 
