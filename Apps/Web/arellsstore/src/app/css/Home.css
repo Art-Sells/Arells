@@ -5939,6 +5939,56 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	transform: translateY(-2px);
 }
 
+.phase-one-bitcoin-alien-race-group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	margin: 12px auto 0;
+	padding: 12px;
+	box-sizing: border-box;
+	border-radius: 10px;
+}
+
+.phase-one-bitcoin-alien-race-group .phase-one-bitcoin-alien-race-button {
+	margin: 0 auto;
+}
+
+.phase-one-bitcoin-alien-race-group--desktop .phase-one-bitcoin-alien-race-button {
+	width: 100%;
+}
+
+.phase-one-bitcoin-alien-race-group--mobile {
+	display: none;
+}
+
+@media (max-width: 750px) {
+	.phase-one-bitcoin-alien-race-group--desktop {
+		display: none;
+	}
+
+	.phase-one-bitcoin-alien-race-group--mobile {
+		display: flex;
+	}
+}
+
+.phase-one-character-line-row {
+	display: block;
+}
+
+.phase-one-character-line {
+	margin: 8px auto 0;
+	padding: 0;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: -0.5px;
+	line-height: 1.25;
+	text-align: center;
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
 @media (hover: hover) and (pointer: fine) {
 	.phase-one-bitcoin-alien-race-button:hover {
 		transform: translateY(-2px);
@@ -12629,6 +12679,23 @@ a.asset-action-button--save-signin {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+}
+
+.guest-trailer-character-line {
+	margin: 0;
+	padding: 0 12px;
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	font-weight: 800;
+	letter-spacing: -0.6px;
+	line-height: 1.35;
+	text-align: center;
+	text-wrap: balance;
+	color: var(--myinv-accent-color);
+}
+
+.asset-page .guest-trailer-character-line {
+	color: var(--asset-slogan-color);
 }
 
 .asset-guest-poster-frame {

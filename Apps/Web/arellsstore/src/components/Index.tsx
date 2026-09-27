@@ -9,6 +9,7 @@ import { liquidSolidToggleKnobStyle } from './Assets/shared/liquidSolidToggleKno
 import { useLiquidSolidToggleTrackSync } from './Assets/shared/useLiquidSolidToggleTrackSync';
 import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
+import { useGuestPreview } from '../hooks/useGuestPreview';
 import HomeAssetCategoryCard from './Home/HomeAssetCategoryCard';
 import HomeCryptoAssetRow, { type HomeCryptoAssetRowData } from './Home/HomeCryptoAssetRow';
 import HomeMarketSearchCard from './Home/HomeMarketSearchCard';
@@ -36,9 +37,10 @@ const Index = () => {
   const { getAsset, loadMoreAssets } = useVavity();
   const visibleAssetCount = VISIBLE_HOME_CRYPTO.length;
   const { email } = useUser();
+  const guestPreview = useGuestPreview();
   const forceHomeInvestmentsPreview = false;
-  const showGuestLanding = !email && !forceHomeInvestmentsPreview;
-  const showSignedInHome = !!email || forceHomeInvestmentsPreview;
+  const showGuestLanding = guestPreview || (!email && !forceHomeInvestmentsPreview);
+  const showSignedInHome = !guestPreview && (!!email || forceHomeInvestmentsPreview);
   const showHomeLoader = showLoading && showSignedInHome;
   const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
   const [cardShimmersFading, setCardShimmersFading] = useState(false);

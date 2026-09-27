@@ -6,19 +6,34 @@ import { emailVerifiedWelcomePhaseCopy } from '../../content/emailVerifiedWelcom
 
 type PhaseOneBitcoinAlienRaceButtonProps = {
   className?: string;
+  groupClassName?: string;
+  stackedLine?: boolean;
 };
 
 export default function PhaseOneBitcoinAlienRaceButton({
   className,
+  groupClassName,
+  stackedLine = false,
 }: PhaseOneBitcoinAlienRaceButtonProps) {
   const { label, href } = emailVerifiedWelcomePhaseCopy.bitcoinAlienRaceButton;
   return (
-    <Link
-      href={href}
-      className={`phase-one-bitcoin-alien-race-button${className ? ` ${className}` : ''}`}
-      aria-label={label}
-    >
-      <span className="phase-one-bitcoin-alien-race-button-text">{label}</span>
-    </Link>
+    <div className={`phase-one-bitcoin-alien-race-group myinv-accent-border${groupClassName ? ` ${groupClassName}` : ''}`}>
+      <Link
+        href={href}
+        className={`phase-one-bitcoin-alien-race-button${className ? ` ${className}` : ''}`}
+        aria-label={label}
+      >
+        <span className="phase-one-bitcoin-alien-race-button-text">{label}</span>
+      </Link>
+      <p className="phase-one-character-line">
+        {stackedLine
+          ? emailVerifiedWelcomePhaseCopy.characterInShowStackedLines.map((line) => (
+              <span key={line} className="phase-one-character-line-row">
+                {line}
+              </span>
+            ))
+          : emailVerifiedWelcomePhaseCopy.characterInShowLine}
+      </p>
+    </div>
   );
 }

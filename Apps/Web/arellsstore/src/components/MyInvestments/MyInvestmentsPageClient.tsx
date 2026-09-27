@@ -1435,7 +1435,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                                           </p>
                                         );
                                       })}
-                                      <PhaseOneBitcoinAlienRaceButton className="phase-one-bitcoin-alien-race-button--myinv" />
                                     </div>
                                     <div className="myinv-mission-phase-detail-lines myinv-mission-phase-detail-lines--mobile">
                                       {emailVerifiedWelcomePhaseCopy.myInvPhaseOneDetailMobile.lines.map((line) => {
@@ -1456,8 +1455,16 @@ const MyInvestmentsPageClient: React.FC = () => {
                                           </p>
                                         );
                                       })}
-                                      <PhaseOneBitcoinAlienRaceButton className="phase-one-bitcoin-alien-race-button--myinv" />
                                     </div>
+                                    <PhaseOneBitcoinAlienRaceButton
+                                      className="phase-one-bitcoin-alien-race-button--myinv"
+                                      groupClassName="phase-one-bitcoin-alien-race-group--desktop"
+                                    />
+                                    <PhaseOneBitcoinAlienRaceButton
+                                      className="phase-one-bitcoin-alien-race-button--myinv"
+                                      groupClassName="phase-one-bitcoin-alien-race-group--mobile"
+                                      stackedLine
+                                    />
                                   </div>
                                 </div>
                               </div>

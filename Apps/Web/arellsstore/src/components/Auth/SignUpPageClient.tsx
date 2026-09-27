@@ -253,8 +253,8 @@ const SignUpPageClient: React.FC = () => {
                             </p>
                           );
                         })}
-                        <PhaseOneBitcoinAlienRaceButton className="phase-one-bitcoin-alien-race-button--verified" />
                       </div>
+                      <PhaseOneBitcoinAlienRaceButton className="phase-one-bitcoin-alien-race-button--verified" stackedLine />
                     </div>
                     <div className="auth-verified-phase-section myinv-accent-border">
                       <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--portfolio-cta">

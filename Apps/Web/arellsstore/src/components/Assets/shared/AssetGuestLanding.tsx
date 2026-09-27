@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
 import GuestTrailerPlayer from '../../GuestTrailerPlayer';
+import { emailVerifiedWelcomePhaseCopy } from '../../../content/emailVerifiedWelcomeCopy';
 
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
@@ -92,6 +93,9 @@ export default function AssetGuestLanding({
             </div>
           ) : null}
           {showTrailer ? <GuestTrailerPlayer theme="bitcoin" /> : null}
+          {showTrailer ? (
+            <p className="guest-trailer-character-line">{emailVerifiedWelcomePhaseCopy.characterInShowLine}</p>
+          ) : null}
           <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
               <p className="asset-signin-believe-prompt">Sign in to get involved</p>

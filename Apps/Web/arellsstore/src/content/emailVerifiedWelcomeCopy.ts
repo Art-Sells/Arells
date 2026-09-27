@@ -20,6 +20,10 @@ export const emailVerifiedWelcomePhaseCopy = {
     label: 'The Bitcoin Alien Race',
     href: '/thebitcoinalienrace',
   },
+  /** Under The Bitcoin Alien Race button and under the guest trailers (Home, Bitcoin, The Bitcoin Alien Race). */
+  characterInShowLine: 'You will be a main character in the show',
+  /** Stacked version of `characterInShowLine` (verified, My Investments <750px). */
+  characterInShowStackedLines: ['You will be a', 'main character', 'in the show'] as const,
   /** Nested Phase One detail — verified stacked lines. */
   verifiedPhaseOneDetail: {
     title: 'Phase One:',
