@@ -12774,6 +12774,15 @@ a.asset-action-button--save-signin {
 	}
 }
 
+.asset-page.asset-page--bitcoin .asset-guest-icon-wrap {
+	margin-top: 50px;
+}
+
+/* Bitcoin asset page keeps an empty 18px `.asset-header` above the guest landing. */
+.asset-page.asset-page--bitcoin .asset-header--bitcoin ~ .asset-guest-landing .asset-guest-icon-wrap {
+	margin-top: 32px;
+}
+
 .asset-guest-icon-tint {
 	background: var(--asset-line-color);
 }
@@ -15266,6 +15275,10 @@ a.asset-action-button--save-signin {
 /* Weekly earnings guest — home guest column (340px), icon top spacing via .home-guest-icon-wrap */
 .myinv-page--weekly-guest .home-guest-landing {
 	margin-bottom: 0;
+}
+
+.myinv-page--weekly-guest:not(.not-found-page) .home-guest-icon-wrap {
+	margin-top: 50px;
 }
 
 .myinv-page--weekly-guest .home-guest-signin-shell {
