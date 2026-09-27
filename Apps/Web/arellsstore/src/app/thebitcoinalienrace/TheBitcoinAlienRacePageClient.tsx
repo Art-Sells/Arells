@@ -11,6 +11,7 @@ import AssetSummaryCircleLoader from '../../components/Assets/shared/AssetSummar
 import { useAssetSummaryCircleLoader } from '../../components/Assets/shared/useAssetSummaryCircleLoader';
 import { useUser } from '../../context/UserContext';
 import { useAlienRaceUpdates } from '../../hooks/useAlienRaceUpdates';
+import { useGuestPreview } from '../../hooks/useGuestPreview';
 import { alienRaceThumbCount } from '../../lib/bitcoinAlienRaceUpdates';
 
 const PREMIER_POSTER = '/images/banners/assets/crypto/Bitcoin/Posters/BTCBaseAnnouncementPoster.jpg';
@@ -19,8 +20,9 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
   const { isSignedIn, authSessionLoading } = useUser();
   const { days, ready } = useAlienRaceUpdates();
   const hasContent = alienRaceThumbCount(days) > 0;
-  const allowSignedIn = !authSessionLoading && isSignedIn;
-  const showGuest = !authSessionLoading && !isSignedIn;
+  const guestPreview = useGuestPreview();
+  const allowSignedIn = !authSessionLoading && isSignedIn && !guestPreview;
+  const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
   const pageLoader = useAssetSummaryCircleLoader();
 
   useEffect(() => {
@@ -66,8 +68,8 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           ticker="BTC"
           title="Bitcoin"
           posterSrc={PREMIER_POSTER}
-          posterWidth={3000}
-          posterHeight={3000}
+          posterWidth={1408}
+          posterHeight={901}
           posterAlt="The Bitcoin Alien Race"
         />
       </div>

@@ -11,6 +11,7 @@ import SiteSocialFooter from '../../../SiteSocialFooter';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
 import Bitcoin from './bitcoin';
 import { useUser } from '../../../../context/UserContext';
+import { useGuestPreview } from '../../../../hooks/useGuestPreview';
 
 /** Session reset overlay timeline from fade-in start: fade in, hold, fade out. */
 const SESSION_RESET_MODAL_FADE_IN_MS = 2000;
@@ -26,7 +27,8 @@ const BitcoinPageClient: React.FC = () => {
   const [sessionResetKey, setSessionResetKey] = useState(0);
   const [sessionResetVisible, setSessionResetVisible] = useState(false);
   const { email, isSignedIn, authSessionLoading } = useUser();
-  const isGuest = !authSessionLoading && !email && !isSignedIn;
+  const guestPreview = useGuestPreview();
+  const isGuest = guestPreview || (!authSessionLoading && !email && !isSignedIn);
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
   /** Survives `<Bitcoin key={sessionResetKey} />` remounts so session-clear-on-mount runs once per page visit. */
@@ -272,7 +274,7 @@ const BitcoinPageClient: React.FC = () => {
   return (
     <div className={`asset-page asset-page--${ASSET.cssModifier}`} ref={pageRef}>
       <header className={`asset-header asset-header--${ASSET.cssModifier}`} />
-      {showLoading && !showSessionResetOverlay && !!email && (
+      {showLoading && !showSessionResetOverlay && !!email && !guestPreview && (
         <div
           className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier}${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >

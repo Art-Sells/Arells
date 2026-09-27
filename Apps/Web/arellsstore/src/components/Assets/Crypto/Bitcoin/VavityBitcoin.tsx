@@ -23,6 +23,7 @@ import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleL
 import BitcoinChart from './BitcoinChart';
 import BitcoinSeasonTeaser from './BitcoinSeasonTeaser';
 import AlienRaceDailyUpdates from '../../../AlienRaceDailyUpdates';
+import { useGuestPreview } from '../../../../hooks/useGuestPreview';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 import {
   ASSET_PRICE_CHART_MOUNT_SLIDE_MS,
@@ -58,7 +59,8 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
   }, [ensureAssetsLoaded]);
   const { email, isSignedIn, authSessionLoading, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [bitcoinEmptyPreview, setBitcoinEmptyPreview] = useState(false);
-  const isGuestView = !bitcoinEmptyPreview && !isSignedIn && !email;
+  const guestPreview = useGuestPreview();
+  const isGuestView = guestPreview || (!bitcoinEmptyPreview && !isSignedIn && !email);
   const summaryCircleLoader = useAssetSummaryCircleLoader();
   const summaryCircleLoaderDismissRef = useRef<(() => void) | null>(null);
   summaryCircleLoaderDismissRef.current = summaryCircleLoader.dismissOnSummaryExpandComplete;
