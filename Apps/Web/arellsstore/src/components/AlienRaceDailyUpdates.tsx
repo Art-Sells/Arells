@@ -5,7 +5,6 @@ import AlienRaceLoadReveal from './AlienRaceLoadReveal';
 import AlienRaceUpdatesGrid from './AlienRaceUpdatesGrid';
 import { useAlienRaceUpdates } from '../hooks/useAlienRaceUpdates';
 import { ALIEN_RACE_UPDATES_PAGE_SIZE, alienRaceThumbCount } from '../lib/bitcoinAlienRaceUpdates';
-
 type AlienRaceDailyUpdatesProps = {
   variant: 'myinv' | 'bitcoin';
   mountExpand?: boolean;
@@ -32,7 +31,7 @@ export default function AlienRaceDailyUpdates({ variant, mountExpand = true }: A
 
   if (variant === 'bitcoin') {
     if (ready && !hasContent) return null;
-    if (!ready) return null;
+    if (!ready) return <div data-page-loading="" hidden />;
     return (
       <div className="asset-bitcoin-season-teaser-updates">
         <h3 className="asset-bitcoin-season-teaser-season-title">Weekly Updates</h3>

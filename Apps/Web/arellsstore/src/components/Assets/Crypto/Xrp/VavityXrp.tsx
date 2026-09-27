@@ -31,6 +31,7 @@ import {
 import {
   ASSET_PAGE_SCROLL_BOTTOM_MS,
   cancelDocumentBottomScrollAnimation,
+  scrollDocumentToBottomAfterPageLoaded,
   runAfterDocumentHeightStable,
   runAfterMaxHeightTransitionEnd,
   scrollDocumentToBottomOverMs,
@@ -3119,8 +3120,18 @@ const VavityXrp: React.FC<VavityXrpProps> = ({ sessionMountClearGuardRef }) => {
       setAddFormPanelHeight((prev) => (prev === next ? prev : next));
       requestAnimationFrame(() => setAddFormOpen(true));
     });
-    requestAnimationFrame(() => scrollToBottomAfterDocumentStable());
-  }, [scrollToBottomAfterDocumentStable]);
+  }, []);
+
+  const mountScrollStartedRef = useRef(false);
+  const mountScrollCancelRef = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    if (mountScrollStartedRef.current) return;
+    if (isGuestView || !email || showInitialFetchLoader) return;
+    if (!hasInvestmentsUI && !addFormOpen) return;
+    mountScrollStartedRef.current = true;
+    mountScrollCancelRef.current = scrollDocumentToBottomAfterPageLoaded();
+  }, [isGuestView, email, showInitialFetchLoader, hasInvestmentsUI, addFormOpen]);
+  useEffect(() => () => mountScrollCancelRef.current?.(), []);
 
   const addFormBusy = submitLoading || isSubmitCollapsing || addFormSubmitAnimating || addFormSubmitCollapsing;
 

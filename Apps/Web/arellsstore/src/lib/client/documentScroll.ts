@@ -102,6 +102,70 @@ export function scrollDocumentToBottomOverMs(
   return cancel;
 }
 
+/** Marker for content still fetching its data (e.g. sections that render nothing until a request resolves). */
+const PAGE_LOADING_ATTR = 'data-page-loading';
+
+function pageHasPendingLoads(): boolean {
+  if (document.querySelector(`[${PAGE_LOADING_ATTR}]`)) return true;
+  if (document.fonts && document.fonts.status !== 'loaded') return true;
+  return Array.from(document.images).some((img) => !img.complete && img.loading !== 'lazy');
+}
+
+/**
+ * Page-load scroll: waits until everything has finished loading (no `data-page-loading` markers, fonts
+ * and eager images done) and the document height has then held still for `stableMs`, and only then
+ * animates to the bottom over `ASSET_PAGE_SCROLL_BOTTOM_MS`. Gives up waiting after `timeoutMs` and
+ * scrolls anyway. Cancelled if the user wheels / touches / presses a key / clicks before it starts.
+ */
+export function scrollDocumentToBottomAfterPageLoaded(options?: {
+  stableMs?: number;
+  timeoutMs?: number;
+}): () => void {
+  const stableMs = options?.stableMs ?? 400;
+  const timeoutMs = options?.timeoutMs ?? 12000;
+  if (typeof window === 'undefined') return () => {};
+
+  const userEvents = ['wheel', 'touchstart', 'keydown', 'mousedown'] as const;
+  const t0 = performance.now();
+  let rafId: number | null = null;
+  let stopped = false;
+  let lastH = -1;
+  let readySince: number | null = null;
+
+  const stop = () => {
+    if (stopped) return;
+    stopped = true;
+    if (rafId != null) cancelAnimationFrame(rafId);
+    rafId = null;
+    userEvents.forEach((type) => window.removeEventListener(type, onUser));
+  };
+  const onUser = () => {
+    stop();
+    cancelDocumentBottomScrollAnimation();
+  };
+
+  const loop = (now: number) => {
+    if (stopped) return;
+    const h = getDocumentScrollHeight();
+    if (pageHasPendingLoads() || h !== lastH) {
+      lastH = h;
+      readySince = null;
+    } else if (readySince == null) {
+      readySince = now;
+    }
+    if ((readySince != null && now - readySince >= stableMs) || now - t0 >= timeoutMs) {
+      stop();
+      scrollDocumentToBottomOverMs(ASSET_PAGE_SCROLL_BOTTOM_MS);
+      return;
+    }
+    rafId = requestAnimationFrame(loop);
+  };
+
+  userEvents.forEach((type) => window.addEventListener(type, onUser, { passive: true }));
+  rafId = requestAnimationFrame(loop);
+  return onUser;
+}
+
 /**
  * Scroll from current position toward document top (y=0) over `durationMs` (linear).
  */
