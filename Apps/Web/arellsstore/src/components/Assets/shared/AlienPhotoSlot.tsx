@@ -40,7 +40,7 @@ function comingSoonLines(assetName?: string) {
     'inside the',
     name,
     'Alien Race',
-    'Episodes!',
+    'Episodes.',
     '-',
     'coming soon',
     'stay tuned',
