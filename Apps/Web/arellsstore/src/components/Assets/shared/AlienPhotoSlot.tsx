@@ -11,6 +11,20 @@ type AlienPhotoSlotProps = {
 const PLACEHOLDER_SRC =
   '/images/banners/assets/crypto/Bitcoin/Posters/personalalienplaceholder.jpg';
 
+const EMPTY_LABEL_LINES = [
+  'Add a photo of your',
+  'face to include',
+  'yourself in The',
+  'Bitcoin Alien Race',
+  'episodes',
+] as const;
+
+const EMPTY_LABEL_LINES_DESKTOP = [
+  'Add a photo of your face to include',
+  'yourself in The Bitcoin Alien Race',
+  'episodes',
+] as const;
+
 const THEME_VARS = [
   '--asset-line-color',
   '--asset-hover-dot-color',
@@ -71,9 +85,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [open, close]);
 
-  const emptyLabel = assetName?.trim()
-    ? `Add a photo of your face to create your own Personal ${assetName.trim()} Alien to be included in The Bitcoin Alien Race episodes`
-    : 'Add a photo of your face to create your own Personal Bitcoin Alien to be included in The Bitcoin Alien Race episodes';
+  const emptyLabel = EMPTY_LABEL_LINES.join(' ');
 
   return (
     <div className={`asset-alien-photo-slot asset-alien-photo-slot--${assetId}`}>
@@ -94,7 +106,18 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
             aria-hidden="true"
           />
         </span>
-        <span className="asset-alien-photo-label">{emptyLabel}</span>
+        <span className="asset-alien-photo-label">
+          {EMPTY_LABEL_LINES_DESKTOP.map((line) => (
+            <span key={`desktop-${line}`} className="asset-alien-photo-label-line asset-alien-photo-label-line--desktop">
+              {line}
+            </span>
+          ))}
+          {EMPTY_LABEL_LINES.map((line) => (
+            <span key={`mobile-${line}`} className="asset-alien-photo-label-line asset-alien-photo-label-line--mobile">
+              {line}
+            </span>
+          ))}
+        </span>
         <span className="asset-alien-photo-plus" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="22" height="22">
             <path

@@ -1389,9 +1389,26 @@ body {
 	opacity: 0.7;
 }
 
+.asset-alien-photo-label-line {
+	display: block;
+	white-space: nowrap;
+}
+
+.asset-alien-photo-label-line--mobile {
+	display: none;
+}
+
 @media screen and (max-width: 750px) {
 	.asset-alien-photo-label {
 		font-size: 18px;
+	}
+
+	.asset-alien-photo-label-line--desktop {
+		display: none;
+	}
+
+	.asset-alien-photo-label-line--mobile {
+		display: block;
 	}
 }
 
