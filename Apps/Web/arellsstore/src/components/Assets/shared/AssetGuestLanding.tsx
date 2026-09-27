@@ -20,6 +20,7 @@ type AssetGuestLandingProps = {
   posterWidth?: number;
   posterHeight?: number;
   posterAlt?: string;
+  smallIcon?: boolean;
 };
 
 export default function AssetGuestLanding({
@@ -29,13 +30,18 @@ export default function AssetGuestLanding({
   posterWidth = 3000,
   posterHeight = 2688,
   posterAlt = '',
+  smallIcon = false,
 }: AssetGuestLandingProps) {
   const showTrailer = cssModifier === 'bitcoin';
   const showPoster = Boolean(posterSrc);
   const [posterLoaded, setPosterLoaded] = useState(false);
 
   return (
-    <div className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing`}>
+    <div
+      className={`asset-page-content asset-page-content--${cssModifier} asset-guest-landing${
+        smallIcon ? ' asset-guest-landing--small-icon' : ''
+      }`}
+    >
       <div className="asset-guest-landing-stack">
         <span
           className="home-guest-icon-wrap asset-guest-icon-wrap asset-guest-mount-slide asset-guest-mount-slide--badge"

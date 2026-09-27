@@ -12778,6 +12778,20 @@ a.asset-action-button--save-signin {
 	margin-top: 50px;
 }
 
+.asset-guest-landing--small-icon .asset-guest-icon-wrap {
+	width: 30px;
+	height: 30px;
+}
+
+.asset-guest-landing--small-icon .home-guest-icon-img {
+	width: 30px !important;
+	height: 30px !important;
+}
+
+.asset-guest-landing.asset-guest-landing--small-icon .asset-guest-landing-mission {
+	font-size: 11px;
+}
+
 /* Bitcoin asset page keeps an empty 18px `.asset-header` above the guest landing. */
 .asset-page.asset-page--bitcoin .asset-header--bitcoin ~ .asset-guest-landing .asset-guest-icon-wrap {
 	margin-top: 32px;
