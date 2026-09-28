@@ -21,6 +21,7 @@ type AssetGuestLandingProps = {
   posterHeight?: number;
   posterAlt?: string;
   smallIcon?: boolean;
+  showTrailer?: boolean;
 };
 
 export default function AssetGuestLanding({
@@ -31,8 +32,8 @@ export default function AssetGuestLanding({
   posterHeight = 2688,
   posterAlt = '',
   smallIcon = false,
+  showTrailer = false,
 }: AssetGuestLandingProps) {
-  const showTrailer = cssModifier === 'bitcoin';
   const showPoster = Boolean(posterSrc);
   const [posterLoaded, setPosterLoaded] = useState(false);
 

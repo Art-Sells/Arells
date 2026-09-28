@@ -72,6 +72,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           posterHeight={901}
           posterAlt="The Bitcoin Alien Race"
           smallIcon
+          showTrailer
         />
       </div>
     );
