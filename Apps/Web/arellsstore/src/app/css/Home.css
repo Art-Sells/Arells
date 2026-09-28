@@ -12765,22 +12765,13 @@ a.asset-action-button--save-signin {
 }
 
 .asset-guest-icon-wrap {
-	margin-top: 20px;
-}
-
-@media screen and (min-height: 501px) {
-	.asset-guest-icon-wrap {
-		margin-top: 100px;
-	}
-}
-
-.asset-page.asset-page--bitcoin .asset-guest-icon-wrap {
-	margin-top: 50px;
+	margin-top: 100px;
 }
 
 .asset-guest-landing--small-icon .asset-guest-icon-wrap {
 	width: 30px;
 	height: 30px;
+	margin-top: 50px;
 }
 
 .asset-guest-landing--small-icon .home-guest-icon-img {
@@ -12791,12 +12782,6 @@ a.asset-action-button--save-signin {
 .asset-guest-landing.asset-guest-landing--small-icon .asset-guest-landing-mission {
 	font-size: 11px;
 }
-
-/* Bitcoin asset page keeps an empty 18px `.asset-header` above the guest landing. */
-.asset-page.asset-page--bitcoin .asset-header--bitcoin ~ .asset-guest-landing .asset-guest-icon-wrap {
-	margin-top: 32px;
-}
-
 .asset-guest-icon-tint {
 	background: var(--asset-line-color);
 }
@@ -15292,7 +15277,7 @@ a.asset-action-button--save-signin {
 }
 
 .myinv-page--weekly-guest:not(.not-found-page) .home-guest-icon-wrap {
-	margin-top: 50px;
+	margin-top: 100px;
 }
 
 .myinv-page--weekly-guest .home-guest-signin-shell {
