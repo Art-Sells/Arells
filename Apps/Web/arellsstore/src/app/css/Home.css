@@ -2190,7 +2190,7 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	gap: 10px;
 }
 
-.asset-portfolio-center > .asset-bitcoin-season-teaser-updates {
+.asset-header-panel > .asset-bitcoin-season-teaser-updates {
 	margin-top: 14px;
 }
 
@@ -2618,10 +2618,10 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 
 /* Header panel padding/margins (moved from inline styles in the TSX) */
 .asset-page-content--bitcoin .asset-header-panel {
-	padding-top: 5px;
+	padding-top: 25px;
 	padding-right: 20px;   /* <- edit this */
-	padding-bottom: 15px;
-	padding-left: 0px;
+	padding-bottom: 16px;
+	padding-left: 20px;
 }
 
 .asset-page-content--ethereum .asset-header-panel {
@@ -7458,6 +7458,9 @@ a.myinv-about-button:focus-visible {
 		padding-right: 10px;   /* <- edit this */
 		padding-bottom: 0px;
 		padding-left: 10px;
+	}
+	.asset-page-content.asset-page-content--bitcoin > .asset-header-panel {
+		padding: 10px;
 	}
 	.asset-page-content--ethereum .asset-header-panel {
 		padding-top: 6px;
@@ -12667,6 +12670,34 @@ a.asset-action-button--save-signin {
 	width: auto !important;
 	height: auto !important;
 	max-width: 100px;
+}
+
+.asset-mission-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	/* 20px from the page top, counting the empty 18px `.asset-header` rendered above it. */
+	margin: 2px auto 0;
+	text-align: center;
+}
+
+.asset-mission-header-icon {
+	position: relative;
+	display: block;
+	width: 30px;
+	height: 30px;
+}
+
+.asset-mission-header-line {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: -0.5px;
+	line-height: 1.15;
+	color: var(--asset-line-color);
+	-webkit-text-fill-color: var(--asset-line-color);
 }
 
 .home-guest-slogan {

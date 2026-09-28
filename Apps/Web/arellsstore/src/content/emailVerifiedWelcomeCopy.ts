@@ -18,7 +18,7 @@ export const emailVerifiedWelcomePhaseCopy = {
   missionPhaseIntroDesktop: 'We are currently in Phase One of our mission.',
   bitcoinAlienRaceButton: {
     label: 'The Bitcoin Alien Race',
-    href: '/thebitcoinalienrace',
+    href: '/bitcoin',
   },
   /** Under The Bitcoin Alien Race button and under the guest trailers (Home, Bitcoin, The Bitcoin Alien Race). */
   characterInShowLine: 'You will be a main character in the show',

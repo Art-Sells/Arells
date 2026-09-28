@@ -16,6 +16,7 @@ import {
 } from '../../../../lib/vavity/portfolioValuation';
 import { useUser } from '../../../../context/UserContext';
 import AssetGuestLanding from '../../shared/AssetGuestLanding';
+import AssetMissionHeader from '../../shared/AssetMissionHeader';
 import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
 import LifeForceInfoBadge from '../../shared/LifeForceInfoBadge';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
@@ -31,7 +32,6 @@ import {
 import {
   ASSET_PAGE_SCROLL_BOTTOM_MS,
   cancelDocumentBottomScrollAnimation,
-  scrollDocumentToBottomAfterPageLoaded,
   runAfterDocumentHeightStable,
   runAfterMaxHeightTransitionEnd,
   scrollDocumentToBottomOverMs,
@@ -3129,17 +3129,6 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
     });
   }, []);
 
-  const mountScrollStartedRef = useRef(false);
-  const mountScrollCancelRef = useRef<(() => void) | null>(null);
-  useEffect(() => {
-    if (mountScrollStartedRef.current) return;
-    if (isGuestView || !email || showInitialFetchLoader) return;
-    if (!hasInvestmentsUI && !addFormOpen) return;
-    mountScrollStartedRef.current = true;
-    mountScrollCancelRef.current = scrollDocumentToBottomAfterPageLoaded();
-  }, [isGuestView, email, showInitialFetchLoader, hasInvestmentsUI, addFormOpen]);
-  useEffect(() => () => mountScrollCancelRef.current?.(), []);
-
   const addFormBusy = submitLoading || isSubmitCollapsing || addFormSubmitAnimating || addFormSubmitCollapsing;
 
   useEffect(() => {
@@ -3231,368 +3220,12 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
 
   return (
     <>
+      <AssetMissionHeader title={ASSET.label} />
       <div className="asset-page-content asset-page-content--ethereum page-slide-down">
       <div
         className="asset-panel asset-panel--ethereum asset-header-panel asset-section-slide"
         ref={headerPanelRef}
       >
-        <a
-          className="asset-title-badge asset-title-badge--ethereum asset-title-badge--section"
-          href="https://ethereum.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span className="asset-title-badge-label">ETH</span>
-        </a>
-        <div ref={sectionHeaderRef} className={`asset-section-header${displayIsLiquidMode ? ' is-liquid' : ''}`}>
-          <div ref={assetTitleRef} className="asset-header-title">Ethereum</div>
-          <div
-            className={`asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}
-          >
-            never loses value
-          </div>
-        </div>
-        <div {...assetPriceChartMountSlide.slidePanelProps}>
-          <div ref={assetPriceChartMountSlide.measureRef} className="asset-asset-price-chart-mount-slide-inner">
-        <div
-          className="asset-panel asset-panel--ethereum asset-price-chart-row asset-price-chart-row--combined"
-          style={{ overflow: 'visible' }}
-      >
-          <div
-            className="asset-price-panel asset-price-panel--ethereum asset-section-slide"
-            style={{
-              padding: '30px',
-              background: 'transparent',
-              alignSelf: 'flex-start',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}
-          >
-            <div className="asset-metric-row">
-              <span className="asset-metric-title--ethereum">Price:</span>
-              <span className="asset-metric-value-wrap">
-                {!headerNumbersVisible && (
-                  <span className={`asset-number-loader asset-number-loader--ethereum asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
-                )}
-                <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
-                <span className="asset-header-switch-fade" style={realityFadeStyle}>
-                  <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
-                    {formatCurrency(displayPoint?.price ?? (displayIsLiquidMode ? assetPrice : vapa) ?? 0)}
-                  </span>
-                </span>
-              </span>
-            </div>
-            <div className="asset-metric-row">
-              <span className="asset-metric-title--ethereum">Market Cap:</span>
-              <span className="asset-metric-value-wrap">
-                {!headerNumbersVisible && (
-                  <span className={`asset-number-loader asset-number-loader--ethereum asset-number-loader--wide asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
-                )}
-                <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>$</span>
-                <span className="asset-header-switch-fade" style={realityFadeStyle}>
-                  <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
-                    {renderDecimalSafe(formatMarketCap(activeMarketCap))}
-                  </span>
-                </span>
-              </span>
-            </div>
-            <div className="asset-metric-row">
-              <span className="asset-metric-value-wrap">
-                {!headerNumbersVisible && (
-                  <span className={`asset-number-loader asset-number-loader--ethereum asset-number-loader--narrow asset-number-loader--overlay${shimmersFading ? ' is-hidden' : ''}`} />
-                )}
-                {percentageIncrease > 0 ? (
-                  <span className={`asset-metric-trend-icon asset-metric-trend-icon--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`} aria-hidden="true" />
-                ) : (
-                  <span
-                    className={`asset-metric-trend-icon asset-metric-trend-icon--down asset-metric-trend-icon--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}
-                    aria-hidden="true"
-                  />
-                )}
-                <span
-                  key={chartRangeDays ?? 'all'}
-                  className={`asset-metric-value asset-percentage-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}
-                >
-                  <span className="asset-header-switch-fade" style={realityFadeStyle}>
-                    {headerNumbersVisible
-                      ? formatPercent(Math.abs(percentageIncrease)).replace('%', '').replace('+', '')
-                      : '\u00A0'}
-                  </span>
-                </span>
-                <span
-                  className={`asset-metric-symbol--ethereum asset-metric-percent-symbol--ethereum asset-mount-fade-2s${
-                    headerNumbersVisible ? ' is-visible' : ''
-                  }`}
-                >
-                  %
-                </span>
-              </span>
-            </div>
-            <div
-              className="asset-panel asset-panel--ethereum asset-section-slide asset-market-controls"
-            >
-              <div className="asset-market-controls-header">
-                <div className="asset-profit-summary asset-profit-summary--ethereum" style={{ marginBottom: 0 }}>
-                  <div className="asset-metric-inline-row">
-                    {(() => {
-                      const rawLabel = chartRanges.find((r) => r.days === chartRangeDays)?.label ?? 'All';
-                      const label =
-                        rawLabel === 'All'
-                          ? 'All-time'
-                          : rawLabel === '1 wk'
-                            ? '1 week'
-                            : rawLabel === '1 mnth'
-                              ? '1 month'
-                              : rawLabel === '3 mnths'
-                                ? '3 months'
-                                : rawLabel === '1 yr'
-                                  ? '1 year'
-                                  : rawLabel;
-                      return (
-                        <>
-                          <span className="asset-metric-inline-title--ethereum asset-market-status-title">
-                            {label}:
-                          </span>{' '}
-                          <span
-                            className="asset-metric-inline-value asset-market-status-value"
-                            style={{
-                              opacity: (marketWordHidden ? 0 : 1) * realityOpacity,
-                              transition:
-                                toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 0.25s ease',
-                            }}
-                          >
-                            {marketWordText ||
-                              (percentageIncrease > 0
-                                ? 'Bull Market'
-                                : displayIsLiquidMode
-                                  ? 'Bear Market'
-                                  : 'Sloth Market')}
-                          </span>
-                        </>
-                      );
-                    })()}
-                  </div>
-                </div>
-              </div>
-              <div className="asset-price-button-row">
-                {chartRanges.map((range) => {
-                  const isActive = chartRangeDays === range.days;
-                  return (
-                    <button
-                      key={range.label}
-                      type="button"
-                      className={`asset-range-button asset-range-button--ethereum${isActive ? ' is-active' : ''}`}
-                      disabled={isActive}
-                      onClick={() => {
-                        if (isActive) return;
-                        // Trigger Bull/Bear/Sloth fade on range change.
-                        rangeClickFadeRef.current = true;
-                        setMarketWordHidden(true);
-                        setChartRangeAnchorMs(Date.now());
-                        setChartRangeDays(range.days);
-                      }}
-                    >
-                      {range.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <div className="asset-chart-wrap" ref={chartWrapRef}>
-          <div
-              className="asset-panel asset-panel--ethereum asset-section-slide asset-chart-panel asset-chart-panel--ethereum"
-            style={{
-                padding: '0px',
-                position: 'relative',
-                height: `${chartPanelHeight}px`
-            }}
-          >
-            {chartHoverPoint != null && displayPoint && (
-                <div className="asset-chart-date-badge asset-chart-date-badge--ethereum">
-                  <span className="asset-metric-inline-title--ethereum">Date:</span>{' '}
-                  <span className="asset-metric-inline-value">{new Date(displayPoint.date.includes('T') ? displayPoint.date : `${displayPoint.date}T00:00:00`).toLocaleDateString('en-US')}</span>
-              </div>
-            )}
-              <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
-                <div className="asset-chart-grid-shimmer asset-chart-grid-shimmer--ethereum">
-                  <div className="asset-chart-grid-shimmer-thin" />
-                  <div className="asset-chart-grid-shimmer-thick" />
-                </div>
-              </div>
-              <div
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  inset: 1,
-                  borderRadius: 14,
-                  pointerEvents: 'none',
-                  zIndex: 0,
-                  backgroundImage:
-                    'repeating-linear-gradient(to right, rgba(107, 114, 168, 0.1) 0px, rgba(107, 114, 168, 0.1) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(107, 114, 168, 0.1) 0px, rgba(107, 114, 168, 0.1) 1px, transparent 1px, transparent 30px)',
-                }}
-              />
-              <div
-                className={`asset-chart-fade asset-chart-interactive${
-                  chartReady && !forceChartLoader ? ' is-visible' : ''
-                }${chartReady && !forceChartLoader ? '' : ' is-disabled'}`}
-              >
-            <EthereumChart
-              history={chartHistoryForLine || []}
-                  color="rgba(107, 114, 168, 0.5)"
-                  activeColor="rgba(107, 114, 168, 0.6)"
-                  markerColor="rgba(107, 114, 168, 1)"
-                  gridColor="transparent"
-                  gridSpacing={30}
-                  height={chartCanvasHeight}
-                  interactiveHeight={chartPanelHeight}
-                  canvasOffsetTop={chartTopPadding}
-                  backgroundColor="rgba(107, 114, 168, 0.17)"
-                  markerShadow="-8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2)"
-                  animationDurationMs={toggleKnobLeftPx != null || toggleAnimating ? 0 : 1000}
-              onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
-                setChartHoverIndex(idx ?? null);
-                setChartHoverPoint(point);
-              }}
-            />
-          </div>
-        </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-          <div className="asset-panel asset-panel--ethereum asset-reality-toggle-shell">
-            <div className="asset-reality-toggle-row asset-reality-toggle-row--ethereum">
-              <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
-              <button
-                type="button"
-                ref={toggleBtnRef}
-                className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${toggleKnobLeftPx != null ? ' is-dragging' : ''}${toggleAnimating ? ' is-animating' : ''}`}
-                aria-pressed={displayIsLiquidMode}
-                aria-label="Toggle Liquid/Solid mode"
-                disabled={toggleDisabled}
-                style={liquidSolidToggleKnobStyle(toggleAnimating, toggleKnobLeftEffectivePx)}
-                onPointerDown={(e) => {
-                  if (toggleDisabled) return;
-                  if (toggleAnimating) return;
-                  const btn = e.currentTarget;
-                  const cs = window.getComputedStyle(btn);
-                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
-                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
-                  const w = btn.getBoundingClientRect().width;
-                  const minLeft = leftInset;
-                  const maxLeft = Math.max(leftInset, w - rightInset);
-                  const currentLeft = toggleKnobLeftPx ?? (displayIsLiquidMode ? minLeft : maxLeft);
-                  setToggleTrack({ minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 });
-
-                  toggleDragRef.current.active = true;
-                  toggleDragRef.current.pointerId = e.pointerId;
-                  toggleDragRef.current.startX = e.clientX;
-                  toggleDragRef.current.startLeft = currentLeft;
-                  toggleDragRef.current.lastLeft = currentLeft;
-                  toggleDragRef.current.didDrag = false;
-                  toggleDragRef.current.track = { minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 };
-                  btn.classList.add('is-dragging');
-
-                  try {
-                    btn.setPointerCapture(e.pointerId);
-                  } catch {}
-                  setToggleKnobLeftPx(currentLeft);
-                  btn.style.setProperty('--toggle-knob-left', `${currentLeft}px`);
-                  const alpha = (maxLeft - currentLeft) / Math.max(1e-6, maxLeft - minLeft);
-                  toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
-                  setToggleAlpha(toggleAlphaRef.current);
-                  e.preventDefault();
-                }}
-                onPointerMove={(e) => {
-                  if (!toggleDragRef.current.active) return;
-                  const btn = e.currentTarget;
-                  const track = toggleDragRef.current.track;
-                  if (!track) return;
-                  const minLeft = track.minLeft;
-                  const maxLeft = track.maxLeft;
-                  const dx = e.clientX - toggleDragRef.current.startX;
-                  if (Math.abs(dx) > 2) toggleDragRef.current.didDrag = true;
-                  const next = Math.min(maxLeft, Math.max(minLeft, toggleDragRef.current.startLeft + dx));
-                  toggleDragRef.current.lastLeft = next;
-                  btn.style.setProperty('--toggle-knob-left', `${next}px`);
-                  const alpha = (maxLeft - next) / Math.max(1e-6, maxLeft - minLeft);
-                  toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
-                  if (toggleDragRef.current.raf == null) {
-                    toggleDragRef.current.raf = window.requestAnimationFrame(() => {
-                      toggleDragRef.current.raf = null;
-                      setToggleAlpha((prev) =>
-                        Math.abs(prev - toggleAlphaRef.current) > 0.001 ? toggleAlphaRef.current : prev
-                      );
-                    });
-                  }
-                  e.preventDefault();
-                }}
-                onPointerUp={(e) => {
-                  if (!toggleDragRef.current.active) return;
-                  const btn = e.currentTarget;
-                  const cs = window.getComputedStyle(btn);
-                  const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
-                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
-                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
-                  const w = btn.getBoundingClientRect().width;
-                  const minLeft = leftInset;
-                  const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
-                  const mid = (minLeft + maxLeft) / 2;
-                  const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
-                  const nextIsLiquid = finalLeft <= mid;
-
-                  toggleDragRef.current.active = false;
-                  toggleDragRef.current.pointerId = null;
-                  toggleDragRef.current.track = null;
-                  btn.classList.remove('is-dragging');
-                  try {
-                    btn.releasePointerCapture(e.pointerId);
-                  } catch {}
-
-                  // If this was a tap (no drag), toggle immediately on pointer-up to avoid click lag.
-                  if (!toggleDragRef.current.didDrag) {
-                    animateToggleToAlpha(displayIsLiquidMode ? 0 : 1);
-                    e.preventDefault();
-                    return;
-                  }
-
-                  // Drag: snap to the nearest edge.
-                  animateToggleToAlpha(nextIsLiquid ? 1 : 0);
-                  e.preventDefault();
-                }}
-                onPointerCancel={(e) => {
-                  if (!toggleDragRef.current.active) return;
-                  toggleDragRef.current.active = false;
-                  toggleDragRef.current.pointerId = null;
-                  toggleDragRef.current.track = null;
-                  if (toggleDragRef.current.raf != null) {
-                    window.cancelAnimationFrame(toggleDragRef.current.raf);
-                    toggleDragRef.current.raf = null;
-                  }
-                  setToggleKnobLeftPx(null);
-                  e.currentTarget.style.removeProperty('--toggle-knob-left');
-                  setToggleAlpha(isLiquidMode ? 1 : 0);
-                  try {
-                    e.currentTarget.classList.remove('is-dragging');
-                    e.currentTarget.releasePointerCapture(e.pointerId);
-                  } catch {}
-                }}
-                onClick={() => {}}
-              >
-                <span
-                  className="asset-reality-toggle-knob"
-                  aria-hidden="true"
-                  style={{ opacity: toggleKnobHidden ? 0 : 1, transition: 'opacity 0.8s ease' }}
-                />
-              </button>
-              <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
-            </div>
-          </div>
-
       <div
         className={`asset-panel asset-panel--ethereum asset-portfolio-center asset-section-slide${
           summaryOpen && !isClearingInvestments ? ' asset-portfolio-center--summary-open' : ''
@@ -3890,6 +3523,134 @@ const VavityEthereum: React.FC<VavityEthereumProps> = ({ sessionMountClearGuardR
                   </div>
                 </div>
 
+                <div className="asset-panel asset-panel--ethereum asset-reality-toggle-shell">
+                  <div className="asset-reality-toggle-row asset-reality-toggle-row--ethereum">
+                    <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
+                    <button
+                      type="button"
+                      ref={toggleBtnRef}
+                      className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${toggleKnobLeftPx != null ? ' is-dragging' : ''}${toggleAnimating ? ' is-animating' : ''}`}
+                      aria-pressed={displayIsLiquidMode}
+                      aria-label="Toggle Liquid/Solid mode"
+                      disabled={toggleDisabled}
+                      style={liquidSolidToggleKnobStyle(toggleAnimating, toggleKnobLeftEffectivePx)}
+                      onPointerDown={(e) => {
+                        if (toggleDisabled) return;
+                        if (toggleAnimating) return;
+                        const btn = e.currentTarget;
+                        const cs = window.getComputedStyle(btn);
+                        const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+                        const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
+                        const w = btn.getBoundingClientRect().width;
+                        const minLeft = leftInset;
+                        const maxLeft = Math.max(leftInset, w - rightInset);
+                        const currentLeft = toggleKnobLeftPx ?? (displayIsLiquidMode ? minLeft : maxLeft);
+                        setToggleTrack({ minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 });
+
+                        toggleDragRef.current.active = true;
+                        toggleDragRef.current.pointerId = e.pointerId;
+                        toggleDragRef.current.startX = e.clientX;
+                        toggleDragRef.current.startLeft = currentLeft;
+                        toggleDragRef.current.lastLeft = currentLeft;
+                        toggleDragRef.current.didDrag = false;
+                        toggleDragRef.current.track = { minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 };
+                        btn.classList.add('is-dragging');
+
+                        try {
+                          btn.setPointerCapture(e.pointerId);
+                        } catch {}
+                        setToggleKnobLeftPx(currentLeft);
+                        btn.style.setProperty('--toggle-knob-left', `${currentLeft}px`);
+                        const alpha = (maxLeft - currentLeft) / Math.max(1e-6, maxLeft - minLeft);
+                        toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
+                        setToggleAlpha(toggleAlphaRef.current);
+                        e.preventDefault();
+                      }}
+                      onPointerMove={(e) => {
+                        if (!toggleDragRef.current.active) return;
+                        const btn = e.currentTarget;
+                        const track = toggleDragRef.current.track;
+                        if (!track) return;
+                        const minLeft = track.minLeft;
+                        const maxLeft = track.maxLeft;
+                        const dx = e.clientX - toggleDragRef.current.startX;
+                        if (Math.abs(dx) > 2) toggleDragRef.current.didDrag = true;
+                        const next = Math.min(maxLeft, Math.max(minLeft, toggleDragRef.current.startLeft + dx));
+                        toggleDragRef.current.lastLeft = next;
+                        btn.style.setProperty('--toggle-knob-left', `${next}px`);
+                        const alpha = (maxLeft - next) / Math.max(1e-6, maxLeft - minLeft);
+                        toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
+                        if (toggleDragRef.current.raf == null) {
+                          toggleDragRef.current.raf = window.requestAnimationFrame(() => {
+                            toggleDragRef.current.raf = null;
+                            setToggleAlpha((prev) =>
+                              Math.abs(prev - toggleAlphaRef.current) > 0.001 ? toggleAlphaRef.current : prev
+                            );
+                          });
+                        }
+                        e.preventDefault();
+                      }}
+                      onPointerUp={(e) => {
+                        if (!toggleDragRef.current.active) return;
+                        const btn = e.currentTarget;
+                        const cs = window.getComputedStyle(btn);
+                        const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
+                        const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
+                        const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+                        const w = btn.getBoundingClientRect().width;
+                        const minLeft = leftInset;
+                        const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                        const mid = (minLeft + maxLeft) / 2;
+                        const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
+                        const nextIsLiquid = finalLeft <= mid;
+
+                        toggleDragRef.current.active = false;
+                        toggleDragRef.current.pointerId = null;
+                        toggleDragRef.current.track = null;
+                        btn.classList.remove('is-dragging');
+                        try {
+                          btn.releasePointerCapture(e.pointerId);
+                        } catch {}
+
+                        // If this was a tap (no drag), toggle immediately on pointer-up to avoid click lag.
+                        if (!toggleDragRef.current.didDrag) {
+                          animateToggleToAlpha(displayIsLiquidMode ? 0 : 1);
+                          e.preventDefault();
+                          return;
+                        }
+
+                        // Drag: snap to the nearest edge.
+                        animateToggleToAlpha(nextIsLiquid ? 1 : 0);
+                        e.preventDefault();
+                      }}
+                      onPointerCancel={(e) => {
+                        if (!toggleDragRef.current.active) return;
+                        toggleDragRef.current.active = false;
+                        toggleDragRef.current.pointerId = null;
+                        toggleDragRef.current.track = null;
+                        if (toggleDragRef.current.raf != null) {
+                          window.cancelAnimationFrame(toggleDragRef.current.raf);
+                          toggleDragRef.current.raf = null;
+                        }
+                        setToggleKnobLeftPx(null);
+                        e.currentTarget.style.removeProperty('--toggle-knob-left');
+                        setToggleAlpha(isLiquidMode ? 1 : 0);
+                        try {
+                          e.currentTarget.classList.remove('is-dragging');
+                          e.currentTarget.releasePointerCapture(e.pointerId);
+                        } catch {}
+                      }}
+                      onClick={() => {}}
+                    >
+                      <span
+                        className="asset-reality-toggle-knob"
+                        aria-hidden="true"
+                        style={{ opacity: toggleKnobHidden ? 0 : 1, transition: 'opacity 0.8s ease' }}
+                      />
+                    </button>
+                    <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
+                  </div>
+                </div>
                 {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
                 <div ref={bottomActionsWrapRef}>
                   <div

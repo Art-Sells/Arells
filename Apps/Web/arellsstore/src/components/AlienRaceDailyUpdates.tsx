@@ -31,7 +31,7 @@ export default function AlienRaceDailyUpdates({ variant, mountExpand = true }: A
 
   if (variant === 'bitcoin') {
     if (ready && !hasContent) return null;
-    if (!ready) return <div data-page-loading="" hidden />;
+    if (!ready) return null;
     return (
       <div className="asset-bitcoin-season-teaser-updates">
         <h3 className="asset-bitcoin-season-teaser-season-title">Weekly Updates</h3>
