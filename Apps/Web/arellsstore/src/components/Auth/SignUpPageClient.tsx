@@ -22,7 +22,6 @@ import {
   emailVerifiedWelcomeCopy,
   emailVerifiedWelcomePhaseCopy,
 } from '../../content/emailVerifiedWelcomeCopy';
-import PhaseOneBitcoinAlienRaceButton from '../shared/PhaseOneBitcoinAlienRaceButton';
 
 const COLLAPSE_MS = 1500;
 
@@ -219,43 +218,6 @@ const SignUpPageClient: React.FC = () => {
                   <p className="auth-verified-welcome-headline">{emailVerifiedWelcomeCopy.headline}</p>
                   <p className="auth-verified-welcome-paragraph">{emailVerifiedWelcomeCopy.paragraphs[0]}</p>
                   <div className="auth-verified-welcome-phases auth-verified-welcome-phases--stacked myinv-accent-border">
-                    <div className="auth-verified-welcome-phase-intro-lines">
-                      <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--stack-muted">
-                        {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line1}
-                      </p>
-                      <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--stack-accent">
-                        {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line2}
-                      </p>
-                      <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--stack-muted">
-                        {emailVerifiedWelcomePhaseCopy.missionPhaseIntroLines.line3}
-                      </p>
-                    </div>
-                    <div className="auth-verified-phase-section auth-verified-phase-section--detail myinv-accent-border">
-                      <p className="auth-verified-welcome-phase-heading">
-                        {emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.title}
-                      </p>
-                      <div className="auth-verified-welcome-phase-detail-lines">
-                        {emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.lines.map((line) => {
-                          const isAccent =
-                            emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.accentLines.includes(
-                              line as (typeof emailVerifiedWelcomePhaseCopy.verifiedPhaseOneDetail.accentLines)[number]
-                            );
-                          return (
-                            <p
-                              key={line}
-                              className={`auth-verified-welcome-phase-line${
-                                isAccent
-                                  ? ' auth-verified-welcome-phase-line--stack-accent'
-                                  : ' auth-verified-welcome-phase-line--stack-muted'
-                              }`}
-                            >
-                              {line}
-                            </p>
-                          );
-                        })}
-                      </div>
-                      <PhaseOneBitcoinAlienRaceButton className="phase-one-bitcoin-alien-race-button--verified" stackedLine />
-                    </div>
                     <div className="auth-verified-phase-section myinv-accent-border">
                       <p className="auth-verified-welcome-phase-line auth-verified-welcome-phase-line--portfolio-cta">
                         {emailVerifiedWelcomePhaseCopy.portfolioBenefitLine}
