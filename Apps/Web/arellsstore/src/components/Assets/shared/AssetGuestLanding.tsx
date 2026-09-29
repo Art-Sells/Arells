@@ -72,7 +72,7 @@ export default function AssetGuestLanding({
           On a mission to ensure
           <br />
           <span className="asset-guest-landing-mission-tail">
-            {title} investments live forever.
+            your {title} investments live forever.
           </span>
         </p>
         <div
