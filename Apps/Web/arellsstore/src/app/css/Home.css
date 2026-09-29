@@ -5327,7 +5327,7 @@ a.asset-action-button--myinv-asset-link {
 	font-family: Arial, sans-serif;
 	font-weight: 800;
 	letter-spacing: -.6px;
-	/* Match the Home slogan ("investments live forever") */
+	/* Match the Home slogan ("investments can live forever") */
 	font-size: 14px;
 	color: #000;
 	opacity: .5;
@@ -6174,7 +6174,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	opacity: 0.95;
 }
 
-/* “we are on a mission…” — accent; not `.myinv-mission-sub` (“currently in”). */
+/* “investments can live forever” — accent; not `.myinv-mission-sub` (“currently in”). */
 .myinv-mission-line {
 	margin: 0;
 	font-size: 15px;
@@ -12704,9 +12704,14 @@ a.asset-action-button--save-signin {
 	-webkit-text-fill-color: var(--asset-line-color);
 }
 
+.asset-page--bitcoin .asset-mission-header {
+	gap: 15px;
+	margin-bottom: -5px;
+}
+
 @media (max-width: 750px) {
 	.asset-page--bitcoin .asset-mission-header-line {
-		font-size: 9px;
+		font-size: 12px;
 	}
 }
 

@@ -1041,7 +1041,7 @@ const MyInvestmentsPageClient: React.FC = () => {
             <p
               className={`myinv-descriptioner myinv-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
             >
-              live forever
+              can live forever
             </p>
           </div>
         </div>
@@ -1375,7 +1375,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                         <div className="myinv-panel myinv-panel--shell myinv-mission-inner-shell">
                           <div className="myinv-mission-accent-body">
                             <p className="myinv-mission-line">
-                              we are on a mission to ensure your investments live forever
+                              investments can live forever
                             </p>
                             <div className="myinv-panel-section myinv-accent-border myinv-mission-phase-card">
                               <div className="myinv-panel myinv-panel--shell myinv-mission-phase-shell">

@@ -3268,9 +3268,16 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
 
   return (
     <>
-      <AssetMissionHeader title={ASSET.label}>
-        <h2 className="asset-bitcoin-season-teaser-show-title">The Bitcoin Alien Race</h2>
-      </AssetMissionHeader>
+      <AssetMissionHeader
+        title={ASSET.label}
+        line={
+          <>
+            Your {ASSET.label}
+            <br />
+            investments can live forever.
+          </>
+        }
+      />
       <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
       <div
         className="asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide"

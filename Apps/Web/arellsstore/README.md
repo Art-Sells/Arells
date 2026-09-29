@@ -1,4 +1,4 @@
-Part of the **Arells** monorepo — see the repository root `README.md`. **Arells is on a mission to ensure investments live forever.**
+Part of the **Arells** monorepo — see the repository root `README.md`. **Investments can live forever.**
 
 ---
 

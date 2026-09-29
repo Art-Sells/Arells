@@ -9,7 +9,7 @@ import { HOME_OG_BANNER } from '../lib/siteMetaDescriptions';
 
 const title = 'Arells';
 const description =
-  'Investments live forever with Arells. Arells is on a mission to ensure investments live forever. Powered by Vavity. Now in Phase One of the mission.';
+  'Investments can live forever with Arells. Powered by Vavity. Now in Phase One.';
 
 export const metadata: Metadata = {
   title,

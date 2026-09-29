@@ -4,7 +4,7 @@
  */
 export const emailVerifiedWelcomeCopy = {
   headline: 'Welcome',
-  paragraphs: ['You are now part of a mission to ensure your investments live forever.'],
+  paragraphs: ['Investments can live forever.'],
 } as const;
 
 /** Shared Phase One mission copy (verified, About, My Investments). */
