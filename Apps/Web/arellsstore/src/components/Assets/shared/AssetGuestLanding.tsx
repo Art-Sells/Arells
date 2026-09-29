@@ -20,6 +20,7 @@ type AssetGuestLandingProps = {
   posterAlt?: string;
   smallIcon?: boolean;
   showTrailer?: boolean;
+  hideWordmark?: boolean;
 };
 
 export default function AssetGuestLanding({
@@ -31,6 +32,7 @@ export default function AssetGuestLanding({
   posterAlt = '',
   smallIcon = false,
   showTrailer = false,
+  hideWordmark = false,
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
   const [posterLoaded, setPosterLoaded] = useState(false);
@@ -57,11 +59,13 @@ export default function AssetGuestLanding({
             priority
           />
         </span>
-        <span
-          className="asset-guest-wordmark asset-guest-mount-slide asset-guest-mount-slide--title"
-          role="img"
-          aria-label="Arells"
-        />
+        {hideWordmark ? null : (
+          <span
+            className="asset-guest-wordmark asset-guest-mount-slide asset-guest-mount-slide--title"
+            role="img"
+            aria-label="Arells"
+          />
+        )}
         <p
           className={`home-guest-slogan asset-guest-landing-mission asset-guest-landing-mission--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
         >

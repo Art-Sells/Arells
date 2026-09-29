@@ -12812,6 +12812,10 @@ a.asset-action-button--save-signin {
 	margin-top: 100px;
 }
 
+.asset-page-content--bitcoin.asset-guest-landing:not(.asset-guest-landing--small-icon) .asset-guest-icon-wrap {
+	margin-top: 80px;
+}
+
 .asset-guest-landing--small-icon .asset-guest-icon-wrap {
 	width: 30px;
 	height: 30px;
@@ -12836,6 +12840,10 @@ a.asset-action-button--save-signin {
 	margin-top: 0;
 	font-size: 15px;
 	letter-spacing: -0.5px;
+}
+
+.asset-page-content--bitcoin.asset-guest-landing:not(.asset-guest-landing--small-icon) .asset-guest-landing-mission {
+	margin-top: 15px;
 }
 
 .asset-guest-wordmark {
