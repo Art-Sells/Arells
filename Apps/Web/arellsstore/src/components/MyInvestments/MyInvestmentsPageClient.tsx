@@ -1375,7 +1375,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                         <div className="myinv-panel myinv-panel--shell myinv-mission-inner-shell">
                           <div className="myinv-mission-accent-body">
                             <p className="myinv-mission-line">
-                              investments can live forever
+                              we are on a mission to ensure your investments live forever
                             </p>
                             <div className="myinv-panel-section myinv-accent-border myinv-mission-phase-card">
                               <div className="myinv-panel myinv-panel--shell myinv-mission-phase-shell">
