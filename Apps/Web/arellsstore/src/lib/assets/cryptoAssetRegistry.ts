@@ -68,7 +68,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/ethereumVAPA.json',
     metaTitle: 'Ethereum lives forever',
     faviconPath: '/images/favicons/EthBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/Ethereum/ArellsETHBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'xrp',
@@ -82,7 +82,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/xrpVAPA.json',
     metaTitle: 'XRP lives forever',
     faviconPath: '/images/favicons/XrpBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/XRP/ArellsXRPBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'bnb',
@@ -96,7 +96,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/bnbVAPA.json',
     metaTitle: 'BNB lives forever',
     faviconPath: '/images/favicons/BnbBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/BNB/ArellsBNBBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'solana',
@@ -110,7 +110,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/solanaVAPA.json',
     metaTitle: 'Solana lives forever',
     faviconPath: '/images/favicons/SolBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/Solana/ArellsSOLBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'tron',
@@ -124,7 +124,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/tronVAPA.json',
     metaTitle: 'Tron lives forever',
     faviconPath: '/images/favicons/TronBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/Tron/ArellsTRXBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'doge',
@@ -138,7 +138,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/dogeVAPA.json',
     metaTitle: 'Dogecoin lives forever',
     faviconPath: '/images/favicons/DogeBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/Dogecoin/ArellsDOGEBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'cardano',
@@ -152,7 +152,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/cardanoVAPA.json',
     metaTitle: 'Cardano lives forever',
     faviconPath: '/images/favicons/AdaBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/Cardano/ArellsADABanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'stellar',
@@ -166,7 +166,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/stellarVAPA.json',
     metaTitle: 'Stellar lives forever',
     faviconPath: '/images/favicons/XlmBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/Stellar/ArellsXLMBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'bch',
@@ -180,7 +180,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/bchVAPA.json',
     metaTitle: 'Bitcoin Cash lives forever',
     faviconPath: '/images/favicons/BchBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/BitcoinCash/ArellsBCHBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
   {
     id: 'chainlink',
@@ -194,7 +194,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/chainlinkVAPA.json',
     metaTitle: 'Chainlink lives forever',
     faviconPath: '/images/favicons/LinkBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/Chainlink/ArellsLINKBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
   },
 ] as const;
 

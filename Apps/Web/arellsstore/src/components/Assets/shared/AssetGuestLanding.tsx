@@ -22,6 +22,7 @@ type AssetGuestLandingProps = {
   posterAlt?: string;
   smallIcon?: boolean;
   showTrailer?: boolean;
+  showCharacterLine?: boolean;
 };
 
 export default function AssetGuestLanding({
@@ -33,6 +34,7 @@ export default function AssetGuestLanding({
   posterAlt = '',
   smallIcon = false,
   showTrailer = false,
+  showCharacterLine = false,
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
   const [posterLoaded, setPosterLoaded] = useState(false);
@@ -100,7 +102,7 @@ export default function AssetGuestLanding({
             </div>
           ) : null}
           {showTrailer ? <GuestTrailerPlayer theme="bitcoin" /> : null}
-          {showTrailer ? (
+          {showTrailer && showCharacterLine ? (
             <p className="guest-trailer-character-line">{emailVerifiedWelcomePhaseCopy.characterInShowLine}</p>
           ) : null}
           <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>

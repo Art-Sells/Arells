@@ -36,7 +36,7 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     s3VapaKey: 'vavity/nvidiaVAPA.json',
     metaTitle: 'NVIDIA lives forever',
     faviconPath: '/images/favicons/NvdaBadge.svg',
-    ogBannerPath: '/images/banners/assets/stocks/Nvidia/ArellsNVDABanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
     companyUrl: 'https://www.nvidia.com/',
   },
   {
@@ -51,7 +51,7 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     s3VapaKey: 'vavity/appleVAPA.json',
     metaTitle: 'Apple lives forever',
     faviconPath: '/images/favicons/AaplBadge.svg',
-    ogBannerPath: '/images/banners/assets/stocks/Apple/ArellsAAPLBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
     companyUrl: 'https://www.apple.com/',
   },
   {
@@ -66,7 +66,7 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     s3VapaKey: 'vavity/alphabetVAPA.json',
     metaTitle: 'Alphabet lives forever',
     faviconPath: '/images/favicons/GooglBadge.svg',
-    ogBannerPath: '/images/banners/assets/stocks/Alphabet/ArellsGOOGLBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
     companyUrl: 'https://abc.xyz/',
   },
   {
@@ -81,7 +81,7 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     s3VapaKey: 'vavity/microsoftVAPA.json',
     metaTitle: 'Microsoft lives forever',
     faviconPath: '/images/favicons/MsftBadge.svg',
-    ogBannerPath: '/images/banners/assets/stocks/Microsoft/ArellsMSFTBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
     companyUrl: 'https://www.microsoft.com/',
   },
   {
@@ -96,7 +96,7 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     s3VapaKey: 'vavity/amazonVAPA.json',
     metaTitle: 'Amazon lives forever',
     faviconPath: '/images/favicons/AmznBadge.svg',
-    ogBannerPath: '/images/banners/assets/stocks/Amazon/ArellsAMZNBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
     companyUrl: 'https://www.amazon.com/',
   },
   {
@@ -112,7 +112,7 @@ export const STOCK_ASSETS: readonly StockAssetConfig[] = [
     listDate: '2026-06-12',
     metaTitle: 'SpaceX lives forever',
     faviconPath: '/images/favicons/SpcxBadge.svg',
-    ogBannerPath: '/images/banners/assets/stocks/SpaceX/ArellsSPCXBanner.jpg',
+    ogBannerPath: '/images/banners/ArellsGeneralBannerOfficial.jpg',
     companyUrl: 'https://www.spacex.com/',
   },
 ];

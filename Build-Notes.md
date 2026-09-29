@@ -33,6 +33,7 @@ After Episode One is done:
 - - delet
 
 #### If sharing (organic) happens:
+- Prepare to change banners for other assets
 - Purchase MDR for: Binaural Frequency Meditation - Positive Relaxing Dreamy Peaceful Ambient 
 - Purchase MDR for: Cinematic Ambient Piano - amadasounds
 - Add Worst Case Scenarios (in notes)
