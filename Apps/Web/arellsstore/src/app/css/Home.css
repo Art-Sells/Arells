@@ -5327,7 +5327,7 @@ a.asset-action-button--myinv-asset-link {
 	font-family: Arial, sans-serif;
 	font-weight: 800;
 	letter-spacing: -.6px;
-	/* Match the Home slogan ("investments never lose value") */
+	/* Match the Home slogan ("investments live forever") */
 	font-size: 14px;
 	color: #000;
 	opacity: .5;
@@ -12698,6 +12698,12 @@ a.asset-action-button--save-signin {
 	line-height: 1.15;
 	color: var(--asset-line-color);
 	-webkit-text-fill-color: var(--asset-line-color);
+}
+
+@media (max-width: 750px) {
+	.asset-page--bitcoin .asset-mission-header-line {
+		font-size: 9px;
+	}
 }
 
 .home-guest-slogan {

@@ -14,7 +14,7 @@ export default function AssetMissionHeader({ title, children }: AssetMissionHead
       <p className="asset-mission-header-line">
         On a mission to ensure
         <br />
-        {title} never loses value.
+        {title} investments live forever.
       </p>
       {children}
     </div>

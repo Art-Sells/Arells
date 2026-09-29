@@ -70,7 +70,7 @@ export default function AssetGuestLanding({
           On a mission to ensure
           <br />
           <span className="asset-guest-landing-mission-tail">
-            {title} never loses value.
+            {title} investments live forever.
           </span>
         </p>
         <div
