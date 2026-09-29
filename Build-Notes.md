@@ -15,7 +15,7 @@ After Episode One is done:
 
 - Create and Post Season One Posters (no image to image editing(reset every week usage)) on Bitcoin Reddit ---Reddit ("You will be a main character in the show" post-commenters) | X/LinkedIn (remove coming soon and change to "now playing on arells")
 
--Snd follow-ups ({As you probably already know, you will be a main character in the Bitcoin Alien Race! You'll be able to add a photo of yourself and you'll be able to see yourself interacting with the other characters in the show... announce new trailer (that includes the avatar that will play you in the series, our mission to ensure your investments never lose value hasn't changed, but our slogan has to "investments live forever")}) (mailmeteor [get verified emails]) [with poster]
+-Snd follow-ups ({As you probably already know, you will be a main character in the Bitcoin Alien Race! You'll be able to add a photo of yourself and you'll be able to see yourself interacting with the other characters in the show... announce new trailer (that includes the avatar that will play you in the series, our mission to ensure your investments never lose value hasn't changed, but our slogan has changed to "investments live forever")}) (mailmeteor [get verified emails]) [with poster]
 
 - reach out to D/M/D/N/ABTC
 

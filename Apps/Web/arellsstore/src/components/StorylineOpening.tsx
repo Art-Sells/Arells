@@ -62,7 +62,7 @@ export default function StorylineOpening({
       <span>{investmentsPhrase} are lifeless…</span>
       <span className="storyline-opening-row-break" aria-hidden="true" />
       <span>But in another universe, they are alive,</span>
-      <span>and are on a mission to live forever.</span>
+      <span>and believe they can live forever.</span>
     </>
   );
 
