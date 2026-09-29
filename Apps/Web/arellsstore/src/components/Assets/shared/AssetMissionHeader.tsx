@@ -12,9 +12,9 @@ export default function AssetMissionHeader({ title, children }: AssetMissionHead
         <span className="home-guest-icon-tint asset-guest-icon-tint" />
       </span>
       <p className="asset-mission-header-line">
-        On a mission to ensure
+        On a mission to ensure your
         <br />
-        your {title} investments live forever.
+        {title} investments live forever.
       </p>
       {children}
     </div>

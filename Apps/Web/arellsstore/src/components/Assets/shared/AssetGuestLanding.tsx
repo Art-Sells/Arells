@@ -69,10 +69,10 @@ export default function AssetGuestLanding({
         <p
           className={`home-guest-slogan asset-guest-landing-mission asset-guest-landing-mission--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
         >
-          On a mission to ensure
+          On a mission to ensure your
           <br />
           <span className="asset-guest-landing-mission-tail">
-            your {title} investments live forever.
+            {title} investments live forever.
           </span>
         </p>
         <div
