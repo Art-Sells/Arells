@@ -11742,6 +11742,10 @@ a.growth-metrics-about-button:focus-visible {
 	text-align: center;
 }
 
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verified-welcome-phases--stacked > .auth-verified-phase-section:first-child {
+	margin-top: 0;
+}
+
 .auth-verify-sent.auth-verify-sent--verified-success .auth-verified-phase-section--detail .auth-verified-welcome-phase-detail-lines {
 	width: 170px;
 	max-width: 100%;
