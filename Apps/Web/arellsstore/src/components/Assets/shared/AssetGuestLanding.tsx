@@ -5,8 +5,6 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
 import GuestTrailerPlayer from '../../GuestTrailerPlayer';
-import { emailVerifiedWelcomePhaseCopy } from '../../../content/emailVerifiedWelcomeCopy';
-
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
 
@@ -22,7 +20,6 @@ type AssetGuestLandingProps = {
   posterAlt?: string;
   smallIcon?: boolean;
   showTrailer?: boolean;
-  showCharacterLine?: boolean;
 };
 
 export default function AssetGuestLanding({
@@ -34,7 +31,6 @@ export default function AssetGuestLanding({
   posterAlt = '',
   smallIcon = false,
   showTrailer = false,
-  showCharacterLine = false,
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
   const [posterLoaded, setPosterLoaded] = useState(false);
@@ -100,12 +96,9 @@ export default function AssetGuestLanding({
             </div>
           ) : null}
           {showTrailer ? <GuestTrailerPlayer theme="bitcoin" /> : null}
-          {showTrailer && showCharacterLine ? (
-            <p className="guest-trailer-character-line">{emailVerifiedWelcomePhaseCopy.characterInShowLine}</p>
-          ) : null}
           <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
-              <p className="asset-signin-believe-prompt">Sign in to get involved</p>
+              <p className="asset-signin-believe-prompt">Sign in to learn more</p>
               <Link
                 href="/signin"
                 className={`asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty asset-action-button--${cssModifier}`}

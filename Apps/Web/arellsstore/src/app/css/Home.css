@@ -12709,10 +12709,8 @@ a.asset-action-button--save-signin {
 	margin-bottom: -5px;
 }
 
-@media (max-width: 750px) {
-	.asset-page--bitcoin .asset-mission-header-line {
-		font-size: 12px;
-	}
+.asset-page--bitcoin .asset-mission-header-line {
+	font-size: 12px;
 }
 
 .home-guest-slogan {
