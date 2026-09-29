@@ -3262,7 +3262,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
 
   if (isGuestView) {
     return (
-      <AssetGuestLanding cssModifier={ASSET.cssModifier} ticker={ASSET.ticker} title={ASSET.label} showTrailer />
+      <AssetGuestLanding cssModifier={ASSET.cssModifier} ticker={ASSET.ticker} title={ASSET.label} />
     );
   }
 
