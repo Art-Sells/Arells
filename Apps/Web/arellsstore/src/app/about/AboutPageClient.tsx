@@ -45,7 +45,7 @@ const AboutPageClient = () => {
             <div className="about-section about-section--outer myinv-accent-border">
               <div className="about-section about-section--lead myinv-accent-border">
                 <p className="about-text about-text--outer">
-                  Arells is on a mission to ensure investments live forever.
+                  Arells is on a mission to ensure investments never lose value.
                 </p>
               </div>
               <div className="about-section about-section--mid myinv-accent-border">

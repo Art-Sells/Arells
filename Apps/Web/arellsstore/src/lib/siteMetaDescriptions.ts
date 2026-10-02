@@ -3,5 +3,5 @@
 export const HOME_OG_BANNER = '/images/banners/ArellsGeneralBannerOfficial.jpg';
 
 export function buildAssetMetaDescription(displayName: string): string {
-  return `${displayName} investments can live forever with Arells. Sign in to get involved. Powered by Vavity.`;
+  return `${displayName} investments can live forever with Arells. Sign in to get involved in Arells' mission to ensure ${displayName} investments never lose value. Powered by Vavity.`;
 }

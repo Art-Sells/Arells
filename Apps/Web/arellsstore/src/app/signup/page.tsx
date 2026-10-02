@@ -5,7 +5,7 @@ const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
 
 const title = 'Sign up';
 const description =
-  'Sign up for Arells. Investments can live forever. Powered by Vavity.';
+  'Sign up to join our mission to ensure investments never lose value. Powered by Vavity.';
 
 export const metadata: Metadata = {
   title,

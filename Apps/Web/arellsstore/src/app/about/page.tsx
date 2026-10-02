@@ -3,7 +3,7 @@ import AboutPageClient from './AboutPageClient';
 const generalBanner = '/images/banners/ArellsGeneralBannerOfficial.jpg';
 
 const description =
-  'Learn about Arells and Vavity. Investments can live forever. Now in Phase One.';
+  'Learn about Arells, Vavity, and our mission to ensure investments never lose value. Now in Phase One.';
 
 export const metadata: Metadata = {
   title: 'About',
