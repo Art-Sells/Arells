@@ -8,7 +8,7 @@ After Episode One is done:
 
 - Upload the Episode (and prepare to change the ending announcement after Episode 2)
 
--Replace TheBitcoinAlienRace page/YouTube/X poster/trailer with Season One poster/trailer(as well as the metadata poster (use date announcement for preview on trailers) (the main Bitcoin page trailer preview has no words (centered TrailerRef image) Trailer title above the video)
+-Replace TheBitcoinAlienRace and Bitcoin page/YouTube/X poster/trailer with Season One poster/trailer(as well as the metadata poster (use date announcement for preview on trailers) (the main Bitcoin page trailer preview has no words (centered TrailerRef image) Trailer title above the video)
 - Unhide (new episode every saturday and change to date of Episode Two)
 - Change coming soon to generate new ultra high def image of Leila ref looking like the girl with her eye high definition for "Season One" image
 
