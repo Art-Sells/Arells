@@ -16,6 +16,8 @@ After Episode One is done:
 
 -Snd follow-ups ({As you probably already know, you will be a main character in the Bitcoin Alien Race! You'll be able to add a photo of yourself and you'll be able to see yourself interacting with the other characters in the show... announce new trailer (that includes the avatar that will play you in the series, our mission to ensure your investments never lose value hasn't changed, but our slogan has changed to "investments live forever")}) (mailmeteor [get verified emails]) [with poster]
 
+- Set up in Main BluePrint: Put back the chart and make it into a button [show/hide marketplace]) above character . Move slider back under marketplace] after episode 4/5 explaining it, revert back to this commit for the charts: 8bb8cddd6d61d4bbec7ca52fcca44d18974b8bce
+
 - reach out to D/M/D/N/ABTC
 
 - *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
