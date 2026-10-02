@@ -12,13 +12,15 @@ After Episode One is done:
 - Unhide (new episode every saturday and change to date of Episode Two)
 - Change coming soon to generate new ultra high def image of Leila ref looking like the girl with her eye high definition for "Season One" image
 
-- Create and Post Season One Posters (no image to image editing(reset every week usage)) on Bitcoin Reddit ---Reddit ("Give them the bitcoin page(make sure new trailer is there" post-commenters) | X/LinkedIn (remove coming soon and change to "now playing on arells")
+- Create and Post Season One Posters on Bitcoin Reddit {Bitcoin Series Season One is here hands (add prompt describing AI and to give it a shot before blowing blab blab bla bla, if you hate it after, no big deal, I won't take it personally. My hope blab lab label} ---Reddit ("Give them the bitcoin page(make sure new trailer is there" post-commenters) | X/LinkedIn (remove coming soon and change to "now playing on arells")
 
 -Snd follow-ups ({As you probably already know, you will be a main character in the Bitcoin Alien Race! You'll be able to add a photo of yourself and you'll be able to see yourself interacting with the other characters in the show... announce new trailer (that includes the avatar that will play you in the series, our mission to ensure your investments never lose value hasn't changed, but our slogan has changed to "investments live forever")}) (mailmeteor [get verified emails]) [with poster]
 
+After launch:
+
 - Set up in Main BluePrint: Put back the chart and make it into a button [show/hide marketplace]) above character . Move slider back under marketplace] after episode 4/5 explaining it, revert back to this commit for the charts: 8bb8cddd6d61d4bbec7ca52fcca44d18974b8bce
 
-- reach out to D/M/D/N/ABTC
+- reach out to D/M/D/N/ABTC (2 months?)
 
 - *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
 - *brink1111111@outlook.com and j6767677@outlook.com test emails*
