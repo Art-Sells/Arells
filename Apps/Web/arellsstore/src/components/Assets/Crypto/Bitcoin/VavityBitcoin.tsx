@@ -945,6 +945,11 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
       ? Boolean(email)
       : Boolean(sessionReady && sessionId && fetchVavityAggregator);
   const showInitialFetchLoader = shouldFetchInitialData && !initialFetchDone;
+  const showEmptyTeaser = !hasInvestmentsUI && !showInitialFetchLoader;
+  const [teaserRevealAfterClear, setTeaserRevealAfterClear] = useState(false);
+  const [emptyTeaserOpen, setEmptyTeaserOpen] = useState(false);
+  const [emptyTeaserHeight, setEmptyTeaserHeight] = useState(0);
+  const emptyTeaserContentRef = useRef<HTMLDivElement | null>(null);
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
     setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
@@ -1164,6 +1169,8 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
           }, 1000);
           prevLiveCountRef.current = 0;
           prevSummaryCountRef.current = 0;
+          setTeaserRevealAfterClear(true);
+          setEmptyTeaserOpen(false);
           setIsClearingInvestments(false);
           setSummaryTotalsSnapshot(null);
           setSummaryRangePriceSnapshot(null);
@@ -3167,6 +3174,36 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
     };
   }, [isGuestView, bitcoinEmptyPreview, hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
 
+  useEffect(() => {
+    const node = emptyTeaserContentRef.current;
+    if (!showEmptyTeaser || !teaserRevealAfterClear || !node || typeof ResizeObserver === 'undefined') return;
+    const measure = () => {
+      const next = node.scrollHeight;
+      setEmptyTeaserHeight((prev) => (prev === next ? prev : next));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [showEmptyTeaser, teaserRevealAfterClear]);
+
+  useEffect(() => {
+    if (!showEmptyTeaser) {
+      setTeaserRevealAfterClear(false);
+      setEmptyTeaserOpen(false);
+      return;
+    }
+    if (!teaserRevealAfterClear) return;
+    let raf2 = 0;
+    const raf1 = window.requestAnimationFrame(() => {
+      raf2 = window.requestAnimationFrame(() => setEmptyTeaserOpen(true));
+    });
+    return () => {
+      window.cancelAnimationFrame(raf1);
+      window.cancelAnimationFrame(raf2);
+    };
+  }, [showEmptyTeaser, teaserRevealAfterClear]);
+
   const openEmptyAddForm = useCallback(() => {
     setShowEmptyAddForm(true);
     setShowAddForm(true);
@@ -3299,10 +3336,24 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
         ref={headerPanelRef}
         style={!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : undefined}
       >
-        {!hasInvestmentsUI && !showInitialFetchLoader ? (
-          <>
-            <BitcoinSeasonTeaser />
-          </>
+        {showEmptyTeaser ? (
+          teaserRevealAfterClear ? (
+            <div
+              className="asset-slide-panel"
+              style={{
+                maxHeight: emptyTeaserOpen ? (emptyTeaserHeight ? `${emptyTeaserHeight}px` : 'none') : '0px',
+                transition: 'max-height 3s ease',
+              }}
+            >
+              <div ref={emptyTeaserContentRef}>
+                <BitcoinSeasonTeaser />
+              </div>
+            </div>
+          ) : (
+            <>
+              <BitcoinSeasonTeaser />
+            </>
+          )
         ) : (
           <>
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation
