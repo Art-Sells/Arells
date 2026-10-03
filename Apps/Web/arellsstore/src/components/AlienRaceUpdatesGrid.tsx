@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import React, { useMemo, useState } from 'react';
-import GuestTrailerPlayer from './GuestTrailerPlayer';
+import VideoPlayer from './VideoPlayer';
 import AlienRaceUpdateImage from './AlienRaceUpdateImage';
 import { BitcoinMemoriamStoryline } from './StorylineOpening';
 import {
@@ -11,7 +11,7 @@ import {
   visibleAlienRaceDays,
   type AlienRaceDay,
 } from '../lib/bitcoinAlienRaceUpdates';
-import type { TrailerSources } from '../lib/guestTrailer';
+import type { TrailerSources } from '../lib/videoPlayer';
 
 type AlienRaceUpdatesGridProps = {
   days: AlienRaceDay[];
@@ -96,7 +96,7 @@ export default function AlienRaceUpdatesGrid({
               {rest.map((item) =>
                 item.kind === 'video' ? (
                   <div key={item.key} className="alien-race-updates-thumb alien-race-updates-thumb--player">
-                    <GuestTrailerPlayer
+                    <VideoPlayer
                       theme={playerTheme}
                       sources={item.sources || videoSources(item.url)}
                       poster={item.previewUrl ?? null}

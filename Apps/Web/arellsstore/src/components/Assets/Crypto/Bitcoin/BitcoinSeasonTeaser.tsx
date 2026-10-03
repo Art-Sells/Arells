@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import GuestTrailerPlayer from '../../../GuestTrailerPlayer';
+import VideoPlayer from '../../../VideoPlayer';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/videos';
 import { EPISODE_ONE_POSTER, EPISODE_ONE_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodeone';
 
@@ -15,7 +15,7 @@ export default function BitcoinSeasonTeaser() {
     <div className="asset-bitcoin-season-teaser">
       <div className="asset-bitcoin-season-teaser-show">
         <div className="asset-bitcoin-season-teaser-trailer">
-          <GuestTrailerPlayer
+          <VideoPlayer
             theme="bitcoin"
             sources={SIGNED_IN_TRAILER_SOURCES}
             poster={SIGNED_IN_TRAILER_POSTER}
@@ -41,7 +41,7 @@ export default function BitcoinSeasonTeaser() {
             <p className="asset-bitcoin-season-teaser-cadence">
               <span>Episode One</span>
             </p>
-            <GuestTrailerPlayer
+            <VideoPlayer
               theme="bitcoin"
               sources={EPISODE_ONE_SOURCES}
               poster={EPISODE_ONE_POSTER}

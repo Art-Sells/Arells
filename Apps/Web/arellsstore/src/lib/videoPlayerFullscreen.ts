@@ -24,6 +24,16 @@ export function isNativeVideoFullscreen(video: HTMLVideoElement | null): boolean
   return Boolean(video && (video as WebkitVideo).webkitDisplayingFullscreen);
 }
 
+/** iPhone Safari: no element fullscreen, only the native video player. */
+export function usesNativeVideoFullscreen(player: HTMLElement, video: HTMLVideoElement): boolean {
+  const el = player as FullscreenCapable;
+  const hasElementFullscreen =
+    typeof el.requestFullscreen === 'function' ||
+    typeof el.webkitRequestFullscreen === 'function' ||
+    typeof el.webkitRequestFullScreen === 'function';
+  return !hasElementFullscreen && typeof (video as WebkitVideo).webkitEnterFullscreen === 'function';
+}
+
 export function isPlayerFullscreen(
   player: HTMLElement | null,
   video: HTMLVideoElement | null

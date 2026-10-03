@@ -1,4 +1,4 @@
-import type { TrailerSources } from '../../../../../guestTrailer';
+import type { TrailerSources } from '../../../../../videoPlayer';
 
 const EPISODE_ONE_S3_BASE =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/episode1';

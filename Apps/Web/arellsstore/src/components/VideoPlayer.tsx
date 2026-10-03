@@ -6,13 +6,19 @@ import {
   trailerSrcForQuality,
   type GuestTrailerQuality,
   type TrailerSources,
-} from '../lib/guestTrailer';
+} from '../lib/videoPlayer';
 import { GUEST_TRAILER_POSTER, GUEST_TRAILER_SOURCES } from '../lib/marketing/assets/crypto/bitcoin/videos';
-import { waitForVideoMetadata } from '../lib/guestTrailerFullscreen';
+import {
+  enterPlayerFullscreen,
+  exitPlayerFullscreen,
+  isNativeVideoFullscreen,
+  usesNativeVideoFullscreen,
+  waitForVideoMetadata,
+} from '../lib/videoPlayerFullscreen';
 import { captureVideoFrame, midVideoFrameTime } from '../lib/captureVideoFrame';
 import { claimMediaPlayback, MEDIA_PLAYBACK_CLAIM_EVENT } from '../lib/mediaPlaybackClaim';
 
-type GuestTrailerPlayerProps = {
+type VideoPlayerProps = {
   theme: 'home' | 'bitcoin';
   sources?: TrailerSources;
   poster?: string | null;
@@ -29,8 +35,9 @@ const PLAYBACK_CLOCK_EPS = 0.04;
 const STALL_SPINNER_MS = 300;
 
 /**
- * Expand fills the browser viewport via the top layer (not the Fullscreen API), so every device,
- * including iPhone, keeps this player's controls. Ancestor lift is the fallback without the Popover API.
+ * Expand fills the browser viewport via the top layer (not the Fullscreen API) so this player's controls stay.
+ * iPhone (no element fullscreen) uses the native video fullscreen instead.
+ * Ancestor lift is the fallback without the Popover API.
  */
 const FILL_ANCESTOR_LIFT: [string, string][] = [
   ['transform', 'none'],
@@ -48,7 +55,7 @@ type VideoFrameCallbackVideo = HTMLVideoElement & {
   cancelVideoFrameCallback?: (id: number) => void;
 };
 
-export default function GuestTrailerPlayer({
+export default function VideoPlayer({
   theme,
   sources = GUEST_TRAILER_SOURCES,
   poster = GUEST_TRAILER_POSTER,
@@ -57,7 +64,7 @@ export default function GuestTrailerPlayer({
   seekWidthPx,
   hideSeek = false,
   notchPlay = false,
-}: GuestTrailerPlayerProps) {
+}: VideoPlayerProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -199,7 +206,10 @@ export default function GuestTrailerPlayer({
 
   useEffect(() => () => setFillFullscreen(false), [setFillFullscreen]);
 
-  const inFullscreen = useCallback(() => fillFullscreenRef.current, []);
+  const inFullscreen = useCallback(
+    () => fillFullscreenRef.current || isNativeVideoFullscreen(videoRef.current),
+    []
+  );
 
   useEffect(() => {
     if (!settingsOpen) return;
@@ -478,6 +488,7 @@ export default function GuestTrailerPlayer({
       seekRef.current?.style.setProperty('--seek-ratio', '1');
     }
     setFillFullscreen(false);
+    if (isNativeVideoFullscreen(video ?? null)) void exitPlayerFullscreen(video ?? null);
   }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
@@ -658,7 +669,8 @@ export default function GuestTrailerPlayer({
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
-        setFillFullscreen(true);
+        if (usesNativeVideoFullscreen(player, video)) await enterPlayerFullscreen(player, video);
+        else setFillFullscreen(true);
         if (video.paused) {
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
