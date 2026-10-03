@@ -362,6 +362,17 @@
 		min-width: 0 !important;
 		--seek-inset: 8px;
 	}
+
+	.guest-trailer-frame--notch .guest-trailer-seek {
+		max-width: 161px;
+		margin: 0 7.5px;
+	}
+
+	.guest-trailer-frame--notch .guest-trailer:fullscreen .guest-trailer-seek,
+	.guest-trailer-frame--notch .guest-trailer:-webkit-full-screen .guest-trailer-seek,
+	.guest-trailer-frame--notch .guest-trailer.is-expanded .guest-trailer-seek {
+		margin: 0;
+	}
 }
 
 .guest-trailer-seek::before {
