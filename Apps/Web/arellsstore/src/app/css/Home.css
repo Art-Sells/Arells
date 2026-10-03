@@ -5120,6 +5120,7 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .asset-investment-metrics {
+	text-align: center;
 	transition: opacity 0.35s ease;
 }
 

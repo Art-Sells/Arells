@@ -23,7 +23,7 @@ function lifeForceDescription(variant: 'asset' | 'investments', assetName?: stri
       'investments you',
       'own dictates',
       'the Life Force',
-      'your Aliens',
+      'your Characters',
       'possess.',
     ].join('\n');
   }
@@ -33,7 +33,7 @@ function lifeForceDescription(variant: 'asset' | 'investments', assetName?: stri
     `${name} investments`,
     'you own dictates',
     'the Life Force',
-    `your ${name} Alien`,
+    `your ${name === 'Bitcoin' ? 'Character' : `${name} Alien`}`,
     'possesses.',
   ].join('\n');
 }

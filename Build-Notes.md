@@ -4,14 +4,6 @@
 
 ### Trigger Organic Growth
 
-After Episode One is done:
-
-- test metadata links (bitcoin/homepage/tbar)
-
--Snd follow-ups ({As you probably already know, you will be a main character in the Bitcoin Alien Race! But not just a main character, you will be the hero that the characters in the show depend on. Their fate will rest in your hands. You'll be able to add a photo of yourself and you'll be able to see yourself interacting with the other characters.. announce new trailer (that includes the avatar that will play you in the series, our mission to ensure your investments never lose value hasn't changed, but our slogan has changed to "investments live forever")}) (mailmeteor [get verified emails]) [with poster]
-
-- Post Season One Posters on Bitcoin Reddit {Bitcoin Series Season One is here hands (add prompt describing AI and to give it a shot before blowing blab blab bla bla, if you hate it after, no big deal, I won't take it personally. My hope blab lab label} ---Reddit ("Give them the bitcoin page(make sure new trailer is there" post-commenters) | X/LinkedIn (remove coming soon and change to "now playing on arells")
-
 
 
 After launch:
