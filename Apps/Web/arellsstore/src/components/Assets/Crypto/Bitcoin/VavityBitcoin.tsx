@@ -3276,6 +3276,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
         smallIcon
         showTrailer
         hideWordmark
+        hideSigninPrompt
       />
     );
   }

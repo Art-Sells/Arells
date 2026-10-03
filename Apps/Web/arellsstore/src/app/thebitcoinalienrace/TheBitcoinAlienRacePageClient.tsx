@@ -76,6 +76,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           smallIcon
           showTrailer
           hideWordmark
+          hideSigninPrompt
         />
       </div>
     );
