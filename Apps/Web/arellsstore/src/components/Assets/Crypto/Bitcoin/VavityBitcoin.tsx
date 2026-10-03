@@ -950,6 +950,8 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
   const [emptyTeaserOpen, setEmptyTeaserOpen] = useState(false);
   const [emptyTeaserHeight, setEmptyTeaserHeight] = useState(0);
   const emptyTeaserContentRef = useRef<HTMLDivElement | null>(null);
+  const emptyTeaserWrapRef = useRef<HTMLDivElement | null>(null);
+  const emptyTeaserCollapseAnimRef = useRef<Animation | null>(null);
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
     setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
@@ -2589,6 +2591,16 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
         requestAnimationFrame(() => setSubmitPanelMaxHeight(0));
       });
     } else {
+      const teaserWrap = emptyTeaserWrapRef.current;
+      if (teaserWrap) {
+        emptyTeaserCollapseAnimRef.current?.cancel();
+        teaserWrap.style.overflow = 'hidden';
+        const teaserH = teaserWrap.getBoundingClientRect().height;
+        emptyTeaserCollapseAnimRef.current = teaserWrap.animate(
+          [{ maxHeight: `${teaserH}px` }, { maxHeight: '0px' }],
+          { duration: 2000, easing: 'ease', fill: 'forwards' }
+        );
+      }
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setAddFormOuterSubmitMaxHeight(0);
@@ -3204,6 +3216,15 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
     };
   }, [showEmptyTeaser, teaserRevealAfterClear]);
 
+  useLayoutEffect(() => {
+    if (isSubmitCollapsing) return;
+    const anim = emptyTeaserCollapseAnimRef.current;
+    if (!anim) return;
+    emptyTeaserCollapseAnimRef.current = null;
+    anim.cancel();
+    if (emptyTeaserWrapRef.current) emptyTeaserWrapRef.current.style.overflow = '';
+  }, [isSubmitCollapsing]);
+
   const openEmptyAddForm = useCallback(() => {
     setShowEmptyAddForm(true);
     setShowAddForm(true);
@@ -3339,6 +3360,7 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
         {showEmptyTeaser ? (
           teaserRevealAfterClear ? (
             <div
+              ref={emptyTeaserWrapRef}
               className="asset-slide-panel"
               style={{
                 maxHeight: emptyTeaserOpen ? (emptyTeaserHeight ? `${emptyTeaserHeight}px` : 'none') : '0px',
@@ -3350,9 +3372,9 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
               </div>
             </div>
           ) : (
-            <>
+            <div ref={emptyTeaserWrapRef}>
               <BitcoinSeasonTeaser />
-            </>
+            </div>
           )
         ) : (
           <>
