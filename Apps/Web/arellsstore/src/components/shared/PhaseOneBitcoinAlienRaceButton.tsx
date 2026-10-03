@@ -7,13 +7,11 @@ import { emailVerifiedWelcomePhaseCopy } from '../../content/emailVerifiedWelcom
 type PhaseOneBitcoinAlienRaceButtonProps = {
   className?: string;
   groupClassName?: string;
-  stackedLine?: boolean;
 };
 
 export default function PhaseOneBitcoinAlienRaceButton({
   className,
   groupClassName,
-  stackedLine = false,
 }: PhaseOneBitcoinAlienRaceButtonProps) {
   const { label, href } = emailVerifiedWelcomePhaseCopy.bitcoinAlienRaceButton;
   return (
@@ -25,15 +23,6 @@ export default function PhaseOneBitcoinAlienRaceButton({
       >
         <span className="phase-one-bitcoin-alien-race-button-text">{label}</span>
       </Link>
-      <p className="phase-one-character-line">
-        {stackedLine
-          ? emailVerifiedWelcomePhaseCopy.characterInShowStackedLines.map((line) => (
-              <span key={line} className="phase-one-character-line-row">
-                {line}
-              </span>
-            ))
-          : emailVerifiedWelcomePhaseCopy.characterInShowLine}
-      </p>
     </div>
   );
 }

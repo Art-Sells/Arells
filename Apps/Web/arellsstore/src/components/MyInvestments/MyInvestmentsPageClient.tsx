@@ -1463,7 +1463,6 @@ const MyInvestmentsPageClient: React.FC = () => {
                                     <PhaseOneBitcoinAlienRaceButton
                                       className="phase-one-bitcoin-alien-race-button--myinv"
                                       groupClassName="phase-one-bitcoin-alien-race-group--mobile"
-                                      stackedLine
                                     />
                                   </div>
                                 </div>

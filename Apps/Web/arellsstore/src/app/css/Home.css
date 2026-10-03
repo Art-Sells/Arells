@@ -6048,23 +6048,6 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	}
 }
 
-.phase-one-character-line-row {
-	display: block;
-}
-
-.phase-one-character-line {
-	margin: 8px auto 0;
-	padding: 0;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	font-weight: 800;
-	letter-spacing: -0.5px;
-	line-height: 1.25;
-	text-align: center;
-	color: var(--myinv-accent-color);
-	-webkit-text-fill-color: var(--myinv-accent-color);
-}
-
 @media (hover: hover) and (pointer: fine) {
 	.phase-one-bitcoin-alien-race-button:hover {
 		transform: translateY(-2px);
