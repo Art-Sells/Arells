@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
 import VideoPlayer from '../../VideoPlayer';
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
@@ -36,6 +36,12 @@ export default function AssetGuestLanding({
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
   const [posterLoaded, setPosterLoaded] = useState(false);
+  const posterImgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const img = posterImgRef.current;
+    if (img?.complete && img.naturalWidth > 0) setPosterLoaded(true);
+  }, [posterSrc]);
 
   return (
     <div
@@ -90,6 +96,7 @@ export default function AssetGuestLanding({
                 </div>
               ) : null}
               <img
+                ref={posterImgRef}
                 src={posterSrc}
                 alt={posterAlt}
                 width={posterWidth}

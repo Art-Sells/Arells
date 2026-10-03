@@ -45,6 +45,9 @@ import { CRYPTO_ASSET_BY_ID } from '../../../../lib/assets/cryptoAssetRegistry';
 
 const ASSET = CRYPTO_ASSET_BY_ID.bitcoin;
 
+const PREMIER_POSTER =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
+
 const PREVIEW_SKIP_SESSION_DELETES = false;
 
 type VavityBitcoinProps = {
@@ -3262,7 +3265,18 @@ const VavityBitcoin: React.FC<VavityBitcoinProps> = ({ sessionMountClearGuardRef
 
   if (isGuestView) {
     return (
-      <AssetGuestLanding cssModifier={ASSET.cssModifier} ticker={ASSET.ticker} title={ASSET.label} showTrailer hideWordmark />
+      <AssetGuestLanding
+        cssModifier={ASSET.cssModifier}
+        ticker={ASSET.ticker}
+        title={ASSET.label}
+        posterSrc={PREMIER_POSTER}
+        posterWidth={2000}
+        posterHeight={1166}
+        posterAlt="The Bitcoin Alien Race"
+        smallIcon
+        showTrailer
+        hideWordmark
+      />
     );
   }
 

@@ -64,6 +64,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
   if (showGuest) {
     return (
       <div className="asset-page asset-page--bitcoin">
+        <header className="asset-header asset-header--bitcoin" />
         <AssetGuestLanding
           cssModifier="bitcoin"
           ticker="BTC"
@@ -74,6 +75,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           posterAlt="The Bitcoin Alien Race"
           smallIcon
           showTrailer
+          hideWordmark
         />
       </div>
     );

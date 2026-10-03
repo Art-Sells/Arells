@@ -12877,7 +12877,7 @@ a.asset-action-button--save-signin {
 .asset-guest-landing--small-icon .asset-guest-icon-wrap {
 	width: 30px;
 	height: 30px;
-	margin-top: 50px;
+	margin-top: 32px;
 }
 
 .asset-guest-landing--small-icon .home-guest-icon-img {
@@ -12900,8 +12900,12 @@ a.asset-action-button--save-signin {
 	letter-spacing: -0.5px;
 }
 
-.asset-page-content--bitcoin.asset-guest-landing:not(.asset-guest-landing--small-icon) .asset-guest-landing-mission {
-	margin-top: 15px;
+.asset-page-content--bitcoin.asset-guest-landing:not(:has(.asset-guest-wordmark)) .asset-guest-landing-mission {
+	margin-top: 0;
+}
+
+.asset-page-content--bitcoin.asset-guest-landing:not(:has(.asset-guest-wordmark)) .asset-guest-action-shell {
+	margin-top: -2px;
 }
 
 .asset-guest-wordmark {
