@@ -2,13 +2,12 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
-  GUEST_TRAILER_POSTER,
   GUEST_TRAILER_QUALITY_OPTIONS,
-  GUEST_TRAILER_SOURCES,
   trailerSrcForQuality,
   type GuestTrailerQuality,
   type TrailerSources,
 } from '../lib/guestTrailer';
+import { GUEST_TRAILER_POSTER, GUEST_TRAILER_SOURCES } from '../lib/marketing/assets/crypto/bitcoin/videos';
 import {
   enterPlayerFullscreen,
   exitPlayerFullscreen,
@@ -26,6 +25,7 @@ type GuestTrailerPlayerProps = {
   compact?: boolean;
   seekWidthPx?: number;
   hideSeek?: boolean;
+  notchPlay?: boolean;
 };
 
 const CHROME_HIDE_MS = 2800;
@@ -46,6 +46,7 @@ export default function GuestTrailerPlayer({
   compact = false,
   seekWidthPx,
   hideSeek = false,
+  notchPlay = false,
 }: GuestTrailerPlayerProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<HTMLDivElement | null>(null);
@@ -648,7 +649,7 @@ export default function GuestTrailerPlayer({
       ref={rootRef}
       className={`guest-trailer-frame guest-trailer-frame--${theme}${
         poster ? '' : ' guest-trailer-frame--no-poster'
-      }${compact ? ' guest-trailer-frame--compact' : ''}`}
+      }${compact ? ' guest-trailer-frame--compact' : ''}${notchPlay ? ' guest-trailer-frame--notch' : ''}`}
     >
       <div className="guest-trailer-sizer" aria-hidden="true" />
       <div
@@ -759,10 +760,28 @@ export default function GuestTrailerPlayer({
             <span className="guest-trailer-loader-ring" />
           </div>
         ) : null}
+        {idlePlayMounted && notchPlay ? (
+          <span
+            className={`guest-trailer-notch${
+              !isLoading && (posterVisible || (useVideoThumbnail && Boolean(freezeUrl))) ? ' is-visible' : ''
+            }`}
+            aria-hidden="true"
+          />
+        ) : null}
+        {idlePlayMounted && notchPlay ? (
+          <span
+            className={`guest-trailer-notch-outer${
+              !isLoading && (posterVisible || (useVideoThumbnail && Boolean(freezeUrl))) ? ' is-visible' : ''
+            }`}
+            aria-hidden="true"
+          />
+        ) : null}
         {idlePlayMounted ? (
           <button
             type="button"
             className={`guest-trailer-ctrl guest-trailer-ctrl--center${
+              notchPlay ? ' guest-trailer-ctrl--notch' : ''
+            }${
               !isLoading && (posterVisible || (useVideoThumbnail && Boolean(freezeUrl))) ? ' is-visible' : ''
             }`}
             aria-label="Play trailer"

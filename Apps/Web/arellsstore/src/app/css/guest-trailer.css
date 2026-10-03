@@ -35,6 +35,25 @@
 	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
 }
 
+/* Beats Home.css "Asset pages: remove ALL button shadows" (incl. :hover/:focus) */
+.asset-page--bitcoin .guest-trailer.guest-trailer--bitcoin .guest-trailer-ctrl {
+	box-shadow: 0 5px 18px 3px rgba(80, 38, 0, 0.75) !important;
+}
+
+.alien-race-updates-grid--myinv .guest-trailer-ctrl {
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.65);
+}
+
+.asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl--settings,
+.asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl--expand,
+.asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl--center.is-visible:not(.guest-trailer-ctrl--notch) {
+	opacity: 0.98;
+}
+
+.asset-page--bitcoin .guest-trailer.guest-trailer--bitcoin .guest-trailer-ctrl.guest-trailer-ctrl--notch {
+	box-shadow: 0 4px 16px rgba(198, 113, 0, 0.65) !important;
+}
+
 .asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl svg,
 .asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl path {
 	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
@@ -187,6 +206,32 @@
 	pointer-events: auto;
 }
 
+.guest-trailer-ctrl--notch {
+	top: 100%;
+}
+
+.guest-trailer-notch {
+	position: absolute;
+	left: 50%;
+	top: 100%;
+	width: 61px;
+	height: 61px;
+	box-sizing: border-box;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	background: var(--app-bg, #ffffff);
+	clip-path: inset(-1px -1px calc(50% - 1px) -1px);
+	z-index: 3;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.45s ease;
+}
+
+.guest-trailer-notch.is-visible {
+	opacity: 1;
+}
+
 .guest-trailer-ctrl--center svg {
 	width: 19px;
 	height: 19px;
@@ -273,6 +318,13 @@
 
 .asset-bitcoin-season-teaser-updates .guest-trailer--compact .guest-trailer-seek {
 	width: 176px;
+}
+
+.guest-trailer-frame--notch .guest-trailer-seek {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 0;
+	max-width: 176px;
 }
 
 @media (max-width: 750px) {

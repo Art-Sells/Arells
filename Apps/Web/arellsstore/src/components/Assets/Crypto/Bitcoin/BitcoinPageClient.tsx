@@ -6,7 +6,6 @@ const ASSET = CRYPTO_ASSET_BY_ID.bitcoin;
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import AlienRaceThemeMusicPlayer from '../../../AlienRaceThemeMusicPlayer';
 import SiteSocialFooter from '../../../SiteSocialFooter';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
 import Bitcoin from './bitcoin';
@@ -342,7 +341,6 @@ const BitcoinPageClient: React.FC = () => {
         </footer>
       )}
       {!authSessionLoading && !isGuest && <SiteSocialFooter />}
-      {!authSessionLoading && !isGuest && <AlienRaceThemeMusicPlayer />}
     </div>
   );
 };

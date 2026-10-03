@@ -14,7 +14,8 @@ import { useAlienRaceUpdates } from '../../hooks/useAlienRaceUpdates';
 import { useGuestPreview } from '../../hooks/useGuestPreview';
 import { alienRaceThumbCount } from '../../lib/bitcoinAlienRaceUpdates';
 
-const PREMIER_POSTER = '/images/banners/assets/crypto/Bitcoin/Posters/BTCBaseAnnouncementPoster.jpg';
+const PREMIER_POSTER =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
 
 const TheBitcoinAlienRacePageClient: React.FC = () => {
   const { isSignedIn, authSessionLoading } = useUser();
@@ -68,8 +69,8 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           ticker="BTC"
           title="Bitcoin"
           posterSrc={PREMIER_POSTER}
-          posterWidth={1408}
-          posterHeight={901}
+          posterWidth={2000}
+          posterHeight={1166}
           posterAlt="The Bitcoin Alien Race"
           smallIcon
           showTrailer

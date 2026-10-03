@@ -5,7 +5,8 @@ const path = '/thebitcoinalienrace';
 const title = 'The Bitcoin Alien Race';
 const description =
   'In our universe, your Bitcoin investments are lifeless… But in another universe, they are alive, and are on a mission to live forever.';
-const banner = '/images/banners/assets/crypto/Bitcoin/Posters/BTCBaseAnnouncementPoster.jpg';
+const banner =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg';
 
 export const metadata: Metadata = {
   title,

@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import GuestTrailerPlayer from '../../../GuestTrailerPlayer';
-import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/guestTrailer';
+import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/videos';
+import { EPISODE_ONE_POSTER, EPISODE_ONE_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodeone';
 
-const SEASON_ONE_TEASER_SRC = '/images/banners/assets/crypto/Bitcoin/Posters/BTCBaseAnnouncementPoster.jpg';
+const SEASON_ONE_TEASER_SRC =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/SeasonOneCopy.jpg';
 
 export default function BitcoinSeasonTeaser() {
   const [teaserLoaded, setTeaserLoaded] = useState(false);
@@ -20,7 +22,6 @@ export default function BitcoinSeasonTeaser() {
           />
         </div>
         <div className="asset-bitcoin-season-teaser-season">
-          <h3 className="asset-bitcoin-season-teaser-season-title">Season One</h3>
           <div className={`asset-bitcoin-season-teaser-frame${teaserLoaded ? ' is-loaded' : ''}`}>
             {!teaserLoaded ? (
               <div className="asset-bitcoin-season-teaser-loader" aria-hidden="true">
@@ -30,18 +31,33 @@ export default function BitcoinSeasonTeaser() {
             <img
               src={SEASON_ONE_TEASER_SRC}
               alt="Season One coming soon"
-              width={1408}
-              height={901}
+              width={2660}
+              height={382}
               className={`asset-bitcoin-season-teaser-img${teaserLoaded ? ' is-visible' : ''}`}
               onLoad={() => setTeaserLoaded(true)}
             />
           </div>
-        </div>
-        <div className="asset-bitcoin-season-teaser-cadence-wrap">
-          <p className="asset-bitcoin-season-teaser-cadence">
-            <span>New Episode</span>
-            <span>every Saturday</span>
-          </p>
+          <div className="asset-bitcoin-season-teaser-episode">
+            <p className="asset-bitcoin-season-teaser-cadence">
+              <span>Episode One</span>
+            </p>
+            <GuestTrailerPlayer
+              theme="bitcoin"
+              sources={EPISODE_ONE_SOURCES}
+              poster={EPISODE_ONE_POSTER}
+              notchPlay
+            />
+          </div>
+          <div className="asset-bitcoin-season-teaser-episode">
+            <p className="asset-bitcoin-season-teaser-cadence">
+              <span>Episode Two</span>
+            </p>
+            <div className="asset-bitcoin-season-teaser-cadence-wrap">
+              <p className="asset-bitcoin-season-teaser-cadence">
+                <span>Coming October 31st 2026</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -54,7 +54,8 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/bitcoinVAPA.json',
     metaTitle: 'Bitcoin investments can live forever',
     faviconPath: '/images/favicons/BtcBadge.svg',
-    ogBannerPath: '/images/banners/assets/crypto/Bitcoin/ArellsBTCBanner.jpg',
+    ogBannerPath:
+      'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg',
   },
   {
     id: 'ethereum',

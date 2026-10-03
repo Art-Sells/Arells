@@ -1472,18 +1472,65 @@ body {
 }
 
 .asset-bitcoin-season-teaser-cadence-wrap {
-	display: none;
 	width: 100%;
 	box-sizing: border-box;
 	border-radius: 14px;
 	border: 1px solid rgba(248, 141, 0, 0.3);
 	background: transparent;
-	padding: 8px 10px 12px;
+	padding: 8px 10px 10px;
+}
+
+.asset-bitcoin-season-teaser-episode {
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 14px;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	background: transparent;
+	padding: 8px 10px 10px;
+	margin-bottom: 0;
+	transition: margin-bottom 0.45s ease;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.asset-bitcoin-season-teaser-episode:has(.guest-trailer-notch.is-visible) {
+	margin-bottom: 19px;
+}
+
+.asset-bitcoin-season-teaser-episode .guest-trailer-notch,
+.asset-bitcoin-season-teaser-episode .guest-trailer-notch-outer {
+	background: color-mix(in srgb, rgb(248, 141, 0) 6%, var(--app-bg, rgb(255, 247, 236)));
+}
+
+.asset-bitcoin-season-teaser-episode .guest-trailer-notch-outer {
+	position: absolute;
+	left: 50%;
+	top: 100%;
+	width: 61px;
+	height: 61px;
+	box-sizing: border-box;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	clip-path: inset(calc(50% + 1px) -1px -1px -1px);
+	z-index: 3;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.45s ease;
+}
+
+.asset-bitcoin-season-teaser-episode .guest-trailer-notch-outer.is-visible {
+	opacity: 1;
+}
+
+.asset-bitcoin-season-teaser-episode .asset-bitcoin-season-teaser-cadence-wrap {
+	margin-top: -3px;
 }
 
 .asset-bitcoin-season-teaser-cadence {
 	font-weight: 800;
-	font-size: 32px;
+	font-size: 29px;
 	letter-spacing: -2px;
 	line-height: 1;
 	text-align: center;
@@ -1504,7 +1551,7 @@ body {
 	}
 
 	.asset-bitcoin-season-teaser-cadence {
-		font-size: 23.5px;
+		font-size: 20.5px;
 		letter-spacing: -1.4px;
 		flex-direction: column;
 		column-gap: 0;
@@ -1566,6 +1613,17 @@ body {
 	border-radius: 12px;
 	opacity: 0;
 	transition: opacity 0.9s ease;
+}
+
+@media (max-width: 750px) {
+	.asset-bitcoin-season-teaser-frame {
+		border-radius: 6px;
+	}
+
+	.asset-bitcoin-season-teaser-frame::before,
+	.asset-bitcoin-season-teaser-img {
+		border-radius: 5px;
+	}
 }
 
 .asset-bitcoin-season-teaser-img.is-visible {
