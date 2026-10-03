@@ -37,11 +37,23 @@
 
 /* Beats Home.css "Asset pages: remove ALL button shadows" (incl. :hover/:focus) */
 .asset-page--bitcoin .guest-trailer.guest-trailer--bitcoin .guest-trailer-ctrl {
-	box-shadow: 0 5px 18px 3px rgba(80, 38, 0, 0.75) !important;
+	box-shadow: 0 0 18px 3px rgba(140, 67, 0, 0.75) !important;
+}
+
+.asset-page--bitcoin .guest-trailer.guest-trailer--bitcoin:fullscreen .guest-trailer-ctrl,
+.asset-page--bitcoin .guest-trailer.guest-trailer--bitcoin:-webkit-full-screen .guest-trailer-ctrl,
+.asset-page--bitcoin .guest-trailer.guest-trailer--bitcoin.is-expanded .guest-trailer-ctrl {
+	box-shadow: 0 0 18px 3px rgba(130, 63, 0, 0.75) !important;
 }
 
 .alien-race-updates-grid--myinv .guest-trailer-ctrl {
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.65);
+	box-shadow: 0 0 16px rgba(0, 0, 0, 0.65);
+}
+
+.alien-race-updates-grid--myinv .guest-trailer:fullscreen .guest-trailer-ctrl,
+.alien-race-updates-grid--myinv .guest-trailer:-webkit-full-screen .guest-trailer-ctrl,
+.alien-race-updates-grid--myinv .guest-trailer.is-expanded .guest-trailer-ctrl {
+	box-shadow: 0 0 16px rgba(80, 80, 80, 0.75);
 }
 
 .asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl--settings,
@@ -51,7 +63,7 @@
 }
 
 .asset-page--bitcoin .guest-trailer.guest-trailer--bitcoin .guest-trailer-ctrl.guest-trailer-ctrl--notch {
-	box-shadow: 0 4px 16px rgba(198, 113, 0, 0.65) !important;
+	box-shadow: 0 0 16px rgba(198, 113, 0, 0.65) !important;
 }
 
 .asset-page--bitcoin .guest-trailer--bitcoin .guest-trailer-ctrl svg,
@@ -126,7 +138,8 @@
 }
 
 .guest-trailer:fullscreen .guest-trailer-freeze,
-.guest-trailer:-webkit-full-screen .guest-trailer-freeze {
+.guest-trailer:-webkit-full-screen .guest-trailer-freeze,
+.guest-trailer.is-expanded .guest-trailer-freeze {
 	border-radius: 0;
 	object-fit: contain;
 }
@@ -181,7 +194,7 @@
 	color: #fff;
 	cursor: pointer;
 	z-index: 4;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+	box-shadow: 0 0 16px rgba(0, 0, 0, 0.28);
 }
 
 .guest-trailer-ctrl svg {
@@ -480,7 +493,8 @@
 }
 
 .guest-trailer:fullscreen,
-.guest-trailer:-webkit-full-screen {
+.guest-trailer:-webkit-full-screen,
+.guest-trailer.is-expanded {
 	position: fixed;
 	inset: 0;
 	width: 100%;
@@ -491,8 +505,18 @@
 	overflow: hidden;
 }
 
+.guest-trailer.is-expanded {
+	z-index: 2147483000;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	max-height: none;
+	color: inherit;
+}
+
 .guest-trailer:fullscreen .guest-trailer-stage,
-.guest-trailer:-webkit-full-screen .guest-trailer-stage {
+.guest-trailer:-webkit-full-screen .guest-trailer-stage,
+.guest-trailer.is-expanded .guest-trailer-stage {
 	inset: 0;
 	border-radius: 0;
 }
@@ -500,14 +524,31 @@
 .guest-trailer:fullscreen .guest-trailer-video,
 .guest-trailer:fullscreen .guest-trailer-poster,
 .guest-trailer:-webkit-full-screen .guest-trailer-video,
-.guest-trailer:-webkit-full-screen .guest-trailer-poster {
+.guest-trailer:-webkit-full-screen .guest-trailer-poster,
+.guest-trailer.is-expanded .guest-trailer-video,
+.guest-trailer.is-expanded .guest-trailer-poster {
 	border-radius: 0;
 	object-fit: contain;
 	background: #000;
 }
 
+.guest-trailer:fullscreen .guest-trailer-bottom,
+.guest-trailer:-webkit-full-screen .guest-trailer-bottom,
+.guest-trailer.is-expanded .guest-trailer-bottom {
+	bottom: 73px;
+}
+
+@media (max-height: 500px) {
+	.guest-trailer:fullscreen .guest-trailer-bottom,
+	.guest-trailer:-webkit-full-screen .guest-trailer-bottom,
+	.guest-trailer.is-expanded .guest-trailer-bottom {
+		bottom: 8px;
+	}
+}
+
 .guest-trailer:fullscreen .guest-trailer-seek,
-.guest-trailer:-webkit-full-screen .guest-trailer-seek {
+.guest-trailer:-webkit-full-screen .guest-trailer-seek,
+.guest-trailer.is-expanded .guest-trailer-seek {
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -519,13 +560,15 @@
 }
 
 .guest-trailer:fullscreen .guest-trailer-settings-wrap,
-.guest-trailer:-webkit-full-screen .guest-trailer-settings-wrap {
+.guest-trailer:-webkit-full-screen .guest-trailer-settings-wrap,
+.guest-trailer.is-expanded .guest-trailer-settings-wrap {
 	top: -43px;
 	left: 40px;
 }
 
 .guest-trailer:fullscreen .guest-trailer-ctrl--expand,
-.guest-trailer:-webkit-full-screen .guest-trailer-ctrl--expand {
+.guest-trailer:-webkit-full-screen .guest-trailer-ctrl--expand,
+.guest-trailer.is-expanded .guest-trailer-ctrl--expand {
 	top: -43px;
 	left: -40px;
 }

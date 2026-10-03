@@ -8,12 +8,7 @@ import {
   type TrailerSources,
 } from '../lib/guestTrailer';
 import { GUEST_TRAILER_POSTER, GUEST_TRAILER_SOURCES } from '../lib/marketing/assets/crypto/bitcoin/videos';
-import {
-  enterPlayerFullscreen,
-  exitPlayerFullscreen,
-  isPlayerFullscreen,
-  waitForVideoMetadata,
-} from '../lib/guestTrailerFullscreen';
+import { waitForVideoMetadata } from '../lib/guestTrailerFullscreen';
 import { captureVideoFrame, midVideoFrameTime } from '../lib/captureVideoFrame';
 import { claimMediaPlayback, MEDIA_PLAYBACK_CLAIM_EVENT } from '../lib/mediaPlaybackClaim';
 
@@ -32,6 +27,21 @@ const CHROME_HIDE_MS = 2800;
 const FULLSCREEN_CHROME_HIDE_MS = 1000;
 const PLAYBACK_CLOCK_EPS = 0.04;
 const STALL_SPINNER_MS = 300;
+
+/**
+ * Expand fills the browser viewport via the top layer (not the Fullscreen API), so every device,
+ * including iPhone, keeps this player's controls. Ancestor lift is the fallback without the Popover API.
+ */
+const FILL_ANCESTOR_LIFT: [string, string][] = [
+  ['transform', 'none'],
+  ['filter', 'none'],
+  ['perspective', 'none'],
+  ['will-change', 'auto'],
+  ['contain', 'none'],
+  ['overflow', 'visible'],
+];
+
+type LiftedStyle = { el: HTMLElement; prop: string; value: string; priority: string };
 
 type VideoFrameCallbackVideo = HTMLVideoElement & {
   requestVideoFrameCallback?: (cb: () => void) => number;
@@ -58,6 +68,10 @@ export default function GuestTrailerPlayer({
   const seekRef = useRef<HTMLDivElement | null>(null);
   const seekDraggingRef = useRef(false);
   const fullscreenSuppressLoaderRef = useRef(false);
+  const qualitySwitchingRef = useRef(false);
+  const fillFullscreenRef = useRef(false);
+  const liftedStylesRef = useRef<LiftedStyle[]>([]);
+  const rootOverflowRef = useRef('');
   const wantPlaybackRef = useRef(false);
   const firstFrameRef = useRef(false);
   const playbackOriginRef = useRef(0);
@@ -82,6 +96,11 @@ export default function GuestTrailerPlayer({
   const [isCoarse, setIsCoarse] = useState(false);
   const [freezeUrl, setFreezeUrl] = useState<string | null>(null);
   const [seekRatio, setSeekRatio] = useState(0);
+  const [qualitySwitching, setQualitySwitching] = useState(false);
+  const endQualitySwitch = useCallback(() => {
+    qualitySwitchingRef.current = false;
+    setQualitySwitching(false);
+  }, []);
 
   const srcForQuality = useCallback(
     (next: GuestTrailerQuality) => trailerSrcForQuality(next, sources),
@@ -125,22 +144,62 @@ export default function GuestTrailerPlayer({
     return () => mq.removeEventListener('change', sync);
   }, []);
 
-  useEffect(() => {
-    const syncFullscreen = () => {
-      setExpanded(isPlayerFullscreen(playerRef.current, videoRef.current));
-    };
-    document.addEventListener('fullscreenchange', syncFullscreen);
-    document.addEventListener('webkitfullscreenchange', syncFullscreen);
-    const video = videoRef.current;
-    video?.addEventListener('webkitbeginfullscreen', syncFullscreen);
-    video?.addEventListener('webkitendfullscreen', syncFullscreen);
-    return () => {
-      document.removeEventListener('fullscreenchange', syncFullscreen);
-      document.removeEventListener('webkitfullscreenchange', syncFullscreen);
-      video?.removeEventListener('webkitbeginfullscreen', syncFullscreen);
-      video?.removeEventListener('webkitendfullscreen', syncFullscreen);
-    };
+  const setFillFullscreen = useCallback((on: boolean) => {
+    if (fillFullscreenRef.current === on) return;
+    fillFullscreenRef.current = on;
+    const root = document.documentElement;
+    if (on) {
+      rootOverflowRef.current = root.style.overflow;
+      root.style.overflow = 'hidden';
+    } else {
+      root.style.overflow = rootOverflowRef.current;
+    }
+    const player = playerRef.current;
+    const canTopLayer = Boolean(player && typeof player.showPopover === 'function');
+    if (on && player && canTopLayer) {
+      player.classList.add('is-expanded');
+      player.setAttribute('popover', 'manual');
+      try {
+        player.showPopover();
+      } catch {
+        /* ignore */
+      }
+    } else if (!on && player?.hasAttribute('popover')) {
+      try {
+        player.hidePopover();
+      } catch {
+        /* ignore */
+      }
+      player.removeAttribute('popover');
+    } else if (on) {
+      const saved: LiftedStyle[] = [];
+      let node = playerRef.current?.parentElement ?? null;
+      while (node && node !== document.body) {
+        for (const [prop, value] of FILL_ANCESTOR_LIFT) {
+          saved.push({
+            el: node,
+            prop,
+            value: node.style.getPropertyValue(prop),
+            priority: node.style.getPropertyPriority(prop),
+          });
+          node.style.setProperty(prop, value, 'important');
+        }
+        node = node.parentElement;
+      }
+      liftedStylesRef.current = saved;
+    } else {
+      for (const { el, prop, value, priority } of liftedStylesRef.current) {
+        if (value) el.style.setProperty(prop, value, priority);
+        else el.style.removeProperty(prop);
+      }
+      liftedStylesRef.current = [];
+    }
+    setExpanded(on);
   }, []);
+
+  useEffect(() => () => setFillFullscreen(false), [setFillFullscreen]);
+
+  const inFullscreen = useCallback(() => fillFullscreenRef.current, []);
 
   useEffect(() => {
     if (!settingsOpen) return;
@@ -158,10 +217,11 @@ export default function GuestTrailerPlayer({
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
       if (settingsOpen) setSettingsOpen(false);
+      else if (fillFullscreenRef.current) setFillFullscreen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [settingsOpen]);
+  }, [setFillFullscreen, settingsOpen]);
 
   useEffect(() => {
     if (showChrome) scheduleChromeHide();
@@ -199,8 +259,8 @@ export default function GuestTrailerPlayer({
     const video = videoRef.current;
     if (!video) return;
     if (
-      fullscreenSuppressLoaderRef.current ||
-      isPlayerFullscreen(playerRef.current, video)
+      !qualitySwitchingRef.current &&
+      (fullscreenSuppressLoaderRef.current || inFullscreen())
     ) {
       setIsLoading(false);
       stopBufferPoll();
@@ -223,11 +283,12 @@ export default function GuestTrailerPlayer({
       if (stallMoved) clearStallTimer();
       setIsLoading(false);
       setFreezeUrl(null);
+      endQualitySwitch();
       stopBufferPoll();
       return;
     }
     if (!playbackStartedRef.current) setIsLoading(true);
-  }, [clearStallTimer, stopBufferPoll]);
+  }, [clearStallTimer, endQualitySwitch, inFullscreen, stopBufferPoll]);
 
   const watchFirstFrame = useCallback(
     (video: HTMLVideoElement) => {
@@ -272,10 +333,7 @@ export default function GuestTrailerPlayer({
         stallTimerRef.current = null;
         const current = videoRef.current;
         if (!current || !wantPlaybackRef.current) return;
-        if (
-          fullscreenSuppressLoaderRef.current ||
-          isPlayerFullscreen(playerRef.current, current)
-        ) {
+        if (fullscreenSuppressLoaderRef.current || inFullscreen()) {
           return;
         }
         if (current.ended) return;
@@ -285,7 +343,7 @@ export default function GuestTrailerPlayer({
         beginPlaybackWait(current);
       }, STALL_SPINNER_MS);
     },
-    [beginPlaybackWait]
+    [beginPlaybackWait, inFullscreen]
   );
 
   useEffect(() => {
@@ -372,10 +430,11 @@ export default function GuestTrailerPlayer({
     stopFrameWatch();
     clearStallTimer();
     setIsLoading(false);
+    endQualitySwitch();
     videoRef.current?.pause();
     setChromePinned(true);
     clearHideTimer();
-  }, [clearHideTimer, clearStallTimer, stopBufferPoll, stopFrameWatch]);
+  }, [clearHideTimer, clearStallTimer, endQualitySwitch, stopBufferPoll, stopFrameWatch]);
 
   const togglePlay = useCallback(() => {
     if (!hasStarted) {
@@ -418,8 +477,8 @@ export default function GuestTrailerPlayer({
       setSeekRatio(1);
       seekRef.current?.style.setProperty('--seek-ratio', '1');
     }
-    void exitPlayerFullscreen(video ?? null);
-  }, [clearStallTimer, stopBufferPoll, stopFrameWatch]);
+    setFillFullscreen(false);
+  }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
     (next: GuestTrailerQuality) => {
@@ -443,6 +502,8 @@ export default function GuestTrailerPlayer({
       }
       const freeze = captureVideoFrame(video);
       if (freeze) setFreezeUrl(freeze);
+      qualitySwitchingRef.current = true;
+      setQualitySwitching(true);
       beginPlaybackWait(video);
       video.src = nextSrc;
       video.load();
@@ -463,6 +524,7 @@ export default function GuestTrailerPlayer({
         wantPlaybackRef.current = false;
         setIsLoading(false);
         setFreezeUrl(null);
+        endQualitySwitch();
         return;
       }
       beginPlaybackWait(video);
@@ -487,7 +549,7 @@ export default function GuestTrailerPlayer({
     }
 
     playIfNeeded();
-  }, [beginPlaybackWait]);
+  }, [beginPlaybackWait, endQualitySwitch]);
 
   const seekRatioFromClientX = useCallback((clientX: number) => {
     const el = seekRef.current;
@@ -576,8 +638,8 @@ export default function GuestTrailerPlayer({
       if (!player || !video) return;
       fullscreenSuppressLoaderRef.current = true;
       setIsLoading(false);
-      if (isPlayerFullscreen(player, video)) {
-        await exitPlayerFullscreen(video);
+      if (fillFullscreenRef.current) {
+        setFillFullscreen(false);
         fullscreenSuppressLoaderRef.current = false;
         return;
       }
@@ -596,7 +658,7 @@ export default function GuestTrailerPlayer({
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
-        await enterPlayerFullscreen(player, video);
+        setFillFullscreen(true);
         if (video.paused) {
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
@@ -610,7 +672,7 @@ export default function GuestTrailerPlayer({
         }, 800);
       }
     },
-    [quality, srcForQuality]
+    [quality, setFillFullscreen, srcForQuality]
   );
 
   const showPausedPlay = hasStarted && !isPlaying && !isLoading && !posterVisible;
@@ -690,7 +752,7 @@ export default function GuestTrailerPlayer({
               !video ||
               !wantPlaybackRef.current ||
               fullscreenSuppressLoaderRef.current ||
-              isPlayerFullscreen(playerRef.current, video)
+              inFullscreen()
             ) {
               return;
             }
@@ -702,7 +764,7 @@ export default function GuestTrailerPlayer({
               !video ||
               !wantPlaybackRef.current ||
               fullscreenSuppressLoaderRef.current ||
-              isPlayerFullscreen(playerRef.current, video)
+              inFullscreen()
             ) {
               return;
             }
@@ -739,6 +801,7 @@ export default function GuestTrailerPlayer({
             clearStallTimer();
             setIsLoading(false);
             setFreezeUrl(null);
+            endQualitySwitch();
           }}
         />
         {poster ? (
@@ -755,7 +818,7 @@ export default function GuestTrailerPlayer({
         {freezeUrl ? (
           <img className="guest-trailer-freeze" src={freezeUrl} alt="" draggable={false} />
         ) : null}
-        {isLoading && !expanded ? (
+        {isLoading && (!expanded || qualitySwitching) ? (
           <div className="guest-trailer-loader" aria-hidden="true">
             <span className="guest-trailer-loader-ring" />
           </div>
