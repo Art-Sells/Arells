@@ -8,7 +8,13 @@ import {
   type TrailerSources,
 } from '../lib/videoPlayer';
 import { GUEST_TRAILER_POSTER, GUEST_TRAILER_SOURCES } from '../lib/marketing/assets/crypto/bitcoin/videos';
-import { waitForVideoMetadata } from '../lib/videoPlayerFullscreen';
+import {
+  canElementFullscreen,
+  enterPlayerFullscreen,
+  exitPlayerFullscreen,
+  isPlayerFullscreen,
+  waitForVideoMetadata,
+} from '../lib/videoPlayerFullscreen';
 import { captureVideoFrame, midVideoFrameTime } from '../lib/captureVideoFrame';
 import { claimMediaPlayback, MEDIA_PLAYBACK_CLAIM_EVENT } from '../lib/mediaPlaybackClaim';
 
@@ -30,7 +36,7 @@ const STALL_SPINNER_MS = 300;
 const FULLSCREEN_TRANSITION_MS = 400;
 
 /**
- * Expand fills the browser viewport via the top layer (not the Fullscreen API) so this player's controls stay.
+ * Expand uses element fullscreen where supported; otherwise (iPhone) it fills the browser viewport via the top layer.
  * Ancestor lift is the fallback without the Popover API.
  */
 const FILL_ANCESTOR_LIFT: [string, string][] = [
@@ -256,9 +262,22 @@ export default function VideoPlayer({
   useEffect(() => () => setFillFullscreen(false, true), [setFillFullscreen]);
 
   const inFullscreen = useCallback(
-    () => fillFullscreenRef.current,
+    () => fillFullscreenRef.current || isPlayerFullscreen(playerRef.current),
     []
   );
+
+  useEffect(() => {
+    const sync = () => {
+      if (fillFullscreenRef.current) return;
+      setExpanded(isPlayerFullscreen(playerRef.current));
+    };
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener('webkitfullscreenchange', sync);
+    return () => {
+      document.removeEventListener('fullscreenchange', sync);
+      document.removeEventListener('webkitfullscreenchange', sync);
+    };
+  }, []);
 
   useEffect(() => {
     if (!settingsOpen) return;
@@ -537,6 +556,7 @@ export default function VideoPlayer({
       seekRef.current?.style.setProperty('--seek-ratio', '1');
     }
     setFillFullscreen(false);
+    if (isPlayerFullscreen(playerRef.current)) void exitPlayerFullscreen().catch(() => undefined);
   }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
@@ -702,6 +722,17 @@ export default function VideoPlayer({
         fullscreenSuppressLoaderRef.current = false;
         return;
       }
+      if (isPlayerFullscreen(player)) {
+        void exitPlayerFullscreen().catch(() => undefined);
+        fullscreenSuppressLoaderRef.current = false;
+        return;
+      }
+      const realFullscreen = canElementFullscreen(player)
+        ? enterPlayerFullscreen(player).then(
+            () => true,
+            () => false
+          )
+        : Promise.resolve(false);
       setHasStarted(true);
       setPosterVisible(false);
       setIdlePlayMounted(false);
@@ -717,7 +748,7 @@ export default function VideoPlayer({
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
-        setFillFullscreen(true);
+        if (!(await realFullscreen)) setFillFullscreen(true);
         if (video.paused) {
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);

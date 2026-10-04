@@ -3,12 +3,6 @@ type FullscreenCapable = HTMLElement & {
   webkitRequestFullScreen?: () => Promise<void> | void;
 };
 
-type WebkitVideo = HTMLVideoElement & {
-  webkitEnterFullscreen?: () => void;
-  webkitExitFullscreen?: () => void;
-  webkitDisplayingFullscreen?: boolean;
-};
-
 type FullscreenDocument = Document & {
   webkitFullscreenElement?: Element | null;
   webkitExitFullscreen?: () => Promise<void> | void;
@@ -20,23 +14,21 @@ export function getFullscreenElement(): Element | null {
   return document.fullscreenElement ?? doc.webkitFullscreenElement ?? null;
 }
 
-export function isNativeVideoFullscreen(video: HTMLVideoElement | null): boolean {
-  return Boolean(video && (video as WebkitVideo).webkitDisplayingFullscreen);
+export function canElementFullscreen(player: HTMLElement): boolean {
+  const el = player as FullscreenCapable;
+  return (
+    typeof el.requestFullscreen === 'function' ||
+    typeof el.webkitRequestFullscreen === 'function' ||
+    typeof el.webkitRequestFullScreen === 'function'
+  );
 }
 
-export function isPlayerFullscreen(
-  player: HTMLElement | null,
-  video: HTMLVideoElement | null
-): boolean {
+export function isPlayerFullscreen(player: HTMLElement | null): boolean {
   const fs = getFullscreenElement();
-  if (player && fs && (fs === player || player.contains(fs) || fs.contains(player))) return true;
-  return isNativeVideoFullscreen(video);
+  return Boolean(player && fs && (fs === player || player.contains(fs) || fs.contains(player)));
 }
 
-export async function enterPlayerFullscreen(
-  player: HTMLElement,
-  video: HTMLVideoElement
-): Promise<void> {
+export async function enterPlayerFullscreen(player: HTMLElement): Promise<void> {
   const el = player as FullscreenCapable;
   if (typeof el.requestFullscreen === 'function') {
     await el.requestFullscreen();
@@ -48,20 +40,10 @@ export async function enterPlayerFullscreen(
   }
   if (typeof el.webkitRequestFullScreen === 'function') {
     await el.webkitRequestFullScreen();
-    return;
-  }
-  const nativeVideo = video as WebkitVideo;
-  if (typeof nativeVideo.webkitEnterFullscreen === 'function') {
-    nativeVideo.webkitEnterFullscreen();
   }
 }
 
-export async function exitPlayerFullscreen(video: HTMLVideoElement | null): Promise<void> {
-  const nativeVideo = video as WebkitVideo | null;
-  if (nativeVideo?.webkitDisplayingFullscreen && typeof nativeVideo.webkitExitFullscreen === 'function') {
-    nativeVideo.webkitExitFullscreen();
-    return;
-  }
+export async function exitPlayerFullscreen(): Promise<void> {
   const doc = document as FullscreenDocument;
   if (document.fullscreenElement && typeof document.exitFullscreen === 'function') {
     await document.exitFullscreen();
