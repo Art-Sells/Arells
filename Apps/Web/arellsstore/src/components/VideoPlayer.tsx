@@ -82,7 +82,6 @@ export default function VideoPlayer({
   const qualitySwitchingRef = useRef(false);
   const fillFullscreenRef = useRef(false);
   const elementFullscreenRef = useRef(false);
-  const nativeFullscreenRef = useRef(false);
   const liftedStylesRef = useRef<LiftedStyle[]>([]);
   const rootOverflowRef = useRef('');
   const fillTransitionRef = useRef<{ anim: Animation; done: () => void } | null>(null);
@@ -268,7 +267,7 @@ export default function VideoPlayer({
   useEffect(() => () => setFillFullscreen(false, true), [setFillFullscreen]);
 
   const inFullscreen = useCallback(
-    () => fillFullscreenRef.current || elementFullscreenRef.current || nativeFullscreenRef.current,
+    () => fillFullscreenRef.current || elementFullscreenRef.current,
     []
   );
 
@@ -283,24 +282,6 @@ export default function VideoPlayer({
     return () => {
       document.removeEventListener('fullscreenchange', sync);
       document.removeEventListener('webkitfullscreenchange', sync);
-    };
-  }, []);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const onBegin = () => {
-      nativeFullscreenRef.current = true;
-    };
-    const onEnd = () => {
-      nativeFullscreenRef.current = false;
-      video.controls = false;
-    };
-    video.addEventListener('webkitbeginfullscreen', onBegin);
-    video.addEventListener('webkitendfullscreen', onEnd);
-    return () => {
-      video.removeEventListener('webkitbeginfullscreen', onBegin);
-      video.removeEventListener('webkitendfullscreen', onEnd);
     };
   }, []);
 
@@ -582,7 +563,7 @@ export default function VideoPlayer({
     }
     setFillFullscreen(false);
     if (elementFullscreenRef.current) void exitPlayerFullscreen().catch(() => undefined);
-    if (nativeFullscreenRef.current) exitNativeVideoFullscreen(video ?? null);
+    exitNativeVideoFullscreen(video ?? null);
   }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
