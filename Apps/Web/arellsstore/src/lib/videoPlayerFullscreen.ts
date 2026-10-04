@@ -24,7 +24,11 @@ export function isNativeVideoFullscreen(video: HTMLVideoElement | null): boolean
 }
 
 export function enterNativeVideoFullscreen(video: HTMLVideoElement): void {
-  (video as WebkitVideo).webkitEnterFullscreen?.();
+  try {
+    (video as WebkitVideo).webkitEnterFullscreen?.();
+  } catch {
+    /* ignore */
+  }
 }
 
 export function exitNativeVideoFullscreen(video: HTMLVideoElement | null): void {

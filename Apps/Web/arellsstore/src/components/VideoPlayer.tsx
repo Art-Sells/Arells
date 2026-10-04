@@ -15,7 +15,6 @@ import {
   enterPlayerFullscreen,
   exitNativeVideoFullscreen,
   exitPlayerFullscreen,
-  isNativeVideoFullscreen,
   isPlayerFullscreen,
   waitForVideoMetadata,
 } from '../lib/videoPlayerFullscreen';
@@ -82,6 +81,8 @@ export default function VideoPlayer({
   const fullscreenSuppressLoaderRef = useRef(false);
   const qualitySwitchingRef = useRef(false);
   const fillFullscreenRef = useRef(false);
+  const elementFullscreenRef = useRef(false);
+  const nativeFullscreenRef = useRef(false);
   const liftedStylesRef = useRef<LiftedStyle[]>([]);
   const rootOverflowRef = useRef('');
   const fillTransitionRef = useRef<{ anim: Animation; done: () => void } | null>(null);
@@ -267,23 +268,39 @@ export default function VideoPlayer({
   useEffect(() => () => setFillFullscreen(false, true), [setFillFullscreen]);
 
   const inFullscreen = useCallback(
-    () =>
-      fillFullscreenRef.current ||
-      isPlayerFullscreen(playerRef.current) ||
-      isNativeVideoFullscreen(videoRef.current),
+    () => fillFullscreenRef.current || elementFullscreenRef.current || nativeFullscreenRef.current,
     []
   );
 
   useEffect(() => {
     const sync = () => {
+      elementFullscreenRef.current = isPlayerFullscreen(playerRef.current);
       if (fillFullscreenRef.current) return;
-      setExpanded(isPlayerFullscreen(playerRef.current));
+      setExpanded(elementFullscreenRef.current);
     };
     document.addEventListener('fullscreenchange', sync);
     document.addEventListener('webkitfullscreenchange', sync);
     return () => {
       document.removeEventListener('fullscreenchange', sync);
       document.removeEventListener('webkitfullscreenchange', sync);
+    };
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const onBegin = () => {
+      nativeFullscreenRef.current = true;
+    };
+    const onEnd = () => {
+      nativeFullscreenRef.current = false;
+      video.controls = false;
+    };
+    video.addEventListener('webkitbeginfullscreen', onBegin);
+    video.addEventListener('webkitendfullscreen', onEnd);
+    return () => {
+      video.removeEventListener('webkitbeginfullscreen', onBegin);
+      video.removeEventListener('webkitendfullscreen', onEnd);
     };
   }, []);
 
@@ -564,8 +581,8 @@ export default function VideoPlayer({
       seekRef.current?.style.setProperty('--seek-ratio', '1');
     }
     setFillFullscreen(false);
-    if (isPlayerFullscreen(playerRef.current)) void exitPlayerFullscreen().catch(() => undefined);
-    exitNativeVideoFullscreen(video ?? null);
+    if (elementFullscreenRef.current) void exitPlayerFullscreen().catch(() => undefined);
+    if (nativeFullscreenRef.current) exitNativeVideoFullscreen(video ?? null);
   }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
@@ -731,12 +748,28 @@ export default function VideoPlayer({
         fullscreenSuppressLoaderRef.current = false;
         return;
       }
-      if (isPlayerFullscreen(player)) {
+      if (elementFullscreenRef.current) {
         void exitPlayerFullscreen().catch(() => undefined);
         fullscreenSuppressLoaderRef.current = false;
         return;
       }
       const useNative = !canElementFullscreen(player) && canNativeVideoFullscreen(video);
+      if (useNative) {
+        setHasStarted(true);
+        setPosterVisible(false);
+        setIdlePlayMounted(false);
+        if (!video.getAttribute('src')) video.src = srcForQuality(quality);
+        claimMediaPlayback(playbackTokenRef.current);
+        if (video.paused && video.readyState < HTMLMediaElement.HAVE_METADATA) {
+          void video.play().catch(() => undefined);
+          window.setTimeout(() => enterNativeVideoFullscreen(video), 0);
+        } else {
+          enterNativeVideoFullscreen(video);
+          if (video.paused) void video.play().catch(() => undefined);
+        }
+        fullscreenSuppressLoaderRef.current = false;
+        return;
+      }
       const realFullscreen = canElementFullscreen(player)
         ? enterPlayerFullscreen(player).then(
             () => true,
@@ -758,8 +791,7 @@ export default function VideoPlayer({
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
-        if (useNative) enterNativeVideoFullscreen(video);
-        else if (!(await realFullscreen)) setFillFullscreen(true);
+        if (!(await realFullscreen)) setFillFullscreen(true);
         if (video.paused) {
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
