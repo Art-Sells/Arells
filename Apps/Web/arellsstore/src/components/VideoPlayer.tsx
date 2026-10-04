@@ -8,13 +8,7 @@ import {
   type TrailerSources,
 } from '../lib/videoPlayer';
 import { GUEST_TRAILER_POSTER, GUEST_TRAILER_SOURCES } from '../lib/marketing/assets/crypto/bitcoin/videos';
-import {
-  enterPlayerFullscreen,
-  exitPlayerFullscreen,
-  isNativeVideoFullscreen,
-  usesNativeVideoFullscreen,
-  waitForVideoMetadata,
-} from '../lib/videoPlayerFullscreen';
+import { waitForVideoMetadata } from '../lib/videoPlayerFullscreen';
 import { captureVideoFrame, midVideoFrameTime } from '../lib/captureVideoFrame';
 import { claimMediaPlayback, MEDIA_PLAYBACK_CLAIM_EVENT } from '../lib/mediaPlaybackClaim';
 
@@ -207,7 +201,7 @@ export default function VideoPlayer({
   useEffect(() => () => setFillFullscreen(false), [setFillFullscreen]);
 
   const inFullscreen = useCallback(
-    () => fillFullscreenRef.current || isNativeVideoFullscreen(videoRef.current),
+    () => fillFullscreenRef.current,
     []
   );
 
@@ -488,7 +482,6 @@ export default function VideoPlayer({
       seekRef.current?.style.setProperty('--seek-ratio', '1');
     }
     setFillFullscreen(false);
-    if (isNativeVideoFullscreen(video ?? null)) void exitPlayerFullscreen(video ?? null);
   }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
@@ -669,8 +662,7 @@ export default function VideoPlayer({
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
-        if (usesNativeVideoFullscreen(player, video)) await enterPlayerFullscreen(player, video);
-        else setFillFullscreen(true);
+        setFillFullscreen(true);
         if (video.paused) {
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
