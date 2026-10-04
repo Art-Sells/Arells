@@ -10,8 +10,12 @@ import {
 import { GUEST_TRAILER_POSTER, GUEST_TRAILER_SOURCES } from '../lib/marketing/assets/crypto/bitcoin/videos';
 import {
   canElementFullscreen,
+  canNativeVideoFullscreen,
+  enterNativeVideoFullscreen,
   enterPlayerFullscreen,
+  exitNativeVideoFullscreen,
   exitPlayerFullscreen,
+  isNativeVideoFullscreen,
   isPlayerFullscreen,
   waitForVideoMetadata,
 } from '../lib/videoPlayerFullscreen';
@@ -36,7 +40,8 @@ const STALL_SPINNER_MS = 300;
 const FULLSCREEN_TRANSITION_MS = 400;
 
 /**
- * Expand uses element fullscreen where supported; otherwise (iPhone) it fills the browser viewport via the top layer.
+ * Expand uses element fullscreen where supported, iPhone's native video fullscreen otherwise,
+ * and fills the browser viewport via the top layer as the last fallback.
  * Ancestor lift is the fallback without the Popover API.
  */
 const FILL_ANCESTOR_LIFT: [string, string][] = [
@@ -262,7 +267,10 @@ export default function VideoPlayer({
   useEffect(() => () => setFillFullscreen(false, true), [setFillFullscreen]);
 
   const inFullscreen = useCallback(
-    () => fillFullscreenRef.current || isPlayerFullscreen(playerRef.current),
+    () =>
+      fillFullscreenRef.current ||
+      isPlayerFullscreen(playerRef.current) ||
+      isNativeVideoFullscreen(videoRef.current),
     []
   );
 
@@ -557,6 +565,7 @@ export default function VideoPlayer({
     }
     setFillFullscreen(false);
     if (isPlayerFullscreen(playerRef.current)) void exitPlayerFullscreen().catch(() => undefined);
+    exitNativeVideoFullscreen(video ?? null);
   }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
@@ -727,6 +736,7 @@ export default function VideoPlayer({
         fullscreenSuppressLoaderRef.current = false;
         return;
       }
+      const useNative = !canElementFullscreen(player) && canNativeVideoFullscreen(video);
       const realFullscreen = canElementFullscreen(player)
         ? enterPlayerFullscreen(player).then(
             () => true,
@@ -748,7 +758,8 @@ export default function VideoPlayer({
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
         }
-        if (!(await realFullscreen)) setFillFullscreen(true);
+        if (useNative) enterNativeVideoFullscreen(video);
+        else if (!(await realFullscreen)) setFillFullscreen(true);
         if (video.paused) {
           claimMediaPlayback(playbackTokenRef.current);
           await video.play().catch(() => undefined);
