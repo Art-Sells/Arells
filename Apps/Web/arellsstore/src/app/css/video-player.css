@@ -570,6 +570,25 @@
 	min-width: 320px;
 }
 
+@media (max-width: 750px) {
+	.guest-trailer:fullscreen .guest-trailer-seek,
+	.guest-trailer:-webkit-full-screen .guest-trailer-seek,
+	.guest-trailer.is-expanded .guest-trailer-seek {
+		width: 176px;
+		max-width: none;
+		min-width: 0;
+	}
+
+	.guest-trailer.guest-trailer--compact:fullscreen .guest-trailer-seek,
+	.guest-trailer.guest-trailer--compact:-webkit-full-screen .guest-trailer-seek,
+	.guest-trailer.guest-trailer--compact.is-expanded .guest-trailer-seek,
+	.guest-trailer-frame--notch .guest-trailer:fullscreen .guest-trailer-seek,
+	.guest-trailer-frame--notch .guest-trailer:-webkit-full-screen .guest-trailer-seek,
+	.guest-trailer-frame--notch .guest-trailer.is-expanded .guest-trailer-seek {
+		width: 161px;
+	}
+}
+
 .guest-trailer:fullscreen .guest-trailer-settings-wrap,
 .guest-trailer:-webkit-full-screen .guest-trailer-settings-wrap,
 .guest-trailer.is-expanded .guest-trailer-settings-wrap {
