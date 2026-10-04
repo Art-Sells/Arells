@@ -4,7 +4,6 @@ import './css/global.css';
 import { UserProvider } from '../context/UserContext';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import ReferralCaptureRoot from './referral-capture';
-import StripLegacyParamsRoot from './strip-legacy-params';
 import { VavityProvider } from '../context/VavityAggregator';
 import { defaultSiteIcons } from '../lib/defaultSiteIcons';
 import { getSiteMetadataBase } from '../lib/siteMetadataBase';
@@ -61,7 +60,6 @@ const RootLayout = ({ children }: LayoutProps) => {
         />
         <UserProvider>
           <ReferralCaptureRoot />
-          <StripLegacyParamsRoot />
           <AnalyticsBeacon />
           <VavityProvider>{children}</VavityProvider>
         </UserProvider>
