@@ -27,10 +27,10 @@ const CHROME_HIDE_MS = 2800;
 const FULLSCREEN_CHROME_HIDE_MS = 1000;
 const PLAYBACK_CLOCK_EPS = 0.04;
 const STALL_SPINNER_MS = 300;
+const FULLSCREEN_TRANSITION_MS = 400;
 
 /**
  * Expand fills the browser viewport via the top layer (not the Fullscreen API) so this player's controls stay.
- * iPhone (no element fullscreen) uses the native video fullscreen instead.
  * Ancestor lift is the fallback without the Popover API.
  */
 const FILL_ANCESTOR_LIFT: [string, string][] = [
@@ -73,6 +73,7 @@ export default function VideoPlayer({
   const fillFullscreenRef = useRef(false);
   const liftedStylesRef = useRef<LiftedStyle[]>([]);
   const rootOverflowRef = useRef('');
+  const fillTransitionRef = useRef<{ anim: Animation; done: () => void } | null>(null);
   const wantPlaybackRef = useRef(false);
   const firstFrameRef = useRef(false);
   const playbackOriginRef = useRef(0);
@@ -145,9 +146,7 @@ export default function VideoPlayer({
     return () => mq.removeEventListener('change', sync);
   }, []);
 
-  const setFillFullscreen = useCallback((on: boolean) => {
-    if (fillFullscreenRef.current === on) return;
-    fillFullscreenRef.current = on;
+  const applyFill = useCallback((on: boolean) => {
     const root = document.documentElement;
     if (on) {
       rootOverflowRef.current = root.style.overflow;
@@ -156,9 +155,10 @@ export default function VideoPlayer({
       root.style.overflow = rootOverflowRef.current;
     }
     const player = playerRef.current;
+    if (on) player?.classList.add('is-expanded');
+    else player?.classList.remove('is-expanded');
     const canTopLayer = Boolean(player && typeof player.showPopover === 'function');
     if (on && player && canTopLayer) {
-      player.classList.add('is-expanded');
       player.setAttribute('popover', 'manual');
       try {
         player.showPopover();
@@ -198,7 +198,62 @@ export default function VideoPlayer({
     setExpanded(on);
   }, []);
 
-  useEffect(() => () => setFillFullscreen(false), [setFillFullscreen]);
+  const setFillFullscreen = useCallback(
+    (on: boolean, immediate = false) => {
+      const pending = fillTransitionRef.current;
+      if (pending) {
+        if (!immediate) return;
+        fillTransitionRef.current = null;
+        pending.anim.cancel();
+        pending.done();
+      }
+      if (fillFullscreenRef.current === on) return;
+      fillFullscreenRef.current = on;
+      const player = playerRef.current;
+      const frame = rootRef.current;
+      if (immediate || !player || !frame || typeof player.animate !== 'function') {
+        applyFill(on);
+        return;
+      }
+      const slot = frame.getBoundingClientRect();
+      const inline = {
+        top: `${slot.top + 1}px`,
+        left: `${slot.left + 1}px`,
+        width: `${slot.width - 2}px`,
+        height: `${slot.height - 2}px`,
+        borderRadius: '12px',
+      };
+      if (on) applyFill(true);
+      const full = player.getBoundingClientRect();
+      const fullFrame = {
+        top: `${full.top}px`,
+        left: `${full.left}px`,
+        width: `${full.width}px`,
+        height: `${full.height}px`,
+        borderRadius: '0px',
+      };
+      player.setAttribute('data-fs-animating', '');
+      const anim = player.animate(on ? [inline, fullFrame] : [fullFrame, inline], {
+        duration: FULLSCREEN_TRANSITION_MS,
+        easing: 'ease',
+        fill: 'forwards',
+      });
+      const done = () => {
+        if (!on) applyFill(false);
+        anim.cancel();
+        player.removeAttribute('data-fs-animating');
+      };
+      fillTransitionRef.current = { anim, done };
+      anim.onfinish = () => {
+        if (fillTransitionRef.current?.anim !== anim) return;
+        fillTransitionRef.current = null;
+        done();
+      };
+    },
+    [applyFill]
+  );
+
+  useEffect(() => () => setFillFullscreen(false, true), [setFillFullscreen]);
 
   const inFullscreen = useCallback(
     () => fillFullscreenRef.current,

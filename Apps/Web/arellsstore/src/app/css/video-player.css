@@ -525,6 +525,11 @@
 	color: inherit;
 }
 
+.guest-trailer[data-fs-animating] .guest-trailer-chrome {
+	opacity: 0;
+	transition: none;
+}
+
 .guest-trailer:fullscreen .guest-trailer-stage,
 .guest-trailer:-webkit-full-screen .guest-trailer-stage,
 .guest-trailer.is-expanded .guest-trailer-stage {
