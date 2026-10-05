@@ -4,13 +4,11 @@
 
 ### Trigger Organic Growth
 
-
-After launch:
-
-- Start path (possibly Episode 3 on when to implement character poster (metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
-- Set up in Main BluePrint: Put back the chart and make it into a button [show/hide marketplace]) above character . Move slider back under marketplace] after episode 4/5 explaining it, revert back to this commit for the charts: 8bb8cddd6d61d4bbec7ca52fcca44d18974b8bce
-
 - reach out to D/M/D/N/ABTC (2 months?)
+
+After Episode 2 (or during):
+
+- If finished early, start path Implement character poster (metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
 
 - *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
 - *brink1111111@outlook.com and j6767677@outlook.com test emails*
