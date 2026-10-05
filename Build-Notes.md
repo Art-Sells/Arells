@@ -10,6 +10,8 @@ After Episode 2 (or during):
 
 - If finished early, start path Implement character poster (metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
 
+- For Browser Full-Screen issues, start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
+
 - *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
 - *brink1111111@outlook.com and j6767677@outlook.com test emails*
 
