@@ -3,12 +3,8 @@
 import React from 'react';
 import VavityMicrosoft from './VavityMicrosoft';
 
-type MicrosoftWrapProps = {
-  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
-};
-
-const Microsoft: React.FC<MicrosoftWrapProps> = ({ sessionMountClearGuardRef }) => {
-  return <VavityMicrosoft sessionMountClearGuardRef={sessionMountClearGuardRef} />;
+const Microsoft: React.FC = () => {
+  return <VavityMicrosoft />;
 };
 
 export default Microsoft;

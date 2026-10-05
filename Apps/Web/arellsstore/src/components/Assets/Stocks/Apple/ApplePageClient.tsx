@@ -14,36 +14,13 @@ const ASSET = STOCK_ASSET_BY_ID.apple;
 /** Opaque viewport tint for overscroll (Apple blue wash, not plain white). */
 const APPLE_PAGE_OVERSCROLL_BG = 'rgb(245, 245, 245)';
 
-/** Session reset overlay timeline from fade-in start: fade in, hold, fade out. */
-const SESSION_RESET_MODAL_FADE_IN_MS = 2000;
-const SESSION_RESET_MODAL_HOLD_MS = 5000;
-const SESSION_RESET_MODAL_FADE_OUT_MS = 2000;
-
 const ApplePageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
-  const [sessionResetActive, setSessionResetActive] = useState(false);
-  const [sessionResetFooterHidden, setSessionResetFooterHidden] = useState(false);
-  const [sessionResetFade, setSessionResetFade] = useState(false);
-  const [sessionResetKey, setSessionResetKey] = useState(0);
-  const [sessionResetVisible, setSessionResetVisible] = useState(false);
   const { email, isSignedIn, authSessionLoading } = useUser();
   const isGuest = !authSessionLoading && !email && !isSignedIn;
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
-  /** Survives `<Apple key={sessionResetKey} />` remounts so session-clear-on-mount runs once per page visit. */
-  const sessionMountClearGuardRef = useRef(false);
-  const sessionResetTimersRef = useRef<number[]>([]);
-  /** True from `vavity:session-expired` until reset overlay fully dismissed (gates collapse-started listener). */
-  const sessionResetCycleActiveRef = useRef(false);
-  const sessionResetGenerationRef = useRef(0);
-  const sessionResetFallbackTimerRef = useRef<number | null>(null);
-  /** Prevents double clear of the fallback timer if collapse-started fires twice for the same reset generation. */
-  const sessionResetCollapseScheduledGenRef = useRef(0);
-  const forceSessionResetPreview = false;
-  const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;
-  const showSessionResetFade = sessionResetFade && !forceSessionResetPreview;
-  const sessionResetKeyValue = forceSessionResetPreview ? 'preview' : sessionResetKey;
 
   const updateLoaderToggleRange = useCallback((btn: HTMLButtonElement) => {
     const shell = loaderToggleShellRef.current;
@@ -175,115 +152,10 @@ const ApplePageClient: React.FC = () => {
     };
   }, [authSessionLoading, email]);
 
-  useEffect(() => {
-    if (!showSessionResetOverlay) {
-      setSessionResetVisible(false);
-      return;
-    }
-    setSessionResetVisible(false);
-    const timer = window.setTimeout(() => setSessionResetVisible(true), 30);
-    return () => window.clearTimeout(timer);
-  }, [showSessionResetOverlay]);
-
-  const clearSessionResetFallbackTimer = useCallback(() => {
-    if (sessionResetFallbackTimerRef.current != null) {
-      window.clearTimeout(sessionResetFallbackTimerRef.current);
-      sessionResetFallbackTimerRef.current = null;
-    }
-  }, []);
-
-  const completeSessionResetDismiss = useCallback(() => {
-    clearSessionResetFallbackTimer();
-    setSessionResetActive(false);
-    setSessionResetFooterHidden(false);
-    setSessionResetFade(false);
-    sessionResetCycleActiveRef.current = false;
-  }, [clearSessionResetFallbackTimer]);
-
-  useEffect(() => {
-    if (!sessionResetVisible || !sessionResetCycleActiveRef.current || forceSessionResetPreview) return;
-    const generation = sessionResetGenerationRef.current;
-    const fadeOutStartDelay =
-      SESSION_RESET_MODAL_FADE_IN_MS + SESSION_RESET_MODAL_HOLD_MS;
-    const dismissDelay = fadeOutStartDelay + SESSION_RESET_MODAL_FADE_OUT_MS;
-    const fadeOutTimer = window.setTimeout(() => {
-      if (generation !== sessionResetGenerationRef.current) return;
-      setSessionResetFade(true);
-    }, fadeOutStartDelay);
-    const dismissTimer = window.setTimeout(() => {
-      if (generation !== sessionResetGenerationRef.current) return;
-      completeSessionResetDismiss();
-    }, dismissDelay);
-    return () => {
-      window.clearTimeout(fadeOutTimer);
-      window.clearTimeout(dismissTimer);
-    };
-  }, [sessionResetVisible, forceSessionResetPreview, completeSessionResetDismiss]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const footerFadeDuration = 500;
-    const SESSION_RESET_FALLBACK_MS = 30_000;
-
-    const resetHandler = (_event: Event) => {
-      sessionResetGenerationRef.current += 1;
-      const generation = sessionResetGenerationRef.current;
-      sessionResetCycleActiveRef.current = true;
-      sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
-      sessionResetTimersRef.current = [];
-      clearSessionResetFallbackTimer();
-      setSessionResetFooterHidden(true);
-      setSessionResetVisible(false);
-      setSessionResetFade(false);
-      sessionResetTimersRef.current.push(
-        window.setTimeout(() => {
-          if (generation !== sessionResetGenerationRef.current) return;
-          setSessionResetActive(true);
-          setSessionResetKey((prev) => prev + 1);
-        }, footerFadeDuration)
-      );
-      sessionResetFallbackTimerRef.current = window.setTimeout(() => {
-        sessionResetFallbackTimerRef.current = null;
-        if (generation !== sessionResetGenerationRef.current) return;
-        if (!sessionResetCycleActiveRef.current) return;
-        setSessionResetFade(true);
-        const dismissTimer = window.setTimeout(() => {
-          if (generation !== sessionResetGenerationRef.current) return;
-          completeSessionResetDismiss();
-        }, SESSION_RESET_MODAL_FADE_OUT_MS);
-        sessionResetTimersRef.current.push(dismissTimer);
-      }, SESSION_RESET_FALLBACK_MS);
-    };
-
-    const emptyActionsCollapseHandler = () => {
-      if (!sessionResetCycleActiveRef.current) return;
-      const generation = sessionResetGenerationRef.current;
-      if (sessionResetCollapseScheduledGenRef.current === generation) return;
-      sessionResetCollapseScheduledGenRef.current = generation;
-      clearSessionResetFallbackTimer();
-    };
-
-    window.addEventListener('vavity:session-expired', resetHandler as EventListener);
-    window.addEventListener(
-      'vavity:session-reset-empty-actions-collapse-started',
-      emptyActionsCollapseHandler as EventListener
-    );
-    return () => {
-      window.removeEventListener('vavity:session-expired', resetHandler as EventListener);
-      window.removeEventListener(
-        'vavity:session-reset-empty-actions-collapse-started',
-        emptyActionsCollapseHandler as EventListener
-      );
-      sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
-      sessionResetTimersRef.current = [];
-      clearSessionResetFallbackTimer();
-    };
-  }, [clearSessionResetFallbackTimer, completeSessionResetDismiss]);
-
   return (
     <div className={`asset-page asset-page--${ASSET.cssModifier}`} ref={pageRef}>
       <header className={`asset-header asset-header--${ASSET.cssModifier}`} />
-      {showLoading && !showSessionResetOverlay && !!email && (
+      {showLoading && !!email && (
         <div
           className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier}${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >
@@ -299,38 +171,11 @@ const ApplePageClient: React.FC = () => {
           </div>
         </div>
       )}
-      {showSessionResetOverlay && (
-        <div
-          className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier} asset-session-reset-overlay${
-            showSessionResetFade ? ' asset-loader-overlay-fade' : ''
-          }${sessionResetVisible ? ' is-visible' : ''}`}
-        >
-          <div className="asset-session-reset-modal">
-            <div className={`asset-session-reset-text asset-session-reset-text--title asset-metric-title--${ASSET.cssModifier}`}>
-              Resetting Investments
-            </div>
-            <div className={`asset-session-reset-spinner-wrap asset-profit-summary asset-profit-summary--${ASSET.cssModifier}`}>
-              <div className="asset-session-reset-spinner" aria-hidden="true">
-                <div
-                  className="asset-delete-loader-spinner"
-                  style={{ borderColor: 'rgba(55, 91, 210, 0.2)', borderTopColor: 'rgba(55, 91, 210, 0.5)' }}
-                />
-              </div>
-            </div>
-            <div className={`asset-session-reset-text asset-session-reset-text--subtitle asset-metric-title--${ASSET.cssModifier}`}>
-              Sign In to Save
-            </div>
-          </div>
-        </div>
-      )}
 
-      <Apple key={`session-reset-${sessionResetKeyValue}`} sessionMountClearGuardRef={sessionMountClearGuardRef} />
+      <Apple />
 
       {!authSessionLoading && !isGuest && (
-        <footer
-          className={`asset-footer${sessionResetFooterHidden ? ' asset-footer--session-reset-hidden' : ''}`}
-          aria-hidden={sessionResetFooterHidden ? true : undefined}
-        >
+        <footer className="asset-footer">
           {!!email && <AssetFooterPortfolioButton cssModifier={ASSET.cssModifier} />}
           <Link
             href="/"

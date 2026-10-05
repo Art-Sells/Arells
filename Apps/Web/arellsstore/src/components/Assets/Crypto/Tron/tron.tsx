@@ -3,12 +3,8 @@
 import React from 'react';
 import VavityTron from './VavityTron';
 
-type TronWrapProps = {
-  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
-};
-
-const Tron: React.FC<TronWrapProps> = ({ sessionMountClearGuardRef }) => {
-  return <VavityTron sessionMountClearGuardRef={sessionMountClearGuardRef} />;
+const Tron: React.FC = () => {
+  return <VavityTron />;
 };
 
 export default Tron;

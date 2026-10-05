@@ -3,12 +3,8 @@
 import React from 'react';
 import VavityAlphabet from './VavityAlphabet';
 
-type AlphabetWrapProps = {
-  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
-};
-
-const Alphabet: React.FC<AlphabetWrapProps> = ({ sessionMountClearGuardRef }) => {
-  return <VavityAlphabet sessionMountClearGuardRef={sessionMountClearGuardRef} />;
+const Alphabet: React.FC = () => {
+  return <VavityAlphabet />;
 };
 
 export default Alphabet;

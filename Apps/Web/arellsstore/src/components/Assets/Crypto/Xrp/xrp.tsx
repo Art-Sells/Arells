@@ -3,12 +3,8 @@
 import React from 'react';
 import VavityXrp from './VavityXrp';
 
-type XrpProps = {
-  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
-};
-
-const Xrp: React.FC<XrpProps> = ({ sessionMountClearGuardRef }) => {
-  return <VavityXrp sessionMountClearGuardRef={sessionMountClearGuardRef} />;
+const Xrp: React.FC = () => {
+  return <VavityXrp />;
 };
 
 export default Xrp;

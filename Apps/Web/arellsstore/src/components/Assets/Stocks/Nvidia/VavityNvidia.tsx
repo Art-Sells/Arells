@@ -40,14 +40,8 @@ import { STOCK_ASSET_BY_ID } from '../../../../lib/assets/stockAssetRegistry';
 
 const ASSET = STOCK_ASSET_BY_ID.nvidia;
 
-const PREVIEW_SKIP_SESSION_DELETES = false;
 
-
-type VavityNvidiaProps = {
-  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
-};
-
-const VavityNvidia: React.FC<VavityNvidiaProps> = ({ sessionMountClearGuardRef }) => {
+const VavityNvidia: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset, ensureAssetsLoaded } =
     useVavity();
 
@@ -741,57 +735,6 @@ const VavityNvidia: React.FC<VavityNvidiaProps> = ({ sessionMountClearGuardRef }
   }, []);
 
   useEffect(() => {
-    if (PREVIEW_SKIP_SESSION_DELETES) return;
-    if (!sessionReady || !sessionId) return;
-    if (isSignedIn || email) return;
-    if (sessionMountClearGuardRef.current) return;
-    sessionMountClearGuardRef.current = true;
-    (async () => {
-      try {
-        const pendingAt = Date.now();
-        if (typeof window !== 'undefined') {
-          (window as any).__vavitySessionClearCheckPending = true;
-          (window as any).__vavitySessionClearCheckPendingAt = pendingAt;
-          window.dispatchEvent(
-            new CustomEvent('vavity:session-clear-check-start', {
-              detail: { pendingAt },
-            }),
-          );
-        }
-        let hasInvestments = Array.isArray(vavityData?.investments) && vavityData!.investments.length > 0;
-        if (!hasInvestments) {
-          const current = await fetchVavityAggregator(sessionId, ASSET.id);
-          hasInvestments = Array.isArray(current?.investments) && current.investments.length > 0;
-        }
-        if (typeof window !== 'undefined') {
-          (window as any).__vavitySessionClearCheckPending = false;
-          (window as any).__vavitySessionClearCheckPendingAt = pendingAt;
-          window.dispatchEvent(
-            new CustomEvent('vavity:session-clear-check-end', {
-              detail: { pendingAt, hasInvestments },
-            }),
-          );
-        }
-        if (!hasInvestments) return;
-        if (typeof window !== 'undefined') {
-          const holdMs = 4000;
-          window.dispatchEvent(
-            new CustomEvent('vavity:session-expired', {
-              detail: { holdMs },
-            }),
-          );
-          await new Promise((r) => globalThis.setTimeout(r, 600));
-        }
-        await saveVavityAggregator(sessionId, [], ASSET.id);
-        const cleared = await fetchVavityAggregator(sessionId, ASSET.id);
-        if (cleared) setVavityData(cleared);
-      } catch {
-        // ignore
-      }
-    })();
-  }, [sessionReady, sessionId, isSignedIn, email, saveVavityAggregator, fetchVavityAggregator, sessionMountClearGuardRef]);
-
-  useEffect(() => {
     prevVavityDataRef.current = vavityData;
   }, [vavityData]);
 
@@ -1111,9 +1054,6 @@ const VavityNvidia: React.FC<VavityNvidiaProps> = ({ sessionMountClearGuardRef }
           if (showEmptyAddForm || showAddForm || addFormOpen) {
             clearInvestmentsAnimTimerRef.current = null;
             return;
-          }
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('vavity:session-reset-empty-actions-collapse-started'));
           }
           // Ensure empty buttons animate in (height down 1s) after clearing.
           setEmptySigninHiding(true);

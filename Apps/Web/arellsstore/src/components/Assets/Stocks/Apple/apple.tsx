@@ -3,12 +3,8 @@
 import React from 'react';
 import VavityApple from './VavityApple';
 
-type AppleWrapProps = {
-  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
-};
-
-const Apple: React.FC<AppleWrapProps> = ({ sessionMountClearGuardRef }) => {
-  return <VavityApple sessionMountClearGuardRef={sessionMountClearGuardRef} />;
+const Apple: React.FC = () => {
+  return <VavityApple />;
 };
 
 export default Apple;

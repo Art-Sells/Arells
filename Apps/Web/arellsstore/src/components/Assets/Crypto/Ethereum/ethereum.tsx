@@ -3,12 +3,8 @@
 import React from 'react';
 import VavityEthereum from './VavityEthereum';
 
-type EthereumProps = {
-  sessionMountClearGuardRef: React.MutableRefObject<boolean>;
-};
-
-const Ethereum: React.FC<EthereumProps> = ({ sessionMountClearGuardRef }) => {
-  return <VavityEthereum sessionMountClearGuardRef={sessionMountClearGuardRef} />;
+const Ethereum: React.FC = () => {
+  return <VavityEthereum />;
 };
 
 export default Ethereum;
