@@ -8,14 +8,12 @@ import {
   type TrailerSources,
 } from '../lib/videoPlayer';
 import { GUEST_TRAILER_POSTER, GUEST_TRAILER_SOURCES } from '../lib/marketing/assets/crypto/bitcoin/videos';
-import { captureVideoFrame, midVideoFrameTime } from '../lib/captureVideoFrame';
 import { claimMediaPlayback, MEDIA_PLAYBACK_CLAIM_EVENT } from '../lib/mediaPlaybackClaim';
 
 type VideoPlayerProps = {
   theme: 'home' | 'bitcoin';
   sources?: TrailerSources;
   poster?: string | null;
-  useVideoThumbnail?: boolean;
   compact?: boolean;
   seekWidthPx?: number;
   hideSeek?: boolean;
@@ -132,7 +130,6 @@ export default function VideoPlayer({
   theme,
   sources = GUEST_TRAILER_SOURCES,
   poster = GUEST_TRAILER_POSTER,
-  useVideoThumbnail = false,
   compact = false,
   seekWidthPx,
   hideSeek = false,
@@ -162,7 +159,6 @@ export default function VideoPlayer({
   const playbackStartedRef = useRef(false);
   const stallTimerRef = useRef<number | null>(null);
   const stallClockRef = useRef(0);
-  const hasStartedRef = useRef(false);
   const playbackTokenRef = useRef({});
 
   const [hasStarted, setHasStarted] = useState(false);
@@ -176,7 +172,6 @@ export default function VideoPlayer({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [quality, setQuality] = useState<GuestTrailerQuality>('auto');
   const [isCoarse, setIsCoarse] = useState(false);
-  const [freezeUrl, setFreezeUrl] = useState<string | null>(null);
   const [seekRatio, setSeekRatio] = useState(0);
   const [qualitySwitching, setQualitySwitching] = useState(false);
   const endQualitySwitch = useCallback(() => {
@@ -435,7 +430,6 @@ export default function VideoPlayer({
       playbackStartedRef.current = true;
       if (stallMoved) clearStallTimer();
       setIsLoading(false);
-      setFreezeUrl(null);
       endQualitySwitch();
       stopBufferPoll();
       return;
@@ -535,48 +529,6 @@ export default function VideoPlayer({
     }
   }, [beginPlaybackWait, clearStallTimer, quality, revealChrome, srcForQuality, stopBufferPoll, stopFrameWatch]);
 
-  useEffect(() => {
-    hasStartedRef.current = hasStarted;
-  }, [hasStarted]);
-
-  useEffect(() => {
-    if (!useVideoThumbnail) return;
-    const video = videoRef.current;
-    if (!video) return;
-    let captured = false;
-    if (!video.getAttribute('src')) {
-      video.src = srcForQuality(quality);
-    }
-    const grab = () => {
-      if (hasStartedRef.current || captured) return;
-      const url = captureVideoFrame(video);
-      if (!url) return;
-      captured = true;
-      setFreezeUrl(url);
-      try {
-        video.currentTime = 0;
-      } catch {
-        /* ignore */
-      }
-    };
-    const seekMid = () => {
-      if (hasStartedRef.current || captured) return;
-      const target = midVideoFrameTime(video);
-      try {
-        video.currentTime = target;
-      } catch {
-        /* ignore */
-      }
-    };
-    video.addEventListener('loadeddata', seekMid);
-    video.addEventListener('seeked', grab);
-    video.load();
-    return () => {
-      video.removeEventListener('loadeddata', seekMid);
-      video.removeEventListener('seeked', grab);
-    };
-  }, [quality, srcForQuality, useVideoThumbnail]);
-
   const pauseVideo = useCallback(() => {
     wantPlaybackRef.current = false;
     stopBufferPoll();
@@ -625,7 +577,6 @@ export default function VideoPlayer({
     setIdlePlayMounted(false);
     setSettingsOpen(false);
     setChromePinned(true);
-    setFreezeUrl(null);
     if (Number.isFinite(duration) && duration > 0) {
       setSeekRatio(1);
       seekRef.current?.style.setProperty('--seek-ratio', '1');
@@ -654,8 +605,6 @@ export default function VideoPlayer({
         qualityChangeRef.current = false;
         return;
       }
-      const freeze = captureVideoFrame(video);
-      if (freeze) setFreezeUrl(freeze);
       qualitySwitchingRef.current = true;
       setQualitySwitching(true);
       beginPlaybackWait(video);
@@ -677,7 +626,6 @@ export default function VideoPlayer({
       if (!shouldPlay) {
         wantPlaybackRef.current = false;
         setIsLoading(false);
-        setFreezeUrl(null);
         endQualitySwitch();
         return;
       }
@@ -903,8 +851,7 @@ export default function VideoPlayer({
           ref={videoRef}
           className={`guest-trailer-video${hasStarted ? ' is-on' : ''}`}
           playsInline
-          preload={useVideoThumbnail ? 'auto' : 'none'}
-          crossOrigin="anonymous"
+          preload="none"
           onPlay={() => {
             setIsPlaying(true);
             syncBuffering();
@@ -969,7 +916,6 @@ export default function VideoPlayer({
             stopFrameWatch();
             clearStallTimer();
             setIsLoading(false);
-            setFreezeUrl(null);
             endQualitySwitch();
           }}
         />
@@ -984,9 +930,6 @@ export default function VideoPlayer({
             }}
           />
         ) : null}
-        {freezeUrl ? (
-          <img className="guest-trailer-freeze" src={freezeUrl} alt="" draggable={false} />
-        ) : null}
         {isLoading && (!expanded || qualitySwitching) ? (
           <div className="guest-trailer-loader" aria-hidden="true">
             <span className="guest-trailer-loader-ring" />
@@ -995,7 +938,7 @@ export default function VideoPlayer({
         {idlePlayMounted && notchPlay ? (
           <span
             className={`guest-trailer-notch${
-              !isLoading && (posterVisible || (useVideoThumbnail && Boolean(freezeUrl))) ? ' is-visible' : ''
+              !isLoading && posterVisible ? ' is-visible' : ''
             }`}
             aria-hidden="true"
           />
@@ -1003,7 +946,7 @@ export default function VideoPlayer({
         {idlePlayMounted && notchPlay ? (
           <span
             className={`guest-trailer-notch-outer${
-              !isLoading && (posterVisible || (useVideoThumbnail && Boolean(freezeUrl))) ? ' is-visible' : ''
+              !isLoading && posterVisible ? ' is-visible' : ''
             }`}
             aria-hidden="true"
           />
@@ -1014,7 +957,7 @@ export default function VideoPlayer({
             className={`guest-trailer-ctrl guest-trailer-ctrl--center${
               notchPlay ? ' guest-trailer-ctrl--notch' : ''
             }${
-              !isLoading && (posterVisible || (useVideoThumbnail && Boolean(freezeUrl))) ? ' is-visible' : ''
+              !isLoading && posterVisible ? ' is-visible' : ''
             }`}
             aria-label="Play trailer"
             onClick={(event) => {

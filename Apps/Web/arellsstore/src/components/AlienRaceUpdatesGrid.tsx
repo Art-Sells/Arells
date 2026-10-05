@@ -100,7 +100,6 @@ export default function AlienRaceUpdatesGrid({
                       theme={playerTheme}
                       sources={item.sources || videoSources(item.url)}
                       poster={item.previewUrl ?? null}
-                      useVideoThumbnail={!item.previewUrl}
                       compact
                       hideSeek
                     />
