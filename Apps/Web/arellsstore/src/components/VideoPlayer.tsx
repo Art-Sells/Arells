@@ -271,18 +271,18 @@ export default function VideoPlayer({
     []
   );
 
-  useEffect(() => {
+  const watchElementFullscreen = useCallback((player: HTMLDivElement) => {
     const sync = () => {
-      elementFullscreenRef.current = isPlayerFullscreen(playerRef.current);
-      if (fillFullscreenRef.current) return;
-      setExpanded(elementFullscreenRef.current);
+      const active = isPlayerFullscreen(player);
+      elementFullscreenRef.current = active;
+      setExpanded(active);
+      if (active) return;
+      player.removeEventListener('fullscreenchange', sync);
+      player.removeEventListener('webkitfullscreenchange', sync);
     };
-    document.addEventListener('fullscreenchange', sync);
-    document.addEventListener('webkitfullscreenchange', sync);
-    return () => {
-      document.removeEventListener('fullscreenchange', sync);
-      document.removeEventListener('webkitfullscreenchange', sync);
-    };
+    player.addEventListener('fullscreenchange', sync);
+    player.addEventListener('webkitfullscreenchange', sync);
+    return sync;
   }, []);
 
   useEffect(() => {
@@ -751,12 +751,17 @@ export default function VideoPlayer({
         fullscreenSuppressLoaderRef.current = false;
         return;
       }
-      const realFullscreen = canElementFullscreen(player)
-        ? enterPlayerFullscreen(player).then(
-            () => true,
-            () => false
-          )
-        : Promise.resolve(false);
+      let realFullscreen = Promise.resolve(false);
+      if (canElementFullscreen(player)) {
+        const sync = watchElementFullscreen(player);
+        realFullscreen = enterPlayerFullscreen(player).then(
+          () => true,
+          () => {
+            sync();
+            return false;
+          }
+        );
+      }
       setHasStarted(true);
       setPosterVisible(false);
       setIdlePlayMounted(false);
@@ -786,7 +791,7 @@ export default function VideoPlayer({
         }, 800);
       }
     },
-    [quality, setFillFullscreen, srcForQuality]
+    [quality, setFillFullscreen, srcForQuality, watchElementFullscreen]
   );
 
   const showPausedPlay = hasStarted && !isPlaying && !isLoading && !posterVisible;

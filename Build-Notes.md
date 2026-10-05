@@ -5,7 +5,6 @@
 ### Trigger Organic Growth
 
 
-
 After launch:
 
 - Start path (possibly Episode 3 on when to implement character poster (metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
