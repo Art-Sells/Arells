@@ -13,7 +13,6 @@ import {
   canNativeVideoFullscreen,
   enterNativeVideoFullscreen,
   enterPlayerFullscreen,
-  exitNativeVideoFullscreen,
   exitPlayerFullscreen,
   isPlayerFullscreen,
   waitForVideoMetadata,
@@ -563,7 +562,6 @@ export default function VideoPlayer({
     }
     setFillFullscreen(false);
     if (elementFullscreenRef.current) void exitPlayerFullscreen().catch(() => undefined);
-    exitNativeVideoFullscreen(video ?? null);
   }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(

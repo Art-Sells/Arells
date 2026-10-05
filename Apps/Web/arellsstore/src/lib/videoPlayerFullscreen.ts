@@ -11,16 +11,10 @@ type FullscreenDocument = Document & {
 
 type WebkitVideo = HTMLVideoElement & {
   webkitEnterFullscreen?: () => void;
-  webkitExitFullscreen?: () => void;
-  webkitDisplayingFullscreen?: boolean;
 };
 
 export function canNativeVideoFullscreen(video: HTMLVideoElement): boolean {
   return typeof (video as WebkitVideo).webkitEnterFullscreen === 'function';
-}
-
-export function isNativeVideoFullscreen(video: HTMLVideoElement | null): boolean {
-  return Boolean(video && (video as WebkitVideo).webkitDisplayingFullscreen);
 }
 
 export function enterNativeVideoFullscreen(video: HTMLVideoElement): void {
@@ -30,12 +24,6 @@ export function enterNativeVideoFullscreen(video: HTMLVideoElement): void {
     /* ignore */
   }
 }
-
-export function exitNativeVideoFullscreen(video: HTMLVideoElement | null): void {
-  const nativeVideo = video as WebkitVideo | null;
-  if (nativeVideo?.webkitDisplayingFullscreen) nativeVideo.webkitExitFullscreen?.();
-}
-
 export function getFullscreenElement(): Element | null {
   const doc = document as FullscreenDocument;
   return document.fullscreenElement ?? doc.webkitFullscreenElement ?? null;
