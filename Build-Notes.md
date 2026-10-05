@@ -10,7 +10,7 @@ After Episode 2 (or during):
 
 - If finished early, start path Implement character poster (metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
 
--IMPORTANT: test page sitting for 3-5 minutes for resets after investment additions or otherwise (should not reload the fucking page)
+-IMPORTANT: test page sitting for 3-5 minutes for resets after investment additions or otherwise (have it load the investments once on page mount only)
 
 - Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
 
