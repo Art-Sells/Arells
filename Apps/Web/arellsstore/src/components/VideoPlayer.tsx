@@ -847,78 +847,80 @@ export default function VideoPlayer({
         }}
       >
       <div className="guest-trailer-stage" onPointerUp={onStagePointer}>
-        <video
-          ref={videoRef}
-          className={`guest-trailer-video${hasStarted ? ' is-on' : ''}`}
-          playsInline
-          preload="none"
-          onPlay={() => {
-            setIsPlaying(true);
-            syncBuffering();
-          }}
-          onPlaying={() => {
-            setIsPlaying(true);
-            setPosterVisible(false);
-            setIdlePlayMounted(false);
-            syncBuffering();
-          }}
-          onPause={() => setIsPlaying(false)}
-          onWaiting={() => {
-            const video = videoRef.current;
-            if (
-              !video ||
-              !wantPlaybackRef.current ||
-              fullscreenSuppressLoaderRef.current ||
-              inFullscreen()
-            ) {
-              return;
-            }
-            scheduleStallSpinner(video);
-          }}
-          onStalled={() => {
-            const video = videoRef.current;
-            if (
-              !video ||
-              !wantPlaybackRef.current ||
-              fullscreenSuppressLoaderRef.current ||
-              inFullscreen()
-            ) {
-              return;
-            }
-            scheduleStallSpinner(video);
-          }}
-          onProgress={() => {
-            syncBuffering();
-          }}
-          onTimeUpdate={() => {
-            if (seekDraggingRef.current) return;
-            const video = videoRef.current;
-            if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
-            const next = video.currentTime / video.duration;
-            setSeekRatio(next);
-            seekRef.current?.style.setProperty('--seek-ratio', String(next));
-            syncBuffering();
-          }}
-          onLoadedMetadata={() => {
-            resumeAfterQualityChange();
-            syncBuffering();
-          }}
-          onLoadedData={() => {
-            resumeAfterQualityChange();
-            syncBuffering();
-          }}
-          onError={() => {
-            qualityChangeRef.current = false;
-            pendingPlayRef.current = false;
-            pendingSeekRef.current = null;
-            wantPlaybackRef.current = false;
-            stopBufferPoll();
-            stopFrameWatch();
-            clearStallTimer();
-            setIsLoading(false);
-            endQualitySwitch();
-          }}
-        />
+        <div className="guest-trailer-video-wrap">
+          <video
+            ref={videoRef}
+            className={`guest-trailer-video${hasStarted ? ' is-on' : ''}`}
+            playsInline
+            preload="none"
+            onPlay={() => {
+              setIsPlaying(true);
+              syncBuffering();
+            }}
+            onPlaying={() => {
+              setIsPlaying(true);
+              setPosterVisible(false);
+              setIdlePlayMounted(false);
+              syncBuffering();
+            }}
+            onPause={() => setIsPlaying(false)}
+            onWaiting={() => {
+              const video = videoRef.current;
+              if (
+                !video ||
+                !wantPlaybackRef.current ||
+                fullscreenSuppressLoaderRef.current ||
+                inFullscreen()
+              ) {
+                return;
+              }
+              scheduleStallSpinner(video);
+            }}
+            onStalled={() => {
+              const video = videoRef.current;
+              if (
+                !video ||
+                !wantPlaybackRef.current ||
+                fullscreenSuppressLoaderRef.current ||
+                inFullscreen()
+              ) {
+                return;
+              }
+              scheduleStallSpinner(video);
+            }}
+            onProgress={() => {
+              syncBuffering();
+            }}
+            onTimeUpdate={() => {
+              if (seekDraggingRef.current) return;
+              const video = videoRef.current;
+              if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+              const next = video.currentTime / video.duration;
+              setSeekRatio(next);
+              seekRef.current?.style.setProperty('--seek-ratio', String(next));
+              syncBuffering();
+            }}
+            onLoadedMetadata={() => {
+              resumeAfterQualityChange();
+              syncBuffering();
+            }}
+            onLoadedData={() => {
+              resumeAfterQualityChange();
+              syncBuffering();
+            }}
+            onError={() => {
+              qualityChangeRef.current = false;
+              pendingPlayRef.current = false;
+              pendingSeekRef.current = null;
+              wantPlaybackRef.current = false;
+              stopBufferPoll();
+              stopFrameWatch();
+              clearStallTimer();
+              setIsLoading(false);
+              endQualitySwitch();
+            }}
+          />
+        </div>
         {poster ? (
           <img
             className={`guest-trailer-poster${posterVisible ? ' is-visible' : ''}`}

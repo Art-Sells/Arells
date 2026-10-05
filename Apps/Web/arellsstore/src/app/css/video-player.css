@@ -92,6 +92,11 @@
 	background: #111;
 }
 
+.guest-trailer-video-wrap {
+	position: absolute;
+	inset: 0;
+}
+
 .guest-trailer-video,
 .guest-trailer-poster {
 	position: absolute;
