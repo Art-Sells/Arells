@@ -116,6 +116,12 @@ body {
 	animation: myInvAccentCycle 15s linear infinite;
 }
 
+@media (hover: none) and (pointer: coarse) {
+	:root {
+		animation-timing-function: steps(38);
+	}
+}
+
 @keyframes shadowGradientPulse {
 	0%,
 	100% {
