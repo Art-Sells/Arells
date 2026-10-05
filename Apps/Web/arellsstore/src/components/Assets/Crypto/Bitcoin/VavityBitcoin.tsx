@@ -729,11 +729,9 @@ const VavityBitcoin: React.FC = () => {
     };
 
     loadData();
-    const interval = setInterval(loadData, 5000);
 
     return () => {
       isMounted = false;
-      clearInterval(interval);
     };
   }, [
     bitcoinEmptyPreview,
