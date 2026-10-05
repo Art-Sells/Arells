@@ -27,7 +27,8 @@ const STALL_SPINNER_MS = 300;
 const FULLSCREEN_TRANSITION_MS = 400;
 
 /**
- * Expand uses element fullscreen where supported and fills the browser viewport via the top layer otherwise.
+ * Expand uses element fullscreen where supported, iPhone's native video fullscreen otherwise,
+ * and fills the browser viewport via the top layer as the last fallback.
  * Ancestor lift is the fallback without the Popover API.
  */
 const FILL_ANCESTOR_LIFT: [string, string][] = [
@@ -124,6 +125,29 @@ function waitForVideoMetadata(video: HTMLVideoElement): Promise<void> {
     video.addEventListener('loadedmetadata', onLoaded);
     video.addEventListener('error', onError);
   });
+}
+
+type WebkitVideo = HTMLVideoElement & {
+  webkitEnterFullscreen?: () => void;
+  webkitExitFullscreen?: () => void;
+  webkitDisplayingFullscreen?: boolean;
+};
+
+function canNativeVideoFullscreen(video: HTMLVideoElement): boolean {
+  return typeof (video as WebkitVideo).webkitEnterFullscreen === 'function';
+}
+
+function enterNativeVideoFullscreen(video: HTMLVideoElement): void {
+  try {
+    (video as WebkitVideo).webkitEnterFullscreen?.();
+  } catch {
+    /* ignore */
+  }
+}
+
+function exitNativeVideoFullscreen(video: HTMLVideoElement | null): void {
+  const nativeVideo = video as WebkitVideo | null;
+  if (nativeVideo?.webkitDisplayingFullscreen) nativeVideo.webkitExitFullscreen?.();
 }
 
 export default function VideoPlayer({
@@ -583,6 +607,7 @@ export default function VideoPlayer({
     }
     setFillFullscreen(false);
     if (elementFullscreenRef.current) void exitPlayerFullscreen().catch(() => undefined);
+    exitNativeVideoFullscreen(video ?? null);
   }, [clearStallTimer, setFillFullscreen, stopBufferPoll, stopFrameWatch]);
 
   const applyQuality = useCallback(
@@ -747,6 +772,23 @@ export default function VideoPlayer({
       }
       if (elementFullscreenRef.current) {
         void exitPlayerFullscreen().catch(() => undefined);
+        fullscreenSuppressLoaderRef.current = false;
+        return;
+      }
+      const useNative = !canElementFullscreen(player) && canNativeVideoFullscreen(video);
+      if (useNative) {
+        setHasStarted(true);
+        setPosterVisible(false);
+        setIdlePlayMounted(false);
+        if (!video.getAttribute('src')) video.src = srcForQuality(quality);
+        claimMediaPlayback(playbackTokenRef.current);
+        if (video.paused && video.readyState < HTMLMediaElement.HAVE_METADATA) {
+          void video.play().catch(() => undefined);
+          window.setTimeout(() => enterNativeVideoFullscreen(video), 0);
+        } else {
+          enterNativeVideoFullscreen(video);
+          if (video.paused) void video.play().catch(() => undefined);
+        }
         fullscreenSuppressLoaderRef.current = false;
         return;
       }
