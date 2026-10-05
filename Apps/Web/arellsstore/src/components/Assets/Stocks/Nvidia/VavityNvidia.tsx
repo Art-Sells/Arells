@@ -94,8 +94,6 @@ const VavityNvidia: React.FC = () => {
   const [rangeHistoricalPriceLiquid, setRangeHistoricalPriceLiquid] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState<boolean>(false);
   const [profitValueHidden, setProfitValueHidden] = useState<boolean>(false);
-  const [mockEntries, setMockEntries] = useState<any[]>([]);
-  const [mockStep, setMockStep] = useState<number>(0);
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [isLiquidMode, setIsLiquidMode] = useState<boolean>(false);
   const [toggleKnobLeftPx, setToggleKnobLeftPx] = useState<number | null>(null);
@@ -2283,29 +2281,6 @@ const VavityNvidia: React.FC = () => {
     tokenInputRef.current.setSelectionRange(pos, pos);
   }, [tokenAmount]);
 
-  useEffect(() => {
-    let isMounted = true;
-    const loadMock = async () => {
-      try {
-        const resp = await axios.get('/api/assets/stocks/nvidia/nvidiaMockPortfolio');
-        const portfolio = Array.isArray(resp.data?.portfolio) ? resp.data.portfolio : [];
-        if (isMounted) {
-          setMockEntries(portfolio);
-        }
-      } catch {
-        // ignore errors for mock load
-      }
-    };
-    loadMock();
-    const interval = setInterval(() => {
-      setMockStep((s) => s + 1);
-    }, 3000);
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, []);
-
   const formatDate = useCallback((iso: string) => {
     if (!iso) return '...';
     const d = new Date(iso.includes('T') ? iso : `${iso}T00:00:00`);
@@ -2337,11 +2312,6 @@ const VavityNvidia: React.FC = () => {
     if (Number.isNaN(d.getTime())) return '...';
     return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
   }, []);
-
-  const currentMockEntry = useMemo(() => {
-    if (!mockEntries.length) return null;
-    return mockEntries[mockStep % mockEntries.length];
-  }, [mockEntries, mockStep]);
 
   useEffect(() => {
     let isMounted = true;

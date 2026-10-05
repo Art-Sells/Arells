@@ -940,7 +940,6 @@ export default function VideoPlayer({
             }
             scheduleStallSpinner(video);
           }}
-          onEnded={handleEnded}
           onProgress={() => {
             syncBuffering();
           }}
