@@ -6747,7 +6747,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	transform: translateY(-4px);
 }
 
-.life-force-metric-label {
+.life-blood-metric-label {
 	display: inline-flex;
 	align-items: baseline;
 	gap: 5px;
@@ -6755,18 +6755,18 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	justify-content: center;
 }
 
-.asset-profit-block .life-force-metric-label,
+.asset-profit-block .life-blood-metric-label,
 .myinv-profit-row .myinv-metric-title,
 .asset-invest-form-metrics .asset-invest-form-row:nth-child(3) .asset-invest-form-metric-title,
 .asset-investment-metrics .asset-money-row:nth-child(3) > span:first-child {
 	margin-top: 4px;
 }
 
-.asset-profit-block .asset-profit-inline-wrap .life-force-metric-label {
+.asset-profit-block .asset-profit-inline-wrap .life-blood-metric-label {
 	padding-bottom: 3px;
 }
 
-.life-force-badge {
+.life-blood-badge {
 	appearance: none;
 	-webkit-appearance: none;
 	display: inline-flex;
@@ -6792,24 +6792,24 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	transition: transform 0.2s ease;
 }
 
-.life-force-badge:active {
+.life-blood-badge:active {
 	transform: translateY(-2px);
 }
 
 @media (hover: hover) and (pointer: fine) {
-	.life-force-badge:hover {
+	.life-blood-badge:hover {
 		transform: translateY(-2px);
 	}
 }
 
-.myinv-page .life-force-badge {
+.myinv-page .life-blood-badge {
 	border-color: color-mix(in srgb, var(--myinv-accent-color) 38%, transparent);
 	background: transparent;
 	color: var(--myinv-accent-color);
 	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
-.life-force-overlay {
+.life-blood-overlay {
 	position: fixed;
 	inset: 0;
 	min-width: 370px;
@@ -6824,7 +6824,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	font-family: Arial, sans-serif;
 }
 
-.life-force-overlay-card {
+.life-blood-overlay-card {
 	width: 200px;
 	height: 270px;
 	background: color-mix(in srgb, var(--asset-hover-dot-color, var(--myinv-accent-color)) 6%, #ffffff);
@@ -6842,16 +6842,16 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	will-change: transform, opacity;
 }
 
-.life-force-overlay-card--coming-soon {
+.life-blood-overlay-card--coming-soon {
 	height: 300px;
 }
 
-.life-force-overlay-card.myinv-accent-border {
+.life-blood-overlay-card.myinv-accent-border {
 	border: none;
 	background: #fff;
 }
 
-.life-force-overlay-icon {
+.life-blood-overlay-icon {
 	width: 30px;
 	height: 30px;
 	flex-shrink: 0;
@@ -6867,11 +6867,11 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	mask-position: center;
 }
 
-.life-force-overlay-icon--investments {
+.life-blood-overlay-icon--investments {
 	background: var(--myinv-accent-color);
 }
 
-.life-force-overlay-copy {
+.life-blood-overlay-copy {
 	margin: 0;
 	padding: 0;
 	flex: 0 0 auto;
@@ -6886,16 +6886,16 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	text-align: center;
 }
 
-.life-force-overlay-card:not(.myinv-accent-border) .life-force-overlay-copy {
+.life-blood-overlay-card:not(.myinv-accent-border) .life-blood-overlay-copy {
 	color: var(--asset-line-color);
 	-webkit-text-fill-color: var(--asset-line-color);
 }
 
-.life-force-overlay-line {
+.life-blood-overlay-line {
 	display: block;
 }
 
-.life-force-ok {
+.life-blood-ok {
 	width: 80px;
 	height: 40px;
 	margin-top: 10px;
@@ -6908,7 +6908,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	flex-shrink: 0;
 }
 
-.life-force-overlay .myinv-range-button {
+.life-blood-overlay .myinv-range-button {
 	width: 80px;
 	height: 40px;
 	margin-top: 10px;
@@ -7419,7 +7419,7 @@ a.myinv-about-button:focus-visible {
 	text-align: center;
 }
 
-.myinv-metric-title.life-force-metric-label {
+.myinv-metric-title.life-blood-metric-label {
 	display: inline-flex;
 }
 

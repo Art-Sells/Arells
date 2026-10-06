@@ -18,7 +18,7 @@ import { useUser } from '../../../../context/UserContext';
 import AssetGuestLanding from '../../shared/AssetGuestLanding';
 import AssetMissionHeader from '../../shared/AssetMissionHeader';
 import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
-import LifeForceInfoBadge from '../../shared/LifeForceInfoBadge';
+import LifeBloodInfoBadge from '../../shared/LifeBloodInfoBadge';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import BnbChart from './BnbChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
@@ -2794,7 +2794,7 @@ const VavityBnb: React.FC = () => {
             <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--bnb">
               <div className="asset-invest-form-metrics">
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--bnb asset-invest-form-metric-title life-force-metric-label">Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
+                  <span className="asset-metric-title--bnb asset-invest-form-metric-title life-blood-metric-label">Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${
                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
@@ -2817,7 +2817,7 @@ const VavityBnb: React.FC = () => {
                 </div>
 
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--bnb asset-invest-form-metric-title life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
+                  <span className="asset-metric-title--bnb asset-invest-form-metric-title life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}
                     style={{
@@ -2867,7 +2867,7 @@ const VavityBnb: React.FC = () => {
             <div className="asset-invest-form-controls asset-invest-form-controls--bnb">
               <div className="asset-invest-form-field">
                 <div className="asset-metric-row asset-invest-form-field-label">
-                  <span className="asset-metric-title--bnb life-force-metric-label">BNB <LifeForceInfoBadge assetName={ASSET.displayName} /> amount</span>
+                  <span className="asset-metric-title--bnb life-blood-metric-label">BNB <LifeBloodInfoBadge assetName={ASSET.displayName} /> amount</span>
                 </div>
                 <div className="asset-invest-form-field-control">
                   <input
@@ -3174,7 +3174,7 @@ const VavityBnb: React.FC = () => {
                   >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--bnb life-force-metric-label" style={{ marginTop: 30 }}>Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
+                <span className="asset-metric-title--bnb life-blood-metric-label" style={{ marginTop: 30 }}>Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={purchasedValueRef}
                   style={{
@@ -3197,7 +3197,7 @@ const VavityBnb: React.FC = () => {
                 </div>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--bnb life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
+                <span className="asset-metric-title--bnb life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={currentValueRef}
                   style={{
@@ -3248,9 +3248,9 @@ const VavityBnb: React.FC = () => {
                             style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                           >
                             <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                              <span className="asset-metric-inline-title--bnb life-force-metric-label">
+                              <span className="asset-metric-inline-title--bnb life-blood-metric-label">
                                 {formatRangeLabel(selectedRangeDays)}{' '}
-                                <LifeForceInfoBadge assetName={ASSET.displayName} />{' '}
+                                <LifeBloodInfoBadge assetName={ASSET.displayName} />{' '}
                                 <span
                                   style={{
                                     opacity:
@@ -3298,9 +3298,9 @@ const VavityBnb: React.FC = () => {
                           style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                         >
                           <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                            <span className="asset-metric-inline-title--bnb life-force-metric-label">
+                            <span className="asset-metric-inline-title--bnb life-blood-metric-label">
                               {formatRangeLabel(null)}{' '}
-                              <LifeForceInfoBadge assetName={ASSET.displayName} />{' '}
+                              <LifeBloodInfoBadge assetName={ASSET.displayName} />{' '}
                                 <span
                                 style={{
                                   opacity:
@@ -3388,7 +3388,7 @@ const VavityBnb: React.FC = () => {
                     setTimeout(() => setAddMoreOpen(true), 0);
                   }}
                 >
-                  {addMoreOpen ? 'Hide add more life force' : 'Add more life force'}
+                  {addMoreOpen ? 'Hide add more life blood' : 'Add more life blood'}
                 </button>
               </div>
               {showAddMoreForm && (
@@ -3415,7 +3415,7 @@ const VavityBnb: React.FC = () => {
                   <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                     <div className="asset-invest-form-box asset-invest-form-box--bnb">
                       {renderAddForm(
-                        'Add more life force',
+                        'Add more life blood',
                         closeAddMoreForm,
                         'asset-action-button asset-action-button--bnb'
                       )}
@@ -3688,7 +3688,7 @@ const VavityBnb: React.FC = () => {
                               </div>
                               <div className="asset-investment-metrics">
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--bnb life-force-metric-label" style={{ marginTop: 20 }}>Purchased <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
+                                    <span className="asset-metric-title--bnb life-blood-metric-label" style={{ marginTop: 20 }}>Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-symbol--bnb">$</span>
                                       <span className="asset-metric-value">
@@ -3697,7 +3697,7 @@ const VavityBnb: React.FC = () => {
                                     </span>
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--bnb life-force-metric-label">Current <LifeForceInfoBadge assetName={ASSET.displayName} /> Value</span>
+                                    <span className="asset-metric-title--bnb life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-symbol--bnb">$</span>
                                       <span className="asset-metric-value">
@@ -3727,7 +3727,7 @@ const VavityBnb: React.FC = () => {
                                     })()}
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--bnb life-force-metric-label">BNB <LifeForceInfoBadge assetName={ASSET.displayName} /> amount</span>
+                                    <span className="asset-metric-title--bnb life-blood-metric-label">BNB <LifeBloodInfoBadge assetName={ASSET.displayName} /> amount</span>
                                     <span className="asset-metric-value">
                                       {Number(amount).toLocaleString('en-US', {
                                         minimumFractionDigits: 0,
