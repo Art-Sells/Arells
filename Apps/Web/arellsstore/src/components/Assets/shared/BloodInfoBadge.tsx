@@ -24,7 +24,7 @@ function bloodDescription(variant: 'asset' | 'investments', assetName?: string) 
       'own dictates',
       'the Blood',
       'your Characters',
-      'possess.',
+      'have.',
     ].join('\n');
   }
   const name = assetName?.trim() || 'asset';
@@ -34,7 +34,7 @@ function bloodDescription(variant: 'asset' | 'investments', assetName?: string) 
     'you own dictates',
     'the Blood',
     `your ${name === 'Bitcoin' ? 'Character' : `${name} Alien`}`,
-    'possesses.',
+    'has.',
   ].join('\n');
 }
 
