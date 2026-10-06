@@ -7,7 +7,7 @@ import { liquidSolidToggleKnobStyle } from '../Assets/shared/liquidSolidToggleKn
 import { useLiquidSolidToggleTrackSync } from '../Assets/shared/useLiquidSolidToggleTrackSync';
 import AssetSummaryCircleLoader from '../Assets/shared/AssetSummaryCircleLoader';
 import { useAssetSummaryCircleLoader } from '../Assets/shared/useAssetSummaryCircleLoader';
-import LifeBloodInfoBadge from '../Assets/shared/LifeBloodInfoBadge';
+import BloodInfoBadge from '../Assets/shared/BloodInfoBadge';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 import SiteSocialFooter from '../SiteSocialFooter';
@@ -1084,7 +1084,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                       <div className="myinv-summary-shell">
                         <div className="myinv-totals">
                           <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
-                            <span className="myinv-metric-title life-blood-metric-label">Purchased <LifeBloodInfoBadge variant="investments" /> Value</span>
+                            <span className="myinv-metric-title blood-metric-label">Purchased <BloodInfoBadge variant="investments" /> Value</span>
                             <div
                               ref={purchasedValueRef}
                               style={{
@@ -1118,7 +1118,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                             </div>
                           </div>
                           <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
-                            <span className="myinv-metric-title life-blood-metric-label">Current <LifeBloodInfoBadge variant="investments" /> Value</span>
+                            <span className="myinv-metric-title blood-metric-label">Current <BloodInfoBadge variant="investments" /> Value</span>
                             <div
                               ref={currentValueRef}
                               style={{
@@ -1166,9 +1166,9 @@ const MyInvestmentsPageClient: React.FC = () => {
                     >
                       <div className="myinv-profit-summary myinv-profit-inner">
                         <div className="asset-metric-row asset-money-row myinv-profit-row">
-                          <span className="myinv-metric-title life-blood-metric-label">
+                          <span className="myinv-metric-title blood-metric-label">
                             {formatRangeLabel(selectedRangeDays)}{' '}
-                            <LifeBloodInfoBadge variant="investments" />{' '}
+                            <BloodInfoBadge variant="investments" />{' '}
                             <span
                               className="asset-profit-range-anim"
                               style={{

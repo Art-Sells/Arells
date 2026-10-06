@@ -18,7 +18,7 @@ import { useUser } from '../../../../context/UserContext';
 import AssetGuestLanding from '../../shared/AssetGuestLanding';
 import AssetMissionHeader from '../../shared/AssetMissionHeader';
 import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
-import LifeBloodInfoBadge from '../../shared/LifeBloodInfoBadge';
+import BloodInfoBadge from '../../shared/BloodInfoBadge';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import ChainlinkChart from './ChainlinkChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
@@ -2793,7 +2793,7 @@ const VavityChainlink: React.FC = () => {
             <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--chainlink">
               <div className="asset-invest-form-metrics">
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--chainlink asset-invest-form-metric-title life-blood-metric-label">Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                  <span className="asset-metric-title--chainlink asset-invest-form-metric-title blood-metric-label">Purchased <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${
                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
@@ -2816,7 +2816,7 @@ const VavityChainlink: React.FC = () => {
                 </div>
 
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--chainlink asset-invest-form-metric-title life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                  <span className="asset-metric-title--chainlink asset-invest-form-metric-title blood-metric-label">Current <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}
                     style={{
@@ -2866,7 +2866,7 @@ const VavityChainlink: React.FC = () => {
             <div className="asset-invest-form-controls asset-invest-form-controls--chainlink">
               <div className="asset-invest-form-field">
                 <div className="asset-metric-row asset-invest-form-field-label">
-                  <span className="asset-metric-title--chainlink life-blood-metric-label">{ASSET.ticker} <LifeBloodInfoBadge assetName={ASSET.displayName} /> amount</span>
+                  <span className="asset-metric-title--chainlink blood-metric-label">{ASSET.ticker} <BloodInfoBadge assetName={ASSET.displayName} /> amount</span>
                 </div>
                 <div className="asset-invest-form-field-control">
                   <input
@@ -3173,7 +3173,7 @@ const VavityChainlink: React.FC = () => {
                   >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--chainlink life-blood-metric-label" style={{ marginTop: 30 }}>Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                <span className="asset-metric-title--chainlink blood-metric-label" style={{ marginTop: 30 }}>Purchased <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={purchasedValueRef}
                   style={{
@@ -3196,7 +3196,7 @@ const VavityChainlink: React.FC = () => {
                 </div>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--chainlink life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                <span className="asset-metric-title--chainlink blood-metric-label">Current <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={currentValueRef}
                   style={{
@@ -3247,9 +3247,9 @@ const VavityChainlink: React.FC = () => {
                             style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                           >
                             <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                              <span className="asset-metric-inline-title--chainlink life-blood-metric-label">
+                              <span className="asset-metric-inline-title--chainlink blood-metric-label">
                                 {formatRangeLabel(selectedRangeDays)}{' '}
-                                <LifeBloodInfoBadge assetName={ASSET.displayName} />{' '}
+                                <BloodInfoBadge assetName={ASSET.displayName} />{' '}
                                 <span
                                   style={{
                                     opacity:
@@ -3297,9 +3297,9 @@ const VavityChainlink: React.FC = () => {
                           style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                         >
                           <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                            <span className="asset-metric-inline-title--chainlink life-blood-metric-label">
+                            <span className="asset-metric-inline-title--chainlink blood-metric-label">
                               {formatRangeLabel(null)}{' '}
-                              <LifeBloodInfoBadge assetName={ASSET.displayName} />{' '}
+                              <BloodInfoBadge assetName={ASSET.displayName} />{' '}
                                 <span
                                 style={{
                                   opacity:
@@ -3387,7 +3387,7 @@ const VavityChainlink: React.FC = () => {
                     setTimeout(() => setAddMoreOpen(true), 0);
                   }}
                 >
-                  {addMoreOpen ? 'Hide add more life blood' : 'Add more life blood'}
+                  {addMoreOpen ? 'Hide add more blood' : 'Add more blood'}
                 </button>
               </div>
               {showAddMoreForm && (
@@ -3414,7 +3414,7 @@ const VavityChainlink: React.FC = () => {
                   <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                     <div className="asset-invest-form-box asset-invest-form-box--chainlink">
                       {renderAddForm(
-                        'Add more life blood',
+                        'Add more blood',
                         closeAddMoreForm,
                         'asset-action-button asset-action-button--chainlink'
                       )}
@@ -3687,7 +3687,7 @@ const VavityChainlink: React.FC = () => {
                               </div>
                               <div className="asset-investment-metrics">
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--chainlink life-blood-metric-label" style={{ marginTop: 20 }}>Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                                    <span className="asset-metric-title--chainlink blood-metric-label" style={{ marginTop: 20 }}>Purchased <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-symbol--chainlink">$</span>
                                       <span className="asset-metric-value">
@@ -3696,7 +3696,7 @@ const VavityChainlink: React.FC = () => {
                                     </span>
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--chainlink life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                                    <span className="asset-metric-title--chainlink blood-metric-label">Current <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-symbol--chainlink">$</span>
                                       <span className="asset-metric-value">
@@ -3726,7 +3726,7 @@ const VavityChainlink: React.FC = () => {
                                     })()}
                                   </div>
                                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                    <span className="asset-metric-title--chainlink life-blood-metric-label">{ASSET.ticker} <LifeBloodInfoBadge assetName={ASSET.displayName} /> amount</span>
+                                    <span className="asset-metric-title--chainlink blood-metric-label">{ASSET.ticker} <BloodInfoBadge assetName={ASSET.displayName} /> amount</span>
                                     <span className="asset-metric-value">
                                       {Number(amount).toLocaleString('en-US', {
                                         minimumFractionDigits: 0,

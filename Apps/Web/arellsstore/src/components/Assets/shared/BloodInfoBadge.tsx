@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-type LifeBloodInfoBadgeProps = {
+type BloodInfoBadgeProps = {
   assetName?: string;
   variant?: 'asset' | 'investments';
 };
@@ -16,13 +16,13 @@ const THEME_VARS = [
   '--myinv-accent-color',
 ] as const;
 
-function lifeBloodDescription(variant: 'asset' | 'investments', assetName?: string) {
+function bloodDescription(variant: 'asset' | 'investments', assetName?: string) {
   if (variant === 'investments') {
     return [
       'The amount of',
       'investments you',
       'own dictates',
-      'the Life Blood',
+      'the Blood',
       'your Characters',
       'possess.',
     ].join('\n');
@@ -32,7 +32,7 @@ function lifeBloodDescription(variant: 'asset' | 'investments', assetName?: stri
     'The amount of',
     `${name} investments`,
     'you own dictates',
-    'the Life Blood',
+    'the Blood',
     `your ${name === 'Bitcoin' ? 'Character' : `${name} Alien`}`,
     'possesses.',
   ].join('\n');
@@ -49,7 +49,7 @@ function themeStyleFrom(el: HTMLElement | null): React.CSSProperties {
   return style as React.CSSProperties;
 }
 
-const LifeBloodInfoBadge: React.FC<LifeBloodInfoBadgeProps> = ({
+const BloodInfoBadge: React.FC<BloodInfoBadgeProps> = ({
   assetName,
   variant = 'asset',
 }) => {
@@ -79,7 +79,7 @@ const LifeBloodInfoBadge: React.FC<LifeBloodInfoBadgeProps> = ({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [open, close]);
 
-  const descriptionLines = lifeBloodDescription(variant, assetName).split('\n');
+  const descriptionLines = bloodDescription(variant, assetName).split('\n');
   const isInvestments = variant === 'investments';
 
   return (
@@ -87,36 +87,36 @@ const LifeBloodInfoBadge: React.FC<LifeBloodInfoBadgeProps> = ({
       <button
         ref={triggerRef}
         type="button"
-        className="life-blood-badge"
+        className="blood-badge"
         aria-expanded={open}
         aria-haspopup="dialog"
-        aria-label="Life Blood"
+        aria-label="Blood"
         onClick={openPopup}
       >
-        Life Blood
+        Blood
       </button>
       {mounted && open
         ? createPortal(
             <div
-              className="life-blood-overlay is-visible"
+              className="blood-overlay is-visible"
               style={isInvestments ? undefined : overlayStyle}
               onClick={close}
               role="presentation"
             >
               <div
-                className={`life-blood-overlay-card${isInvestments ? ' myinv-accent-border' : ''}`}
+                className={`blood-overlay-card${isInvestments ? ' myinv-accent-border' : ''}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}
                 onClick={(event) => event.stopPropagation()}
               >
                 <span
-                  className={`life-blood-overlay-icon${isInvestments ? ' life-blood-overlay-icon--investments' : ''}`}
+                  className={`blood-overlay-icon${isInvestments ? ' blood-overlay-icon--investments' : ''}`}
                   aria-hidden="true"
                 />
-                <p id={titleId} className="life-blood-overlay-copy">
+                <p id={titleId} className="blood-overlay-copy">
                   {descriptionLines.map((line) => (
-                    <span key={line} className="life-blood-overlay-line">
+                    <span key={line} className="blood-overlay-line">
                       {line}
                     </span>
                   ))}
@@ -126,7 +126,7 @@ const LifeBloodInfoBadge: React.FC<LifeBloodInfoBadgeProps> = ({
                   className={
                     isInvestments
                       ? 'asset-range-button myinv-range-button'
-                      : 'asset-range-button life-blood-ok'
+                      : 'asset-range-button blood-ok'
                   }
                   onClick={close}
                 >
@@ -141,4 +141,4 @@ const LifeBloodInfoBadge: React.FC<LifeBloodInfoBadgeProps> = ({
   );
 };
 
-export default LifeBloodInfoBadge;
+export default BloodInfoBadge;

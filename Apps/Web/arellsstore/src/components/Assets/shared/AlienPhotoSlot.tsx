@@ -130,27 +130,27 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       {mounted && open
         ? createPortal(
             <div
-              className="life-blood-overlay is-visible"
+              className="blood-overlay is-visible"
               style={overlayStyle}
               onClick={close}
               role="presentation"
             >
               <div
-                className="life-blood-overlay-card life-blood-overlay-card--coming-soon"
+                className="blood-overlay-card blood-overlay-card--coming-soon"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}
                 onClick={(event) => event.stopPropagation()}
               >
-                <span className="life-blood-overlay-icon" aria-hidden="true" />
-                <p id={titleId} className="life-blood-overlay-copy">
+                <span className="blood-overlay-icon" aria-hidden="true" />
+                <p id={titleId} className="blood-overlay-copy">
                   {comingSoonLines(assetName).map((line, index) => (
-                    <span key={`${index}-${line}`} className="life-blood-overlay-line">
+                    <span key={`${index}-${line}`} className="blood-overlay-line">
                       {line}
                     </span>
                   ))}
                 </p>
-                <button type="button" className="asset-range-button life-blood-ok" onClick={close}>
+                <button type="button" className="asset-range-button blood-ok" onClick={close}>
                   Ok
                 </button>
               </div>

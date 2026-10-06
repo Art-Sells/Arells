@@ -18,7 +18,7 @@ import { useUser } from '../../../../context/UserContext';
 import AssetGuestLanding from '../../shared/AssetGuestLanding';
 import AssetMissionHeader from '../../shared/AssetMissionHeader';
 import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
-import LifeBloodInfoBadge from '../../shared/LifeBloodInfoBadge';
+import BloodInfoBadge from '../../shared/BloodInfoBadge';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import EthereumChart from './EthereumChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
@@ -2800,7 +2800,7 @@ const VavityEthereum: React.FC = () => {
             <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--ethereum">
               <div className="asset-invest-form-metrics">
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title life-blood-metric-label">Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title blood-metric-label">Purchased <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${
                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
@@ -2823,7 +2823,7 @@ const VavityEthereum: React.FC = () => {
                 </div>
 
                 <div className="asset-metric-row asset-invest-form-row">
-                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title blood-metric-label">Current <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                   <span
                     className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}
                     style={{
@@ -2873,7 +2873,7 @@ const VavityEthereum: React.FC = () => {
             <div className="asset-invest-form-controls asset-invest-form-controls--ethereum">
               <div className="asset-invest-form-field">
                 <div className="asset-metric-row asset-invest-form-field-label">
-                  <span className="asset-metric-title--ethereum life-blood-metric-label">Ethereum <LifeBloodInfoBadge assetName={ASSET.displayName} /> amount</span>
+                  <span className="asset-metric-title--ethereum blood-metric-label">Ethereum <BloodInfoBadge assetName={ASSET.displayName} /> amount</span>
                 </div>
                 <div className="asset-invest-form-field-control">
                   <input
@@ -3180,7 +3180,7 @@ const VavityEthereum: React.FC = () => {
                   >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--ethereum life-blood-metric-label" style={{ marginTop: 30 }}>Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                <span className="asset-metric-title--ethereum blood-metric-label" style={{ marginTop: 30 }}>Purchased <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={purchasedValueRef}
                   style={{
@@ -3203,7 +3203,7 @@ const VavityEthereum: React.FC = () => {
                 </div>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--ethereum life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                <span className="asset-metric-title--ethereum blood-metric-label">Current <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                 <div
                   ref={currentValueRef}
                   style={{
@@ -3253,9 +3253,9 @@ const VavityEthereum: React.FC = () => {
                             style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                           >
                             <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                              <span className="asset-metric-inline-title--ethereum life-blood-metric-label">
+                              <span className="asset-metric-inline-title--ethereum blood-metric-label">
                                 {formatRangeLabel(selectedRangeDays)}{' '}
-                                <LifeBloodInfoBadge assetName={ASSET.displayName} />{' '}
+                                <BloodInfoBadge assetName={ASSET.displayName} />{' '}
                                 <span
                                   style={{
                                     opacity:
@@ -3303,9 +3303,9 @@ const VavityEthereum: React.FC = () => {
                           style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                         >
                           <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
-                            <span className="asset-metric-inline-title--ethereum life-blood-metric-label">
+                            <span className="asset-metric-inline-title--ethereum blood-metric-label">
                               {formatRangeLabel(null)}{' '}
-                              <LifeBloodInfoBadge assetName={ASSET.displayName} />{' '}
+                              <BloodInfoBadge assetName={ASSET.displayName} />{' '}
                                 <span
                                 style={{
                                   opacity:
@@ -3393,7 +3393,7 @@ const VavityEthereum: React.FC = () => {
                     setTimeout(() => setAddMoreOpen(true), 0);
                   }}
                 >
-                  {addMoreOpen ? 'Hide add more life blood' : 'Add more life blood'}
+                  {addMoreOpen ? 'Hide add more blood' : 'Add more blood'}
                 </button>
               </div>
                 {showAddMoreForm && (
@@ -3420,7 +3420,7 @@ const VavityEthereum: React.FC = () => {
                     <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
                       <div className="asset-invest-form-box asset-invest-form-box--ethereum">
                         {renderAddForm(
-                          'Add more life blood',
+                          'Add more blood',
                           closeAddMoreForm,
                         'asset-action-button asset-action-button--ethereum'
                         )}
@@ -3694,7 +3694,7 @@ const VavityEthereum: React.FC = () => {
                                 </div>
                                 <div className="asset-investment-metrics">
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                      <span className="asset-metric-title--ethereum life-blood-metric-label" style={{ marginTop: 20 }}>Purchased <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                                      <span className="asset-metric-title--ethereum blood-metric-label" style={{ marginTop: 20 }}>Purchased <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                                       <span className="asset-money-wrap">
                                         <span className="asset-metric-symbol--ethereum">$</span>
                                         <span className="asset-metric-value">
@@ -3705,7 +3705,7 @@ const VavityEthereum: React.FC = () => {
                                       </span>
                                     </div>
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                      <span className="asset-metric-title--ethereum life-blood-metric-label">Current <LifeBloodInfoBadge assetName={ASSET.displayName} /> Value</span>
+                                      <span className="asset-metric-title--ethereum blood-metric-label">Current <BloodInfoBadge assetName={ASSET.displayName} /> Value</span>
                                       <span className="asset-money-wrap">
                                         <span className="asset-metric-symbol--ethereum">$</span>
                                         <span className="asset-metric-value">
@@ -3737,7 +3737,7 @@ const VavityEthereum: React.FC = () => {
                                       })()}
                                     </div>
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                      <span className="asset-metric-title--ethereum life-blood-metric-label">Ethereum <LifeBloodInfoBadge assetName={ASSET.displayName} /> amount</span>
+                                      <span className="asset-metric-title--ethereum blood-metric-label">Ethereum <BloodInfoBadge assetName={ASSET.displayName} /> amount</span>
                                       <span className="asset-metric-value">
                                         {Number(amount).toLocaleString('en-US', {
                                           minimumFractionDigits: 0,
