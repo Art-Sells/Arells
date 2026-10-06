@@ -22,7 +22,7 @@ function bloodDescription(variant: 'asset' | 'investments', assetName?: string) 
       'The amount of',
       'investments you',
       'own dictates',
-      'the Blood',
+      'the amount of Blood',
       'your Characters',
       'have.',
     ].join('\n');
@@ -32,7 +32,7 @@ function bloodDescription(variant: 'asset' | 'investments', assetName?: string) 
     'The amount of',
     `${name} investments`,
     'you own dictates',
-    'the Blood',
+    'the amount of Blood',
     `your ${name === 'Bitcoin' ? 'Character' : `${name} Alien`}`,
     'has.',
   ].join('\n');
