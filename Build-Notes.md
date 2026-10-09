@@ -4,7 +4,7 @@
 
 ### Trigger Organic Growth
 
-- reach out to D/M/D/N/ABTC (2 months?)
+- reach out to D/M/D/N/ABTC (2 months?) Add new company direction marketing…
 
 After Episode 2 (or during):
 
