@@ -123,6 +123,7 @@
 	transition: opacity 0.45s ease;
 	pointer-events: none;
 	z-index: 1;
+	background: transparent;
 }
 
 .guest-trailer-poster.is-visible {
