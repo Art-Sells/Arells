@@ -124,6 +124,10 @@
 	pointer-events: none;
 	z-index: 1;
 	background: transparent;
+	inset: -3px;
+	width: calc(100% + 6px);
+	height: calc(100% + 6px);
+	clip-path: inset(3px round 12px);
 }
 
 .guest-trailer-poster.is-visible {
@@ -552,6 +556,15 @@
 	border-radius: 0;
 	object-fit: contain;
 	background: #000;
+}
+
+.guest-trailer:fullscreen .guest-trailer-poster,
+.guest-trailer:-webkit-full-screen .guest-trailer-poster,
+.guest-trailer.is-expanded .guest-trailer-poster {
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	clip-path: none;
 }
 
 .guest-trailer:fullscreen .guest-trailer-bottom,
