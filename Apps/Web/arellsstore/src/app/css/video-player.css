@@ -112,6 +112,10 @@
 .guest-trailer-video {
 	opacity: 0;
 	background: #000;
+	inset: -3px;
+	width: calc(100% + 6px);
+	height: calc(100% + 6px);
+	clip-path: inset(3px round 12px);
 }
 
 .guest-trailer-video.is-on {
@@ -558,8 +562,11 @@
 	background: #000;
 }
 
+.guest-trailer:fullscreen .guest-trailer-video,
 .guest-trailer:fullscreen .guest-trailer-poster,
+.guest-trailer:-webkit-full-screen .guest-trailer-video,
 .guest-trailer:-webkit-full-screen .guest-trailer-poster,
+.guest-trailer.is-expanded .guest-trailer-video,
 .guest-trailer.is-expanded .guest-trailer-poster {
 	inset: 0;
 	width: 100%;
