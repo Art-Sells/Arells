@@ -897,6 +897,9 @@ const VavityBitcoin: React.FC = () => {
   const emptyTeaserContentRef = useRef<HTMLDivElement | null>(null);
   const emptyTeaserWrapRef = useRef<HTMLDivElement | null>(null);
   const emptyTeaserCollapseAnimRef = useRef<Animation | null>(null);
+  /** Teaser / investments collapsed during mount hold — don't leave panel padding above Weekly News. */
+  const sectionsHeldCollapsed =
+    Boolean(showEmptyTeaser && !emptyTeaserOpen) || Boolean(hasInvestmentsUI && !summaryOpen);
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
     setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
@@ -3318,7 +3321,9 @@ const VavityBitcoin: React.FC = () => {
       />
       <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
       <div
-        className="asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide"
+        className={`asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide${
+          sectionsHeldCollapsed ? ' asset-header-panel--hold' : ''
+        }`}
         ref={headerPanelRef}
         style={!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : undefined}
       >

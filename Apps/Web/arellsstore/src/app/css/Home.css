@@ -2357,6 +2357,15 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	margin-top: 14px;
 }
 
+/* Mount hold: teaser/investments at 0 height — keep a small top gap, not full panel padding. */
+.asset-page-content--bitcoin .asset-header-panel.asset-header-panel--hold {
+	padding-top: 14px;
+}
+
+.asset-header-panel.asset-header-panel--hold > .asset-bitcoin-season-teaser-updates.is-open {
+	margin-top: 0;
+}
+
 @media (max-width: 750px) {
 	.asset-bitcoin-season-teaser-updates .guest-trailer-ctrl--center {
 		width: 41px !important;
@@ -7571,6 +7580,9 @@ a.myinv-about-button:focus-visible {
 	}
 	.asset-page-content.asset-page-content--bitcoin > .asset-header-panel {
 		padding: 10px;
+	}
+	.asset-page-content.asset-page-content--bitcoin > .asset-header-panel.asset-header-panel--hold {
+		padding-top: 14px;
 	}
 	.asset-page-content--ethereum .asset-header-panel {
 		padding-top: 6px;
