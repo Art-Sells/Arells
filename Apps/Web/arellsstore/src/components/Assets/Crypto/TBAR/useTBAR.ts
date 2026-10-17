@@ -1,17 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { AlienRaceDay } from '../lib/bitcoinAlienRaceUpdates';
+import type { TBARDay } from '../../../../lib/assets/crypto/TBAR/media';
 
-export function useAlienRaceUpdates() {
-  const [days, setDays] = useState<AlienRaceDay[]>([]);
+export function useTBAR() {
+  const [days, setDays] = useState<TBARDay[]>([]);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    void fetch('/api/assets/crypto/bitcoin/alien-race-updates', { cache: 'no-store' })
+    void fetch('/api/assets/crypto/bitcoin/tbar', { cache: 'no-store' })
       .then((res) => (res.ok ? res.json() : { days: [] }))
-      .then((body: { days?: AlienRaceDay[] }) => {
+      .then((body: { days?: TBARDay[] }) => {
         if (cancelled) return;
         setDays(Array.isArray(body.days) ? body.days : []);
         setReady(true);

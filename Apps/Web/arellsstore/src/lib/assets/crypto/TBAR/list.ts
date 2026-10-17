@@ -1,17 +1,14 @@
-import { s3BucketNameOrThrow } from './s3Bucket';
-import {
-  ALIEN_RACE_UPDATES_CATALOG,
-  alienRaceUpdatesObjectKey,
-} from '../alienRaceUpdatesCatalog';
+import { s3BucketNameOrThrow } from '../../../server/s3Bucket';
+import { THE_BITCOIN_ALIEN_REPORT, tbarObjectKey } from './catalog';
 import {
   fileKind,
-  formatAlienRaceDayLabel,
-  groupAlienRaceMedia,
-  parseAlienRaceFolder,
+  formatTBARDayLabel,
+  groupTBARMedia,
+  parseTBARFolder,
   publicS3ObjectUrl,
-  type AlienRaceDay,
-  type AlienRaceMedia,
-} from '../bitcoinAlienRaceUpdates';
+  type TBARDay,
+  type TBARMedia,
+} from './media';
 
 function s3Region(): string {
   return (
@@ -22,7 +19,7 @@ function s3Region(): string {
   );
 }
 
-export async function listBitcoinAlienRaceUpdates(): Promise<AlienRaceDay[]> {
+export async function listTBAR(): Promise<TBARDay[]> {
   let bucket: string;
   try {
     bucket = s3BucketNameOrThrow();
@@ -31,21 +28,21 @@ export async function listBitcoinAlienRaceUpdates(): Promise<AlienRaceDay[]> {
   }
 
   const region = s3Region();
-  const days: AlienRaceDay[] = [];
+  const days: TBARDay[] = [];
 
-  for (const entry of ALIEN_RACE_UPDATES_CATALOG) {
-    if (!parseAlienRaceFolder(entry.folder)) continue;
-    const label = formatAlienRaceDayLabel(entry.folder);
+  for (const entry of THE_BITCOIN_ALIEN_REPORT) {
+    if (!parseTBARFolder(entry.folder)) continue;
+    const label = formatTBARDayLabel(entry.folder);
     if (!label) continue;
 
-    const files: AlienRaceMedia[] = [];
+    const files: TBARMedia[] = [];
     for (const relative of entry.files) {
       const name = relative.replace(/^\/+/, '');
       if (!name) continue;
       const fileName = name.split('/').filter(Boolean).pop() || name;
       const kind = fileKind(fileName);
       if (!kind) continue;
-      const key = alienRaceUpdatesObjectKey(entry.folder, name);
+      const key = tbarObjectKey(entry.folder, name);
       files.push({
         key,
         url: publicS3ObjectUrl(bucket, region, key),
@@ -54,7 +51,7 @@ export async function listBitcoinAlienRaceUpdates(): Promise<AlienRaceDay[]> {
       });
     }
 
-    const media = groupAlienRaceMedia(files);
+    const media = groupTBARMedia(files);
     days.push({
       folder: entry.folder,
       label,
@@ -64,8 +61,8 @@ export async function listBitcoinAlienRaceUpdates(): Promise<AlienRaceDay[]> {
   }
 
   days.sort((a, b) => {
-    const pa = parseAlienRaceFolder(a.folder)!;
-    const pb = parseAlienRaceFolder(b.folder)!;
+    const pa = parseTBARFolder(a.folder)!;
+    const pb = parseTBARFolder(b.folder)!;
     return Date.UTC(pb.year, pb.month - 1, pb.day) - Date.UTC(pa.year, pa.month - 1, pa.day);
   });
 

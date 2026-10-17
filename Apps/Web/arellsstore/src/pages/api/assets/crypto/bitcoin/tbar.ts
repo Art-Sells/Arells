@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { listBitcoinAlienRaceUpdates } from '../../../../../lib/server/listBitcoinAlienRaceUpdates';
+import { listTBAR } from '../../../../../lib/assets/crypto/TBAR/list';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -8,11 +8,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const days = await listBitcoinAlienRaceUpdates();
+    const days = await listTBAR();
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json({ days });
   } catch (err) {
-    console.error('alien-race-updates', err);
+    console.error('tbar', err);
     return res.status(200).json({ days: [] });
   }
 }

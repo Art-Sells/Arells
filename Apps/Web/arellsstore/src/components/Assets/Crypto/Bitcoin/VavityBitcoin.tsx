@@ -23,7 +23,7 @@ import AlienPhotoSlot from '../../shared/AlienPhotoSlot';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import BitcoinChart from './BitcoinChart';
 import BitcoinSeasonTeaser from './BitcoinSeasonTeaser';
-import AlienRaceDailyUpdates from '../../../AlienRaceDailyUpdates';
+import TBARDaily from '../TBAR/Daily';
 import { useGuestPreview } from '../../../../hooks/useGuestPreview';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 import {
@@ -4016,7 +4016,7 @@ const VavityBitcoin: React.FC = () => {
             </div>
           </div>
         )}
-        {!showInitialFetchLoader ? <AlienRaceDailyUpdates variant="bitcoin" /> : null}
+        {!showInitialFetchLoader ? <TBARDaily variant="bitcoin" /> : null}
       </div>
     </div>
       <AssetSummaryCircleLoader

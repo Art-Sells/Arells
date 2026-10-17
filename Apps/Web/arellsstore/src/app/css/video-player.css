@@ -46,13 +46,13 @@
 	box-shadow: 0 0 18px 3px rgba(130, 63, 0, 0.75) !important;
 }
 
-.alien-race-updates-grid--myinv .guest-trailer-ctrl {
+.tbar-grid--myinv .guest-trailer-ctrl {
 	box-shadow: 0 0 16px rgba(0, 0, 0, 0.65);
 }
 
-.alien-race-updates-grid--myinv .guest-trailer:fullscreen .guest-trailer-ctrl,
-.alien-race-updates-grid--myinv .guest-trailer:-webkit-full-screen .guest-trailer-ctrl,
-.alien-race-updates-grid--myinv .guest-trailer.is-expanded .guest-trailer-ctrl {
+.tbar-grid--myinv .guest-trailer:fullscreen .guest-trailer-ctrl,
+.tbar-grid--myinv .guest-trailer:-webkit-full-screen .guest-trailer-ctrl,
+.tbar-grid--myinv .guest-trailer.is-expanded .guest-trailer-ctrl {
 	box-shadow: 0 0 16px rgba(80, 80, 80, 0.75);
 }
 
@@ -355,17 +355,17 @@
 }
 
 @media (max-width: 750px) {
-	.alien-race-updates-thumb--player .guest-trailer-ctrl--center {
+	.tbar-thumb--player .guest-trailer-ctrl--center {
 		width: 41px;
 		height: 41px;
 	}
 
-	.alien-race-updates-thumb--player .guest-trailer-ctrl--center svg {
+	.tbar-thumb--player .guest-trailer-ctrl--center svg {
 		width: 19px;
 		height: 19px;
 	}
 
-	.alien-race-updates-thumb--player .guest-trailer-seek:not(.guest-trailer-seek--forced) {
+	.tbar-thumb--player .guest-trailer-seek:not(.guest-trailer-seek--forced) {
 		width: 161px !important;
 		--seek-inset: 22.5px;
 	}

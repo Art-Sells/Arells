@@ -5,14 +5,14 @@ import React, { useEffect, useRef, useState } from 'react';
 
 const FADE_MS = 900;
 
-type AlienRaceUpdateImageProps = {
+type TBARImageProps = {
   src: string;
   theme: 'myinv' | 'bitcoin';
   href?: string;
   label: string;
 };
 
-export default function AlienRaceUpdateImage({ src, theme, href, label }: AlienRaceUpdateImageProps) {
+export default function TBARImage({ src, theme, href, label }: TBARImageProps) {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [loaderGone, setLoaderGone] = useState(false);
@@ -31,11 +31,11 @@ export default function AlienRaceUpdateImage({ src, theme, href, label }: AlienR
     <>
       {loaderGone ? null : (
         <div
-          className={`alien-race-updates-thumb-loader${loaded ? ' is-fading' : ''}`}
+          className={`tbar-thumb-loader${loaded ? ' is-fading' : ''}`}
           aria-hidden="true"
         >
           <div
-            className={`alien-race-inflow-circle${
+            className={`tbar-inflow-circle${
               theme === 'myinv' ? ' asset-summary-circle-loader--myinv' : ''
             }`}
           >
@@ -47,13 +47,13 @@ export default function AlienRaceUpdateImage({ src, theme, href, label }: AlienR
         ref={imgRef}
         src={src}
         alt=""
-        className={`alien-race-updates-thumb-img${loaded ? ' is-visible' : ''}`}
+        className={`tbar-thumb-img${loaded ? ' is-visible' : ''}`}
         onLoad={() => setLoaded(true)}
       />
     </>
   );
 
-  const className = `alien-race-updates-thumb${loaded ? ' is-loaded' : ''}`;
+  const className = `tbar-thumb${loaded ? ' is-loaded' : ''}`;
 
   if (href) {
     return (

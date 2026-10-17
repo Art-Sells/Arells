@@ -1,15 +1,15 @@
-export const ALIEN_RACE_UPDATES_PREFIX = 'marketing/assets/crypto/bitcoin/Updates/';
+export const TBAR_PREFIX = 'marketing/assets/crypto/bitcoin/Updates/';
 /** How many date folders to show before "show more" / "View More Updates" on My Inv & Bitcoin. */
-export const ALIEN_RACE_UPDATES_PAGE_SIZE = 1;
-export const ALIEN_RACE_DATE_FOLDER_RE = /^(\d{2})\.(\d{2})\.(\d{2})$/;
+export const TBAR_PAGE_SIZE = 1;
+export const TBAR_DATE_FOLDER_RE = /^(\d{2})\.(\d{2})\.(\d{2})$/;
 
-export type AlienRaceMediaKind = 'image' | 'video';
+export type TBARMediaKind = 'image' | 'video';
 
-export type AlienRaceMedia = {
+export type TBARMedia = {
   key: string;
   url: string;
   name: string;
-  kind: AlienRaceMediaKind;
+  kind: TBARMediaKind;
   previewUrl?: string;
   sources?: {
     '480': string;
@@ -18,25 +18,25 @@ export type AlienRaceMedia = {
   };
 };
 
-export type AlienRaceDay = {
+export type TBARDay = {
   folder: string;
   label: string;
-  images: AlienRaceMedia[];
-  media: AlienRaceMedia[];
+  images: TBARMedia[];
+  media: TBARMedia[];
 };
 
 const IMAGE_EXT = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif']);
 const VIDEO_EXT = new Set(['mp4', 'webm', 'mov']);
 
-export function fileKind(name: string): AlienRaceMediaKind | null {
+export function fileKind(name: string): TBARMediaKind | null {
   const ext = name.split('.').pop()?.toLowerCase() || '';
   if (IMAGE_EXT.has(ext)) return 'image';
   if (VIDEO_EXT.has(ext)) return 'video';
   return null;
 }
 
-export function parseAlienRaceFolder(folder: string): { year: number; month: number; day: number } | null {
-  const match = folder.match(ALIEN_RACE_DATE_FOLDER_RE);
+export function parseTBARFolder(folder: string): { year: number; month: number; day: number } | null {
+  const match = folder.match(TBAR_DATE_FOLDER_RE);
   if (!match) return null;
   const month = Number(match[1]);
   const day = Number(match[2]);
@@ -49,8 +49,8 @@ export function parseAlienRaceFolder(folder: string): { year: number; month: num
   return { year, month, day };
 }
 
-export function formatAlienRaceDayLabel(folder: string): string | null {
-  const parsed = parseAlienRaceFolder(folder);
+export function formatTBARDayLabel(folder: string): string | null {
+  const parsed = parseTBARFolder(folder);
   if (!parsed) return null;
   const dt = new Date(Date.UTC(parsed.year, parsed.month - 1, parsed.day));
   const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'long', timeZone: 'UTC' }).format(dt);
@@ -68,13 +68,40 @@ export function publicS3ObjectUrl(bucket: string, region: string, key: string): 
   return `https://${bucket}.s3.${region}.amazonaws.com/${encoded}`;
 }
 
-export function visibleAlienRaceDays(days: AlienRaceDay[], visibleDayCount: number): AlienRaceDay[] {
+export function visibleTBARDays(days: TBARDay[], visibleDayCount: number): TBARDay[] {
   const withMedia = days.filter((day) => day.media.length > 0);
   return withMedia.slice(0, Math.max(0, visibleDayCount));
 }
 
-export function alienRaceThumbCount(days: AlienRaceDay[]): number {
+export function tbarThumbCount(days: TBARDay[]): number {
   return days.reduce((sum, day) => sum + day.media.length, 0);
+}
+
+/** UTC midnight for a valid `mm.dd.yy` folder, or null. */
+export function tbarFolderUtcMs(folder: string): number | null {
+  const parsed = parseTBARFolder(folder);
+  if (!parsed) return null;
+  return Date.UTC(parsed.year, parsed.month - 1, parsed.day);
+}
+
+/**
+ * Split days at a catalog folder date (inclusive on the news side).
+ * `news` = folder date ≥ cutoff; `other` = older than cutoff.
+ */
+export function splitTBARDaysAt(
+  days: TBARDay[],
+  cutoffFolder: string
+): { news: TBARDay[]; other: TBARDay[] } {
+  const cutoffMs = tbarFolderUtcMs(cutoffFolder);
+  if (cutoffMs == null) return { news: days, other: [] };
+  const news: TBARDay[] = [];
+  const other: TBARDay[] = [];
+  for (const day of days) {
+    const ms = tbarFolderUtcMs(day.folder);
+    if (ms == null || ms >= cutoffMs) news.push(day);
+    else other.push(day);
+  }
+  return { news, other };
 }
 
 const VIDEO_QUALITY_PAREN_RE = /^(.+?)\((480|720|1080)p?\)(\.[^.]+)$/i;
@@ -133,18 +160,18 @@ function videoPairingKey(name: string): string | null {
 }
 
 /** Collapse 480/720/1080 files of the same video into one player, like the trailer. */
-export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
+export function groupTBARMedia(files: TBARMedia[]): TBARMedia[] {
   const previewByKey = new Map<string, string>();
   for (const item of files) {
     if (item.kind !== 'image' || !isPreviewAsset(item.name)) continue;
     previewByKey.set(pairingKey(item.name), item.url);
   }
 
-  const images: { item: AlienRaceMedia; order: number }[] = [];
-  const ungrouped: { item: AlienRaceMedia; order: number }[] = [];
+  const images: { item: TBARMedia; order: number }[] = [];
+  const ungrouped: { item: TBARMedia; order: number }[] = [];
   const groups = new Map<
     string,
-    { parts: Partial<Record<'480' | '720' | '1080', AlienRaceMedia>>; order: number }
+    { parts: Partial<Record<'480' | '720' | '1080', TBARMedia>>; order: number }
   >();
 
   files.forEach((item, index) => {
@@ -164,7 +191,7 @@ export function groupAlienRaceMedia(files: AlienRaceMedia[]): AlienRaceMedia[] {
     groups.set(parsed.base, existing);
   });
 
-  const grouped: { item: AlienRaceMedia; order: number }[] = [];
+  const grouped: { item: TBARMedia; order: number }[] = [];
   for (const [, group] of groups) {
     const chosen = group.parts['720'] || group.parts['1080'] || group.parts['480']!;
     const urls: Partial<Record<'480' | '720' | '1080', string>> = {};

@@ -2,19 +2,19 @@
 
 import Link from 'next/link';
 import React, { useMemo, useState } from 'react';
-import VideoPlayer from './VideoPlayer';
-import AlienRaceUpdateImage from './AlienRaceUpdateImage';
-import { BitcoinMemoriamStoryline } from './StorylineOpening';
+import VideoPlayer from '../../../VideoPlayer';
+import TBARImage from './Image';
+import { BitcoinMemoriamStoryline } from '../../../StorylineOpening';
 import {
-  ALIEN_RACE_UPDATES_PAGE_SIZE,
-  alienRaceThumbCount,
-  visibleAlienRaceDays,
-  type AlienRaceDay,
-} from '../lib/bitcoinAlienRaceUpdates';
-import type { TrailerSources } from '../lib/videoPlayer';
+  TBAR_PAGE_SIZE,
+  tbarThumbCount,
+  visibleTBARDays,
+  type TBARDay,
+} from '../../../../lib/assets/crypto/TBAR/media';
+import type { TrailerSources } from '../../../../lib/videoPlayer';
 
-type AlienRaceUpdatesGridProps = {
-  days: AlienRaceDay[];
+type TBARGridProps = {
+  days: TBARDay[];
   theme: 'myinv' | 'bitcoin';
   imageHref?: string;
   showMoreClassName?: string;
@@ -35,7 +35,7 @@ function isBitcoinMemoriamStill(name: string): boolean {
   return /TheBitcoinMemoriam/i.test(file);
 }
 
-export default function AlienRaceUpdatesGrid({
+export default function TBARGrid({
   days,
   theme,
   imageHref,
@@ -43,17 +43,17 @@ export default function AlienRaceUpdatesGrid({
   usePreviewThumbs,
   seekWidthPx,
   viewMoreHref,
-  pageSize = ALIEN_RACE_UPDATES_PAGE_SIZE,
-}: AlienRaceUpdatesGridProps) {
+  pageSize = TBAR_PAGE_SIZE,
+}: TBARGridProps) {
   const [visibleDayCount, setVisibleDayCount] = useState(pageSize);
-  const total = alienRaceThumbCount(days);
+  const total = tbarThumbCount(days);
   const daysWithMedia = useMemo(
     () => days.filter((day) => day.media.length > 0),
     [days]
   );
   const totalDays = daysWithMedia.length;
   const visibleDays = useMemo(
-    () => visibleAlienRaceDays(daysWithMedia, visibleDayCount),
+    () => visibleTBARDays(daysWithMedia, visibleDayCount),
     [daysWithMedia, visibleDayCount]
   );
   const canShowMore = visibleDayCount < totalDays;
@@ -64,8 +64,8 @@ export default function AlienRaceUpdatesGrid({
 
   return (
     <div
-      className={`alien-race-updates-grid alien-race-updates-grid--${theme}${
-        usePreviewThumbs ? ' alien-race-updates-grid--thumbs' : ''
+      className={`tbar-grid tbar-grid--${theme}${
+        usePreviewThumbs ? ' tbar-grid--thumbs' : ''
       }`}
     >
       {visibleDays.map((day) => {
@@ -78,24 +78,24 @@ export default function AlienRaceUpdatesGrid({
           : day.media;
 
         return (
-          <div key={day.folder} className="alien-race-updates-day">
-            <h3 className="alien-race-updates-date">{day.label}</h3>
-            <div className="alien-race-updates-thumbs">
+          <div key={day.folder} className="tbar-day">
+            <h3 className="tbar-date">{day.label}</h3>
+            <div className="tbar-thumbs">
               {memoriamItems.map((item) => (
-                <div key={item.key} className="alien-race-memoriam-section">
-                  <AlienRaceUpdateImage
+                <div key={item.key} className="tbar-memoriam-section">
+                  <TBARImage
                     src={item.url}
                     theme={theme}
                     label={`${day.label} update`}
                   />
-                  <div className="alien-race-memoriam-copy">
+                  <div className="tbar-memoriam-copy">
                     <BitcoinMemoriamStoryline />
                   </div>
                 </div>
               ))}
               {rest.map((item) =>
                 item.kind === 'video' ? (
-                  <div key={item.key} className="alien-race-updates-thumb alien-race-updates-thumb--player">
+                  <div key={item.key} className="tbar-thumb tbar-thumb--player">
                     <VideoPlayer
                       theme={playerTheme}
                       sources={item.sources || videoSources(item.url)}
@@ -105,7 +105,7 @@ export default function AlienRaceUpdatesGrid({
                     />
                   </div>
                 ) : (
-                  <AlienRaceUpdateImage
+                  <TBARImage
                     key={item.key}
                     src={usePreviewThumbs && item.previewUrl ? item.previewUrl : item.url}
                     theme={theme}
@@ -120,8 +120,8 @@ export default function AlienRaceUpdatesGrid({
       })}
       {canShowMore ? (
         <div
-          className={`home-assets-show-more-wrap alien-race-updates-more${
-            viewMoreHref ? ' alien-race-updates-more--hub-link' : ''
+          className={`home-assets-show-more-wrap tbar-more${
+            viewMoreHref ? ' tbar-more--hub-link' : ''
           }`}
         >
           {viewMoreHref ? (
@@ -137,7 +137,7 @@ export default function AlienRaceUpdatesGrid({
               {theme === 'bitcoin' ? (
                 <span className="asset-save-signin-text">{moreLabel}</span>
               ) : (
-                <span className="alien-race-updates-more-label">{moreLabel}</span>
+                <span className="tbar-more-label">{moreLabel}</span>
               )}
             </Link>
           ) : (

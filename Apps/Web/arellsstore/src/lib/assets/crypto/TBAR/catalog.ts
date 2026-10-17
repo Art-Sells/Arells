@@ -1,7 +1,7 @@
-import { ALIEN_RACE_UPDATES_PREFIX } from './bitcoinAlienRaceUpdates';
+import { TBAR_PREFIX } from './media';
 
 /** Date folder `mm.dd.yy` plus files under that folder. Upload to S3 first, then add them here. */
-export type AlienRaceUpdatesDayCatalog = {
+export type TBARCatalog = {
   folder: string;
   files: string[];
 };
@@ -10,7 +10,16 @@ export type AlienRaceUpdatesDayCatalog = {
  * What the app shows. S3 uploads do not appear until they are listed here and deployed
  * (or the local catalog is saved while you run the app).
  */
-export const ALIEN_RACE_UPDATES_CATALOG: AlienRaceUpdatesDayCatalog[] = [
+export const THE_BITCOIN_ALIEN_REPORT: TBARCatalog[] = [
+  {
+    folder: '10.16.26',
+    files: [
+      'TBARS1E2W2(preview).jpg',
+      'TBARS1E2W2(480p).mp4',
+      'TBARS1E2W2(720p).mp4',
+      'TBARS1E2W2(1080p).mp4',
+    ],
+  },
   {
     folder: '10.09.26',
     files: [
@@ -92,7 +101,7 @@ export const ALIEN_RACE_UPDATES_CATALOG: AlienRaceUpdatesDayCatalog[] = [
   },
 ];
 
-export function alienRaceUpdatesObjectKey(folder: string, relativeFile: string): string {
+export function tbarObjectKey(folder: string, relativeFile: string): string {
   const name = relativeFile.replace(/^\/+/, '');
-  return `${ALIEN_RACE_UPDATES_PREFIX}${folder}/${name}`;
+  return `${TBAR_PREFIX}${folder}/${name}`;
 }

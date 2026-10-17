@@ -1,26 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useEffect } from 'react';
-import AlienRaceLoadReveal from '../../components/AlienRaceLoadReveal';
+import React, { useEffect, useMemo, useState } from 'react';
+import TBARLoadReveal from '../../components/Assets/Crypto/TBAR/LoadReveal';
 import AlienRaceThemeMusicPlayer from '../../components/AlienRaceThemeMusicPlayer';
-import AlienRaceUpdatesGrid from '../../components/AlienRaceUpdatesGrid';
+import TBARGrid from '../../components/Assets/Crypto/TBAR/Grid';
 import AssetGuestLanding from '../../components/Assets/shared/AssetGuestLanding';
 import StorylineOpening from '../../components/StorylineOpening';
 import AssetSummaryCircleLoader from '../../components/Assets/shared/AssetSummaryCircleLoader';
 import { useAssetSummaryCircleLoader } from '../../components/Assets/shared/useAssetSummaryCircleLoader';
 import { useUser } from '../../context/UserContext';
-import { useAlienRaceUpdates } from '../../hooks/useAlienRaceUpdates';
+import { useTBAR } from '../../components/Assets/Crypto/TBAR/useTBAR';
 import { useGuestPreview } from '../../hooks/useGuestPreview';
-import { alienRaceThumbCount } from '../../lib/bitcoinAlienRaceUpdates';
+import { splitTBARDaysAt, tbarThumbCount } from '../../lib/assets/crypto/TBAR/media';
 
 const PREMIER_POSTER =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
 
+/** Inclusive cutoff: this day and newer = Weekly News; older = Other Updates. */
+const TBAR_NEWS_CUTOFF_FOLDER = '10.16.26';
+
 const TheBitcoinAlienRacePageClient: React.FC = () => {
   const { isSignedIn, authSessionLoading } = useUser();
-  const { days, ready } = useAlienRaceUpdates();
-  const hasContent = alienRaceThumbCount(days) > 0;
+  const { days, ready } = useTBAR();
+  const hasContent = tbarThumbCount(days) > 0;
+  const [showOtherUpdates, setShowOtherUpdates] = useState(false);
+  const { news: newsDays, other: otherDays } = useMemo(
+    () => splitTBARDaysAt(days, TBAR_NEWS_CUTOFF_FOLDER),
+    [days]
+  );
+  const newsHasContent = tbarThumbCount(newsDays) > 0;
+  const otherHasContent = tbarThumbCount(otherDays) > 0;
   const guestPreview = useGuestPreview();
   const allowSignedIn = !authSessionLoading && isSignedIn && !guestPreview;
   const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
@@ -95,7 +105,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
             <div className="asset-bitcoin-season-teaser-storyline">
               <StorylineOpening assetName="Bitcoin" className="storyline-opening--bitcoin-teaser" />
               <div className="asset-bitcoin-season-teaser-asset-block">
-                <h2 className="alien-race-updates-date">Asset</h2>
+                <h2 className="tbar-date">Asset</h2>
                 <div className="asset-bitcoin-season-teaser-badge">
                   <Link
                     href="/bitcoin"
@@ -116,15 +126,41 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           </div>
           <div className="bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--updates asset-guest-mount-slide">
             <div
-              className={`bitcoin-alien-race-updates-wrap${
+              className={`bitcoin-tbar-wrap${
                 ready && hasContent ? ' is-open' : ''
               }${ready && !hasContent ? ' is-collapsing' : ''}`}
             >
-              <div className="bitcoin-alien-race-updates-height">
-                <h2 className="asset-bitcoin-season-teaser-season-title">Weekly Updates</h2>
-                <AlienRaceLoadReveal ready={ready} hasContent={hasContent} theme="bitcoin">
-                  <AlienRaceUpdatesGrid days={days} theme="bitcoin" pageSize={6} />
-                </AlienRaceLoadReveal>
+              <div className="bitcoin-tbar-height">
+                <h2 className="asset-bitcoin-season-teaser-season-title">Weekly News</h2>
+                <TBARLoadReveal ready={ready} hasContent={newsHasContent} theme="bitcoin">
+                  <TBARGrid
+                    days={newsDays}
+                    theme="bitcoin"
+                    pageSize={Math.max(1, newsDays.filter((d) => d.media.length > 0).length)}
+                  />
+                </TBARLoadReveal>
+                {ready && otherHasContent ? (
+                  <div className="tbar-other-updates">
+                    <h2 className="asset-bitcoin-season-teaser-season-title">Other Updates</h2>
+                    {!showOtherUpdates ? (
+                      <div className="home-assets-show-more-wrap tbar-more">
+                        <button
+                          type="button"
+                          className="auth-submit asset-range-button asset-range-button--bitcoin home-assets-show-more-button"
+                          onClick={() => setShowOtherUpdates(true)}
+                        >
+                          Show Updates
+                        </button>
+                      </div>
+                    ) : (
+                      <TBARGrid
+                        days={otherDays}
+                        theme="bitcoin"
+                        pageSize={Math.max(1, otherDays.filter((d) => d.media.length > 0).length)}
+                      />
+                    )}
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

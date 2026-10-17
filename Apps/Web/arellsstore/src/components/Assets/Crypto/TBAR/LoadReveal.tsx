@@ -2,19 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 
-type AlienRaceLoadRevealProps = {
+type TBARLoadRevealProps = {
   ready: boolean;
   hasContent: boolean;
   theme: 'bitcoin' | 'myinv';
   children: React.ReactNode;
 };
 
-export default function AlienRaceLoadReveal({
+export default function TBARLoadReveal({
   ready,
   hasContent,
   theme,
   children,
-}: AlienRaceLoadRevealProps) {
+}: TBARLoadRevealProps) {
   const [gone, setGone] = useState(false);
 
   useEffect(() => {
@@ -33,11 +33,11 @@ export default function AlienRaceLoadReveal({
 
   return (
     <div
-      className={`alien-race-load-reveal alien-race-load-reveal--${theme}${showContent ? ' is-open' : ''}${
+      className={`tbar-load-reveal tbar-load-reveal--${theme}${showContent ? ' is-open' : ''}${
         ready && !hasContent ? ' is-empty' : ''
       }`}
     >
-      {showContent ? <div className="alien-race-load-reveal-body is-open">{children}</div> : null}
+      {showContent ? <div className="tbar-load-reveal-body is-open">{children}</div> : null}
     </div>
   );
 }

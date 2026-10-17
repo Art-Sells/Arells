@@ -1,32 +1,33 @@
 'use client';
 
 import React from 'react';
-import AlienRaceLoadReveal from './AlienRaceLoadReveal';
-import AlienRaceUpdatesGrid from './AlienRaceUpdatesGrid';
-import { useAlienRaceUpdates } from '../hooks/useAlienRaceUpdates';
-import { ALIEN_RACE_UPDATES_PAGE_SIZE, alienRaceThumbCount } from '../lib/bitcoinAlienRaceUpdates';
-type AlienRaceDailyUpdatesProps = {
+import TBARLoadReveal from './LoadReveal';
+import TBARGrid from './Grid';
+import { useTBAR } from './useTBAR';
+import { TBAR_PAGE_SIZE, tbarThumbCount } from '../../../../lib/assets/crypto/TBAR/media';
+
+type TBARDailyProps = {
   variant: 'myinv' | 'bitcoin';
   mountExpand?: boolean;
 };
 
-export default function AlienRaceDailyUpdates({ variant, mountExpand = true }: AlienRaceDailyUpdatesProps) {
-  const { days, ready } = useAlienRaceUpdates();
-  const hasContent = alienRaceThumbCount(days) > 0;
+export default function TBARDaily({ variant, mountExpand = true }: TBARDailyProps) {
+  const { days, ready } = useTBAR();
+  const hasContent = tbarThumbCount(days) > 0;
   const open = Boolean(mountExpand && ready && hasContent);
   const theme = variant;
   const body = (
-    <AlienRaceLoadReveal ready={ready} hasContent={hasContent} theme={theme}>
-      <AlienRaceUpdatesGrid
+    <TBARLoadReveal ready={ready} hasContent={hasContent} theme={theme}>
+      <TBARGrid
         days={days}
         theme={theme}
         imageHref="/thebitcoinalienrace"
         usePreviewThumbs
         seekWidthPx={variant === 'bitcoin' ? 100 : undefined}
         viewMoreHref="/thebitcoinalienrace"
-        pageSize={ALIEN_RACE_UPDATES_PAGE_SIZE}
+        pageSize={TBAR_PAGE_SIZE}
       />
-    </AlienRaceLoadReveal>
+    </TBARLoadReveal>
   );
 
   if (variant === 'bitcoin') {
@@ -34,7 +35,7 @@ export default function AlienRaceDailyUpdates({ variant, mountExpand = true }: A
     if (!ready) return null;
     return (
       <div className="asset-bitcoin-season-teaser-updates">
-        <h3 className="asset-bitcoin-season-teaser-season-title">Weekly Updates</h3>
+        <h3 className="asset-bitcoin-season-teaser-season-title">Weekly News</h3>
         {body}
       </div>
     );
@@ -47,7 +48,7 @@ export default function AlienRaceDailyUpdates({ variant, mountExpand = true }: A
       }${ready && !hasContent ? ' is-collapsing' : ''}`}
     >
       <div className="myinv-daily-updates-height">
-      <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly Updates</div>
+      <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Weekly News</div>
       <div className="myinv-panel-section myinv-daily-updates-frame myinv-asset-hub-outer">
         <div className="myinv-panel myinv-panel--shell myinv-asset-hub-outer-shell">{body}</div>
       </div>
