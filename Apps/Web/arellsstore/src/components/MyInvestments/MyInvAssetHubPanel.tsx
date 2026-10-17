@@ -8,7 +8,6 @@ import MyInvStocksAction from './MyInvStocksAction';
 
 type MyInvAssetHubPanelProps = {
   title: string;
-  slideIn: boolean;
   assets: string[];
   linkKeyPrefix: string;
   cryptoMode: 'badges' | 'expandable';
@@ -23,7 +22,6 @@ const STOCK_ID_SET = new Set<string>(SUPPORTED_STOCK_ASSET_IDS);
 
 const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
   title,
-  slideIn,
   assets,
   linkKeyPrefix,
   cryptoMode,
@@ -35,7 +33,7 @@ const MyInvAssetHubPanel: React.FC<MyInvAssetHubPanelProps> = ({
   const stockAssets = useMemo(() => assets.filter((id) => STOCK_ID_SET.has(id)), [assets]);
 
   return (
-    <div className={`myinv-panel-group myinv-panel-group--bordered myinv-asset-hub-group${slideIn ? ' page-slide-in' : ''}`}>
+    <div className="myinv-panel-group myinv-panel-group--bordered myinv-asset-hub-group">
       <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">{title}</div>
       <div className="myinv-panel-section myinv-accent-border myinv-asset-hub-outer">
         <div className="myinv-panel myinv-panel--shell myinv-asset-hub-outer-shell">

@@ -31,6 +31,8 @@ import PhaseOneBitcoinAlienRaceButton from '../shared/PhaseOneBitcoinAlienRaceBu
 
 const SUMMARY_VALUES_FORCE_READY_MS = 8000;
 const SUMMARY_HEIGHT_EXPAND_MS = 3000;
+/** Hold summary + mission + asset hubs so Weekly News height-downs first (same as Bitcoin 4s). */
+const MYINV_HUBS_MOUNT_HOLD_MS = 4000;
 
 const formatCurrencyParts = (value: number) => {
   const formatted = (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -201,7 +203,8 @@ const MyInvestmentsPageClient: React.FC = () => {
   });
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
-  const [slideIn, setSlideIn] = useState(false);
+  /** Mission + asset hubs wait so Weekly News can height-down first. */
+  const [hubsSlideIn, setHubsSlideIn] = useState(false);
   const [initialDataReady, setInitialDataReady] = useState(false);
   const initialFetchDoneRef = useRef(false);
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
@@ -361,10 +364,17 @@ const MyInvestmentsPageClient: React.FC = () => {
     requestAnimationFrame(tick);
   }, [open, purchasedValueHeight, currentValueHeight, profitValueHeight, profitBlockHeight, summaryOpen, summaryHeight]);
 
+  // Weekly News expands as soon as this block mounts; mission + hubs wait 4s.
   useEffect(() => {
-    if (!open) return;
-    setSlideIn(true);
-  }, [open]);
+    if (!effectiveSignedIn || !initialDataReady) {
+      setHubsSlideIn(false);
+      return;
+    }
+    const timer = globalThis.setTimeout(() => {
+      setHubsSlideIn(true);
+    }, MYINV_HUBS_MOUNT_HOLD_MS);
+    return () => globalThis.clearTimeout(timer);
+  }, [effectiveSignedIn, initialDataReady]);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
@@ -571,7 +581,8 @@ const MyInvestmentsPageClient: React.FC = () => {
     if (!effectiveSignedIn || !hasAny) return;
     if (showLoading) return;
     // Same as assets: show the floating summary circle until the height-down finishes.
-    if (!summaryValuesReady) {
+    // Hold mount until hubsSlideIn (4s) so Weekly News height-downs first.
+    if (!summaryValuesReady || !hubsSlideIn) {
       setSummaryMounted(false);
       setSummaryOpen(false);
       setSummaryHeight(0);
@@ -584,7 +595,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     // Mount first; height expand runs in the layout effect once the panel is in the DOM.
     setSummaryMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveSignedIn, hasAny, showLoading, summaryValuesReady]);
+  }, [effectiveSignedIn, hasAny, showLoading, summaryValuesReady, hubsSlideIn]);
 
   // After mount: start at max-height 0, then measure and height-down (asset summary pattern).
   useLayoutEffect(() => {
@@ -1032,11 +1043,11 @@ const MyInvestmentsPageClient: React.FC = () => {
       <div className={`myinv-page myinv-page--accent${effectiveSignedIn ? '' : ' myinv-page--guest'}`}>
         <div
           ref={headerRef}
-          className={`myinv-header-inner${slideIn ? ' page-slide-in' : ''}${displayIsLiquidMode ? ' is-liquid' : ''}`}
+          className={`myinv-header-inner${displayIsLiquidMode ? ' is-liquid' : ''}`}
         >
           <div className="myinv-title">my investments</div>
         </div>
-        <div className={`myinv-slogan-layer${slideIn ? ' page-slide-in' : ''}`}>
+        <div className="myinv-slogan-layer">
           <div className="myinv-descriptioner-wrapper">
             <p
               className={`myinv-descriptioner myinv-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
@@ -1045,19 +1056,26 @@ const MyInvestmentsPageClient: React.FC = () => {
             </p>
           </div>
         </div>
-        <div className="myinv-shell shadow-border-wrap">
+        <div
+          className={`myinv-shell shadow-border-wrap${
+            effectiveSignedIn && hasAny && !hubsSlideIn ? ' is-hold-collapsed' : ''
+          }`}
+        >
           <span className="shadow-border" aria-hidden="true" />
           <div
             className={`asset-slide-panel myinv-slide${open ? ' is-open' : ''}`}
-            style={{ maxHeight: open ? `${shellMaxHeight}px` : '0px', transition: 'max-height 2s ease' }}
+            style={{
+              maxHeight: open && !(effectiveSignedIn && hasAny && !hubsSlideIn) ? `${shellMaxHeight}px` : '0px',
+              transition: 'max-height 2s ease',
+            }}
           >
             <div ref={myinvWrapperRef} className="myinv-wrapper">
-              <div className={`myinv-topbar${slideIn ? ' page-slide-in' : ''}`}>
+              <div className="myinv-topbar">
                 <span />
               </div>
 
               {!effectiveSignedIn && !authSessionLoading ? (
-                <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
+                <div className="myinv-panel">
                   <div className="myinv-cta-row">
                     <Link href="/signin" className="myinv-cta-button">
                       <span className="myinv-cta-button-bg" aria-hidden="true" />
@@ -1241,8 +1259,8 @@ const MyInvestmentsPageClient: React.FC = () => {
                   </div>
                   ) : null}
 
-                  {showLiquidityToggle && (
-                    <div className={`myinv-toggle-shell myinv-accent-border${slideIn ? ' page-slide-in' : ''}`}>
+                  {showLiquidityToggle && hubsSlideIn && (
+                    <div className="myinv-toggle-shell myinv-accent-border">
                       <div className="asset-reality-toggle-row myinv-toggle-row">
                         <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
                         <button
@@ -1367,8 +1385,8 @@ const MyInvestmentsPageClient: React.FC = () => {
                   )}
                 </>
               ) : null}
-              {effectiveSignedIn && initialDataReady && (
-                <div className={`myinv-panel-group myinv-panel-group--bordered myinv-mission-group${slideIn ? ' page-slide-in' : ''}`}>
+              {effectiveSignedIn && initialDataReady && hubsSlideIn && (
+                <div className="myinv-panel-group myinv-panel-group--bordered myinv-mission-group">
                   <div className="myinv-panel-section myinv-accent-border myinv-mission-outer">
                     <div className="myinv-panel myinv-panel--shell myinv-mission-outer-shell">
                       <div className="myinv-panel-section myinv-accent-border myinv-mission-inner-card">
@@ -1481,10 +1499,9 @@ const MyInvestmentsPageClient: React.FC = () => {
         </div>
         {effectiveSignedIn && initialDataReady && (
           <>
-            {myAssetsSortedByHoldings.length > 0 && (
+            {hubsSlideIn && myAssetsSortedByHoldings.length > 0 && (
               <MyInvAssetHubPanel
                 title="My Assets"
-                slideIn={slideIn}
                 assets={myAssetsSortedByHoldings}
                 linkKeyPrefix="held"
                 cryptoMode="badges"
@@ -1492,22 +1509,20 @@ const MyInvestmentsPageClient: React.FC = () => {
               />
             )}
 
-            {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length === 0 && (
+            {hubsSlideIn && missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length === 0 && (
               <MyInvAssetHubPanel
                 title="View Asset"
-                slideIn={slideIn}
                 assets={missingAssetsByMarketCap}
                 linkKeyPrefix="add-missing"
                 cryptoMode="expandable"
               />
             )}
 
-            <MyInvDailyUpdatesPanel slideIn={slideIn} />
+            <MyInvDailyUpdatesPanel />
 
-            {missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length > 0 && (
+            {hubsSlideIn && missingAssetsByMarketCap.length > 0 && effectiveAssetsPresent.length > 0 && (
               <MyInvAssetHubPanel
                 title="Other Assets"
-                slideIn={slideIn}
                 assets={missingAssetsByMarketCap}
                 linkKeyPrefix="missing"
                 cryptoMode="expandable"
@@ -1515,7 +1530,6 @@ const MyInvestmentsPageClient: React.FC = () => {
             )}
           </>
         )}
-        {/* No page-slide-in: that animation’s backwards fill (opacity 0) flashed when slideIn turned on. */}
         <div className="myportfolio-questions-support-shell">
           <div className="site-social-footer-rule myportfolio-questions-support-rule" aria-hidden="true" />
           <PortfolioQuestionsSupport />

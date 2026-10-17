@@ -3,14 +3,7 @@
 import React from 'react';
 import TBARDaily from '../Assets/Crypto/TBAR/Daily';
 
-type DailyUpdatesPanelProps = {
-  slideIn: boolean;
-};
-
-export default function MyInvDailyUpdatesPanel({ slideIn }: DailyUpdatesPanelProps) {
-  return (
-    <div className={slideIn ? 'page-slide-in' : undefined}>
-      <TBARDaily variant="myinv" mountExpand={slideIn} />
-    </div>
-  );
+export default function MyInvDailyUpdatesPanel() {
+  // Height-down only — no page-slide-in on mount.
+  return <TBARDaily variant="myinv" mountExpand />;
 }

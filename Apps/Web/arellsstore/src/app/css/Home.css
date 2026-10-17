@@ -5656,6 +5656,21 @@ a.asset-action-button--myinv-asset-link {
 	z-index: 2;
 }
 
+/* During 4s hold before summary height-down: no empty white shell gap. */
+.myinv-shell.is-hold-collapsed {
+	min-width: 0;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.myinv-shell.is-hold-collapsed::after,
+.myinv-shell.is-hold-collapsed > .shadow-border {
+	opacity: 0;
+}
+
 .myinv-page--guest .myinv-shell {
 	margin-top: 0;
 }
@@ -5687,11 +5702,6 @@ a.asset-action-button--myinv-asset-link {
 	z-index: 3;
 }
 
-.myinv-header-inner.page-slide-in {
-	animation: pageSlideUpMyinvHeaderInner 4s ease both;
-	will-change: transform, opacity;
-}
-
 .myinv-header-inner .myinv-title {
 	position: relative;
 	text-align: left;
@@ -5716,11 +5726,6 @@ a.asset-action-button--myinv-asset-link {
 	margin: 0 auto;
 	display: flex;
 	margin-bottom: 10px;
-	animation-name: pageSlideUp;
-	animation-duration: 1s;
-	animation-delay: 2s;
-	animation-timing-function: ease;
-	animation-fill-mode: both;
 	justify-content: flex-end;
 	position: relative;
 	z-index: 3;
@@ -7454,54 +7459,12 @@ a.myinv-about-button:focus-visible {
 	opacity: 0.2;
 }
 
-/* Stagger My Investments sections */
-.myinv-wrapper > * {
-	opacity: 0;
-}
-
-/* Summary reveals via max-height (not page-slide-in); keep visible while collapsed/expanding. */
+/* Summary reveals via max-height (not page-slide-in). */
 .myinv-wrapper > .myinv-summary-height-panel {
 	opacity: 1;
 	width: min(700px, 100%);
 	margin: 0 auto;
 	box-sizing: border-box;
-}
-
-.myinv-wrapper > .page-slide-in {
-	animation-duration: 4s;
-	animation-timing-function: ease;
-	animation-fill-mode: both;
-}
-
-.myinv-wrapper > .page-slide-in:has(.myinv-daily-updates-group) {
-	will-change: auto;
-	transform: none;
-	opacity: 1;
-	animation: none;
-}
-
-.myinv-wrapper > .page-slide-in:nth-of-type(1) {
-	animation-delay: 0s;
-}
-
-.myinv-wrapper > .page-slide-in:nth-of-type(2) {
-	animation-delay: 0.2s;
-}
-
-.myinv-wrapper > .page-slide-in:nth-of-type(3) {
-	animation-delay: 0.4s;
-}
-
-.myinv-wrapper > .page-slide-in:nth-of-type(4) {
-	animation-delay: 0.6s;
-}
-
-.myinv-wrapper > .page-slide-in:nth-of-type(5) {
-	animation-delay: 0.8s;
-}
-
-.myinv-wrapper > .page-slide-in:nth-of-type(6) {
-	animation-delay: 1s;
 }
 
 .myinv-metric-title {
