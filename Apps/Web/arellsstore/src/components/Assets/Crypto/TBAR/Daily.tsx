@@ -32,11 +32,18 @@ export default function TBARDaily({ variant, mountExpand = true }: TBARDailyProp
 
   if (variant === 'bitcoin') {
     if (ready && !hasContent) return null;
-    if (!ready) return null;
     return (
-      <div className="asset-bitcoin-season-teaser-updates">
-        <h3 className="asset-bitcoin-season-teaser-season-title">Weekly News</h3>
-        {body}
+      <div
+        className={`asset-bitcoin-season-teaser-updates${
+          open ? ' is-open' : ''
+        }${ready && !hasContent ? ' is-collapsing' : ''}`}
+      >
+        <div className="asset-bitcoin-season-teaser-updates-height">
+          <div className="asset-bitcoin-season-teaser-updates-inner">
+            <h3 className="asset-bitcoin-season-teaser-season-title">Weekly News</h3>
+            {body}
+          </div>
+        </div>
       </div>
     );
   }

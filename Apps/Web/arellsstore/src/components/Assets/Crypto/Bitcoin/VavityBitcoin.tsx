@@ -43,6 +43,9 @@ import {
 
 import { CRYPTO_ASSET_BY_ID } from '../../../../lib/assets/cryptoAssetRegistry';
 
+/** Bitcoin page: hold collapsed on mount/reload before height-down (teaser / character). Not Weekly News. */
+const BITCOIN_SECTIONS_MOUNT_HOLD_MS = 4000;
+
 const ASSET = CRYPTO_ASSET_BY_ID.bitcoin;
 
 const PREMIER_POSTER =
@@ -305,6 +308,8 @@ const VavityBitcoin: React.FC = () => {
   const assetPriceChartMountSlide = useAssetPriceChartMountSlide(24, ASSET_PRICE_CHART_MOUNT_SLIDE_SECONDS);
   const assetPageMountAtRef = useRef(Date.now());
   const openInvestmentsDeferTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  /** Prevents re-entrant openInvestmentsSection from resetting the hold / collapsing mid-expand. */
+  const openInvestmentsExpandStartedRef = useRef(false);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
   const sectionHeaderRef = useRef<HTMLDivElement | null>(null);
   const assetTitleRef = useRef<HTMLDivElement | null>(null);
@@ -431,6 +436,7 @@ const VavityBitcoin: React.FC = () => {
         globalThis.clearTimeout(openInvestmentsDeferTimerRef.current);
         openInvestmentsDeferTimerRef.current = null;
       }
+      openInvestmentsExpandStartedRef.current = false;
     };
   }, []);
 
@@ -920,10 +926,20 @@ const VavityBitcoin: React.FC = () => {
     setDeleteLocked(false);
   }, []);
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
-  const openInvestmentsSection = useCallback(() => {
+  const openInvestmentsSection = useCallback((options?: { skipMountHold?: boolean }) => {
+    // Already opening / open — do not clear timers or re-zero height (that was the add-submit flicker).
+    if (openInvestmentsDeferTimerRef.current || openInvestmentsExpandStartedRef.current) {
+      return;
+    }
+    const skipMountHold = Boolean(options?.skipMountHold);
     const run = () => {
       openInvestmentsDeferTimerRef.current = null;
-      setInvestmentsWholeHeight(0);
+      openInvestmentsExpandStartedRef.current = true;
+      // After first-add submit the panel mounts at 0 already; forcing 0 again mid-measure
+      // collapses a frame while totals/loader settle (regression vs pre-mount-hold open).
+      if (!skipMountHold) {
+        setInvestmentsWholeHeight(0);
+      }
       setSummaryAnimating(true);
       summaryAnimatingRef.current = true;
       setSummaryOpen(true);
@@ -951,11 +967,14 @@ const VavityBitcoin: React.FC = () => {
     const elapsed = Date.now() - assetPageMountAtRef.current;
     const chartAlignedDelayMs =
       ASSET_PRICE_CHART_MOUNT_SLIDE_MS - ASSET_SUMMARY_START_BEFORE_CHART_SLIDE_END_MS;
-    const requiredDelayFromMountMs = Math.max(chartAlignedDelayMs, ASSET_SUMMARY_PAUSE_BEFORE_EXPAND_MS);
-    const waitMs = Math.max(0, requiredDelayFromMountMs - elapsed);
-    if (openInvestmentsDeferTimerRef.current) {
-      globalThis.clearTimeout(openInvestmentsDeferTimerRef.current);
-      openInvestmentsDeferTimerRef.current = null;
+    const requiredDelayFromMountMs = Math.max(
+      chartAlignedDelayMs,
+      ASSET_SUMMARY_PAUSE_BEFORE_EXPAND_MS
+    );
+    // Mount/reload only: hold collapsed before height-down. Never after first-add submit.
+    let waitMs = Math.max(0, requiredDelayFromMountMs - elapsed);
+    if (!skipMountHold) {
+      waitMs = Math.max(waitMs, BITCOIN_SECTIONS_MOUNT_HOLD_MS);
     }
     if (waitMs <= 0) {
       run();
@@ -963,6 +982,13 @@ const VavityBitcoin: React.FC = () => {
       openInvestmentsDeferTimerRef.current = globalThis.setTimeout(run, waitMs);
     }
   }, []);
+
+  // After clear/close, allow a future open. Do not clear while the first-open hold is pending.
+  useEffect(() => {
+    if (summaryOpen || openInvestmentsDeferTimerRef.current) return;
+    openInvestmentsExpandStartedRef.current = false;
+  }, [summaryOpen]);
+
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptyActionsMountPhase('done');
     setEmptySigninGone(false);
@@ -2580,8 +2606,11 @@ const VavityBitcoin: React.FC = () => {
       setSubmitPhase('idle');
       setIsSubmitCollapsing(false);
       if (target === 'add' && pendingOpenAfterSubmitRef.current) {
-        pendingOpenAfterSubmitRef.current = false;
-        openInvestmentsSection();
+        // Keep pendingOpen true until we open so the mount effect doesn't schedule a 4s hold.
+        requestAnimationFrame(() => {
+          pendingOpenAfterSubmitRef.current = false;
+          openInvestmentsSection({ skipMountHold: true });
+        });
       }
       submitCollapseTimerRef.current = null;
     }, 2000);
@@ -3084,10 +3113,10 @@ const VavityBitcoin: React.FC = () => {
     if (emptyActionsMountPhase !== 'hidden') return;
     const revealTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('revealing');
-    }, 1000);
+    }, BITCOIN_SECTIONS_MOUNT_HOLD_MS);
     const doneTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('done');
-    }, 4200);
+    }, BITCOIN_SECTIONS_MOUNT_HOLD_MS + 3200);
     return () => {
       globalThis.clearTimeout(revealTimer);
       globalThis.clearTimeout(doneTimer);
@@ -3096,7 +3125,7 @@ const VavityBitcoin: React.FC = () => {
 
   useEffect(() => {
     const node = emptyTeaserContentRef.current;
-    if (!showEmptyTeaser || !teaserRevealAfterClear || !node || typeof ResizeObserver === 'undefined') return;
+    if (!showEmptyTeaser || !node || typeof ResizeObserver === 'undefined') return;
     const measure = () => {
       const next = node.scrollHeight;
       setEmptyTeaserHeight((prev) => (prev === next ? prev : next));
@@ -3105,7 +3134,7 @@ const VavityBitcoin: React.FC = () => {
     const ro = new ResizeObserver(measure);
     ro.observe(node);
     return () => ro.disconnect();
-  }, [showEmptyTeaser, teaserRevealAfterClear]);
+  }, [showEmptyTeaser, emptyTeaserOpen]);
 
   useEffect(() => {
     if (!showEmptyTeaser) {
@@ -3113,24 +3142,45 @@ const VavityBitcoin: React.FC = () => {
       setEmptyTeaserOpen(false);
       return;
     }
-    if (!teaserRevealAfterClear) return;
-    let raf2 = 0;
-    const raf1 = window.requestAnimationFrame(() => {
-      raf2 = window.requestAnimationFrame(() => setEmptyTeaserOpen(true));
-    });
-    return () => {
-      window.cancelAnimationFrame(raf1);
-      window.cancelAnimationFrame(raf2);
-    };
-  }, [showEmptyTeaser, teaserRevealAfterClear]);
+    if (emptyTeaserOpen) return;
+
+    // After clear: height-down immediately. Initial mount/reload: hold collapsed 4s first.
+    if (teaserRevealAfterClear) {
+      let raf2 = 0;
+      const raf1 = window.requestAnimationFrame(() => {
+        raf2 = window.requestAnimationFrame(() => setEmptyTeaserOpen(true));
+      });
+      return () => {
+        window.cancelAnimationFrame(raf1);
+        window.cancelAnimationFrame(raf2);
+      };
+    }
+
+    const holdTimer = globalThis.setTimeout(() => {
+      const h = emptyTeaserContentRef.current?.scrollHeight ?? 0;
+      if (h > 0) setEmptyTeaserHeight(h);
+      setEmptyTeaserOpen(true);
+    }, BITCOIN_SECTIONS_MOUNT_HOLD_MS);
+    return () => globalThis.clearTimeout(holdTimer);
+  }, [showEmptyTeaser, teaserRevealAfterClear, emptyTeaserOpen]);
 
   useLayoutEffect(() => {
     if (isSubmitCollapsing) return;
     const anim = emptyTeaserCollapseAnimRef.current;
     if (!anim) return;
     emptyTeaserCollapseAnimRef.current = null;
+    const wrap = emptyTeaserWrapRef.current;
+    // commitStyles keeps maxHeight at 0; bare cancel() snaps back to open → quick flicker.
+    try {
+      anim.commitStyles();
+    } catch {
+      /* older engines */
+    }
     anim.cancel();
-    if (emptyTeaserWrapRef.current) emptyTeaserWrapRef.current.style.overflow = '';
+    if (wrap) {
+      wrap.style.maxHeight = '0px';
+      wrap.style.overflow = 'hidden';
+    }
   }, [isSubmitCollapsing]);
 
   const openEmptyAddForm = useCallback(() => {
@@ -3179,7 +3229,16 @@ const VavityBitcoin: React.FC = () => {
     if (!initialFetchDone) return;
     if (liveInvestments.length > 0) {
       if (!isSubmitCollapsing && !suppressInvestmentsUI) {
-        if (!summaryOpen || investmentsWholeHeight === 0 || summaryHeight === 0) {
+        // Only kick open when still closed. Do not re-enter while height/summaryHeight
+        // are still 0 mid-expand — that used to reschedule and collapse (slide up).
+        // After first-add submit, pendingOpenAfterSubmit opens with skipMountHold; don't
+        // schedule a second mount-hold open that collapses for 4s while data loads.
+        if (
+          !summaryOpen &&
+          !pendingOpenAfterSubmitRef.current &&
+          !openInvestmentsDeferTimerRef.current &&
+          !openInvestmentsExpandStartedRef.current
+        ) {
           openInvestmentsSection();
         }
       }
@@ -3188,10 +3247,10 @@ const VavityBitcoin: React.FC = () => {
     if (hasInvestmentsUI || showInitialFetchLoader || emptyActionsMountPhase !== 'hidden') return;
     const revealTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('revealing');
-    }, 1000);
+    }, BITCOIN_SECTIONS_MOUNT_HOLD_MS);
     const doneTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('done');
-    }, 4200);
+    }, BITCOIN_SECTIONS_MOUNT_HOLD_MS + 3200);
     return () => {
       globalThis.clearTimeout(revealTimer);
       globalThis.clearTimeout(doneTimer);
@@ -3201,8 +3260,6 @@ const VavityBitcoin: React.FC = () => {
     initialFetchDone,
     liveInvestments.length,
     summaryOpen,
-    investmentsWholeHeight,
-    summaryHeight,
     openInvestmentsSection,
     hasInvestmentsUI,
     showInitialFetchLoader,
@@ -3266,24 +3323,20 @@ const VavityBitcoin: React.FC = () => {
         style={!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : undefined}
       >
         {showEmptyTeaser ? (
-          teaserRevealAfterClear ? (
             <div
               ref={emptyTeaserWrapRef}
               className="asset-slide-panel"
               style={{
                 maxHeight: emptyTeaserOpen ? (emptyTeaserHeight ? `${emptyTeaserHeight}px` : 'none') : '0px',
                 transition: 'max-height 3s ease',
+                overflowX: 'visible',
+                overflowY: 'hidden',
               }}
             >
               <div ref={emptyTeaserContentRef}>
                 <BitcoinSeasonTeaser />
               </div>
             </div>
-          ) : (
-            <div ref={emptyTeaserWrapRef}>
-              <BitcoinSeasonTeaser />
-            </div>
-          )
         ) : (
           <>
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation

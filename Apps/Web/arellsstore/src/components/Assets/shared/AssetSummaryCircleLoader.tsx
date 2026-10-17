@@ -24,6 +24,7 @@ export default function AssetSummaryCircleLoader({
       }${fadingOut ? ' is-fading-out' : ''}`}
       aria-hidden="true"
     >
+      <div className="asset-summary-circle-loader-disc" />
       <div className="asset-summary-circle-loader-ring" />
     </div>
   );

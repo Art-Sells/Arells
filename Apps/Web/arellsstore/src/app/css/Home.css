@@ -1421,12 +1421,13 @@ body {
 .asset-bitcoin-season-teaser {
 	width: 100%;
 	box-sizing: border-box;
-	margin: 0 auto 14px;
+	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 	background: transparent;
-	padding: 0;
+	/* Padding (not margin) so empty-teaser max-height keeps space before Add My Character. */
+	padding: 0 0 14px;
 }
 
 .asset-bitcoin-season-teaser-show-title,
@@ -1448,10 +1449,10 @@ body {
 .asset-bitcoin-season-teaser-show {
 	width: 100%;
 	box-sizing: border-box;
-	border-radius: 14px;
-	border: 1px solid rgba(248, 141, 0, 0.3);
+	/* Wrapper only — season keeps the border now that trailer lives inside it. */
+	border: 0;
 	background: transparent;
-	padding: 10px;
+	padding: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
@@ -1463,8 +1464,80 @@ body {
 	box-sizing: border-box;
 }
 
+.asset-bitcoin-season-teaser-trailer-section {
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+
+/* View Trailer: same solid CTA as Weekly News “View More News” (keep Title Case).
+   Kill show-more / hub-link wrap spacing — season `gap` already separates poster / episodes. */
+.asset-bitcoin-season-teaser-trailer-section .home-assets-show-more-wrap.asset-bitcoin-season-teaser-trailer-cta,
+.asset-bitcoin-season-teaser-trailer-section .tbar-more--hub-link.asset-bitcoin-season-teaser-trailer-cta {
+	width: 100%;
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.asset-bitcoin-season-teaser-trailer-cta.tbar-more--hub-link .asset-action-button--save-signin,
+.asset-page--bitcoin .asset-page-content .asset-bitcoin-season-teaser-trailer-cta .asset-action-button--save-signin {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: none;
+	letter-spacing: 20px;
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-left: auto;
+	margin-right: auto;
+	/* 8px smaller than save-signin / View More News */
+	font-size: 17px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	border-radius: 10px;
+}
+
+.asset-page--bitcoin .asset-page-content .asset-bitcoin-season-teaser-trailer-cta .asset-save-signin-text {
+	opacity: 0.9;
+}
+
+@media screen and (max-width: 750px) {
+	.asset-bitcoin-season-teaser-trailer-cta.tbar-more--hub-link .asset-action-button--save-signin,
+	.asset-page--bitcoin .asset-page-content .asset-bitcoin-season-teaser-trailer-cta .asset-action-button--save-signin {
+		font-size: 10px;
+		letter-spacing: 8px;
+		padding-top: 12px;
+		padding-bottom: 13px;
+		border-radius: 5px;
+	}
+}
+
+.asset-bitcoin-season-teaser-trailer-panel {
+	display: grid;
+	grid-template-rows: 0fr;
+	overflow: hidden;
+	transition: grid-template-rows 3s ease;
+	width: 100%;
+}
+
+.asset-bitcoin-season-teaser-trailer-panel.is-open {
+	grid-template-rows: 1fr;
+}
+
+.asset-bitcoin-season-teaser-trailer-panel-height {
+	min-height: 0;
+	overflow: hidden;
+}
+
 .asset-bitcoin-season-teaser-trailer {
-	margin-top: -3px;
+	margin-top: 0;
 }
 
 .asset-bitcoin-season-teaser-season {
@@ -1702,7 +1775,7 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	border-radius: 14px;
 	border: 1px solid rgba(248, 141, 0, 0.3);
 	background: rgb(255, 247, 236);
-	box-shadow: none;
+	box-shadow: 0 0 18px 3px rgba(140, 67, 0, 0.05);
 	position: relative;
 	isolation: isolate;
 	margin-bottom: 0;
@@ -1731,7 +1804,9 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	/* Match Sign In / trailer control icon tint on orange */
 	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%);
 	-webkit-text-fill-color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%);
-	box-shadow: none;
+	/* Same glow as bitcoin page guest-trailer play controls, softer on music player */
+	box-shadow: 0 0 18px 3px rgba(140, 67, 0, 0.25);
+	transition: transform 0.2s ease;
 }
 
 .alien-race-theme-player-play svg {
@@ -1765,6 +1840,7 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	letter-spacing: -0.2px;
 	color: var(--asset-line-color, rgb(209, 142, 55));
 	-webkit-text-fill-color: var(--asset-line-color, rgb(209, 142, 55));
+	box-shadow: 0 0 18px 3px rgba(140, 67, 0, 0.05);
 	transition: transform 0.2s ease;
 }
 
@@ -1775,10 +1851,7 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 }
 
 @media (hover: hover) {
-	.alien-race-theme-player-play:hover {
-		filter: brightness(1.05);
-	}
-
+	.alien-race-theme-player-play:hover,
 	.alien-race-theme-player-track:hover {
 		transform: translateY(-2px);
 	}
@@ -1789,7 +1862,6 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 }
 
 .bitcoin-alien-race-badge-wrap,
-.bitcoin-tbar-wrap,
 .bitcoin-alien-race-day-stack,
 .bitcoin-alien-race-day-item {
 	width: 100%;
@@ -1940,28 +2012,27 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 }
 
 .bitcoin-tbar-wrap {
-	display: grid;
-	grid-template-rows: 0fr;
+	width: 100%;
+	box-sizing: border-box;
 	overflow: hidden;
 	background: transparent;
 	isolation: auto;
-	transition: grid-template-rows 2s ease;
-}
-
-.bitcoin-tbar-wrap.is-open {
-	grid-template-rows: 1fr;
+	border-radius: 14px;
+	border: 0;
+	/* Ring on the overflow shell (not a child) so it isn’t clipped. */
+	box-shadow: 0 0 0 1px rgba(248, 141, 0, 0.3);
+	padding: 10px;
+	transition: max-height 2.5s ease;
+	will-change: max-height;
 }
 
 .bitcoin-tbar-height {
 	min-height: 0;
-	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-}
-
-.bitcoin-tbar-wrap.is-collapsing {
-	grid-template-rows: 0fr;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .bitcoin-alien-race-day-label {
@@ -2063,7 +2134,7 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	display: grid;
 	grid-template-rows: 0fr;
 	overflow: hidden;
-	transition: grid-template-rows 2s ease;
+	transition: grid-template-rows 2.5s ease;
 }
 
 .myinv-daily-updates-group.is-open {
@@ -2249,6 +2320,29 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 }
 
 .asset-bitcoin-season-teaser-updates {
+	display: grid;
+	grid-template-rows: 0fr;
+	overflow: hidden;
+	transition: grid-template-rows 2.5s ease;
+	background: transparent;
+	border: 0;
+	padding: 0;
+}
+
+.asset-bitcoin-season-teaser-updates.is-open {
+	grid-template-rows: 1fr;
+}
+
+.asset-bitcoin-season-teaser-updates.is-collapsing {
+	grid-template-rows: 0fr;
+}
+
+.asset-bitcoin-season-teaser-updates-height {
+	min-height: 0;
+	overflow: hidden;
+}
+
+.asset-bitcoin-season-teaser-updates-inner {
 	border-radius: 14px;
 	border: 1px solid rgba(248, 141, 0, 0.3);
 	background: transparent;
@@ -2256,9 +2350,10 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+	box-sizing: border-box;
 }
 
-.asset-header-panel > .asset-bitcoin-season-teaser-updates {
+.asset-header-panel > .asset-bitcoin-season-teaser-updates.is-open {
 	margin-top: 14px;
 }
 
@@ -13557,7 +13652,25 @@ a.asset-action-button--save-signin {
 	border-top-color: var(--myinv-accent-color);
 }
 
+/* Page-colored disc under the spin ring (all asset / myinv summary loaders). */
+.asset-summary-circle-loader-disc {
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	box-sizing: border-box;
+	background: var(--app-bg, #ffffff);
+	opacity: 0.9;
+	border: 1px solid color-mix(in srgb, var(--asset-line-color, #333) 35%, transparent);
+	z-index: 0;
+}
+
+.asset-summary-circle-loader--myinv .asset-summary-circle-loader-disc {
+	border-color: color-mix(in srgb, var(--myinv-accent-color) 35%, transparent);
+}
+
 .asset-summary-circle-loader-ring {
+	position: relative;
+	z-index: 1;
 	width: 100%;
 	height: 100%;
 	border-radius: 50%;
