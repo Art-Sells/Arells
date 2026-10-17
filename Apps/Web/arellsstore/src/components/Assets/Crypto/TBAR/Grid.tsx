@@ -58,7 +58,7 @@ export default function TBARGrid({
   );
   const canShowMore = visibleDayCount < totalDays;
   const playerTheme = theme === 'bitcoin' ? 'bitcoin' : 'home';
-  const moreLabel = theme === 'bitcoin' && !viewMoreHref ? 'show more' : 'View More Updates';
+  const moreLabel = theme === 'bitcoin' && !viewMoreHref ? 'show more' : 'View More News';
 
   if (total === 0) return null;
 
