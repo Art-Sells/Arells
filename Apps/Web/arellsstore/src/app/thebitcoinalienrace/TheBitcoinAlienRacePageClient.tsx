@@ -266,40 +266,44 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
               }}
             >
               <div ref={sectionContentRef} className="bitcoin-tbar-height">
-                <h2 className="asset-bitcoin-season-teaser-season-title">Weekly News</h2>
-                <TBARLoadReveal ready={ready} hasContent={newsHasContent} theme="bitcoin">
-                  <TBARGrid days={newsDays} theme="bitcoin" pageSize={TBAR_HUB_PAGE_SIZE} />
-                </TBARLoadReveal>
+                <div className="tbar-weekly-news-inner">
+                  <h2 className="asset-bitcoin-season-teaser-season-title">Weekly News</h2>
+                  <TBARLoadReveal ready={ready} hasContent={newsHasContent} theme="bitcoin">
+                    <TBARGrid days={newsDays} theme="bitcoin" pageSize={TBAR_HUB_PAGE_SIZE} />
+                  </TBARLoadReveal>
+                </div>
                 {ready && otherHasContent ? (
                   <div className="tbar-other-updates">
-                    <h2 className="asset-bitcoin-season-teaser-season-title">Other Updates</h2>
-                    <div className="home-assets-show-more-wrap tbar-more">
-                      <button
-                        type="button"
-                        className="auth-submit asset-range-button asset-range-button--bitcoin home-assets-show-more-button"
-                        onClick={toggleOtherUpdates}
-                      >
-                        {otherOpen ? 'Hide Updates' : 'Show Updates'}
-                      </button>
-                    </div>
-                    {otherMounted ? (
-                      <div
-                        className="tbar-other-updates-shell"
-                        style={{
-                          maxHeight: otherMaxHeight,
-                          overflow: 'hidden',
-                          transition: `max-height ${TBAR_HUB_HEIGHT_MS}ms ease`,
-                        }}
-                      >
-                        <div ref={otherContentRef}>
-                          <TBARGrid
-                            days={otherDays}
-                            theme="bitcoin"
-                            pageSize={TBAR_HUB_PAGE_SIZE}
-                          />
-                        </div>
+                    <div className="tbar-other-updates-inner">
+                      <h2 className="asset-bitcoin-season-teaser-season-title">Other Updates</h2>
+                      <div className="home-assets-show-more-wrap tbar-more">
+                        <button
+                          type="button"
+                          className="auth-submit asset-range-button asset-range-button--bitcoin home-assets-show-more-button"
+                          onClick={toggleOtherUpdates}
+                        >
+                          {otherOpen ? 'Hide Updates' : 'Show Updates'}
+                        </button>
                       </div>
-                    ) : null}
+                      {otherMounted ? (
+                        <div
+                          className="tbar-other-updates-shell"
+                          style={{
+                            maxHeight: otherMaxHeight,
+                            overflow: 'hidden',
+                            transition: `max-height ${TBAR_HUB_HEIGHT_MS}ms ease`,
+                          }}
+                        >
+                          <div ref={otherContentRef}>
+                            <TBARGrid
+                              days={otherDays}
+                              theme="bitcoin"
+                              pageSize={TBAR_HUB_PAGE_SIZE}
+                            />
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 ) : null}
               </div>

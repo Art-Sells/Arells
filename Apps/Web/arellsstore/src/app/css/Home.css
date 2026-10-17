@@ -2035,6 +2035,22 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	box-sizing: border-box;
 }
 
+/* Nested borders inside .bitcoin-tbar-wrap — no flex gap on the title row. */
+.tbar-weekly-news-inner,
+.tbar-other-updates-inner {
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 14px;
+	border: 0;
+	box-shadow: 0 0 0 1px rgba(248, 141, 0, 0.3);
+	background: transparent;
+	padding: 10px;
+}
+
+.tbar-weekly-news-inner > .tbar-load-reveal {
+	margin-top: 6px;
+}
+
 .bitcoin-alien-race-day-label {
 	margin: 0;
 	text-align: center;
