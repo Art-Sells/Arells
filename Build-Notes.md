@@ -2,15 +2,13 @@
 
 ## Arells v1
 
-### Trigger Organic Growth
+### Trigger Organic Growth (AI's public perception problem).
 
-- reach out to D/M/D/N/ABTC (2 months?) Add new company direction marketing…
+New Episodes as first
 
 After Episode 2 (or during):
 
 - If finished early, start path Implement character poster (metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
-
--IMPORTANT: test page sitting for 3-5 minutes for resets after investment additions or otherwise (webkit on iPhones have an issue.... Possible have it load the investments once on page mount only)
 
 - Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
 
@@ -29,7 +27,7 @@ After Episode 2 (or during):
 
 #### If sharing (organic) happens:
 - Prepare to change banners for other assets
-- Purchase MDR for: Binaural Frequency Meditation - Positive Relaxing Dreamy Peaceful Ambient 
+- Purchase MDR for: Binaural Frequency Meditation (and others) - Positive Relaxing Dreamy Peaceful Ambient 
 - Purchase MDR for: Cinematic Ambient Piano - amadasounds
 - Add Worst Case Scenarios (in notes)
 - - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
