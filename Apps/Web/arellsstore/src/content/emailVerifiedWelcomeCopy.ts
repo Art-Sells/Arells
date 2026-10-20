@@ -60,23 +60,9 @@ export const emailVerifiedWelcomePhaseCopy = {
   portfolioBenefitLine: 'view Bitcoin to continue',
   portfolioCtaLabel: 'view Bitcoin',
   portfolioCtaLoadingLabel: 'Loading Bitcoin',
-  phaseOneTitle: 'Phase One:',
-  /** About page Phase One body (stacked lines). */
-  aboutPhaseOneLines: [
-    'Entertain and educate',
-    'supporters and believers',
-    'on how we plan',
-    'to achieve our mission',
-    'by releasing',
-    'Episodic Content',
-    'based on each asset.',
-  ] as const,
-  aboutPhaseOneAccentLines: ['Episodic Content'] as const,
-  phaseTwoTitle: 'Phase Two:',
-  phaseTwoLead: 'Implement our mission by...',
-  phaseTwoBullets: [
-    'Building the infrastructure to support investments never losing value.',
-    'Launching the infrastructure.',
-    'Sharing infrastructure revenue with phase one supporters & believers.',
-  ] as const,
+  phaseOneTitle: 'Phase One',
+  /** About page Phase One body. */
+  aboutPhaseOneLine: 'Education through entertainment',
+  phaseTwoTitle: 'Phase Two',
+  phaseTwoLead: 'Build the financial infrastructure',
 } as const;

@@ -12172,6 +12172,15 @@ a.asset-action-button--save-signin {
 	box-sizing: border-box;
 }
 
+.about-card .about-phase-copy-column .about-phase-title-rule {
+	display: block;
+	width: 72px;
+	height: 1.5px;
+	margin: -12px auto;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--myinv-accent-color, #222) 45%, transparent);
+}
+
 .about-card .about-phase-copy-column .about-phase-detail-lines {
 	width: 130px;
 	max-width: 100%;

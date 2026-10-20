@@ -51,27 +51,6 @@ const AboutPageClient = () => {
               <div className="about-section about-section--mid myinv-accent-border">
                 <div className="about-section about-section--mid-body myinv-accent-border">
                   <p className="about-text about-text--mid">
-                    Powered by a ledger that shows your investments never losing value.
-                  </p>
-                </div>
-                <div className="about-section about-section--inner myinv-accent-border">
-                  <div className="about-section about-section--inner-body myinv-accent-border">
-                    <p className="about-text about-text--inner">
-                      Powered by a new psychological and technological invention called Vavity.
-                    </p>
-                  </div>
-                  <div className="about-section about-section--cta myinv-accent-border">
-                    <button
-                      type="button"
-                      onClick={() => window.open('/vavity', '_blank')}
-                      className="asset-range-button myinv-range-button about-cta-button"
-                    >
-                      Learn more
-                    </button>
-                  </div>
-                </div>
-                <div className="about-section about-section--mid-body myinv-accent-border">
-                  <p className="about-text about-text--mid">
                     We are currently in Phase One of our mission.
                   </p>
                 </div>
@@ -80,24 +59,10 @@ const AboutPageClient = () => {
                     <p className="about-text about-text--mid">
                       <strong>{emailVerifiedWelcomePhaseCopy.phaseOneTitle}</strong>
                     </p>
-                    <div className="about-phase-detail-lines">
-                      {emailVerifiedWelcomePhaseCopy.aboutPhaseOneLines.map((line) => {
-                        const isAccent =
-                          emailVerifiedWelcomePhaseCopy.aboutPhaseOneAccentLines.includes(
-                            line as (typeof emailVerifiedWelcomePhaseCopy.aboutPhaseOneAccentLines)[number]
-                          );
-                        return (
-                          <p
-                            key={line}
-                            className={`about-text about-text--mid about-phase-detail-line${
-                              isAccent ? ' about-phase-detail-line--accent' : ''
-                            }`}
-                          >
-                            {line}
-                          </p>
-                        );
-                      })}
-                    </div>
+                    <span className="about-phase-title-rule" aria-hidden="true" />
+                    <p className="about-text about-text--mid">
+                      {emailVerifiedWelcomePhaseCopy.aboutPhaseOneLine}
+                    </p>
                   </div>
                 </div>
                 <div className="about-section about-section--mid-body myinv-accent-border">
@@ -105,13 +70,18 @@ const AboutPageClient = () => {
                     <p className="about-text about-text--mid">
                       <strong>{emailVerifiedWelcomePhaseCopy.phaseTwoTitle}</strong>
                     </p>
+                    <span className="about-phase-title-rule" aria-hidden="true" />
                     <p className="about-text about-text--mid">{emailVerifiedWelcomePhaseCopy.phaseTwoLead}</p>
-                    <ul className="about-phase-list">
-                      {emailVerifiedWelcomePhaseCopy.phaseTwoBullets.map((bullet) => (
-                        <li key={bullet}>{bullet}</li>
-                      ))}
-                    </ul>
                   </div>
+                </div>
+                <div className="about-section about-section--cta myinv-accent-border">
+                  <button
+                    type="button"
+                    onClick={() => window.open('/vavity', '_blank')}
+                    className="asset-range-button myinv-range-button about-cta-button"
+                  >
+                    Learn more
+                  </button>
                 </div>
               </div>
             </div>
