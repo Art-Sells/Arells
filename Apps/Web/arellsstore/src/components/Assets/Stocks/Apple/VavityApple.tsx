@@ -19,6 +19,7 @@ import AssetGuestLanding from '../../shared/AssetGuestLanding';
 import AssetMissionHeader from '../../shared/AssetMissionHeader';
 import AssetSummaryCircleLoader from '../../shared/AssetSummaryCircleLoader';
 import BloodInfoBadge from '../../shared/BloodInfoBadge';
+import AlienPhotoSlot from '../../shared/AlienPhotoSlot';
 import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleLoader';
 import AppleChart from './AppleChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
@@ -181,8 +182,11 @@ const VavityApple: React.FC = () => {
   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
   const [investmentsListOpen, setInvestmentsListOpen] = useState(false);
   /** Show My Blood / Hide My Blood — bordered my-character wraps button + collapsible blood (metrics/add more/toggle/investments). */
-  /** Default open — closed start clipped first-add height-down (regression vs 9e1f0201). */
-  const [bloodPanelOpen, setBloodPanelOpen] = useState(true);
+  /** Default closed on mount — Show My Blood height-downs the blood sections. */
+  const [bloodPanelOpen, setBloodPanelOpen] = useState(false);
+  /** True only while Show My Blood is height-downing (0→px); settled open uses maxHeight none. */
+  const [bloodPanelExpanding, setBloodPanelExpanding] = useState(false);
+  const bloodPanelExpandTimerRef = useRef<number | null>(null);
   const [bloodPanelHeight, setBloodPanelHeight] = useState(0);
   const bloodPanelContentRef = useRef<HTMLDivElement | null>(null);
   /** Empty state: Add My Blood panel (always that label; collapsed until click). */
@@ -905,7 +909,6 @@ const VavityApple: React.FC = () => {
       openInvestmentsDeferTimerRef.current = null;
       openInvestmentsExpandStartedRef.current = true;
       setInvestmentsWholeHeight(0);
-      setBloodPanelOpen(true);
       setSummaryAnimating(true);
       summaryAnimatingRef.current = true;
       setSummaryOpen(true);
@@ -997,9 +1000,11 @@ const VavityApple: React.FC = () => {
         : '0px';
   const investmentsWholeTransition = isClearingInvestments
     ? 'max-height 3s ease'
-    : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
-      ? 'max-height 3s ease'
-      : 'max-height 0s ease';
+    : bloodPanelExpanding
+      ? 'max-height 2s ease'
+      : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
+        ? 'max-height 3s ease'
+        : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   // Add-more form lives inside the summary panel. If both the outer summary and the inner form
   // animate max-height, it feels slower because the outer panel clips the inner one during its own expand.
@@ -1341,9 +1346,10 @@ const VavityApple: React.FC = () => {
         const next = node.scrollHeight + 24;
         setInvestmentsWholeHeight((prev) => {
           if (next === prev) return prev;
-          /* Opening animation used to skip all updates here for ~3s; inner growth (Add more, big numbers)
-           * then never raised max-height and the outer panel clipped. Allow increases; avoid shrinking mid-open. */
-          if (summaryAnimatingRef.current && next < prev) return prev;
+          // First-add opens this panel: freeze max-height while heighting-down so photo/metrics
+          // settling can't bump mid-flight (jumps). openInvestmentsSection rAF sets the target.
+          // Delete-to-empty never uses this path.
+          if (summaryAnimatingRef.current) return prev;
           return next;
         });
       });
@@ -1365,7 +1371,7 @@ const VavityApple: React.FC = () => {
       const next = node.scrollHeight + 24;
       setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
     });
-  }, [summaryAnimating, summaryOpen, isClearingInvestments]);
+  }, [summaryAnimating, summaryOpen, isClearingInvestments, bloodPanelOpen, bloodPanelHeight]);
 
   useEffect(() => {
     if (investmentsWholeHeight > 0) {
@@ -2985,7 +2991,7 @@ const VavityApple: React.FC = () => {
                 disabled={submitLoading || deleteInFlight || deleteLocked || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
-                {submitLoading ? 'Submitting...' : (label === 'Add My Character' ? 'Add My Character' : 'Submit')}
+                {submitLoading ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </div>
@@ -3010,13 +3016,19 @@ const VavityApple: React.FC = () => {
   const emptyBloodMaxHeight = emptyBloodOpen ? `${Math.max(0, emptyBloodHeight)}px` : '0px';
 
   const toggleBloodPanel = useCallback(() => {
+    if (bloodPanelExpandTimerRef.current != null) {
+      window.clearTimeout(bloodPanelExpandTimerRef.current);
+      bloodPanelExpandTimerRef.current = null;
+    }
+    const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
     if (bloodPanelOpen) {
       if (investmentsListOpen) {
         setInvestmentsListOpen(false);
         window.setTimeout(() => setVisibleInvestments(3), 2000);
       }
       if (addMoreOpen) setAddMoreOpen(false);
-      const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+      setBloodPanelExpanding(false);
+      // Hide: WAAPI none→0 (CSS can't transition from max-height: none).
       if (wrap) {
         wrap.getAnimations?.().forEach((a) => a.cancel());
         wrap.style.overflow = 'hidden';
@@ -3030,13 +3042,47 @@ const VavityApple: React.FC = () => {
       setBloodPanelOpen(false);
       return;
     }
-    const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
-    if (wrap) {
-      wrap.getAnimations?.().forEach((a) => a.cancel());
-      wrap.style.maxHeight = '';
-      wrap.style.overflow = '';
-    }
+    // Show: WAAPI 0→h (same easing/duration as hide), then settle to none.
+    setBloodPanelExpanding(true);
     setBloodPanelOpen(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const panel = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+        const content = bloodPanelContentRef.current;
+        if (!panel || !content) {
+          setBloodPanelExpanding(false);
+          return;
+        }
+        panel.getAnimations?.().forEach((a) => a.cancel());
+        const h = content.scrollHeight + 8;
+        setBloodPanelHeight(h);
+        const whole = investmentsWholeContentRef.current;
+        if (whole) {
+          // Blood is collapsed in layout; grow the outer shell with the same 2s ease.
+          setInvestmentsWholeHeight(whole.scrollHeight + 24 + h);
+        }
+        panel.style.overflow = 'hidden';
+        panel.style.maxHeight = '0px';
+        const anim = panel.animate([{ maxHeight: '0px' }, { maxHeight: `${h}px` }], {
+          duration: 2000,
+          easing: 'ease',
+          fill: 'forwards',
+        });
+        const settle = () => {
+          if (bloodPanelExpandTimerRef.current != null) {
+            window.clearTimeout(bloodPanelExpandTimerRef.current);
+            bloodPanelExpandTimerRef.current = null;
+          }
+          // Pin none before canceling WAAPI so we don't flash back to React's 0px.
+          panel.style.maxHeight = 'none';
+          panel.style.overflow = 'hidden';
+          panel.getAnimations?.().forEach((a) => a.cancel());
+          setBloodPanelExpanding(false);
+        };
+        anim.onfinish = settle;
+        bloodPanelExpandTimerRef.current = window.setTimeout(settle, 2100);
+      });
+    });
   }, [bloodPanelOpen, investmentsListOpen, addMoreOpen]);
 
   const openEmptyBlood = useCallback(() => {
@@ -3369,7 +3415,13 @@ const VavityApple: React.FC = () => {
                   <div
                     className="asset-blood-panel"
                     style={{
-                      maxHeight: bloodPanelOpen ? 'none' : '0px',
+                      // Show/Hide both use WAAPI in toggleBloodPanel. React stays at 0 while
+                      // expanding so WAAPI owns the 0→h; settled open = none (no nested clip).
+                      maxHeight: bloodPanelOpen
+                        ? bloodPanelExpanding
+                          ? '0px'
+                          : 'none'
+                        : '0px',
                       overflow: 'hidden',
                     }}
                   >
@@ -4067,7 +4119,7 @@ const VavityApple: React.FC = () => {
           >
             <div ref={emptyActionsMeasureRef}>
             <h2 className="asset-investments-header">
-              <span className="asset-portfolio-title-muted">Add My Character</span>
+              <span className="asset-portfolio-title-muted">My Character</span>
             </h2>
             <div className="asset-portfolio-summary-box asset-portfolio-summary-box--apple">
               {isSignedIn && email ? (

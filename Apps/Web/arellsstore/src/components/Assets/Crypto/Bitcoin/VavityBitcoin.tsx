@@ -193,8 +193,11 @@ const VavityBitcoin: React.FC = () => {
   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
   const [investmentsListOpen, setInvestmentsListOpen] = useState(false);
   /** Show My Blood / Hide My Blood — bordered my-character wraps photo + button + collapsible blood (metrics/add more/toggle/investments). */
-  /** Default open so first-add height-down matches pre-blood-panel commit (9e1f0201) — closed start clipped content and popped. */
-  const [bloodPanelOpen, setBloodPanelOpen] = useState(true);
+  /** Default closed on mount — Show My Blood height-downs the blood sections. */
+  const [bloodPanelOpen, setBloodPanelOpen] = useState(false);
+  /** True only while Show My Blood is height-downing (0→px); settled open uses maxHeight none. */
+  const [bloodPanelExpanding, setBloodPanelExpanding] = useState(false);
+  const bloodPanelExpandTimerRef = useRef<number | null>(null);
   const [bloodPanelHeight, setBloodPanelHeight] = useState(0);
   const bloodPanelContentRef = useRef<HTMLDivElement | null>(null);
   /** Empty state: Add My Blood panel (always that label; collapsed until click). */
@@ -911,7 +914,7 @@ const VavityBitcoin: React.FC = () => {
   const emptyTeaserContentRef = useRef<HTMLDivElement | null>(null);
   const emptyTeaserWrapRef = useRef<HTMLDivElement | null>(null);
   const emptyTeaserCollapseAnimRef = useRef<Animation | null>(null);
-  /** Teaser / investments collapsed during mount hold — don't leave panel padding above Weekly News. */
+  /** Mount hold: teaser / character stay collapsed until height-down (empty or with investments). */
   const sectionsHeldCollapsed =
     Boolean(showEmptyTeaser && !emptyTeaserOpen) || Boolean(hasInvestmentsUI && !summaryOpen);
 
@@ -952,12 +955,9 @@ const VavityBitcoin: React.FC = () => {
     const run = () => {
       openInvestmentsDeferTimerRef.current = null;
       openInvestmentsExpandStartedRef.current = true;
-      // After first-add submit the panel mounts at 0 already; forcing 0 again mid-measure
-      // collapses a frame while totals/loader settle (9e1f0201 / skipMountHold).
-      if (!skipMountHold) {
-        setInvestmentsWholeHeight(0);
-      }
-      setBloodPanelOpen(true);
+      // Always start at 0 so the first paint can height-down (first-add remounts this panel;
+      // delete-to-empty does not). Re-entrancy guarded above.
+      setInvestmentsWholeHeight(0);
       setSummaryAnimating(true);
       summaryAnimatingRef.current = true;
       setSummaryOpen(true);
@@ -1054,9 +1054,11 @@ const VavityBitcoin: React.FC = () => {
         : '0px';
   const investmentsWholeTransition = isClearingInvestments
     ? 'max-height 3s ease'
-    : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
-      ? 'max-height 3s ease'
-      : 'max-height 0s ease';
+    : bloodPanelExpanding
+      ? 'max-height 2s ease'
+      : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
+        ? 'max-height 3s ease'
+        : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   // Add-more form lives inside the summary panel. If both the outer summary and the inner form
   // animate max-height, it feels slower because the outer panel clips the inner one during its own expand.
@@ -1159,8 +1161,7 @@ const VavityBitcoin: React.FC = () => {
           }, 1000);
           prevLiveCountRef.current = 0;
           prevSummaryCountRef.current = 0;
-          setTeaserRevealAfterClear(true);
-          setEmptyTeaserOpen(false);
+          // Teaser stays; only My Character summary heights up then empty shell (Add My Blood) heights down.
           setEmptyActionsMountPhase('hidden');
           setEmptyBloodOpen(false);
           setIsClearingInvestments(false);
@@ -1387,9 +1388,9 @@ const VavityBitcoin: React.FC = () => {
         const next = node.scrollHeight + 24;
         setInvestmentsWholeHeight((prev) => {
           if (next === prev) return prev;
-          /* Opening animation used to skip all updates here for ~3s; inner growth (Add more, big numbers)
-           * then never raised max-height and the outer panel clipped. Allow increases; avoid shrinking mid-open. */
-          if (summaryAnimatingRef.current && next < prev) return prev;
+          // First-add: freeze while heighting-down — openInvestmentsSection rAF owns the target.
+          // RO bumps from photo/metrics were the jumps (delete-to-empty never hits this path).
+          if (summaryAnimatingRef.current) return prev;
           return next;
         });
       });
@@ -1411,16 +1412,19 @@ const VavityBitcoin: React.FC = () => {
       const next = node.scrollHeight + 24;
       setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
     });
-  }, [summaryAnimating, summaryOpen, isClearingInvestments, summaryHeight]);
+  }, [summaryAnimating, summaryOpen, isClearingInvestments, summaryHeight, bloodPanelOpen, bloodPanelHeight]);
 
   useLayoutEffect(() => {
     if (!summaryOpen || isClearingInvestments) return;
     const summary = summaryContentRef.current;
-    const whole = investmentsWholeContentRef.current;
     if (summary) {
       const next = summary.scrollHeight;
       setSummaryHeight((prev) => (prev === next ? prev : next));
     }
+    // Do not seed whole height before paint while opening — layout-effect full height
+    // skips the 0→h frame (first-add jump). Double-rAF / RO start the height-down after paint.
+    if (summaryAnimatingRef.current) return;
+    const whole = investmentsWholeContentRef.current;
     if (whole) {
       const next = whole.scrollHeight + 24;
       setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
@@ -2553,16 +2557,7 @@ const VavityBitcoin: React.FC = () => {
         requestAnimationFrame(() => setSubmitPanelMaxHeight(0));
       });
     } else {
-      const teaserWrap = emptyTeaserWrapRef.current;
-      if (teaserWrap) {
-        emptyTeaserCollapseAnimRef.current?.cancel();
-        teaserWrap.style.overflow = 'hidden';
-        const teaserH = teaserWrap.getBoundingClientRect().height;
-        emptyTeaserCollapseAnimRef.current = teaserWrap.animate(
-          [{ maxHeight: `${teaserH}px` }, { maxHeight: '0px' }],
-          { duration: 2000, easing: 'ease', fill: 'forwards' }
-        );
-      }
+      // Only the My Character form/summary heights up — teaser stays put.
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setAddFormOuterSubmitMaxHeight(0);
@@ -3037,7 +3032,7 @@ const VavityBitcoin: React.FC = () => {
                 disabled={submitLoading || deleteInFlight || deleteLocked || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
-                {submitLoading ? 'Submitting...' : (label === 'Add My Character' ? 'Add My Character' : 'Submit')}
+                {submitLoading ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </div>
@@ -3062,14 +3057,19 @@ const VavityBitcoin: React.FC = () => {
   const emptyBloodMaxHeight = emptyBloodOpen ? `${Math.max(0, emptyBloodHeight)}px` : '0px';
 
   const toggleBloodPanel = useCallback(() => {
+    if (bloodPanelExpandTimerRef.current != null) {
+      window.clearTimeout(bloodPanelExpandTimerRef.current);
+      bloodPanelExpandTimerRef.current = null;
+    }
+    const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
     if (bloodPanelOpen) {
       if (investmentsListOpen) {
         setInvestmentsListOpen(false);
         window.setTimeout(() => setVisibleInvestments(3), 2000);
       }
       if (addMoreOpen) setAddMoreOpen(false);
-      // Animate none→0 via WAAPI (CSS can't transition from max-height: none).
-      const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+      setBloodPanelExpanding(false);
+      // Hide: WAAPI none→0 (CSS can't transition from max-height: none).
       if (wrap) {
         wrap.getAnimations?.().forEach((a) => a.cancel());
         wrap.style.overflow = 'hidden';
@@ -3083,13 +3083,47 @@ const VavityBitcoin: React.FC = () => {
       setBloodPanelOpen(false);
       return;
     }
-    const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
-    if (wrap) {
-      wrap.getAnimations?.().forEach((a) => a.cancel());
-      wrap.style.maxHeight = '';
-      wrap.style.overflow = '';
-    }
+    // Show: WAAPI 0→h (same easing/duration as hide), then settle to none.
+    setBloodPanelExpanding(true);
     setBloodPanelOpen(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const panel = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+        const content = bloodPanelContentRef.current;
+        if (!panel || !content) {
+          setBloodPanelExpanding(false);
+          return;
+        }
+        panel.getAnimations?.().forEach((a) => a.cancel());
+        const h = content.scrollHeight + 8;
+        setBloodPanelHeight(h);
+        const whole = investmentsWholeContentRef.current;
+        if (whole) {
+          // Blood is collapsed in layout; grow the outer shell with the same 2s ease.
+          setInvestmentsWholeHeight(whole.scrollHeight + 24 + h);
+        }
+        panel.style.overflow = 'hidden';
+        panel.style.maxHeight = '0px';
+        const anim = panel.animate([{ maxHeight: '0px' }, { maxHeight: `${h}px` }], {
+          duration: 2000,
+          easing: 'ease',
+          fill: 'forwards',
+        });
+        const settle = () => {
+          if (bloodPanelExpandTimerRef.current != null) {
+            window.clearTimeout(bloodPanelExpandTimerRef.current);
+            bloodPanelExpandTimerRef.current = null;
+          }
+          // Pin none before canceling WAAPI so we don't flash back to React's 0px.
+          panel.style.maxHeight = 'none';
+          panel.style.overflow = 'hidden';
+          panel.getAnimations?.().forEach((a) => a.cancel());
+          setBloodPanelExpanding(false);
+        };
+        anim.onfinish = settle;
+        bloodPanelExpandTimerRef.current = window.setTimeout(settle, 2100);
+      });
+    });
   }, [bloodPanelOpen, investmentsListOpen, addMoreOpen]);
 
   const openEmptyBlood = useCallback(() => {
@@ -3252,7 +3286,7 @@ const VavityBitcoin: React.FC = () => {
 
   useEffect(() => {
     const node = emptyTeaserContentRef.current;
-    if (!showEmptyTeaser || !node || typeof ResizeObserver === 'undefined') return;
+    if (showInitialFetchLoader || !node || typeof ResizeObserver === 'undefined') return;
     const measure = () => {
       const next = node.scrollHeight;
       setEmptyTeaserHeight((prev) => (prev === next ? prev : next));
@@ -3261,27 +3295,15 @@ const VavityBitcoin: React.FC = () => {
     const ro = new ResizeObserver(measure);
     ro.observe(node);
     return () => ro.disconnect();
-  }, [showEmptyTeaser, emptyTeaserOpen]);
+  }, [showInitialFetchLoader, emptyTeaserOpen, hasInvestmentsUI, isClearingInvestments]);
 
   useEffect(() => {
-    if (!showEmptyTeaser) {
-      setTeaserRevealAfterClear(false);
-      setEmptyTeaserOpen(false);
-      return;
-    }
+    if (showInitialFetchLoader) return;
+    // With investments: teaser opens with summary (not on fetch). Empty: mount-hold then height-down.
+    // Do not force-open on hasInvestmentsUI alone — that skipped the page-mount hide.
+    if (hasInvestmentsUI || isClearingInvestments) return;
+    if (!showEmptyTeaser) return;
     if (emptyTeaserOpen) return;
-
-    // After clear: height-down immediately. Initial mount/reload: hold collapsed 4s first.
-    if (teaserRevealAfterClear) {
-      let raf2 = 0;
-      const raf1 = window.requestAnimationFrame(() => {
-        raf2 = window.requestAnimationFrame(() => setEmptyTeaserOpen(true));
-      });
-      return () => {
-        window.cancelAnimationFrame(raf1);
-        window.cancelAnimationFrame(raf2);
-      };
-    }
 
     const holdTimer = globalThis.setTimeout(() => {
       const h = emptyTeaserContentRef.current?.scrollHeight ?? 0;
@@ -3289,7 +3311,13 @@ const VavityBitcoin: React.FC = () => {
       setEmptyTeaserOpen(true);
     }, BITCOIN_SECTIONS_MOUNT_HOLD_MS);
     return () => globalThis.clearTimeout(holdTimer);
-  }, [showEmptyTeaser, teaserRevealAfterClear, emptyTeaserOpen]);
+  }, [
+    showInitialFetchLoader,
+    showEmptyTeaser,
+    emptyTeaserOpen,
+    hasInvestmentsUI,
+    isClearingInvestments,
+  ]);
 
   useLayoutEffect(() => {
     if (isSubmitCollapsing) return;
@@ -3468,12 +3496,21 @@ const VavityBitcoin: React.FC = () => {
         ref={headerPanelRef}
         style={!hasInvestmentsUI && emptyActionsMountPhase !== 'done' ? { overflow: 'hidden' } : undefined}
       >
-        {showEmptyTeaser ? (
+        {/* Teaser outside My Character anims, but still mount-held: hidden until emptyTeaserOpen
+            or summary opens (invested mount). Stays put on first-add / delete-all once open. */}
+        {!showInitialFetchLoader ? (
             <div
               ref={emptyTeaserWrapRef}
               className="asset-slide-panel"
               style={{
-                maxHeight: emptyTeaserOpen ? (emptyTeaserHeight ? `${emptyTeaserHeight}px` : 'none') : '0px',
+                maxHeight:
+                  emptyTeaserOpen ||
+                  isClearingInvestments ||
+                  (hasInvestmentsUI && (summaryOpen || summaryAnimating))
+                    ? emptyTeaserHeight
+                      ? `${emptyTeaserHeight}px`
+                      : 'none'
+                    : '0px',
                 transition: 'max-height 3s ease',
                 overflowX: 'visible',
                 overflowY: 'hidden',
@@ -3483,10 +3520,10 @@ const VavityBitcoin: React.FC = () => {
                 <BitcoinSeasonTeaser />
               </div>
             </div>
-        ) : (
+        ) : null}
+        {hasInvestmentsUI ? (
           <>
-            {/* Option B: Treat the entire investments viewing section as ONE measured height animation
-                (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
+            {/* My Character summary only — teaser is not part of this height-down / clear. */}
             <div
               ref={investmentsWholePanelRef}
               className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-bitcoin' : ''}`}
@@ -3498,7 +3535,6 @@ const VavityBitcoin: React.FC = () => {
               }}
             >
               <div ref={investmentsWholeContentRef}>
-                <BitcoinSeasonTeaser />
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
                     <span className="asset-portfolio-title-muted">My Character</span>
@@ -3526,9 +3562,13 @@ const VavityBitcoin: React.FC = () => {
                   <div
                     className="asset-blood-panel"
                     style={{
-                      // Open = none (no nested px max-height). Same single outer height-down as 9e1f0201.
-                      // Close uses WAAPI in toggleBloodPanel.
-                      maxHeight: bloodPanelOpen ? 'none' : '0px',
+                      // Show/Hide both use WAAPI in toggleBloodPanel. React stays at 0 while
+                      // expanding so WAAPI owns the 0→h; settled open = none (no nested clip).
+                      maxHeight: bloodPanelOpen
+                        ? bloodPanelExpanding
+                          ? '0px'
+                          : 'none'
+                        : '0px',
                       overflow: 'hidden',
                     }}
                   >
@@ -4199,7 +4239,7 @@ const VavityBitcoin: React.FC = () => {
               </div>
             </div>
           </>
-      )}
+        ) : null}
         {shouldRenderAddForm && (
           <div
             ref={addFormPanelRef}
@@ -4226,7 +4266,7 @@ const VavityBitcoin: React.FC = () => {
           >
             <div ref={emptyActionsMeasureRef}>
               <h2 className="asset-investments-header">
-                <span className="asset-portfolio-title-muted">Add My Character</span>
+                <span className="asset-portfolio-title-muted">My Character</span>
               </h2>
               <div className="asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin">
                 {isSignedIn && email ? (
