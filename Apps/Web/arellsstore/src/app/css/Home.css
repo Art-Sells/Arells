@@ -2416,11 +2416,6 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	text-transform: lowercase;
 }
 
-/* My Investments View More Updates: −5px top padding vs default show-more (18px) */
-.tbar-grid--myinv .tbar-more--hub-link a.home-assets-show-more-button {
-	padding-top: 13px;
-}
-
 /* Bitcoin Updates: match guest/portfolio Sign In CTA */
 .asset-page--bitcoin .asset-page-content .tbar-more--hub-link a.asset-action-button--save-signin {
 	width: 100%;
@@ -2455,12 +2450,7 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 		padding-top: 15px; /* 20px save-signin − 5px */
 	}
 
-	.tbar-more--hub-link a.home-assets-show-more-button {
-		padding-top: 13px; /* 18px show-more − 5px */
-	}
-
-	.tbar-more--hub-link a.asset-action-button--save-signin .asset-save-signin-text,
-	.tbar-more--hub-link .tbar-more-label {
+	.tbar-more--hub-link a.asset-action-button--save-signin .asset-save-signin-text {
 		display: inline-block;
 		transform: translateY(3px);
 	}
@@ -2721,6 +2711,31 @@ body.has-alien-race-theme-player .asset-page--bitcoin:not(.bitcoin-alien-race-pa
 	margin-top: var(--asset-portfolio-actions-show-margin-top, 20px);
 	margin-bottom: 0px;
 
+}
+
+.asset-portfolio-actions--blood {
+	width: calc(100% - 80px);
+	box-sizing: border-box;
+	margin-top: 14px;
+	margin-bottom: 10px;
+	margin-left: 40px;
+	margin-right: 40px;
+}
+
+.asset-portfolio-actions--blood .asset-action-button--invest-show {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+.myinv-blood-actions {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	margin-bottom: 10px;
 }
 
 
@@ -5668,7 +5683,7 @@ a.asset-action-button--myinv-asset-link {
 	width: min(700px, calc(100% - 20px));
 	min-width: 350px;
 	margin: 0 auto;
-	padding-top: 20px;
+	padding-top: 0;
 	padding-bottom: 0px;
 	padding-left: 20px;
 	padding-right: 20px;
@@ -5689,6 +5704,10 @@ a.asset-action-button--myinv-asset-link {
 	margin: 0;
 	overflow: hidden;
 	pointer-events: none;
+}
+
+.myinv-shell.is-hold-collapsed .myinv-wrapper {
+	padding-top: 0;
 }
 
 .myinv-shell.is-hold-collapsed::after,
@@ -5790,7 +5809,8 @@ a.asset-action-button--myinv-asset-link {
 .myinv-wrapper {
 	width: 100%;
 	margin: 0;
-	padding: 0;
+	/* Gap under shell border (not shell padding) so the ring stays tight to the title. */
+	padding: 20px 0 0;
 	box-shadow: none;
 	border-radius: 0;
 	background: transparent;
@@ -9207,6 +9227,35 @@ a.myinv-about-button:focus-visible {
 	padding-bottom: 4px;
 }
 
+/* My Investments Show/Hide Investments: top gap from .myinv-wrapper; keep normal space below. */
+.home-assets-show-more-wrap.myinv-blood-actions {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	margin-top: 0;
+	margin-bottom: 10px;
+	margin-left: 0;
+	margin-right: 0;
+	padding-bottom: 0;
+}
+
+.home-assets-show-more-wrap.myinv-blood-actions .home-assets-show-more-button.auth-submit {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.home-assets-show-more-wrap.myinv-blood-actions .tbar-more-label {
+	display: inline-block;
+	text-align: center;
+}
+
 .home-assets-category-button-wrap {
 	display: flex;
 	justify-content: center;
@@ -9291,6 +9340,18 @@ a.myinv-about-button:focus-visible {
 	font-weight: 800;
 	border-radius: 15px;
 	cursor: pointer;
+}
+
+/* Equal 13px under 750px (View More News + Show/Hide Investments). !important beats later .auth-submit 18px. */
+@media screen and (max-width: 750px) {
+	.home-assets-show-more-wrap .home-assets-show-more-button.auth-submit {
+		padding-top: 13px !important;
+		padding-bottom: 13px !important;
+	}
+
+	.home-assets-show-more-wrap .tbar-more-label {
+		transform: none;
+	}
 }
 
 @media screen and (max-width: 700px) {

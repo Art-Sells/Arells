@@ -222,6 +222,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [summaryMounted, setSummaryMounted] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryHeight, setSummaryHeight] = useState(0);
+  const bloodHideTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const summaryPanelRef = useRef<HTMLDivElement | null>(null);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
   const pendingSummaryDismissCancelRef = useRef<(() => void) | null>(null);
@@ -580,9 +581,13 @@ const MyInvestmentsPageClient: React.FC = () => {
   useEffect(() => {
     if (!effectiveSignedIn || !hasAny) return;
     if (showLoading) return;
-    // Same as assets: show the floating summary circle until the height-down finishes.
-    // Hold mount until hubsSlideIn (4s) so Weekly News height-downs first.
+    // Hold until hubsSlideIn (4s) so Weekly News height-downs first. Summary stays collapsed
+    // until Show My Blood — dismiss loader once the button can appear.
     if (!summaryValuesReady || !hubsSlideIn) {
+      if (bloodHideTimerRef.current) {
+        globalThis.clearTimeout(bloodHideTimerRef.current);
+        bloodHideTimerRef.current = null;
+      }
       setSummaryMounted(false);
       setSummaryOpen(false);
       setSummaryHeight(0);
@@ -591,11 +596,28 @@ const MyInvestmentsPageClient: React.FC = () => {
       summaryCircleLoader.show();
       return;
     }
-    summaryCircleLoader.show();
-    // Mount first; height expand runs in the layout effect once the panel is in the DOM.
-    setSummaryMounted(true);
+    summaryCircleLoader.dismissImmediately();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveSignedIn, hasAny, showLoading, summaryValuesReady, hubsSlideIn]);
+
+  const toggleBloodPanel = useCallback(() => {
+    if (summaryOpen || summaryMounted) {
+      setSummaryOpen(false);
+      if (bloodHideTimerRef.current) globalThis.clearTimeout(bloodHideTimerRef.current);
+      bloodHideTimerRef.current = globalThis.setTimeout(() => {
+        bloodHideTimerRef.current = null;
+        setSummaryMounted(false);
+        setSummaryHeight(0);
+      }, SUMMARY_HEIGHT_EXPAND_MS);
+      return;
+    }
+    if (bloodHideTimerRef.current) {
+      globalThis.clearTimeout(bloodHideTimerRef.current);
+      bloodHideTimerRef.current = null;
+    }
+    // Mount; height-down runs in the layout effect once the panel is in the DOM.
+    setSummaryMounted(true);
+  }, [summaryOpen, summaryMounted]);
 
   // After mount: start at max-height 0, then measure and height-down (asset summary pattern).
   useLayoutEffect(() => {
@@ -1085,6 +1107,19 @@ const MyInvestmentsPageClient: React.FC = () => {
                 </div>
               ) : effectiveSignedIn && hasAny ? (
                 <>
+                  {hubsSlideIn && summaryValuesReady ? (
+                    <div className="home-assets-show-more-wrap tbar-more tbar-more--hub-link myinv-blood-actions">
+                      <button
+                        type="button"
+                        className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button"
+                        onClick={toggleBloodPanel}
+                      >
+                        <span className="tbar-more-label">
+                          {summaryOpen || summaryMounted ? 'Hide Investments' : 'Show Investments'}
+                        </span>
+                      </button>
+                    </div>
+                  ) : null}
                   {summaryMounted ? (
                   <div
                     ref={summaryPanelRef}
@@ -1255,134 +1290,133 @@ const MyInvestmentsPageClient: React.FC = () => {
                         })}
                       </div>
                     </div>
+                    {showLiquidityToggle ? (
+                      <div className="myinv-toggle-shell myinv-accent-border">
+                        <div className="asset-reality-toggle-row myinv-toggle-row">
+                          <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
+                          <button
+                            type="button"
+                            ref={toggleBtnRef}
+                            className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${
+                              toggleAnimating ? ' is-animating' : ''
+                            }`}
+                            aria-pressed={displayIsLiquidMode}
+                            aria-label="Toggle Liquid/Solid mode"
+                            style={liquidSolidToggleKnobStyle(toggleAnimating, toggleKnobLeftEffectivePx)}
+                            onPointerDown={(e) => {
+                              if (toggleAnimating) return;
+                              const btn = e.currentTarget;
+                              const cs = window.getComputedStyle(btn);
+                              const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+                              const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
+                              const w = btn.getBoundingClientRect().width;
+                              const minLeft = leftInset;
+                              const maxLeft = Math.max(leftInset, w - rightInset);
+                              const currentLeft = toggleKnobLeftPx ?? (displayIsLiquidMode ? minLeft : maxLeft);
+                              setToggleTrack({ minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 });
+
+                              toggleDragRef.current.active = true;
+                              toggleDragRef.current.pointerId = e.pointerId;
+                              toggleDragRef.current.startX = e.clientX;
+                              toggleDragRef.current.startLeft = currentLeft;
+                              toggleDragRef.current.lastLeft = currentLeft;
+                              toggleDragRef.current.didDrag = false;
+                              toggleDragRef.current.track = { minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 };
+                              btn.classList.add('is-dragging');
+
+                              try {
+                                btn.setPointerCapture(e.pointerId);
+                              } catch {}
+                              setToggleKnobLeftPx(currentLeft);
+                              btn.style.setProperty('--toggle-knob-left', `${currentLeft}px`);
+                              const alpha = (maxLeft - currentLeft) / Math.max(1e-6, maxLeft - minLeft);
+                              toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
+                              setToggleAlpha(toggleAlphaRef.current);
+                              e.preventDefault();
+                            }}
+                            onPointerMove={(e) => {
+                              if (!toggleDragRef.current.active) return;
+                              const btn = e.currentTarget;
+                              const track = toggleDragRef.current.track;
+                              if (!track) return;
+                              const minLeft = track.minLeft;
+                              const maxLeft = track.maxLeft;
+                              const dx = e.clientX - toggleDragRef.current.startX;
+                              if (Math.abs(dx) > 2) toggleDragRef.current.didDrag = true;
+                              const next = Math.min(maxLeft, Math.max(minLeft, toggleDragRef.current.startLeft + dx));
+                              toggleDragRef.current.lastLeft = next;
+                              btn.style.setProperty('--toggle-knob-left', `${next}px`);
+                              const alpha = (maxLeft - next) / Math.max(1e-6, maxLeft - minLeft);
+                              toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
+                              if (toggleDragRef.current.raf == null) {
+                                toggleDragRef.current.raf = window.requestAnimationFrame(() => {
+                                  toggleDragRef.current.raf = null;
+                                  setToggleAlpha((prev) =>
+                                    Math.abs(prev - toggleAlphaRef.current) > 0.001 ? toggleAlphaRef.current : prev
+                                  );
+                                });
+                              }
+                              e.preventDefault();
+                            }}
+                            onPointerUp={(e) => {
+                              if (!toggleDragRef.current.active) return;
+                              const btn = e.currentTarget;
+                              const cs = window.getComputedStyle(btn);
+                              const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
+                              const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
+                              const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+                              const w = btn.getBoundingClientRect().width;
+                              const minLeft = leftInset;
+                              const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                              const mid = (minLeft + maxLeft) / 2;
+                              const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
+                              const nextIsLiquid = finalLeft <= mid;
+
+                              toggleDragRef.current.active = false;
+                              toggleDragRef.current.pointerId = null;
+                              toggleDragRef.current.track = null;
+                              btn.classList.remove('is-dragging');
+                              try {
+                                btn.releasePointerCapture(e.pointerId);
+                              } catch {}
+
+                              if (!toggleDragRef.current.didDrag) {
+                                animateToggleToAlpha(displayIsLiquidMode ? 0 : 1);
+                                e.preventDefault();
+                                return;
+                              }
+
+                              animateToggleToAlpha(nextIsLiquid ? 1 : 0);
+                              e.preventDefault();
+                            }}
+                            onPointerCancel={(e) => {
+                              if (!toggleDragRef.current.active) return;
+                              toggleDragRef.current.active = false;
+                              toggleDragRef.current.pointerId = null;
+                              toggleDragRef.current.track = null;
+                              if (toggleDragRef.current.raf != null) {
+                                window.cancelAnimationFrame(toggleDragRef.current.raf);
+                                toggleDragRef.current.raf = null;
+                              }
+                              setToggleKnobLeftPx(null);
+                              e.currentTarget.style.removeProperty('--toggle-knob-left');
+                              setToggleAlpha(isLiquidMode ? 1 : 0);
+                              try {
+                                e.currentTarget.classList.remove('is-dragging');
+                                e.currentTarget.releasePointerCapture(e.pointerId);
+                              } catch {}
+                            }}
+                            onClick={() => {}}
+                          >
+                            <span className="asset-reality-toggle-knob" aria-hidden="true" />
+                          </button>
+                          <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                   </div>
                   ) : null}
-
-                  {showLiquidityToggle && hubsSlideIn && (
-                    <div className="myinv-toggle-shell myinv-accent-border">
-                      <div className="asset-reality-toggle-row myinv-toggle-row">
-                        <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
-                        <button
-                          type="button"
-                          ref={toggleBtnRef}
-                          className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${
-                            toggleAnimating ? ' is-animating' : ''
-                          }`}
-                          aria-pressed={displayIsLiquidMode}
-                          aria-label="Toggle Liquid/Solid mode"
-                          style={liquidSolidToggleKnobStyle(toggleAnimating, toggleKnobLeftEffectivePx)}
-                          onPointerDown={(e) => {
-                            if (toggleAnimating) return;
-                            const btn = e.currentTarget;
-                            const cs = window.getComputedStyle(btn);
-                            const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
-                            const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
-                            const w = btn.getBoundingClientRect().width;
-                            const minLeft = leftInset;
-                            const maxLeft = Math.max(leftInset, w - rightInset);
-                            const currentLeft = toggleKnobLeftPx ?? (displayIsLiquidMode ? minLeft : maxLeft);
-                            setToggleTrack({ minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 });
-
-                            toggleDragRef.current.active = true;
-                            toggleDragRef.current.pointerId = e.pointerId;
-                            toggleDragRef.current.startX = e.clientX;
-                            toggleDragRef.current.startLeft = currentLeft;
-                            toggleDragRef.current.lastLeft = currentLeft;
-                            toggleDragRef.current.didDrag = false;
-                            toggleDragRef.current.track = { minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 };
-                            btn.classList.add('is-dragging');
-
-                            try {
-                              btn.setPointerCapture(e.pointerId);
-                            } catch {}
-                            setToggleKnobLeftPx(currentLeft);
-                            btn.style.setProperty('--toggle-knob-left', `${currentLeft}px`);
-                            const alpha = (maxLeft - currentLeft) / Math.max(1e-6, maxLeft - minLeft);
-                            toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
-                            setToggleAlpha(toggleAlphaRef.current);
-                            e.preventDefault();
-                          }}
-                          onPointerMove={(e) => {
-                            if (!toggleDragRef.current.active) return;
-                            const btn = e.currentTarget;
-                            const track = toggleDragRef.current.track;
-                            if (!track) return;
-                            const minLeft = track.minLeft;
-                            const maxLeft = track.maxLeft;
-                            const dx = e.clientX - toggleDragRef.current.startX;
-                            if (Math.abs(dx) > 2) toggleDragRef.current.didDrag = true;
-                            const next = Math.min(maxLeft, Math.max(minLeft, toggleDragRef.current.startLeft + dx));
-                            toggleDragRef.current.lastLeft = next;
-                            btn.style.setProperty('--toggle-knob-left', `${next}px`);
-                            const alpha = (maxLeft - next) / Math.max(1e-6, maxLeft - minLeft);
-                            toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
-                            if (toggleDragRef.current.raf == null) {
-                              toggleDragRef.current.raf = window.requestAnimationFrame(() => {
-                                toggleDragRef.current.raf = null;
-                                setToggleAlpha((prev) =>
-                                  Math.abs(prev - toggleAlphaRef.current) > 0.001 ? toggleAlphaRef.current : prev
-                                );
-                              });
-                            }
-                            e.preventDefault();
-                          }}
-                          onPointerUp={(e) => {
-                            if (!toggleDragRef.current.active) return;
-                            const btn = e.currentTarget;
-                            const cs = window.getComputedStyle(btn);
-                            const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
-                            const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
-                            const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
-                            const w = btn.getBoundingClientRect().width;
-                            const minLeft = leftInset;
-                            const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
-                            const mid = (minLeft + maxLeft) / 2;
-                            const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
-                            const nextIsLiquid = finalLeft <= mid;
-
-                            toggleDragRef.current.active = false;
-                            toggleDragRef.current.pointerId = null;
-                            toggleDragRef.current.track = null;
-                            btn.classList.remove('is-dragging');
-                            try {
-                              btn.releasePointerCapture(e.pointerId);
-                            } catch {}
-
-                            if (!toggleDragRef.current.didDrag) {
-                              animateToggleToAlpha(displayIsLiquidMode ? 0 : 1);
-                              e.preventDefault();
-                              return;
-                            }
-
-                            animateToggleToAlpha(nextIsLiquid ? 1 : 0);
-                            e.preventDefault();
-                          }}
-                          onPointerCancel={(e) => {
-                            if (!toggleDragRef.current.active) return;
-                            toggleDragRef.current.active = false;
-                            toggleDragRef.current.pointerId = null;
-                            toggleDragRef.current.track = null;
-                            if (toggleDragRef.current.raf != null) {
-                              window.cancelAnimationFrame(toggleDragRef.current.raf);
-                              toggleDragRef.current.raf = null;
-                            }
-                            setToggleKnobLeftPx(null);
-                            e.currentTarget.style.removeProperty('--toggle-knob-left');
-                            setToggleAlpha(isLiquidMode ? 1 : 0);
-                            try {
-                              e.currentTarget.classList.remove('is-dragging');
-                              e.currentTarget.releasePointerCapture(e.pointerId);
-                            } catch {}
-                          }}
-                          onClick={() => {}}
-                        >
-                          <span className="asset-reality-toggle-knob" aria-hidden="true" />
-                        </button>
-                        <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
-                      </div>
-                    </div>
-                  )}
                 </>
               ) : null}
               {effectiveSignedIn && initialDataReady && hubsSlideIn && (

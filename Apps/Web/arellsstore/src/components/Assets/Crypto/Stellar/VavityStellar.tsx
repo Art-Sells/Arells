@@ -180,6 +180,10 @@ const VavityStellar: React.FC = () => {
   const [chartHoverPoint, setChartHoverPoint] = useState<{ x: Date; y: number } | null>(null);
   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
   const [investmentsListOpen, setInvestmentsListOpen] = useState(false);
+  /** Show My Blood / Hide My Blood — bordered my-character wraps button + collapsible blood (metrics/add more/toggle/investments). */
+  const [bloodPanelOpen, setBloodPanelOpen] = useState(false);
+  const [bloodPanelHeight, setBloodPanelHeight] = useState(0);
+  const bloodPanelContentRef = useRef<HTMLDivElement | null>(null);
   const [visibleInvestments, setVisibleInvestments] = useState<number>(3);
   const [closingInvestments, setClosingInvestments] = useState<string[]>([]);
   const [deletingInvestments, setDeletingInvestments] = useState<string[]>([]);
@@ -2923,6 +2927,42 @@ const VavityStellar: React.FC = () => {
   const investmentsSectionMaxHeight = investmentsListOpen
     ? `${investmentsListHeight + investmentsListHeaderHeight + investmentsListBorderHeight + (hasActiveDelete ? 11 : 5)}px`
     : '0px';
+  const bloodPanelMaxHeight = bloodPanelOpen ? `${Math.max(0, bloodPanelHeight)}px` : '0px';
+
+  const toggleBloodPanel = useCallback(() => {
+    if (bloodPanelOpen) {
+      if (investmentsListOpen) {
+        setInvestmentsListOpen(false);
+        window.setTimeout(() => setVisibleInvestments(3), 2000);
+      }
+      if (addMoreOpen) setAddMoreOpen(false);
+      setBloodPanelOpen(false);
+      return;
+    }
+    setBloodPanelOpen(true);
+  }, [bloodPanelOpen, investmentsListOpen, addMoreOpen]);
+
+  useEffect(() => {
+    const node = bloodPanelContentRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') {
+      setBloodPanelHeight((node?.scrollHeight ?? 0) + 8);
+      return;
+    }
+    let raf = 0;
+    const measure = () => {
+      raf = window.requestAnimationFrame(() => {
+        const next = node.scrollHeight + 8;
+        setBloodPanelHeight((prev) => (prev === next ? prev : next));
+      });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [bloodPanelOpen, summaryOpen, investmentsListOpen, addMoreOpen, showInvestmentsList]);
 
   useEffect(() => {
     if (!showInvestmentsList) return;
@@ -3101,17 +3141,38 @@ const VavityStellar: React.FC = () => {
 
   useEffect(() => {
     if (isGuestView) return;
+
+    // Empty / still fetching: keep circle through mount hold until empty actions reveal.
+    if (!hasInvestmentsUI) {
+      if (emptyActionsMountPhase === 'hidden') {
+        summaryCircleLoader.show();
+      }
+      return;
+    }
+
     if (!initialFetchDone) return;
-    if (liveInvestments.length === 0) return;
     if (investmentsWholeHeight > 0 && summaryOpen) return;
     summaryCircleLoader.show();
   }, [
     isGuestView,
+    hasInvestmentsUI,
+    emptyActionsMountPhase,
     initialFetchDone,
-    liveInvestments.length,
     investmentsWholeHeight,
     summaryOpen,
     summaryCircleLoader.show,
+  ]);
+
+  useEffect(() => {
+    if (isGuestView) return;
+    if (hasInvestmentsUI) return;
+    if (emptyActionsMountPhase === 'hidden') return;
+    summaryCircleLoader.dismissOnSummaryExpandComplete();
+  }, [
+    isGuestView,
+    hasInvestmentsUI,
+    emptyActionsMountPhase,
+    summaryCircleLoader.dismissOnSummaryExpandComplete,
   ]);
 
   if (isGuestView) {
@@ -3167,9 +3228,33 @@ const VavityStellar: React.FC = () => {
                     summaryQuickFade ? ' is-quickfade' : ''
                   }`}
                 >
+                  <div className="asset-portfolio-actions asset-portfolio-actions--show asset-portfolio-actions--blood">
+                    <button
+                      type="button"
+                      className="asset-action-button asset-action-button--stellar asset-action-button--invest-show"
+                      onClick={toggleBloodPanel}
+                    >
+                      {bloodPanelOpen ? 'Hide My Blood' : 'Show My Blood'}
+                    </button>
+                  </div>
+                  <div
+                    className="asset-blood-panel"
+                    style={{
+                      maxHeight: bloodPanelMaxHeight,
+                      transition: 'max-height 2s ease',
+                      overflow: 'hidden',
+                    }}
+                  >
+                  <div ref={bloodPanelContentRef}>
                   <div
                     className="asset-slide-panel"
-                    style={{ maxHeight: summaryMaxHeight, transition: summaryTransition, overflow: 'hidden' }}
+                    style={{
+                      maxHeight: bloodPanelOpen
+                        ? (summaryHeight > 0 && !summaryAnimating ? `${summaryHeight}px` : 'none')
+                        : summaryMaxHeight,
+                      transition: summaryTransition,
+                      overflow: 'hidden',
+                    }}
                   >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
@@ -3425,7 +3510,6 @@ const VavityStellar: React.FC = () => {
 
                     </div>
                   </div>
-                </div>
 
                 <div className="asset-panel asset-panel--stellar asset-reality-toggle-shell">
                   <div className="asset-reality-toggle-row asset-reality-toggle-row--stellar">
@@ -3557,7 +3641,7 @@ const VavityStellar: React.FC = () => {
                     <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
                   </div>
                 </div>
-                {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
+                {/* Bottom actions + investments list: inside bordered my-character / Show My Blood collapse. */}
                 <div ref={bottomActionsWrapRef}>
                 <div
                   ref={showActionsRef}
@@ -3824,6 +3908,9 @@ const VavityStellar: React.FC = () => {
                   </div>
                 )}
               </div>
+                  </div>
+                  </div>
+                </div>
               </div>
             </div>
           </>
