@@ -1366,13 +1366,16 @@ body {
 	overflow: hidden;
 	background: rgba(248, 141, 0, 0.08);
 	flex-shrink: 0;
+	/* Match personalalienplaceholder.jpg (1792×1008) so first-add remount
+	   doesn't grow the photo block mid height-down (delete-all keeps RO live). */
+	aspect-ratio: 1792 / 1008;
 }
 
 .asset-alien-photo-slot-placeholder {
 	display: block;
 	width: 100%;
-	height: auto;
-	object-fit: contain;
+	height: 100%;
+	object-fit: cover;
 }
 
 .asset-alien-photo-label {
