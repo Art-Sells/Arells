@@ -182,9 +182,14 @@ const VavityBnb: React.FC = () => {
   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
   const [investmentsListOpen, setInvestmentsListOpen] = useState(false);
   /** Show My Blood / Hide My Blood — bordered my-character wraps button + collapsible blood (metrics/add more/toggle/investments). */
-  const [bloodPanelOpen, setBloodPanelOpen] = useState(false);
+  /** Default open — closed start clipped first-add height-down (regression vs 9e1f0201). */
+  const [bloodPanelOpen, setBloodPanelOpen] = useState(true);
   const [bloodPanelHeight, setBloodPanelHeight] = useState(0);
   const bloodPanelContentRef = useRef<HTMLDivElement | null>(null);
+  /** Empty state: Add My Blood panel (always that label; collapsed until click). */
+  const [emptyBloodOpen, setEmptyBloodOpen] = useState(false);
+  const [emptyBloodHeight, setEmptyBloodHeight] = useState(0);
+  const emptyBloodContentRef = useRef<HTMLDivElement | null>(null);
   const [visibleInvestments, setVisibleInvestments] = useState<number>(3);
   const [closingInvestments, setClosingInvestments] = useState<string[]>([]);
   const [deletingInvestments, setDeletingInvestments] = useState<string[]>([]);
@@ -222,6 +227,7 @@ const VavityBnb: React.FC = () => {
   const summaryQuickFadeTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const summaryQuickFadeEndRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const pendingOpenAfterSubmitRef = useRef(false);
+  const openInvestmentsExpandStartedRef = useRef(false);
   const [hideEmptyActionsOnSubmit, setHideEmptyActionsOnSubmit] = useState(false);
   const emptyActionsHoldRef = useRef(false);
   const [formValuesHidden, setFormValuesHidden] = useState(false);
@@ -858,6 +864,11 @@ const VavityBnb: React.FC = () => {
   const showInvestmentsHeader = investments.length > 0;
   const shouldFetchInitialData = isSignedIn ? Boolean(email) : Boolean(sessionReady && sessionId && fetchVavityAggregator);
   const showInitialFetchLoader = shouldFetchInitialData && !initialFetchDone;
+  const showEmptyCharacterShell =
+    !isGuestView &&
+    !hasInvestmentsUI &&
+    !showInitialFetchLoader &&
+    !isClearingInvestments;
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
     setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
@@ -888,9 +899,14 @@ const VavityBnb: React.FC = () => {
   }, []);
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
   const openInvestmentsSection = useCallback(() => {
+    if (openInvestmentsDeferTimerRef.current || openInvestmentsExpandStartedRef.current) {
+      return;
+    }
     const run = () => {
       openInvestmentsDeferTimerRef.current = null;
+      openInvestmentsExpandStartedRef.current = true;
       setInvestmentsWholeHeight(0);
+      setBloodPanelOpen(true);
       setSummaryAnimating(true);
       summaryAnimatingRef.current = true;
       setSummaryOpen(true);
@@ -930,8 +946,15 @@ const VavityBnb: React.FC = () => {
       openInvestmentsDeferTimerRef.current = globalThis.setTimeout(run, waitMs);
     }
   }, []);
+  useEffect(() => {
+    if (summaryOpen || openInvestmentsDeferTimerRef.current) return;
+    openInvestmentsExpandStartedRef.current = false;
+  }, [summaryOpen]);
+
   const triggerEmptyButtonsExpand = useCallback(() => {
-    setEmptyActionsMountPhase('done');
+    // After delete-to-empty: height-down Add My Character (don't pop at full height).
+    setEmptyActionsMountPhase('hidden');
+    setEmptyBloodOpen(false);
     setEmptySigninGone(false);
     setEmptyAddGone(false);
     setEmptySigninHiding(true);
@@ -942,17 +965,19 @@ const VavityBnb: React.FC = () => {
     }
     setEmptyActionsExpanding(true);
     setEmptyAddFadeIn(false);
-    emptyActionsExpandTimerRef.current = globalThis.setTimeout(() => {
-      setEmptyActionsExpanding(false);
-      emptyActionsExpandTimerRef.current = null;
-    }, 1000);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
+        setEmptyActionsMountPhase('revealing');
         setEmptyAddFadeIn(true);
         setEmptySigninHiding(false);
         setEmptyAddHiding(false);
       });
     });
+    emptyActionsExpandTimerRef.current = globalThis.setTimeout(() => {
+      setEmptyActionsMountPhase('done');
+      setEmptyActionsExpanding(false);
+      emptyActionsExpandTimerRef.current = null;
+    }, 3200);
   }, []);
   useEffect(() => {
     if (!emptyActionsHoldRef.current) return;
@@ -983,7 +1008,9 @@ const VavityBnb: React.FC = () => {
   const summaryTransition =
     summaryAnimating ? 'max-height 0s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 3s ease';
   const shouldRenderAddForm =
-    (showEmptyAddForm && showAddForm) || addFormSubmitAnimating || addFormSubmitCollapsing;
+    addFormSubmitAnimating ||
+    addFormSubmitCollapsing ||
+    (showEmptyCharacterShell && !hideEmptyActionsOnSubmit);
 
   const beginClearing = useCallback(
     (heightOverride?: number) => {
@@ -1074,6 +1101,9 @@ const VavityBnb: React.FC = () => {
           }, 1000);
           prevLiveCountRef.current = 0;
           prevSummaryCountRef.current = 0;
+          setEmptyActionsMountPhase('hidden');
+          setEmptyBloodOpen(false);
+          setInvestmentsWholeHeight(0);
           setIsClearingInvestments(false);
           setSummaryTotalsSnapshot(null);
           setSummaryRangePriceSnapshot(null);
@@ -1143,11 +1173,25 @@ const VavityBnb: React.FC = () => {
 
   useEffect(() => {
     const prev = prevHasInvestmentsUIRef.current;
-    if (prev && !hasInvestmentsUI && !showEmptyAddForm) {
+    // Only after real delete-to-empty. Skip submit suppress flicker (true→false→true).
+    if (
+      prev &&
+      !hasInvestmentsUI &&
+      !showEmptyAddForm &&
+      !isSubmitCollapsing &&
+      !hideEmptyActionsOnSubmit &&
+      !emptyActionsHoldRef.current
+    ) {
       triggerEmptyButtonsExpand();
     }
     prevHasInvestmentsUIRef.current = hasInvestmentsUI;
-  }, [hasInvestmentsUI, showEmptyAddForm, triggerEmptyButtonsExpand]);
+  }, [
+    hasInvestmentsUI,
+    showEmptyAddForm,
+    triggerEmptyButtonsExpand,
+    isSubmitCollapsing,
+    hideEmptyActionsOnSubmit,
+  ]);
 
   useLayoutEffect(() => {
     if (!summaryOpen || isClearingInvestments) {
@@ -2427,6 +2471,9 @@ const VavityBnb: React.FC = () => {
       } else {
         setHideEmptyActionsOnSubmit(true);
         emptyActionsHoldRef.current = true;
+        setEmptyActionsMountPhase('hidden');
+        setEmptyBloodOpen(false);
+        setInvestmentsWholeHeight(0);
         setAddFormSubmitAnimating(true);
         setAddFormSubmitCollapsing(true);
         const nextAddStart =
@@ -2521,8 +2568,10 @@ const VavityBnb: React.FC = () => {
       setSubmitPhase('idle');
       setIsSubmitCollapsing(false);
       if (target === 'add' && pendingOpenAfterSubmitRef.current) {
-        pendingOpenAfterSubmitRef.current = false;
-        openInvestmentsSection();
+        requestAnimationFrame(() => {
+          pendingOpenAfterSubmitRef.current = false;
+          openInvestmentsSection();
+        });
       }
       submitCollapseTimerRef.current = null;
     }, 2000);
@@ -2759,7 +2808,14 @@ const VavityBnb: React.FC = () => {
     }, 2000);
   }, []);
 
-  const renderAddForm = (label: string, onClose: () => void, buttonClass: string) => {
+  const renderAddForm = (
+    label: string,
+    onClose: () => void,
+    buttonClass: string,
+    opts?: { omitPhoto?: boolean; bloodLayout?: boolean }
+  ) => {
+    const omitPhoto = Boolean(opts?.omitPhoto);
+    const bloodLayout = Boolean(opts?.bloodLayout);
     const purchasedValue =
       tokenAmount && purchaseDate && formPurchaseUnitPrice > 0
         ? formatCurrency(parseTokenAmount(tokenAmount || '0') * formPurchaseUnitPrice)
@@ -2785,14 +2841,18 @@ const VavityBnb: React.FC = () => {
       return { title, prefix: isProfit ? '+$' : '-$', value: formattedValue };
     })();
 
+    const heading = (
+      <div className="asset-metric-row asset-invest-form-heading">
+        <span className="asset-metric-title--bnb" style={{ fontWeight: 800 }}>
+          {label}
+        </span>
+      </div>
+    );
+
     return (
       <div className="asset-invest-form">
         <div className="asset-submit-form">
-          <div className="asset-metric-row asset-invest-form-heading">
-            <span className="asset-metric-title--bnb" style={{ fontWeight: 800 }}>
-              {label}
-            </span>
-          </div>
+          {!bloodLayout ? heading : null}
 
           <div className="asset-invest-form-body asset-invest-form-body--bnb">
             <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--bnb">
@@ -2929,6 +2989,7 @@ const VavityBnb: React.FC = () => {
     ? `${investmentsListHeight + investmentsListHeaderHeight + investmentsListBorderHeight + (hasActiveDelete ? 11 : 5)}px`
     : '0px';
   const bloodPanelMaxHeight = bloodPanelOpen ? `${Math.max(0, bloodPanelHeight)}px` : '0px';
+  const emptyBloodMaxHeight = emptyBloodOpen ? `${Math.max(0, emptyBloodHeight)}px` : '0px';
 
   const toggleBloodPanel = useCallback(() => {
     if (bloodPanelOpen) {
@@ -2937,11 +2998,36 @@ const VavityBnb: React.FC = () => {
         window.setTimeout(() => setVisibleInvestments(3), 2000);
       }
       if (addMoreOpen) setAddMoreOpen(false);
+      const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+      if (wrap) {
+        wrap.getAnimations?.().forEach((a) => a.cancel());
+        wrap.style.overflow = 'hidden';
+        const h = wrap.scrollHeight;
+        wrap.animate([{ maxHeight: `${h}px` }, { maxHeight: '0px' }], {
+          duration: 2000,
+          easing: 'ease',
+          fill: 'forwards',
+        });
+      }
       setBloodPanelOpen(false);
       return;
     }
+    const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+    if (wrap) {
+      wrap.getAnimations?.().forEach((a) => a.cancel());
+      wrap.style.maxHeight = '';
+      wrap.style.overflow = '';
+    }
     setBloodPanelOpen(true);
   }, [bloodPanelOpen, investmentsListOpen, addMoreOpen]);
+
+  const openEmptyBlood = useCallback(() => {
+    if (emptyBloodOpen) return;
+    setShowEmptyAddForm(true);
+    setShowAddForm(true);
+    setSubmitPhase('idle');
+    window.setTimeout(() => setEmptyBloodOpen(true), 0);
+  }, [emptyBloodOpen]);
 
   useEffect(() => {
     const node = bloodPanelContentRef.current;
@@ -2964,6 +3050,29 @@ const VavityBnb: React.FC = () => {
       if (raf) window.cancelAnimationFrame(raf);
     };
   }, [bloodPanelOpen, summaryOpen, investmentsListOpen, addMoreOpen, showInvestmentsList]);
+
+  useEffect(() => {
+    if (!showEmptyCharacterShell || !emptyBloodOpen) return;
+    const node = emptyBloodContentRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') {
+      setEmptyBloodHeight((node?.scrollHeight ?? 0) + 8);
+      return;
+    }
+    let raf = 0;
+    const measure = () => {
+      raf = window.requestAnimationFrame(() => {
+        const next = node.scrollHeight + 8;
+        setEmptyBloodHeight((prev) => (prev === next ? prev : next));
+      });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [showEmptyCharacterShell, emptyBloodOpen, tokenAmount, purchaseDate, submitPhase, formValuesHidden, formCalcHidden]);
 
   useEffect(() => {
     if (!showInvestmentsList) return;
@@ -3042,13 +3151,15 @@ const VavityBnb: React.FC = () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [emptyActionsMountPhase]);
+  }, [emptyActionsMountPhase, showEmptyCharacterShell, emptyBloodOpen, shouldRenderAddForm]);
 
   useEffect(() => {
     if (isGuestView) return;
     if (hasInvestmentsUI) return;
     if (showInitialFetchLoader) return;
     if (emptyActionsMountPhase !== 'hidden') return;
+    // Delete-to-empty: triggerEmptyButtonsExpand owns the height-down.
+    if (prevHasInvestmentsUIRef.current) return;
     const revealTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('revealing');
     }, 1000);
@@ -3059,7 +3170,7 @@ const VavityBnb: React.FC = () => {
       globalThis.clearTimeout(revealTimer);
       globalThis.clearTimeout(doneTimer);
     };
-  }, [isGuestView, hasInvestmentsUI, showInitialFetchLoader, emptyActionsMountPhase]);
+  }, [isGuestView, hasInvestmentsUI, showInitialFetchLoader]);
 
   const openEmptyAddForm = useCallback(() => {
     setShowEmptyAddForm(true);
@@ -3078,17 +3189,13 @@ const VavityBnb: React.FC = () => {
   useEffect(() => {
     if (isGuestView || addFormBusy) return;
     if (hasInvestmentsUI) {
-      if (showEmptyAddForm || showAddForm || addFormOpen) {
+      if (showEmptyAddForm || showAddForm || addFormOpen || emptyBloodOpen) {
         setAddFormOpen(false);
         setShowAddForm(false);
         setShowEmptyAddForm(false);
+        setEmptyBloodOpen(false);
       }
-      return;
     }
-    if (showInitialFetchLoader || isClearingInvestments) return;
-    if (emptyActionsMountPhase === 'hidden') return;
-    if (showEmptyAddForm) return;
-    openEmptyAddForm();
   }, [
     isGuestView,
     addFormBusy,
@@ -3096,10 +3203,7 @@ const VavityBnb: React.FC = () => {
     showEmptyAddForm,
     showAddForm,
     addFormOpen,
-    showInitialFetchLoader,
-    isClearingInvestments,
-    emptyActionsMountPhase,
-    openEmptyAddForm,
+    emptyBloodOpen,
   ]);
 
   useEffect(() => {
@@ -3107,13 +3211,20 @@ const VavityBnb: React.FC = () => {
     if (!initialFetchDone) return;
     if (liveInvestments.length > 0) {
       if (!isSubmitCollapsing && !suppressInvestmentsUI) {
-        if (!summaryOpen || investmentsWholeHeight === 0 || summaryHeight === 0) {
+        if (
+          !summaryOpen &&
+          !pendingOpenAfterSubmitRef.current &&
+          !openInvestmentsDeferTimerRef.current &&
+          !openInvestmentsExpandStartedRef.current
+        ) {
           openInvestmentsSection();
         }
       }
       return;
     }
     if (hasInvestmentsUI || showInitialFetchLoader || emptyActionsMountPhase !== 'hidden') return;
+    // Delete-to-empty: triggerEmptyButtonsExpand owns the height-down.
+    if (prevHasInvestmentsUIRef.current) return;
     const revealTimer = globalThis.setTimeout(() => {
       setEmptyActionsMountPhase('revealing');
     }, 1000);
@@ -3134,7 +3245,6 @@ const VavityBnb: React.FC = () => {
     openInvestmentsSection,
     hasInvestmentsUI,
     showInitialFetchLoader,
-    emptyActionsMountPhase,
     isSubmitCollapsing,
     suppressInvestmentsUI,
   ]);
@@ -3221,7 +3331,7 @@ const VavityBnb: React.FC = () => {
               <div ref={investmentsWholeContentRef}>
                 {showInvestmentsHeader && (
                   <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">my character</span>
+                    <span className="asset-portfolio-title-muted">My Character</span>
                   </h2>
                 )}
                 <div
@@ -3241,8 +3351,7 @@ const VavityBnb: React.FC = () => {
                   <div
                     className="asset-blood-panel"
                     style={{
-                      maxHeight: bloodPanelMaxHeight,
-                      transition: 'max-height 2s ease',
+                      maxHeight: bloodPanelOpen ? 'none' : '0px',
                       overflow: 'hidden',
                     }}
                   >
@@ -3250,9 +3359,7 @@ const VavityBnb: React.FC = () => {
                   <div
                     className="asset-slide-panel"
                     style={{
-                      maxHeight: bloodPanelOpen
-                        ? (summaryHeight > 0 && !summaryAnimating ? `${summaryHeight}px` : 'none')
-                        : summaryMaxHeight,
+                      maxHeight: summaryMaxHeight,
                       transition: summaryTransition,
                       overflow: 'hidden',
                     }}
@@ -3920,41 +4027,80 @@ const VavityBnb: React.FC = () => {
           <div
             ref={addFormPanelRef}
             className="asset-submit-collapse"
-            style={{
-              maxHeight:
-                (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
-                  ? `${addFormOuterSubmitMaxHeight}px`
-                  : undefined,
-              transition:
-                (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
-                  ? 'max-height 2s ease'
-                  : undefined,
-              overflow:
-                (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
-                  ? 'hidden'
-                  : undefined,
-            }}
+            style={
+              (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
+                ? {
+                    maxHeight: `${addFormOuterSubmitMaxHeight}px`,
+                    transition: 'max-height 2s ease',
+                    overflow: 'hidden',
+                  }
+                : hideEmptyActionsOnSubmit
+                  ? { maxHeight: '0px', overflow: 'hidden' }
+                  : emptyActionsMountPhase === 'hidden'
+                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 3s ease' }
+                    : emptyActionsMountPhase === 'revealing'
+                      ? {
+                          maxHeight: `${Math.max(emptyActionsHeight || 0, 200) + 40}px`,
+                          overflow: 'hidden',
+                          transition: 'max-height 3s ease',
+                        }
+                      : { maxHeight: 'none', overflow: 'visible' }
+            }
           >
+            <div ref={emptyActionsMeasureRef}>
+            <h2 className="asset-investments-header">
+              <span className="asset-portfolio-title-muted">Add My Character</span>
+            </h2>
             <div className="asset-portfolio-summary-box asset-portfolio-summary-box--bnb">
+              {isSignedIn && email ? (
+                <div style={{ paddingTop: 30 }}>
+                  <AlienPhotoSlot assetId={ASSET.id} assetName={ASSET.displayName} />
+                </div>
+              ) : null}
+              {!emptyBloodOpen ? (
+                <div className="asset-portfolio-actions asset-portfolio-actions--show asset-portfolio-actions--blood">
+                  <button
+                    type="button"
+                    className="asset-action-button asset-action-button--bnb asset-action-button--invest-show"
+                    onClick={openEmptyBlood}
+                  >
+                    Add My Blood
+                  </button>
+                </div>
+              ) : null}
               <div
-                className={`asset-slide-panel asset-slide-panel--form${
-                  addFormOpen || addFormSubmitCollapsing ? ' is-open' : ''
-                }${addFormSubmitCollapsing ? ' is-submit-collapse' : ''}`}
+                className="asset-blood-panel"
                 style={{
-                  maxHeight: addFormOpen ? `${Math.max(600, addFormPanelHeight)}px` : '0px',
+                  maxHeight:
+                    (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
+                      ? undefined
+                      : emptyBloodMaxHeight,
+                  transition: 'max-height 2s ease',
+                  overflow: 'hidden',
                 }}
-                ref={addFormSlidePanelRef}
               >
-                <div ref={addFormBoxRef} className="asset-slide-panel-inner">
-                  <div className="asset-invest-form-box asset-invest-form-box--bnb">
-                    {renderAddForm(
-                      'Add My Character',
-                      closeAddForm,
-                      'asset-action-button asset-action-button--bnb'
-                    )}
-                  </div>
+                <div ref={emptyBloodContentRef}>
+                  {(emptyBloodOpen || showEmptyAddForm || addFormSubmitAnimating || addFormSubmitCollapsing) && (
+                    <div
+                      className={`asset-slide-panel asset-slide-panel--form${
+                        emptyBloodOpen || addFormSubmitCollapsing ? ' is-open' : ''
+                      }${addFormSubmitCollapsing ? ' is-submit-collapse' : ''}`}
+                      style={{ maxHeight: emptyBloodOpen || addFormSubmitCollapsing ? 'none' : '0px' }}
+                      ref={addFormSlidePanelRef}
+                    >
+                      <div ref={addFormBoxRef} className="asset-slide-panel-inner">
+                        {renderAddForm(
+                          'Add My Character',
+                          closeAddForm,
+                          'asset-action-button asset-action-button--bnb',
+                          { omitPhoto: true, bloodLayout: true }
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
+            </div>
             </div>
           </div>
         )}
