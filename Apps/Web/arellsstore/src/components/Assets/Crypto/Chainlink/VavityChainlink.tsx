@@ -189,6 +189,8 @@ const VavityChainlink: React.FC = () => {
   /** True while Show/Hide My Blood max-height anim is running — button stays disabled + faded. */
   const [bloodPanelAnimating, setBloodPanelAnimating] = useState(false);
   const bloodPanelExpandTimerRef = useRef<number | null>(null);
+  const bloodPanelAnimatingRef = useRef(false);
+  const pendingBloodShowSettleCancelRef = useRef<(() => void) | null>(null);
   const [bloodPanelHeight, setBloodPanelHeight] = useState(0);
   const bloodPanelContentRef = useRef<HTMLDivElement | null>(null);
   /** Empty state: Add My Blood panel (always that label; collapsed until click). */
@@ -1352,6 +1354,8 @@ const VavityChainlink: React.FC = () => {
           // settling can't bump mid-flight (jumps). openInvestmentsSection rAF sets the target.
           // Delete-to-empty never uses this path.
           if (summaryAnimatingRef.current) return prev;
+          // Don't shrink the shell mid Show/Hide My Blood (clipped scrollHeight).
+          if (bloodPanelAnimatingRef.current && next < prev) return prev;
           return next;
         });
       });
@@ -1367,13 +1371,23 @@ const VavityChainlink: React.FC = () => {
 
   useEffect(() => {
     if (summaryAnimating || !summaryOpen || isClearingInvestments) return;
+    // Show/Hide My Blood owns whole height for 2s — remasuring while clipped shrinks it (pause).
+    if (bloodPanelExpanding || bloodPanelAnimating) return;
     const node = investmentsWholeContentRef.current;
     if (!node) return;
     requestAnimationFrame(() => {
       const next = node.scrollHeight + 24;
       setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
     });
-  }, [summaryAnimating, summaryOpen, isClearingInvestments, bloodPanelOpen, bloodPanelHeight]);
+  }, [
+    summaryAnimating,
+    summaryOpen,
+    isClearingInvestments,
+    bloodPanelOpen,
+    bloodPanelHeight,
+    bloodPanelExpanding,
+    bloodPanelAnimating,
+  ]);
 
   useEffect(() => {
     if (investmentsWholeHeight > 0) {
@@ -3033,7 +3047,10 @@ const VavityChainlink: React.FC = () => {
       window.clearTimeout(bloodPanelExpandTimerRef.current);
       bloodPanelExpandTimerRef.current = null;
     }
+    pendingBloodShowSettleCancelRef.current?.();
+    pendingBloodShowSettleCancelRef.current = null;
     const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+    bloodPanelAnimatingRef.current = true;
     setBloodPanelAnimating(true);
     if (bloodPanelOpen) {
       if (investmentsListOpen) {
@@ -3065,55 +3082,55 @@ const VavityChainlink: React.FC = () => {
       setBloodPanelOpen(false);
       bloodPanelExpandTimerRef.current = window.setTimeout(() => {
         bloodPanelExpandTimerRef.current = null;
+        bloodPanelAnimatingRef.current = false;
         setBloodPanelAnimating(false);
       }, 2000);
       return;
     }
-    // Show: content already mounted under maxHeight 0 — measure + WAAPI immediately
-    // (double-rAF waited for paint and felt like a pause before height-down).
+    // Show: same model as My Investments "Show Investments" — CSS max-height 0→px (no WAAPI).
     const panel = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
     const content = bloodPanelContentRef.current;
     if (!panel || !content) {
+      bloodPanelAnimatingRef.current = false;
       setBloodPanelAnimating(false);
       return;
     }
     panel.getAnimations?.().forEach((a) => a.cancel());
-    const contentH = content.scrollHeight;
-    const h = contentH + 8;
+    panel.style.maxHeight = '';
+    panel.style.overflow = '';
     setBloodPanelExpanding(true);
     setBloodPanelOpen(true);
-    setBloodPanelHeight(h);
-    const whole = investmentsWholeContentRef.current;
-    if (whole) {
-      // Blood is collapsed in layout; grow the outer shell with the same 2s ease.
-      setInvestmentsWholeHeight(whole.scrollHeight + contentH + 24);
-    }
-    panel.style.overflow = 'hidden';
-    panel.style.maxHeight = '0px';
-    const anim = panel.animate([{ maxHeight: '0px' }, { maxHeight: `${h}px` }], {
-      duration: 2000,
-      easing: 'ease',
-      fill: 'forwards',
+    setBloodPanelHeight(0);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const contentH = content.scrollHeight;
+        const h = contentH + 8;
+        setBloodPanelHeight(h);
+        const whole = investmentsWholeContentRef.current;
+        if (whole) {
+          setInvestmentsWholeHeight(whole.scrollHeight + contentH + 24);
+        }
+        const settle = () => {
+          pendingBloodShowSettleCancelRef.current?.();
+          pendingBloodShowSettleCancelRef.current = null;
+          if (bloodPanelExpandTimerRef.current != null) {
+            window.clearTimeout(bloodPanelExpandTimerRef.current);
+            bloodPanelExpandTimerRef.current = null;
+          }
+          setBloodPanelExpanding(false);
+          bloodPanelAnimatingRef.current = false;
+          setBloodPanelAnimating(false);
+          const wholeNode = investmentsWholeContentRef.current;
+          if (wholeNode) {
+            setInvestmentsWholeHeight(wholeNode.scrollHeight + 24);
+          }
+        };
+        pendingBloodShowSettleCancelRef.current?.();
+        pendingBloodShowSettleCancelRef.current = runAfterMaxHeightTransitionEnd(panel, settle, {
+          timeoutMs: 2500,
+        });
+      });
     });
-    const settle = () => {
-      if (bloodPanelExpandTimerRef.current != null) {
-        window.clearTimeout(bloodPanelExpandTimerRef.current);
-        bloodPanelExpandTimerRef.current = null;
-      }
-      // Pin none before canceling WAAPI so we don't flash back to React's 0px.
-      panel.style.maxHeight = 'none';
-      panel.style.overflow = 'hidden';
-      panel.getAnimations?.().forEach((a) => a.cancel());
-      setBloodPanelExpanding(false);
-      setBloodPanelAnimating(false);
-      // Drop any open-time fudge so the summary doesn't keep slack below the toggle.
-      const wholeNode = investmentsWholeContentRef.current;
-      if (wholeNode) {
-        setInvestmentsWholeHeight(wholeNode.scrollHeight + 24);
-      }
-    };
-    anim.onfinish = settle;
-    bloodPanelExpandTimerRef.current = window.setTimeout(settle, 2100);
   }, [bloodPanelAnimating, bloodPanelOpen, investmentsListOpen, addMoreOpen]);
 
   const openEmptyBlood = useCallback(() => {
@@ -3447,13 +3464,13 @@ const VavityChainlink: React.FC = () => {
                   <div
                     className="asset-blood-panel"
                     style={{
-                      // Show/Hide both use WAAPI in toggleBloodPanel. React stays at 0 while
-                      // expanding so WAAPI owns the 0→h; settled open = none (no nested clip).
+                      // Show: CSS max-height like My Investments. Hide: WAAPI from none→0.
                       maxHeight: bloodPanelOpen
                         ? bloodPanelExpanding
-                          ? '0px'
+                          ? `${Math.max(0, bloodPanelHeight)}px`
                           : 'none'
                         : '0px',
+                      transition: bloodPanelExpanding ? 'max-height 2s ease' : undefined,
                       overflow: 'hidden',
                     }}
                   >
