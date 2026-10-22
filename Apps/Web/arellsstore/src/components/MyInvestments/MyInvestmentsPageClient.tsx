@@ -612,22 +612,45 @@ const MyInvestmentsPageClient: React.FC = () => {
   const measureSummaryPanelHeight = useCallback(() => {
     const panel = summaryPanelRef.current;
     const content = summaryContentRef.current;
-    if (panel) {
-      panel.getAnimations?.().forEach((a) => a.cancel());
-      panel.style.maxHeight = 'none';
-      panel.style.overflow = 'hidden';
-      void panel.offsetHeight;
+    if (!content) return 1;
+    if (!panel) return Math.max(content.scrollHeight, 1);
+
+    // Unclipped (settled `none` / hide start): trust in-flow scrollHeight.
+    if (globalThis.getComputedStyle(panel).maxHeight === 'none') {
+      return Math.max(content.scrollHeight, panel.scrollHeight, 1);
     }
-    const h = Math.max(
-      content?.scrollHeight ?? 0,
-      panel?.scrollHeight ?? 0,
-      panel?.getBoundingClientRect().height ?? 0,
-      1
-    );
-    // Clear inline so React maxHeight owns show/hide transitions.
-    if (panel) {
-      panel.style.maxHeight = '';
-    }
+
+    // Clipped/collapsed: measure off-flow at parent width so wrap (<750) is correct
+    // without flashing full height in document flow.
+    const width = panel.parentElement?.clientWidth || panel.offsetWidth || 0;
+    const prev = {
+      maxHeight: panel.style.maxHeight,
+      overflow: panel.style.overflow,
+      position: panel.style.position,
+      visibility: panel.style.visibility,
+      pointerEvents: panel.style.pointerEvents,
+      width: panel.style.width,
+      left: panel.style.left,
+      top: panel.style.top,
+    };
+    panel.style.maxHeight = 'none';
+    panel.style.overflow = 'visible';
+    panel.style.position = 'absolute';
+    panel.style.visibility = 'hidden';
+    panel.style.pointerEvents = 'none';
+    panel.style.left = '0';
+    panel.style.top = '0';
+    if (width > 0) panel.style.width = `${width}px`;
+    void panel.offsetHeight;
+    const h = Math.max(content.scrollHeight, panel.scrollHeight, 1);
+    panel.style.maxHeight = prev.maxHeight;
+    panel.style.overflow = prev.overflow;
+    panel.style.position = prev.position;
+    panel.style.visibility = prev.visibility;
+    panel.style.pointerEvents = prev.pointerEvents;
+    panel.style.width = prev.width;
+    panel.style.left = prev.left;
+    panel.style.top = prev.top;
     return h;
   }, []);
 
@@ -712,6 +735,8 @@ const MyInvestmentsPageClient: React.FC = () => {
             () => {
               if (settleGen !== summaryAnimGenRef.current) return;
               pendingSummaryDismissCancelRef.current = null;
+              // Never shrink while still clipped (that cut off under 750). Grow-only, then lift to none.
+              setSummaryHeight((prev) => Math.max(prev, measureSummaryPanelHeight()));
               setSummaryHeightSettled(true);
               setSummaryToggleAnimating(false);
               summaryCircleLoader.dismissOnSummaryExpandComplete();
