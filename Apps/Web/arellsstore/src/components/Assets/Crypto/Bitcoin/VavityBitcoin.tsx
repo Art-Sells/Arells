@@ -916,8 +916,17 @@ const VavityBitcoin: React.FC = () => {
   const emptyTeaserWrapRef = useRef<HTMLDivElement | null>(null);
   const emptyTeaserCollapseAnimRef = useRef<Animation | null>(null);
   /** Mount hold: teaser / character stay collapsed until height-down (empty or with investments). */
+  // Hold padding (25↔14 / 10↔14) is only for a fully collapsed header stack.
+  // First-add used to set hasInvestmentsUI && !summaryOpen while the teaser was
+  // already open — that snapped My Character's top spacing for the whole mount hold.
+  const teaserOrSummaryVisible =
+    emptyTeaserOpen ||
+    isClearingInvestments ||
+    (hasInvestmentsUI && (summaryOpen || summaryAnimating));
   const sectionsHeldCollapsed =
-    Boolean(showEmptyTeaser && !emptyTeaserOpen) || Boolean(hasInvestmentsUI && !summaryOpen);
+    !teaserOrSummaryVisible &&
+    (Boolean(showEmptyTeaser && !emptyTeaserOpen) ||
+      Boolean(hasInvestmentsUI && !summaryOpen));
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
     setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
