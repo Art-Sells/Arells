@@ -1008,7 +1008,8 @@ const MyInvestmentsPageClient: React.FC = () => {
       ref: React.RefObject<HTMLDivElement>,
       setHeight: React.Dispatch<React.SetStateAction<number | null>>,
       prevRef: React.MutableRefObject<number | null>,
-      timerRef: React.MutableRefObject<ReturnType<typeof globalThis.setTimeout> | null>
+      timerRef: React.MutableRefObject<ReturnType<typeof globalThis.setTimeout> | null>,
+      options?: { skipColdStartCollapse?: boolean }
     ) => {
       const node = ref.current;
       if (!node) return;
@@ -1022,6 +1023,11 @@ const MyInvestmentsPageClient: React.FC = () => {
       const prev = prevRef.current;
       prevRef.current = next;
       if (prev == null) {
+        // First Show: collapsing rows to 0 under-measures the summary panel (wait → pop at
+        // settle). Later Hide→Show already has prevRef and skips this path.
+        if (options?.skipColdStartCollapse) {
+          return;
+        }
         setHeight(0);
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -1064,16 +1070,37 @@ const MyInvestmentsPageClient: React.FC = () => {
       pendingPurchasedHeightRef.current = true;
       return;
     }
+    const skipCold =
+      summaryToggleAnimating && !summaryHeightSettled;
     if (pendingPurchasedHeightRef.current) {
       pendingPurchasedHeightRef.current = false;
       lastFormattedVatopRef.current = key;
-      animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValueHeightRef, purchasedValueTimerRef);
+      animateNumberHeight(
+        purchasedValueRef,
+        setPurchasedValueHeight,
+        purchasedValueHeightRef,
+        purchasedValueTimerRef,
+        { skipColdStartCollapse: skipCold }
+      );
       return;
     }
     if (lastFormattedVatopRef.current === key) return;
     lastFormattedVatopRef.current = key;
-    animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValueHeightRef, purchasedValueTimerRef);
-  }, [animateNumberHeight, open, hasAny, summaryOpen, summaryTotals.acVatop]);
+    animateNumberHeight(
+      purchasedValueRef,
+      setPurchasedValueHeight,
+      purchasedValueHeightRef,
+      purchasedValueTimerRef
+    );
+  }, [
+    animateNumberHeight,
+    open,
+    hasAny,
+    summaryOpen,
+    summaryTotals.acVatop,
+    summaryToggleAnimating,
+    summaryHeightSettled,
+  ]);
 
   useLayoutEffect(() => {
     const value = summaryTotals?.acVact || 0;
@@ -1083,16 +1110,37 @@ const MyInvestmentsPageClient: React.FC = () => {
       pendingCurrentHeightRef.current = true;
       return;
     }
+    const skipCold =
+      summaryToggleAnimating && !summaryHeightSettled;
     if (pendingCurrentHeightRef.current) {
       pendingCurrentHeightRef.current = false;
       lastFormattedVactRef.current = key;
-      animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValueHeightRef, currentValueTimerRef);
+      animateNumberHeight(
+        currentValueRef,
+        setCurrentValueHeight,
+        currentValueHeightRef,
+        currentValueTimerRef,
+        { skipColdStartCollapse: skipCold }
+      );
       return;
     }
     if (lastFormattedVactRef.current === key) return;
     lastFormattedVactRef.current = key;
-    animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValueHeightRef, currentValueTimerRef);
-  }, [animateNumberHeight, open, hasAny, summaryOpen, summaryTotals.acVact]);
+    animateNumberHeight(
+      currentValueRef,
+      setCurrentValueHeight,
+      currentValueHeightRef,
+      currentValueTimerRef
+    );
+  }, [
+    animateNumberHeight,
+    open,
+    hasAny,
+    summaryOpen,
+    summaryTotals.acVact,
+    summaryToggleAnimating,
+    summaryHeightSettled,
+  ]);
 
   useLayoutEffect(() => {
     const formatted = formatCurrencyParts(Math.abs(totalProfit || 0));
@@ -1101,18 +1149,51 @@ const MyInvestmentsPageClient: React.FC = () => {
       pendingProfitHeightRef.current = true;
       return;
     }
+    const skipCold =
+      summaryToggleAnimating && !summaryHeightSettled;
     if (pendingProfitHeightRef.current) {
       pendingProfitHeightRef.current = false;
       lastFormattedProfitRef.current = key;
-      animateNumberHeight(profitValueRef, setProfitValueHeight, profitValueHeightRef, profitValueTimerRef);
-      animateNumberHeight(profitBlockRef, setProfitBlockHeight, profitBlockHeightRef, profitBlockTimerRef);
+      animateNumberHeight(
+        profitValueRef,
+        setProfitValueHeight,
+        profitValueHeightRef,
+        profitValueTimerRef,
+        { skipColdStartCollapse: skipCold }
+      );
+      animateNumberHeight(
+        profitBlockRef,
+        setProfitBlockHeight,
+        profitBlockHeightRef,
+        profitBlockTimerRef,
+        { skipColdStartCollapse: skipCold }
+      );
       return;
     }
     if (lastFormattedProfitRef.current === key) return;
     lastFormattedProfitRef.current = key;
-    animateNumberHeight(profitValueRef, setProfitValueHeight, profitValueHeightRef, profitValueTimerRef);
-    animateNumberHeight(profitBlockRef, setProfitBlockHeight, profitBlockHeightRef, profitBlockTimerRef);
-  }, [animateNumberHeight, open, hasAny, summaryOpen, totalProfit, profitLabel]);
+    animateNumberHeight(
+      profitValueRef,
+      setProfitValueHeight,
+      profitValueHeightRef,
+      profitValueTimerRef
+    );
+    animateNumberHeight(
+      profitBlockRef,
+      setProfitBlockHeight,
+      profitBlockHeightRef,
+      profitBlockTimerRef
+    );
+  }, [
+    animateNumberHeight,
+    open,
+    hasAny,
+    summaryOpen,
+    totalProfit,
+    profitLabel,
+    summaryToggleAnimating,
+    summaryHeightSettled,
+  ]);
 
   useEffect(() => {
     if (rangeLoading) return;

@@ -15795,6 +15795,12 @@ a.asset-action-button--save-signin {
 	font-weight: 800;
 }
 
+/* Asset Questions/Concerns: match "Email us:" to the asset accent (panel/icon already do). */
+.asset-page .asset-questions-support-shell .myportfolio-email-support-copy-text {
+	color: var(--myinv-accent-color);
+	-webkit-text-fill-color: var(--myinv-accent-color);
+}
+
 .myportfolio-email-support-copy .site-social-footer-link {
 	margin-top: 8px;
 }
