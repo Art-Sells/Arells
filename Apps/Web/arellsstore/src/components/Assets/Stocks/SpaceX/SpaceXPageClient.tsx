@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import Link from 'next/link';
 import SiteSocialFooter from '../../../SiteSocialFooter';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
+import AssetQuestionsSupport from '../../shared/AssetQuestionsSupport';
 import SpaceX from './spacex';
 import { useUser } from '../../../../context/UserContext';
 import { iconAssetUrl } from '../../../../lib/iconAssetUrl';
@@ -195,6 +196,7 @@ const SpaceXPageClient: React.FC = () => {
           </Link>
         </footer>
       )}
+      {!authSessionLoading && !isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
       {!authSessionLoading && !isGuest && <SiteSocialFooter />}
     </div>
   );

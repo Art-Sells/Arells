@@ -187,6 +187,8 @@ const VavityEthereum: React.FC = () => {
   const [bloodPanelOpen, setBloodPanelOpen] = useState(false);
   /** True only while Show My Blood is height-downing (0→px); settled open uses maxHeight none. */
   const [bloodPanelExpanding, setBloodPanelExpanding] = useState(false);
+  /** True while Show/Hide My Blood max-height anim is running — button stays disabled + faded. */
+  const [bloodPanelAnimating, setBloodPanelAnimating] = useState(false);
   const bloodPanelExpandTimerRef = useRef<number | null>(null);
   const [bloodPanelHeight, setBloodPanelHeight] = useState(0);
   const bloodPanelContentRef = useRef<HTMLDivElement | null>(null);
@@ -2444,6 +2446,14 @@ const VavityEthereum: React.FC = () => {
         : contentHeight != null
           ? Math.max(0, contentHeight + 24)
           : Math.max(600, addMoreFormPanelHeight);
+    const nextAddStart =
+      measuredAddHeight > 1
+        ? measuredAddHeight
+        : addFormBoxRef.current?.scrollHeight != null
+          ? Math.max(0, addFormBoxRef.current.scrollHeight + 24)
+          : Math.max(600, addFormPanelHeight);
+    const nextOuterStart =
+      measuredOuterHeight > 1 ? measuredOuterHeight : Math.max(0, nextAddStart + 24);
     const prevBodyOverflowAnchor = typeof document !== 'undefined' ? document.body.style.overflowAnchor : '';
     flushSync(() => {
       setIsSubmitCollapsing(true);
@@ -2453,18 +2463,13 @@ const VavityEthereum: React.FC = () => {
       } else {
         setHideEmptyActionsOnSubmit(true);
         emptyActionsHoldRef.current = true;
+        setEmptyActionsMountPhase('hidden');
+        setInvestmentsWholeHeight(0);
         setAddFormSubmitAnimating(true);
         setAddFormSubmitCollapsing(true);
-        const nextAddStart =
-          measuredAddHeight > 1
-            ? measuredAddHeight
-            : addFormBoxRef.current?.scrollHeight != null
-              ? Math.max(0, addFormBoxRef.current.scrollHeight + 24)
-              : Math.max(600, addFormPanelHeight);
         setAddFormSubmitMaxHeight(null);
-        const nextOuterStart =
-          measuredOuterHeight > 1 ? measuredOuterHeight : Math.max(0, nextAddStart + 24);
-        setAddFormOuterSubmitMaxHeight(nextOuterStart);
+        // Temporary pin so the overflow:hidden style branch applies before remasure.
+        setAddFormOuterSubmitMaxHeight(nextOuterStart > 0 ? nextOuterStart : 1);
       }
     });
     if (isAddMore) {
@@ -2476,11 +2481,31 @@ const VavityEthereum: React.FC = () => {
         requestAnimationFrame(() => setSubmitPanelMaxHeight(0));
       });
     } else {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setAddFormOuterSubmitMaxHeight(0);
+      // Remeasure AFTER overflow:hidden + is-collapsing. Measuring while overflow was
+      // visible lets margins collapse out of the box; switching to hidden then snaps them in.
+      // Delete-all never snaps because that panel stays overflow:hidden the whole time.
+      const wrap = addFormPanelRef.current;
+      if (wrap) {
+        wrap.getAnimations?.().forEach((a) => a.cancel());
+        wrap.style.overflow = 'hidden';
+        wrap.style.maxHeight = 'none';
+        void wrap.offsetHeight;
+        const h = Math.max(
+          wrap.scrollHeight,
+          wrap.getBoundingClientRect().height,
+          nextOuterStart,
+          1
+        );
+        wrap.style.maxHeight = `${h}px`;
+        void wrap.offsetHeight;
+        setAddFormOuterSubmitMaxHeight(h);
+        const anim = wrap.animate([{ maxHeight: `${h}px` }, { maxHeight: '0px' }], {
+          duration: 2000,
+          easing: 'ease',
+          fill: 'forwards',
         });
-      });
+        addFormCollapseAnimRef.current = anim;
+      }
     }
     if (typeof document !== 'undefined') {
       document.body.style.overflowAnchor = 'none';
@@ -2508,10 +2533,16 @@ const VavityEthereum: React.FC = () => {
       } else {
         if (addFormPanelRef.current) {
           if (addFormCollapseAnimRef.current) {
+            try {
+              addFormCollapseAnimRef.current.commitStyles();
+            } catch {
+              /* older engines */
+            }
             addFormCollapseAnimRef.current.cancel();
             addFormCollapseAnimRef.current = null;
           }
           addFormPanelRef.current.style.height = '';
+          addFormPanelRef.current.style.maxHeight = '';
           addFormPanelRef.current.style.overflow = '';
           addFormPanelRef.current.style.willChange = '';
         }
@@ -2961,7 +2992,7 @@ const VavityEthereum: React.FC = () => {
                 disabled={submitLoading || deleteInFlight || deleteLocked || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
-                {submitLoading ? 'Submitting...' : 'Submit'}
+                {submitLoading ? 'Adding Blood...' : 'Add Blood'}
               </button>
             </div>
           </div>
@@ -2986,14 +3017,25 @@ const VavityEthereum: React.FC = () => {
   const emptyBloodMaxHeight = emptyBloodOpen ? `${Math.max(0, emptyBloodHeight)}px` : '0px';
 
   const toggleBloodPanel = useCallback(() => {
+    if (bloodPanelAnimating) return;
     if (bloodPanelExpandTimerRef.current != null) {
       window.clearTimeout(bloodPanelExpandTimerRef.current);
       bloodPanelExpandTimerRef.current = null;
     }
     const wrap = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+    setBloodPanelAnimating(true);
     if (bloodPanelOpen) {
       if (investmentsListOpen) {
         setInvestmentsListOpen(false);
+        setShowMoreDisabled(true);
+        if (showMoreDisableTimerRef.current) {
+          globalThis.clearTimeout(showMoreDisableTimerRef.current);
+          showMoreDisableTimerRef.current = null;
+        }
+        showMoreDisableTimerRef.current = globalThis.setTimeout(() => {
+          showMoreDisableTimerRef.current = null;
+          setShowMoreDisabled(false);
+        }, 2000);
         window.setTimeout(() => setVisibleInvestments(3), 2000);
       }
       if (addMoreOpen) setAddMoreOpen(false);
@@ -3010,6 +3052,10 @@ const VavityEthereum: React.FC = () => {
         });
       }
       setBloodPanelOpen(false);
+      bloodPanelExpandTimerRef.current = window.setTimeout(() => {
+        bloodPanelExpandTimerRef.current = null;
+        setBloodPanelAnimating(false);
+      }, 2000);
       return;
     }
     // Show: WAAPI 0→h (same easing/duration as hide), then settle to none.
@@ -3021,15 +3067,17 @@ const VavityEthereum: React.FC = () => {
         const content = bloodPanelContentRef.current;
         if (!panel || !content) {
           setBloodPanelExpanding(false);
+          setBloodPanelAnimating(false);
           return;
         }
         panel.getAnimations?.().forEach((a) => a.cancel());
-        const h = content.scrollHeight + 8;
+        const contentH = content.scrollHeight;
+        const h = contentH + 8;
         setBloodPanelHeight(h);
         const whole = investmentsWholeContentRef.current;
         if (whole) {
           // Blood is collapsed in layout; grow the outer shell with the same 2s ease.
-          setInvestmentsWholeHeight(whole.scrollHeight + 24 + h);
+          setInvestmentsWholeHeight(whole.scrollHeight + contentH + 24);
         }
         panel.style.overflow = 'hidden';
         panel.style.maxHeight = '0px';
@@ -3048,12 +3096,18 @@ const VavityEthereum: React.FC = () => {
           panel.style.overflow = 'hidden';
           panel.getAnimations?.().forEach((a) => a.cancel());
           setBloodPanelExpanding(false);
+          setBloodPanelAnimating(false);
+          // Drop any open-time fudge so the summary doesn't keep slack below the toggle.
+          const wholeNode = investmentsWholeContentRef.current;
+          if (wholeNode) {
+            setInvestmentsWholeHeight(wholeNode.scrollHeight + 24);
+          }
         };
         anim.onfinish = settle;
         bloodPanelExpandTimerRef.current = window.setTimeout(settle, 2100);
       });
     });
-  }, [bloodPanelOpen, investmentsListOpen, addMoreOpen]);
+  }, [bloodPanelAnimating, bloodPanelOpen, investmentsListOpen, addMoreOpen]);
 
   const openEmptyBlood = useCallback(() => {
     if (emptyBloodOpen) return;
@@ -3377,6 +3431,7 @@ const VavityEthereum: React.FC = () => {
                     <button
                       type="button"
                       className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show"
+                      disabled={bloodPanelAnimating || showMoreDisabled}
                       onClick={toggleBloodPanel}
                     >
                       {bloodPanelOpen ? 'Hide My Blood' : 'Show My Blood'}
@@ -3796,9 +3851,19 @@ const VavityEthereum: React.FC = () => {
                       className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
                         showPulse ? ' asset-action-button--pulse' : ''
                       }`}
-                      disabled={!investments.length || showMoreDisabled}
+                      disabled={!investments.length || showMoreDisabled || bloodPanelAnimating}
                       onClick={() => {
+                        if (showMoreDisabled || bloodPanelAnimating) return;
                         triggerShowPulse();
+                        setShowMoreDisabled(true);
+                        if (showMoreDisableTimerRef.current) {
+                          globalThis.clearTimeout(showMoreDisableTimerRef.current);
+                          showMoreDisableTimerRef.current = null;
+                        }
+                        showMoreDisableTimerRef.current = globalThis.setTimeout(() => {
+                          showMoreDisableTimerRef.current = null;
+                          setShowMoreDisabled(false);
+                        }, 2000);
                         if (investmentsListOpen) {
                           setInvestmentsListOpen(false);
                           setTimeout(() => {
@@ -4076,7 +4141,7 @@ const VavityEthereum: React.FC = () => {
               (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
                 ? {
                     maxHeight: `${addFormOuterSubmitMaxHeight}px`,
-                    transition: 'max-height 2s ease',
+                    transition: addFormSubmitCollapsing ? undefined : 'max-height 2s ease',
                     overflow: 'hidden',
                   }
                 : hideEmptyActionsOnSubmit
@@ -4089,7 +4154,7 @@ const VavityEthereum: React.FC = () => {
                           overflow: 'hidden',
                           transition: 'max-height 3s ease',
                         }
-                      : { maxHeight: 'none', overflow: 'visible' }
+                      : { maxHeight: 'none', overflow: 'hidden' }
             }
           >
             <div ref={emptyActionsMeasureRef}>
@@ -4102,7 +4167,7 @@ const VavityEthereum: React.FC = () => {
                   <AlienPhotoSlot assetId={ASSET.id} assetName={ASSET.displayName} />
                 </div>
               ) : null}
-              {!emptyBloodOpen ? (
+              {!emptyBloodOpen && !addFormSubmitCollapsing ? (
                 <div className="asset-portfolio-actions asset-portfolio-actions--show asset-portfolio-actions--blood">
                   <button
                     type="button"
@@ -4116,11 +4181,18 @@ const VavityEthereum: React.FC = () => {
               <div
                 className="asset-blood-panel"
                 style={{
+                  // During submit height-up, freeze inner max-height (no parallel transition).
+                  // Outer `.asset-submit-collapse` owns the smooth collapse.
                   maxHeight:
-                    (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
-                      ? undefined
+                    addFormSubmitCollapsing ||
+                    ((submitTargetSnapshot ?? submitTargetRef.current) === 'add' &&
+                      addFormOuterSubmitMaxHeight != null)
+                      ? 'none'
                       : emptyBloodMaxHeight,
-                  transition: 'max-height 2s ease',
+                  transition:
+                    addFormSubmitCollapsing || addFormOuterSubmitMaxHeight != null
+                      ? undefined
+                      : 'max-height 2s ease',
                   overflow: 'hidden',
                 }}
               >
@@ -4130,7 +4202,10 @@ const VavityEthereum: React.FC = () => {
                       className={`asset-slide-panel asset-slide-panel--form${
                         emptyBloodOpen || addFormSubmitCollapsing ? ' is-open' : ''
                       }${addFormSubmitCollapsing ? ' is-submit-collapse' : ''}`}
-                      style={{ maxHeight: emptyBloodOpen || addFormSubmitCollapsing ? 'none' : '0px' }}
+                      style={{
+                        maxHeight: emptyBloodOpen || addFormSubmitCollapsing ? 'none' : '0px',
+                        transition: addFormSubmitCollapsing ? 'none' : undefined,
+                      }}
                       ref={addFormSlidePanelRef}
                     >
                       <div ref={addFormBoxRef} className="asset-slide-panel-inner">

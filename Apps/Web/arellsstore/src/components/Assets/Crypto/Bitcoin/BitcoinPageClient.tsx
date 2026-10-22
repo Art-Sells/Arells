@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import Link from 'next/link';
 import SiteSocialFooter from '../../../SiteSocialFooter';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
+import AssetQuestionsSupport from '../../shared/AssetQuestionsSupport';
 import Bitcoin from './bitcoin';
 import { useUser } from '../../../../context/UserContext';
 import { useGuestPreview } from '../../../../hooks/useGuestPreview';
@@ -184,6 +185,7 @@ const BitcoinPageClient: React.FC = () => {
           </Link>
         </footer>
       )}
+      {!authSessionLoading && !isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
       {!authSessionLoading && !isGuest && <SiteSocialFooter />}
     </div>
   );

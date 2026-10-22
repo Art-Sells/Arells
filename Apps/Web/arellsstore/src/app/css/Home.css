@@ -1264,15 +1264,10 @@ body {
 	padding-top: 0px;
 }
 
-/* When a collapsing submit panel is closing, remove the wrapper's bottom margin
-   so the final unmount doesn't create a last-millisecond "pop". */
-.asset-portfolio-summary-box.is-collapsing {
-	margin-bottom: 0px !important;
-	/* This wrapper has a default padding-bottom: 20px; if we don't animate it down,
-	   the unmount creates a final "pop" even after the inner max-height reaches 0. */
-	padding-bottom: 0px !important;
+/* First-add: contain child margins inside the collapsible shell (max-height catches them).
+   Do not fold/zero margins here — that under-measures then pops when content settles. */
+.asset-submit-collapse {
 	overflow: hidden;
-	transition: margin-bottom 2s ease, padding-bottom 2s ease;
 }
 
 /* Empty-state: sign-in section uses its own wrapper so padding can be tuned without affecting Add Investments */
@@ -3152,6 +3147,13 @@ a.asset-action-button--myinv-asset-link {
 
 .asset-action-button--invest-show {
 	padding: 10px 15px;
+	transition: opacity 0.35s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+/* Show/Hide Blood & Investments: stay clearly faded while panel height anim runs */
+.asset-page-content .asset-portfolio-actions--show .asset-action-button--invest-show:disabled,
+.asset-page-content .asset-portfolio-actions--blood .asset-action-button--invest-show:disabled {
+	opacity: 0.28 !important;
 }
 
 .asset-page--bitcoin .asset-page-content .asset-action-button--invest-add:not(.asset-action-button--add-investments),
@@ -4639,8 +4641,9 @@ a.asset-action-button--myinv-asset-link {
 }
 
 .asset-slide-panel--form.is-submit-collapse {
-	transition: max-height 2s ease !important;
-	transition-duration: 2s !important;
+	/* Outer submit wrapper owns height-up — don't let is-open's 2000px max-height animate. */
+	max-height: none !important;
+	transition: none !important;
 }
 
 .asset-submit-status {
@@ -6434,6 +6437,11 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	box-sizing: border-box;
 }
 
+/* Toggle lives inside the summary card — don't stack its old 20px bottom margin on the card padding. */
+.myinv-summary-block .myinv-toggle-shell {
+	margin-bottom: 0;
+}
+
 .myinv-toggle-row {
 	transform: none;
 	justify-content: center;
@@ -6476,7 +6484,8 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 
 .myinv-summary-block {
 	width: min(700px, 100%);
-	margin: 0 auto 12px;
+	/* Bottom gap to mission section lives on `.myinv-summary-height-panel` (overflow:hidden clips inner margin). */
+	margin: 0 auto;
 	padding: 12px 12px 14px;
 	padding-top: 5px;
 	border-radius: 12px;
@@ -7508,8 +7517,13 @@ a.myinv-about-button:focus-visible {
 .myinv-wrapper > .myinv-summary-height-panel {
 	opacity: 1;
 	width: min(700px, 100%);
-	margin: 0 auto;
+	margin: 0 auto 20px;
 	box-sizing: border-box;
+}
+
+/* Enable margin-bottom to ease with max-height (margin is outside max-height otherwise). */
+.myinv-wrapper > .myinv-summary-height-panel.is-height-animating {
+	transition: max-height 3s ease, margin-bottom 3s ease;
 }
 
 .myinv-metric-title {
@@ -9249,6 +9263,14 @@ a.myinv-about-button:focus-visible {
 	text-align: center;
 	padding-left: 10px;
 	padding-right: 10px;
+	transition: opacity 0.35s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.home-assets-show-more-wrap.myinv-blood-actions .home-assets-show-more-button.auth-submit:disabled {
+	opacity: 0.28 !important;
+	pointer-events: none;
+	cursor: default;
+	transform: none;
 }
 
 .home-assets-show-more-wrap.myinv-blood-actions .tbar-more-label {
@@ -12296,7 +12318,8 @@ a.asset-action-button--save-signin {
 }
 
 .asset-page .site-social-footer.site-social-footer--asset {
-	padding: 0 16px max(0px, env(safe-area-inset-bottom, 0px));
+	/* Match `.asset-questions-support-shell` margin-top so both divider lines share the same air. */
+	padding: 24px 16px max(0px, env(safe-area-inset-bottom, 0px));
 }
 
 .site-social-footer-inner {
@@ -14967,6 +14990,125 @@ a.asset-action-button--save-signin {
 	min-width: 350px;
 	margin: 30px auto -27px;
 	box-sizing: border-box;
+}
+
+/* Asset pages: below about button; accent + panel wash match `.asset-panel--*`. */
+.asset-page .asset-questions-support-shell {
+	margin: 24px auto 0;
+}
+
+.asset-page--bitcoin .asset-questions-support-shell {
+	--myinv-accent-color: rgb(248, 141, 0);
+	--asset-questions-panel-bg: rgba(248, 141, 0, 0.06);
+	--asset-questions-panel-border: rgba(248, 141, 0, 0.3);
+}
+.asset-page--ethereum .asset-questions-support-shell {
+	--myinv-accent-color: rgb(107, 114, 168);
+	--asset-questions-panel-bg: rgba(107, 114, 168, 0.07);
+	--asset-questions-panel-border: rgba(107, 114, 168, 0.3);
+}
+.asset-page--bnb .asset-questions-support-shell {
+	--myinv-accent-color: rgb(243, 186, 47);
+	--asset-questions-panel-bg: rgba(243, 186, 47, 0.06);
+	--asset-questions-panel-border: rgba(243, 186, 47, 0.6);
+}
+.asset-page--tron .asset-questions-support-shell {
+	--myinv-accent-color: rgb(255, 0, 19);
+	--asset-questions-panel-bg: rgba(255, 0, 19, 0.075);
+	--asset-questions-panel-border: rgba(255, 0, 19, 0.32);
+}
+.asset-page--doge .asset-questions-support-shell {
+	--myinv-accent-color: rgb(194, 166, 51);
+	--asset-questions-panel-bg: rgba(194, 166, 51, 0.075);
+	--asset-questions-panel-border: rgba(194, 166, 51, 0.55);
+}
+.asset-page--cardano .asset-questions-support-shell {
+	--myinv-accent-color: rgb(0, 51, 173);
+	--asset-questions-panel-bg: rgba(0, 51, 173, 0.075);
+	--asset-questions-panel-border: rgba(0, 51, 173, 0.3);
+}
+.asset-page--chainlink .asset-questions-support-shell {
+	--myinv-accent-color: rgb(55, 91, 210);
+	--asset-questions-panel-bg: rgba(55, 91, 210, 0.075);
+	--asset-questions-panel-border: rgba(55, 91, 210, 0.3);
+}
+.asset-page--nvidia .asset-questions-support-shell {
+	--myinv-accent-color: rgb(86, 138, 0);
+	--asset-questions-panel-bg: rgba(86, 138, 0, 0.075);
+	--asset-questions-panel-border: rgba(86, 138, 0, 0.3);
+}
+.asset-page--apple .asset-questions-support-shell {
+	--myinv-accent-color: rgb(85, 85, 85);
+	--asset-questions-panel-bg: rgba(85, 85, 85, 0.075);
+	--asset-questions-panel-border: rgba(85, 85, 85, 0.3);
+}
+.asset-page--alphabet .asset-questions-support-shell {
+	--myinv-accent-color: rgb(37, 99, 200);
+	--asset-questions-panel-bg: rgba(66, 133, 244, 0.075);
+	--asset-questions-panel-border: rgba(37, 99, 200, 0.3);
+}
+.asset-page--microsoft .asset-questions-support-shell {
+	--myinv-accent-color: rgb(0, 120, 212);
+	--asset-questions-panel-bg: rgba(0, 120, 212, 0.075);
+	--asset-questions-panel-border: rgba(0, 120, 212, 0.3);
+}
+.asset-page--amazon .asset-questions-support-shell {
+	--myinv-accent-color: rgb(255, 153, 0);
+	--asset-questions-panel-bg: rgba(255, 153, 0, 0.075);
+	--asset-questions-panel-border: rgba(160, 85, 0, 0.3);
+}
+.asset-page--spacex .asset-questions-support-shell {
+	--myinv-accent-color: rgb(40, 48, 64);
+	--asset-questions-panel-bg: rgba(40, 48, 64, 0.075);
+	--asset-questions-panel-border: rgba(40, 48, 64, 0.3);
+}
+.asset-page--stellar .asset-questions-support-shell {
+	--myinv-accent-color: rgb(0, 0, 0);
+	--asset-questions-panel-bg: rgba(0, 0, 0, 0.06);
+	--asset-questions-panel-border: rgba(0, 0, 0, 0.25);
+}
+.asset-page--bch .asset-questions-support-shell {
+	--myinv-accent-color: rgb(10, 193, 142);
+	--asset-questions-panel-bg: rgba(10, 193, 142, 0.075);
+	--asset-questions-panel-border: rgba(10, 193, 142, 0.3);
+}
+.asset-page--solana .asset-questions-support-shell {
+	--myinv-accent-color: rgb(0, 208, 168);
+	--asset-questions-panel-bg: rgba(0, 208, 168, 0.06);
+	--asset-questions-panel-border: rgba(0, 208, 168, 0.6);
+}
+.asset-page--xrp .asset-questions-support-shell {
+	--myinv-accent-color: rgb(30, 41, 59);
+	--asset-questions-panel-bg: rgba(30, 41, 59, 0.06);
+	--asset-questions-panel-border: rgba(30, 41, 59, 0.25);
+}
+
+/* Double border: outer `.shadow-border` + inner `.myinv-accent-border` (same as My Investments). */
+.asset-page .asset-questions-support-shell .myportfolio-portfolio-below-panel-wrap.shadow-border-wrap {
+	width: 100%;
+	padding: 10px;
+	border-radius: 14px;
+	box-sizing: border-box;
+	background: var(--asset-questions-panel-bg);
+}
+
+.asset-page .asset-questions-support-shell .shadow-border {
+	border-color: var(--asset-questions-panel-border);
+	border-radius: 14px;
+	opacity: 1;
+}
+
+.asset-page .asset-questions-support-shell .myportfolio-portfolio-below-panel-wrap .myinv-panel-section {
+	border-radius: 12px;
+	padding: 10px;
+	background: var(--asset-questions-panel-bg);
+	border: none;
+}
+
+/* Inner ring uses `--myinv-accent-color` at the asset border strength. */
+.asset-page .asset-questions-support-shell .myinv-accent-border::before {
+	background: var(--asset-questions-panel-border);
+	opacity: 1;
 }
 
 .myportfolio-questions-support-shell .myportfolio-questions-support-rule {

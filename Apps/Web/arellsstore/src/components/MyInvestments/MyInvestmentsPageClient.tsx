@@ -222,10 +222,16 @@ const MyInvestmentsPageClient: React.FC = () => {
   const [summaryMounted, setSummaryMounted] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryHeight, setSummaryHeight] = useState(0);
+  /** After height-down, use maxHeight none so an under-measure can't clip the card. */
+  const [summaryHeightSettled, setSummaryHeightSettled] = useState(false);
+  /** Show/Hide Investments stays disabled + faded until max-height anim finishes. */
+  const [summaryToggleAnimating, setSummaryToggleAnimating] = useState(false);
   const bloodHideTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const summaryPanelRef = useRef<HTMLDivElement | null>(null);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
   const pendingSummaryDismissCancelRef = useRef<(() => void) | null>(null);
+  /** Bumps on each show/hide so a stale show-settle can't set settled mid-hide (last-second pop). */
+  const summaryAnimGenRef = useRef(0);
   const summaryCircleLoader = useAssetSummaryCircleLoader();
   /** Holdings key for which VAPA load finished successfully (survives Strict Mode cancel/retry). */
   const summaryLoadDoneKeyRef = useRef('');
@@ -535,6 +541,7 @@ const MyInvestmentsPageClient: React.FC = () => {
       setSummaryMounted(false);
       setSummaryOpen(false);
       setSummaryHeight(0);
+      setSummaryToggleAnimating(false);
       pendingSummaryDismissCancelRef.current?.();
       pendingSummaryDismissCancelRef.current = null;
       summaryCircleLoader.dismissImmediately();
@@ -591,6 +598,8 @@ const MyInvestmentsPageClient: React.FC = () => {
       setSummaryMounted(false);
       setSummaryOpen(false);
       setSummaryHeight(0);
+      setSummaryHeightSettled(false);
+      setSummaryToggleAnimating(false);
       pendingSummaryDismissCancelRef.current?.();
       pendingSummaryDismissCancelRef.current = null;
       summaryCircleLoader.show();
@@ -600,29 +609,90 @@ const MyInvestmentsPageClient: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveSignedIn, hasAny, showLoading, summaryValuesReady, hubsSlideIn]);
 
+  const measureSummaryPanelHeight = useCallback(() => {
+    const panel = summaryPanelRef.current;
+    const content = summaryContentRef.current;
+    if (panel) {
+      panel.getAnimations?.().forEach((a) => a.cancel());
+      panel.style.maxHeight = 'none';
+      panel.style.overflow = 'hidden';
+      void panel.offsetHeight;
+    }
+    const h = Math.max(
+      content?.scrollHeight ?? 0,
+      panel?.scrollHeight ?? 0,
+      panel?.getBoundingClientRect().height ?? 0,
+      1
+    );
+    // Clear inline so React maxHeight owns show/hide transitions.
+    if (panel) {
+      panel.style.maxHeight = '';
+    }
+    return h;
+  }, []);
+
   const toggleBloodPanel = useCallback(() => {
+    if (summaryToggleAnimating) return;
     if (summaryOpen || summaryMounted) {
-      setSummaryOpen(false);
-      if (bloodHideTimerRef.current) globalThis.clearTimeout(bloodHideTimerRef.current);
-      bloodHideTimerRef.current = globalThis.setTimeout(() => {
+      // Kill show-settle — its transitionend at end of hide sets settled and pops.
+      summaryAnimGenRef.current += 1;
+      pendingSummaryDismissCancelRef.current?.();
+      pendingSummaryDismissCancelRef.current = null;
+      if (bloodHideTimerRef.current) {
+        globalThis.clearTimeout(bloodHideTimerRef.current);
         bloodHideTimerRef.current = null;
-        setSummaryMounted(false);
-        setSummaryHeight(0);
-      }, SUMMARY_HEIGHT_EXPAND_MS);
+      }
+
+      const h = measureSummaryPanelHeight();
+      const panel = summaryPanelRef.current;
+      setSummaryToggleAnimating(true);
+      setSummaryHeightSettled(false);
+      setSummaryHeight(h);
+      // Pin px + full margin, then height-up max-height and margin-bottom together.
+      if (panel) {
+        panel.style.maxHeight = `${h}px`;
+        panel.style.marginBottom = '20px';
+        panel.style.overflow = 'hidden';
+        void panel.offsetHeight;
+      }
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (panel) {
+            panel.style.maxHeight = '';
+            panel.style.marginBottom = '0px';
+          }
+          setSummaryOpen(false);
+          bloodHideTimerRef.current = globalThis.setTimeout(() => {
+            bloodHideTimerRef.current = null;
+            const node = summaryPanelRef.current;
+            if (node) {
+              node.style.maxHeight = '';
+              node.style.marginBottom = '';
+              node.style.overflow = '';
+            }
+            setSummaryMounted(false);
+            setSummaryHeight(0);
+            setSummaryToggleAnimating(false);
+          }, SUMMARY_HEIGHT_EXPAND_MS);
+        });
+      });
       return;
     }
     if (bloodHideTimerRef.current) {
       globalThis.clearTimeout(bloodHideTimerRef.current);
       bloodHideTimerRef.current = null;
     }
-    // Mount; height-down runs in the layout effect once the panel is in the DOM.
+    summaryAnimGenRef.current += 1;
+    setSummaryToggleAnimating(true);
+    setSummaryHeightSettled(false);
     setSummaryMounted(true);
-  }, [summaryOpen, summaryMounted]);
+  }, [summaryToggleAnimating, summaryOpen, summaryMounted, measureSummaryPanelHeight]);
 
-  // After mount: start at max-height 0, then measure and height-down (asset summary pattern).
+  // After mount: measure once, then one continuous max-height height-down.
   useLayoutEffect(() => {
     if (!summaryMounted || !summaryValuesReady) return;
 
+    setSummaryHeightSettled(false);
     setSummaryOpen(true);
     setSummaryHeight(0);
 
@@ -631,21 +701,30 @@ const MyInvestmentsPageClient: React.FC = () => {
     const raf1 = globalThis.requestAnimationFrame(() => {
       raf2 = globalThis.requestAnimationFrame(() => {
         if (cancelled) return;
-        const h = summaryContentRef.current?.scrollHeight ?? 0;
+        // Single target for the whole ease — do not bump height mid-flight.
+        const h = measureSummaryPanelHeight();
         setSummaryHeight(h);
         pendingSummaryDismissCancelRef.current?.();
+        const settleGen = summaryAnimGenRef.current;
         if (h > 0) {
           pendingSummaryDismissCancelRef.current = runAfterMaxHeightTransitionEnd(
             summaryPanelRef.current,
             () => {
+              if (settleGen !== summaryAnimGenRef.current) return;
               pendingSummaryDismissCancelRef.current = null;
+              setSummaryHeightSettled(true);
+              setSummaryToggleAnimating(false);
               summaryCircleLoader.dismissOnSummaryExpandComplete();
             },
             { timeoutMs: SUMMARY_HEIGHT_EXPAND_MS + 500 }
           );
         } else {
           pendingSummaryDismissCancelRef.current = null;
-          summaryCircleLoader.dismissOnSummaryExpandComplete();
+          if (settleGen === summaryAnimGenRef.current) {
+            setSummaryHeightSettled(true);
+            setSummaryToggleAnimating(false);
+            summaryCircleLoader.dismissOnSummaryExpandComplete();
+          }
         }
       });
     });
@@ -658,27 +737,39 @@ const MyInvestmentsPageClient: React.FC = () => {
       pendingSummaryDismissCancelRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [summaryMounted, summaryValuesReady]);
+  }, [summaryMounted, summaryValuesReady, measureSummaryPanelHeight]);
 
-  // Keep measured summary height in sync while open (wrapped numbers, range changes, etc.).
+  // After expand settles only. Updating max-height mid-ease restarts a fresh 3s ease
+  // (feels like crawl-then-rush) — especially when number-row heights animate.
   useEffect(() => {
-    if (!summaryMounted || !summaryOpen || summaryHeight <= 0) return;
+    if (!summaryMounted || !summaryOpen || !summaryHeightSettled || summaryToggleAnimating) return;
     const node = summaryContentRef.current;
     if (!node || typeof ResizeObserver === 'undefined') return;
     let raf = 0;
     const measure = () => {
       raf = globalThis.requestAnimationFrame(() => {
-        const next = node.scrollHeight;
+        const next = Math.max(node.scrollHeight, summaryPanelRef.current?.scrollHeight ?? 0);
         setSummaryHeight((prev) => (prev === next ? prev : next));
       });
     };
+    measure();
     const ro = new ResizeObserver(measure);
     ro.observe(node);
     return () => {
       ro.disconnect();
       if (raf) globalThis.cancelAnimationFrame(raf);
     };
-  }, [summaryMounted, summaryOpen, summaryHeight > 0]);
+  }, [
+    summaryMounted,
+    summaryOpen,
+    summaryHeightSettled,
+    summaryToggleAnimating,
+    purchasedValueHeight,
+    currentValueHeight,
+    profitValueHeight,
+    forceSessionPreview,
+    effectiveEmail,
+  ]);
 
   /** My Assets badge order: largest current holding first (follows liquid/solid mode). */
   const myAssetsSortedByHoldings = useMemo(() => {
@@ -1112,6 +1203,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                       <button
                         type="button"
                         className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button"
+                        disabled={summaryToggleAnimating}
                         onClick={toggleBloodPanel}
                       >
                         <span className="tbar-more-label">
@@ -1123,10 +1215,21 @@ const MyInvestmentsPageClient: React.FC = () => {
                   {summaryMounted ? (
                   <div
                     ref={summaryPanelRef}
-                    className="asset-slide-panel myinv-summary-height-panel"
+                    className={`asset-slide-panel myinv-summary-height-panel${
+                      summaryToggleAnimating ? ' is-height-animating' : ''
+                    }`}
                     style={{
-                      maxHeight: summaryOpen ? `${summaryHeight}px` : '0px',
-                      transition: `max-height ${SUMMARY_HEIGHT_EXPAND_MS}ms ease`,
+                      maxHeight: summaryOpen
+                        ? summaryHeightSettled
+                          ? 'none'
+                          : `${summaryHeight}px`
+                        : '0px',
+                      // Show: one max-height ease. Hide: class also eases margin-bottom with it.
+                      transition: summaryHeightSettled
+                        ? undefined
+                        : summaryToggleAnimating && !summaryOpen
+                          ? undefined
+                          : `max-height ${SUMMARY_HEIGHT_EXPAND_MS}ms ease`,
                       overflow: 'hidden',
                     }}
                   >

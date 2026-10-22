@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import Link from 'next/link';
 import SiteSocialFooter from '../../../SiteSocialFooter';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
+import AssetQuestionsSupport from '../../shared/AssetQuestionsSupport';
 import Xrp from './xrp';
 import { useUser } from '../../../../context/UserContext';
 
@@ -183,6 +184,7 @@ const XrpPageClient: React.FC = () => {
           </Link>
         </footer>
       )}
+      {!authSessionLoading && !isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
       {!authSessionLoading && !isGuest && <SiteSocialFooter />}
     </div>
   );
