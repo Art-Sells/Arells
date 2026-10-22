@@ -960,9 +960,7 @@ const VavityBitcoin: React.FC = () => {
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
   const openInvestmentsSection = useCallback((options?: { skipMountHold?: boolean }) => {
     const skipMountHold = Boolean(options?.skipMountHold);
-    // First-add after submit must not wait out a 4s mount hold that was scheduled when
-    // the count hit 1 mid-collapse — during that hold the shell/photo can already be
-    // live, so the later height-down looks like a pop.
+    // First-add: cancel a mount-hold open scheduled while the form was still collapsing.
     if (skipMountHold && openInvestmentsDeferTimerRef.current) {
       globalThis.clearTimeout(openInvestmentsDeferTimerRef.current);
       openInvestmentsDeferTimerRef.current = null;
@@ -975,49 +973,38 @@ const VavityBitcoin: React.FC = () => {
     const run = () => {
       openInvestmentsDeferTimerRef.current = null;
       openInvestmentsExpandStartedRef.current = true;
-      // Always start at 0 so the first paint can height-down (first-add remounts this panel;
-      // delete-to-empty does not). Re-entrancy guarded above.
-      // Reverse of beginClearing: 0 → measured, same double-rAF + reflow.
-      setInvestmentsWholeHeight(0);
-      setSummaryAnimating(true);
-      summaryAnimatingRef.current = true;
-      setSummaryOpen(true);
+      // Same model as delete-all empty reveal / reverse beginClearing: pin 0 with the
+      // 3s transition armed, then ease to measured+40. Single shell is already mounted.
+      flushSync(() => {
+        setInvestmentsWholeHeight(0);
+        setSummaryAnimating(true);
+        summaryAnimatingRef.current = true;
+        setSummaryOpen(true);
+      });
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           const panel = investmentsWholePanelRef.current;
           const whole = investmentsWholeContentRef.current;
-          if (!whole) return;
-          // Safari: scrollHeight while max-height:0 under-measures. Measure unconstrained,
-          // pin 0, then ease to h. RO must not bump mid-flight (restarts ease → photo pop).
-          let h = whole.scrollHeight + 40;
-          if (panel) {
-            panel.style.transition = 'none';
-            panel.style.maxHeight = 'none';
-            void panel.offsetHeight;
-            h = Math.max(h, whole.scrollHeight + 40);
-            panel.style.maxHeight = '0px';
-            void panel.offsetHeight;
-            panel.style.transition = '';
-            panel.style.maxHeight = '';
+          if (panel) void panel.offsetHeight;
+          // +40 matches emptyActionsMountPhase 'revealing' (delete-all height-down).
+          const h = Math.max((whole?.scrollHeight ?? 0) + 40, 1);
+          setInvestmentsWholeHeight(h);
+          pendingOpenAfterSubmitRef.current = false;
+          if (h > 0) {
+            pendingCircleLoaderDismissCancelRef.current?.();
+            pendingCircleLoaderDismissCancelRef.current = runAfterMaxHeightTransitionEnd(
+              panel,
+              () => {
+                pendingCircleLoaderDismissCancelRef.current = null;
+                summaryCircleLoaderDismissRef.current?.();
+              },
+              { timeoutMs: 3500 }
+            );
           }
-          setInvestmentsWholeHeight(0);
-          requestAnimationFrame(() => {
-            setInvestmentsWholeHeight(h);
-            if (h > 0) {
-              pendingCircleLoaderDismissCancelRef.current?.();
-              pendingCircleLoaderDismissCancelRef.current = runAfterMaxHeightTransitionEnd(
-                panel,
-                () => {
-                  pendingCircleLoaderDismissCancelRef.current = null;
-                  summaryCircleLoaderDismissRef.current?.();
-                },
-                { timeoutMs: 3500 }
-              );
-            }
-          });
         });
       });
     };
+
     const elapsed = Date.now() - assetPageMountAtRef.current;
     const chartAlignedDelayMs =
       ASSET_PRICE_CHART_MOUNT_SLIDE_MS - ASSET_SUMMARY_START_BEFORE_CHART_SLIDE_END_MS;
@@ -1096,9 +1083,14 @@ const VavityBitcoin: React.FC = () => {
       : isClearingInvestments && emptyActionsTargetHeight
         ? `${emptyActionsTargetHeight}px`
         : '0px';
+  // Handoff frame: invested UI on, still collapsed — keep 3s armed so 0→h eases
+  // (delete-all empty reveal never uses 0s on the opening frame).
   const investmentsWholeTransition = isClearingInvestments
     ? 'max-height 3s ease'
-    : summaryAnimating || summaryAnimatingCooldown || addFormSubmitCollapsing
+    : summaryAnimating ||
+        summaryAnimatingCooldown ||
+        addFormSubmitCollapsing ||
+        (hasInvestmentsUI && !summaryOpen && investmentsWholeHeight === 0)
       ? 'max-height 3s ease'
       : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
@@ -1113,6 +1105,56 @@ const VavityBitcoin: React.FC = () => {
     addFormSubmitAnimating ||
     addFormSubmitCollapsing ||
     (showEmptyCharacterShell && !hideEmptyActionsOnSubmit);
+  // One My Character shell for empty + invested (delete-all model). Photo stays mounted
+  // across first-add — no empty↔invested remount / second AlienPhotoSlot.
+  const showMyCharacterShell =
+    hasInvestmentsUI || shouldRenderAddForm || isClearingInvestments;
+  const myCharacterShellStyle: React.CSSProperties = (() => {
+    if (isClearingInvestments) {
+      return {
+        maxHeight: clearingHeightPx,
+        transition: 'max-height 3s ease',
+        overflowX: 'hidden' as const,
+        overflowY: 'hidden' as const,
+      };
+    }
+    if (hasInvestmentsUI) {
+      return {
+        maxHeight: investmentsWholeMaxHeight,
+        transition: investmentsWholeTransition,
+        overflowX: (summaryAnimating || isClearingInvestments ? 'hidden' : 'visible') as 'hidden' | 'visible',
+        overflowY: 'hidden' as const,
+      };
+    }
+    if (
+      (submitTargetSnapshot ?? submitTargetRef.current) === 'add' &&
+      addFormOuterSubmitMaxHeight != null
+    ) {
+      return {
+        maxHeight: `${addFormOuterSubmitMaxHeight}px`,
+        transition: 'max-height 3s ease',
+        overflow: 'hidden' as const,
+      };
+    }
+    if (hideEmptyActionsOnSubmit) {
+      return { maxHeight: '0px', overflow: 'hidden' as const };
+    }
+    if (emptyActionsMountPhase === 'hidden') {
+      return {
+        maxHeight: '0px',
+        overflow: 'hidden' as const,
+        transition: 'max-height 3s ease',
+      };
+    }
+    if (emptyActionsMountPhase === 'revealing') {
+      return {
+        maxHeight: `${Math.max(emptyActionsHeight || 0, 200) + 40}px`,
+        overflow: 'hidden' as const,
+        transition: 'max-height 3s ease',
+      };
+    }
+    return { maxHeight: 'none', overflow: 'hidden' as const };
+  })();
 
   const beginClearing = useCallback(
     (heightOverride?: number) => {
@@ -1450,9 +1492,9 @@ const VavityBitcoin: React.FC = () => {
         const next = node.scrollHeight + 24;
         setInvestmentsWholeHeight((prev) => {
           if (next === prev) return prev;
-          // First-add: freeze whole flight — openInvestmentsSection owns the target.
-          // Mid-ease bumps restart max-height transition (photo pop).
-          if (summaryAnimatingRef.current) return prev;
+          // 9e1f0201: allow height increases while opening (content settles); never shrink
+          // mid-open (that restarts the ease / looks like a pop).
+          if (summaryAnimatingRef.current && next < prev) return prev;
           // Don't shrink the shell mid Show/Hide My Blood (clipped scrollHeight).
           if (bloodPanelAnimatingRef.current && next < prev) return prev;
           return next;
@@ -2625,8 +2667,8 @@ const VavityBitcoin: React.FC = () => {
         setSubmitPanelMaxHeight(start);
       } else {
         // Exact beginClearing model on `.asset-submit-collapse`: pin px → rAF → 0.
-        // Do NOT retarget blood/mount-phase mid-flight — that reflows the photo
-        // (sibling of blood) while the form eases. Delete-all never does that.
+        // 9e1f0201: hide empty shell flag at start; collapsing flags keep the form mounted.
+        setHideEmptyActionsOnSubmit(true);
         emptyActionsHoldRef.current = true;
         if (openInvestmentsDeferTimerRef.current) {
           globalThis.clearTimeout(openInvestmentsDeferTimerRef.current);
@@ -2682,11 +2724,10 @@ const VavityBitcoin: React.FC = () => {
           setShowMoreDisabled(false);
         }, 1500);
       } else {
+        // Shared My Character shell — do not clear maxHeight inline (fights React ease).
         if (addFormPanelRef.current) {
           addFormCollapseAnimRef.current = null;
           addFormPanelRef.current.style.height = '';
-          addFormPanelRef.current.style.maxHeight = '';
-          addFormPanelRef.current.style.overflow = '';
           addFormPanelRef.current.style.willChange = '';
         }
         setAddFormOpen(false);
@@ -2696,8 +2737,6 @@ const VavityBitcoin: React.FC = () => {
         setAddFormSubmitMaxHeight(null);
         setAddFormOuterSubmitMaxHeight(null);
         setAddFormSubmitCollapsing(false);
-        // Hide shell only after the mount-phase ease finishes (not at submit start).
-        setHideEmptyActionsOnSubmit(true);
       }
       if (typeof document !== 'undefined') {
         document.body.style.overflowAnchor = prevBodyOverflowAnchor;
@@ -2706,6 +2745,7 @@ const VavityBitcoin: React.FC = () => {
       if (target === 'add') {
         if (investments.length > 0) {
           emptyActionsHoldRef.current = false;
+          setHideEmptyActionsOnSubmit(false);
         }
       } else {
         setHideEmptyActionsOnSubmit(false);
@@ -2722,10 +2762,9 @@ const VavityBitcoin: React.FC = () => {
       setSubmitPhase('idle');
       setIsSubmitCollapsing(false);
       if (target === 'add' && pendingOpenAfterSubmitRef.current) {
-        // Match delete-all empty→invested handoff: no mount hold after submit.
+        // 9e1f0201: keep pending until this rAF so mount effect won't schedule a 4s hold.
         requestAnimationFrame(() => {
           pendingOpenAfterSubmitRef.current = false;
-          setHideEmptyActionsOnSubmit(false);
           openInvestmentsSection({ skipMountHold: true });
         });
       }
@@ -3637,36 +3676,38 @@ const VavityBitcoin: React.FC = () => {
               </div>
             </div>
         ) : null}
-        {hasInvestmentsUI ? (
-          <>
-            {/* My Character summary only — teaser is not part of this height-down / clear. */}
+        {showMyCharacterShell ? (
+          <div
+            ref={(node) => {
+              investmentsWholePanelRef.current = node;
+              addFormPanelRef.current = node;
+            }}
+            className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-bitcoin' : ''}${!hasInvestmentsUI ? ' asset-submit-collapse' : ''}`}
+            style={myCharacterShellStyle}
+          >
             <div
-              ref={investmentsWholePanelRef}
-              className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-bitcoin' : ''}`}
-              style={{
-                maxHeight: isClearingInvestments ? clearingHeightPx : investmentsWholeMaxHeight,
-                transition: isClearingInvestments ? 'max-height 3s ease' : investmentsWholeTransition,
-                // Match .asset-submit-collapse during first-add height-down (photo in this shell).
-                overflowX: summaryAnimating || isClearingInvestments ? 'hidden' : 'visible',
-                overflowY: 'hidden',
+              ref={(node) => {
+                investmentsWholeContentRef.current = node;
+                emptyActionsMeasureRef.current = node;
               }}
             >
-              <div ref={investmentsWholeContentRef}>
-                {showInvestmentsHeader && (
-                  <h2 className="asset-investments-header">
-                    <span className="asset-portfolio-title-muted">My Character</span>
-                  </h2>
-                )}
-                <div
-                  className={`asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin${
-                    summaryQuickFade ? ' is-quickfade' : ''
-                  }`}
-                >
-                  {isSignedIn && email ? (
-                    <div style={{ paddingTop: 30 }}>
-                      <AlienPhotoSlot assetId={ASSET.id} assetName={ASSET.displayName} />
-                    </div>
-                  ) : null}
+              {(hasInvestmentsUI ? showInvestmentsHeader : true) && (
+                <h2 className="asset-investments-header">
+                  <span className="asset-portfolio-title-muted">My Character</span>
+                </h2>
+              )}
+              <div
+                className={`asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin${
+                  summaryQuickFade ? ' is-quickfade' : ''
+                }`}
+              >
+                {isSignedIn && email ? (
+                  <div style={{ paddingTop: 30 }}>
+                    <AlienPhotoSlot assetId={ASSET.id} assetName={ASSET.displayName} />
+                  </div>
+                ) : null}
+                {hasInvestmentsUI ? (
+                  <>
                   <div className="asset-portfolio-actions asset-portfolio-actions--show asset-portfolio-actions--blood">
                     <button
                       type="button"
@@ -4364,46 +4405,9 @@ const VavityBitcoin: React.FC = () => {
               </div>
                   </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : null}
-        {shouldRenderAddForm && (
-          <div
-            ref={addFormPanelRef}
-            className="asset-submit-collapse"
-            style={
-              (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
-                ? {
-                    maxHeight: `${addFormOuterSubmitMaxHeight}px`,
-                    // Same CSS max-height ease as delete-all beginClearing / empty reveal.
-                    transition: 'max-height 3s ease',
-                    overflow: 'hidden',
-                  }
-                : hideEmptyActionsOnSubmit
-                  ? { maxHeight: '0px', overflow: 'hidden' }
-                  : emptyActionsMountPhase === 'hidden'
-                    ? { maxHeight: '0px', overflow: 'hidden', transition: 'max-height 3s ease' }
-                    : emptyActionsMountPhase === 'revealing'
-                      ? {
-                          maxHeight: `${Math.max(emptyActionsHeight || 0, 200) + 40}px`,
-                          overflow: 'hidden',
-                          transition: 'max-height 3s ease',
-                        }
-                      : { maxHeight: 'none', overflow: 'hidden' }
-            }
-          >
-            <div ref={emptyActionsMeasureRef}>
-              <h2 className="asset-investments-header">
-                <span className="asset-portfolio-title-muted">My Character</span>
-              </h2>
-              <div className="asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin">
-                {isSignedIn && email ? (
-                  <div style={{ paddingTop: 30 }}>
-                    <AlienPhotoSlot assetId={ASSET.id} assetName={ASSET.displayName} />
-                  </div>
-                ) : null}
+                  </>
+                ) : (
+                  <>
                 {!emptyBloodOpen && !addFormSubmitCollapsing ? (
                   <div className="asset-portfolio-actions asset-portfolio-actions--show asset-portfolio-actions--blood">
                     <button
@@ -4448,10 +4452,13 @@ const VavityBitcoin: React.FC = () => {
                     )}
                   </div>
                 </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
-        )}
+        ) : null}
+
         {!showInitialFetchLoader ? <TBARDaily variant="bitcoin" /> : null}
       </div>
     </div>
