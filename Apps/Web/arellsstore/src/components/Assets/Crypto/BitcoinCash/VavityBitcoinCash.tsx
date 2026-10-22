@@ -3069,55 +3069,51 @@ const VavityBitcoinCash: React.FC = () => {
       }, 2000);
       return;
     }
-    // Show: WAAPI 0→h (same easing/duration as hide), then settle to none.
+    // Show: content already mounted under maxHeight 0 — measure + WAAPI immediately
+    // (double-rAF waited for paint and felt like a pause before height-down).
+    const panel = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
+    const content = bloodPanelContentRef.current;
+    if (!panel || !content) {
+      setBloodPanelAnimating(false);
+      return;
+    }
+    panel.getAnimations?.().forEach((a) => a.cancel());
+    const contentH = content.scrollHeight;
+    const h = contentH + 8;
     setBloodPanelExpanding(true);
     setBloodPanelOpen(true);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const panel = bloodPanelContentRef.current?.parentElement as HTMLElement | null;
-        const content = bloodPanelContentRef.current;
-        if (!panel || !content) {
-          setBloodPanelExpanding(false);
-          setBloodPanelAnimating(false);
-          return;
-        }
-        panel.getAnimations?.().forEach((a) => a.cancel());
-        const contentH = content.scrollHeight;
-        const h = contentH + 8;
-        setBloodPanelHeight(h);
-        const whole = investmentsWholeContentRef.current;
-        if (whole) {
-          // Blood is collapsed in layout; grow the outer shell with the same 2s ease.
-          setInvestmentsWholeHeight(whole.scrollHeight + contentH + 24);
-        }
-        panel.style.overflow = 'hidden';
-        panel.style.maxHeight = '0px';
-        const anim = panel.animate([{ maxHeight: '0px' }, { maxHeight: `${h}px` }], {
-          duration: 2000,
-          easing: 'ease',
-          fill: 'forwards',
-        });
-        const settle = () => {
-          if (bloodPanelExpandTimerRef.current != null) {
-            window.clearTimeout(bloodPanelExpandTimerRef.current);
-            bloodPanelExpandTimerRef.current = null;
-          }
-          // Pin none before canceling WAAPI so we don't flash back to React's 0px.
-          panel.style.maxHeight = 'none';
-          panel.style.overflow = 'hidden';
-          panel.getAnimations?.().forEach((a) => a.cancel());
-          setBloodPanelExpanding(false);
-          setBloodPanelAnimating(false);
-          // Drop any open-time fudge so the summary doesn't keep slack below the toggle.
-          const wholeNode = investmentsWholeContentRef.current;
-          if (wholeNode) {
-            setInvestmentsWholeHeight(wholeNode.scrollHeight + 24);
-          }
-        };
-        anim.onfinish = settle;
-        bloodPanelExpandTimerRef.current = window.setTimeout(settle, 2100);
-      });
+    setBloodPanelHeight(h);
+    const whole = investmentsWholeContentRef.current;
+    if (whole) {
+      // Blood is collapsed in layout; grow the outer shell with the same 2s ease.
+      setInvestmentsWholeHeight(whole.scrollHeight + contentH + 24);
+    }
+    panel.style.overflow = 'hidden';
+    panel.style.maxHeight = '0px';
+    const anim = panel.animate([{ maxHeight: '0px' }, { maxHeight: `${h}px` }], {
+      duration: 2000,
+      easing: 'ease',
+      fill: 'forwards',
     });
+    const settle = () => {
+      if (bloodPanelExpandTimerRef.current != null) {
+        window.clearTimeout(bloodPanelExpandTimerRef.current);
+        bloodPanelExpandTimerRef.current = null;
+      }
+      // Pin none before canceling WAAPI so we don't flash back to React's 0px.
+      panel.style.maxHeight = 'none';
+      panel.style.overflow = 'hidden';
+      panel.getAnimations?.().forEach((a) => a.cancel());
+      setBloodPanelExpanding(false);
+      setBloodPanelAnimating(false);
+      // Drop any open-time fudge so the summary doesn't keep slack below the toggle.
+      const wholeNode = investmentsWholeContentRef.current;
+      if (wholeNode) {
+        setInvestmentsWholeHeight(wholeNode.scrollHeight + 24);
+      }
+    };
+    anim.onfinish = settle;
+    bloodPanelExpandTimerRef.current = window.setTimeout(settle, 2100);
   }, [bloodPanelAnimating, bloodPanelOpen, investmentsListOpen, addMoreOpen]);
 
   const openEmptyBlood = useCallback(() => {
