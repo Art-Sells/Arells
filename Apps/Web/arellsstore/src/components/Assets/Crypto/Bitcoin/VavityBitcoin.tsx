@@ -984,18 +984,29 @@ const VavityBitcoin: React.FC = () => {
       setSummaryOpen(true);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          if (investmentsWholePanelRef.current) {
-            void investmentsWholePanelRef.current.offsetHeight;
-          }
+          const panel = investmentsWholePanelRef.current;
           const whole = investmentsWholeContentRef.current;
-          if (whole) {
-            // +40 matches delete-all empty revealing (`emptyActionsHeight + 40`).
-            const h = whole.scrollHeight + 40;
+          if (!whole) return;
+          // Safari: scrollHeight while max-height:0 under-measures. Measure unconstrained,
+          // pin 0, then ease to h. RO must not bump mid-flight (restarts ease → photo pop).
+          let h = whole.scrollHeight + 40;
+          if (panel) {
+            panel.style.transition = 'none';
+            panel.style.maxHeight = 'none';
+            void panel.offsetHeight;
+            h = Math.max(h, whole.scrollHeight + 40);
+            panel.style.maxHeight = '0px';
+            void panel.offsetHeight;
+            panel.style.transition = '';
+            panel.style.maxHeight = '';
+          }
+          setInvestmentsWholeHeight(0);
+          requestAnimationFrame(() => {
             setInvestmentsWholeHeight(h);
             if (h > 0) {
               pendingCircleLoaderDismissCancelRef.current?.();
               pendingCircleLoaderDismissCancelRef.current = runAfterMaxHeightTransitionEnd(
-                investmentsWholePanelRef.current,
+                panel,
                 () => {
                   pendingCircleLoaderDismissCancelRef.current = null;
                   summaryCircleLoaderDismissRef.current?.();
@@ -1003,7 +1014,7 @@ const VavityBitcoin: React.FC = () => {
                 { timeoutMs: 3500 }
               );
             }
-          }
+          });
         });
       });
     };
@@ -1439,9 +1450,9 @@ const VavityBitcoin: React.FC = () => {
         const next = node.scrollHeight + 24;
         setInvestmentsWholeHeight((prev) => {
           if (next === prev) return prev;
-          // Delete-all empty revealing keeps RO live so photo/layout can settle.
-          // Only block SHRINK mid first-add (that restarts the ease / pops).
-          if (summaryAnimatingRef.current && next < prev) return prev;
+          // First-add: freeze whole flight — openInvestmentsSection owns the target.
+          // Mid-ease bumps restart max-height transition (photo pop).
+          if (summaryAnimatingRef.current) return prev;
           // Don't shrink the shell mid Show/Hide My Blood (clipped scrollHeight).
           if (bloodPanelAnimatingRef.current && next < prev) return prev;
           return next;
@@ -3136,7 +3147,6 @@ const VavityBitcoin: React.FC = () => {
   const investmentsSectionMaxHeight = investmentsListOpen
     ? `${investmentsListHeight + investmentsListHeaderHeight + investmentsListBorderHeight + (hasActiveDelete ? 11 : 5)}px`
     : '0px';
-  const bloodPanelMaxHeight = bloodPanelOpen ? `${Math.max(0, bloodPanelHeight)}px` : '0px';
   const emptyBloodMaxHeight = emptyBloodOpen ? `${Math.max(0, emptyBloodHeight)}px` : '0px';
 
   const toggleBloodPanel = useCallback(() => {
@@ -3150,45 +3160,49 @@ const VavityBitcoin: React.FC = () => {
     const content = bloodPanelContentRef.current;
     bloodPanelAnimatingRef.current = true;
     setBloodPanelAnimating(true);
-    // Never use maxHeight:none for invested blood — stay on px so Show/Hide is pure CSS
-    // (0 ↔ measured), same model as empty Add My Blood / My Investments.
-    setBloodPanelExpanding(false);
 
     if (bloodPanelOpen) {
       const closeList = investmentsListOpen;
       const closeAddMore = addMoreOpen;
+      // Pin px (from settled none) then ease to 0 — same as before always-px broke Show Investments.
       const h = Math.max(content?.scrollHeight ?? 0, bloodPanelHeight, 1);
+      setBloodPanelExpanding(true);
       setBloodPanelHeight(h);
       requestAnimationFrame(() => {
-        setBloodPanelOpen(false);
-        bloodPanelExpandTimerRef.current = window.setTimeout(() => {
-          bloodPanelExpandTimerRef.current = null;
-          if (closeList) {
-            setInvestmentsListOpen(false);
-            setShowMoreDisabled(true);
-            if (showMoreDisableTimerRef.current) {
-              globalThis.clearTimeout(showMoreDisableTimerRef.current);
-              showMoreDisableTimerRef.current = null;
+        requestAnimationFrame(() => {
+          setBloodPanelOpen(false);
+          bloodPanelExpandTimerRef.current = window.setTimeout(() => {
+            bloodPanelExpandTimerRef.current = null;
+            if (closeList) {
+              setInvestmentsListOpen(false);
+              setShowMoreDisabled(true);
+              if (showMoreDisableTimerRef.current) {
+                globalThis.clearTimeout(showMoreDisableTimerRef.current);
+                showMoreDisableTimerRef.current = null;
+              }
+              showMoreDisableTimerRef.current = globalThis.setTimeout(() => {
+                showMoreDisableTimerRef.current = null;
+                setShowMoreDisabled(false);
+              }, 2000);
+              window.setTimeout(() => setVisibleInvestments(3), 2000);
             }
-            showMoreDisableTimerRef.current = globalThis.setTimeout(() => {
-              showMoreDisableTimerRef.current = null;
-              setShowMoreDisabled(false);
-            }, 2000);
-            window.setTimeout(() => setVisibleInvestments(3), 2000);
-          }
-          if (closeAddMore) setAddMoreOpen(false);
-          setBloodPanelHeight(0);
-          bloodPanelAnimatingRef.current = false;
-          setBloodPanelAnimating(false);
-          const wholeNode = investmentsWholeContentRef.current;
-          if (wholeNode) {
-            setInvestmentsWholeHeight(wholeNode.scrollHeight + 24);
-          }
-        }, 2000);
+            if (closeAddMore) setAddMoreOpen(false);
+            setBloodPanelHeight(0);
+            setBloodPanelExpanding(false);
+            bloodPanelAnimatingRef.current = false;
+            setBloodPanelAnimating(false);
+            const wholeNode = investmentsWholeContentRef.current;
+            if (wholeNode) {
+              setInvestmentsWholeHeight(wholeNode.scrollHeight + 24);
+            }
+          }, 2000);
+        });
       });
       return;
     }
 
+    // Show: 0 → px, then settle to none so Show Investments can grow without waiting on blood px.
+    setBloodPanelExpanding(true);
     setBloodPanelOpen(true);
     setBloodPanelHeight(0);
     requestAnimationFrame(() => {
@@ -3197,6 +3211,7 @@ const VavityBitcoin: React.FC = () => {
         setBloodPanelHeight(h);
         bloodPanelExpandTimerRef.current = window.setTimeout(() => {
           bloodPanelExpandTimerRef.current = null;
+          setBloodPanelExpanding(false);
           bloodPanelAnimatingRef.current = false;
           setBloodPanelAnimating(false);
         }, 2000);
@@ -3238,6 +3253,8 @@ const VavityBitcoin: React.FC = () => {
 
   useEffect(() => {
     if (!showEmptyCharacterShell || !emptyBloodOpen) return;
+    // First-add height-up: freeze blood px so sibling photo doesn't reflow mid-ease.
+    if (addFormSubmitCollapsing) return;
     const node = emptyBloodContentRef.current;
     if (!node || typeof ResizeObserver === 'undefined') {
       setEmptyBloodHeight((node?.scrollHeight ?? 0) + 8);
@@ -3257,7 +3274,7 @@ const VavityBitcoin: React.FC = () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [showEmptyCharacterShell, emptyBloodOpen, tokenAmount, purchaseDate, submitPhase, formValuesHidden, formCalcHidden]);
+  }, [showEmptyCharacterShell, emptyBloodOpen, addFormSubmitCollapsing, tokenAmount, purchaseDate, submitPhase, formValuesHidden, formCalcHidden]);
 
   useEffect(() => {
     if (!showInvestmentsList) return;
@@ -3663,9 +3680,14 @@ const VavityBitcoin: React.FC = () => {
                   <div
                     className="asset-blood-panel"
                     style={{
-                      // Always px (never none) so Show/Hide can CSS-ease both ways.
-                      maxHeight: bloodPanelMaxHeight,
-                      transition: 'max-height 2s ease',
+                      // Settled open = none so Show Investments isn't clipped waiting on blood px.
+                      // Expanding/hiding uses px + 2s ease (pin before hide from none).
+                      maxHeight: bloodPanelOpen
+                        ? bloodPanelExpanding
+                          ? `${Math.max(0, bloodPanelHeight)}px`
+                          : 'none'
+                        : '0px',
+                      transition: bloodPanelExpanding ? 'max-height 2s ease' : undefined,
                       overflow: 'hidden',
                     }}
                   >
