@@ -986,8 +986,22 @@ const VavityBitcoin: React.FC = () => {
           const panel = investmentsWholePanelRef.current;
           const whole = investmentsWholeContentRef.current;
           if (panel) void panel.offsetHeight;
+          // Mobile Chrome/Safari under-measure scrollHeight while max-height:0.
+          // Children offsetHeights still reflect real layout (no live maxHeight:none).
+          let childSum = 0;
+          if (whole) {
+            for (let i = 0; i < whole.children.length; i += 1) {
+              const child = whole.children[i] as HTMLElement;
+              const cs = window.getComputedStyle(child);
+              childSum +=
+                child.offsetHeight +
+                (parseFloat(cs.marginTop) || 0) +
+                (parseFloat(cs.marginBottom) || 0);
+            }
+          }
+          const measured = Math.max(whole?.scrollHeight ?? 0, childSum);
           // +40 matches emptyActionsMountPhase 'revealing' (delete-all height-down).
-          const h = Math.max((whole?.scrollHeight ?? 0) + 40, 1);
+          const h = Math.max(measured + 40, 1);
           setInvestmentsWholeHeight(h);
           pendingOpenAfterSubmitRef.current = false;
           if (h > 0) {
@@ -1492,9 +1506,9 @@ const VavityBitcoin: React.FC = () => {
         const next = node.scrollHeight + 24;
         setInvestmentsWholeHeight((prev) => {
           if (next === prev) return prev;
-          // 9e1f0201: allow height increases while opening (content settles); never shrink
-          // mid-open (that restarts the ease / looks like a pop).
-          if (summaryAnimatingRef.current && next < prev) return prev;
+          // Open owns the target (children-measure above). Mid-flight RO bumps restart
+          // max-height on mobile WebKit — freeze for the ease, then settle after.
+          if (summaryAnimatingRef.current) return prev;
           // Don't shrink the shell mid Show/Hide My Blood (clipped scrollHeight).
           if (bloodPanelAnimatingRef.current && next < prev) return prev;
           return next;
