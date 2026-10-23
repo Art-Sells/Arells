@@ -12,13 +12,22 @@ export default function BitcoinSeasonTeaser() {
   const [teaserLoaded, setTeaserLoaded] = useState(false);
   const [trailerMounted, setTrailerMounted] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
+  const [trailerSettled, setTrailerSettled] = useState(false);
 
   useEffect(() => {
     if (!trailerMounted || trailerOpen) return;
     // Paint collapsed (0fr) first, then open so grid-template-rows height-downs.
+    setTrailerSettled(false);
     const timer = window.setTimeout(() => setTrailerOpen(true), 0);
     return () => window.clearTimeout(timer);
   }, [trailerMounted, trailerOpen]);
+
+  // Safari sometimes skips transitionend on grid-template-rows; match the 3s ease.
+  useEffect(() => {
+    if (!trailerOpen || trailerSettled) return;
+    const timer = window.setTimeout(() => setTrailerSettled(true), 3100);
+    return () => window.clearTimeout(timer);
+  }, [trailerOpen, trailerSettled]);
 
   return (
     <div className="asset-bitcoin-season-teaser">
@@ -52,7 +61,14 @@ export default function BitcoinSeasonTeaser() {
               </div>
             ) : (
               <div
-                className={`asset-bitcoin-season-teaser-trailer-panel${trailerOpen ? ' is-open' : ''}`}
+                className={`asset-bitcoin-season-teaser-trailer-panel${trailerOpen ? ' is-open' : ''}${
+                  trailerSettled ? ' is-settled' : ''
+                }`}
+                onTransitionEnd={(event) => {
+                  if (event.target !== event.currentTarget) return;
+                  if (event.propertyName !== 'grid-template-rows') return;
+                  if (trailerOpen) setTrailerSettled(true);
+                }}
               >
                 <div className="asset-bitcoin-season-teaser-trailer-panel-height">
                   <div className="asset-bitcoin-season-teaser-trailer">

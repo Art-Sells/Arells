@@ -1529,9 +1529,22 @@ body {
 	grid-template-rows: 1fr;
 }
 
+/* After the height-down eases, drop 0fr/1fr clipping so settings can open upward
+   and viewport resize (e.g. across 750px) doesn’t leave the video bottom chopped. */
+.asset-bitcoin-season-teaser-trailer-panel.is-open.is-settled {
+	grid-template-rows: auto;
+	overflow: visible;
+	transition: none;
+}
+
 .asset-bitcoin-season-teaser-trailer-panel-height {
 	min-height: 0;
 	overflow: hidden;
+}
+
+.asset-bitcoin-season-teaser-trailer-panel.is-open.is-settled .asset-bitcoin-season-teaser-trailer-panel-height {
+	min-height: auto;
+	overflow: visible;
 }
 
 .asset-bitcoin-season-teaser-trailer {
