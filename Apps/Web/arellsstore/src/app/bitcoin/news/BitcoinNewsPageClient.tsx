@@ -301,6 +301,14 @@ const BitcoinNewsPageClient: React.FC = () => {
               </div>
             </div>
           </div>
+          <footer className="asset-footer">
+            <Link
+              className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-show asset-footer-about-button"
+              href="/about"
+            >
+              <span className="asset-footer-about-text">about</span>
+            </Link>
+          </footer>
         </div>
       </div>
       <AssetSummaryCircleLoader
