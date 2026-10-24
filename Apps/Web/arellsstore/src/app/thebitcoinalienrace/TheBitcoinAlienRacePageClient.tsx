@@ -18,8 +18,12 @@ import { runAfterMaxHeightTransitionEnd } from '../../lib/client/documentScroll'
 const PREMIER_POSTER =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
 
-/** Inclusive cutoff: this day and newer = Weekly News; older = Other Updates. */
-const TBAR_NEWS_CUTOFF_FOLDER = '10.23.26';
+/**
+ * Inclusive Weekly News floor — do not bump this when a new week ships.
+ * Weekly News: 10.16.26 and newer (always).
+ * Other Updates: 10.09.26 and older only.
+ */
+const TBAR_NEWS_CUTOFF_FOLDER = '10.16.26';
 const TBAR_HUB_PAGE_SIZE = 6;
 /** Match Hide investments / Grid collapse. */
 const TBAR_HUB_HEIGHT_MS = 2500;
