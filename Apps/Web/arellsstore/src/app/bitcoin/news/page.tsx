@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
-import TheBitcoinAlienRacePageClient from './TheBitcoinAlienRacePageClient';
+import { iconAssetUrl as u } from '../../../lib/iconAssetUrl';
+import BitcoinNewsPageClient from './BitcoinNewsPageClient';
 
-const path = '/thebitcoinalienrace';
-const title = 'The Bitcoin Alien Race';
+const path = '/bitcoin/news';
+const title = 'Bitcoin News';
 const description =
   'In our universe, your Bitcoin investments are lifeless… But in another universe, they are alive, and are on a mission to live forever.';
+/** Same metaposter as the Bitcoin asset page. */
 const banner =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg';
+/** Same favicon as the Bitcoin asset page. */
+const favicon = u('/images/favicons/BtcBadge.svg');
 
 export const metadata: Metadata = {
   title,
@@ -14,6 +18,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
   alternates: {
     canonical: path,
+  },
+  icons: {
+    shortcut: favicon,
+    icon: [
+      { url: favicon, type: 'image/svg+xml' },
+      { url: u('/ArellsIcon.png'), type: 'image/png', sizes: '192x192' },
+    ],
+    apple: [{ url: favicon, type: 'image/svg+xml', sizes: '180x180' }],
   },
   openGraph: {
     title,
@@ -30,8 +42,8 @@ export const metadata: Metadata = {
   },
 };
 
-const TheBitcoinAlienRacePage = () => {
-  return <TheBitcoinAlienRacePageClient />;
+const BitcoinNewsPage = () => {
+  return <BitcoinNewsPageClient />;
 };
 
-export default TheBitcoinAlienRacePage;
+export default BitcoinNewsPage;

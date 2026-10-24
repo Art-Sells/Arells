@@ -17,7 +17,7 @@ export const emailVerifiedWelcomePhaseCopy = {
   /** ≥750px My Investments intro (single line). */
   missionPhaseIntroDesktop: 'We are currently in Phase One of our mission.',
   bitcoinAlienRaceButton: {
-    label: 'The Bitcoin Alien Race',
+    label: 'The Bitcoin Alien Report',
     href: '/bitcoin',
   },
   /** Nested Phase One detail — verified stacked lines. */

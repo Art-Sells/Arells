@@ -21,10 +21,10 @@ export default function TBARDaily({ variant, mountExpand = true }: TBARDailyProp
       <TBARGrid
         days={days}
         theme={theme}
-        imageHref="/thebitcoinalienrace"
+        imageHref="/bitcoin/news"
         usePreviewThumbs
         seekWidthPx={variant === 'bitcoin' ? 100 : undefined}
-        viewMoreHref="/thebitcoinalienrace"
+        viewMoreHref="/bitcoin/news"
         pageSize={TBAR_PAGE_SIZE}
       />
     </TBARLoadReveal>

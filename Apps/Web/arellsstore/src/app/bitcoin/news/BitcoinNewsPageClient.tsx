@@ -1,16 +1,17 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import TBARLoadReveal from '../../components/Assets/Crypto/TBAR/LoadReveal';
-import TBARGrid from '../../components/Assets/Crypto/TBAR/Grid';
-import AssetGuestLanding from '../../components/Assets/shared/AssetGuestLanding';
-import AssetSummaryCircleLoader from '../../components/Assets/shared/AssetSummaryCircleLoader';
-import { useAssetSummaryCircleLoader } from '../../components/Assets/shared/useAssetSummaryCircleLoader';
-import { useUser } from '../../context/UserContext';
-import { useTBAR } from '../../components/Assets/Crypto/TBAR/useTBAR';
-import { useGuestPreview } from '../../hooks/useGuestPreview';
-import { splitTBARDaysAt, tbarThumbCount } from '../../lib/assets/crypto/TBAR/media';
-import { runAfterMaxHeightTransitionEnd } from '../../lib/client/documentScroll';
+import TBARLoadReveal from '../../../components/Assets/Crypto/TBAR/LoadReveal';
+import TBARGrid from '../../../components/Assets/Crypto/TBAR/Grid';
+import AssetGuestLanding from '../../../components/Assets/shared/AssetGuestLanding';
+import AssetSummaryCircleLoader from '../../../components/Assets/shared/AssetSummaryCircleLoader';
+import { useAssetSummaryCircleLoader } from '../../../components/Assets/shared/useAssetSummaryCircleLoader';
+import { useUser } from '../../../context/UserContext';
+import { useTBAR } from '../../../components/Assets/Crypto/TBAR/useTBAR';
+import { useGuestPreview } from '../../../hooks/useGuestPreview';
+import { splitTBARDaysAt, tbarThumbCount } from '../../../lib/assets/crypto/TBAR/media';
+import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
 const PREMIER_POSTER =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
@@ -37,7 +38,7 @@ function measureTBARSectionHeight(
   return Math.ceil(content.scrollHeight + padY);
 }
 
-const TheBitcoinAlienRacePageClient: React.FC = () => {
+const BitcoinNewsPageClient: React.FC = () => {
   const { isSignedIn, authSessionLoading } = useUser();
   const { days, ready } = useTBAR();
   const hasContent = tbarThumbCount(days) > 0;
@@ -203,7 +204,7 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           posterSrc={PREMIER_POSTER}
           posterWidth={2000}
           posterHeight={1166}
-          posterAlt="The Bitcoin Alien Race"
+          posterAlt="Bitcoin News"
           smallIcon
           showTrailer
           hideWordmark
@@ -227,9 +228,23 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
     <>
       <div className="asset-page asset-page--bitcoin bitcoin-alien-race-page">
         <div className="bitcoin-alien-race-page-inner">
-          <h1 className="asset-bitcoin-season-teaser-show-title bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--title asset-guest-mount-slide">
-            The Bitcoin Alien Race
-          </h1>
+          <div className="bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--title asset-guest-mount-slide">
+            <div className="asset-bitcoin-season-teaser-badge">
+              <Link
+                href="/bitcoin"
+                className="myinv-asset-home-card home-asset-bitcoin bitcoin-alien-race-asset-card"
+                aria-label="Bitcoin"
+              >
+                <div className="home-assets-cell home-assets-asset">
+                  <span className="home-asset-label home-asset-label-bitcoin">
+                    <span className="home-asset-name asset-action-button asset-action-button--bitcoin asset-action-button--home-asset-chip">
+                      Bitcoin
+                    </span>
+                  </span>
+                </div>
+              </Link>
+            </div>
+          </div>
           <div className="bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--updates asset-guest-mount-slide">
             <div
               ref={sectionWrapRef}
@@ -245,7 +260,6 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
             >
               <div ref={sectionContentRef} className="bitcoin-tbar-height">
                 <div className="tbar-weekly-news-inner">
-                  <h2 className="asset-bitcoin-season-teaser-season-title">Weekly News</h2>
                   <TBARLoadReveal ready={ready} hasContent={newsHasContent} theme="bitcoin">
                     <TBARGrid days={newsDays} theme="bitcoin" pageSize={TBAR_HUB_PAGE_SIZE} />
                   </TBARLoadReveal>
@@ -299,4 +313,4 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
   );
 };
 
-export default TheBitcoinAlienRacePageClient;
+export default BitcoinNewsPageClient;
