@@ -8,9 +8,7 @@ New Episodes as first
 
 After Episode 2 (or during):
 
-- Make Episode One very small
-
-- If finished early, start path Implement character poster (metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
+- If finished early, start path Implement character poster {FOR BEST RESULTS [show sample photo white mannequin with black features}}: Good lighting, face forward, no smiling or frowning})(metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
 
 - Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
 
