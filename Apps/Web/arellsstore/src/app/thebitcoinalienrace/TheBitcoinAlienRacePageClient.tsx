@@ -1,12 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import TBARLoadReveal from '../../components/Assets/Crypto/TBAR/LoadReveal';
-import AlienRaceThemeMusicPlayer from '../../components/AlienRaceThemeMusicPlayer';
 import TBARGrid from '../../components/Assets/Crypto/TBAR/Grid';
 import AssetGuestLanding from '../../components/Assets/shared/AssetGuestLanding';
-import StorylineOpening from '../../components/StorylineOpening';
 import AssetSummaryCircleLoader from '../../components/Assets/shared/AssetSummaryCircleLoader';
 import { useAssetSummaryCircleLoader } from '../../components/Assets/shared/useAssetSummaryCircleLoader';
 import { useUser } from '../../context/UserContext';
@@ -233,29 +230,6 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
           <h1 className="asset-bitcoin-season-teaser-show-title bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--title asset-guest-mount-slide">
             The Bitcoin Alien Race
           </h1>
-          <div className="bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--storyline asset-guest-mount-slide">
-            <div className="asset-bitcoin-season-teaser-storyline">
-              <StorylineOpening assetName="Bitcoin" className="storyline-opening--bitcoin-teaser" />
-              <div className="asset-bitcoin-season-teaser-asset-block">
-                <h2 className="tbar-date">Asset</h2>
-                <div className="asset-bitcoin-season-teaser-badge">
-                  <Link
-                    href="/bitcoin"
-                    className="myinv-asset-home-card home-asset-bitcoin bitcoin-alien-race-asset-card"
-                    aria-label="Bitcoin"
-                  >
-                    <div className="home-assets-cell home-assets-asset">
-                      <span className="home-asset-label home-asset-label-bitcoin">
-                        <span className="home-asset-name asset-action-button asset-action-button--bitcoin asset-action-button--home-asset-chip">
-                          Bitcoin
-                        </span>
-                      </span>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--updates asset-guest-mount-slide">
             <div
               ref={sectionWrapRef}
@@ -321,7 +295,6 @@ const TheBitcoinAlienRacePageClient: React.FC = () => {
         visible={pageLoader.visible}
         fadingOut={pageLoader.fadingOut}
       />
-      <AlienRaceThemeMusicPlayer />
     </>
   );
 };
