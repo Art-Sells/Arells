@@ -15,7 +15,6 @@ import HomeCryptoAssetRow, { type HomeCryptoAssetRowData } from './Home/HomeCryp
 import HomeMarketSearchCard from './Home/HomeMarketSearchCard';
 import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
 import PortfolioWeeklyGuestPageView from './MyPortfolio/PortfolioWeeklyGuestPageView';
-import SiteSocialFooter from './SiteSocialFooter';
 import {
   CRYPTO_ASSETS,
 } from '../lib/assets/cryptoAssetRegistry';
@@ -683,12 +682,6 @@ const Index = () => {
       ) : null}
 
       {!showLoading && showSignedInHome && <HomeInvestmentsSlideUpCTA />}
-
-      {showSignedInHome && (
-        <div className="home-site-social-footer-spacer">
-          <SiteSocialFooter variant="accent" />
-        </div>
-      )}
     </>
   );
 }

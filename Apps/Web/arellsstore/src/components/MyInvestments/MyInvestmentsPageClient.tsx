@@ -10,7 +10,6 @@ import { useAssetSummaryCircleLoader } from '../Assets/shared/useAssetSummaryCir
 import BloodInfoBadge from '../Assets/shared/BloodInfoBadge';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
-import SiteSocialFooter from '../SiteSocialFooter';
 import MyInvAssetHubPanel from './MyInvAssetHubPanel';
 import MyInvDailyUpdatesPanel from './MyInvDailyUpdatesPanel';
 import PortfolioQuestionsSupport from '../MyPortfolio/PortfolioQuestionsSupport';
@@ -1783,7 +1782,6 @@ const MyInvestmentsPageClient: React.FC = () => {
             <span className="myinv-about-button-text">about</span>
           </Link>
         </div>
-        <SiteSocialFooter variant="accent" />
       </div>
       <AssetSummaryCircleLoader
         cssModifier="myinv"

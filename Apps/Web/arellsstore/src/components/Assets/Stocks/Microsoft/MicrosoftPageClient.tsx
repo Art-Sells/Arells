@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import SiteSocialFooter from '../../../SiteSocialFooter';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
 import AssetQuestionsSupport from '../../shared/AssetQuestionsSupport';
 import Microsoft from './microsoft';
@@ -197,7 +196,6 @@ const MicrosoftPageClient: React.FC = () => {
         </footer>
       )}
       {!authSessionLoading && !isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
-      {!authSessionLoading && !isGuest && <SiteSocialFooter />}
     </div>
   );
 };
