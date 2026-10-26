@@ -10,6 +10,7 @@ import { useAssetSummaryCircleLoader } from '../../../components/Assets/shared/u
 import { useUser } from '../../../context/UserContext';
 import { useTBAR } from '../../../components/Assets/Crypto/TBAR/useTBAR';
 import { useGuestPreview } from '../../../hooks/useGuestPreview';
+import { assetSharePath } from '../../../lib/assets/assetSharePath';
 import { splitTBARDaysAt, tbarThumbCount } from '../../../lib/assets/crypto/TBAR/media';
 import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
@@ -39,7 +40,7 @@ function measureTBARSectionHeight(
 }
 
 const BitcoinNewsPageClient: React.FC = () => {
-  const { isSignedIn, authSessionLoading } = useUser();
+  const { isSignedIn, authSessionLoading, shareId } = useUser();
   const { days, ready } = useTBAR();
   const hasContent = tbarThumbCount(days) > 0;
   /** Mounted in DOM (like showInvestmentsList). */
@@ -231,7 +232,7 @@ const BitcoinNewsPageClient: React.FC = () => {
           <div className="bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--title asset-guest-mount-slide">
             <div className="asset-bitcoin-season-teaser-badge">
               <Link
-                href="/bitcoin"
+                href={assetSharePath('/bitcoin', shareId)}
                 className="myinv-asset-home-card home-asset-bitcoin bitcoin-alien-race-asset-card"
                 aria-label="Bitcoin"
               >

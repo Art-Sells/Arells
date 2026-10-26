@@ -2,17 +2,22 @@ import fs from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
 
-export const ALIEN_COMPOSE_BASE_REL = path.join(
+const ALIEN_COMPOSE_DIR = path.join(
   'public',
   'images',
   'banners',
   'assets',
   'crypto',
   'Bitcoin',
-  'Posters',
-  'BTCBaseAnnouncementPoster.jpg'
+  'AlienCompose'
 );
-export const ALIEN_COMPOSE_IRIS_REL = path.join('public', 'tmp', 'bitcoin-alien-iris-ref.jpg');
+
+/** Launch / share metaposter base (white mannequin). */
+export const ALIEN_COMPOSE_BASE_REL = path.join(ALIEN_COMPOSE_DIR, 'metaposter-base.jpg');
+/** Wide SEASON ONE banner base (white mannequin between SEASON / ONE). */
+export const ALIEN_SEASONONE_BASE_REL = path.join(ALIEN_COMPOSE_DIR, 'seasonone-base.jpg');
+/** Permanent iris color/detail reference (not tmp). */
+export const ALIEN_COMPOSE_IRIS_REL = path.join(ALIEN_COMPOSE_DIR, 'iris-ref.jpg');
 
 /**
  * Grok multi-image edit: <IMAGE_0> base poster (canvas first), <IMAGE_1> selfie, <IMAGE_2> iris.
@@ -48,6 +53,25 @@ export const ALIEN_PORTRAIT_PROMPT = [
   'GENDER FIT: Infer sex presentation from <IMAGE_0>. IF female / feminine: use a feminine-cut orange jacket (softer shoulder, tailored/fitted waist, feminine collar/zipper proportions) and feminine head-and-shoulders body proportions consistent with <IMAGE_0>. IF male / masculine: keep a standard menswear orange jacket cut and masculine body proportions (do not feminize).',
   'JACKET COLOR (CRITICAL — COLOR LOCK): The jacket MUST be the exact same rust-orange / Bitcoin orange as the Personal Bitcoin Alien wardrobe — same hue, saturation, and brightness. Feminine cut may change shape/fit only. NEVER recolor the jacket (no pink, red, brown, black, beige, or any other color).',
   'Head-and-shoulders framing for a wide 2:1 image. No extra text, logos, or watermarks.',
+].join(' ');
+
+/**
+ * Wide SEASON ONE banner edit.
+ * <IMAGE_0> SeasonOne banner, <IMAGE_1> selfie, <IMAGE_2> iris.
+ */
+export const ALIEN_SEASONONE_PROMPT = [
+  'EDIT TASK (not a new generation): Start from <IMAGE_0> and change as little as possible.',
+  'OUTPUT MUST still be the same ultra-wide SEASON ONE banner as <IMAGE_0> — same beige background, same large SEASON and ONE lettering, same girl on the left, same bearded man in the center, same framing, same warm lighting, same rust-orange jacket family on the RIGHT white-mannequin figure (jacket cut may become feminine if <IMAGE_1> is female — see GENDER FIT), same gold A necklace.',
+  'TEXT: Keep SEASON and ONE lettering exactly as in <IMAGE_0> (same words, spelling, placement, size, color). Do NOT add any new words, titles, captions, watermarks, logos, or gibberish.',
+  'Replace ONLY the featureless matte-white silhouette head (and any white hands/skin) on the RIGHT figure. Do NOT replace Sam or Leila. Do NOT replace the background. Do NOT crop away the SEASON / ONE text.',
+  'IDENTITY: Fill that white head/hands with an unmistakable photorealistic likeness of the person in <IMAGE_1> — same face shape, bone structure, nose, lips, ears, mustache/facial hair when present, hair or shaved head/hairline, skin tone, skin texture, and age.',
+  'HANDS (REQUIRED — COLOR LOCK): Any visible hands on the right figure MUST match the finished face skin tone from <IMAGE_1>. NEVER leave hands matte-white or mannequin-white.',
+  'HEAD SIZE: Keep the finished head proportional to the orange jacket and the banner crop — not oversized. Do NOT fill a huge white oval.',
+  'IRIS: For the right character only, natural non-glowing amber/burnt-orange irises matching <IMAGE_2> — matte photorealistic, no bloom, no glow. Leave Sam and Leila eyes unchanged.',
+  'MAKEUP: For the right character only — IF <IMAGE_1> appears female / already wears lipstick or eyeliner, Bitcoin-orange lipstick and eyeliner. IF male / masculine or bare-faced, do NOT add makeup.',
+  'GENDER FIT: Infer sex presentation from <IMAGE_1>. IF female / feminine: feminine orange jacket cut + feminine body proportions consistent with <IMAGE_1>. IF male / masculine: keep jacket cut and body as in <IMAGE_0> (do not feminize). Leave Sam and Leila unchanged.',
+  'JACKET COLOR (CRITICAL — COLOR LOCK): The right figure\'s jacket MUST stay the exact same rust-orange / Bitcoin orange as in <IMAGE_0> — same hue, saturation, and brightness. Feminine cut may change shape/fit only. NEVER recolor the jacket.',
+  'If unsure, keep more of <IMAGE_0> unchanged and only swap the white silhouette regions.',
 ].join(' ');
 
 /** Re-encode to a clean sRGB JPEG. */
@@ -201,7 +225,7 @@ export async function composePersonalBitcoinAlien(args: {
   irisMime: string;
 }): Promise<Buffer> {
   const [baseJpeg, identityJpeg, irisJpeg] = await Promise.all([
-    toCleanJpeg(args.base),
+    toCleanJpeg(args.base, 2048),
     toIdentityJpeg(args.selfie),
     toCleanJpeg(args.iris),
   ]);
@@ -214,6 +238,29 @@ export async function composePersonalBitcoinAlien(args: {
       { url: toDataUri(irisJpeg), type: 'image_url' },
     ],
     aspectRatio: '3:2',
+  });
+}
+
+/** Ultra-wide SEASON ONE banner with mannequin replaced. */
+export async function composePersonalBitcoinAlienSeasonOne(args: {
+  selfie: Buffer;
+  base: Buffer;
+  iris: Buffer;
+}): Promise<Buffer> {
+  const [baseJpeg, identityJpeg, irisJpeg] = await Promise.all([
+    toCleanJpeg(args.base, 2660),
+    toIdentityJpeg(args.selfie),
+    toCleanJpeg(args.iris),
+  ]);
+
+  return grokImageEdit({
+    prompt: ALIEN_SEASONONE_PROMPT,
+    images: [
+      { url: toDataUri(baseJpeg), type: 'image_url' },
+      { url: toDataUri(identityJpeg), type: 'image_url' },
+      { url: toDataUri(irisJpeg), type: 'image_url' },
+    ],
+    aspectRatio: '21:9',
   });
 }
 

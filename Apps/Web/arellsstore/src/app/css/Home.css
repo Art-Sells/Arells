@@ -1416,6 +1416,38 @@ body {
 	}
 }
 
+.asset-alien-photo-slot.is-busy,
+.asset-alien-photo-hit:disabled {
+	cursor: wait;
+	opacity: 0.85;
+}
+
+.asset-alien-photo-busy {
+	display: block;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	border: 2px solid rgba(248, 141, 0, 0.25);
+	border-top-color: rgba(248, 141, 0, 0.95);
+	animation: asset-alien-photo-spin 0.7s linear infinite;
+}
+
+@keyframes asset-alien-photo-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.asset-alien-photo-error {
+	margin: 8px 4px 0;
+	padding: 0;
+	font-size: 12px;
+	line-height: 15px;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: #b42318;
+}
+
 .asset-bitcoin-season-teaser {
 	width: 100%;
 	box-sizing: border-box;
@@ -6905,6 +6937,44 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 
 .blood-overlay-card--coming-soon {
 	height: 300px;
+}
+
+.blood-overlay-card--alien-meta {
+	height: auto;
+	min-height: 300px;
+	max-height: min(90vh, 640px);
+	padding: 22px 18px 18px;
+	overflow: auto;
+}
+
+.asset-alien-meta-preview {
+	display: block;
+	width: 100%;
+	max-width: 280px;
+	margin: 4px auto 0;
+	border-radius: 10px;
+	object-fit: cover;
+	aspect-ratio: 2 / 3;
+	background: rgba(0, 0, 0, 0.04);
+}
+
+.asset-alien-share-hint {
+	margin: 10px 0 0;
+	padding: 0 6px;
+	box-sizing: border-box;
+	width: 100%;
+	font-size: 11px;
+	line-height: 14px;
+	letter-spacing: -0.2px;
+	color: #111;
+	opacity: 0.55;
+	text-align: center;
+	word-break: break-all;
+}
+
+.asset-alien-share-hint span {
+	font-weight: 600;
+	opacity: 0.9;
 }
 
 .blood-overlay-card.myinv-accent-border {

@@ -6,18 +6,30 @@ const ASSET = CRYPTO_ASSET_BY_ID.bitcoin;
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
 import AssetQuestionsSupport from '../../shared/AssetQuestionsSupport';
 import Bitcoin from './bitcoin';
 import { useUser } from '../../../../context/UserContext';
 import { useGuestPreview } from '../../../../hooks/useGuestPreview';
+import { assetSharePath } from '../../../../lib/assets/assetSharePath';
 
 const BitcoinPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
-  const { email, isSignedIn, authSessionLoading } = useUser();
+  const { email, isSignedIn, authSessionLoading, shareId } = useUser();
   const guestPreview = useGuestPreview();
   const isGuest = guestPreview || (!authSessionLoading && !email && !isSignedIn);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authSessionLoading || !isSignedIn || !shareId) return;
+    const path = (pathname || '').replace(/\/+$/, '') || '/';
+    if (path === '/bitcoin') {
+      router.replace(assetSharePath('/bitcoin', shareId));
+    }
+  }, [authSessionLoading, isSignedIn, pathname, router, shareId]);
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
 

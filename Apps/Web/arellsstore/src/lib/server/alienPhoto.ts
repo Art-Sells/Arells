@@ -16,9 +16,14 @@ export function alienPhotoKey(email: string, asset: string): string {
   return `users/${normalizeEmailKey(email)}/aliens/${asset}`;
 }
 
-/** Personalized Season One poster after compose. */
+/** Personalized launch / share metaposter after compose. */
 export function alienComposedKey(email: string, asset: string): string {
   return `users/${normalizeEmailKey(email)}/aliens/${asset}-composed`;
+}
+
+/** Personalized SEASON ONE banner after compose. */
+export function alienSeasonOneKey(email: string, asset: string): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}-seasonone`;
 }
 
 /** Wide 2:1 Personal Bitcoin Alien portrait. */
@@ -31,19 +36,21 @@ export function alienQuotaKey(email: string, asset: string): string {
   return `users/${normalizeEmailKey(email)}/aliens/${asset}-quota.json`;
 }
 
-export type AlienPhotoKind = 'selfie' | 'composed' | 'portrait';
+export type AlienPhotoKind = 'selfie' | 'composed' | 'portrait' | 'seasonone';
 
 export function normalizeAlienPhotoKind(raw: unknown): AlienPhotoKind {
   if (typeof raw !== 'string') return 'selfie';
   const kind = raw.trim().toLowerCase();
-  if (kind === 'composed') return 'composed';
+  if (kind === 'composed' || kind === 'metaposter') return 'composed';
   if (kind === 'portrait') return 'portrait';
+  if (kind === 'seasonone' || kind === 'season-one') return 'seasonone';
   return 'selfie';
 }
 
 export function alienPhotoObjectKey(email: string, asset: string, kind: AlienPhotoKind = 'selfie'): string {
   if (kind === 'composed') return alienComposedKey(email, asset);
   if (kind === 'portrait') return alienPortraitKey(email, asset);
+  if (kind === 'seasonone') return alienSeasonOneKey(email, asset);
   return alienPhotoKey(email, asset);
 }
 

@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import VideoPlayer from '../../../VideoPlayer';
+import { useUser } from '../../../../context/UserContext';
+import { ALIEN_COMPOSE_DONE_EVENT } from '../../../../lib/assets/assetSharePath';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/videos';
 import { EPISODE_ONE_POSTER, EPISODE_ONE_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodeone';
 
@@ -9,20 +11,59 @@ const SEASON_ONE_TEASER_SRC =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/SeasonOneCopy.jpg';
 
 export default function BitcoinSeasonTeaser() {
+  const { isSignedIn } = useUser();
   const [teaserLoaded, setTeaserLoaded] = useState(false);
+  const [teaserSrc, setTeaserSrc] = useState(SEASON_ONE_TEASER_SRC);
   const [trailerMounted, setTrailerMounted] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [trailerSettled, setTrailerSettled] = useState(false);
 
+  const loadPersonalizedSeasonOne = useCallback(async () => {
+    if (!isSignedIn) {
+      setTeaserSrc(SEASON_ONE_TEASER_SRC);
+      return;
+    }
+    try {
+      const res = await fetch('/api/user/alien-photo?asset=bitcoin&kind=seasonone', {
+        credentials: 'include',
+        cache: 'no-store',
+      });
+      if (!res.ok) {
+        setTeaserSrc(SEASON_ONE_TEASER_SRC);
+        return;
+      }
+      const blob = await res.blob();
+      setTeaserSrc((prev) => {
+        if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return URL.createObjectURL(blob);
+      });
+      setTeaserLoaded(false);
+    } catch {
+      setTeaserSrc(SEASON_ONE_TEASER_SRC);
+    }
+  }, [isSignedIn]);
+
+  useEffect(() => {
+    void loadPersonalizedSeasonOne();
+  }, [loadPersonalizedSeasonOne]);
+
+  useEffect(() => {
+    const onDone = (event: Event) => {
+      const detail = (event as CustomEvent<{ assetId?: string }>).detail;
+      if (detail?.assetId && detail.assetId !== 'bitcoin') return;
+      void loadPersonalizedSeasonOne();
+    };
+    window.addEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
+    return () => window.removeEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
+  }, [loadPersonalizedSeasonOne]);
+
   useEffect(() => {
     if (!trailerMounted || trailerOpen) return;
-    // Paint collapsed (0fr) first, then open so grid-template-rows height-downs.
     setTrailerSettled(false);
     const timer = window.setTimeout(() => setTrailerOpen(true), 0);
     return () => window.clearTimeout(timer);
   }, [trailerMounted, trailerOpen]);
 
-  // Safari sometimes skips transitionend on grid-template-rows; match the 3s ease.
   useEffect(() => {
     if (!trailerOpen || trailerSettled) return;
     const timer = window.setTimeout(() => setTrailerSettled(true), 3100);
@@ -40,7 +81,7 @@ export default function BitcoinSeasonTeaser() {
               </div>
             ) : null}
             <img
-              src={SEASON_ONE_TEASER_SRC}
+              src={teaserSrc}
               alt="Season One coming soon"
               width={2660}
               height={382}

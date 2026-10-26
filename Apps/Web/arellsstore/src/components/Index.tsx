@@ -18,6 +18,7 @@ import PortfolioWeeklyGuestPageView from './MyPortfolio/PortfolioWeeklyGuestPage
 import {
   CRYPTO_ASSETS,
 } from '../lib/assets/cryptoAssetRegistry';
+import { assetSharePath } from '../lib/assets/assetSharePath';
 import { compareByMarketCapDesc, latestLiquidMarketCap } from '../lib/assets/marketCapSort';
 
 const VISIBLE_HOME_CRYPTO = CRYPTO_ASSETS.filter((a) => a.id === 'bitcoin');
@@ -35,7 +36,7 @@ const Index = () => {
   });
   const { getAsset, loadMoreAssets } = useVavity();
   const visibleAssetCount = VISIBLE_HOME_CRYPTO.length;
-  const { email } = useUser();
+  const { email, shareId } = useUser();
   const guestPreview = useGuestPreview();
   const forceHomeInvestmentsPreview = false;
   const showGuestLanding = guestPreview || (!email && !forceHomeInvestmentsPreview);
@@ -404,7 +405,7 @@ const Index = () => {
         id: asset.id,
         label: asset.label,
         ticker: asset.ticker,
-        href: asset.href,
+        href: assetSharePath(asset.href, shareId),
         solidPrice,
         liquidPrice,
         solidChange1w: getPercentChange(solidHistory, 7),
@@ -415,7 +416,7 @@ const Index = () => {
         liquidChangeAll: getPercentChange(liquidHistory),
       };
     },
-    [getAsset]
+    [getAsset, shareId]
   );
 
   useEffect(() => {

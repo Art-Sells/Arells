@@ -4,8 +4,10 @@ import { getSessionFromRequest } from '../../../lib/auth/session';
 import {
   ALIEN_COMPOSE_BASE_REL,
   ALIEN_COMPOSE_IRIS_REL,
+  ALIEN_SEASONONE_BASE_REL,
   composePersonalBitcoinAlien,
   composePersonalBitcoinAlienPortrait,
+  composePersonalBitcoinAlienSeasonOne,
   readAlienComposeRef,
 } from '../../../lib/server/alienCompose';
 import {
@@ -13,6 +15,7 @@ import {
   alienPhotoKey,
   alienPortraitKey,
   alienQuotaKey,
+  alienSeasonOneKey,
   isMissingS3Object,
   normalizeAlienPhotoAsset,
   normalizeQuotaRecord,
@@ -136,24 +139,45 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const iris = await readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL);
 
     if (mode === 'full') {
-      const base = await readAlienComposeRef(ALIEN_COMPOSE_BASE_REL);
-      const composed = await composePersonalBitcoinAlien({
-        selfie: selfieBuf,
-        selfieMime: 'image/jpeg',
-        base: base.buffer,
-        baseMime: base.mime,
-        iris: iris.buffer,
-        irisMime: iris.mime,
-      });
-      await s3
-        .putObject({
-          Bucket: bucket,
-          Key: alienComposedKey(allowed, asset),
-          Body: composed,
-          ContentType: 'image/jpeg',
-          ACL: 'private',
-        })
-        .promise();
+      const [metaBase, seasonBase] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_BASE_REL),
+        readAlienComposeRef(ALIEN_SEASONONE_BASE_REL),
+      ]);
+      const [composed, seasonOne] = await Promise.all([
+        composePersonalBitcoinAlien({
+          selfie: selfieBuf,
+          selfieMime: 'image/jpeg',
+          base: metaBase.buffer,
+          baseMime: metaBase.mime,
+          iris: iris.buffer,
+          irisMime: iris.mime,
+        }),
+        composePersonalBitcoinAlienSeasonOne({
+          selfie: selfieBuf,
+          base: seasonBase.buffer,
+          iris: iris.buffer,
+        }),
+      ]);
+      await Promise.all([
+        s3
+          .putObject({
+            Bucket: bucket,
+            Key: alienComposedKey(allowed, asset),
+            Body: composed,
+            ContentType: 'image/jpeg',
+            ACL: 'private',
+          })
+          .promise(),
+        s3
+          .putObject({
+            Bucket: bucket,
+            Key: alienSeasonOneKey(allowed, asset),
+            Body: seasonOne,
+            ContentType: 'image/jpeg',
+            ACL: 'private',
+          })
+          .promise(),
+      ]);
     }
 
     const portrait = await composePersonalBitcoinAlienPortrait({
