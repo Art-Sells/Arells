@@ -2,7 +2,6 @@ import { normalizeEmailKey } from '../auth/normalize';
 
 export const ALIEN_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
 export const ALIEN_PHOTO_ASSETS = new Set(['bitcoin']);
-export const ALIEN_REPLACE_LIMIT_PER_MONTH = 4;
 
 export type AlienPhotoMime = 'image/jpeg' | 'image/png' | 'image/webp';
 
@@ -31,11 +30,6 @@ export function alienPortraitKey(email: string, asset: string): string {
   return `users/${normalizeEmailKey(email)}/aliens/${asset}-portrait`;
 }
 
-/** Monthly replace quota: { month: "YYYY-MM", count: number }. */
-export function alienQuotaKey(email: string, asset: string): string {
-  return `users/${normalizeEmailKey(email)}/aliens/${asset}-quota.json`;
-}
-
 export type AlienPhotoKind = 'selfie' | 'composed' | 'portrait' | 'seasonone';
 
 export function normalizeAlienPhotoKind(raw: unknown): AlienPhotoKind {
@@ -52,61 +46,6 @@ export function alienPhotoObjectKey(email: string, asset: string, kind: AlienPho
   if (kind === 'portrait') return alienPortraitKey(email, asset);
   if (kind === 'seasonone') return alienSeasonOneKey(email, asset);
   return alienPhotoKey(email, asset);
-}
-
-export type AlienQuotaState = {
-  month: string;
-  count: number;
-  limit: number;
-  remaining: number;
-  exhausted: boolean;
-  /** e.g. "October" — the next calendar month name when exhausted */
-  nextMonthLabel: string;
-};
-
-export function currentQuotaMonthKey(now = new Date()): string {
-  const y = now.getUTCFullYear();
-  const m = String(now.getUTCMonth() + 1).padStart(2, '0');
-  return `${y}-${m}`;
-}
-
-export function nextCalendarMonthLabel(now = new Date()): string {
-  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
-  return d.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
-}
-
-export function normalizeQuotaRecord(
-  raw: unknown,
-  now = new Date()
-): { month: string; count: number } {
-  const month = currentQuotaMonthKey(now);
-  if (!raw || typeof raw !== 'object') {
-    return { month, count: 0 };
-  }
-  const rec = raw as { month?: unknown; count?: unknown };
-  const storedMonth = typeof rec.month === 'string' ? rec.month : '';
-  const storedCount = typeof rec.count === 'number' && Number.isFinite(rec.count) ? rec.count : 0;
-  if (storedMonth !== month) {
-    return { month, count: 0 };
-  }
-  return { month, count: Math.max(0, Math.floor(storedCount)) };
-}
-
-export function toAlienQuotaState(
-  record: { month: string; count: number },
-  now = new Date()
-): AlienQuotaState {
-  const limit = ALIEN_REPLACE_LIMIT_PER_MONTH;
-  const count = record.count;
-  const remaining = Math.max(0, limit - count);
-  return {
-    month: record.month,
-    count,
-    limit,
-    remaining,
-    exhausted: remaining <= 0,
-    nextMonthLabel: nextCalendarMonthLabel(now),
-  };
 }
 
 export function sniffAlienPhotoMime(buf: Buffer): AlienPhotoMime | null {

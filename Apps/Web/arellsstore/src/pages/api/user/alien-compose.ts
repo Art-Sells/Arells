@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { assertUserEmailMatchesSession } from '../../../lib/auth/requireUserApi';
-import { getSessionFromRequest } from '../../../lib/auth/session';
 import {
   ALIEN_COMPOSE_BASE_REL,
   ALIEN_COMPOSE_IRIS_REL,
@@ -14,14 +13,10 @@ import {
   alienComposedKey,
   alienPhotoKey,
   alienPortraitKey,
-  alienQuotaKey,
   alienSeasonOneKey,
   isMissingS3Object,
   normalizeAlienPhotoAsset,
-  normalizeQuotaRecord,
   sniffAlienPhotoMime,
-  toAlienQuotaState,
-  type AlienQuotaState,
 } from '../../../lib/server/alienPhoto';
 import { getServerS3 } from '../../../lib/server/awsS3';
 import { s3BucketNameOrThrow } from '../../../lib/server/s3Bucket';
@@ -35,41 +30,6 @@ export const config = {
     },
   },
 };
-
-async function readQuota(
-  bucket: string,
-  email: string,
-  asset: string
-): Promise<{ month: string; count: number }> {
-  try {
-    const obj = await s3.getObject({ Bucket: bucket, Key: alienQuotaKey(email, asset) }).promise();
-    const text = obj.Body ? obj.Body.toString('utf8') : '{}';
-    return normalizeQuotaRecord(JSON.parse(text));
-  } catch (err) {
-    if (isMissingS3Object(err)) {
-      return normalizeQuotaRecord(null);
-    }
-    throw err;
-  }
-}
-
-async function writeQuota(
-  bucket: string,
-  email: string,
-  asset: string,
-  record: { month: string; count: number }
-): Promise<AlienQuotaState> {
-  await s3
-    .putObject({
-      Bucket: bucket,
-      Key: alienQuotaKey(email, asset),
-      Body: JSON.stringify(record),
-      ContentType: 'application/json',
-      ACL: 'private',
-    })
-    .promise();
-  return toAlienQuotaState(record);
-}
 
 async function loadSelfie(bucket: string, email: string, asset: string): Promise<Buffer> {
   const selfieObj = await s3.getObject({ Bucket: bucket, Key: alienPhotoKey(email, asset) }).promise();
@@ -87,25 +47,6 @@ async function loadSelfie(bucket: string, email: string, asset: string): Promise
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'GET') {
-    const session = await getSessionFromRequest(req);
-    if (!session) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-    const rawAsset = Array.isArray(req.query.asset) ? req.query.asset[0] : req.query.asset;
-    const asset = normalizeAlienPhotoAsset(rawAsset) || (rawAsset ? null : 'bitcoin');
-    if (!asset) {
-      return res.status(400).json({ error: 'Unsupported asset' });
-    }
-    try {
-      const record = await readQuota(s3BucketNameOrThrow(), session.email, asset);
-      return res.status(200).json({ quota: toAlienQuotaState(record) });
-    } catch (err) {
-      console.error('alien-compose GET quota', err);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
-
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -126,15 +67,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const bucket = s3BucketNameOrThrow();
 
   try {
-    const quotaRecord = await readQuota(bucket, allowed, asset);
-    const quotaBefore = toAlienQuotaState(quotaRecord);
-    if (quotaBefore.exhausted) {
-      return res.status(429).json({
-        error: `Wait until ${quotaBefore.nextMonthLabel} to replace photo`,
-        quota: quotaBefore,
-      });
-    }
-
     const selfieBuf = await loadSelfie(bucket, allowed, asset);
     const iris = await readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL);
 
@@ -194,13 +126,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       })
       .promise();
 
-    const nextRecord = {
-      month: quotaRecord.month,
-      count: quotaRecord.count + 1,
-    };
-    const quota = await writeQuota(bucket, allowed, asset, nextRecord);
-
-    return res.status(200).json({ ok: true, mode, quota });
+    return res.status(200).json({ ok: true, mode });
   } catch (err) {
     if (isMissingS3Object(err)) {
       return res.status(404).json({ error: 'Upload a face photo first' });

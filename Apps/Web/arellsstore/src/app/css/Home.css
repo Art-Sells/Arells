@@ -1709,7 +1709,7 @@ body {
 }
 
 .asset-bitcoin-season-teaser-frame:not(.is-loaded) {
-	aspect-ratio: 2660 / 382;
+	aspect-ratio: 4561 / 1091;
 }
 
 .asset-bitcoin-season-teaser-loader {
@@ -6909,9 +6909,13 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	background: rgba(255, 255, 255, 0.86);
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	/* flex-start + card margin:auto so tall modals stay scrollable (center clips top). */
+	align-items: flex-start;
 	padding: 16px;
+	overflow-x: hidden;
 	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
 	z-index: 2500;
 	box-sizing: border-box;
 	font-family: Arial, sans-serif;
@@ -6931,6 +6935,9 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	align-items: center;
 	justify-content: flex-start;
 	gap: 16px;
+	margin-top: auto;
+	margin-bottom: auto;
+	flex-shrink: 0;
 	animation: pageSlideUp 1s ease both;
 	will-change: transform, opacity;
 }
@@ -6940,41 +6947,36 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 }
 
 .blood-overlay-card--alien-meta {
+	width: 260px;
 	height: auto;
-	min-height: 300px;
-	max-height: min(90vh, 640px);
-	padding: 22px 18px 18px;
-	overflow: auto;
+	min-height: 0;
+	max-height: none;
+	padding: 15px 10px 11px;
+	border-radius: 12px;
+	overflow: visible;
+	flex-shrink: 0;
+	gap: 0;
+}
+
+@media (max-height: 499px) {
+	.blood-overlay-card--alien-meta {
+		max-height: none;
+		overflow: visible;
+		flex-shrink: 0;
+	}
 }
 
 .asset-alien-meta-preview {
 	display: block;
-	width: 100%;
-	max-width: 280px;
-	margin: 4px auto 0;
+	width: calc(100% - 10px);
+	max-width: none;
+	height: auto;
+	margin: 2px auto 0;
 	border-radius: 10px;
-	object-fit: cover;
-	aspect-ratio: 2 / 3;
-	background: rgba(0, 0, 0, 0.04);
-}
-
-.asset-alien-share-hint {
-	margin: 10px 0 0;
-	padding: 0 6px;
+	border: 1px solid color-mix(in srgb, var(--asset-hover-dot-color, var(--asset-line-color, rgb(209, 142, 55))) 35%, transparent);
 	box-sizing: border-box;
-	width: 100%;
-	font-size: 11px;
-	line-height: 14px;
-	letter-spacing: -0.2px;
-	color: #111;
-	opacity: 0.55;
-	text-align: center;
-	word-break: break-all;
-}
-
-.asset-alien-share-hint span {
-	font-weight: 600;
-	opacity: 0.9;
+	object-fit: contain;
+	background: rgba(0, 0, 0, 0.04);
 }
 
 .blood-overlay-card.myinv-accent-border {

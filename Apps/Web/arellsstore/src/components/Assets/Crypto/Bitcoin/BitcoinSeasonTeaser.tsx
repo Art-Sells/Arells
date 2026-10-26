@@ -83,8 +83,8 @@ export default function BitcoinSeasonTeaser() {
             <img
               src={teaserSrc}
               alt="Season One coming soon"
-              width={2660}
-              height={382}
+              width={4561}
+              height={1091}
               className={`asset-bitcoin-season-teaser-img${teaserLoaded ? ' is-visible' : ''}`}
               onLoad={() => setTeaserLoaded(true)}
             />

@@ -69,7 +69,6 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [metaUrl, setMetaUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [successOpen, setSuccessOpen] = useState(false);
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
@@ -107,13 +106,11 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
 
   const openPicker = useCallback(() => {
     setOverlayStyle(themeStyleFrom(triggerRef.current));
-    setError(null);
     if (assetId !== 'bitcoin') {
       setComingSoonOpen(true);
       return;
     }
     if (!isSignedIn || !email) {
-      setError('Sign in to add your character');
       return;
     }
     fileInputRef.current?.click();
@@ -125,7 +122,6 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       event.target.value = '';
       if (!file || !email) return;
       setBusy(true);
-      setError(null);
       try {
         const data = await fileToDataUrl(file);
         const uploadRes = await fetch('/api/user/alien-photo', {
@@ -180,7 +176,8 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           })
         );
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Something went wrong');
+        // Fail silently in UI — keep busy spinner off only.
+        console.error('alien photo upload/compose', err);
       } finally {
         setBusy(false);
       }
@@ -201,7 +198,9 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
     router.push(href);
   }, [assetId, router, shareId]);
 
+  const hasCharacter = Boolean(portraitUrl);
   const emptyLabel = EMPTY_LABEL_LINES.join(' ');
+  const hitLabel = hasCharacter ? 'Replace character photo' : emptyLabel;
   const thumbSrc = portraitUrl || PLACEHOLDER_SRC;
 
   return (
@@ -225,7 +224,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         disabled={busy}
         aria-expanded={successOpen || comingSoonOpen}
         aria-haspopup="dialog"
-        aria-label={emptyLabel}
+        aria-label={hitLabel}
       >
         <span className="asset-alien-photo-slot-placeholder-wrap">
           <img
@@ -235,24 +234,26 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
             aria-hidden="true"
           />
         </span>
-        <span className="asset-alien-photo-label">
-          {EMPTY_LABEL_LINES_DESKTOP.map((line) => (
-            <span
-              key={`desktop-${line}`}
-              className="asset-alien-photo-label-line asset-alien-photo-label-line--desktop"
-            >
-              {line}
-            </span>
-          ))}
-          {EMPTY_LABEL_LINES.map((line) => (
-            <span
-              key={`mobile-${line}`}
-              className="asset-alien-photo-label-line asset-alien-photo-label-line--mobile"
-            >
-              {line}
-            </span>
-          ))}
-        </span>
+        {!hasCharacter ? (
+          <span className="asset-alien-photo-label">
+            {EMPTY_LABEL_LINES_DESKTOP.map((line) => (
+              <span
+                key={`desktop-${line}`}
+                className="asset-alien-photo-label-line asset-alien-photo-label-line--desktop"
+              >
+                {line}
+              </span>
+            ))}
+            {EMPTY_LABEL_LINES.map((line) => (
+              <span
+                key={`mobile-${line}`}
+                className="asset-alien-photo-label-line asset-alien-photo-label-line--mobile"
+              >
+                {line}
+              </span>
+            ))}
+          </span>
+        ) : null}
         <span className="asset-alien-photo-plus" aria-hidden="true">
           {busy ? (
             <span className="asset-alien-photo-busy" />
@@ -266,7 +267,6 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           )}
         </span>
       </button>
-      {error ? <p className="asset-alien-photo-error">{error}</p> : null}
       {mounted && comingSoonOpen
         ? createPortal(
             <div
@@ -312,27 +312,14 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
                 className="blood-overlay-card blood-overlay-card--alien-meta"
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby={`${titleId}-success`}
+                aria-label="Character added"
                 onClick={(event) => event.stopPropagation()}
               >
-                <p id={`${titleId}-success`} className="blood-overlay-copy">
-                  <span className="blood-overlay-line">You&apos;re in The Bitcoin Alien Race</span>
-                </p>
                 <img
                   className="asset-alien-meta-preview"
                   src={metaUrl}
                   alt="Your personalized Bitcoin Alien Race poster"
                 />
-                {shareId ? (
-                  <p className="asset-alien-share-hint">
-                    Share link:{' '}
-                    <span>
-                      {typeof window !== 'undefined'
-                        ? `${window.location.origin}${assetSharePath('/bitcoin', shareId)}`
-                        : assetSharePath('/bitcoin', shareId)}
-                    </span>
-                  </p>
-                ) : null}
                 <button type="button" className="asset-range-button blood-ok" onClick={onSuccessOk}>
                   Ok
                 </button>
