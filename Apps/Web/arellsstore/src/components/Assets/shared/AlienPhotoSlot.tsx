@@ -70,8 +70,10 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   const [metaUrl, setMetaUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const errorTitleId = useId();
 
   useEffect(() => {
     setMounted(true);
@@ -103,9 +105,11 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   }, [loadExisting]);
 
   const closeComingSoon = useCallback(() => setComingSoonOpen(false), []);
+  const closeError = useCallback(() => setErrorOpen(false), []);
 
   const openPicker = useCallback(() => {
     setOverlayStyle(themeStyleFrom(triggerRef.current));
+    setErrorOpen(false);
     if (assetId !== 'bitcoin') {
       setComingSoonOpen(true);
       return;
@@ -113,15 +117,24 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
     if (!isSignedIn || !email) {
       return;
     }
+    // Reset so picking the same filename still fires onChange and regenerates.
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     fileInputRef.current?.click();
   }, [assetId, email, isSignedIn]);
 
   const onFile = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
+      if (!file || !email) {
+        event.target.value = '';
+        return;
+      }
+      // Keep a stable File handle, then clear input for the next same-name pick.
       event.target.value = '';
-      if (!file || !email) return;
       setBusy(true);
+      setErrorOpen(false);
       try {
         const data = await fileToDataUrl(file);
         const uploadRes = await fetch('/api/user/alien-photo', {
@@ -176,8 +189,9 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           })
         );
       } catch (err) {
-        // Fail silently in UI — keep busy spinner off only.
         console.error('alien photo upload/compose', err);
+        setOverlayStyle(themeStyleFrom(triggerRef.current));
+        setErrorOpen(true);
       } finally {
         setBusy(false);
       }
@@ -222,7 +236,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         className="asset-alien-photo-hit"
         onClick={openPicker}
         disabled={busy}
-        aria-expanded={successOpen || comingSoonOpen}
+        aria-expanded={successOpen || comingSoonOpen || errorOpen}
         aria-haspopup="dialog"
         aria-label={hitLabel}
       >
@@ -294,6 +308,33 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
                   <span className="blood-overlay-line">stay tuned</span>
                 </p>
                 <button type="button" className="asset-range-button blood-ok" onClick={closeComingSoon}>
+                  Ok
+                </button>
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
+      {mounted && errorOpen
+        ? createPortal(
+            <div
+              className="blood-overlay is-visible"
+              style={overlayStyle}
+              onClick={closeError}
+              role="presentation"
+            >
+              <div
+                className="blood-overlay-card blood-overlay-card--alien-error"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={errorTitleId}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <p id={errorTitleId} className="blood-overlay-copy">
+                  <span className="blood-overlay-line">Failed To Upload</span>
+                  <span className="blood-overlay-line">Try Again</span>
+                </p>
+                <button type="button" className="asset-range-button blood-ok" onClick={closeError}>
                   Ok
                 </button>
               </div>

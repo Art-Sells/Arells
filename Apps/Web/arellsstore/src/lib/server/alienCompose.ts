@@ -31,37 +31,46 @@ export const ALIEN_COMPOSE_PROMPT = [
   'SAM + GIRL EYES (CRITICAL — NEVER ERASE): Sam and the girl MUST keep complete, open, living eyes exactly as in <IMAGE_0> — pupils, irises, sclera, eyelids, lashes. FORBIDDEN: blank eyes, white-out eyes, missing irises, closed/melted eye sockets, smeared eye regions, featureless faces, painted-over eyes. If their eyes are erased or damaged vs <IMAGE_0>, the edit FAILED — restore eyes from <IMAGE_0> before finishing.',
   'TEXT: Copy on-image lettering from <IMAGE_0> exactly. Do NOT invent premiere dates or new words.',
   'Replace ONLY the featureless matte-white silhouette head (and any white neck/hands/skin) on the LEFT mannequin figure in the orange jacket. Do NOT replace the bearded man or the girl.',
-  'HEAD SIZE (CRITICAL — MATCH MANNEQUIN EXACTLY): LEFT head+hair+wrap MUST match the white mannequin head size in <IMAGE_0>. Scale likeness INTO that bound. Center on same neck/collar.',
-  'IDENTITY (LEFT MANNEQUIN ONLY): Photorealistic likeness of <IMAGE_1> ONLY on the LEFT orange-jacket figure — face, hair, skin, age. Distinct from the RIGHT bearded man even if similar.',
+  'HEAD SIZE (CRITICAL — #1 CONSTRAINT AFTER CANVAS): LEFT head + hair MUST be the SAME pixel scale as the white mannequin head in <IMAGE_0>. Measure vs orange-jacket shoulders / collar: head width ≈ mannequin head width in <IMAGE_0>, chin-to-crown ≈ mannequin. FORBIDDEN: enlarging the head to fit more face detail, big hair that grows the silhouette, oversized face vs Sam. Shrink the likeness INTO the mannequin bound — do NOT expand the bound. Center on the same neck/collar as <IMAGE_0>. A LEFT head larger than the mannequin = FAILED edit.',
+  'IDENTITY (LEFT MANNEQUIN ONLY): Photorealistic likeness of <IMAGE_1> ONLY on the LEFT orange-jacket figure — face, hair, skin, age — but ALWAYS within the mannequin head-size bound above. Distinct from the RIGHT bearded man even if similar.',
   'EXPRESSION (CRITICAL — NEUTRAL): LEFT face must be neutral / calm — closed or gently relaxed mouth, no smile, no grin, no laugh, no frown, no scowl, no surprise. If <IMAGE_1> is smiling, frowning, or expressive, convert to a neutral expression while keeping identity. Match the calm look of the bearded man / girl in <IMAGE_0>.',
   'LIGHTING (CRITICAL — EVEN STUDIO MATCH): LEFT face/neck/hands: soft even studio-like light matching the bearded man / girl in <IMAGE_0>. FORBIDDEN: harsh split lighting, blown white forehead/nose hotspots, shiny plastic skin, selfie flash. Skin must look like real living skin.',
   'NECK (CRITICAL — MOST COMMON FAILURE — NEVER WHITE): The LEFT neck from jawline to collar MUST be living skin continuous with the LEFT face — same tone, undertone, pores/texture. FORBIDDEN: leaving the original mannequin neck white, porcelain, plaster, or tee-white under the chin. A face with a white neck is a FAILED edit — repaint the entire neck column before finishing.',
   'HANDS (CRITICAL — NEVER WHITE): Every LEFT hand/wrist/finger (including in pockets) MUST match the LEFT face skin tone. FORBIDDEN: mannequin-white, plaster, white gloves, white blobs into white pants/tee.',
-  'HAIR: Match <IMAGE_1> hair but keep head+hair within mannequin head bound.',
+  'HAIR: Match <IMAGE_1> hair style/color but COMPRESS hair into the mannequin head bound — hair must not enlarge the head silhouette past <IMAGE_0> mannequin.',
   'HATS (REQUIRED — REMOVE): Remove hats/caps/beanies; show natural hair. Do not enlarge head.',
   'HEADWEAR (CRITICAL — DEFAULT NONE): Do NOT add a bandana, wrap, durag, scarf, headband, or any headwear. Bare head / natural hair only UNLESS <IMAGE_1> clearly already wears a bandana/wrap/durag/scarf/headband — then keep that item only and recolor it to LEFT jacket rust-orange. NEVER invent headwear.',
-  'IRIS (LEFT FIGURE ONLY): LEFT irises match <IMAGE_2> amber/burnt-orange — matte, NO glow, NO bloom, NO neon. LEFT eyes must be complete (pupil + iris + sclera) — never blank/erased. Bearded man and girl keep ORIGINAL eye colors from <IMAGE_0> — never orange.',
+  'IRIS (LEFT FIGURE ONLY — CRITICAL — LOCK TO <IMAGE_2>): LEFT BOTH irises MUST match <IMAGE_2> exactly — same amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, AND radial iris fiber texture/detail from the close-up. Matte photorealistic, natural wetness OK. Eye color + iris texture come ONLY from <IMAGE_2> — never from <IMAGE_1> natural eye color. LEFT eyes must be complete (pupil + iris + sclera) — never blank/erased. Bearded man and girl keep ORIGINAL eye colors from <IMAGE_0> — never orange from <IMAGE_2>.',
   'NO GLOWING EYES (CRITICAL — ALL FIGURES): Eyes must be matte / natural photorealistic only. FORBIDDEN on anyone: glowing eyes, luminous pupils, light beams, bloom, neon, emissive/HDR eye glow, sci-fi shine.',
-  'NO ERASED EYES (CRITICAL — ALL FIGURES): Nobody may have blank, white, missing, or destroyed eyes. Sam + girl eyes = <IMAGE_0>. LEFT eyes = full eyes with <IMAGE_2> iris color.',
+  'NO ERASED EYES (CRITICAL — ALL FIGURES): Nobody may have blank, white, missing, or destroyed eyes. Sam + girl eyes = <IMAGE_0>. LEFT eyes = full eyes with <IMAGE_2> iris color + texture.',
   'MAKEUP: LEFT only — female lipstick/eyeliner → Bitcoin orange; male/bare → no makeup. Sam/girl unchanged.',
-  'GENDER FIT (CRITICAL — LEFT FIGURE ONLY): Infer sex presentation from <IMAGE_1>. IF female / feminine: restyle the LEFT orange jacket to a feminine cut (softer shoulder, tailored/fitted waist, feminine collar/zipper proportions) and give feminine body proportions under the jacket (shoulders, chest, waist) consistent with <IMAGE_1>. IF male / masculine: keep the orange jacket cut, tee, pants, and body proportions as in <IMAGE_0> (menswear / do not feminize). Never change Sam or the girl.',
+  'GENDER FIT (CRITICAL — LEFT FIGURE ONLY): Infer sex presentation from <IMAGE_1>. IF female / feminine: restyle the LEFT orange jacket to a feminine cut (softer shoulder, tailored/fitted waist, feminine collar/zipper proportions) and give feminine body proportions under the jacket (shoulders, chest, waist) consistent with <IMAGE_1>. IF male / masculine: keep the orange jacket cut, tee, pants, and body proportions as in <IMAGE_0> (menswear / do not feminize). Never change Sam or the girl. Gender fit must NOT enlarge the LEFT head.',
   'JACKET COLOR (CRITICAL): LEFT jacket exact rust-orange / Bitcoin orange from <IMAGE_0> — gender fit may change cut/shape only, never hue.',
-  'If unsure, change less — only the LEFT white mannequin regions.',
+  'If unsure, change less — only the LEFT white mannequin regions. Prefer a slightly smaller head over any oversized head.',
 ].join(' ');
 
 /**
- * Second-pass metaposter fix: <IMAGE_0> first compose result, <IMAGE_1> original base.
- * Hardens head size when the first pass ignores mannequin scale.
+ * Pass 2 — HEAD SIZE ONLY. <IMAGE_0> compose result, <IMAGE_1> original mannequin base.
+ * Kept separate so iris/neck jobs cannot override scale.
  */
 export const ALIEN_COMPOSE_HEAD_SIZE_FIX_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0>. Change as little as possible.',
-  'NECK FIX (CRITICAL — DO THIS): If the LEFT orange-jacket person has a white / mannequin / porcelain neck under a skinned face, REPAINT the entire neck + throat + visible skin at the collar to match the face skin tone continuously (jaw → neck → collar). No white neck column. This is required even if head size is already correct.',
-  'HEAD SIZE FIX (CRITICAL): If the LEFT head is too big, shrink it to MATCH the mannequin head size in <IMAGE_1> — same width/height/scale vs orange jacket shoulders. Keep identity, iris color, jacket, pose from <IMAGE_0>. Center on same neck/collar as <IMAGE_1>.',
+  'EDIT TASK: Start from <IMAGE_0>. ONLY job: fix LEFT head size. Change nothing else unless required for scale.',
+  'HEAD SIZE (SOLE PRIORITY — CRITICAL): Compare LEFT orange-jacket head in <IMAGE_0> to the white mannequin head in <IMAGE_1>. If LEFT head (face + hair silhouette) is larger in width OR height vs shoulders/collar than the mannequin, SHRINK it now until it MATCHES <IMAGE_1> mannequin scale exactly. Keep identity and amber iris color while shrinking. Center on the same neck/collar as <IMAGE_1>.',
+  'FORBIDDEN: leaving an oversized head, growing hair outside the mannequin bound, matching Sam’s head size instead of the mannequin.',
+  'Do NOT change Sam or the girl. Do NOT change text, background, framing, or jacket color.',
+].join(' ');
+
+/**
+ * Pass 3 — neck / hands / iris after head size is locked.
+ * <IMAGE_0> sized result, <IMAGE_1> original base, <IMAGE_2> iris.
+ */
+export const ALIEN_COMPOSE_DETAIL_FIX_PROMPT = [
+  'EDIT TASK: Start from <IMAGE_0>. Change as little as possible. Do NOT enlarge the LEFT head — head size is already locked.',
+  'IRIS FIX (LEFT ONLY — CRITICAL): LEFT BOTH irises MUST match <IMAGE_2> amber / burnt-orange hue AND radial fiber texture. Matte, NO glow. Sam + girl keep <IMAGE_1> eye colors.',
+  'NECK FIX: If LEFT neck is white/mannequin, repaint jaw→collar to match face skin.',
   'HANDS: If any LEFT hand/wrist is still white, paint skin matching the face.',
-  'SAM + GIRL EYE RESTORE (CRITICAL): If the bearded man or girl on the RIGHT have blank/erased/missing/white eyes vs <IMAGE_1>, RESTORE their complete eyes from <IMAGE_1> exactly — pupils, irises, sclera. Do not leave damaged eyes.',
-  'LEFT EYES: LEFT figure must keep complete eyes (not blank); amber iris color from <IMAGE_0> result stays matte — no glow.',
-  'NO GLOWING EYES: Keep eyes matte — no glow, bloom, neon, or emissive pupils on anyone.',
-  'Do NOT change Sam or the girl except to restore erased eyes from <IMAGE_1>. Do NOT change text, background, or framing.',
+  'SAM + GIRL EYE RESTORE: If Sam or girl eyes are blank/erased vs <IMAGE_1>, restore from <IMAGE_1>.',
+  'NO GLOWING EYES. Do NOT enlarge LEFT head. Do NOT change text/background/framing.',
 ].join(' ');
 
 /**
@@ -69,15 +78,15 @@ export const ALIEN_COMPOSE_HEAD_SIZE_FIX_PROMPT = [
  * <IMAGE_0> selfie identity, <IMAGE_1> iris style.
  */
 export const ALIEN_PORTRAIT_PROMPT = [
-  'PRIORITY ORDER (HIGHEST FIRST): (1) IRIS LOCK to <IMAGE_1>, (2) identity from <IMAGE_0>, (3) sun light + front pose, (4) everything else. Never sacrifice iris color for any other goal.',
+  'PRIORITY ORDER (HIGHEST FIRST): (1) IRIS LOCK to <IMAGE_1>, (2) identity from <IMAGE_0>, (3) CREAM BACKGROUND, (4) soft even studio lighting, (5) front pose. Never sacrifice iris color for any other goal.',
   'Create a wide portrait (aspect 2:1) of the SAME person as <IMAGE_0> as their Personal Bitcoin Alien character.',
-  'IRIS (MOST IMPORTANT — CRITICAL — LOCK TO <IMAGE_1>): BOTH irises MUST match <IMAGE_1> exactly — same amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, and radial detail. Matte photorealistic, natural wetness OK. FORBIDDEN: brown, blue, green, hazel, black, gray, or any <IMAGE_0> eye color; glow; bloom; neon. If EITHER eye is not clearly amber/burnt-orange like <IMAGE_1>, the entire edit failed — fix the irises before anything else. Eye color comes ONLY from <IMAGE_1>.',
+  'IRIS (MOST IMPORTANT — CRITICAL — LOCK TO <IMAGE_1>): BOTH irises MUST match <IMAGE_1> exactly — same amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, and radial fiber texture/detail. Matte photorealistic, natural wetness OK. FORBIDDEN: brown, blue, green, hazel, black, gray, or any <IMAGE_0> eye color; glow; bloom; neon. If EITHER eye is not clearly amber/burnt-orange like <IMAGE_1>, the entire edit failed — fix the irises before anything else. Eye color + iris texture come ONLY from <IMAGE_1>.',
   'NO GLOWING EYES (CRITICAL): Eyes must be matte / natural photorealistic only. FORBIDDEN: glowing eyes, luminous pupils, light beams, bloom, neon, emissive/HDR eye glow, sci-fi shine.',
-  'IDENTITY ONLY FROM <IMAGE_0>: Use <IMAGE_0> ONLY for face identity (shape, features, skin tone, hair). Discard <IMAGE_0>\'s lighting, camera angle, pose, and eye color.',
+  'BACKGROUND (CRITICAL — CREAM): Plain solid cream background edge-to-edge behind the subject — warm cream / ivory / off-white cream (not pure white, not beige-tan wall, not orange). Soft even light on the cream field. FORBIDDEN: orange wash, #F88D00, gray, charcoal, busy scenes, outdoors, windows, textured walls that read beige/taupe instead of cream.',
+  'IDENTITY ONLY FROM <IMAGE_0>: Use <IMAGE_0> ONLY for face identity (shape, features, skin tone, hair). Discard <IMAGE_0>\'s lighting, camera angle, pose, background, and eye color.',
   'POSE (CRITICAL — FACE FORWARD): Head and face straight-on / front view. Eyes into camera. FORBIDDEN: 3/4 turn, looking left/right, profile, chin-down selfie angle. If <IMAGE_0> is turned, straighten to full frontal.',
   'EXPRESSION (CRITICAL — NEUTRAL): Neutral / calm mouth. If <IMAGE_0> is expressive, convert to neutral while keeping identity.',
-  'LIGHTING (CRITICAL — SUN LIGHT — IGNORE PHOTO LIGHT): Ignore <IMAGE_0> lighting completely. Relight with natural sunlight on the face — clear daytime sun, soft open-shade fill so skin stays readable, natural sun catchlights. FORBIDDEN: cinematic lighting, studio softboxes, ring light, phone selfie flash, copying photo lighting, evening/golden-hour/sunset, harsh underexposed shadow side, blown white hotspots.',
-  'BACKGROUND (CRITICAL — BEIGE WALL): Plain indoor wall behind the subject — warm beige / light sand plaster wall matching the Launch / Season One poster wall family. Soft even light on the wall, subtle texture OK. FORBIDDEN: orange color wash, solid #F88D00 backdrop, gray studio sweep, busy room, windows, outdoors, gradients that read as abstract color fields instead of a wall.',
+  'LIGHTING (CRITICAL — SOFT EVEN STUDIO): Ignore <IMAGE_0> photo lighting. Soft even indoor studio light on face/neck — flat gentle key + soft fill. FORBIDDEN: outdoor sun, golden-hour, cinematic drama, ring light, phone selfie flash, shiny plastic hotspots.',
   'MAKEUP: IF <IMAGE_0> appears female / already wears lipstick or eyeliner, Bitcoin-orange lipstick/eyeliner. IF male / bare-faced, do NOT add makeup.',
   'HATS (REQUIRED — REMOVE): Remove hats/caps/beanies; show natural hair.',
   'HEADWEAR (CRITICAL — DEFAULT NONE): Do NOT invent bandanas/wraps. Only keep if clearly in <IMAGE_0>, then recolor to jacket rust-orange.',
@@ -87,15 +96,15 @@ export const ALIEN_PORTRAIT_PROMPT = [
   'Head-and-shoulders framing, wide 2:1. No extra text, logos, or watermarks.',
 ].join(' ');
 
-/** Second pass: force studio lighting + frontal pose on My Character portrait. */
+/** Second pass: iris + cream background + studio lighting + frontal pose on My Character portrait. */
 export const ALIEN_PORTRAIT_STUDIO_FIX_PROMPT = [
   'EDIT TASK: Start from <IMAGE_0>. Keep the same person and jacket.',
-  'IRIS (MOST IMPORTANT): BOTH irises must stay amber/burnt-orange Bitcoin alien eyes — never revert to brown/blue/green/natural photo eye color. If irises drifted, fix them first.',
+  'IRIS (MOST IMPORTANT): BOTH irises MUST match <IMAGE_1> amber/burnt-orange hue + radial texture — never brown/blue/green/selfie eye color. Matte, NO glow.',
   'NO GLOWING EYES (CRITICAL): Keep eyes matte — no glow, bloom, neon, luminous pupils, or emissive shine.',
-  'LIGHTING FIX (CRITICAL — SUN LIGHT): Relight the face/neck from scratch with natural daytime sunlight (clear sun + soft open-shade fill). REMOVE cinematic/studio/ring-light/selfie-flash look and any leftover phone-photo lighting.',
+  'BACKGROUND FIX (CRITICAL — CREAM): Replace any wrong background with a plain solid cream / ivory / off-white cream field edge-to-edge. FORBIDDEN: orange, gray, beige-tan wall, busy scene.',
+  'LIGHTING FIX (CRITICAL — SOFT EVEN STUDIO): Relight face/neck with soft even indoor studio light. REMOVE outdoor sun, golden-hour, selfie-flash, cinematic lighting.',
   'POSE FIX (CRITICAL): Full front-facing — straight at camera, no 3/4 turn left or right. Eyes forward.',
   'EXPRESSION: Keep neutral / calm.',
-  'BACKGROUND FIX (CRITICAL — BEIGE WALL): Replace any orange wash / abstract color field with a plain warm beige / light sand indoor wall (same family as Launch / Season One posters). Soft even wall light, subtle texture OK. FORBIDDEN: orange backdrop, gray studio sweep, busy scene.',
 ].join(' ');
 
 /**
@@ -303,13 +312,25 @@ export async function composePersonalBitcoinAlien(args: {
     aspectRatio: '1:1',
   });
 
-  // Second pass: force LEFT head to mannequin scale using original base as size reference.
+  // Pass 2: head size ONLY vs original mannequin (no iris — scale must win).
   const firstJpeg = await toCleanJpeg(firstPass, 2048);
-  return grokImageEdit({
+  const sizedPass = await grokImageEdit({
     prompt: ALIEN_COMPOSE_HEAD_SIZE_FIX_PROMPT,
     images: [
       { url: toDataUri(firstJpeg), type: 'image_url' },
       { url: toDataUri(baseJpeg), type: 'image_url' },
+    ],
+    aspectRatio: '1:1',
+  });
+  const sizedJpeg = await toCleanJpeg(sizedPass, 2048);
+
+  // Pass 3: iris / neck / hands without touching head scale.
+  return grokImageEdit({
+    prompt: ALIEN_COMPOSE_DETAIL_FIX_PROMPT,
+    images: [
+      { url: toDataUri(sizedJpeg), type: 'image_url' },
+      { url: toDataUri(baseJpeg), type: 'image_url' },
+      { url: toDataUri(irisJpeg), type: 'image_url' },
     ],
     aspectRatio: '1:1',
   });
@@ -353,7 +374,7 @@ export async function composePersonalBitcoinAlienSeasonOne(args: {
 
 /**
  * Wide 2:1 Personal Bitcoin Alien portrait — neutral expression, iris locked.
- * Order: selfie identity, then iris ref.
+ * Order: selfie identity, iris ref.
  */
 export async function composePersonalBitcoinAlienPortrait(args: {
   selfie: Buffer;
@@ -373,12 +394,11 @@ export async function composePersonalBitcoinAlienPortrait(args: {
     aspectRatio: '2:1',
   });
 
-  // Second pass: strip leftover selfie lighting + force frontal pose; re-pass iris so eyes stay locked.
   const firstJpeg = await toCleanJpeg(firstPass, 2048);
   return grokImageEdit({
     prompt: [
       ALIEN_PORTRAIT_STUDIO_FIX_PROMPT,
-      'IRIS REF: Match BOTH irises to <IMAGE_1> amber/burnt-orange exactly — highest priority. NO GLOWING EYES — matte only.',
+      'IRIS REF: Match BOTH irises to <IMAGE_1> amber/burnt-orange + texture exactly — highest priority. NO GLOWING EYES — matte only.',
     ].join(' '),
     images: [
       { url: toDataUri(firstJpeg), type: 'image_url' },

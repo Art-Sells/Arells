@@ -6946,6 +6946,14 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	height: 300px;
 }
 
+.blood-overlay-card--alien-error {
+	height: 200px;
+	justify-content: center;
+	gap: 20px;
+	padding-top: 24px;
+	padding-bottom: 24px;
+}
+
 .blood-overlay-card--alien-meta {
 	width: 260px;
 	height: auto;
