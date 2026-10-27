@@ -1,26 +1,38 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoPlayer from '../../../VideoPlayer';
 import { useUser } from '../../../../context/UserContext';
 import { ALIEN_COMPOSE_DONE_EVENT } from '../../../../lib/assets/assetSharePath';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/videos';
 import { EPISODE_ONE_POSTER, EPISODE_ONE_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodeone';
 
-const SEASON_ONE_TEASER_SRC =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/SeasonOneCopy.jpg';
+const SEASON_ONE_POSTERS_BASE =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters';
+
+const SEASON_ONE_COPY_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneCopy.jpg`;
+const SEASON_ONE_LOOP_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneLoop.mp4`;
 
 export default function BitcoinSeasonTeaser() {
   const { isSignedIn } = useUser();
-  const [teaserLoaded, setTeaserLoaded] = useState(false);
-  const [teaserSrc, setTeaserSrc] = useState(SEASON_ONE_TEASER_SRC);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [stillSrc, setStillSrc] = useState(SEASON_ONE_COPY_SRC);
+  const [videoReady, setVideoReady] = useState(false);
+  const [videoDone, setVideoDone] = useState(false);
+  const [stillLoaded, setStillLoaded] = useState(false);
   const [trailerMounted, setTrailerMounted] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [trailerSettled, setTrailerSettled] = useState(false);
 
+  const showStill = videoDone && stillLoaded;
+  const frameReady = videoReady || showStill;
+
   const loadPersonalizedSeasonOne = useCallback(async () => {
     if (!isSignedIn) {
-      setTeaserSrc(SEASON_ONE_TEASER_SRC);
+      setStillSrc((prev) => {
+        if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return SEASON_ONE_COPY_SRC;
+      });
       return;
     }
     try {
@@ -29,17 +41,23 @@ export default function BitcoinSeasonTeaser() {
         cache: 'no-store',
       });
       if (!res.ok) {
-        setTeaserSrc(SEASON_ONE_TEASER_SRC);
+        setStillSrc((prev) => {
+          if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+          return SEASON_ONE_COPY_SRC;
+        });
         return;
       }
       const blob = await res.blob();
-      setTeaserSrc((prev) => {
+      setStillSrc((prev) => {
         if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
         return URL.createObjectURL(blob);
       });
-      setTeaserLoaded(false);
+      setStillLoaded(false);
     } catch {
-      setTeaserSrc(SEASON_ONE_TEASER_SRC);
+      setStillSrc((prev) => {
+        if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return SEASON_ONE_COPY_SRC;
+      });
     }
   }, [isSignedIn]);
 
@@ -58,6 +76,21 @@ export default function BitcoinSeasonTeaser() {
   }, [loadPersonalizedSeasonOne]);
 
   useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.loop = false;
+    const tryPlay = () => {
+      void video.play().catch(() => {
+        // Autoplay blocked — fall through to still.
+        setVideoDone(true);
+      });
+    };
+    if (video.readyState >= 2) tryPlay();
+    else video.addEventListener('loadeddata', tryPlay, { once: true });
+    return () => video.removeEventListener('loadeddata', tryPlay);
+  }, []);
+
+  useEffect(() => {
     if (!trailerMounted || trailerOpen) return;
     setTrailerSettled(false);
     const timer = window.setTimeout(() => setTrailerOpen(true), 0);
@@ -70,23 +103,49 @@ export default function BitcoinSeasonTeaser() {
     return () => window.clearTimeout(timer);
   }, [trailerOpen, trailerSettled]);
 
+  const onVideoEnded = useCallback(() => {
+    setVideoDone(true);
+  }, []);
+
   return (
     <div className="asset-bitcoin-season-teaser">
       <div className="asset-bitcoin-season-teaser-show">
         <div className="asset-bitcoin-season-teaser-season">
-          <div className={`asset-bitcoin-season-teaser-frame${teaserLoaded ? ' is-loaded' : ''}`}>
-            {!teaserLoaded ? (
+          <div
+            className={`asset-bitcoin-season-teaser-frame${frameReady ? ' is-loaded' : ''}${
+              showStill ? ' is-still' : ''
+            }`}
+          >
+            {!frameReady ? (
               <div className="asset-bitcoin-season-teaser-loader" aria-hidden="true">
                 <div className="asset-bitcoin-season-teaser-loader-ring" />
               </div>
             ) : null}
+            <video
+              ref={videoRef}
+              className={`asset-bitcoin-season-teaser-video${videoReady && !showStill ? ' is-visible' : ''}${
+                showStill ? ' is-done' : ''
+              }`}
+              src={SEASON_ONE_LOOP_SRC}
+              muted
+              playsInline
+              preload="auto"
+              autoPlay
+              controls={false}
+              disablePictureInPicture
+              onLoadedData={() => setVideoReady(true)}
+              onCanPlay={() => setVideoReady(true)}
+              onEnded={onVideoEnded}
+              onError={() => setVideoDone(true)}
+              aria-label="Season One"
+            />
             <img
-              src={teaserSrc}
-              alt="Season One coming soon"
+              src={stillSrc}
+              alt="Season One"
               width={4561}
               height={1091}
-              className={`asset-bitcoin-season-teaser-img${teaserLoaded ? ' is-visible' : ''}`}
-              onLoad={() => setTeaserLoaded(true)}
+              className={`asset-bitcoin-season-teaser-img${showStill ? ' is-visible' : ''}`}
+              onLoad={() => setStillLoaded(true)}
             />
           </div>
           <div className="asset-bitcoin-season-teaser-trailer-section">

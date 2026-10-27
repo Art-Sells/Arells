@@ -1362,9 +1362,10 @@ body {
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
-	border-radius: 10px;
+	padding: 1px;
+	border-radius: 11px;
 	overflow: hidden;
-	background: rgba(248, 141, 0, 0.08);
+	background: rgba(248, 141, 0, 0.3);
 	flex-shrink: 0;
 	/* Match personalalienplaceholder.jpg (1792×1008) so first-add remount
 	   doesn't grow the photo block mid height-down (delete-all keeps RO live). */
@@ -1376,6 +1377,18 @@ body {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	border-radius: 10px;
+	box-sizing: border-box;
+}
+
+@media screen and (max-width: 750px) {
+	.asset-alien-photo-slot-placeholder-wrap {
+		border-radius: 7px;
+	}
+
+	.asset-alien-photo-slot-placeholder {
+		border-radius: 6px;
+	}
 }
 
 .asset-alien-photo-label {
@@ -1697,25 +1710,23 @@ body {
 	border-radius: 13px;
 	overflow: hidden;
 	background: rgba(248, 141, 0, 0.3);
+	aspect-ratio: 4561 / 1091;
 }
 
 .asset-bitcoin-season-teaser-frame::before {
 	content: '';
 	position: absolute;
 	inset: 1px;
+	z-index: 3;
 	border-radius: 12px;
 	background: rgba(248, 141, 0, 0.06);
 	pointer-events: none;
 }
 
-.asset-bitcoin-season-teaser-frame:not(.is-loaded) {
-	aspect-ratio: 4561 / 1091;
-}
-
 .asset-bitcoin-season-teaser-loader {
 	position: absolute;
 	inset: 0;
-	z-index: 1;
+	z-index: 4;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1732,13 +1743,43 @@ body {
 	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
 }
 
+.asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-img {
-	width: 100%;
-	height: auto;
+	position: absolute;
+	inset: 1px;
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
 	display: block;
 	border-radius: 12px;
+	object-fit: cover;
+	box-sizing: border-box;
 	opacity: 0;
-	transition: opacity 0.9s ease;
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity;
+}
+
+.asset-bitcoin-season-teaser-video {
+	z-index: 1;
+}
+
+.asset-bitcoin-season-teaser-img {
+	z-index: 2;
+}
+
+.asset-bitcoin-season-teaser-video.is-visible {
+	opacity: 1;
+}
+
+.asset-bitcoin-season-teaser-video.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.4s;
+}
+
+.asset-bitcoin-season-teaser-img.is-visible {
+	opacity: 1;
+	transition-duration: 1.6s;
+	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (max-width: 750px) {
@@ -1747,13 +1788,10 @@ body {
 	}
 
 	.asset-bitcoin-season-teaser-frame::before,
+	.asset-bitcoin-season-teaser-video,
 	.asset-bitcoin-season-teaser-img {
 		border-radius: 5px;
 	}
-}
-
-.asset-bitcoin-season-teaser-img.is-visible {
-	opacity: 1;
 }
 
 .asset-bitcoin-season-teaser-storyline {

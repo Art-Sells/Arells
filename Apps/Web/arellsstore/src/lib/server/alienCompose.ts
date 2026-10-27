@@ -112,37 +112,34 @@ export const ALIEN_PORTRAIT_STUDIO_FIX_PROMPT = [
  * <IMAGE_0> SeasonOne banner, <IMAGE_1> selfie, <IMAGE_2> iris.
  */
 export const ALIEN_SEASONONE_PROMPT = [
-  'EDIT TASK (not a new generation): Start from <IMAGE_0> and change as little as possible. INPAINT the sole center mannequin only — NOT a new poster.',
-  'LOCKED CANVAS from <IMAGE_0>: same ultra-wide banner, same beige wall, same “SEASON” (left) and “ONE” (right) lettering, same framing/aspect, same soft studio light. ONE figure only — the center orange-jacket mannequin. Do NOT invent extra people.',
-  'Replace ONLY the featureless matte-white mannequin head (and any white neck/hands/skin) on the sole orange-jacket figure. Keep gold triangular / “A” necklace, white tee, hands-in-pockets pose, jacket hue from <IMAGE_0>.',
-  'IDENTITY: Photorealistic likeness of <IMAGE_1> — face, hair, skin, age — on that sole figure only.',
+  'PRIORITY ORDER (HIGHEST FIRST): (1) IRIS LOCK to <IMAGE_2>, (2) locked canvas / sole figure, (3) identity from <IMAGE_1>, (4) everything else. Never sacrifice iris color or texture.',
+  'EDIT TASK (not a new generation): Start from <IMAGE_0> and change as little as possible. Put <IMAGE_1>’s face on the sole center orange-jacket figure — NOT a new poster.',
+  'LOCKED CANVAS from <IMAGE_0>: same ultra-wide banner, same beige wall, same “SEASON” (left) and “ONE” (right) lettering, same framing/aspect, same soft studio light. ONE figure only — the center orange-jacket person. Do NOT invent extra people.',
+  'Keep gold triangular / “A” necklace, white tee, hands-in-pockets pose, jacket hue from <IMAGE_0>.',
+  'IRIS (MOST IMPORTANT — CRITICAL — LOCK TO <IMAGE_2>): BOTH irises MUST match <IMAGE_2> exactly — same amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, AND radial iris fiber texture/detail from the close-up. Matte photorealistic, natural wetness OK. Eye color + iris texture come ONLY from <IMAGE_2>. FORBIDDEN: brown, blue, green, hazel, black, gray, or any <IMAGE_1> natural eye color; glow; bloom; neon. If EITHER eye is not clearly amber/burnt-orange with <IMAGE_2> fiber texture, the entire edit FAILED — fix irises before anything else. Complete eyes required (pupil + iris + sclera) — never blank/erased.',
+  'NO GLOWING EYES (CRITICAL): Matte eyes only. FORBIDDEN: glow, bloom, neon, luminous pupils, emissive/HDR eye shine, sci-fi shine.',
+  'IDENTITY: Photorealistic likeness of <IMAGE_1> — face, hair, skin, age — on that sole figure only. Do NOT copy <IMAGE_1> eye color.',
   'EXPRESSION (CRITICAL — NEUTRAL): Neutral / calm face. If <IMAGE_1> is expressive, convert to neutral while keeping identity.',
   'LIGHTING: Soft even light matching <IMAGE_0>. No selfie flash, no plastic shine.',
-  'NECK (CRITICAL — NEVER WHITE): Neck jawline→collar = living skin continuous with the face. Face + white neck = FAILED.',
-  'HANDS (CRITICAL — NEVER WHITE): Hands/wrists/fingers (including in pockets) match face skin tone. No mannequin-white.',
-  'HEAD SIZE: Same size as the white mannequin head in <IMAGE_0>. Do NOT enlarge past that bound. Do NOT cover “SEASON” or “ONE”.',
   'HATS (REMOVE) / HEADWEAR DEFAULT NONE: No invented bandanas/wraps; natural hair from <IMAGE_1> unless <IMAGE_1> already wears headwear (then recolor to jacket rust-orange).',
-  'IRIS (CRITICAL — LOCK TO <IMAGE_2>): BOTH irises MUST match <IMAGE_2> exactly — same amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, and radial iris texture/detail. Matte photorealistic, natural wetness OK. Eye color + iris texture come ONLY from <IMAGE_2>.',
-  'NO GLOWING EYES (CRITICAL): Matte eyes only. FORBIDDEN: glow, bloom, neon, luminous pupils, emissive/HDR eye shine.',
   'MAKEUP: Female/lipstick in <IMAGE_1> → Bitcoin-orange lipstick/eyeliner. Male/bare → no makeup.',
-  'BODY LOCK (CRITICAL — NO BODY RECOMPOSE): Keep jacket cut, shoulders, chest, waist, tee, pants/pose, and overall body proportions EXACTLY as in <IMAGE_0>. Do NOT feminize, masculinize, reshape, slim, widen, or restyle the body or jacket. Face/skin/hair/iris only.',
+  'BODY LOCK (CRITICAL — NO BODY RECOMPOSE): Keep jacket cut, shoulders, chest, waist, tee, pants/pose, and overall body proportions EXACTLY as in <IMAGE_0>. Do NOT feminize, masculinize, reshape, slim, widen, or restyle the body or jacket. Face/skin/hair/iris only — no mannequin head-size or neck rules (same as My Character portrait).',
   'JACKET COLOR (CRITICAL): Exact rust-orange / Bitcoin orange from <IMAGE_0> — never change hue or cut.',
-  'FAILURE CHECK: If any white mannequin neck/hands remain, eyes glow, irises are not amber like <IMAGE_2>, or the body/jacket shape changed from <IMAGE_0> — fix those before finishing.',
+  'FAILURE CHECK: If irises are not amber like <IMAGE_2> with matching fiber texture, OR eyes glow, OR body/jacket changed — FAILED; fix irises first, then the rest.',
 ].join(' ');
 
 /**
- * Second-pass Season One: neck/hands + iris harden; keep sole-figure layout.
+ * Second-pass Season One: iris harden; keep sole-figure layout.
+ * No head-size / neck mannequin locks (same freedom as My Character portrait).
  * <IMAGE_0> first compose result, <IMAGE_1> original seasonone-base, <IMAGE_2> iris.
  */
 export const ALIEN_SEASONONE_FIX_PROMPT = [
   'EDIT TASK: Start from <IMAGE_0>. Change as little as possible.',
+  'IRIS FIX (MOST IMPORTANT — CRITICAL — HIGHEST PRIORITY): BOTH irises MUST match <IMAGE_2> exactly — amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, AND radial fiber texture/detail. If either eye drifted to brown/blue/green/hazel/selfie color or looks blank, REPAINT both irises from <IMAGE_2> now before anything else. Matte photorealistic only — NO glow, bloom, neon, or emissive shine. Eye color + texture come ONLY from <IMAGE_2>.',
+  'NO GLOWING EYES (CRITICAL): Matte only.',
   'SOLE FIGURE: Keep ONE person only — the center orange-jacket figure. Do NOT add other people. Keep “SEASON” / “ONE” and beige wall from <IMAGE_1>.',
   'BODY LOCK: Jacket cut and body proportions must match <IMAGE_1> — do not reshape the body.',
-  'NECK FIX: If neck is still white/mannequin, repaint jaw→collar to match face skin continuously.',
-  'HANDS FIX: If any hand/wrist is still white, paint skin matching the face.',
-  'HEAD SIZE: If head is too big vs the mannequin in <IMAGE_1>, shrink to that bound; keep identity.',
-  'IRIS (CRITICAL): BOTH irises must match <IMAGE_2> amber/burnt-orange hue + radial texture — matte, NO glow.',
-  'NO GLOWING EYES: Matte only.',
+  'Do NOT apply mannequin head-size or white-neck rules — face/iris only, like My Character.',
 ].join(' ');
 
 /** Re-encode to a clean sRGB JPEG. */
