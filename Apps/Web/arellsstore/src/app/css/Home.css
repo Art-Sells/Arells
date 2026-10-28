@@ -12509,9 +12509,9 @@ a.asset-action-button--save-signin {
 	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Match bitcoin guest: trailer-shell gap only (no extra poster margin) */
+/* Space between launch poster and Sign In (trailer removed on home guest) */
 .home-guest-launch-poster {
-	margin-bottom: 0;
+	margin-bottom: 10px;
 }
 
 @media (max-width: 750px) {

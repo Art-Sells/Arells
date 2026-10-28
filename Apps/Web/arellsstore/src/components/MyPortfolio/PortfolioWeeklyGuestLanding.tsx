@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import GuestLandingCopyright from '../GuestLandingCopyright';
-import VideoPlayer from '../VideoPlayer';
 import { usePosterLoopPlayback } from '../../hooks/usePosterLoopPlayback';
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
@@ -57,7 +56,7 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
         <p className="home-guest-slogan myportfolio-weekly-guest-mission home-guest-mount-slide home-guest-mount-slide--slogan">
           investments can live forever
         </p>
-        <div className="home-guest-signin-shell shadow-border-wrap home-guest-trailer-shell home-guest-mount-slide home-guest-mount-slide--signin">
+        <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--signin">
           <span className="shadow-border" aria-hidden="true" />
           <div
             className={`asset-guest-poster-frame asset-guest-poster-frame--loop home-guest-launch-poster${
@@ -99,7 +98,6 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
               onLoad={() => setStillLoaded(true)}
             />
           </div>
-          <VideoPlayer theme="home" />
           <div className="home-guest-signin-panel myinv-accent-border">
             <div className="home-guest-signin-inner">
               <p className="home-guest-signin-lead">Sign In to learn more</p>
