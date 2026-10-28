@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import { ReactNode } from 'react';
 import './css/global.css';
 import { UserProvider } from '../context/UserContext';
+import { AlienCharacterCreateProvider } from '../context/AlienCharacterCreateContext';
+import AlienCharacterCreateHost from '../components/Assets/shared/AlienCharacterCreateHost';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import ReferralCaptureRoot from './referral-capture';
 import { VavityProvider } from '../context/VavityAggregator';
@@ -59,9 +61,12 @@ const RootLayout = ({ children }: LayoutProps) => {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(origin)) }}
         />
         <UserProvider>
-          <ReferralCaptureRoot />
-          <AnalyticsBeacon />
-          <VavityProvider>{children}</VavityProvider>
+          <AlienCharacterCreateProvider>
+            <ReferralCaptureRoot />
+            <AnalyticsBeacon />
+            <VavityProvider>{children}</VavityProvider>
+            <AlienCharacterCreateHost />
+          </AlienCharacterCreateProvider>
         </UserProvider>
       </body>
     </html>

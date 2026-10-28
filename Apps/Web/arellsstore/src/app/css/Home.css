@@ -1358,6 +1358,23 @@ body {
 	fill: currentColor;
 }
 
+.asset-alien-photo-plus--view {
+	font-size: 12px;
+	font-weight: 400;
+	letter-spacing: -0.3px;
+	line-height: 1.2;
+	text-align: center;
+	padding: 0 10px;
+	border-radius: 6px;
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+}
+
+a.asset-alien-photo-hit {
+	text-decoration: none;
+	color: inherit;
+}
+
 .asset-alien-photo-slot-placeholder-wrap {
 	display: block;
 	width: 100%;
@@ -1435,8 +1452,24 @@ body {
 	opacity: 0.85;
 }
 
+.asset-alien-photo-plus--creating {
+	gap: 10px;
+	font-size: 12px;
+	font-weight: 400;
+	letter-spacing: -0.3px;
+	line-height: 1.2;
+	text-transform: lowercase;
+}
+
+.asset-alien-photo-creating-word {
+	flex: 0 0 auto;
+	color: inherit;
+	-webkit-text-fill-color: inherit;
+}
+
 .asset-alien-photo-busy {
 	display: block;
+	flex: 0 0 auto;
 	width: 22px;
 	height: 22px;
 	border-radius: 50%;
@@ -1805,13 +1838,21 @@ body {
 
 .asset-bitcoin-season-teaser-img.is-visible {
 	opacity: 1;
-	transition-duration: 1.5s;
+	transition-duration: 1.4s;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 750px) {
 	.asset-bitcoin-season-teaser-frame {
 		border-radius: 6px;
+	}
+
+	.asset-bitcoin-season-teaser-frame::before,
+	.asset-bitcoin-season-teaser-frame::after,
+	.asset-bitcoin-season-teaser-media,
+	.asset-bitcoin-season-teaser-video,
+	.asset-bitcoin-season-teaser-img {
+		border-radius: 5px;
 	}
 }
 
@@ -1835,6 +1876,154 @@ body {
 	display: flex;
 	justify-content: center;
 	min-height: 100vh;
+}
+
+.bitcoin-my-character-body {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 16px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-launch {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-launch .asset-alien-meta-preview-frame {
+	width: 100%;
+	margin: 0;
+}
+
+.bitcoin-my-character-launch--loading {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	border-radius: 10px;
+	overflow: hidden;
+	border: 1px solid rgba(248, 141, 0, 0.35);
+	background: rgba(248, 141, 0, 0.06);
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-launch--loading .asset-alien-meta-preview-loader {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: transparent;
+}
+
+.bitcoin-my-character-launch--loading .asset-alien-meta-preview-loader-ring {
+	width: 42px;
+	height: 42px;
+	border-width: 5px;
+}
+
+.bitcoin-my-character-photo-slot {
+	width: 100%;
+	margin: 0;
+}
+
+.bitcoin-my-character-photo-slot .asset-alien-photo-hit {
+	cursor: pointer;
+}
+
+.bitcoin-my-character-photo-slot > .asset-alien-photo-hit:not(button) {
+	cursor: default;
+	pointer-events: none;
+}
+
+.bitcoin-my-character-photo-frame {
+	position: relative;
+	background: rgba(248, 141, 0, 0.08);
+}
+
+.bitcoin-my-character-photo-loader {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	opacity: 1;
+	transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+	background: color-mix(in srgb, rgba(248, 141, 0, 1) 8%, transparent);
+}
+
+.bitcoin-my-character-photo-loader.is-fading {
+	opacity: 0;
+}
+
+.bitcoin-my-character-photo-loader .asset-alien-meta-preview-loader-ring {
+	width: 42px;
+	height: 42px;
+	border-width: 5px;
+}
+
+.bitcoin-my-character-photo-img {
+	opacity: 0;
+	transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bitcoin-my-character-photo-img.is-visible {
+	opacity: 1;
+}
+
+.bitcoin-my-character-page .bitcoin-alien-race-page-inner {
+	gap: 0;
+}
+
+.bitcoin-my-character-height-down {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-height-down-inner {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-section--badge .bitcoin-my-character-height-down-inner,
+.bitcoin-my-character-section--photo .bitcoin-my-character-height-down-inner,
+.bitcoin-my-character-section--launch .bitcoin-my-character-height-down-inner {
+	padding-bottom: 16px;
+}
+
+.bitcoin-my-character-section--questions .bitcoin-my-character-height-down-inner,
+.bitcoin-my-character-section--footer .bitcoin-my-character-height-down-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.bitcoin-my-character-section--footer .asset-footer {
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	margin-top: 8px;
+	margin-bottom: 15px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+.bitcoin-my-character-section--footer .asset-footer .asset-footer-about-button {
+	padding-left: 16px;
+	padding-right: 16px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.bitcoin-my-character-section--footer .asset-footer .asset-footer-about-text {
+	margin-right: 0;
 }
 
 .bitcoin-alien-race-page-inner {
@@ -7013,6 +7202,56 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	padding-bottom: 24px;
 }
 
+.blood-overlay-card--alien-creating {
+	height: auto;
+	min-height: 270px;
+	justify-content: center;
+	gap: 18px;
+	padding-top: 28px;
+	padding-bottom: 24px;
+}
+
+.blood-overlay-creating-spinner {
+	position: relative;
+	width: 72px;
+	height: 72px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.blood-overlay-creating-spinner-ring {
+	position: absolute;
+	inset: 0;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 5px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 22%,
+		transparent
+	);
+	border-top-color: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+.blood-overlay-creating-profile {
+	width: 34px;
+	height: 34px;
+	display: block;
+	flex-shrink: 0;
+	opacity: 0.9;
+	background: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-mask-image: url('/images/icons/profile.png');
+	mask-image: url('/images/icons/profile.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+
 .blood-overlay-card--alien-meta {
 	width: 280px;
 	height: auto;
@@ -7204,11 +7443,17 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	align-items: center;
 	justify-content: center;
 	pointer-events: none;
+	opacity: 1;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	background: color-mix(
 		in srgb,
 		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 8%,
 		transparent
 	);
+}
+
+.asset-alien-meta-preview-loader.is-fading {
+	opacity: 0;
 }
 
 .asset-alien-meta-preview-loader-ring {
@@ -7275,6 +7520,11 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 }
 
 .asset-alien-meta-preview:not(.asset-alien-meta-preview--loop-still) {
+	opacity: 0;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-alien-meta-preview:not(.asset-alien-meta-preview--loop-still).is-visible {
 	opacity: 1;
 }
 
@@ -12873,14 +13123,14 @@ a.asset-action-button--save-signin {
 
 .asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible {
 	opacity: 1;
-	transition-duration: 1.5s;
+	transition-duration: 1.4s;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible.is-done {
 	opacity: 0;
 	pointer-events: none;
-	transition-duration: 1.5s;
+	transition-duration: 1.4s;
 }
 
 /* Space between launch poster and Sign In (trailer removed on home guest) */
@@ -12896,6 +13146,14 @@ a.asset-action-button--save-signin {
 
 	.asset-guest-action-shell {
 		border-radius: 6px;
+	}
+
+	.asset-guest-poster-frame--loop::before,
+	.asset-guest-poster-frame--loop::after,
+	.asset-guest-poster-media,
+	.asset-guest-poster-video,
+	.asset-guest-poster-frame--loop .asset-guest-poster-img {
+		border-radius: 5px;
 	}
 }
 
@@ -14855,6 +15113,37 @@ a.asset-action-button--save-signin {
 /* Asset pages: below about button; accent + panel wash match `.asset-panel--*`. */
 .asset-page .asset-questions-support-shell {
 	margin: 24px auto 80px;
+}
+
+/* My Character: Questions above about — modest gap (not the asset-page 80px bottom). */
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell {
+	margin: 8px auto 12px;
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	align-items: center;
+}
+
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell .myportfolio-questions-panel {
+	width: 100%;
+	max-width: 100%;
+}
+
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell .myinv-panel-title--add {
+	width: 100%;
+	text-align: center;
+}
+
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell .myportfolio-email-support-copy {
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell .myportfolio-email-support-copy .site-social-footer-link {
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .asset-page--bitcoin .asset-questions-support-shell {

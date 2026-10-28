@@ -5,7 +5,7 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import GuestLandingCopyright from '../GuestLandingCopyright';
 import { usePosterLoopPlayback } from '../../hooks/usePosterLoopPlayback';
-import { useSequentialPosterFade } from '../../hooks/useSequentialPosterFade';
+
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
 
@@ -17,15 +17,20 @@ const LAUNCH_POSTER_LOOP = `${LAUNCH_POSTERS_BASE}/${encodeURIComponent('LaunchL
 const PortfolioWeeklyGuestLanding: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const stillImgRef = useRef<HTMLImageElement | null>(null);
-  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
-    usePosterLoopPlayback(videoRef, true);
+  const {
+    videoReady,
+    showStillLayer,
+    showVideo,
+    videoFadingOut,
+    isHandoff,
+    markReady,
+    onVideoEnded,
+    skipToStill,
+  } = usePosterLoopPlayback(videoRef, true, undefined, 5000);
   const [stillLoaded, setStillLoaded] = useState(false);
-  const { startOut, showStill, isHandoff } = useSequentialPosterFade(
-    videoDone,
-    stillLoaded,
-    1500
-  );
-  const frameReady = videoReady || startOut;
+
+  const showStill = showStillLayer && stillLoaded;
+  const frameReady = videoReady || showStill || stillLoaded;
 
   useEffect(() => {
     const img = stillImgRef.current;
@@ -74,8 +79,8 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
             ) : null}
             <video
               ref={videoRef}
-              className={`asset-guest-poster-video${videoReady ? ' is-visible' : ''}${
-                startOut ? ' is-done' : ''
+              className={`asset-guest-poster-video${showVideo ? ' is-visible' : ''}${
+                videoFadingOut || !showVideo ? ' is-done' : ''
               }`}
               src={LAUNCH_POSTER_LOOP}
               muted

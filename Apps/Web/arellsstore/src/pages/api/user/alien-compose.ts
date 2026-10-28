@@ -3,6 +3,7 @@ import { assertUserEmailMatchesSession } from '../../../lib/auth/requireUserApi'
 import {
   ALIEN_COMPOSE_BASE_REL,
   ALIEN_COMPOSE_IRIS_REL,
+  ALIEN_PORTRAIT_COLOR_REL,
   ALIEN_SEASONONE_BASE_REL,
   composePersonalBitcoinAlien,
   composePersonalBitcoinAlienPortrait,
@@ -68,7 +69,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const selfieBuf = await loadSelfie(bucket, allowed, asset);
-    const iris = await readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL);
+    const [iris, portraitColor] = await Promise.all([
+      readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
+      readAlienComposeRef(ALIEN_PORTRAIT_COLOR_REL),
+    ]);
 
     if (mode === 'full') {
       const [metaBase, seasonBase] = await Promise.all([
@@ -115,6 +119,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const portrait = await composePersonalBitcoinAlienPortrait({
       selfie: selfieBuf,
       iris: iris.buffer,
+      colorRef: portraitColor.buffer,
     });
     await s3
       .putObject({

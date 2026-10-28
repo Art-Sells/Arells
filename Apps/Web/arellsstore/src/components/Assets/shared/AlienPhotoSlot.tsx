@@ -1,11 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { useUser } from '../../../context/UserContext';
-import { usePosterLoopPlayback } from '../../../hooks/usePosterLoopPlayback';
-import { useSequentialPosterFade } from '../../../hooks/useSequentialPosterFade';
-import { ALIEN_COMPOSE_DONE_EVENT, assetSharePath } from '../../../lib/assets/assetSharePath';
+import { ALIEN_COMPOSE_DONE_EVENT } from '../../../lib/assets/assetSharePath';
 
 type AlienPhotoSlotProps = {
   assetId: string;
@@ -14,12 +14,6 @@ type AlienPhotoSlotProps = {
 
 const PLACEHOLDER_SRC =
   '/images/banners/assets/crypto/Bitcoin/Posters/personalalienplaceholder.jpg';
-
-/** TEMP: force success modal open for share UI review — remove after. */
-const FORCE_ALIEN_META_MODAL_PREVIEW = true;
-
-const PREVIEW_META_FALLBACK =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
 
 const EMPTY_LABEL_LINES = [
   'Add a photo of your',
@@ -54,119 +48,22 @@ function themeStyleFrom(el: HTMLElement | null): React.CSSProperties {
   return style as React.CSSProperties;
 }
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') resolve(reader.result);
-      else reject(new Error('Could not read photo'));
-    };
-    reader.onerror = () => reject(new Error('Could not read photo'));
-    reader.readAsDataURL(file);
-  });
-}
-
-function AlienMetaPreview({
-  metaUrl,
-  loopUrl,
-}: {
-  metaUrl: string;
-  loopUrl: string | null;
-}) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const stillImgRef = useRef<HTMLImageElement | null>(null);
-  const hasLoop = Boolean(loopUrl);
-  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
-    usePosterLoopPlayback(videoRef, hasLoop, loopUrl || '');
-  const [stillLoaded, setStillLoaded] = useState(false);
-  const { startOut, showStill: stillVisible, isHandoff } = useSequentialPosterFade(
-    hasLoop && videoDone,
-    stillLoaded,
-    1500
-  );
-  const showStill = !hasLoop ? stillLoaded : stillVisible;
-  const frameReady = hasLoop ? videoReady || startOut : stillLoaded;
-
-  useEffect(() => {
-    const img = stillImgRef.current;
-    if (img?.complete && img.naturalWidth > 0) setStillLoaded(true);
-  }, [metaUrl]);
-
-  return (
-    <div
-      className={`asset-alien-meta-preview-frame${frameReady ? ' is-loaded' : ''}${
-        showStill ? ' is-still' : ''
-      }${hasLoop ? ' asset-alien-meta-preview-frame--loop' : ''}${
-        isHandoff ? ' is-handoff' : ''
-      }`}
-    >
-      {!frameReady ? (
-        <div className="asset-alien-meta-preview-loader" aria-hidden="true">
-          <div className="asset-alien-meta-preview-loader-ring" />
-        </div>
-      ) : null}
-      {hasLoop && loopUrl ? (
-        <video
-          ref={videoRef}
-          className={`asset-alien-meta-preview-video${videoReady ? ' is-visible' : ''}${
-            startOut ? ' is-done' : ''
-          }`}
-          src={loopUrl}
-          muted
-          playsInline
-          preload="auto"
-          autoPlay
-          controls={false}
-          disablePictureInPicture
-          onLoadedData={markReady}
-          onCanPlay={markReady}
-          onPlaying={markReady}
-          onEnded={onVideoEnded}
-          onError={skipToStill}
-          aria-label="Your personalized Bitcoin Alien Race poster"
-        />
-      ) : null}
-      <img
-        ref={stillImgRef}
-        className={`asset-alien-meta-preview${showStill ? ' is-visible' : ''}${
-          hasLoop ? ' asset-alien-meta-preview--loop-still' : ''
-        }`}
-        src={metaUrl}
-        alt="Your personalized Bitcoin Alien Race poster"
-        onLoad={() => setStillLoaded(true)}
-      />
-    </div>
-  );
-}
-
 const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) => {
   const titleId = useId();
   const { email, shareId, isSignedIn } = useUser();
+  const { isCreatingAsset, blockIfCreating, startCreate } = useAlienCharacterCreate();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
-  const [metaUrl, setMetaUrl] = useState<string | null>(null);
-  const [metaLoopUrl, setMetaLoopUrl] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [successOpen, setSuccessOpen] = useState(false);
-  const [errorOpen, setErrorOpen] = useState(false);
-  const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
-  const [shareCopied, setShareCopied] = useState(false);
-  const errorTitleId = useId();
-  const shareCopiedTimerRef = useRef<number | null>(null);
+  const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
+
+  const busy = isCreatingAsset(assetId);
+  const displayName = assetName?.trim() || 'Bitcoin';
 
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (shareCopiedTimerRef.current != null) {
-        window.clearTimeout(shareCopiedTimerRef.current);
-      }
-    };
   }, []);
 
   const loadExisting = useCallback(async () => {
@@ -184,7 +81,10 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         return;
       }
       const blob = await res.blob();
-      setPortraitUrl(URL.createObjectURL(blob));
+      setPortraitUrl((prev) => {
+        if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return URL.createObjectURL(blob);
+      });
     } catch {
       setPortraitUrl(null);
     }
@@ -194,87 +94,27 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
     void loadExisting();
   }, [loadExisting]);
 
-  // TEMP preview: open success modal on mount so share UI is visible without re-upload.
   useEffect(() => {
-    if (!FORCE_ALIEN_META_MODAL_PREVIEW || !mounted || assetId !== 'bitcoin') return;
-    let cancelled = false;
-    const openPreview = async () => {
-      setOverlayStyle(themeStyleFrom(triggerRef.current));
-      if (isSignedIn) {
-        try {
-          const bust = `&t=${Date.now()}`;
-          const [metaRes, loopRes] = await Promise.all([
-            fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
-              credentials: 'include',
-              cache: 'no-store',
-            }),
-            fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop${bust}`, {
-              credentials: 'include',
-              cache: 'no-store',
-            }),
-          ]);
-          if (cancelled) return;
-          if (metaRes.ok) {
-            const metaBlob = await metaRes.blob();
-            const loopBlob = loopRes.ok ? await loopRes.blob() : null;
-            if (cancelled) return;
-            setMetaUrl((prev) => {
-              if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-              return URL.createObjectURL(metaBlob);
-            });
-            setMetaLoopUrl((prev) => {
-              if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-              return loopBlob ? URL.createObjectURL(loopBlob) : null;
-            });
-            setSuccessOpen(true);
-            return;
-          }
-        } catch {
-          /* fall through to guest poster */
-        }
-      }
-      if (cancelled) return;
-      setMetaUrl(PREVIEW_META_FALLBACK);
-      setMetaLoopUrl(null);
-      setSuccessOpen(true);
+    const onDone = (event: Event) => {
+      const detail = (event as CustomEvent<{ assetId?: string }>).detail;
+      if (detail?.assetId === assetId) void loadExisting();
     };
-    void openPreview();
-    return () => {
-      cancelled = true;
-    };
-  }, [mounted, assetId, isSignedIn]);
+    window.addEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
+    return () => window.removeEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
+  }, [assetId, loadExisting]);
 
   const closeComingSoon = useCallback(() => setComingSoonOpen(false), []);
-  const closeError = useCallback(() => setErrorOpen(false), []);
-  const closeSuccess = useCallback(() => {
-    setSuccessOpen(false);
-    setShareCopied(false);
-  }, []);
 
-  const sharePath = assetSharePath(`/${assetId === 'bitcoin' ? 'bitcoin' : assetId}`, shareId);
-  const shareHref =
-    typeof window !== 'undefined' ? `${window.location.origin}${sharePath}` : sharePath;
-
-  const copyShareLink = useCallback(async () => {
-    if (!shareId) return;
-    try {
-      await navigator.clipboard.writeText(shareHref);
-      setShareCopied(true);
-      if (shareCopiedTimerRef.current != null) {
-        window.clearTimeout(shareCopiedTimerRef.current);
-      }
-      shareCopiedTimerRef.current = window.setTimeout(() => {
-        setShareCopied(false);
-        shareCopiedTimerRef.current = null;
-      }, 1600);
-    } catch (err) {
-      console.error('share copy failed', err);
-    }
-  }, [shareId, shareHref]);
+  const myCharacterHref =
+    assetId === 'bitcoin'
+      ? shareId
+        ? `/bitcoin/my-character/${shareId}`
+        : '/bitcoin/my-character'
+      : null;
 
   const openPicker = useCallback(() => {
-    setOverlayStyle(themeStyleFrom(triggerRef.current));
-    setErrorOpen(false);
+    const style = themeStyleFrom(triggerRef.current);
+    setOverlayStyle(style);
     if (assetId !== 'bitcoin') {
       setComingSoonOpen(true);
       return;
@@ -282,148 +122,106 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
     if (!isSignedIn || !email) {
       return;
     }
-    // Reset so picking the same filename still fires onChange and regenerates.
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    if (blockIfCreating(style)) return;
+    const input = fileInputRef.current;
+    if (input) {
+      try {
+        input.value = '';
+        input.type = 'text';
+        input.type = 'file';
+        input.accept = 'image/jpeg,image/png,image/webp';
+      } catch {
+        input.value = '';
+      }
+      input.click();
     }
-    fileInputRef.current?.click();
-  }, [assetId, email, isSignedIn]);
+  }, [assetId, email, isSignedIn, blockIfCreating]);
 
   const onFile = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file || !email) {
         event.target.value = '';
         return;
       }
-      // Keep a stable File handle, then clear input for the next same-name pick.
       event.target.value = '';
-      setBusy(true);
-      setErrorOpen(false);
-      try {
-        const data = await fileToDataUrl(file);
-        const uploadRes = await fetch('/api/user/alien-photo', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, asset: assetId, data }),
-        });
-        const uploadJson = await uploadRes.json().catch(() => ({}));
-        if (!uploadRes.ok) {
-          throw new Error(uploadJson.error || 'Upload failed');
-        }
-
-        const composeRes = await fetch('/api/user/alien-compose', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, asset: assetId, mode: 'full' }),
-        });
-        const composeJson = await composeRes.json().catch(() => ({}));
-        if (!composeRes.ok) {
-          throw new Error(composeJson.error || 'Character generation failed');
-        }
-
-        // Season One loop FIRST (own request), then metaloop — so Season One
-        // is never starved when metaloop eats the whole API timeout window.
-        let videosJson: {
-          metaloop?: boolean;
-          seasononeloop?: boolean;
-          errors?: string[];
-        } = {};
-        const runVideos = async (kinds: Array<'seasononeloop' | 'metaloop'>) => {
-          const videosRes = await fetch('/api/user/alien-videos', {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, asset: assetId, kinds }),
-          });
-          const json = await videosRes.json().catch(() => ({}));
-          if (!videosRes.ok) {
-            console.error('alien-videos failed', kinds, json);
-          } else if (json.errors?.length) {
-            console.error('alien-videos partial', kinds, json.errors);
-          }
-          return json as typeof videosJson;
-        };
-        try {
-          const seasonJson = await runVideos(['seasononeloop']);
-          videosJson.seasononeloop = Boolean(seasonJson.seasononeloop);
-          if (!videosJson.seasononeloop) {
-            const retry = await runVideos(['seasononeloop']);
-            videosJson.seasononeloop = Boolean(retry.seasononeloop);
-          }
-          // Modal + shared guest LaunchLoop (same S3 metaloop object).
-          const metaJson = await runVideos(['metaloop']);
-          videosJson.metaloop = Boolean(metaJson.metaloop);
-          if (!videosJson.metaloop) {
-            const retryMeta = await runVideos(['metaloop']);
-            videosJson.metaloop = Boolean(retryMeta.metaloop);
-          }
-        } catch (videoErr) {
-          console.error('alien-videos request error', videoErr);
-        }
-
-        const bust = `&t=${Date.now()}`;
-        const [portraitRes, metaRes, loopRes] = await Promise.all([
-          fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=portrait${bust}`, {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
-          fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
-          fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop${bust}`, {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
-        ]);
-        if (!portraitRes.ok || !metaRes.ok) {
-          throw new Error('Could not load generated images');
-        }
-        const [portraitBlob, metaBlob] = await Promise.all([portraitRes.blob(), metaRes.blob()]);
-        const loopBlob = loopRes.ok ? await loopRes.blob() : null;
-        setPortraitUrl((prev) => {
-          if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-          return URL.createObjectURL(portraitBlob);
-        });
-        setMetaUrl((prev) => {
-          if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-          return URL.createObjectURL(metaBlob);
-        });
-        setMetaLoopUrl((prev) => {
-          if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-          return loopBlob ? URL.createObjectURL(loopBlob) : null;
-        });
-        setOverlayStyle(themeStyleFrom(triggerRef.current));
-        setSuccessOpen(true);
-        window.dispatchEvent(
-          new CustomEvent(ALIEN_COMPOSE_DONE_EVENT, {
-            detail: {
-              assetId,
-              shareId,
-              at: Date.now(),
-              metaloop: Boolean(videosJson.metaloop && loopBlob),
-              seasononeloop: Boolean(videosJson.seasononeloop),
-            },
-          })
-        );
-      } catch (err) {
-        console.error('alien photo upload/compose', err);
-        setOverlayStyle(themeStyleFrom(triggerRef.current));
-        setErrorOpen(true);
-      } finally {
-        setBusy(false);
-      }
+      startCreate({
+        email,
+        assetId,
+        assetName: displayName,
+        file,
+        shareId,
+        overlayStyle: themeStyleFrom(triggerRef.current),
+      });
     },
-    [assetId, email, shareId]
+    [assetId, displayName, email, shareId, startCreate]
   );
 
   const hasCharacter = Boolean(portraitUrl);
   const emptyLabel = EMPTY_LABEL_LINES.join(' ');
-  const hitLabel = hasCharacter ? 'Replace character photo' : emptyLabel;
+  const hitLabel = busy
+    ? 'Creating character'
+    : hasCharacter
+      ? 'View My Character'
+      : emptyLabel;
   const thumbSrc = portraitUrl || PLACEHOLDER_SRC;
+  const viewAsLink = Boolean(hasCharacter && myCharacterHref && !busy);
+
+  const media = (
+    <>
+      <span className="asset-alien-photo-slot-placeholder-wrap">
+        <img
+          className="asset-alien-photo-slot-placeholder"
+          src={thumbSrc}
+          alt=""
+          aria-hidden="true"
+        />
+      </span>
+      {!hasCharacter ? (
+        <span className="asset-alien-photo-label">
+          {EMPTY_LABEL_LINES_DESKTOP.map((line) => (
+            <span
+              key={`desktop-${line}`}
+              className="asset-alien-photo-label-line asset-alien-photo-label-line--desktop"
+            >
+              {line}
+            </span>
+          ))}
+          {EMPTY_LABEL_LINES.map((line) => (
+            <span
+              key={`mobile-${line}`}
+              className="asset-alien-photo-label-line asset-alien-photo-label-line--mobile"
+            >
+              {line}
+            </span>
+          ))}
+        </span>
+      ) : null}
+      <span
+        className={`asset-alien-photo-plus${
+          hasCharacter || busy ? ' asset-alien-photo-plus--view' : ''
+        }${busy ? ' asset-alien-photo-plus--creating' : ''}`}
+        aria-hidden="true"
+      >
+        {busy ? (
+          <>
+            <span className="asset-alien-photo-creating-word">creating</span>
+            <span className="asset-alien-photo-busy" />
+            <span className="asset-alien-photo-creating-word">character</span>
+          </>
+        ) : hasCharacter ? (
+          'View My Character'
+        ) : (
+          <svg viewBox="0 0 24 24" width="22" height="22">
+            <path
+              fillRule="evenodd"
+              d="M9.2 3.5 7.6 5.5H5.25A2.25 2.25 0 0 0 3 7.75v9.5A2.25 2.25 0 0 0 5.25 19.5h13.5A2.25 2.25 0 0 0 21 17.25v-9.5A2.25 2.25 0 0 0 18.75 5.5H16.4l-1.6-2H9.2zM12 15.75a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z"
+            />
+          </svg>
+        )}
+      </span>
+    </>
+  );
 
   return (
     <div
@@ -438,57 +236,28 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         hidden
         onChange={onFile}
       />
-      <button
-        ref={triggerRef}
-        type="button"
-        className="asset-alien-photo-hit"
-        onClick={openPicker}
-        disabled={busy}
-        aria-expanded={successOpen || comingSoonOpen || errorOpen}
-        aria-haspopup="dialog"
-        aria-label={hitLabel}
-      >
-        <span className="asset-alien-photo-slot-placeholder-wrap">
-          <img
-            className="asset-alien-photo-slot-placeholder"
-            src={thumbSrc}
-            alt=""
-            aria-hidden="true"
-          />
-        </span>
-        {!hasCharacter ? (
-          <span className="asset-alien-photo-label">
-            {EMPTY_LABEL_LINES_DESKTOP.map((line) => (
-              <span
-                key={`desktop-${line}`}
-                className="asset-alien-photo-label-line asset-alien-photo-label-line--desktop"
-              >
-                {line}
-              </span>
-            ))}
-            {EMPTY_LABEL_LINES.map((line) => (
-              <span
-                key={`mobile-${line}`}
-                className="asset-alien-photo-label-line asset-alien-photo-label-line--mobile"
-              >
-                {line}
-              </span>
-            ))}
-          </span>
-        ) : null}
-        <span className="asset-alien-photo-plus" aria-hidden="true">
-          {busy ? (
-            <span className="asset-alien-photo-busy" />
-          ) : (
-            <svg viewBox="0 0 24 24" width="22" height="22">
-              <path
-                fillRule="evenodd"
-                d="M9.2 3.5 7.6 5.5H5.25A2.25 2.25 0 0 0 3 7.75v9.5A2.25 2.25 0 0 0 5.25 19.5h13.5A2.25 2.25 0 0 0 21 17.25v-9.5A2.25 2.25 0 0 0 18.75 5.5H16.4l-1.6-2H9.2zM12 15.75a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z"
-              />
-            </svg>
-          )}
-        </span>
-      </button>
+      {viewAsLink && myCharacterHref ? (
+        <Link
+          href={myCharacterHref}
+          className="asset-alien-photo-hit"
+          aria-label={hitLabel}
+        >
+          {media}
+        </Link>
+      ) : (
+        <button
+          ref={triggerRef}
+          type="button"
+          className="asset-alien-photo-hit"
+          onClick={openPicker}
+          disabled={busy}
+          aria-expanded={comingSoonOpen}
+          aria-haspopup="dialog"
+          aria-label={hitLabel}
+        >
+          {media}
+        </button>
+      )}
       {mounted && comingSoonOpen
         ? createPortal(
             <div
@@ -508,7 +277,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
                 <p id={titleId} className="blood-overlay-copy">
                   <span className="blood-overlay-line">Add yourself</span>
                   <span className="blood-overlay-line">inside the</span>
-                  <span className="blood-overlay-line">{assetName?.trim() || 'asset'}</span>
+                  <span className="blood-overlay-line">{displayName}</span>
                   <span className="blood-overlay-line">Alien Race</span>
                   <span className="blood-overlay-line">Episodes.</span>
                   <span className="blood-overlay-line">-</span>
@@ -517,77 +286,6 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
                 </p>
                 <button type="button" className="asset-range-button blood-ok" onClick={closeComingSoon}>
                   Ok
-                </button>
-              </div>
-            </div>,
-            document.body
-          )
-        : null}
-      {mounted && errorOpen
-        ? createPortal(
-            <div
-              className="blood-overlay is-visible"
-              style={overlayStyle}
-              onClick={closeError}
-              role="presentation"
-            >
-              <div
-                className="blood-overlay-card blood-overlay-card--alien-error"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby={errorTitleId}
-                onClick={(event) => event.stopPropagation()}
-              >
-                <p id={errorTitleId} className="blood-overlay-copy">
-                  <span className="blood-overlay-line">Failed To Upload</span>
-                  <span className="blood-overlay-line">Try Again</span>
-                </p>
-                <button type="button" className="asset-range-button blood-ok" onClick={closeError}>
-                  Ok
-                </button>
-              </div>
-            </div>,
-            document.body
-          )
-        : null}
-      {mounted && successOpen && metaUrl
-        ? createPortal(
-            <div
-              className="blood-overlay is-visible"
-              style={overlayStyle}
-              role="presentation"
-            >
-              <div
-                className="blood-overlay-card blood-overlay-card--alien-meta"
-                role="dialog"
-                aria-modal="true"
-                aria-label="Character added"
-                onClick={(event) => event.stopPropagation()}
-              >
-                <AlienMetaPreview metaUrl={metaUrl} loopUrl={metaLoopUrl} />
-                <div className="asset-alien-meta-share">
-                  <p className="asset-alien-meta-share-title">Share</p>
-                  <div className="asset-alien-meta-share-row">
-                    <button
-                      type="button"
-                      className="asset-alien-meta-share-copy"
-                      onClick={() => void copyShareLink()}
-                      disabled={!shareId}
-                      aria-label="Copy share link"
-                    >
-                      {shareCopied ? 'Copied' : 'COPY'}
-                    </button>
-                    <span className="asset-alien-meta-share-link" title={shareHref}>
-                      {shareHref}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="asset-range-button blood-ok blood-ok--alien-close"
-                  onClick={closeSuccess}
-                >
-                  Close
                 </button>
               </div>
             </div>,

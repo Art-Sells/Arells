@@ -21,13 +21,9 @@ After Episode 2 (or during):
 
 - expand My Character section to this: 
 
-After a photo has been added, re repalce the "photo" icon with "View My Character" that takes them to /bitcoin/my-character/{user-id} and ensure the medatata is the same for my chacacter/{user-id} as the /bitcoin/my-character.... 
-
-and in my character it should look like the "bitcoin alien race page" except under the bitcoin badge bordered section, it should show the poster video/image and below that a front-facing, side-facing, and 3/4th facing profile non-full-body? `16:9;? (if they never updated my-character just ensure the photos are the sumple my character image with no front-side/3/4ths facers)...
+Repalce the "photo" icon with "View My Character" that takes them to /bitcoin/my-character/{user-id} and ensure the medadata is the same for my chacacter/{user-id} as the /bitcoin/my-character.... 
 
 And below that a "Update My Chatacter" borderes setion with the photo section when clicked allows to upload new photos...
-
-this means we'll have to create a new prompt for that also..... investigate before I approve
 
 - - Play button plays normal videos if no character additions, if character additions, asks to add (generating costs X amount)?
 

@@ -63,7 +63,7 @@ function bitcoinPathShareId(pathname: string | null): string | null {
   const parts = (pathname || '').replace(/\/+$/, '').split('/').filter(Boolean);
   if (parts[0] !== 'bitcoin') return null;
   const id = parts[1] || '';
-  if (!id || id === 'news') return null;
+  if (!id || id === 'news' || id === 'my-character') return null;
   if (!/^[a-z0-9]{6,64}$/i.test(id)) return null;
   return id.toLowerCase();
 }

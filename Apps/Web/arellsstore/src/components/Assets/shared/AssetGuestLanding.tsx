@@ -10,11 +10,6 @@ import { usePosterLoopPlayback } from '../../../hooks/usePosterLoopPlayback';
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
 
-const FADE_MS = 1500;
-
-/** intro/outro *In* keep the black plate up while the next layer fades in (kills the flash). */
-type LoopPhase = 'boot' | 'introOut' | 'introIn' | 'play' | 'outroOut' | 'outroIn' | 'end';
-
 type AssetGuestLandingProps = {
   cssModifier: string;
   ticker: string;
@@ -22,7 +17,7 @@ type AssetGuestLandingProps = {
   slogan?: string;
   /** When set on Bitcoin guest landing, shown above the trailer. */
   posterSrc?: string;
-  /** Optional one-shot loop video; after it ends, fades into posterSrc. */
+  /** Optional loop video; after it ends, fades into posterSrc, then replays after 5s. */
   posterLoopSrc?: string;
   posterWidth?: number;
   posterHeight?: number;
@@ -54,90 +49,29 @@ export default function AssetGuestLanding({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const posterImgRef = useRef<HTMLImageElement>(null);
   const [posterLoaded, setPosterLoaded] = useState(false);
-  const [phase, setPhase] = useState<LoopPhase>('boot');
-  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
-    usePosterLoopPlayback(videoRef, hasLoop, posterLoopSrc);
+  const {
+    videoReady,
+    showStillLayer,
+    showVideo,
+    videoFadingOut,
+    isHandoff,
+    markReady,
+    onVideoEnded,
+    skipToStill,
+  } = usePosterLoopPlayback(videoRef, hasLoop, posterLoopSrc, 5000);
+
+  const showStill = !hasLoop ? posterLoaded : showStillLayer && posterLoaded;
+  const frameReady = hasLoop ? videoReady || showStill || posterLoaded : posterLoaded;
+  const showLoader = Boolean(posterSrc) && !posterLoaded;
 
   useEffect(() => {
     setPosterLoaded(false);
-    setPhase('boot');
   }, [posterSrc, posterLoopSrc]);
 
   useEffect(() => {
     const img = posterImgRef.current;
     if (img?.complete && img.naturalWidth > 0) setPosterLoaded(true);
   }, [posterSrc]);
-
-  // Loading poster → fade out → play video from the start.
-  useEffect(() => {
-    if (!hasLoop || phase !== 'boot' || !videoReady || !posterLoaded) return;
-    const video = videoRef.current;
-    if (video) {
-      video.pause();
-      try {
-        video.currentTime = 0;
-      } catch {
-        /* ignore seek errors before metadata */
-      }
-    }
-    setPhase('introOut');
-  }, [hasLoop, phase, videoReady, posterLoaded]);
-
-  // Poster fully out → start video under black → then clear handoff.
-  useEffect(() => {
-    if (phase !== 'introOut') return;
-    const video = videoRef.current;
-    const timer = window.setTimeout(() => {
-      setPhase('introIn');
-      void video?.play().catch(() => skipToStill());
-    }, FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, [phase, skipToStill]);
-
-  useEffect(() => {
-    if (phase !== 'introIn') return;
-    const timer = window.setTimeout(() => setPhase('play'), FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, [phase]);
-
-  // After loop ends → fade out video → fade in still (black held through both).
-  useEffect(() => {
-    if (!hasLoop || !videoDone) return;
-    if (phase === 'play' || phase === 'introIn') setPhase('outroOut');
-    if (phase === 'boot' || phase === 'introOut') setPhase('end');
-  }, [hasLoop, videoDone, phase]);
-
-  useEffect(() => {
-    if (phase !== 'outroOut') return;
-    const timer = window.setTimeout(() => setPhase('outroIn'), FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, [phase]);
-
-  useEffect(() => {
-    if (phase !== 'outroIn') return;
-    const timer = window.setTimeout(() => setPhase('end'), FADE_MS);
-    return () => window.clearTimeout(timer);
-  }, [phase]);
-
-  // Loader → poster → fade out → black → fade in video → … → fade out → black → still.
-  const showLoadingPoster =
-    hasLoop && posterLoaded && (phase === 'boot' || phase === 'introOut');
-  const showEndStill = !hasLoop
-    ? posterLoaded
-    : phase === 'outroIn' || phase === 'end';
-  const posterVisible = showLoadingPoster || showEndStill;
-  const posterFadingOut = phase === 'introOut';
-  const videoVisible =
-    phase === 'introIn' || phase === 'play' || phase === 'outroOut';
-  const videoFadingOut = phase === 'outroOut';
-  const isHandoff =
-    phase === 'introOut' ||
-    phase === 'introIn' ||
-    phase === 'outroOut' ||
-    phase === 'outroIn';
-  const frameReady = posterLoaded;
-  const isBoot = hasLoop ? phase === 'boot' : !posterLoaded;
-  const showLoader = Boolean(posterSrc) && !posterLoaded;
 
   return (
     <div
@@ -186,12 +120,9 @@ export default function AssetGuestLanding({
             <div
               className={`asset-guest-poster-frame asset-guest-poster-frame--loop${
                 frameReady ? ' is-loaded' : ''
-              }${isBoot ? ' is-boot' : ''}${showEndStill ? ' is-still' : ''}${
-                isHandoff ? ' is-handoff' : ''
-              }`}
+              }${showStill ? ' is-still' : ''}${isHandoff ? ' is-handoff' : ''}`}
               style={{ aspectRatio: `${posterWidth} / ${posterHeight}` }}
             >
-              {/* Same structure as .guest-trailer-frame > .guest-trailer > video/poster */}
               <div className="asset-guest-poster-media">
                 {showLoader ? (
                   <div className="asset-guest-poster-loader" aria-hidden="true">
@@ -201,8 +132,8 @@ export default function AssetGuestLanding({
                 {hasLoop && posterLoopSrc ? (
                   <video
                     ref={videoRef}
-                    className={`asset-guest-poster-video${videoVisible ? ' is-visible' : ''}${
-                      videoFadingOut ? ' is-done' : ''
+                    className={`asset-guest-poster-video${showVideo ? ' is-visible' : ''}${
+                      videoFadingOut || !showVideo ? ' is-done' : ''
                     }`}
                     src={posterLoopSrc}
                     muted
@@ -225,9 +156,7 @@ export default function AssetGuestLanding({
                   alt={posterAlt}
                   width={posterWidth}
                   height={posterHeight}
-                  className={`asset-guest-poster-img${posterVisible ? ' is-visible' : ''}${
-                    posterFadingOut ? ' is-done' : ''
-                  }`}
+                  className={`asset-guest-poster-img${showStill ? ' is-visible' : ''}`}
                   onLoad={() => setPosterLoaded(true)}
                 />
               </div>

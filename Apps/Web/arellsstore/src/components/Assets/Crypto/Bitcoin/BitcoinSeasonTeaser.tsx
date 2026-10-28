@@ -5,7 +5,6 @@ import VideoPlayer from '../../../VideoPlayer';
 import { useUser } from '../../../../context/UserContext';
 import { ALIEN_COMPOSE_DONE_EVENT } from '../../../../lib/assets/assetSharePath';
 import { usePosterLoopPlayback } from '../../../../hooks/usePosterLoopPlayback';
-import { useSequentialPosterFade } from '../../../../hooks/useSequentialPosterFade';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/videos';
 import { EPISODE_ONE_POSTER, EPISODE_ONE_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodeone';
 
@@ -28,15 +27,19 @@ export default function BitcoinSeasonTeaser() {
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [trailerSettled, setTrailerSettled] = useState(false);
   const playbackEnabled = mediaReady && loopEnabled && Boolean(loopSrc);
-  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
-    usePosterLoopPlayback(videoRef, playbackEnabled, loopSrc);
-  const { startOut, showStill, isHandoff } = useSequentialPosterFade(
-    videoDone,
-    stillLoaded,
-    1500
-  );
+  const {
+    videoReady,
+    showStillLayer,
+    showVideo,
+    videoFadingOut,
+    isHandoff,
+    markReady,
+    onVideoEnded,
+    skipToStill,
+  } = usePosterLoopPlayback(videoRef, playbackEnabled, loopSrc, 5000);
+  const showStill = showStillLayer && stillLoaded;
   const frameReady =
-    mediaReady && ((playbackEnabled ? videoReady : stillLoaded) || startOut || showStill);
+    mediaReady && ((playbackEnabled ? videoReady : stillLoaded) || showStill || stillLoaded);
 
   const applyStockSeasonOne = useCallback(() => {
     setStillSrc((prev) => {
@@ -183,8 +186,8 @@ export default function BitcoinSeasonTeaser() {
                 <video
                   key={loopSrc}
                   ref={videoRef}
-                  className={`asset-bitcoin-season-teaser-video${videoReady ? ' is-visible' : ''}${
-                    startOut ? ' is-done' : ''
+                  className={`asset-bitcoin-season-teaser-video${showVideo ? ' is-visible' : ''}${
+                    videoFadingOut || !showVideo ? ' is-done' : ''
                   }`}
                   src={loopSrc}
                   muted

@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { title, description } = getCryptoAssetPageSeo(assetId);
   const path = `/bitcoin/${shareId}`;
 
-  if (!shareId || shareId === 'news') {
+  if (!shareId || shareId === 'news' || shareId === 'my-character') {
     return base;
   }
 
@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 const BitcoinSharePage = async ({ params }: PageProps) => {
   const { shareId: raw } = await params;
   const shareId = (raw || '').trim().toLowerCase();
-  if (!shareId || shareId === 'news') {
+  if (!shareId || shareId === 'news' || shareId === 'my-character') {
     redirect('/bitcoin');
   }
 
