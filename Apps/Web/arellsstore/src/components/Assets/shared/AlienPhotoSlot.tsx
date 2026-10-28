@@ -2,8 +2,9 @@
 
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useRouter } from 'next/navigation';
 import { useUser } from '../../../context/UserContext';
+import { usePosterLoopPlayback } from '../../../hooks/usePosterLoopPlayback';
+import { useSequentialPosterFade } from '../../../hooks/useSequentialPosterFade';
 import { ALIEN_COMPOSE_DONE_EVENT, assetSharePath } from '../../../lib/assets/assetSharePath';
 
 type AlienPhotoSlotProps = {
@@ -13,6 +14,12 @@ type AlienPhotoSlotProps = {
 
 const PLACEHOLDER_SRC =
   '/images/banners/assets/crypto/Bitcoin/Posters/personalalienplaceholder.jpg';
+
+/** TEMP: force success modal open for share UI review — remove after. */
+const FORCE_ALIEN_META_MODAL_PREVIEW = true;
+
+const PREVIEW_META_FALLBACK =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
 
 const EMPTY_LABEL_LINES = [
   'Add a photo of your',
@@ -59,24 +66,107 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+function AlienMetaPreview({
+  metaUrl,
+  loopUrl,
+}: {
+  metaUrl: string;
+  loopUrl: string | null;
+}) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const stillImgRef = useRef<HTMLImageElement | null>(null);
+  const hasLoop = Boolean(loopUrl);
+  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
+    usePosterLoopPlayback(videoRef, hasLoop, loopUrl || '');
+  const [stillLoaded, setStillLoaded] = useState(false);
+  const { startOut, showStill: stillVisible, isHandoff } = useSequentialPosterFade(
+    hasLoop && videoDone,
+    stillLoaded,
+    1500
+  );
+  const showStill = !hasLoop ? stillLoaded : stillVisible;
+  const frameReady = hasLoop ? videoReady || startOut : stillLoaded;
+
+  useEffect(() => {
+    const img = stillImgRef.current;
+    if (img?.complete && img.naturalWidth > 0) setStillLoaded(true);
+  }, [metaUrl]);
+
+  return (
+    <div
+      className={`asset-alien-meta-preview-frame${frameReady ? ' is-loaded' : ''}${
+        showStill ? ' is-still' : ''
+      }${hasLoop ? ' asset-alien-meta-preview-frame--loop' : ''}${
+        isHandoff ? ' is-handoff' : ''
+      }`}
+    >
+      {!frameReady ? (
+        <div className="asset-alien-meta-preview-loader" aria-hidden="true">
+          <div className="asset-alien-meta-preview-loader-ring" />
+        </div>
+      ) : null}
+      {hasLoop && loopUrl ? (
+        <video
+          ref={videoRef}
+          className={`asset-alien-meta-preview-video${videoReady ? ' is-visible' : ''}${
+            startOut ? ' is-done' : ''
+          }`}
+          src={loopUrl}
+          muted
+          playsInline
+          preload="auto"
+          autoPlay
+          controls={false}
+          disablePictureInPicture
+          onLoadedData={markReady}
+          onCanPlay={markReady}
+          onPlaying={markReady}
+          onEnded={onVideoEnded}
+          onError={skipToStill}
+          aria-label="Your personalized Bitcoin Alien Race poster"
+        />
+      ) : null}
+      <img
+        ref={stillImgRef}
+        className={`asset-alien-meta-preview${showStill ? ' is-visible' : ''}${
+          hasLoop ? ' asset-alien-meta-preview--loop-still' : ''
+        }`}
+        src={metaUrl}
+        alt="Your personalized Bitcoin Alien Race poster"
+        onLoad={() => setStillLoaded(true)}
+      />
+    </div>
+  );
+}
+
 const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) => {
   const titleId = useId();
-  const router = useRouter();
   const { email, shareId, isSignedIn } = useUser();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [metaUrl, setMetaUrl] = useState<string | null>(null);
+  const [metaLoopUrl, setMetaLoopUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const errorTitleId = useId();
+  const shareCopiedTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (shareCopiedTimerRef.current != null) {
+        window.clearTimeout(shareCopiedTimerRef.current);
+      }
+    };
   }, []);
 
   const loadExisting = useCallback(async () => {
@@ -104,8 +194,83 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
     void loadExisting();
   }, [loadExisting]);
 
+  // TEMP preview: open success modal on mount so share UI is visible without re-upload.
+  useEffect(() => {
+    if (!FORCE_ALIEN_META_MODAL_PREVIEW || !mounted || assetId !== 'bitcoin') return;
+    let cancelled = false;
+    const openPreview = async () => {
+      setOverlayStyle(themeStyleFrom(triggerRef.current));
+      if (isSignedIn) {
+        try {
+          const bust = `&t=${Date.now()}`;
+          const [metaRes, loopRes] = await Promise.all([
+            fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
+              credentials: 'include',
+              cache: 'no-store',
+            }),
+            fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop${bust}`, {
+              credentials: 'include',
+              cache: 'no-store',
+            }),
+          ]);
+          if (cancelled) return;
+          if (metaRes.ok) {
+            const metaBlob = await metaRes.blob();
+            const loopBlob = loopRes.ok ? await loopRes.blob() : null;
+            if (cancelled) return;
+            setMetaUrl((prev) => {
+              if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+              return URL.createObjectURL(metaBlob);
+            });
+            setMetaLoopUrl((prev) => {
+              if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+              return loopBlob ? URL.createObjectURL(loopBlob) : null;
+            });
+            setSuccessOpen(true);
+            return;
+          }
+        } catch {
+          /* fall through to guest poster */
+        }
+      }
+      if (cancelled) return;
+      setMetaUrl(PREVIEW_META_FALLBACK);
+      setMetaLoopUrl(null);
+      setSuccessOpen(true);
+    };
+    void openPreview();
+    return () => {
+      cancelled = true;
+    };
+  }, [mounted, assetId, isSignedIn]);
+
   const closeComingSoon = useCallback(() => setComingSoonOpen(false), []);
   const closeError = useCallback(() => setErrorOpen(false), []);
+  const closeSuccess = useCallback(() => {
+    setSuccessOpen(false);
+    setShareCopied(false);
+  }, []);
+
+  const sharePath = assetSharePath(`/${assetId === 'bitcoin' ? 'bitcoin' : assetId}`, shareId);
+  const shareHref =
+    typeof window !== 'undefined' ? `${window.location.origin}${sharePath}` : sharePath;
+
+  const copyShareLink = useCallback(async () => {
+    if (!shareId) return;
+    try {
+      await navigator.clipboard.writeText(shareHref);
+      setShareCopied(true);
+      if (shareCopiedTimerRef.current != null) {
+        window.clearTimeout(shareCopiedTimerRef.current);
+      }
+      shareCopiedTimerRef.current = window.setTimeout(() => {
+        setShareCopied(false);
+        shareCopiedTimerRef.current = null;
+      }, 1600);
+    } catch (err) {
+      console.error('share copy failed', err);
+    }
+  }, [shareId, shareHref]);
 
   const openPicker = useCallback(() => {
     setOverlayStyle(themeStyleFrom(triggerRef.current));
@@ -159,12 +324,57 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           throw new Error(composeJson.error || 'Character generation failed');
         }
 
-        const [portraitRes, metaRes] = await Promise.all([
-          fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=portrait`, {
+        // Season One loop FIRST (own request), then metaloop — so Season One
+        // is never starved when metaloop eats the whole API timeout window.
+        let videosJson: {
+          metaloop?: boolean;
+          seasononeloop?: boolean;
+          errors?: string[];
+        } = {};
+        const runVideos = async (kinds: Array<'seasononeloop' | 'metaloop'>) => {
+          const videosRes = await fetch('/api/user/alien-videos', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, asset: assetId, kinds }),
+          });
+          const json = await videosRes.json().catch(() => ({}));
+          if (!videosRes.ok) {
+            console.error('alien-videos failed', kinds, json);
+          } else if (json.errors?.length) {
+            console.error('alien-videos partial', kinds, json.errors);
+          }
+          return json as typeof videosJson;
+        };
+        try {
+          const seasonJson = await runVideos(['seasononeloop']);
+          videosJson.seasononeloop = Boolean(seasonJson.seasononeloop);
+          if (!videosJson.seasononeloop) {
+            const retry = await runVideos(['seasononeloop']);
+            videosJson.seasononeloop = Boolean(retry.seasononeloop);
+          }
+          // Modal + shared guest LaunchLoop (same S3 metaloop object).
+          const metaJson = await runVideos(['metaloop']);
+          videosJson.metaloop = Boolean(metaJson.metaloop);
+          if (!videosJson.metaloop) {
+            const retryMeta = await runVideos(['metaloop']);
+            videosJson.metaloop = Boolean(retryMeta.metaloop);
+          }
+        } catch (videoErr) {
+          console.error('alien-videos request error', videoErr);
+        }
+
+        const bust = `&t=${Date.now()}`;
+        const [portraitRes, metaRes, loopRes] = await Promise.all([
+          fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=portrait${bust}`, {
             credentials: 'include',
             cache: 'no-store',
           }),
-          fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed`, {
+          fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
+            credentials: 'include',
+            cache: 'no-store',
+          }),
+          fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop${bust}`, {
             credentials: 'include',
             cache: 'no-store',
           }),
@@ -173,6 +383,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           throw new Error('Could not load generated images');
         }
         const [portraitBlob, metaBlob] = await Promise.all([portraitRes.blob(), metaRes.blob()]);
+        const loopBlob = loopRes.ok ? await loopRes.blob() : null;
         setPortraitUrl((prev) => {
           if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
           return URL.createObjectURL(portraitBlob);
@@ -181,11 +392,21 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
           return URL.createObjectURL(metaBlob);
         });
+        setMetaLoopUrl((prev) => {
+          if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+          return loopBlob ? URL.createObjectURL(loopBlob) : null;
+        });
         setOverlayStyle(themeStyleFrom(triggerRef.current));
         setSuccessOpen(true);
         window.dispatchEvent(
           new CustomEvent(ALIEN_COMPOSE_DONE_EVENT, {
-            detail: { assetId, shareId, at: Date.now() },
+            detail: {
+              assetId,
+              shareId,
+              at: Date.now(),
+              metaloop: Boolean(videosJson.metaloop && loopBlob),
+              seasononeloop: Boolean(videosJson.seasononeloop),
+            },
           })
         );
       } catch (err) {
@@ -198,19 +419,6 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
     },
     [assetId, email, shareId]
   );
-
-  const onSuccessOk = useCallback(() => {
-    setSuccessOpen(false);
-    const href = assetSharePath(`/${assetId === 'bitcoin' ? 'bitcoin' : assetId}`, shareId);
-    if (shareId && typeof window !== 'undefined') {
-      const path = window.location.pathname.replace(/\/+$/, '');
-      if (path === '/bitcoin' || path.startsWith('/bitcoin/')) {
-        router.replace(href);
-        return;
-      }
-    }
-    router.push(href);
-  }, [assetId, router, shareId]);
 
   const hasCharacter = Boolean(portraitUrl);
   const emptyLabel = EMPTY_LABEL_LINES.join(' ');
@@ -356,13 +564,30 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
                 aria-label="Character added"
                 onClick={(event) => event.stopPropagation()}
               >
-                <img
-                  className="asset-alien-meta-preview"
-                  src={metaUrl}
-                  alt="Your personalized Bitcoin Alien Race poster"
-                />
-                <button type="button" className="asset-range-button blood-ok" onClick={onSuccessOk}>
-                  Ok
+                <AlienMetaPreview metaUrl={metaUrl} loopUrl={metaLoopUrl} />
+                <div className="asset-alien-meta-share">
+                  <p className="asset-alien-meta-share-title">Share</p>
+                  <div className="asset-alien-meta-share-row">
+                    <button
+                      type="button"
+                      className="asset-alien-meta-share-copy"
+                      onClick={() => void copyShareLink()}
+                      disabled={!shareId}
+                      aria-label="Copy share link"
+                    >
+                      {shareCopied ? 'Copied' : 'COPY'}
+                    </button>
+                    <span className="asset-alien-meta-share-link" title={shareHref}>
+                      {shareHref}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="asset-range-button blood-ok blood-ok--alien-close"
+                  onClick={closeSuccess}
+                >
+                  Close
                 </button>
               </div>
             </div>,

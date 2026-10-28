@@ -14,13 +14,35 @@ export function publicAlienImagePath(args: {
   shareId: string;
   asset?: string;
   kind: 'composed' | 'seasonone' | 'portrait';
+  cacheBust?: number | string;
 }): string {
   const params = new URLSearchParams({
     shareId: args.shareId.trim().toLowerCase(),
     asset: args.asset || 'bitcoin',
     kind: args.kind,
   });
+  if (args.cacheBust != null && String(args.cacheBust).length) {
+    params.set('t', String(args.cacheBust));
+  }
   return `/api/public/alien-image?${params.toString()}`;
+}
+
+export function publicAlienVideoPath(args: {
+  shareId: string;
+  asset?: string;
+  kind: 'metaloop' | 'seasononeloop' | 'guestloop';
+  /** Cache-bust so replaced LaunchLoops aren't sticky in the browser. */
+  cacheBust?: number | string;
+}): string {
+  const params = new URLSearchParams({
+    shareId: args.shareId.trim().toLowerCase(),
+    asset: args.asset || 'bitcoin',
+    kind: args.kind,
+  });
+  if (args.cacheBust != null && String(args.cacheBust).length) {
+    params.set('t', String(args.cacheBust));
+  }
+  return `/api/public/alien-video?${params.toString()}`;
 }
 
 export const ALIEN_COMPOSE_DONE_EVENT = 'arells:alien-compose-done';

@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const rawKind = Array.isArray(req.query.kind) ? req.query.kind[0] : req.query.kind;
   const kind = normalizeAlienPhotoKind(rawKind);
-  if (kind === 'selfie') {
+  if (kind === 'selfie' || kind === 'metaloop' || kind === 'seasononeloop') {
     return res.status(400).json({ error: 'Unsupported kind' });
   }
 

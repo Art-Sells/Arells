@@ -3420,7 +3420,7 @@ const VavityStellar: React.FC = () => {
 
   return (
     <>
-      <AssetMissionHeader title={ASSET.label} />
+      <AssetMissionHeader title={ASSET.label} assetId={ASSET.id} />
       <div className="asset-page-content asset-page-content--stellar page-slide-down">
       <div
         className="asset-panel asset-panel--stellar asset-header-panel asset-section-slide"

@@ -1701,26 +1701,50 @@ body {
 	}
 }
 
+/* Same border model as guest poster: 1px orange border, media clipped to same radius */
 .asset-bitcoin-season-teaser-frame {
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
-	padding: 1px;
+	padding: 0;
 	line-height: 0;
-	border-radius: 13px;
+	border-radius: 12px;
 	overflow: hidden;
-	background: rgba(248, 141, 0, 0.3);
+	border: 1px solid rgba(248, 141, 0, 0.55);
+	background: transparent;
 	aspect-ratio: 4561 / 1091;
 }
 
-.asset-bitcoin-season-teaser-frame::before {
+.asset-bitcoin-season-teaser-frame::before,
+.asset-bitcoin-season-teaser-frame::after {
+	content: none;
+}
+
+/* Same media shell as launch guest poster — black plate lives here. */
+.asset-bitcoin-season-teaser-media {
+	position: absolute;
+	inset: 0;
+	border-radius: 0;
+	overflow: hidden;
+	isolation: isolate;
+	background: transparent;
+}
+
+.asset-bitcoin-season-teaser-media::after {
 	content: '';
 	position: absolute;
-	inset: 1px;
-	z-index: 3;
-	border-radius: 12px;
-	background: rgba(248, 141, 0, 0.06);
+	inset: 0;
+	z-index: 0;
+	border-radius: 0;
+	background: #000;
 	pointer-events: none;
+	opacity: 0;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-bitcoin-season-teaser-frame.is-handoff .asset-bitcoin-season-teaser-media::after {
+	opacity: 1;
+	transition-duration: 0.01s;
 }
 
 .asset-bitcoin-season-teaser-loader {
@@ -1731,6 +1755,7 @@ body {
 	align-items: center;
 	justify-content: center;
 	pointer-events: none;
+	background: rgba(248, 141, 0, 0.08);
 }
 
 .asset-bitcoin-season-teaser-loader-ring {
@@ -1746,16 +1771,18 @@ body {
 .asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-img {
 	position: absolute;
-	inset: 1px;
-	width: calc(100% - 2px);
-	height: calc(100% - 2px);
+	inset: 0;
+	width: 100% !important;
+	height: 100% !important;
 	display: block;
-	border-radius: 12px;
+	border-radius: 0;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
-	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
+	border: none;
+	background: transparent;
 }
 
 .asset-bitcoin-season-teaser-video {
@@ -1770,27 +1797,21 @@ body {
 	opacity: 1;
 }
 
-.asset-bitcoin-season-teaser-video.is-done {
+.asset-bitcoin-season-teaser-video.is-visible.is-done {
 	opacity: 0;
 	pointer-events: none;
-	transition-duration: 1.4s;
+	transition-duration: 1.5s;
 }
 
 .asset-bitcoin-season-teaser-img.is-visible {
 	opacity: 1;
-	transition-duration: 1.6s;
-	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+	transition-duration: 1.5s;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 750px) {
 	.asset-bitcoin-season-teaser-frame {
 		border-radius: 6px;
-	}
-
-	.asset-bitcoin-season-teaser-frame::before,
-	.asset-bitcoin-season-teaser-video,
-	.asset-bitcoin-season-teaser-img {
-		border-radius: 5px;
 	}
 }
 
@@ -6993,7 +7014,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 }
 
 .blood-overlay-card--alien-meta {
-	width: 260px;
+	width: 280px;
 	height: auto;
 	min-height: 0;
 	max-height: none;
@@ -7002,6 +7023,12 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	overflow: visible;
 	flex-shrink: 0;
 	gap: 0;
+	/* Keep accent border even if portal loses asset CSS vars */
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
 }
 
 @media (max-height: 499px) {
@@ -7012,17 +7039,243 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	}
 }
 
+.asset-alien-meta-share {
+	width: calc(100% - 10px);
+	margin: 12px auto 0;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+	padding: 10px 8px;
+	box-sizing: border-box;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 6%,
+		#fff
+	);
+}
+
+.asset-alien-meta-share-title {
+	margin: 0;
+	padding: 0;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
+.asset-alien-meta-share-row {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	justify-content: center;
+	gap: 0;
+	width: 100%;
+	min-width: 0;
+}
+
+.asset-alien-meta-share-copy {
+	flex: 0 0 auto;
+	min-width: 64px;
+	margin: 0 -14px 0 0;
+	padding: 10px 12px;
+	box-sizing: border-box;
+	border-radius: 6px;
+	position: relative;
+	z-index: 2;
+	/* Same solid CTA fill as View Trailer / save-signin */
+	border: 1px solid var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	background: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	color: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 18%,
+		white 82%
+	);
+	-webkit-text-fill-color: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 18%,
+		white 82%
+	);
+	font-size: 11px;
+	font-weight: 800;
+	line-height: 1.1;
+	letter-spacing: 0.4px;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.asset-alien-meta-share-copy:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.asset-alien-meta-share-link {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	padding: 8px 10px 8px 20px;
+	border-radius: 6px;
+	box-sizing: border-box;
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 10%,
+		#fff
+	);
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 28%,
+		transparent
+	);
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	font-size: 11px;
+	line-height: 1.2;
+	font-weight: 400;
+	overflow-wrap: anywhere;
+	word-break: break-all;
+	text-align: left;
+}
+
+.blood-overlay-card--alien-meta .blood-ok--alien-close {
+	width: calc(100% - 10px);
+	height: 30px;
+	margin-top: 12px;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+/* Same border model as guest poster / Season One */
+.asset-alien-meta-preview-frame {
+	position: relative;
+	width: calc(100% - 10px);
+	margin: 2px auto 0;
+	line-height: 0;
+	border-radius: 10px;
+	overflow: hidden;
+	box-sizing: border-box;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: transparent;
+	aspect-ratio: 1 / 1;
+}
+
+.asset-alien-meta-preview-frame::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: 0;
+	background: #000;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-alien-meta-preview-frame.is-handoff::after {
+	opacity: 1;
+	transition-duration: 0.01s;
+}
+
+.asset-alien-meta-preview-frame:not(.is-loaded) {
+	min-height: 180px;
+}
+
+.asset-alien-meta-preview-loader {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 8%,
+		transparent
+	);
+}
+
+.asset-alien-meta-preview-loader-ring {
+	width: 36px;
+	height: 36px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 5px solid rgba(248, 141, 0, 0.2);
+	border-top-color: rgba(248, 141, 0, 0.75);
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+.asset-alien-meta-preview-video,
+.asset-alien-meta-preview-frame--loop .asset-alien-meta-preview.asset-alien-meta-preview--loop-still {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	object-fit: cover;
+	box-sizing: border-box;
+	opacity: 0;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+}
+
+.asset-alien-meta-preview-video {
+	z-index: 1;
+}
+
+.asset-alien-meta-preview-frame--loop .asset-alien-meta-preview.asset-alien-meta-preview--loop-still {
+	z-index: 2;
+}
+
+.asset-alien-meta-preview-video.is-visible {
+	opacity: 1;
+}
+
+.asset-alien-meta-preview-video.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.5s;
+}
+
 .asset-alien-meta-preview {
 	display: block;
-	width: calc(100% - 10px);
+	width: 100%;
 	max-width: none;
 	height: auto;
-	margin: 2px auto 0;
-	border-radius: 10px;
-	border: 1px solid color-mix(in srgb, var(--asset-hover-dot-color, var(--asset-line-color, rgb(209, 142, 55))) 35%, transparent);
+	border-radius: 0;
+	border: none;
 	box-sizing: border-box;
 	object-fit: contain;
-	background: rgba(0, 0, 0, 0.04);
+	background: transparent;
+}
+
+.asset-alien-meta-preview-frame--loop
+	.asset-alien-meta-preview.asset-alien-meta-preview--loop-still.is-visible {
+	opacity: 1;
+	transition-duration: 1.5s;
+}
+
+.asset-alien-meta-preview:not(.asset-alien-meta-preview--loop-still) {
+	opacity: 1;
 }
 
 .blood-overlay-card.myinv-accent-border {
@@ -12501,33 +12754,52 @@ a.asset-action-button--save-signin {
 	color: var(--asset-slogan-color);
 }
 
+/*
+ * Shell keeps 10px padding (gap to outer card).
+ * Poster uses a real 1px orange border; media fills inside it (no bg-ring / no clip black edge).
+ */
 .asset-guest-poster-frame {
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
-	padding: 1px;
+	padding: 0;
 	line-height: 0;
-	border-radius: 13px;
+	/* Same radius as .asset-guest-action-shell; overflow clips media to this curve */
+	border-radius: 12px;
 	overflow: hidden;
-	background: rgba(248, 141, 0, 0.3);
+	border: 1px solid rgba(248, 141, 0, 0.55);
+	background: transparent;
 }
 
 .asset-guest-poster-frame:not(.is-loaded) {
 	min-height: 120px;
 }
 
-.asset-guest-poster-frame--loop {
-	aspect-ratio: 2000 / 1166;
+.asset-guest-poster-media {
+	position: absolute;
+	inset: 0;
+	border-radius: 0;
+	overflow: hidden;
+	isolation: isolate;
+	background: transparent;
 }
 
-.asset-guest-poster-frame--loop::before {
+/* Fade-through-black plate — held for fade-out AND fade-in (no empty flash). */
+.asset-guest-poster-media::after {
 	content: '';
 	position: absolute;
-	inset: 1px;
-	z-index: 3;
-	border-radius: 12px;
-	background: rgba(248, 141, 0, 0.06);
+	inset: 0;
+	z-index: 0;
+	border-radius: 0;
+	background: #000;
 	pointer-events: none;
+	opacity: 0;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-guest-poster-frame.is-handoff .asset-guest-poster-media::after {
+	opacity: 1;
+	transition-duration: 0.01s;
 }
 
 .asset-guest-poster-loader {
@@ -12538,6 +12810,7 @@ a.asset-action-button--save-signin {
 	align-items: center;
 	justify-content: center;
 	pointer-events: none;
+	background: rgba(248, 141, 0, 0.08);
 }
 
 .asset-guest-poster-loader-ring {
@@ -12553,16 +12826,18 @@ a.asset-action-button--save-signin {
 .asset-guest-poster-video,
 .asset-guest-poster-frame--loop .asset-guest-poster-img {
 	position: absolute;
-	inset: 1px;
-	width: calc(100% - 2px);
-	height: calc(100% - 2px);
+	inset: 0;
+	width: 100% !important;
+	height: 100% !important;
 	display: block;
-	border-radius: 12px;
+	border-radius: 0;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
-	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
+	border: none;
+	background: transparent;
 }
 
 .asset-guest-poster-video {
@@ -12577,19 +12852,19 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
-.asset-guest-poster-video.is-done {
+.asset-guest-poster-video.is-visible.is-done {
 	opacity: 0;
 	pointer-events: none;
-	transition-duration: 1.4s;
+	transition-duration: 1.5s;
 }
 
 .asset-guest-poster-img {
 	width: 100%;
 	height: auto;
 	display: block;
-	border-radius: 12px;
+	border-radius: 0;
 	opacity: 0;
-	transition: opacity 0.9s ease;
+	transition: opacity 1.5s ease;
 }
 
 .asset-guest-poster-img.is-visible {
@@ -12598,8 +12873,14 @@ a.asset-action-button--save-signin {
 
 .asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible {
 	opacity: 1;
-	transition-duration: 1.6s;
-	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+	transition-duration: 1.5s;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.5s;
 }
 
 /* Space between launch poster and Sign In (trailer removed on home guest) */
@@ -12613,10 +12894,8 @@ a.asset-action-button--save-signin {
 		border-radius: 6px;
 	}
 
-	.asset-guest-poster-frame--loop::before,
-	.asset-guest-poster-video,
-	.asset-guest-poster-frame--loop .asset-guest-poster-img {
-		border-radius: 5px;
+	.asset-guest-action-shell {
+		border-radius: 6px;
 	}
 }
 

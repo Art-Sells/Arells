@@ -17,19 +17,58 @@ import { assetSharePath } from '../../../../lib/assets/assetSharePath';
 const BitcoinPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
-  const { email, isSignedIn, authSessionLoading, shareId } = useUser();
+  const { email, isSignedIn, authSessionLoading, shareId, refreshAuthSession } = useUser();
   const guestPreview = useGuestPreview();
   const isGuest = guestPreview || (!authSessionLoading && !email && !isSignedIn);
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    if (authSessionLoading || !isSignedIn || !shareId) return;
+    if (authSessionLoading || guestPreview) return;
     const path = (pathname || '').replace(/\/+$/, '') || '/';
-    if (path === '/bitcoin') {
-      router.replace(assetSharePath('/bitcoin', shareId));
+    if (path !== '/bitcoin') return;
+
+    if (isSignedIn && shareId) {
+      const target = assetSharePath('/bitcoin', shareId);
+      if (target !== path) {
+        router.replace(target);
+      }
+      return;
     }
-  }, [authSessionLoading, isSignedIn, pathname, router, shareId]);
+
+    if (!isSignedIn) return;
+
+    let cancelled = false;
+    void (async () => {
+      await refreshAuthSession();
+      if (cancelled) return;
+      try {
+        const res = await fetch('/api/auth/session', {
+          credentials: 'include',
+          cache: 'no-store',
+        });
+        const data = await res.json().catch(() => ({}));
+        const id =
+          typeof data?.shareId === 'string' ? data.shareId.trim().toLowerCase() : '';
+        if (!cancelled && id) {
+          router.replace(assetSharePath('/bitcoin', id));
+        }
+      } catch {
+        /* ignore */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    authSessionLoading,
+    guestPreview,
+    isSignedIn,
+    pathname,
+    refreshAuthSession,
+    router,
+    shareId,
+  ]);
   const pageRef = useRef<HTMLDivElement>(null);
   const loaderToggleShellRef = useRef<HTMLDivElement | null>(null);
 

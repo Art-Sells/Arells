@@ -11,7 +11,9 @@ const STALL_TIMEOUT_MS = 6000;
  */
 export function usePosterLoopPlayback(
   videoRef: RefObject<HTMLVideoElement | null>,
-  enabled = true
+  enabled = true,
+  /** Remount/reset when the video src changes (blob URL, share media, etc.). */
+  sourceKey?: string
 ) {
   const [videoReady, setVideoReady] = useState(false);
   const [videoDone, setVideoDone] = useState(!enabled);
@@ -117,7 +119,7 @@ export function usePosterLoopPlayback(
       clearStall();
       teardown?.();
     };
-  }, [enabled, videoRef, markReady, skipToStill]);
+  }, [enabled, videoRef, markReady, skipToStill, sourceKey]);
 
   return {
     videoReady,

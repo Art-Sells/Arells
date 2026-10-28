@@ -6,8 +6,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
 import VideoPlayer from '../../VideoPlayer';
 import { usePosterLoopPlayback } from '../../../hooks/usePosterLoopPlayback';
+
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
+
+const FADE_MS = 1500;
+
+/** intro/outro *In* keep the black plate up while the next layer fades in (kills the flash). */
+type LoopPhase = 'boot' | 'introOut' | 'introIn' | 'play' | 'outroOut' | 'outroIn' | 'end';
 
 type AssetGuestLandingProps = {
   cssModifier: string;
@@ -25,6 +31,8 @@ type AssetGuestLandingProps = {
   showTrailer?: boolean;
   hideWordmark?: boolean;
   hideSigninPrompt?: boolean;
+  /** When true, mission reads “My {title} investments…”. */
+  possessiveMission?: boolean;
 };
 
 export default function AssetGuestLanding({
@@ -39,23 +47,97 @@ export default function AssetGuestLanding({
   showTrailer = false,
   hideWordmark = false,
   hideSigninPrompt = false,
+  possessiveMission = false,
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
   const hasLoop = Boolean(posterSrc && posterLoopSrc);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const posterImgRef = useRef<HTMLImageElement>(null);
   const [posterLoaded, setPosterLoaded] = useState(false);
+  const [phase, setPhase] = useState<LoopPhase>('boot');
   const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
-    usePosterLoopPlayback(videoRef, hasLoop);
+    usePosterLoopPlayback(videoRef, hasLoop, posterLoopSrc);
 
-  // Same as Season One: play loop fully, then fade in still (skip video on load/stall fail).
-  const showStill = !hasLoop ? posterLoaded : videoDone && posterLoaded;
-  const frameReady = hasLoop ? videoReady || showStill : posterLoaded;
+  useEffect(() => {
+    setPosterLoaded(false);
+    setPhase('boot');
+  }, [posterSrc, posterLoopSrc]);
 
   useEffect(() => {
     const img = posterImgRef.current;
     if (img?.complete && img.naturalWidth > 0) setPosterLoaded(true);
   }, [posterSrc]);
+
+  // Loading poster → fade out → play video from the start.
+  useEffect(() => {
+    if (!hasLoop || phase !== 'boot' || !videoReady || !posterLoaded) return;
+    const video = videoRef.current;
+    if (video) {
+      video.pause();
+      try {
+        video.currentTime = 0;
+      } catch {
+        /* ignore seek errors before metadata */
+      }
+    }
+    setPhase('introOut');
+  }, [hasLoop, phase, videoReady, posterLoaded]);
+
+  // Poster fully out → start video under black → then clear handoff.
+  useEffect(() => {
+    if (phase !== 'introOut') return;
+    const video = videoRef.current;
+    const timer = window.setTimeout(() => {
+      setPhase('introIn');
+      void video?.play().catch(() => skipToStill());
+    }, FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase, skipToStill]);
+
+  useEffect(() => {
+    if (phase !== 'introIn') return;
+    const timer = window.setTimeout(() => setPhase('play'), FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  // After loop ends → fade out video → fade in still (black held through both).
+  useEffect(() => {
+    if (!hasLoop || !videoDone) return;
+    if (phase === 'play' || phase === 'introIn') setPhase('outroOut');
+    if (phase === 'boot' || phase === 'introOut') setPhase('end');
+  }, [hasLoop, videoDone, phase]);
+
+  useEffect(() => {
+    if (phase !== 'outroOut') return;
+    const timer = window.setTimeout(() => setPhase('outroIn'), FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'outroIn') return;
+    const timer = window.setTimeout(() => setPhase('end'), FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  // Loader → poster → fade out → black → fade in video → … → fade out → black → still.
+  const showLoadingPoster =
+    hasLoop && posterLoaded && (phase === 'boot' || phase === 'introOut');
+  const showEndStill = !hasLoop
+    ? posterLoaded
+    : phase === 'outroIn' || phase === 'end';
+  const posterVisible = showLoadingPoster || showEndStill;
+  const posterFadingOut = phase === 'introOut';
+  const videoVisible =
+    phase === 'introIn' || phase === 'play' || phase === 'outroOut';
+  const videoFadingOut = phase === 'outroOut';
+  const isHandoff =
+    phase === 'introOut' ||
+    phase === 'introIn' ||
+    phase === 'outroOut' ||
+    phase === 'outroIn';
+  const frameReady = posterLoaded;
+  const isBoot = hasLoop ? phase === 'boot' : !posterLoaded;
+  const showLoader = Boolean(posterSrc) && !posterLoaded;
 
   return (
     <div
@@ -90,6 +172,7 @@ export default function AssetGuestLanding({
           className={`home-guest-slogan asset-guest-landing-mission asset-guest-landing-mission--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
         >
           <span className="asset-guest-landing-mission-tail">
+            {possessiveMission ? 'My ' : ''}
             {title} investments can live forever.
           </span>
         </p>
@@ -101,46 +184,53 @@ export default function AssetGuestLanding({
           <span className="shadow-border" aria-hidden="true" />
           {showPoster && posterSrc ? (
             <div
-              className={`asset-guest-poster-frame${frameReady ? ' is-loaded' : ''}${
-                hasLoop ? ' asset-guest-poster-frame--loop' : ''
-              }${showStill ? ' is-still' : ''}`}
+              className={`asset-guest-poster-frame asset-guest-poster-frame--loop${
+                frameReady ? ' is-loaded' : ''
+              }${isBoot ? ' is-boot' : ''}${showEndStill ? ' is-still' : ''}${
+                isHandoff ? ' is-handoff' : ''
+              }`}
               style={{ aspectRatio: `${posterWidth} / ${posterHeight}` }}
             >
-              {!frameReady ? (
-                <div className="asset-guest-poster-loader" aria-hidden="true">
-                  <div className="asset-guest-poster-loader-ring" />
-                </div>
-              ) : null}
-              {hasLoop && posterLoopSrc ? (
-                <video
-                  ref={videoRef}
-                  className={`asset-guest-poster-video${videoReady && !showStill ? ' is-visible' : ''}${
-                    showStill ? ' is-done' : ''
+              {/* Same structure as .guest-trailer-frame > .guest-trailer > video/poster */}
+              <div className="asset-guest-poster-media">
+                {showLoader ? (
+                  <div className="asset-guest-poster-loader" aria-hidden="true">
+                    <div className="asset-guest-poster-loader-ring" />
+                  </div>
+                ) : null}
+                {hasLoop && posterLoopSrc ? (
+                  <video
+                    ref={videoRef}
+                    className={`asset-guest-poster-video${videoVisible ? ' is-visible' : ''}${
+                      videoFadingOut ? ' is-done' : ''
+                    }`}
+                    src={posterLoopSrc}
+                    muted
+                    playsInline
+                    preload="auto"
+                    autoPlay
+                    controls={false}
+                    disablePictureInPicture
+                    onLoadedData={markReady}
+                    onCanPlay={markReady}
+                    onPlaying={markReady}
+                    onEnded={onVideoEnded}
+                    onError={skipToStill}
+                    aria-label={posterAlt || 'Launch poster'}
+                  />
+                ) : null}
+                <img
+                  ref={posterImgRef}
+                  src={posterSrc}
+                  alt={posterAlt}
+                  width={posterWidth}
+                  height={posterHeight}
+                  className={`asset-guest-poster-img${posterVisible ? ' is-visible' : ''}${
+                    posterFadingOut ? ' is-done' : ''
                   }`}
-                  src={posterLoopSrc}
-                  muted
-                  playsInline
-                  preload="auto"
-                  autoPlay
-                  controls={false}
-                  disablePictureInPicture
-                  onLoadedData={markReady}
-                  onCanPlay={markReady}
-                  onPlaying={markReady}
-                  onEnded={onVideoEnded}
-                  onError={skipToStill}
-                  aria-label={posterAlt || 'Launch poster'}
+                  onLoad={() => setPosterLoaded(true)}
                 />
-              ) : null}
-              <img
-                ref={posterImgRef}
-                src={posterSrc}
-                alt={posterAlt}
-                width={posterWidth}
-                height={posterHeight}
-                className={`asset-guest-poster-img${showStill ? ' is-visible' : ''}`}
-                onLoad={() => setPosterLoaded(true)}
-              />
+              </div>
             </div>
           ) : null}
           {showTrailer ? <VideoPlayer theme="bitcoin" /> : null}

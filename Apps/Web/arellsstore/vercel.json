@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "src/pages/api/user/alien-videos.ts": {
+      "maxDuration": 800
+    },
+    "src/pages/api/user/alien-compose.ts": {
+      "maxDuration": 300
+    }
+  }
+}

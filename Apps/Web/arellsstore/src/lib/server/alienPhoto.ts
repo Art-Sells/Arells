@@ -30,21 +30,47 @@ export function alienPortraitKey(email: string, asset: string): string {
   return `users/${normalizeEmailKey(email)}/aliens/${asset}-portrait`;
 }
 
-export type AlienPhotoKind = 'selfie' | 'composed' | 'portrait' | 'seasonone';
+/** Personalized metaposter / guest loop (image-to-video). */
+export function alienMetaloopKey(email: string, asset: string): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}-metaloop.mp4`;
+}
+
+/** Personalized Season One banner loop (image-to-video). */
+export function alienSeasonOneLoopKey(email: string, asset: string): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}-seasonone-loop.mp4`;
+}
+
+export type AlienPhotoKind =
+  | 'selfie'
+  | 'composed'
+  | 'portrait'
+  | 'seasonone'
+  | 'metaloop'
+  | 'seasononeloop';
 
 export function normalizeAlienPhotoKind(raw: unknown): AlienPhotoKind {
   if (typeof raw !== 'string') return 'selfie';
   const kind = raw.trim().toLowerCase();
-  if (kind === 'composed' || kind === 'metaposter') return 'composed';
+  if (kind === 'composed' || kind === 'metaposter' || kind === 'guestposter') return 'composed';
   if (kind === 'portrait') return 'portrait';
   if (kind === 'seasonone' || kind === 'season-one') return 'seasonone';
+  if (kind === 'metaloop' || kind === 'guestloop') return 'metaloop';
+  if (kind === 'seasononeloop' || kind === 'seasonone-loop' || kind === 'season-one-loop') {
+    return 'seasononeloop';
+  }
   return 'selfie';
+}
+
+export function isAlienVideoKind(kind: AlienPhotoKind): boolean {
+  return kind === 'metaloop' || kind === 'seasononeloop';
 }
 
 export function alienPhotoObjectKey(email: string, asset: string, kind: AlienPhotoKind = 'selfie'): string {
   if (kind === 'composed') return alienComposedKey(email, asset);
   if (kind === 'portrait') return alienPortraitKey(email, asset);
   if (kind === 'seasonone') return alienSeasonOneKey(email, asset);
+  if (kind === 'metaloop') return alienMetaloopKey(email, asset);
+  if (kind === 'seasononeloop') return alienSeasonOneLoopKey(email, asset);
   return alienPhotoKey(email, asset);
 }
 

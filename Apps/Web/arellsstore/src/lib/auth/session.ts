@@ -44,7 +44,14 @@ export async function getSessionFromRequest(req: NextApiRequest): Promise<{ emai
 export async function getSessionFromAppCookies(): Promise<{ email: string } | null> {
   const raw = cookies().get(AUTH_COOKIE_NAME)?.value;
   if (!raw) return null;
-  return verifySessionToken(raw);
+  // Cookie is set with encodeURIComponent(token); try decoded + raw.
+  let token = raw;
+  try {
+    token = decodeURIComponent(raw);
+  } catch {
+    token = raw;
+  }
+  return (await verifySessionToken(token)) || (await verifySessionToken(raw));
 }
 
 export function buildSessionCookie(token: string, maxAgeSec: number): string {

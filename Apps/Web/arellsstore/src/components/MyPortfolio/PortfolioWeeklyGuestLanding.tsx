@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import GuestLandingCopyright from '../GuestLandingCopyright';
 import { usePosterLoopPlayback } from '../../hooks/usePosterLoopPlayback';
+import { useSequentialPosterFade } from '../../hooks/useSequentialPosterFade';
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
 
@@ -19,10 +20,12 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
   const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
     usePosterLoopPlayback(videoRef, true);
   const [stillLoaded, setStillLoaded] = useState(false);
-
-  // Same as Season One: wait for loop to finish, then fade in poster (skip on fail/stall).
-  const showStill = videoDone && stillLoaded;
-  const frameReady = videoReady || showStill;
+  const { startOut, showStill, isHandoff } = useSequentialPosterFade(
+    videoDone,
+    stillLoaded,
+    1500
+  );
+  const frameReady = videoReady || startOut;
 
   useEffect(() => {
     const img = stillImgRef.current;
@@ -61,7 +64,7 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
           <div
             className={`asset-guest-poster-frame asset-guest-poster-frame--loop home-guest-launch-poster${
               frameReady ? ' is-loaded' : ''
-            }${showStill ? ' is-still' : ''}`}
+            }${showStill ? ' is-still' : ''}${isHandoff ? ' is-handoff' : ''}`}
             style={{ aspectRatio: '2000 / 1166' }}
           >
             {!frameReady ? (
@@ -71,8 +74,8 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
             ) : null}
             <video
               ref={videoRef}
-              className={`asset-guest-poster-video${videoReady && !showStill ? ' is-visible' : ''}${
-                showStill ? ' is-done' : ''
+              className={`asset-guest-poster-video${videoReady ? ' is-visible' : ''}${
+                startOut ? ' is-done' : ''
               }`}
               src={LAUNCH_POSTER_LOOP}
               muted

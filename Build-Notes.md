@@ -8,6 +8,31 @@ After Episode 2 (or during):
 
 - If finished early, start path Implement character poster {FOR BEST RESULTS [show sample photo white mannequin with black features}}: Good lighting, face forward, no smiling or frowning, no-one else in the photo})(metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
 
+#### If sharing (organic) happens:
+- Prepare to change banners for other assets
+- Purchase MDR for: Binaural Frequency Meditation (and others) - Positive Relaxing Dreamy Peaceful Ambient 
+- Purchase MDR for: Cinematic Ambient Piano - amadasounds
+- Add Worst Case Scenarios (in notes)
+- - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
+- - Add User location/etc
+
+
+### If Character payments:
+
+- expand My Character section to this: 
+
+After a photo has been added, re repalce the "photo" icon with "View My Character" that takes them to /bitcoin/my-character/{user-id} and ensure the medatata is the same for my chacacter/{user-id} as the /bitcoin/my-character.... 
+
+and in my character it should look like the "bitcoin alien race page" except under the bitcoin badge bordered section, it should show the poster video/image and below that a front-facing, side-facing, and 3/4th facing profile non-full-body? `16:9;? (if they never updated my-character just ensure the photos are the sumple my character image with no front-side/3/4ths facers)...
+
+And below that a "Update My Chatacter" borderes setion with the photo section when clicked allows to upload new photos...
+
+this means we'll have to create a new prompt for that also..... investigate before I approve
+
+- - Play button plays normal videos if no character additions, if character additions, asks to add (generating costs X amount)?
+
+### App Building and others:
+
 - Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
 
 - *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
@@ -22,14 +47,6 @@ After Episode 2 (or during):
 - - find ~/Library/Application\ Support/Cursor/User/globalStorage
 - - mindepth 1 -mtime +2 
 - - delet
-
-#### If sharing (organic) happens:
-- Prepare to change banners for other assets
-- Purchase MDR for: Binaural Frequency Meditation (and others) - Positive Relaxing Dreamy Peaceful Ambient 
-- Purchase MDR for: Cinematic Ambient Piano - amadasounds
-- Add Worst Case Scenarios (in notes)
-- - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
-- - Add User location/etc
 
 ---------------------
 

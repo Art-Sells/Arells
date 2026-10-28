@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import axios from 'axios';
 import { flushSync } from 'react-dom';
 import { useLiquidSolidToggleTrackSync } from '../../shared/useLiquidSolidToggleTrackSync';
@@ -25,6 +26,10 @@ import BitcoinChart from './BitcoinChart';
 import BitcoinSeasonTeaser from './BitcoinSeasonTeaser';
 import TBARDaily from '../TBAR/Daily';
 import { useGuestPreview } from '../../../../hooks/useGuestPreview';
+import {
+  publicAlienImagePath,
+  publicAlienVideoPath,
+} from '../../../../lib/assets/assetSharePath';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 import {
   ASSET_PRICE_CHART_MOUNT_SLIDE_MS,
@@ -54,9 +59,19 @@ const PREMIER_POSTER_LOOP =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +
   encodeURIComponent('LaunchLoop(guest).mp4');
 
+function bitcoinPathShareId(pathname: string | null): string | null {
+  const parts = (pathname || '').replace(/\/+$/, '').split('/').filter(Boolean);
+  if (parts[0] !== 'bitcoin') return null;
+  const id = parts[1] || '';
+  if (!id || id === 'news') return null;
+  if (!/^[a-z0-9]{6,64}$/i.test(id)) return null;
+  return id.toLowerCase();
+}
+
 const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset, ensureAssetsLoaded } =
     useVavity();
+  const pathname = usePathname();
 
   useEffect(() => {
     void ensureAssetsLoaded([ASSET.id]);
@@ -65,6 +80,55 @@ const VavityBitcoin: React.FC = () => {
   const [bitcoinEmptyPreview, setBitcoinEmptyPreview] = useState(false);
   const guestPreview = useGuestPreview();
   const isGuestView = guestPreview || (!bitcoinEmptyPreview && !isSignedIn && !email);
+  const pathShareId = useMemo(() => bitcoinPathShareId(pathname), [pathname]);
+  // Optimistic: show share poster/loop on first paint; demote only if HEAD says missing.
+  const [sharePosterReady, setSharePosterReady] = useState(() => Boolean(pathShareId));
+  const [shareLoopReady, setShareLoopReady] = useState(() => Boolean(pathShareId));
+  const [shareMediaBust, setShareMediaBust] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!isGuestView || !pathShareId) {
+      setSharePosterReady(false);
+      setShareLoopReady(false);
+      return;
+    }
+    let cancelled = false;
+    const bust = Date.now();
+    setShareMediaBust(bust);
+    setSharePosterReady(true);
+    setShareLoopReady(true);
+    const posterUrl = publicAlienImagePath({
+      shareId: pathShareId,
+      asset: 'bitcoin',
+      kind: 'composed',
+      cacheBust: bust,
+    });
+    const loopUrl = publicAlienVideoPath({
+      shareId: pathShareId,
+      asset: 'bitcoin',
+      kind: 'guestloop',
+      cacheBust: bust,
+    });
+    void (async () => {
+      try {
+        const [posterHead, loopHead] = await Promise.all([
+          fetch(posterUrl, { method: 'HEAD', cache: 'no-store' }),
+          fetch(loopUrl, { method: 'HEAD', cache: 'no-store' }),
+        ]);
+        if (cancelled) return;
+        setSharePosterReady(posterHead.ok);
+        setShareLoopReady(loopHead.ok);
+      } catch {
+        if (!cancelled) {
+          setSharePosterReady(false);
+          setShareLoopReady(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isGuestView, pathShareId]);
   const summaryCircleLoader = useAssetSummaryCircleLoader();
   const summaryCircleLoaderDismissRef = useRef<(() => void) | null>(null);
   summaryCircleLoaderDismissRef.current = summaryCircleLoader.dismissOnSummaryExpandComplete;
@@ -3631,36 +3695,47 @@ const VavityBitcoin: React.FC = () => {
   ]);
 
   if (isGuestView) {
+    const useSharePoster = Boolean(pathShareId && sharePosterReady);
+    const useShareLoop = Boolean(pathShareId && shareLoopReady);
+    const guestPosterSrc = useSharePoster
+      ? publicAlienImagePath({
+          shareId: pathShareId!,
+          asset: 'bitcoin',
+          kind: 'composed',
+          cacheBust: shareMediaBust,
+        })
+      : PREMIER_POSTER;
+    const guestLoopSrc = useShareLoop
+      ? publicAlienVideoPath({
+          shareId: pathShareId!,
+          asset: 'bitcoin',
+          kind: 'guestloop',
+          cacheBust: shareMediaBust,
+        })
+      : useSharePoster
+        ? undefined
+        : PREMIER_POSTER_LOOP;
     return (
       <AssetGuestLanding
         cssModifier={ASSET.cssModifier}
         ticker={ASSET.ticker}
         title={ASSET.label}
-        posterSrc={PREMIER_POSTER}
-        posterLoopSrc={PREMIER_POSTER_LOOP}
+        posterSrc={guestPosterSrc}
+        posterLoopSrc={guestLoopSrc}
         posterWidth={2000}
-        posterHeight={1166}
+        posterHeight={pathShareId ? 2000 : 1166}
         posterAlt="The Bitcoin Alien Race"
         smallIcon
-        showTrailer
+        showTrailer={!pathShareId}
         hideWordmark
-        hideSigninPrompt
+        possessiveMission={Boolean(pathShareId)}
       />
     );
   }
 
   return (
     <>
-      <AssetMissionHeader
-        title={ASSET.label}
-        line={
-          <>
-            Your {ASSET.label}
-            <br />
-            investments can live forever.
-          </>
-        }
-      />
+      <AssetMissionHeader title={ASSET.label} assetId={ASSET.id} />
       <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
       <div
         className={`asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide${

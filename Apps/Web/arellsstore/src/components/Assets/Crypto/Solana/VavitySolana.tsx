@@ -3420,7 +3420,7 @@ const VavitySolana: React.FC = () => {
 
   return (
     <>
-      <AssetMissionHeader title={ASSET.label} />
+      <AssetMissionHeader title={ASSET.label} assetId={ASSET.id} />
       <div className="asset-page-content asset-page-content--solana page-slide-down">
       <div
         className="asset-panel asset-panel--solana asset-header-panel asset-section-slide"
