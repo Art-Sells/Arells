@@ -23,7 +23,25 @@ export default function AssetMissionHeader({ title, assetId, line, children }: A
       <p className="asset-mission-header-line">
         {line ?? (
           <>
-            {possessive} {title}
+            <span className="asset-mission-possessive" aria-label={possessive}>
+              <span
+                className={`asset-mission-possessive-word${
+                  possessive === 'Your' ? ' is-active' : ''
+                }`}
+                aria-hidden={possessive !== 'Your'}
+              >
+                Your
+              </span>
+              <span
+                className={`asset-mission-possessive-word${
+                  possessive === 'My' ? ' is-active' : ''
+                }`}
+                aria-hidden={possessive !== 'My'}
+              >
+                My
+              </span>
+            </span>{' '}
+            {title}
             <br />
             investments can live forever.
           </>

@@ -7270,6 +7270,20 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	);
 }
 
+.asset-alien-meta-created-title {
+	margin: 0 0 10px;
+	padding: 0 6px;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
 @media (max-height: 499px) {
 	.blood-overlay-card--alien-meta {
 		max-height: none;
@@ -12946,6 +12960,24 @@ a.asset-action-button--save-signin {
 	line-height: 1.15;
 	color: var(--asset-line-color);
 	-webkit-text-fill-color: var(--asset-line-color);
+}
+
+/* Crossfade Your → My (stacked; width stays at the wider word). */
+.asset-mission-possessive {
+	display: inline-grid;
+	vertical-align: baseline;
+	justify-items: end;
+}
+
+.asset-mission-possessive-word {
+	grid-area: 1 / 1;
+	opacity: 0;
+	transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+	pointer-events: none;
+}
+
+.asset-mission-possessive-word.is-active {
+	opacity: 1;
 }
 
 .asset-page--bitcoin .asset-mission-header {

@@ -6,7 +6,9 @@
 
 After Episode 2 (or during):
 
-- If finished early, start path Implement character poster {FOR BEST RESULTS [show sample photo white mannequin with black features}}: Good lighting, face forward, no smiling or frowning, no-one else in the photo})(metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
+- If finished early, start path Implement character poster 
+
+{FOR BEST RESULTS [show sample photo white mannequin with black features}}: Good lighting, face forward, no smiling or frowning, no-one else in the photo})(metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
 
 #### If sharing (organic) happens:
 - Prepare to change banners for other assets
@@ -16,16 +18,6 @@ After Episode 2 (or during):
 - - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
 - - Add User location/etc
 
-
-### If Character payments:
-
-- expand My Character section to this: 
-
-Repalce the "photo" icon with "View My Character" that takes them to /bitcoin/my-character/{user-id} and ensure the medadata is the same for my chacacter/{user-id} as the /bitcoin/my-character.... 
-
-And below that a "Update My Chatacter" borderes setion with the photo section when clicked allows to upload new photos...
-
-- - Play button plays normal videos if no character additions, if character additions, asks to add (generating costs X amount)?
 
 ### App Building and others:
 

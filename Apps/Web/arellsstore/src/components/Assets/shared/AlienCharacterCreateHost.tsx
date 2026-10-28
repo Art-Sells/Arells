@@ -212,6 +212,9 @@ export default function AlienCharacterCreateHost() {
                 aria-label="Character updated"
                 onClick={(event) => event.stopPropagation()}
               >
+                <p className="asset-alien-meta-created-title">
+                  Character Creation Successful
+                </p>
                 <AlienMetaPreview
                   metaUrl={success.metaUrl}
                   loopUrl={success.loopUrl}
