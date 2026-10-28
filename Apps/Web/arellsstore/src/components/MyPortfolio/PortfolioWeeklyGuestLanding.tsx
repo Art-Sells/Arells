@@ -16,13 +16,20 @@ const LAUNCH_POSTER_LOOP = `${LAUNCH_POSTERS_BASE}/${encodeURIComponent('LaunchL
 const PortfolioWeeklyGuestLanding: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const stillImgRef = useRef<HTMLImageElement | null>(null);
-  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
-    usePosterLoopPlayback(videoRef, true);
+  const {
+    videoReady,
+    showStillLayer,
+    showVideo,
+    isHandoff,
+    markReady,
+    onVideoEnded,
+    skipToStill,
+  } = usePosterLoopPlayback(videoRef, true, 5000);
   const [stillLoaded, setStillLoaded] = useState(false);
 
-  // Same as Season One: wait for loop to finish, then fade in poster (skip on fail/stall).
-  const showStill = videoDone && stillLoaded;
-  const frameReady = videoReady || showStill;
+  // Same as Season One: fade-through-black both directions.
+  const showStill = showStillLayer && stillLoaded;
+  const frameReady = videoReady || showStill || stillLoaded;
 
   useEffect(() => {
     const img = stillImgRef.current;
@@ -61,7 +68,7 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
           <div
             className={`asset-guest-poster-frame asset-guest-poster-frame--loop home-guest-launch-poster${
               frameReady ? ' is-loaded' : ''
-            }${showStill ? ' is-still' : ''}`}
+            }${showStill ? ' is-still' : ''}${isHandoff ? ' is-handoff' : ''}`}
             style={{ aspectRatio: '2000 / 1166' }}
           >
             {!frameReady ? (
@@ -71,8 +78,8 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
             ) : null}
             <video
               ref={videoRef}
-              className={`asset-guest-poster-video${videoReady && !showStill ? ' is-visible' : ''}${
-                showStill ? ' is-done' : ''
+              className={`asset-guest-poster-video${showVideo ? ' is-visible' : ''}${
+                !showVideo ? ' is-done' : ''
               }`}
               src={LAUNCH_POSTER_LOOP}
               muted

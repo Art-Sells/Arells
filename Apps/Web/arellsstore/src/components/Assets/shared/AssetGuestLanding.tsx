@@ -16,7 +16,7 @@ type AssetGuestLandingProps = {
   slogan?: string;
   /** When set on Bitcoin guest landing, shown above the trailer. */
   posterSrc?: string;
-  /** Optional one-shot loop video; after it ends, fades into posterSrc. */
+  /** Optional loop video; after it ends, fades into posterSrc, then replays after 5s. */
   posterLoopSrc?: string;
   posterWidth?: number;
   posterHeight?: number;
@@ -45,12 +45,19 @@ export default function AssetGuestLanding({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const posterImgRef = useRef<HTMLImageElement>(null);
   const [posterLoaded, setPosterLoaded] = useState(false);
-  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
-    usePosterLoopPlayback(videoRef, hasLoop);
+  const {
+    videoReady,
+    showStillLayer,
+    showVideo,
+    isHandoff,
+    markReady,
+    onVideoEnded,
+    skipToStill,
+  } = usePosterLoopPlayback(videoRef, hasLoop, 5000);
 
-  // Same as Season One: play loop fully, then fade in still (skip video on load/stall fail).
-  const showStill = !hasLoop ? posterLoaded : videoDone && posterLoaded;
-  const frameReady = hasLoop ? videoReady || showStill : posterLoaded;
+  // Same as Season One: fade-through-black both directions.
+  const showStill = !hasLoop ? posterLoaded : showStillLayer && posterLoaded;
+  const frameReady = hasLoop ? videoReady || showStill || posterLoaded : posterLoaded;
 
   useEffect(() => {
     const img = posterImgRef.current;
@@ -103,7 +110,7 @@ export default function AssetGuestLanding({
             <div
               className={`asset-guest-poster-frame${frameReady ? ' is-loaded' : ''}${
                 hasLoop ? ' asset-guest-poster-frame--loop' : ''
-              }${showStill ? ' is-still' : ''}`}
+              }${showStill ? ' is-still' : ''}${isHandoff ? ' is-handoff' : ''}`}
               style={{ aspectRatio: `${posterWidth} / ${posterHeight}` }}
             >
               {!frameReady ? (
@@ -114,8 +121,8 @@ export default function AssetGuestLanding({
               {hasLoop && posterLoopSrc ? (
                 <video
                   ref={videoRef}
-                  className={`asset-guest-poster-video${videoReady && !showStill ? ' is-visible' : ''}${
-                    showStill ? ' is-done' : ''
+                  className={`asset-guest-poster-video${showVideo ? ' is-visible' : ''}${
+                    !showVideo ? ' is-done' : ''
                   }`}
                   src={posterLoopSrc}
                   muted

@@ -14,15 +14,22 @@ const SEASON_ONE_LOOP_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneLoop.mp4`;
 
 export default function BitcoinSeasonTeaser() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
-    usePosterLoopPlayback(videoRef, true);
+  const {
+    videoReady,
+    showStillLayer,
+    showVideo,
+    isHandoff,
+    markReady,
+    onVideoEnded,
+    skipToStill,
+  } = usePosterLoopPlayback(videoRef, true, 5000);
   const [stillLoaded, setStillLoaded] = useState(false);
   const [trailerMounted, setTrailerMounted] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [trailerSettled, setTrailerSettled] = useState(false);
 
-  const showStill = videoDone && stillLoaded;
-  const frameReady = videoReady || showStill;
+  const showStill = showStillLayer && stillLoaded;
+  const frameReady = videoReady || showStill || stillLoaded;
 
   useEffect(() => {
     if (!trailerMounted || trailerOpen) return;
@@ -44,7 +51,7 @@ export default function BitcoinSeasonTeaser() {
           <div
             className={`asset-bitcoin-season-teaser-frame${frameReady ? ' is-loaded' : ''}${
               showStill ? ' is-still' : ''
-            }`}
+            }${isHandoff ? ' is-handoff' : ''}`}
           >
             {!frameReady ? (
               <div className="asset-bitcoin-season-teaser-loader" aria-hidden="true">
@@ -53,8 +60,8 @@ export default function BitcoinSeasonTeaser() {
             ) : null}
             <video
               ref={videoRef}
-              className={`asset-bitcoin-season-teaser-video${videoReady && !showStill ? ' is-visible' : ''}${
-                showStill ? ' is-done' : ''
+              className={`asset-bitcoin-season-teaser-video${showVideo ? ' is-visible' : ''}${
+                !showVideo ? ' is-done' : ''
               }`}
               src={SEASON_ONE_LOOP_SRC}
               muted

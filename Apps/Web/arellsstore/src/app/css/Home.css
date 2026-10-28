@@ -1678,6 +1678,24 @@ body {
 	pointer-events: none;
 }
 
+/* Black under media only (inside border). Snap on so video/still never reveal the frame tint; fade off under the next layer. */
+.asset-bitcoin-season-teaser-frame::after {
+	content: '';
+	position: absolute;
+	inset: 1px;
+	z-index: 0;
+	border-radius: 12px;
+	background: #000;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-bitcoin-season-teaser-frame.is-handoff::after {
+	opacity: 1;
+	transition-duration: 0.01s;
+}
+
 .asset-bitcoin-season-teaser-loader {
 	position: absolute;
 	inset: 0;
@@ -1733,8 +1751,8 @@ body {
 
 .asset-bitcoin-season-teaser-img.is-visible {
 	opacity: 1;
-	transition-duration: 1.6s;
-	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+	transition-duration: 1.4s;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 750px) {
@@ -1743,6 +1761,7 @@ body {
 	}
 
 	.asset-bitcoin-season-teaser-frame::before,
+	.asset-bitcoin-season-teaser-frame::after,
 	.asset-bitcoin-season-teaser-video,
 	.asset-bitcoin-season-teaser-img {
 		border-radius: 5px;
@@ -12437,6 +12456,24 @@ a.asset-action-button--save-signin {
 	pointer-events: none;
 }
 
+/* Black under media only (inside border). Snap on so video/still never reveal the frame tint; fade off under the next layer. */
+.asset-guest-poster-frame--loop::after {
+	content: '';
+	position: absolute;
+	inset: 1px;
+	z-index: 0;
+	border-radius: 12px;
+	background: #000;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-guest-poster-frame.is-handoff::after {
+	opacity: 1;
+	transition-duration: 0.01s;
+}
+
 .asset-guest-poster-loader {
 	position: absolute;
 	inset: 0;
@@ -12505,8 +12542,8 @@ a.asset-action-button--save-signin {
 
 .asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible {
 	opacity: 1;
-	transition-duration: 1.6s;
-	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+	transition-duration: 1.4s;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Space between launch poster and Sign In (trailer removed on home guest) */
@@ -12521,6 +12558,7 @@ a.asset-action-button--save-signin {
 	}
 
 	.asset-guest-poster-frame--loop::before,
+	.asset-guest-poster-frame--loop::after,
 	.asset-guest-poster-video,
 	.asset-guest-poster-frame--loop .asset-guest-poster-img {
 		border-radius: 5px;
