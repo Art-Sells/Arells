@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import GuestLandingCopyright from '../../GuestLandingCopyright';
 import VideoPlayer from '../../VideoPlayer';
+import { usePosterLoopPlayback } from '../../../hooks/usePosterLoopPlayback';
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
 
@@ -15,6 +16,8 @@ type AssetGuestLandingProps = {
   slogan?: string;
   /** When set on Bitcoin guest landing, shown above the trailer. */
   posterSrc?: string;
+  /** Optional one-shot loop video; after it ends, fades into posterSrc. */
+  posterLoopSrc?: string;
   posterWidth?: number;
   posterHeight?: number;
   posterAlt?: string;
@@ -28,6 +31,7 @@ export default function AssetGuestLanding({
   cssModifier,
   title,
   posterSrc,
+  posterLoopSrc,
   posterWidth = 3000,
   posterHeight = 2688,
   posterAlt = '',
@@ -37,8 +41,16 @@ export default function AssetGuestLanding({
   hideSigninPrompt = false,
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
-  const [posterLoaded, setPosterLoaded] = useState(false);
+  const hasLoop = Boolean(posterSrc && posterLoopSrc);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const posterImgRef = useRef<HTMLImageElement>(null);
+  const [posterLoaded, setPosterLoaded] = useState(false);
+  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
+    usePosterLoopPlayback(videoRef, hasLoop);
+
+  // Same as Season One: play loop fully, then fade in still (skip video on load/stall fail).
+  const showStill = !hasLoop ? posterLoaded : videoDone && posterLoaded;
+  const frameReady = hasLoop ? videoReady || showStill : posterLoaded;
 
   useEffect(() => {
     const img = posterImgRef.current;
@@ -89,13 +101,36 @@ export default function AssetGuestLanding({
           <span className="shadow-border" aria-hidden="true" />
           {showPoster && posterSrc ? (
             <div
-              className={`asset-guest-poster-frame${posterLoaded ? ' is-loaded' : ''}`}
+              className={`asset-guest-poster-frame${frameReady ? ' is-loaded' : ''}${
+                hasLoop ? ' asset-guest-poster-frame--loop' : ''
+              }${showStill ? ' is-still' : ''}`}
               style={{ aspectRatio: `${posterWidth} / ${posterHeight}` }}
             >
-              {!posterLoaded ? (
+              {!frameReady ? (
                 <div className="asset-guest-poster-loader" aria-hidden="true">
                   <div className="asset-guest-poster-loader-ring" />
                 </div>
+              ) : null}
+              {hasLoop && posterLoopSrc ? (
+                <video
+                  ref={videoRef}
+                  className={`asset-guest-poster-video${videoReady && !showStill ? ' is-visible' : ''}${
+                    showStill ? ' is-done' : ''
+                  }`}
+                  src={posterLoopSrc}
+                  muted
+                  playsInline
+                  preload="auto"
+                  autoPlay
+                  controls={false}
+                  disablePictureInPicture
+                  onLoadedData={markReady}
+                  onCanPlay={markReady}
+                  onPlaying={markReady}
+                  onEnded={onVideoEnded}
+                  onError={skipToStill}
+                  aria-label={posterAlt || 'Launch poster'}
+                />
               ) : null}
               <img
                 ref={posterImgRef}
@@ -103,7 +138,7 @@ export default function AssetGuestLanding({
                 alt={posterAlt}
                 width={posterWidth}
                 height={posterHeight}
-                className={`asset-guest-poster-img${posterLoaded ? ' is-visible' : ''}`}
+                className={`asset-guest-poster-img${showStill ? ' is-visible' : ''}`}
                 onLoad={() => setPosterLoaded(true)}
               />
             </div>

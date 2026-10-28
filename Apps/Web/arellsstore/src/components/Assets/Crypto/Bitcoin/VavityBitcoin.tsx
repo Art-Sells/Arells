@@ -50,6 +50,9 @@ const ASSET = CRYPTO_ASSET_BY_ID.bitcoin;
 
 const PREMIER_POSTER =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
+const PREMIER_POSTER_LOOP =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +
+  encodeURIComponent('LaunchLoop(guest).mp4');
 
 const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset, ensureAssetsLoaded } =
@@ -3634,6 +3637,7 @@ const VavityBitcoin: React.FC = () => {
         ticker={ASSET.ticker}
         title={ASSET.label}
         posterSrc={PREMIER_POSTER}
+        posterLoopSrc={PREMIER_POSTER_LOOP}
         posterWidth={2000}
         posterHeight={1166}
         posterAlt="The Bitcoin Alien Race"

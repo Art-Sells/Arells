@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoPlayer from '../../../VideoPlayer';
 import { useUser } from '../../../../context/UserContext';
 import { ALIEN_COMPOSE_DONE_EVENT } from '../../../../lib/assets/assetSharePath';
+import { usePosterLoopPlayback } from '../../../../hooks/usePosterLoopPlayback';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/videos';
 import { EPISODE_ONE_POSTER, EPISODE_ONE_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodeone';
 
@@ -16,9 +17,9 @@ const SEASON_ONE_LOOP_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneLoop.mp4`;
 export default function BitcoinSeasonTeaser() {
   const { isSignedIn } = useUser();
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
+    usePosterLoopPlayback(videoRef, true);
   const [stillSrc, setStillSrc] = useState(SEASON_ONE_COPY_SRC);
-  const [videoReady, setVideoReady] = useState(false);
-  const [videoDone, setVideoDone] = useState(false);
   const [stillLoaded, setStillLoaded] = useState(false);
   const [trailerMounted, setTrailerMounted] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
@@ -76,21 +77,6 @@ export default function BitcoinSeasonTeaser() {
   }, [loadPersonalizedSeasonOne]);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.loop = false;
-    const tryPlay = () => {
-      void video.play().catch(() => {
-        // Autoplay blocked — fall through to still.
-        setVideoDone(true);
-      });
-    };
-    if (video.readyState >= 2) tryPlay();
-    else video.addEventListener('loadeddata', tryPlay, { once: true });
-    return () => video.removeEventListener('loadeddata', tryPlay);
-  }, []);
-
-  useEffect(() => {
     if (!trailerMounted || trailerOpen) return;
     setTrailerSettled(false);
     const timer = window.setTimeout(() => setTrailerOpen(true), 0);
@@ -102,10 +88,6 @@ export default function BitcoinSeasonTeaser() {
     const timer = window.setTimeout(() => setTrailerSettled(true), 3100);
     return () => window.clearTimeout(timer);
   }, [trailerOpen, trailerSettled]);
-
-  const onVideoEnded = useCallback(() => {
-    setVideoDone(true);
-  }, []);
 
   return (
     <div className="asset-bitcoin-season-teaser">
@@ -133,10 +115,11 @@ export default function BitcoinSeasonTeaser() {
               autoPlay
               controls={false}
               disablePictureInPicture
-              onLoadedData={() => setVideoReady(true)}
-              onCanPlay={() => setVideoReady(true)}
+              onLoadedData={markReady}
+              onCanPlay={markReady}
+              onPlaying={markReady}
               onEnded={onVideoEnded}
-              onError={() => setVideoDone(true)}
+              onError={skipToStill}
               aria-label="Season One"
             />
             <img
