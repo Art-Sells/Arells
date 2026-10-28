@@ -2,13 +2,34 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GuestLandingCopyright from '../GuestLandingCopyright';
 import VideoPlayer from '../VideoPlayer';
+import { usePosterLoopPlayback } from '../../hooks/usePosterLoopPlayback';
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
 
+const LAUNCH_POSTERS_BASE =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters';
+const LAUNCH_POSTER = `${LAUNCH_POSTERS_BASE}/${encodeURIComponent('LaunchPoster(guest).jpg')}`;
+const LAUNCH_POSTER_LOOP = `${LAUNCH_POSTERS_BASE}/${encodeURIComponent('LaunchLoop(guest).mp4')}`;
+
 const PortfolioWeeklyGuestLanding: React.FC = () => {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const stillImgRef = useRef<HTMLImageElement | null>(null);
+  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
+    usePosterLoopPlayback(videoRef, true);
+  const [stillLoaded, setStillLoaded] = useState(false);
+
+  // Same as Season One: wait for loop to finish, then fade in poster (skip on fail/stall).
+  const showStill = videoDone && stillLoaded;
+  const frameReady = videoReady || showStill;
+
+  useEffect(() => {
+    const img = stillImgRef.current;
+    if (img?.complete && img.naturalWidth > 0) setStillLoaded(true);
+  }, []);
+
   return (
     <div className="home-guest-landing">
       <div className="home-guest-landing-stack">
@@ -17,8 +38,8 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
           <Image
             loader={imageLoader}
             alt=""
-            width={60}
-            height={60}
+            width={45}
+            height={45}
             className="home-guest-icon-img"
             src="images/Arells-Icon.png"
             priority
@@ -27,8 +48,8 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
         <Image
           loader={imageLoader}
           alt="Arells"
-          width={70}
-          height={23}
+          width={43}
+          height={14}
           className="home-guest-logo home-guest-mount-slide home-guest-mount-slide--logo"
           src="images/Arells-Logo-Ebony.png"
           priority
@@ -38,6 +59,46 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
         </p>
         <div className="home-guest-signin-shell shadow-border-wrap home-guest-trailer-shell home-guest-mount-slide home-guest-mount-slide--signin">
           <span className="shadow-border" aria-hidden="true" />
+          <div
+            className={`asset-guest-poster-frame asset-guest-poster-frame--loop home-guest-launch-poster${
+              frameReady ? ' is-loaded' : ''
+            }${showStill ? ' is-still' : ''}`}
+            style={{ aspectRatio: '2000 / 1166' }}
+          >
+            {!frameReady ? (
+              <div className="asset-guest-poster-loader" aria-hidden="true">
+                <div className="asset-guest-poster-loader-ring" />
+              </div>
+            ) : null}
+            <video
+              ref={videoRef}
+              className={`asset-guest-poster-video${videoReady && !showStill ? ' is-visible' : ''}${
+                showStill ? ' is-done' : ''
+              }`}
+              src={LAUNCH_POSTER_LOOP}
+              muted
+              playsInline
+              preload="auto"
+              autoPlay
+              controls={false}
+              disablePictureInPicture
+              onLoadedData={markReady}
+              onCanPlay={markReady}
+              onPlaying={markReady}
+              onEnded={onVideoEnded}
+              onError={skipToStill}
+              aria-label="The Bitcoin Alien Race"
+            />
+            <img
+              ref={stillImgRef}
+              src={LAUNCH_POSTER}
+              alt="The Bitcoin Alien Race"
+              width={2000}
+              height={1166}
+              className={`asset-guest-poster-img${showStill ? ' is-visible' : ''}`}
+              onLoad={() => setStillLoaded(true)}
+            />
+          </div>
           <VideoPlayer theme="home" />
           <div className="home-guest-signin-panel myinv-accent-border">
             <div className="home-guest-signin-inner">

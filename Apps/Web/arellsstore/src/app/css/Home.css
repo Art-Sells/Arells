@@ -1665,25 +1665,23 @@ body {
 	border-radius: 13px;
 	overflow: hidden;
 	background: rgba(248, 141, 0, 0.3);
+	aspect-ratio: 2660 / 382;
 }
 
 .asset-bitcoin-season-teaser-frame::before {
 	content: '';
 	position: absolute;
 	inset: 1px;
+	z-index: 3;
 	border-radius: 12px;
 	background: rgba(248, 141, 0, 0.06);
 	pointer-events: none;
 }
 
-.asset-bitcoin-season-teaser-frame:not(.is-loaded) {
-	aspect-ratio: 2660 / 382;
-}
-
 .asset-bitcoin-season-teaser-loader {
 	position: absolute;
 	inset: 0;
-	z-index: 1;
+	z-index: 4;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1700,13 +1698,43 @@ body {
 	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
 }
 
+.asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-img {
-	width: 100%;
-	height: auto;
+	position: absolute;
+	inset: 1px;
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
 	display: block;
 	border-radius: 12px;
+	object-fit: cover;
+	box-sizing: border-box;
 	opacity: 0;
-	transition: opacity 0.9s ease;
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity;
+}
+
+.asset-bitcoin-season-teaser-video {
+	z-index: 1;
+}
+
+.asset-bitcoin-season-teaser-img {
+	z-index: 2;
+}
+
+.asset-bitcoin-season-teaser-video.is-visible {
+	opacity: 1;
+}
+
+.asset-bitcoin-season-teaser-video.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.4s;
+}
+
+.asset-bitcoin-season-teaser-img.is-visible {
+	opacity: 1;
+	transition-duration: 1.6s;
+	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (max-width: 750px) {
@@ -1715,13 +1743,10 @@ body {
 	}
 
 	.asset-bitcoin-season-teaser-frame::before,
+	.asset-bitcoin-season-teaser-video,
 	.asset-bitcoin-season-teaser-img {
 		border-radius: 5px;
 	}
-}
-
-.asset-bitcoin-season-teaser-img.is-visible {
-	opacity: 1;
 }
 
 .asset-bitcoin-season-teaser-storyline {
@@ -12281,7 +12306,22 @@ a.asset-action-button--save-signin {
 .home-guest-logo {
 	width: auto !important;
 	height: auto !important;
-	max-width: 100px;
+	max-width: 95px;
+}
+
+/* Homepage guest only: icon + wordmark smaller than shared guest defaults */
+.myinv-page--weekly-guest:not(.not-found-page) .home-guest-icon-wrap {
+	width: 45px;
+	height: 45px;
+}
+
+.myinv-page--weekly-guest:not(.not-found-page) .home-guest-icon-img {
+	width: 45px !important;
+	height: 45px !important;
+}
+
+.myinv-page--weekly-guest:not(.not-found-page) .home-guest-logo {
+	max-width: 60px;
 }
 
 .asset-mission-header {
@@ -12383,10 +12423,24 @@ a.asset-action-button--save-signin {
 	min-height: 120px;
 }
 
+.asset-guest-poster-frame--loop {
+	aspect-ratio: 2000 / 1166;
+}
+
+.asset-guest-poster-frame--loop::before {
+	content: '';
+	position: absolute;
+	inset: 1px;
+	z-index: 3;
+	border-radius: 12px;
+	background: rgba(248, 141, 0, 0.06);
+	pointer-events: none;
+}
+
 .asset-guest-poster-loader {
 	position: absolute;
 	inset: 0;
-	z-index: 1;
+	z-index: 4;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -12403,6 +12457,39 @@ a.asset-action-button--save-signin {
 	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
 }
 
+.asset-guest-poster-video,
+.asset-guest-poster-frame--loop .asset-guest-poster-img {
+	position: absolute;
+	inset: 1px;
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
+	display: block;
+	border-radius: 12px;
+	object-fit: cover;
+	box-sizing: border-box;
+	opacity: 0;
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity;
+}
+
+.asset-guest-poster-video {
+	z-index: 1;
+}
+
+.asset-guest-poster-frame--loop .asset-guest-poster-img {
+	z-index: 2;
+}
+
+.asset-guest-poster-video.is-visible {
+	opacity: 1;
+}
+
+.asset-guest-poster-video.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.4s;
+}
+
 .asset-guest-poster-img {
 	width: 100%;
 	height: auto;
@@ -12414,6 +12501,30 @@ a.asset-action-button--save-signin {
 
 .asset-guest-poster-img.is-visible {
 	opacity: 1;
+}
+
+.asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible {
+	opacity: 1;
+	transition-duration: 1.6s;
+	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Match bitcoin guest: trailer-shell gap only (no extra poster margin) */
+.home-guest-launch-poster {
+	margin-bottom: 0;
+}
+
+@media (max-width: 750px) {
+	.asset-guest-poster-frame,
+	.asset-guest-poster-frame--loop {
+		border-radius: 6px;
+	}
+
+	.asset-guest-poster-frame--loop::before,
+	.asset-guest-poster-video,
+	.asset-guest-poster-frame--loop .asset-guest-poster-img {
+		border-radius: 5px;
+	}
 }
 
 .asset-guest-icon-wrap {
@@ -15078,7 +15189,7 @@ a.asset-action-button--save-signin {
 }
 
 .myinv-page--weekly-guest:not(.not-found-page) .home-guest-icon-wrap {
-	margin-top: 70px;
+	margin-top: 40px;
 }
 
 .myinv-page--weekly-guest .home-guest-signin-shell {

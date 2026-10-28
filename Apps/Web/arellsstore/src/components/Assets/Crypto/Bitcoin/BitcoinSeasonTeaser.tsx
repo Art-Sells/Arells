@@ -1,28 +1,36 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import VideoPlayer from '../../../VideoPlayer';
+import { usePosterLoopPlayback } from '../../../../hooks/usePosterLoopPlayback';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/videos';
 import { EPISODE_ONE_POSTER, EPISODE_ONE_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodeone';
 
-const SEASON_ONE_TEASER_SRC =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/SeasonOneCopy.jpg';
+const SEASON_ONE_POSTERS_BASE =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters';
+
+const SEASON_ONE_COPY_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneCopy.jpg`;
+const SEASON_ONE_LOOP_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneLoop.mp4`;
 
 export default function BitcoinSeasonTeaser() {
-  const [teaserLoaded, setTeaserLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const { videoReady, videoDone, markReady, onVideoEnded, skipToStill } =
+    usePosterLoopPlayback(videoRef, true);
+  const [stillLoaded, setStillLoaded] = useState(false);
   const [trailerMounted, setTrailerMounted] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [trailerSettled, setTrailerSettled] = useState(false);
 
+  const showStill = videoDone && stillLoaded;
+  const frameReady = videoReady || showStill;
+
   useEffect(() => {
     if (!trailerMounted || trailerOpen) return;
-    // Paint collapsed (0fr) first, then open so grid-template-rows height-downs.
     setTrailerSettled(false);
     const timer = window.setTimeout(() => setTrailerOpen(true), 0);
     return () => window.clearTimeout(timer);
   }, [trailerMounted, trailerOpen]);
 
-  // Safari sometimes skips transitionend on grid-template-rows; match the 3s ease.
   useEffect(() => {
     if (!trailerOpen || trailerSettled) return;
     const timer = window.setTimeout(() => setTrailerSettled(true), 3100);
@@ -33,19 +41,42 @@ export default function BitcoinSeasonTeaser() {
     <div className="asset-bitcoin-season-teaser">
       <div className="asset-bitcoin-season-teaser-show">
         <div className="asset-bitcoin-season-teaser-season">
-          <div className={`asset-bitcoin-season-teaser-frame${teaserLoaded ? ' is-loaded' : ''}`}>
-            {!teaserLoaded ? (
+          <div
+            className={`asset-bitcoin-season-teaser-frame${frameReady ? ' is-loaded' : ''}${
+              showStill ? ' is-still' : ''
+            }`}
+          >
+            {!frameReady ? (
               <div className="asset-bitcoin-season-teaser-loader" aria-hidden="true">
                 <div className="asset-bitcoin-season-teaser-loader-ring" />
               </div>
             ) : null}
+            <video
+              ref={videoRef}
+              className={`asset-bitcoin-season-teaser-video${videoReady && !showStill ? ' is-visible' : ''}${
+                showStill ? ' is-done' : ''
+              }`}
+              src={SEASON_ONE_LOOP_SRC}
+              muted
+              playsInline
+              preload="auto"
+              autoPlay
+              controls={false}
+              disablePictureInPicture
+              onLoadedData={markReady}
+              onCanPlay={markReady}
+              onPlaying={markReady}
+              onEnded={onVideoEnded}
+              onError={skipToStill}
+              aria-label="Season One"
+            />
             <img
-              src={SEASON_ONE_TEASER_SRC}
-              alt="Season One coming soon"
+              src={SEASON_ONE_COPY_SRC}
+              alt="Season One"
               width={2660}
               height={382}
-              className={`asset-bitcoin-season-teaser-img${teaserLoaded ? ' is-visible' : ''}`}
-              onLoad={() => setTeaserLoaded(true)}
+              className={`asset-bitcoin-season-teaser-img${showStill ? ' is-visible' : ''}`}
+              onLoad={() => setStillLoaded(true)}
             />
           </div>
           <div className="asset-bitcoin-season-teaser-trailer-section">

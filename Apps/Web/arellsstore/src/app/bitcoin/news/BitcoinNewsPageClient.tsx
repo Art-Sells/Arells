@@ -15,6 +15,9 @@ import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScro
 
 const PREMIER_POSTER =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
+const PREMIER_POSTER_LOOP =
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +
+  encodeURIComponent('LaunchLoop(guest).mp4');
 
 /**
  * Inclusive Weekly News floor — do not bump this when a new week ships.
@@ -202,6 +205,7 @@ const BitcoinNewsPageClient: React.FC = () => {
           ticker="BTC"
           title="Bitcoin"
           posterSrc={PREMIER_POSTER}
+          posterLoopSrc={PREMIER_POSTER_LOOP}
           posterWidth={2000}
           posterHeight={1166}
           posterAlt="Bitcoin News"
