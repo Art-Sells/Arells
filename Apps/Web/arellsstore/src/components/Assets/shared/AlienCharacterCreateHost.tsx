@@ -16,20 +16,6 @@ function isOnAssetOrCharacterPage(pathname: string, assetId: string): boolean {
   return assetHome.test(pathname) || myCharacter.test(pathname);
 }
 
-/**
- * UI-edit preview: force success modal on every page mount / route change.
- * Set back to false after editing/verification is done.
- */
-const FORCE_ALIEN_SUCCESS_MODAL_PREVIEW = true;
-
-type PreviewSuccess = {
-  assetId: string;
-  assetName: string;
-  shareId: string;
-  metaUrl: string;
-  loopUrl: string | null;
-};
-
 /** Sitewide alien create modals: creating / wait / success / error. */
 export default function AlienCharacterCreateHost() {
   const router = useRouter();
@@ -38,38 +24,16 @@ export default function AlienCharacterCreateHost() {
     creatingModalOpen,
     waitModalOpen,
     waitAssetName,
-    success: liveSuccess,
+    success,
     error,
     errorOpen,
-    overlayStyle: liveOverlayStyle,
+    overlayStyle,
     creatingAssetName,
     dismissCreatingModal,
     dismissWaitModal,
     dismissSuccess,
     dismissError,
   } = useAlienCharacterCreate();
-
-  /** While FORCE is on, Close can hide once — next route/mount brings it back. */
-  const [previewDismissed, setPreviewDismissed] = useState(false);
-  const [previewSuccess, setPreviewSuccess] = useState<PreviewSuccess | null>(null);
-  const previewBlobUrlsRef = useRef<{ meta?: string; loop?: string }>({});
-  const success =
-    FORCE_ALIEN_SUCCESS_MODAL_PREVIEW && !previewDismissed && previewSuccess
-      ? previewSuccess
-      : liveSuccess;
-  const overlayStyle =
-    FORCE_ALIEN_SUCCESS_MODAL_PREVIEW && !previewDismissed && previewSuccess
-      ? ({
-          ['--asset-hover-dot-color' as string]: 'rgba(248, 141, 0, 1)',
-          ['--asset-line-color' as string]: 'rgba(248, 141, 0, 1)',
-          ['--myinv-accent-color' as string]: 'rgba(248, 141, 0, 1)',
-        } as React.CSSProperties)
-      : liveOverlayStyle;
-
-  const onDismissSuccess = useCallback(() => {
-    if (FORCE_ALIEN_SUCCESS_MODAL_PREVIEW) setPreviewDismissed(true);
-    dismissSuccess();
-  }, [dismissSuccess]);
 
   const [mounted, setMounted] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
@@ -81,64 +45,6 @@ export default function AlienCharacterCreateHost() {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  // Force preview: load composed + metaloop as blobs (same as real create) and reopen each route.
-  useEffect(() => {
-    if (!FORCE_ALIEN_SUCCESS_MODAL_PREVIEW) return;
-    let cancelled = false;
-    setPreviewDismissed(false);
-
-    const revokePreview = () => {
-      const prev = previewBlobUrlsRef.current;
-      if (prev.meta?.startsWith('blob:')) URL.revokeObjectURL(prev.meta);
-      if (prev.loop?.startsWith('blob:')) URL.revokeObjectURL(prev.loop);
-      previewBlobUrlsRef.current = {};
-    };
-
-    void (async () => {
-      const bust = `t=${Date.now()}`;
-      try {
-        const [metaRes, loopRes] = await Promise.all([
-          fetch(`/api/user/alien-photo?asset=bitcoin&kind=composed&${bust}`, {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
-          fetch(`/api/user/alien-photo?asset=bitcoin&kind=metaloop&${bust}`, {
-            credentials: 'include',
-            cache: 'no-store',
-          }),
-        ]);
-        if (cancelled) return;
-        if (!metaRes.ok) {
-          setPreviewSuccess(null);
-          return;
-        }
-        const metaBlob = await metaRes.blob();
-        const loopBlob = loopRes.ok ? await loopRes.blob() : null;
-        if (cancelled) return;
-        revokePreview();
-        const metaUrl = URL.createObjectURL(metaBlob);
-        const loopUrl = loopBlob ? URL.createObjectURL(loopBlob) : null;
-        previewBlobUrlsRef.current = { meta: metaUrl, loop: loopUrl || undefined };
-        setPreviewSuccess({
-          assetId: 'bitcoin',
-          assetName: 'Bitcoin',
-          shareId: 'preview',
-          metaUrl,
-          loopUrl,
-        });
-      } catch (err) {
-        console.error('alien success modal preview', err);
-        if (!cancelled) setPreviewSuccess(null);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      setPreviewSuccess(null);
-      revokePreview();
-    };
-  }, [pathname]);
 
   useEffect(() => {
     return () => {
@@ -336,7 +242,7 @@ export default function AlienCharacterCreateHost() {
                 <button
                   type="button"
                   className="asset-range-button blood-ok blood-ok--alien-close"
-                  onClick={onDismissSuccess}
+                  onClick={dismissSuccess}
                 >
                   Close
                 </button>

@@ -59,7 +59,10 @@ function HeightDownSection({
   const contentRef = useRef<HTMLDivElement>(null);
   const [px, setPx] = useState(0);
   const [mode, setMode] = useState<'snap' | 'animate' | 'auto'>('snap');
+  const modeRef = useRef(mode);
   const pendingRef = useRef<(() => void) | null>(null);
+
+  modeRef.current = mode;
 
   const measure = useCallback(() => {
     const node = contentRef.current;
@@ -88,13 +91,29 @@ function HeightDownSection({
     };
   }, [open, measure]);
 
+  /** Media/loader swaps grow content mid-animation — keep max-height >= real height so the final `auto` handoff doesn't pop. */
   useEffect(() => {
-    if (!open || mode !== 'animate' || px <= 0) return;
+    if (!open) return;
+    const node = contentRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => {
+      if (modeRef.current === 'auto' || modeRef.current === 'snap') return;
+      const next = Math.max(measure(), 1);
+      setPx((prev) => (next > prev ? next : prev));
+    });
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [open, measure]);
+
+  useEffect(() => {
+    if (!open || mode !== 'animate') return;
     pendingRef.current?.();
     pendingRef.current = runAfterMaxHeightTransitionEnd(
       wrapRef.current,
       () => {
         pendingRef.current = null;
+        // Final sync before unlocking so auto never reveals a taller clipped tail.
+        setPx(Math.max(measure(), 1));
         setMode('auto');
       },
       { timeoutMs: MY_CHARACTER_HEIGHT_MS + 500 }
@@ -103,7 +122,7 @@ function HeightDownSection({
       pendingRef.current?.();
       pendingRef.current = null;
     };
-  }, [open, mode, px]);
+  }, [open, mode, measure]);
 
   const maxHeight = !open ? '0px' : mode === 'auto' ? 'none' : `${px}px`;
 
@@ -151,7 +170,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [portraitLoaded, setPortraitLoaded] = useState(false);
   const [portraitLoaderGone, setPortraitLoaderGone] = useState(false);
-  const [mediaReady, setMediaReady] = useState(false);
   const portraitImgRef = useRef<HTMLImageElement | null>(null);
   const busy = isCreatingAsset('bitcoin');
 
@@ -236,7 +254,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
       setMetaUrl(metaHead.ok ? nextMeta : null);
       setMetaLoopUrl(metaHead.ok && loopHead.ok ? nextLoop : null);
       setPortraitUrl(portraitHead.ok ? nextPortrait : null);
-      setMediaReady(true);
       if (!metaHead.ok && !portraitHead.ok) {
         router.replace(assetSharePath('/bitcoin', id));
       }
@@ -244,18 +261,16 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
       setMetaUrl(null);
       setMetaLoopUrl(null);
       setPortraitUrl(null);
-      setMediaReady(true);
     }
   }, [router]);
 
   useEffect(() => {
     if (authSessionLoading) return;
     if (showGuest && pathShareId) return;
-    if (!resolvedShareId) {
-      setMediaReady(true);
-      return;
-    }
-    setMediaReady(false);
+    if (!resolvedShareId) return;
+    setMetaUrl(null);
+    setMetaLoopUrl(null);
+    setPortraitUrl(null);
     void loadPublicMedia(resolvedShareId);
   }, [authSessionLoading, showGuest, pathShareId, resolvedShareId, loadPublicMedia]);
 
@@ -306,12 +321,22 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     [email, resolvedShareId, startCreate]
   );
 
-  if (authSessionLoading) return null;
-
   /** Guest + share id: redirecting to /bitcoin/{shareId}. */
-  if (pathShareId && showGuest) return null;
+  if (!authSessionLoading && pathShareId && showGuest) {
+    return (
+      <div
+        className="asset-page asset-page--bitcoin bitcoin-alien-race-page bitcoin-my-character-page bitcoin-my-character-page--booting"
+        role="status"
+        aria-label="Loading"
+      >
+        <div className="bitcoin-my-character-boot-loader" aria-hidden="true">
+          <div className="asset-alien-meta-preview-loader-ring" />
+        </div>
+      </div>
+    );
+  }
 
-  if (!pathShareId && showGuest) {
+  if (!authSessionLoading && !pathShareId && showGuest) {
     return (
       <div className="asset-page asset-page--bitcoin">
         <header className="asset-header asset-header--bitcoin" />
@@ -333,35 +358,55 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     );
   }
 
-  if (!pathShareId && allowSignedIn && !shareId) return null;
-  if (!pathShareId && allowSignedIn && shareId) return null;
-  if (!resolvedShareId) return null;
+  /** Auth / share-id redirect still resolving — show loader instead of a blank page. */
+  if (!resolvedShareId) {
+    if (authSessionLoading || pathShareId || (allowSignedIn && shareId)) {
+      return (
+        <div
+          className="asset-page asset-page--bitcoin bitcoin-alien-race-page bitcoin-my-character-page bitcoin-my-character-page--booting"
+          role="status"
+          aria-label="Loading character"
+        >
+          <div className="bitcoin-my-character-boot-loader" aria-hidden="true">
+            <div className="asset-alien-meta-preview-loader-ring" />
+          </div>
+        </div>
+      );
+    }
+    return null;
+  }
 
-  const sectionsOpen = mediaReady;
+  /** Expand sections immediately; media slots keep their own loaders until HEAD/images land. */
+  const sectionsOpen = true;
+  const portraitPending = !portraitUrl || !portraitLoaded;
 
   const portraitMedia = (
     <span
       className={`asset-alien-photo-slot-placeholder-wrap bitcoin-my-character-photo-frame${
-        portraitLoaded ? ' is-loaded' : ''
+        portraitLoaded && portraitUrl ? ' is-loaded' : ''
       }`}
     >
-      {!portraitLoaderGone ? (
+      {!portraitLoaderGone || !portraitUrl ? (
         <div
-          className={`bitcoin-my-character-photo-loader${portraitLoaded ? ' is-fading' : ''}`}
+          className={`bitcoin-my-character-photo-loader${
+            portraitLoaded && portraitUrl ? ' is-fading' : ''
+          }`}
           aria-hidden="true"
         >
           <div className="asset-alien-meta-preview-loader-ring" />
         </div>
       ) : null}
-      <img
-        ref={portraitImgRef}
-        className={`asset-alien-photo-slot-placeholder bitcoin-my-character-photo-img${
-          portraitLoaded ? ' is-visible' : ''
-        }`}
-        src={portraitUrl || ''}
-        alt="My Character"
-        onLoad={() => setPortraitLoaded(true)}
-      />
+      {portraitUrl ? (
+        <img
+          ref={portraitImgRef}
+          className={`asset-alien-photo-slot-placeholder bitcoin-my-character-photo-img${
+            portraitLoaded ? ' is-visible' : ''
+          }`}
+          src={portraitUrl}
+          alt="My Character"
+          onLoad={() => setPortraitLoaded(true)}
+        />
+      ) : null}
     </span>
   );
 
@@ -398,13 +443,10 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
             />
           ) : null}
 
-          <HeightDownSection
-            open={sectionsOpen && Boolean(portraitUrl)}
-            className="bitcoin-my-character-section--photo"
-          >
+          <HeightDownSection open={sectionsOpen} className="bitcoin-my-character-section--photo">
             <div
               className={`asset-alien-photo-slot asset-alien-photo-slot--bitcoin bitcoin-my-character-photo-slot${
-                busy || !portraitLoaded ? ' is-busy' : ''
+                busy || portraitPending ? ' is-busy' : ''
               }`}
             >
               {isOwner ? (
@@ -413,7 +455,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
                   type="button"
                   className="asset-alien-photo-hit"
                   onClick={openPicker}
-                  disabled={busy}
+                  disabled={busy || !portraitUrl}
                   aria-label="Update Photo"
                 >
                   {portraitMedia}
@@ -468,7 +510,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           </HeightDownSection>
         </div>
       </div>
-
     </>
   );
 };

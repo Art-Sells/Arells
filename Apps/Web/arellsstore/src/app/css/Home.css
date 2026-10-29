@@ -1888,19 +1888,46 @@ a.asset-alien-photo-hit {
 }
 
 .bitcoin-my-character-launch {
-	width: 100%;
-	box-sizing: border-box;
-}
-
-.bitcoin-my-character-launch .asset-alien-meta-preview-frame {
-	width: 100%;
-	margin: 0;
-}
-
-.bitcoin-my-character-launch--loading {
 	position: relative;
 	width: 100%;
 	aspect-ratio: 1 / 1;
+	box-sizing: border-box;
+}
+
+/* Loader + AlienMetaPreview share the same 1:1 box so media swap can't grow mid height-down. */
+.bitcoin-my-character-launch .asset-alien-meta-preview-frame,
+.bitcoin-my-character-launch--loading {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	aspect-ratio: auto;
+}
+
+.bitcoin-my-character-page--booting {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 50vh;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-boot-loader {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+}
+
+.bitcoin-my-character-boot-loader .asset-alien-meta-preview-loader-ring {
+	width: 42px;
+	height: 42px;
+	border-width: 5px;
+}
+
+.bitcoin-my-character-launch--loading {
 	border-radius: 10px;
 	overflow: hidden;
 	border: 1px solid rgba(248, 141, 0, 0.35);
@@ -1940,6 +1967,8 @@ a.asset-alien-photo-hit {
 .bitcoin-my-character-photo-frame {
 	position: relative;
 	background: rgba(248, 141, 0, 0.08);
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .bitcoin-my-character-photo-loader {

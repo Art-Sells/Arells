@@ -36,11 +36,14 @@ const Index = () => {
   });
   const { getAsset, loadMoreAssets } = useVavity();
   const visibleAssetCount = VISIBLE_HOME_CRYPTO.length;
-  const { email, shareId } = useUser();
+  const { email, shareId, authSessionLoading } = useUser();
   const guestPreview = useGuestPreview();
   const forceHomeInvestmentsPreview = false;
-  const showGuestLanding = guestPreview || (!email && !forceHomeInvestmentsPreview);
-  const showSignedInHome = !guestPreview && (!!email || forceHomeInvestmentsPreview);
+  /** During auth, keep signed-in shell + loader — never blank / guest-flash. */
+  const showGuestLanding =
+    guestPreview || (!authSessionLoading && !email && !forceHomeInvestmentsPreview);
+  const showSignedInHome =
+    !guestPreview && (authSessionLoading || !!email || forceHomeInvestmentsPreview);
   const showHomeLoader = showLoading && showSignedInHome;
   const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
   const [cardShimmersFading, setCardShimmersFading] = useState(false);
