@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
 import AssetQuestionsSupport from '../../shared/AssetQuestionsSupport';
+import AlienDcPromotionHost from '../../shared/AlienDcPromotionHost';
 import Bitcoin from './bitcoin';
 import { useUser } from '../../../../context/UserContext';
 import { useGuestPreview } from '../../../../hooks/useGuestPreview';
@@ -240,6 +241,10 @@ const BitcoinPageClient: React.FC = () => {
         </footer>
       )}
       {!isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
+      <AlienDcPromotionHost
+        enabled={!isGuest && !showLoading}
+        assetName={ASSET.displayName}
+      />
     </div>
   );
 };

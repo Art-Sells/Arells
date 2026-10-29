@@ -1955,6 +1955,28 @@ a.asset-alien-photo-hit {
 	margin: 0;
 }
 
+.bitcoin-my-character-photo-slot .bitcoin-my-character-update-photo.asset-alien-photo-plus--view {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font-weight: 800;
+	opacity: 0;
+	transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bitcoin-my-character-photo-slot .bitcoin-my-character-update-photo.asset-alien-photo-plus--view.is-visible {
+	opacity: 1;
+}
+
+.bitcoin-my-character-update-photo-icon {
+	display: block;
+	flex-shrink: 0;
+	fill: currentColor;
+	position: relative;
+	top: -1.5px;
+}
+
 .bitcoin-my-character-photo-slot .asset-alien-photo-hit {
 	cursor: pointer;
 }
@@ -7229,6 +7251,299 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 
 .blood-overlay-card--coming-soon {
 	height: 300px;
+}
+
+/* DC promo — match Bitcoin `.asset-header-panel` (340 under 750 / 665 over). */
+.blood-overlay-card--dc-promo {
+	width: min(340px, calc(100% - 20px));
+	max-width: min(340px, calc(100% - 20px));
+	height: auto;
+	min-height: 0;
+	max-height: none;
+	padding: 10px 10px 11px;
+	border-radius: 12px;
+	overflow: visible;
+	flex-shrink: 0;
+	gap: 10px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+}
+
+.blood-overlay-card--dc-promo .blood-ok {
+	width: 100%;
+	margin-top: 0;
+}
+
+.asset-dc-promo-add-photo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	height: 56px;
+	font-size: 16px;
+	font-weight: 800;
+	letter-spacing: 0.6px;
+}
+
+.asset-dc-promo-add-photo-icon {
+	display: block;
+	flex-shrink: 0;
+	width: 26px;
+	height: 26px;
+	fill: currentColor;
+	position: relative;
+	top: -1.5px;
+}
+
+.asset-dc-promo-section {
+	width: 100%;
+	margin: 0;
+	padding: 10px 8px 7px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 6%,
+		#fff
+	);
+}
+
+.asset-dc-promo-headline {
+	margin: 0 0 5px;
+	padding: 0;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: 8px;
+	text-align: center;
+	transform: translateX(4px);
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
+.asset-dc-promo-frame {
+	position: relative;
+	width: 100%;
+	margin: 0;
+	padding: 1px;
+	line-height: 0;
+	border-radius: 13px;
+	overflow: hidden;
+	box-sizing: border-box;
+	background: rgba(248, 141, 0, 0.3);
+	aspect-ratio: 2100 / 480;
+}
+
+.asset-dc-promo-frame:not(.is-loaded) {
+	min-height: 48px;
+}
+
+.asset-dc-promo-stage {
+	position: absolute;
+	inset: 1px;
+	border-radius: 12px;
+	overflow: hidden;
+	background: transparent;
+}
+
+.asset-dc-promo-loader {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	border-radius: 12px;
+	opacity: 1;
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 8%,
+		transparent
+	);
+}
+
+.asset-dc-promo-loader.is-fading {
+	opacity: 0;
+}
+
+.asset-dc-promo-loader-ring {
+	width: 36px;
+	height: 36px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 5px solid rgba(248, 141, 0, 0.2);
+	border-top-color: rgba(248, 141, 0, 0.75);
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+.asset-dc-promo-video {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	object-fit: cover;
+	box-sizing: border-box;
+	opacity: 0;
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	background: transparent;
+	transform: translateX(-2.5px) scale(1.06);
+	transform-origin: center center;
+}
+
+.asset-dc-promo-video.is-visible {
+	opacity: 1;
+}
+
+@media (max-width: 750px) {
+	.asset-dc-promo-frame {
+		border-radius: 6px;
+	}
+
+	.asset-dc-promo-stage {
+		border-radius: 5px;
+	}
+}
+
+.asset-dc-promo-best-results {
+	margin: 6px 0 0;
+	padding: 10px 8px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 4%,
+		#fff
+	);
+}
+
+.asset-dc-promo-best-results-guide {
+	position: relative;
+	width: 100%;
+	line-height: 0;
+	border-radius: 8px;
+	overflow: hidden;
+	box-sizing: border-box;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 40%,
+		transparent
+	);
+	background: rgba(248, 141, 0, 0.12);
+	/* Guide plate: cumulative crop 15px top / 30px bottom from 1792×1008 */
+	aspect-ratio: 1792 / 963;
+}
+
+.asset-dc-promo-best-results-img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.asset-dc-promo-best-results-body {
+	margin: 0;
+	padding: 10px 8px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 6%,
+		#fff
+	);
+}
+
+.asset-dc-promo-best-results-title {
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
+.asset-dc-promo-best-results-list {
+	margin: 0;
+	padding: 8px 10px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 2px;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 4%,
+		#fff
+	);
+}
+
+.asset-dc-promo-best-results-line {
+	display: block;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.35;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	opacity: 0.85;
+}
+
+@media (min-width: 751px) {
+	.asset-dc-promo-best-results-title {
+		font-size: 14px;
+	}
+}
+
+@media (max-height: 499px) {
+	.blood-overlay-card--dc-promo {
+		max-height: none;
+		overflow: visible;
+		flex-shrink: 0;
+	}
 }
 
 .blood-overlay-card--alien-error {

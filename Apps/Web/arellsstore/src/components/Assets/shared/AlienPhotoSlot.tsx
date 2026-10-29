@@ -3,9 +3,12 @@
 import Link from 'next/link';
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import AlienDcPromotionModal from './AlienDcPromotionModal';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { useUser } from '../../../context/UserContext';
+import { dismissDcPromotion } from '../../../lib/alienDcPromotion';
 import { ALIEN_COMPOSE_DONE_EVENT } from '../../../lib/assets/assetSharePath';
+import { ALIEN_PHOTO_ACCEPT } from '../../../lib/client/alienPhotoCompose';
 
 type AlienPhotoSlotProps = {
   assetId: string;
@@ -57,6 +60,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   const [mounted, setMounted] = useState(false);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
 
   const busy = isCreatingAsset(assetId);
@@ -112,6 +116,20 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         : '/bitcoin/my-character'
       : null;
 
+  const triggerFilePicker = useCallback(() => {
+    const input = fileInputRef.current;
+    if (!input) return;
+    try {
+      input.value = '';
+      input.type = 'text';
+      input.type = 'file';
+      input.accept = ALIEN_PHOTO_ACCEPT;
+    } catch {
+      input.value = '';
+    }
+    input.click();
+  }, []);
+
   const openPicker = useCallback(() => {
     const style = themeStyleFrom(triggerRef.current);
     setOverlayStyle(style);
@@ -123,18 +141,8 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       return;
     }
     if (blockIfCreating(style)) return;
-    const input = fileInputRef.current;
-    if (input) {
-      try {
-        input.value = '';
-        input.type = 'text';
-        input.type = 'file';
-        input.accept = 'image/jpeg,image/png,image/webp';
-      } catch {
-        input.value = '';
-      }
-      input.click();
-    }
+    /* Empty PHOTO: guide modal first, then file picker on OK. */
+    setGuideOpen(true);
   }, [assetId, email, isSignedIn, blockIfCreating]);
 
   const onFile = useCallback(
@@ -153,6 +161,9 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         shareId,
         overlayStyle: themeStyleFrom(triggerRef.current),
       });
+      /* Guide stays up until a photo is actually recorded. */
+      dismissDcPromotion();
+      setGuideOpen(false);
     },
     [assetId, displayName, email, shareId, startCreate]
   );
@@ -232,7 +243,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept={ALIEN_PHOTO_ACCEPT}
         hidden
         onChange={onFile}
       />
@@ -258,6 +269,15 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           {media}
         </button>
       )}
+      {assetId === 'bitcoin' ? (
+        <AlienDcPromotionModal
+          open={guideOpen}
+          assetName={displayName}
+          overlayStyle={overlayStyle}
+          onAddPhoto={triggerFilePicker}
+          onDismiss={() => setGuideOpen(false)}
+        />
+      ) : null}
       {mounted && comingSoonOpen
         ? createPortal(
             <div

@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import AlienDcPromotionHost from '../../../components/Assets/shared/AlienDcPromotionHost';
+import AlienDcPromotionModal from '../../../components/Assets/shared/AlienDcPromotionModal';
 import AlienMetaPreview from '../../../components/Assets/shared/AlienMetaPreview';
 import AssetGuestLanding from '../../../components/Assets/shared/AssetGuestLanding';
 import AssetQuestionsSupport from '../../../components/Assets/shared/AssetQuestionsSupport';
@@ -15,6 +17,8 @@ import {
   publicAlienImagePath,
   publicAlienVideoPath,
 } from '../../../lib/assets/assetSharePath';
+import { dismissDcPromotion } from '../../../lib/alienDcPromotion';
+import { ALIEN_PHOTO_ACCEPT } from '../../../lib/client/alienPhotoCompose';
 import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
 const PREMIER_POSTER =
@@ -50,15 +54,18 @@ function HeightDownSection({
   open,
   className,
   children,
+  /** Skip entrance animation — content (e.g. Update Photo) is visible immediately. */
+  instant = false,
 }: {
   open: boolean;
   className?: string;
   children: React.ReactNode;
+  instant?: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [px, setPx] = useState(0);
-  const [mode, setMode] = useState<'snap' | 'animate' | 'auto'>('snap');
+  const [mode, setMode] = useState<'snap' | 'animate' | 'auto'>(instant ? 'auto' : 'snap');
   const modeRef = useRef(mode);
   const pendingRef = useRef<(() => void) | null>(null);
 
@@ -76,6 +83,11 @@ function HeightDownSection({
       return;
     }
     if (!contentRef.current) return;
+    if (instant) {
+      setMode('auto');
+      setPx(Math.max(measure(), 1));
+      return;
+    }
     setMode('snap');
     setPx(0);
     let raf2 = 0;
@@ -89,7 +101,7 @@ function HeightDownSection({
       cancelAnimationFrame(raf1);
       if (raf2) cancelAnimationFrame(raf2);
     };
-  }, [open, measure]);
+  }, [open, measure, instant]);
 
   /** Media/loader swaps grow content mid-animation — keep max-height >= real height so the final `auto` handoff doesn't pop. */
   useEffect(() => {
@@ -160,6 +172,8 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const updateBtnRef = useRef<HTMLButtonElement | null>(null);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [guideOverlayStyle, setGuideOverlayStyle] = useState<React.CSSProperties>({});
 
   const resolvedShareId = (pathShareId || shareId || '').trim().toLowerCase() || null;
   const isOwner =
@@ -284,21 +298,26 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     return () => window.removeEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
   }, [resolvedShareId, loadPublicMedia]);
 
-  const openPicker = useCallback(() => {
-    if (!isOwner || !email || busy) return;
-    const style = themeStyleFrom(updateBtnRef.current);
-    if (blockIfCreating(style)) return;
+  const triggerFilePicker = useCallback(() => {
     const input = fileInputRef.current;
     if (!input) return;
     try {
       input.value = '';
       input.type = 'text';
       input.type = 'file';
-      input.accept = 'image/jpeg,image/png,image/webp';
+      input.accept = ALIEN_PHOTO_ACCEPT;
     } catch {
       input.value = '';
     }
     input.click();
+  }, []);
+
+  const openPicker = useCallback(() => {
+    if (!isOwner || !email || busy) return;
+    const style = themeStyleFrom(updateBtnRef.current);
+    if (blockIfCreating(style)) return;
+    setGuideOverlayStyle(style);
+    setGuideOpen(true);
   }, [isOwner, email, busy, blockIfCreating]);
 
   const onFile = useCallback(
@@ -317,6 +336,9 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         shareId: resolvedShareId,
         overlayStyle: themeStyleFrom(updateBtnRef.current),
       });
+      /* Guide stays up until a photo is actually recorded. */
+      dismissDcPromotion();
+      setGuideOpen(false);
     },
     [email, resolvedShareId, startCreate]
   );
@@ -378,7 +400,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
   /** Expand sections immediately; media slots keep their own loaders until HEAD/images land. */
   const sectionsOpen = true;
-  const portraitPending = !portraitUrl || !portraitLoaded;
 
   const portraitMedia = (
     <span
@@ -437,16 +458,20 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/png,image/webp"
+              accept={ALIEN_PHOTO_ACCEPT}
               hidden
               onChange={onFile}
             />
           ) : null}
 
-          <HeightDownSection open={sectionsOpen} className="bitcoin-my-character-section--photo">
+          <HeightDownSection
+            open={sectionsOpen}
+            instant
+            className="bitcoin-my-character-section--photo"
+          >
             <div
               className={`asset-alien-photo-slot asset-alien-photo-slot--bitcoin bitcoin-my-character-photo-slot${
-                busy || portraitPending ? ' is-busy' : ''
+                busy ? ' is-busy' : ''
               }`}
             >
               {isOwner ? (
@@ -460,10 +485,31 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
                 >
                   {portraitMedia}
                   <span
-                    className="asset-alien-photo-plus asset-alien-photo-plus--view"
+                    className={`asset-alien-photo-plus asset-alien-photo-plus--view bitcoin-my-character-update-photo${
+                      busy || portraitLoaded ? ' is-visible' : ''
+                    }`}
                     aria-hidden="true"
                   >
-                    {busy ? <span className="asset-alien-photo-busy" /> : 'Update Photo'}
+                    {busy ? (
+                      <span className="asset-alien-photo-busy" />
+                    ) : (
+                      <>
+                        <svg
+                          className="bitcoin-my-character-update-photo-icon"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fill="currentColor"
+                            fillRule="evenodd"
+                            d="M9.2 3.5 7.6 5.5H5.25A2.25 2.25 0 0 0 3 7.75v9.5A2.25 2.25 0 0 0 5.25 19.5h13.5A2.25 2.25 0 0 0 21 17.25v-9.5A2.25 2.25 0 0 0 18.75 5.5H16.4l-1.6-2H9.2zM12 15.75a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z"
+                          />
+                        </svg>
+                        <span>Update Photo</span>
+                      </>
+                    )}
                   </span>
                 </button>
               ) : (
@@ -510,6 +556,17 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           </HeightDownSection>
         </div>
       </div>
+      <AlienDcPromotionModal
+        open={guideOpen}
+        assetName="Bitcoin"
+        overlayStyle={guideOverlayStyle}
+        onAddPhoto={triggerFilePicker}
+        onDismiss={() => setGuideOpen(false)}
+      />
+      <AlienDcPromotionHost
+        enabled={Boolean(allowSignedIn && isOwner && sectionsOpen)}
+        assetName="Bitcoin"
+      />
     </>
   );
 };
