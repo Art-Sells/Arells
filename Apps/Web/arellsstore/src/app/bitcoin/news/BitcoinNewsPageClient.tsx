@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import TBARLoadReveal from '../../../components/Assets/Crypto/TBAR/LoadReveal';
 import TBARGrid from '../../../components/Assets/Crypto/TBAR/Grid';
+import AlienDcPromotionHost from '../../../components/Assets/shared/AlienDcPromotionHost';
 import AssetGuestLanding from '../../../components/Assets/shared/AssetGuestLanding';
 import AssetSummaryCircleLoader from '../../../components/Assets/shared/AssetSummaryCircleLoader';
 import { useAssetSummaryCircleLoader } from '../../../components/Assets/shared/useAssetSummaryCircleLoader';
@@ -57,8 +58,9 @@ const BitcoinNewsPageClient: React.FC = () => {
   const newsHasContent = tbarThumbCount(newsDays) > 0;
   const otherHasContent = tbarThumbCount(otherDays) > 0;
   const guestPreview = useGuestPreview();
-  const allowSignedIn = !authSessionLoading && isSignedIn && !guestPreview;
   const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
+  /** Signed-in chrome during auth too — never blank the page while session resolves. */
+  const showSignedInShell = !guestPreview && (authSessionLoading || isSignedIn);
   const pageLoader = useAssetSummaryCircleLoader();
   const sectionWrapRef = useRef<HTMLDivElement>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
@@ -66,7 +68,8 @@ const BitcoinNewsPageClient: React.FC = () => {
   const otherHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [shellPx, setShellPx] = useState(0);
   const [shellMode, setShellMode] = useState<'auto' | 'snap' | 'animate'>('auto');
-  const sectionShouldExpand = allowSignedIn && ready && hasContent;
+  /** Expand as soon as the signed-in shell mounts; grid reveals when TBAR is ready. */
+  const sectionShouldExpand = showSignedInShell && (!ready || hasContent);
   const pendingExpandDismissRef = useRef<(() => void) | null>(null);
 
   const measure = useCallback(
@@ -76,7 +79,7 @@ const BitcoinNewsPageClient: React.FC = () => {
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    if (!allowSignedIn && !showGuest) return;
+    if (!showSignedInShell && !showGuest) return;
     const bg = 'rgb(255, 247, 236)';
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
     const prevBody = document.body.style.getPropertyValue('--app-bg');
@@ -90,15 +93,15 @@ const BitcoinNewsPageClient: React.FC = () => {
       if (prevBody) document.body.style.setProperty('--app-bg', prevBody);
       else document.body.style.removeProperty('--app-bg');
     };
-  }, [allowSignedIn, showGuest]);
+  }, [showSignedInShell, showGuest]);
 
   useEffect(() => {
-    if (!allowSignedIn) {
+    if (!showSignedInShell) {
       pageLoader.dismissImmediately();
       return;
     }
     if (!ready) pageLoader.show();
-  }, [allowSignedIn, ready, pageLoader.show, pageLoader.dismissImmediately]);
+  }, [showSignedInShell, ready, pageLoader.show, pageLoader.dismissImmediately]);
 
   /** Mount/reload only: outer section height-down. Show/hide more use their own panels. */
   useLayoutEffect(() => {
@@ -122,6 +125,13 @@ const BitcoinNewsPageClient: React.FC = () => {
       if (raf2) cancelAnimationFrame(raf2);
     };
   }, [sectionShouldExpand, measure]);
+
+  /** Remeasure when Weekly News content arrives mid height-down. */
+  useLayoutEffect(() => {
+    if (!sectionShouldExpand || !ready || !hasContent) return;
+    if (shellMode === 'auto') return;
+    setShellPx(Math.max(measure(), 1));
+  }, [sectionShouldExpand, ready, hasContent, newsHasContent, measure, shellMode]);
 
   useEffect(() => {
     if (!sectionShouldExpand || shellMode !== 'animate' || shellPx <= 0) return;
@@ -194,8 +204,6 @@ const BitcoinNewsPageClient: React.FC = () => {
     window.setTimeout(() => setOtherOpen(true), 0);
   };
 
-  if (authSessionLoading) return null;
-
   if (showGuest) {
     return (
       <div className="asset-page asset-page--bitcoin">
@@ -218,7 +226,7 @@ const BitcoinNewsPageClient: React.FC = () => {
     );
   }
 
-  if (!allowSignedIn) return null;
+  if (!showSignedInShell) return null;
 
   const sectionMaxHeightStyle = !sectionShouldExpand
     ? '0px'
@@ -320,6 +328,10 @@ const BitcoinNewsPageClient: React.FC = () => {
         mounted={pageLoader.mounted}
         visible={pageLoader.visible}
         fadingOut={pageLoader.fadingOut}
+      />
+      <AlienDcPromotionHost
+        enabled={!guestPreview && isSignedIn && !authSessionLoading}
+        assetName="Bitcoin"
       />
     </>
   );

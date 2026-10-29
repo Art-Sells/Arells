@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import Link from 'next/link';
 import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
 import AssetQuestionsSupport from '../../shared/AssetQuestionsSupport';
+import AlienDcPromotionHost from '../../shared/AlienDcPromotionHost';
 import Bitcoin from './bitcoin';
 import { useUser } from '../../../../context/UserContext';
 import { useGuestPreview } from '../../../../hooks/useGuestPreview';
@@ -121,7 +122,11 @@ const BitcoinPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (authSessionLoading) return;
+    if (authSessionLoading) {
+      setLoading(true);
+      setFadeOut(false);
+      return;
+    }
 
     if (!email) {
       setLoading(false);
@@ -145,7 +150,7 @@ const BitcoinPageClient: React.FC = () => {
   return (
     <div className={`asset-page asset-page--${ASSET.cssModifier}`} ref={pageRef}>
       <header className={`asset-header asset-header--${ASSET.cssModifier}`} />
-      {showLoading && !!email && !guestPreview && (
+      {showLoading && !isGuest && (
         <div
           className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier}${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >
@@ -163,7 +168,7 @@ const BitcoinPageClient: React.FC = () => {
       )}
       <Bitcoin />
 
-      {!authSessionLoading && !isGuest && (
+      {!isGuest && (
         <footer className="asset-footer">
           {!!email && <AssetFooterPortfolioButton cssModifier={ASSET.cssModifier} />}
           <Link
@@ -184,7 +189,11 @@ const BitcoinPageClient: React.FC = () => {
           </Link>
         </footer>
       )}
-      {!authSessionLoading && !isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
+      {!isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
+      <AlienDcPromotionHost
+        enabled={!isGuest && !showLoading}
+        assetName={ASSET.displayName}
+      />
     </div>
   );
 };

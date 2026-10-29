@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import AlienDcPromotionModal from './AlienDcPromotionModal';
 
 type AlienPhotoSlotProps = {
   assetId: string;
@@ -64,6 +65,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
+  const useDcPromo = assetId === 'bitcoin';
 
   useEffect(() => {
     setMounted(true);
@@ -77,13 +79,13 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   }, []);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || useDcPromo) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') close();
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [open, close]);
+  }, [open, close, useDcPromo]);
 
   const emptyLabel = EMPTY_LABEL_LINES.join(' ');
 
@@ -127,37 +129,45 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           </svg>
         </span>
       </button>
-      {mounted && open
-        ? createPortal(
+      {useDcPromo ? (
+        <AlienDcPromotionModal
+          open={open}
+          onClose={close}
+          assetName={assetName}
+          overlayStyle={overlayStyle}
+          persistOk
+        />
+      ) : mounted && open ? (
+        createPortal(
+          <div
+            className="blood-overlay is-visible"
+            style={overlayStyle}
+            onClick={close}
+            role="presentation"
+          >
             <div
-              className="blood-overlay is-visible"
-              style={overlayStyle}
-              onClick={close}
-              role="presentation"
+              className="blood-overlay-card blood-overlay-card--coming-soon"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
+              onClick={(event) => event.stopPropagation()}
             >
-              <div
-                className="blood-overlay-card blood-overlay-card--coming-soon"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby={titleId}
-                onClick={(event) => event.stopPropagation()}
-              >
-                <span className="blood-overlay-icon" aria-hidden="true" />
-                <p id={titleId} className="blood-overlay-copy">
-                  {comingSoonLines(assetName).map((line, index) => (
-                    <span key={`${index}-${line}`} className="blood-overlay-line">
-                      {line}
-                    </span>
-                  ))}
-                </p>
-                <button type="button" className="asset-range-button blood-ok" onClick={close}>
-                  Ok
-                </button>
-              </div>
-            </div>,
-            document.body
-          )
-        : null}
+              <span className="blood-overlay-icon" aria-hidden="true" />
+              <p id={titleId} className="blood-overlay-copy">
+                {comingSoonLines(assetName).map((line, index) => (
+                  <span key={`${index}-${line}`} className="blood-overlay-line">
+                    {line}
+                  </span>
+                ))}
+              </p>
+              <button type="button" className="asset-range-button blood-ok" onClick={close}>
+                Ok
+              </button>
+            </div>
+          </div>,
+          document.body
+        )
+      ) : null}
     </div>
   );
 };

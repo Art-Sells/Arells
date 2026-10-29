@@ -119,7 +119,11 @@ const XrpPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (authSessionLoading) return;
+    if (authSessionLoading) {
+      setLoading(true);
+      setFadeOut(false);
+      return;
+    }
 
     if (!email) {
       setLoading(false);
@@ -143,7 +147,7 @@ const XrpPageClient: React.FC = () => {
   return (
     <div className={`asset-page asset-page--${ASSET.cssModifier}`} ref={pageRef}>
       <header className={`asset-header asset-header--${ASSET.cssModifier}`} />
-      {showLoading && !!email && (
+      {showLoading && !isGuest && (
         <div
           className={`asset-loader-overlay asset-loader-overlay--${ASSET.cssModifier}${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >
@@ -162,7 +166,7 @@ const XrpPageClient: React.FC = () => {
 
       <Xrp />
 
-      {!authSessionLoading && !isGuest && (
+      {!isGuest && (
         <footer className="asset-footer">
           {!!email && <AssetFooterPortfolioButton cssModifier={ASSET.cssModifier} />}
           <Link
@@ -183,7 +187,7 @@ const XrpPageClient: React.FC = () => {
           </Link>
         </footer>
       )}
-      {!authSessionLoading && !isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
+      {!isGuest && <AssetQuestionsSupport cssModifier={ASSET.cssModifier} />}
     </div>
   );
 };
