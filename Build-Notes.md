@@ -19,9 +19,11 @@ After Episode 2 (or during):
 - - Add User location/etc
 
 
-### App Building and others:
+### App and AI Model Building (if/after PMF/Organic-Growth:
 
 - Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
+
+- Start Process of running Localized AI models (port from best AI open source and build the memory from there) [Transition away from Grok API].
 
 - *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
 - *brink1111111@outlook.com and j6767677@outlook.com test emails*

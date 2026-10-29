@@ -1976,6 +1976,9 @@ a.asset-alien-photo-hit {
 
 .bitcoin-my-character-page .bitcoin-alien-race-page-inner {
 	gap: 0;
+	/* Keep mobile column width on desktop too (do not jump to 665px). */
+	width: min(340px, calc(100% - 20px));
+	max-width: min(340px, calc(100% - 20px));
 }
 
 .bitcoin-my-character-height-down {
@@ -2040,6 +2043,11 @@ a.asset-alien-photo-hit {
 	.bitcoin-alien-race-page-inner {
 		width: 665px;
 		max-width: 665px;
+	}
+
+	.bitcoin-my-character-page .bitcoin-alien-race-page-inner {
+		width: min(340px, calc(100% - 20px));
+		max-width: min(340px, calc(100% - 20px));
 	}
 
 	/* Weekly News / Other Updates titles: 4px under the shared 27px season-title size. */
