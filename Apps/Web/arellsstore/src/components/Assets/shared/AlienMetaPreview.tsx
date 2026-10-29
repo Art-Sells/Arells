@@ -73,7 +73,7 @@ export default function AlienMetaPreview({
         <video
           ref={videoRef}
           className={`asset-alien-meta-preview-video${showVideo ? ' is-visible' : ''}${
-            videoFadingOut || !showVideo ? ' is-done' : ''
+            videoFadingOut ? ' is-done' : ''
           }`}
           src={loopUrl}
           muted

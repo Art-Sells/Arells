@@ -34,75 +34,82 @@ export const ALIEN_PORTRAIT_COLOR_REL = path.join(
 );
 
 /**
- * Grok multi-image edit: <IMAGE_0> base poster (canvas first), <IMAGE_1> selfie, <IMAGE_2> iris.
- * Base must be first — Grok follows the first image for layout/aspect.
+ * Grok multi-image edit: <IMAGE_0> base poster (canvas first), <IMAGE_1> selfie.
+ * LEFT keeps natural eye color from the selfie — iris-ref morph happens in the launch VIDEO at 0:07.
+ * Sam + girl iris color/detail stay locked to <IMAGE_0>.
  */
 export const ALIEN_COMPOSE_PROMPT = [
+  'PRIORITY ORDER (ABSOLUTE — SINGLE PASS): (1) LEFT identity + skin albedo + NATURAL eye color from <IMAGE_1>. (2) Sam + girl iris color/detail LOCKED to <IMAGE_0> (do not recolor their eyes). (3) Sam + girl otherwise untouched from <IMAGE_0>. (4) locked square launch canvas / titles from <IMAGE_0>. (5) everything else.',
   'EDIT TASK (not a new generation): Start from <IMAGE_0> and change as little as possible.',
   'OUTPUT MUST still be the same square Launch / “now playing” metaposter as <IMAGE_0> — same beige wall, same left-side orange title stack (“THE BITCOIN ALIEN RACE” / “Season One” / “now playing”), same framing, same lighting family, same rust-orange jacket / white tee / white pants on the LEFT white-mannequin figure (jacket cut may become feminine if <IMAGE_1> is female — see GENDER FIT), same gold A / triangular necklace.',
-  'IDENTITY LOCK LEFT (CRITICAL — ABSOLUTE #1): The LEFT orange-jacket face MUST be an exact photorealistic identity lock to <IMAGE_1> — same face shape, eyes spacing, nose, mouth, lips, brow, cheekbones, jaw, chin, skin tone, skin texture, age, hairline, hair style/color, and facial hair as <IMAGE_1>. Pixel-faithful likeness of the uploaded person. FORBIDDEN: inventing a different face, blending with anyone else, or replacing LEFT with the RIGHT bearded man’s (Sam’s) face, beard, hair, or bone structure. If LEFT is not clearly the same person as <IMAGE_1>, the edit FAILED — repaint LEFT from <IMAGE_1> before finishing.',
-  'SKIN TONE / TEXTURE LOCK (CRITICAL — LEFT FACE / NECK / HANDS — ABSOLUTE #2): LEFT skin MUST match <IMAGE_1> exactly — same undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. Face, neck, and hands must be ONE continuous complexion sampled from <IMAGE_1> — same brightness family. FORBIDDEN: lightening OR darkening vs <IMAGE_1>; warming/cooling; smoothing away pores; plastic/mannequin skin; borrowing Sam’s / girl skin tone; crushing medium/deep/Black skin darker, muddier, or more shadowed than <IMAGE_1>; making the face darker than the neck (classic failure). If <IMAGE_1> is Black / deep / rich brown, KEEP that exact depth — do NOT over-darken, charcoalize, or muddy the face under studio light. A face darker than <IMAGE_1> or darker than its own neck = FAILED edit — repaint face+neck+hands from <IMAGE_1> before finishing.',
+  'IDENTITY LOCK LEFT (CRITICAL — ABSOLUTE #1): The LEFT orange-jacket face MUST be an exact photorealistic identity lock to <IMAGE_1> — same face shape, eyes spacing, nose, mouth, lips, brow, cheekbones, jaw, chin, skin tone, skin texture, age, hairline, hair style/color, facial hair, AND natural iris/eye color as <IMAGE_1>. Pixel-faithful likeness of the uploaded person. FORBIDDEN: inventing a different face, blending with anyone else, or replacing LEFT with the RIGHT bearded man’s (Sam’s) face, beard, hair, or bone structure. If LEFT is not clearly the same person as <IMAGE_1>, the edit FAILED — repaint LEFT from <IMAGE_1> before finishing.',
+  'LEFT EYES (CRITICAL — NATURAL FROM <IMAGE_1> — NO ORANGE IRIS PAINT): Keep LEFT BOTH irises the SAME natural eye color as <IMAGE_1> (brown/hazel/blue/green/whatever is in the selfie). Complete eyes (pupil + iris + sclera). FORBIDDEN: painting LEFT eyes amber, burnt-orange, Bitcoin-orange, or any sci-fi orange; inventing a new eye color. Orange iris change is for the VIDEO later — NOT this still.',
+  'SKIN ALBEDO LOCK (CRITICAL — LEFT FACE / NECK / HANDS — ABSOLUTE #2): LEFT skin is a SKIN GRAFT from <IMAGE_1> — copy the SAME complexion, undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. Face, neck, and hands = ONE continuous living complexion sampled from <IMAGE_1> only. Compare LEFT face brightness side-by-side to <IMAGE_1>’s face: if LEFT looks lighter OR darker OR redder OR muddier than <IMAGE_1>, FAILED — repaint from <IMAGE_1>. FORBIDDEN: matching LEFT exposure to Sam / the girl / the beige wall; lightening OR darkening vs <IMAGE_1>; warming/cooling; plastic/mannequin skin; borrowing Sam’s or the girl’s complexion; crushing medium/deep/Black skin charcoal/muddy; face darker than neck (classic failure). Soft scene light may hit the jacket/wall — NEVER rewrite LEFT skin albedo to “fit” that light.',
   'IDENTITY LOCK RIGHT / SEPARATION (CRITICAL): LEFT = <IMAGE_1> only. RIGHT Sam + girl = <IMAGE_0> only. Two separate people always. NEVER clone Sam onto LEFT. NEVER clone <IMAGE_1> onto Sam. NEVER twin / mirror / average the two men.',
-  'SAM + GIRL LOCK (CRITICAL — DO NOT TOUCH): The bearded man and young girl on the RIGHT must stay identical to <IMAGE_0> — faces, skin, hair, eyes, iris color (NOT amber/orange from <IMAGE_2>), clothing, hands, lighting. Do NOT apply <IMAGE_1> or <IMAGE_2> to them. If their eyes become orange/amber/glowing, the edit failed.',
-  'SAM + GIRL EYES (CRITICAL — NEVER ERASE): Sam and the girl MUST keep complete, open, living eyes exactly as in <IMAGE_0> — pupils, irises, sclera, eyelids, lashes. FORBIDDEN: blank eyes, white-out eyes, missing irises, closed/melted eye sockets, smeared eye regions, featureless faces, painted-over eyes. If their eyes are erased or damaged vs <IMAGE_0>, the edit FAILED — restore eyes from <IMAGE_0> before finishing.',
+  'SAM + GIRL LOCK (CRITICAL — DO NOT TOUCH): The bearded man and young girl on the RIGHT must stay identical to <IMAGE_0> — faces, skin, hair, clothing, hands, lighting.',
+  'SAM + GIRL IRIS LOCK (CRITICAL — ABSOLUTE): Sam and the girl MUST keep their EXACT iris colors, saturation, brightness, and iris fiber/detail from <IMAGE_0> — do NOT recolor, orange-tint, amber-shift, brighten, or rewrite their eyes. Complete open living eyes — pupils, irises, sclera, eyelids, lashes as in <IMAGE_0>. FORBIDDEN: blank/white-out/missing/melted eyes; painting their irises amber/orange/glowing; transferring <IMAGE_1> eye color onto them. If their eyes drift vs <IMAGE_0>, FAILED — restore from <IMAGE_0>.',
   'TEXT: Copy on-image lettering from <IMAGE_0> exactly. Do NOT invent premiere dates or new words.',
   'Replace ONLY the featureless matte-white silhouette head (and any white neck/hands/skin) on the LEFT mannequin figure in the orange jacket with <IMAGE_1>’s locked identity. Do NOT replace the bearded man or the girl. Do NOT fill the white silhouette with Sam’s face from the RIGHT.',
   'HEAD SIZE (CRITICAL — #1 CONSTRAINT AFTER CANVAS): LEFT head + hair MUST be ~10% LARGER than the white mannequin head in <IMAGE_0> (≈1.10× mannequin width and chin-to-crown). Measure vs orange-jacket shoulders / collar. Target: slightly bigger than the mannequin — NOT 1:1, NOT dramatically oversized vs Sam. FORBIDDEN: matching mannequin 1:1 (too small), shrinking into the mannequin bound, OR growing far past ~10% (big hair that blows past the 1.10× target). Center on the same neck/collar as <IMAGE_0>. A LEFT head at mannequin size or much larger than ~10% = FAILED edit.',
-  'IDENTITY (LEFT MANNEQUIN ONLY): Apply the IDENTITY LOCK LEFT above at the ~10% larger head-size target. <IMAGE_1> is the sole face source for LEFT.',
+  'IDENTITY (LEFT MANNEQUIN ONLY): Apply the IDENTITY LOCK LEFT above at the ~10% larger head-size target. <IMAGE_1> is the sole face + eye-color source for LEFT.',
   'EXPRESSION (CRITICAL — NEUTRAL): LEFT face must be neutral / calm — relaxed mouth, no smile, no frown. If <IMAGE_1> is smiling, laughing, frowning, scowling, or expressive, convert to this calm neutral while keeping identity. Smile is ONLY for the video loop, never this still. NOT a smile, grin, laugh, frown, scowl, or surprise.',
   'HEAD TILT (CRITICAL — LEFT — NO RIGHT TILT): LEFT head must be upright / level — ears even, chin centered over the collar, no lean. FORBIDDEN: tilting the head to the RIGHT (ear toward right shoulder), cocking, or rolling the face clockwise. If <IMAGE_1> is tilted right, straighten to upright while keeping identity. A RIGHT-tilted LEFT head = FAILED edit — straighten before finishing.',
-  'LIGHTING (CRITICAL — EVEN STUDIO MATCH — DO NOT CRUSH SKIN): LEFT face/neck/hands: soft even studio-like light matching the bearded man / girl in <IMAGE_0>. Match light DIRECTION/SOFTNESS only — do NOT change skin undertone, lightness/darkness, or texture from <IMAGE_1>. Soft fill must preserve <IMAGE_1>’s true complexion brightness — especially for medium/deep/Black skin. FORBIDDEN: harsh split lighting, muddy dark face shadows, crushed blacks on the face, blown white forehead/nose hotspots, shiny plastic skin, selfie flash, relighting that makes LEFT darker than <IMAGE_1>. Skin must look like real living skin matching <IMAGE_1>.',
-  'NECK (CRITICAL — NEVER WHITE — MUST MATCH FACE BRIGHTNESS): The LEFT neck from jawline to collar MUST be living skin continuous with the LEFT face — same tone, undertone, lightness, pores/texture as <IMAGE_1> AND the face. FORBIDDEN: mannequin-white neck; lightening the neck while darkening the face (or the reverse). Face and neck must read as the same person under the same light. Mismatched face/neck brightness = FAILED edit — repaint the entire neck column AND face from <IMAGE_1> before finishing.',
-  'HANDS (CRITICAL — NEVER WHITE): Every LEFT hand/wrist/finger (including in pockets) MUST match the LEFT face / <IMAGE_1> skin tone, texture, AND lightness exactly. FORBIDDEN: mannequin-white, plaster, white gloves, white blobs into white pants/tee, lighter/darker hands than the face.',
+  'LIGHTING (CRITICAL — MATCH THE SETTING): Light the LEFT character to match <IMAGE_0>’s scene lighting exactly — same soft even key/fill direction, intensity, color temperature, and shadow softness as Sam/girl and the beige wall already have in <IMAGE_0>. LEFT must look like they were photographed in that same room under the same lights. FORBIDDEN: selfie flash, outdoor sun, golden-hour, ring light, cinematic drama, plastic hotspots, or a differently lit “pasted-on” face. SKIN ALBEDO still locks to <IMAGE_1> while matching that scene light — do NOT bleach/crush complexion to match Sam/girl skin; only match the lighting, not their undertone.',
+  'NECK (CRITICAL — NEVER WHITE — MUST MATCH FACE + <IMAGE_1>): The LEFT neck from jawline to collar MUST be living skin continuous with the LEFT face — same tone, undertone, lightness, pores/texture as <IMAGE_1> AND the face. FORBIDDEN: mannequin-white neck; porcelain neck under a darker face; lightening the neck while darkening the face (or the reverse). Face and neck must read as the same person as <IMAGE_1>. Mismatched face/neck brightness = FAILED — repaint entire neck column AND face from <IMAGE_1>.',
+  'HANDS (CRITICAL — NEVER WHITE): Every LEFT hand/wrist/finger (including in pockets) MUST match the LEFT face / <IMAGE_1> skin tone, texture, AND lightness exactly. FORBIDDEN: mannequin-white, plaster, white gloves, white blobs into white pants/tee, lighter/darker hands than the face / <IMAGE_1>.',
   'HAIR: Match <IMAGE_1> hair style/color within the ~10% larger head silhouette — hair may fill that bound but must not grow far past the 1.10× target.',
   'HATS (REQUIRED — REMOVE): Remove hats/caps/beanies; show natural hair. Do not grow head past the ~10% target.',
   'HEADWEAR (CRITICAL — DEFAULT NONE): Do NOT add a bandana, wrap, durag, scarf, headband, or any headwear. Bare head / natural hair only UNLESS <IMAGE_1> clearly already wears a bandana/wrap/durag/scarf/headband — then keep that item only and recolor it to LEFT jacket rust-orange. NEVER invent headwear.',
-  'IRIS (LEFT FIGURE ONLY — CRITICAL — LOCK TO <IMAGE_2>): LEFT BOTH irises MUST match <IMAGE_2> exactly — same amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, AND radial iris fiber texture/detail from the close-up. Matte photorealistic, natural wetness OK. Eye color + iris texture come ONLY from <IMAGE_2> — never from <IMAGE_1> natural eye color. LEFT eyes must be complete (pupil + iris + sclera) — never blank/erased. Bearded man and girl keep ORIGINAL eye colors from <IMAGE_0> — never orange from <IMAGE_2>.',
   'NO GLOWING EYES (CRITICAL — ALL FIGURES): Eyes must be matte / natural photorealistic only. FORBIDDEN on anyone: glowing eyes, luminous pupils, light beams, bloom, neon, emissive/HDR eye glow, sci-fi shine.',
-  'NO ERASED EYES (CRITICAL — ALL FIGURES): Nobody may have blank, white, missing, or destroyed eyes. Sam + girl eyes = <IMAGE_0>. LEFT eyes = full eyes with <IMAGE_2> iris color + texture.',
+  'GLASSES (IF PRESENT — NO GLOW): If <IMAGE_1> wears glasses, keep the frames/lenses but REMOVE any glow, bloom, neon, luminous reflections, lens flare, or emissive shine on the glasses. Natural matte glass only — soft real-world reflections OK; glowing glasses = FAILED.',
+  'NO ERASED EYES (CRITICAL — ALL FIGURES): Nobody may have blank, white, missing, or destroyed eyes. Sam + girl eyes = locked to <IMAGE_0>. LEFT eyes = full natural eyes from <IMAGE_1>.',
   'GENDER FIT (CRITICAL — LEFT FIGURE ONLY): Infer sex presentation from <IMAGE_1>. IF female / feminine: restyle the LEFT orange jacket to a feminine cut (softer shoulder, tailored/fitted waist, feminine collar/zipper proportions) and give feminine body proportions under the jacket (shoulders, chest, waist) consistent with <IMAGE_1>. IF male / masculine: keep the orange jacket cut, tee, pants, and body proportions as in <IMAGE_0> (menswear / do not feminize). Never change Sam or the girl. Gender fit must NOT change LEFT head away from the ~10% larger target.',
   'JACKET COLOR (CRITICAL): LEFT jacket exact rust-orange / Bitcoin orange from <IMAGE_0> — gender fit may change cut/shape only, never hue.',
   'If unsure, change less — only the LEFT white mannequin regions. Prefer the ~10% larger head target over a tiny mannequin-sized head or a dramatically oversized head.',
+  'FINAL GATE: Confirm LEFT face/skin/natural eye color match <IMAGE_1>, and Sam + girl iris colors still match <IMAGE_0>.',
 ].join(' ');
 
 /**
- * Pass 2 — HEAD SIZE ONLY. <IMAGE_0> compose result, <IMAGE_1> original mannequin base.
- * Kept separate so iris/neck jobs cannot override scale.
+ * Pass 2 — HEAD SIZE ONLY.
+ * <IMAGE_0> compose result, <IMAGE_1> original mannequin base, <IMAGE_2> selfie (identity/skin stay locked while scaling).
  */
 export const ALIEN_COMPOSE_HEAD_SIZE_FIX_PROMPT = [
   'EDIT TASK: Start from <IMAGE_0>. ONLY job: fix LEFT head size. Change nothing else unless required for scale.',
-  'HEAD SIZE (SOLE PRIORITY — CRITICAL): Compare LEFT orange-jacket head in <IMAGE_0> to the white mannequin head in <IMAGE_1>. Target = ~10% LARGER than <IMAGE_1> mannequin (≈1.10× width and chin-to-crown vs shoulders/collar). If LEFT head is smaller than ~1.10×, GROW it to that target. If LEFT head is larger than ~1.10×, SHRINK it to that target. Keep LEFT identity locked and amber iris color while scaling. Center on the same neck/collar as <IMAGE_1>. Keep head upright — no tilt to the right while scaling.',
+  'HEAD SIZE (SOLE PRIORITY — CRITICAL): Compare LEFT orange-jacket head in <IMAGE_0> to the white mannequin head in <IMAGE_1>. Target = ~10% LARGER than <IMAGE_1> mannequin (≈1.10× width and chin-to-crown vs shoulders/collar). If LEFT head is smaller than ~1.10×, GROW it to that target. If LEFT head is larger than ~1.10×, SHRINK it to that target. Center on the same neck/collar as <IMAGE_1>. Keep head upright — no tilt to the right while scaling.',
+  'IDENTITY + SKIN WHILE SCALING (CRITICAL — <IMAGE_2>): <IMAGE_2> is the uploaded person. While resizing, KEEP LEFT face identity AND skin albedo locked to <IMAGE_2> — same complexion, lightness/darkness, undertone, pores. FORBIDDEN: lightening/darkening LEFT skin, borrowing Sam/girl complexion, or inventing a new face while scaling. Keep amber iris color.',
   'FORBIDDEN: leaving a 1:1 mannequin-sized head (too small), leaving a head much larger than ~10%, growing hair far past the 1.10× bound, matching Sam’s head size instead of the 1.10× mannequin target, tilting LEFT head to the right.',
-  'Do NOT change Sam or the girl. Do NOT change LEFT identity. Do NOT change text, background, framing, or jacket color.',
+  'Do NOT change Sam or the girl. Do NOT change text, background, framing, or jacket color.',
 ].join(' ');
 
 /**
- * Pass 3 — iris / Sam eyes after head size is locked.
- * <IMAGE_0> sized result, <IMAGE_1> original base, <IMAGE_2> iris.
- * Skin is fixed in pass 4 with the selfie present (pass 3 used to drop the selfie).
+ * Launch pass 2 — IRIS ONLY (Season One-style harden).
+ * <IMAGE_0> first compose, <IMAGE_1> iris-ref, <IMAGE_2> selfie (do not drift skin/identity).
  */
-export const ALIEN_COMPOSE_DETAIL_FIX_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0>. Change as little as possible. Do NOT change the LEFT head size — it is already locked at ~10% larger than the mannequin.',
-  'IDENTITY LOCK LEFT: Keep LEFT face identity unchanged. Do NOT rewrite LEFT toward Sam.',
-  'HEAD TILT: Keep LEFT head upright — FORBIDDEN tilting to the right.',
-  'IRIS FIX (LEFT ONLY — CRITICAL): LEFT BOTH irises MUST match <IMAGE_2> amber / burnt-orange hue AND radial fiber texture. Matte, NO glow. Sam + girl keep <IMAGE_1> eye colors.',
-  'SAM + GIRL EYE RESTORE: If Sam or girl eyes are blank/erased vs <IMAGE_1>, restore from <IMAGE_1>.',
-  'NO GLOWING EYES. Do NOT change LEFT head size, skin tone, text, background, or framing.',
+export const ALIEN_COMPOSE_IRIS_ONLY_PROMPT = [
+  'EDIT TASK: Start from <IMAGE_0> (launch poster). Change NOTHING except the two irises on the LEFT orange-jacket figure.',
+  'IRIS ONLY — LOCK TO <IMAGE_1> (CRITICAL): Repaint BOTH LEFT irises to match <IMAGE_1> iris-ref exactly — amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, AND radial iris fiber texture. This is the ONLY allowed LEFT eye color source.',
+  'FORBIDDEN: brown, dark brown, chocolate, hazel, blue, green, gray, black, selfie eye color, glow, bloom, neon. If either LEFT iris still looks brown or not clearly orange like <IMAGE_1>, FAILED — repaint again from <IMAGE_1>.',
+  'LEFT ONLY: Do NOT change Sam or the girl eyes (keep whatever they already have in <IMAGE_0>).',
+  'DO NOT TOUCH: LEFT face shape, hair, skin tone/texture, neck, hands, head size, jacket, text, background, framing, pose, or Sam/girl. <IMAGE_2> is the uploaded person — keep LEFT identity + skin locked to <IMAGE_2> while painting irises only.',
+  'NO GLOWING EYES. GLASSES (IF PRESENT — NO GLOW): natural matte glass only.',
 ].join(' ');
 
+/** @deprecated kept for any external imports — use ALIEN_COMPOSE_IRIS_ONLY_PROMPT */
+export const ALIEN_COMPOSE_DETAIL_FIX_PROMPT = ALIEN_COMPOSE_IRIS_ONLY_PROMPT;
+
 /**
- * Pass 4 — SKIN / FACE / NECK / HANDS ONLY. Selfie is <IMAGE_1> so Grok can sample real complexion
- * (Season One / portrait keep the selfie in-context; launch used to drop it after pass 1 — that
- * caused white necks + crushed-dark faces on Black / deep skin).
+ * Pass 4 — SKIN / FACE / NECK / HANDS ONLY (final gate).
+ * Selfie stays in-context every pass now; this pass still FORCE-grafts complexion from the upload.
  * <IMAGE_0> poster after detail, <IMAGE_1> uploaded selfie identity.
  */
 export const ALIEN_COMPOSE_SKIN_LOCK_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0> (launch poster). <IMAGE_1> is the uploaded person — the ONLY allowed source for LEFT face identity and LEFT skin.',
-  'SOLE JOB (CRITICAL): Fix the LEFT orange-jacket face, neck, and hands so they match <IMAGE_1> exactly — likeness + skin tone + skin texture + lightness/darkness + undertone. Face, neck, and hands must be ONE continuous living complexion sampled from <IMAGE_1>.',
-  'WHITE NECK / CRUSHED FACE (MOST COMMON LAUNCH FAILURE): If the neck is white, porcelain, mannequin, or lighter than the face — REPAINT jaw→collar from <IMAGE_1>. If the face is darker, muddier, or charcoalized vs <IMAGE_1> (especially Black / deep / rich brown skin) — REPAINT the face from <IMAGE_1>. FORBIDDEN: face darker than neck; neck white while face is dark; darkening Black skin; borrowing Sam/girl complexion.',
-  'Keep LEFT amber/orange iris color already on the eyes (do not change eye color). Soft even light OK — do NOT crush or muddy the skin while matching the poster light.',
+  'EDIT TASK: Start from <IMAGE_0> (launch poster). <IMAGE_1> is the uploaded person — the ONLY allowed source for LEFT face identity and LEFT skin albedo.',
+  'SOLE JOB (CRITICAL — SKIN GRAFT): Transplant <IMAGE_1>’s face complexion onto the LEFT orange-jacket face, neck, and hands. Match likeness + skin tone + texture + lightness/darkness + undertone EXACTLY. Face, neck, and hands = ONE continuous living complexion sampled from <IMAGE_1> only — same brightness family as <IMAGE_1>’s face when compared side-by-side.',
+  'WHITE NECK / CRUSHED OR DRIFTED FACE (MOST COMMON LAUNCH FAILURE): If the neck is white, porcelain, mannequin, or lighter than the face — REPAINT jaw→collar from <IMAGE_1>. If the face is lighter, darker, muddier, redder, or charcoalized vs <IMAGE_1> (especially Black / deep / rich brown skin) — REPAINT the whole face from <IMAGE_1>. FORBIDDEN: face darker than neck; neck white while face is dark; any brightness drift vs <IMAGE_1>; borrowing Sam’s or the girl’s complexion; “studio correcting” LEFT skin to match the right-side cast.',
+  'Keep LEFT amber/orange iris color already on the eyes (do not change eye color). Soft scene light on jacket/wall is fine — do NOT rewrite LEFT skin albedo to match that light or Sam/girl.',
+  'GLASSES (IF PRESENT — NO GLOW): If glasses are on, remove glow/bloom/neon/luminous lens shine — natural matte glass only.',
   'Do NOT change Sam or the girl. Do NOT change LEFT head size, text, background, framing, jacket color, or pose.',
-  'If LEFT face/neck/hands still do not clearly match <IMAGE_1>’s complexion brightness, the edit FAILED — repaint from <IMAGE_1> again.',
+  'FINAL GATE: Hold <IMAGE_1> next to LEFT face — if complexion/identity still do not clearly match, FAILED — repaint face+neck+hands from <IMAGE_1> again until they do.',
 ].join(' ');
 
 /**
@@ -117,6 +124,7 @@ export const ALIEN_PORTRAIT_PROMPT = [
   'COLOR LOCK FROM <IMAGE_2> (CRITICAL — JACKET / IRIS HUE): <IMAGE_2> is the default My Character profile plate — a white mannequin on a solid BRIGHT Bitcoin-orange field (~#F07317 / #F88D00 family). Jacket and iris HUE MUST match that exact bright orange field — same hue, saturation, and brightness. FORBIDDEN: dark orange, burnt orange, rust, copper, brown-orange, muddy orange, desaturated orange. If jacket/eyes look darker or rustier than <IMAGE_2>’s background, the edit FAILED — recolor to match <IMAGE_2> before finishing.',
   'IRIS (CRITICAL): BOTH irises — HUE/saturation/brightness from <IMAGE_2>’s orange field; radial fiber TEXTURE/detail from <IMAGE_1>. Matte photorealistic, natural wetness OK. FORBIDDEN: brown, blue, green, hazel, black, gray, dark/burnt iris, any <IMAGE_0> eye color; glow; bloom; neon. Complete eyes (pupil + iris + sclera).',
   'NO GLOWING EYES (CRITICAL): Eyes must be matte / natural photorealistic only. FORBIDDEN: glowing eyes, luminous pupils, light beams, bloom, neon, emissive/HDR eye glow, sci-fi shine.',
+  'GLASSES (IF PRESENT — NO GLOW): If <IMAGE_0> wears glasses, keep the frames/lenses but REMOVE any glow, bloom, neon, luminous reflections, lens flare, or emissive shine on the glasses. Natural matte glass only — soft real-world reflections OK; glowing glasses = FAILED.',
   'BACKGROUND (CRITICAL — CREAM SCENE — NOT <IMAGE_2>): Plain solid cream background edge-to-edge behind the subject — warm cream / ivory / off-white cream (not pure white, not beige-tan wall). Soft even light on the cream field. FORBIDDEN: filling the whole canvas with <IMAGE_2>’s orange (orange is for jacket/iris only), gray, charcoal, busy scenes, outdoors, windows.',
   'IDENTITY ONLY FROM <IMAGE_0>: Use <IMAGE_0> ONLY for face identity (shape, features, skin tone, skin texture, hair). Discard <IMAGE_0>\'s lighting, camera angle, pose, background, and eye color.',
   'POSE (CRITICAL — FACE FORWARD): Head and face straight-on / front view. Eyes into camera. FORBIDDEN: 3/4 turn, looking left/right, profile, chin-down selfie angle. If <IMAGE_0> is turned, straighten to full frontal.',
@@ -138,6 +146,7 @@ export const ALIEN_PORTRAIT_STUDIO_FIX_PROMPT = [
   'COLOR FIX FROM <IMAGE_2> (CRITICAL): Recolor jacket and iris HUE to match <IMAGE_2>’s solid bright Bitcoin-orange background exactly. FORBIDDEN: dark/burnt/rust/copper/muddy orange. If jacket/eyes read darker than <IMAGE_2>’s field, fix now.',
   'IRIS FIX: BOTH irises — hue from <IMAGE_2> orange field + radial texture from <IMAGE_1>. Never brown/blue/green/selfie eye color. Matte, NO glow.',
   'NO GLOWING EYES (CRITICAL): Keep eyes matte — no glow, bloom, neon, luminous pupils, or emissive shine.',
+  'GLASSES (IF PRESENT — NO GLOW): If glasses are on, remove glow/bloom/neon/luminous lens shine — natural matte glass only.',
   'BACKGROUND FIX (CRITICAL — CREAM SCENE): Replace any wrong background with a plain solid cream / ivory / off-white cream field edge-to-edge. Do NOT use <IMAGE_2>’s orange as the scene background. FORBIDDEN: gray, beige-tan wall, busy scene.',
   'LIGHTING FIX (CRITICAL — SOFT EVEN STUDIO): Relight face/neck with soft even indoor studio light without changing skin tone/texture. REMOVE outdoor sun, golden-hour, selfie-flash, cinematic lighting.',
   'POSE FIX (CRITICAL): Full front-facing — straight at camera, no 3/4 turn left or right. Eyes forward.',
@@ -157,9 +166,10 @@ export const ALIEN_SEASONONE_PROMPT = [
   'SKIN TONE / TEXTURE LOCK (CRITICAL): Face, neck, and any visible skin in the close-up MUST match <IMAGE_1> exactly — same undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. FORBIDDEN: lightening, darkening, warming, cooling, airbrushed plastic skin, mannequin-white neck, or inventing a different complexion.',
   'IRIS LOCK TO <IMAGE_2> (CRITICAL — BANNER FAILS WITHOUT THIS): Paint BOTH left and right irises using ONLY <IMAGE_2>. Copy hue, saturation, brightness, AND radial iris fiber texture from <IMAGE_2> into the banner face. Eye color must read as clear amber / burnt-orange / #F88D00-family Bitcoin orange — the SAME orange as <IMAGE_2>, NOT dark brown, chocolate, hazel-brown, or selfie-brown from <IMAGE_1>. FORBIDDEN: brown irises, coffee irises, muddy irises, any <IMAGE_1> natural eye color, glow, bloom, neon. If eyes look brown at all, the edit FAILED — repaint irises from <IMAGE_2> before finishing. Complete eyes (pupil + iris + sclera) required.',
   'NO GLOWING EYES (CRITICAL): Matte photorealistic only.',
+  'GLASSES (IF PRESENT — NO GLOW): If <IMAGE_1> wears glasses, keep the frames/lenses but REMOVE any glow, bloom, neon, luminous reflections, lens flare, or emissive shine on the glasses. Natural matte glass only — soft real-world reflections OK; glowing glasses = FAILED.',
   'IDENTITY: Photorealistic likeness of <IMAGE_1> — face shape, hair, skin tone, skin texture, age — on that sole figure only. NEVER transfer <IMAGE_1> eye color.',
   'EXPRESSION (CRITICAL — NEUTRAL): Neutral / calm face. If <IMAGE_1> is expressive, convert to neutral while keeping identity.',
-  'LIGHTING: Soft even light matching <IMAGE_0>. Do NOT change underlying skin tone/texture while relighting. No selfie flash, no plastic shine.',
+  'LIGHTING (CRITICAL — MATCH THE SETTING): Light the center figure to match <IMAGE_0>’s scene lighting exactly — same soft even key/fill direction, intensity, color temperature, and shadow softness as the beige wall / jacket already have in <IMAGE_0>. The person must look photographed in that same room under the same lights — not a pasted-on selfie. FORBIDDEN: selfie flash, outdoor sun, golden-hour, ring light, cinematic drama, plastic hotspots. SKIN ALBEDO still locks to <IMAGE_1> while matching that scene light — do NOT bleach/crush complexion; only match the lighting, not invent a new undertone.',
   'HATS (REMOVE) / HEADWEAR DEFAULT NONE: No invented bandanas/wraps; natural hair from <IMAGE_1> unless <IMAGE_1> already wears headwear (then recolor to jacket rust-orange).',
   'WARDROBE LOCK (CLOSE-UP ONLY): Keep orange jacket collar + white tee + gold necklace as in <IMAGE_0>. Face/skin/hair/iris only beyond that — do NOT recompose outfit or add lower body.',
   'LETTER CLEARANCE (CRITICAL — KEEP DISTANCE FROM “ONE”): The close-up head/shoulders stay centered in the open gap between “SEASON” (left) and “ONE” (right) with a clear empty margin of wall on BOTH sides — especially a comfortable gap from the “O” and “N” of “ONE” on the right (and from the end of “SEASON” on the left). FORBIDDEN: drifting so hair/shoulder/jacket crowds, touches, or overlaps the O or N.',
@@ -177,6 +187,7 @@ export const ALIEN_SEASONONE_FIX_PROMPT = [
   'SKIN TONE / TEXTURE: Do NOT alter face/neck skin tone or texture — keep exact match to the locked identity.',
   'IRIS FIX FROM <IMAGE_2> (SOLE JOB IF EYES ARE WRONG): BOTH irises MUST match <IMAGE_2> iris-ref — amber / burnt-orange / Bitcoin-orange hue + radial fiber texture. Brown / selfie eye color from the upload is FORBIDDEN. If either iris is brown, hazel-brown, or not clearly orange like <IMAGE_2>, REPAINT both irises from <IMAGE_2> immediately. Matte only — NO glow.',
   'NO GLOWING EYES.',
+  'GLASSES (IF PRESENT — NO GLOW): If glasses are on, remove glow/bloom/neon/luminous lens shine — natural matte glass only.',
   'SOLE FIGURE: Keep ONE person — center orange-jacket figure. Keep “SEASON” / “ONE” and beige wall from <IMAGE_1>.',
   'LETTER CLEARANCE: Keep a clear gap from the “O” and “N” of “ONE” (and from “SEASON”) — do not crowd the letters.',
 ].join(' ');
@@ -197,30 +208,34 @@ export const ALIEN_SEASONONE_IRIS_ONLY_PROMPT = [
  * Metaposter / guest metaloop — image-to-video from composed metaposter.
  * Fade in/out is applied in playback code, not here.
  */
+/**
+ * Image-to-video rule: NEVER narrate what is already visible in the input still
+ * (cast poses, who holds whom, wardrobe, wall, lettering, iris color, etc.).
+ * Only instruct NEW motion + what must NOT drift/appear.
+ */
 export const ALIEN_METALOOP_VIDEO_PROMPT = [
-  'PRIORITY ORDER (ABSOLUTE — LAUNCH VIDEO): (1) PIXEL-LOCK LEFT face skin / lighting / cleanliness to the input still — NO new face lines, NO lighting drift. (2) NO GLOWING EYES / matte irises. (3) FADE OUT ALL on-image words as soon as motion starts. (4) gentle walk + soft mouth smile. (5) everything else.',
-  '15-second video starting from this exact original image. Critical motion: the figure on the LEFT walks straight FORWARD toward the camera only — zero left walk, zero right walk, no drifting sideways. From 0:00 to 0:04 it walks forward getting slightly closer; at 0:04 it stops and stays with only slight natural body movements until 0:15. Figure never leaves the frame. Keep the LEFT figure’s face identity and hair exactly as in the input. No duplicating anyone. Locked camera.',
-  'SKIN TONE + LIGHTING LOCK (CRITICAL — LEFT FACE / NECK / HANDS — EVERY FRAME): LEFT skin MUST match the input still exactly — same undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. Keep the SAME soft even studio lighting family as the still — do NOT relight the face while walking closer or smiling. FORBIDDEN: darkening the face, warming/cooling the complexion, adding dramatic cheek/jaw shadows, rim light, contrast boost, HDR skin, shiny plastic hotspots, or any lighting drift away from the still. If LEFT skin looks darker, redder, or more shadowed than the still, the video FAILED.',
-  'NO NEW FACE / EYE LINES (CRITICAL — LAUNCH VIDEO — EVERY FRAME — #1 ARTIFACT TO AVOID): Do NOT etch, draw, or morph ANY new lines onto the LEFT face that are not clearly in the input still. FORBIDDEN around eyes: crow’s feet, under-eye creases, eyelid etch lines, tear-trough contours, dark-circle rings, eyeshadow-like bands, contour rings. FORBIDDEN elsewhere: jaw contour lines, cheek crease lines, nasolabial deepening, forehead wrinkles, temple etch, mouth corner etch, neck lines, or any dark outline / edge-enhance / temporal morph “stroke” around the face or eyes. Keep skin smooth and clean like the still — natural lids/lashes only. Smiling must NOT invent wrinkles or contour strokes.',
-  'NO GLOWING EYES (CRITICAL — LAUNCH VIDEO — EVERY FRAME — ALL FIGURES): Eyes must stay matte / natural photorealistic like the input still. FORBIDDEN: glowing irises, luminous / emissive orange, bloom, neon, light beams, HDR eye shine, sci-fi pupil glow, brightening the iris into a glow while smiling or walking closer. If LEFT eyes look lit-from-within or glowing vs the input still, the video FAILED.',
-  'FADE OUT ALL WORDS (CRITICAL — AS SOON AS VIDEO STARTS): At the very start of motion (within the first ~0.3–0.5s), smoothly FADE OUT / dissolve away EVERY on-image title and word from the input still — “THE BITCOIN ALIEN RACE”, “Season One”, “now playing”, and any other lettering — until the wall is clean of text for the rest of the clip. Do NOT keep titles visible while walking. Do NOT leave ghost letters, half-faded burns, or text sliding over the face. After the fade, NO typography for the remaining duration.',
-  'IRIS LOCK (LEFT FIGURE — CRITICAL): BOTH LEFT irises MUST stay the exact same amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, AND radial iris fiber texture as in the input still — every frame — MATTE only. Copy FROM THE INPUT IMAGE ONLY. FORBIDDEN: brown/hazel drift; rewriting irises; making orange brighter/glowier than the still. Bearded man and girl keep THEIR original non-orange eye colors from the input.',
-  'NATURAL BLINKS (CRITICAL — REQUIRED): LEFT figure MUST blink naturally throughout the full clip — occasional, realistic, soft lid closes (about every 2–4 seconds). FORBIDDEN: staring without blinking, rapid fluttering, twitchy lids, holding eyes locked open. Bearded man and girl may blink naturally too.',
-  'EXPRESSION (LEFT FIGURE — SOFT MOUTH SMILE ONLY): Give the LEFT figure a very soft closed-mouth smile. Animate the mouth corners only — do NOT deepen eye sockets, do NOT add cheek/eye wrinkles, do NOT add face contour lines, do NOT change lighting to “sell” the smile. Never blank/neutral forever, frown, or a big laugh. At the same time the man gently adjusts the girl and adjusts his sweater/jacket. Man always holds the girl at the same height.',
+  'IMAGE-TO-VIDEO from this exact input still. Do NOT restate or re-pose anything already in the image — only add the motion below. Locked camera.',
+  'PRIORITY: (1) at 0:07 LEFT iris morph + left-hand pendant grab together, (2) no cast/layout drift, (3) no LEFT skin/lighting/face-line drift, (4) no glowing eyes, (5) fade out on-image words at motion start, (6) LEFT walk + soft smile.',
+  'MOTION — LEFT FIGURE ONLY: Walks straight FORWARD toward camera (no left/right drift). 0:00–0:04 slightly closer; at 0:04 stops; 0:04–0:15 slight natural idle only (except the 0:07 iris + pendant beat). Never leaves frame. Soft closed-mouth smile — mouth corners only. Natural blinks (~every 2–4s).',
+  'CAST / LAYOUT (CRITICAL — DO NOT CHANGE WHO IS WHERE): Keep every person exactly where they already are in the input. FORBIDDEN: duplicating anyone; adding a second girl/child; moving the girl onto the LEFT figure; LEFT picking up, carrying, hugging, or holding anyone; inventing new arms/hands poses that put someone into LEFT’s arms. RIGHT side may only do tiny in-place idle — no cast reshuffle.',
+  'LEFT IRIS + PENDANT AT 0:07 (CRITICAL — ONE BEAT): From 0:00–0:07 keep LEFT irises as in the input still (natural selfie eye color). Starting at 0:07, simultaneously: (A) FADE IN the iris change over ~1.0–1.5s — BOTH LEFT irises gradually dissolve/blend from the natural selfie eye color into clear amber / burnt-orange / #F88D00-family Bitcoin orange with visible radial iris fiber detail (Bitcoin Alien iris-ref look); soft crossfade only — NEVER a hard cut, snap, pop, flash, or instant swap, and (B) LEFT figure’s LEFT hand rises and gently grabs/holds the gold A / triangular pendant on their necklace — WITHOUT unclasping, removing, or pulling the pendant off the chain; necklace stays on; pendant stays attached. After the fade completes, hold full orange irises + pendant grip through 0:15. Matte eyes only — NO glow, bloom, neon, or emissive shine. FORBIDDEN: popping/snapping the orange in; changing Sam or the girl eyes; orange irises before 0:07; removing the necklace/pendant; glowing eyes after the change.',
+  'SKIN / LIGHT (LEFT): Do not drift LEFT face/neck/hands complexion or lighting vs the input. FORBIDDEN: darkening, warming/cooling, new cheek/jaw shadows, rim light, HDR/plastic shine.',
+  'NO NEW FACE / EYE LINES: Do not etch crow’s feet, under-eye creases, contour rings, jaw/cheek/nasolabial lines, or any new strokes not in the input. Smile must not invent wrinkles.',
+  'TEXT: Within ~0.3–0.5s of motion start, fade out ALL on-image words until the wall is clean for the rest of the clip. No ghost letters.',
 ].join(' ');
 
 /**
  * Season One banner loop — image-to-video from composed Season One still.
  * 1.5s fade out / 1.5s fade in (through black) are applied in playback code, not here.
+ * Do NOT narrate wardrobe/letters/crop already in the still — only motion + anti-drift.
  */
 export const ALIEN_SEASONONE_VIDEO_PROMPT = [
-  'IMAGE-TO-VIDEO: Animate ONLY the sole center figure from this exact input Season One CLOSE-UP banner. Pixel-lock EVERY frame to the input still’s framing — same ultra-wide canvas, beige wall, “SEASON” (left) and “ONE” (right) lettering fully readable, close-up head/shoulders + jacket/tee/necklace. FORBIDDEN: pulling out to waist-up or showing hands/pockets.',
-  'STAGNANT FRAME (CRITICAL — ABSOLUTE #1 — NEVER BREAK): The camera is FROZEN / LOCKED OFF for the entire clip — NO camera movements of any kind. FORBIDDEN: zoom in, zoom out, push-in, pull-back, dolly, truck, pan, tilt, roll, reframe, crop change, Ken Burns, slow drift, orbit, or any camera move. NO CAMERA SHAKE — FORBIDDEN: handheld shake, jitter, vibration, micro-tremor, bounce, wiggle, or any unstable camera motion. ONLY the face may move; the lens stays put. Frame 0 and the last frame MUST match the input still’s exact close-up crop and scale. If the background, letters, or walls appear to grow, shrink, slide, zoom, or shake at all, the video FAILED.',
-  'STATION LOCK (CRITICAL): The person MUST stay exactly in the close-up silhouette slot from the input — between “SEASON” and “ONE”, same scale, same vertical/horizontal position, same distance from camera. Keep a clear empty margin from the letters every frame — especially do NOT drift toward or crowd the “O” or “N” of “ONE” on the right (or the end of “SEASON” on the left). FORBIDDEN: recentering the body, walking forward/closer, drifting left/right, growing larger, covering/obscuring any part of “SEASON” or “ONE”, or sitting too close to the O/N. If shoulders/chest/head hide lettering or close the gap that was visible in the input, the edit FAILED — keep the close-up parked in the original silhouette bound with the same letter clearance.',
-  'No extra people. No text changes. No wardrobe changes. No morphing identity. Keep amber / burnt-orange irises matte (no glow).',
-  'NO EXTRA LINES AROUND THE EYES (CRITICAL — EVERY FRAME): Do NOT add crow’s feet, under-eye creases, eyelid crease lines, tear troughs, dark circles drawn as lines, contour rings, or any new wrinkles/lines around the eyes that are not clearly present in the input still. Keep the eye sockets clean like the input — natural lids/lashes only. FORBIDDEN: etching extra lines into the skin around the eyes while smiling or laughing.',
-  'NATURAL BLINKS (CRITICAL — REQUIRED): The center figure MUST blink naturally throughout the full clip — occasional, realistic, soft lid closes (about every 2–4 seconds), including while glancing, smiling, and laughing. FORBIDDEN: staring without blinking, rapid fluttering, twitchy lids, holding eyes locked open.',
-  'FACE / HEAD MOTION ONLY (subtle, photorealistic, SILENT — no speech, no laughter audio, no sound of any kind): Body below the neck stays STILL — locked silhouette, zero shoulder bounce. Camera stays stagnant / rock-steady while ONLY the face moves — (1) glance left, (2) glance right, (3) return to camera and smile softly, (4) soft silent laugh with mouth/eyes ONLY (no shoulder heave, no body bob — those make the model invent camera shake), (5) settle back to the original neutral expression facing camera. FORBIDDEN: any camera shake, jitter, or zoom while laughing. No headwear changes.',
+  'IMAGE-TO-VIDEO from this exact input still. Do NOT restate framing, letters, wardrobe, or pose already in the image — only add the face motion below.',
+  'CAMERA (CRITICAL): Frozen / locked for the entire clip — no zoom, dolly, pan, tilt, Ken Burns, drift, or shake. Frame 0 and last frame match the input crop/scale. ONLY the face may move.',
+  'STATION (CRITICAL): Do not move the person in frame — no walk-closer, no left/right drift, no scale change, no crowding/covering lettering that is already clear in the input.',
+  'KEEP AS-IS (anti-drift only): no extra people, no text/wardrobe/identity morph, irises stay matte (no glow).',
+  'NO NEW EYE / FACE LINES: Do not add crow’s feet, under-eye creases, tear troughs, contour rings, or wrinkles not in the input while smiling/laughing.',
+  'MOTION — FACE ONLY (silent, no audio): Body below neck still — zero shoulder bounce. (1) glance left, (2) glance right, (3) return to camera + soft smile, (4) soft silent laugh with mouth/eyes only (no shoulder heave / body bob), (5) settle to original neutral facing camera. Natural blinks (~every 2–4s).',
 ].join(' ');
 
 /** Re-encode to a clean sRGB JPEG. */
@@ -417,64 +432,31 @@ async function grokImageEdit(args: {
 
 /**
  * Multi-image edit via xAI Grok Imagine (JSON edits API).
- * Order: base poster FIRST (layout lock), then selfie, then iris.
+ * Order: base poster FIRST (layout lock), then selfie.
+ * Iris-ref is NOT used on the still — LEFT keeps natural eyes; orange iris morph is video-only at 0:07.
  */
 export async function composePersonalBitcoinAlien(args: {
   selfie: Buffer;
   selfieMime: string;
   base: Buffer;
   baseMime: string;
-  iris: Buffer;
-  irisMime: string;
+  /** Unused on still (kept optional for callers). Orange iris morph is launch video at 0:07. */
+  iris?: Buffer;
+  irisMime?: string;
 }): Promise<Buffer> {
-  const [baseJpeg, identityJpeg, irisJpeg] = await Promise.all([
+  const [baseJpeg, identityJpeg] = await Promise.all([
     toCleanJpeg(args.base, 2048),
     toIdentityJpeg(args.selfie),
-    toCleanJpeg(args.iris),
   ]);
 
-  const firstPass = await grokImageEdit({
+  // Single still pass — base + selfie only (no iris-ref, so LEFT eyes stay natural).
+  return grokImageEdit({
     prompt: ALIEN_COMPOSE_PROMPT,
     images: [
       { url: toDataUri(baseJpeg), type: 'image_url' },
       { url: toDataUri(identityJpeg), type: 'image_url' },
-      { url: toDataUri(irisJpeg), type: 'image_url' },
     ],
     // LaunchPoster(metaposter) is square 2000×2000 — keep 1:1 so Grok does not recompose Sam/girl.
-    aspectRatio: '1:1',
-  });
-
-  // Pass 2: head size ONLY vs original mannequin (no iris — scale must win).
-  const firstJpeg = await toCleanJpeg(firstPass, 2048);
-  const sizedPass = await grokImageEdit({
-    prompt: ALIEN_COMPOSE_HEAD_SIZE_FIX_PROMPT,
-    images: [
-      { url: toDataUri(firstJpeg), type: 'image_url' },
-      { url: toDataUri(baseJpeg), type: 'image_url' },
-    ],
-    aspectRatio: '1:1',
-  });
-  const sizedJpeg = await toCleanJpeg(sizedPass, 2048);
-
-  // Pass 3: iris / Sam eyes without touching head scale (no selfie here).
-  const detailPass = await grokImageEdit({
-    prompt: ALIEN_COMPOSE_DETAIL_FIX_PROMPT,
-    images: [
-      { url: toDataUri(sizedJpeg), type: 'image_url' },
-      { url: toDataUri(baseJpeg), type: 'image_url' },
-      { url: toDataUri(irisJpeg), type: 'image_url' },
-    ],
-    aspectRatio: '1:1',
-  });
-  const detailJpeg = await toCleanJpeg(detailPass, 2048);
-
-  // Pass 4: skin/face/neck/hands with selfie back in-context (like Season One identity lock).
-  return grokImageEdit({
-    prompt: ALIEN_COMPOSE_SKIN_LOCK_PROMPT,
-    images: [
-      { url: toDataUri(detailJpeg), type: 'image_url' },
-      { url: toDataUri(identityJpeg), type: 'image_url' },
-    ],
     aspectRatio: '1:1',
   });
 }

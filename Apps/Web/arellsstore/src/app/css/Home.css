@@ -7278,9 +7278,27 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	);
 }
 
+.asset-alien-meta-created {
+	width: calc(100% - 10px);
+	margin: 0 auto 10px;
+	padding: 10px 8px;
+	box-sizing: border-box;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 6%,
+		#fff
+	);
+}
+
 .asset-alien-meta-created-title {
-	margin: 0 0 10px;
-	padding: 0 6px;
+	margin: 0;
+	padding: 0;
 	width: 100%;
 	box-sizing: border-box;
 	font-size: 14px;

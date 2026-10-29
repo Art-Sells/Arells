@@ -5,6 +5,7 @@ import {
   ALIEN_PHOTO_MAX_BYTES,
   alienPhotoObjectKey,
   decodeAlienPhotoDataUrl,
+  isAlienVideoKind,
   isMissingS3Object,
   normalizeAlienPhotoAsset,
   normalizeAlienPhotoKind,
@@ -44,17 +45,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const rawKind = Array.isArray(req.query.kind) ? req.query.kind[0] : req.query.kind;
     const kind = normalizeAlienPhotoKind(rawKind);
     const key = alienPhotoObjectKey(email, asset, kind);
+    const isVideo = isAlienVideoKind(kind);
+    const fallbackType = isVideo ? 'video/mp4' : 'application/octet-stream';
     try {
       if (req.method === 'HEAD') {
         const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
-        res.setHeader('Content-Type', head.ContentType || 'application/octet-stream');
+        const type = head.ContentType && head.ContentType !== 'application/octet-stream'
+          ? head.ContentType
+          : fallbackType;
+        res.setHeader('Content-Type', type);
         res.setHeader('Cache-Control', 'private, no-store');
+        if (isVideo) res.setHeader('Accept-Ranges', 'bytes');
         res.setHeader('X-Alien-Photo-Kind', kind);
         return res.status(200).end();
       }
       const obj = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
-      res.setHeader('Content-Type', obj.ContentType || 'application/octet-stream');
+      const type = obj.ContentType && obj.ContentType !== 'application/octet-stream'
+        ? obj.ContentType
+        : fallbackType;
+      res.setHeader('Content-Type', type);
       res.setHeader('Cache-Control', 'private, no-store');
+      if (isVideo) res.setHeader('Accept-Ranges', 'bytes');
       res.setHeader('X-Alien-Photo-Kind', kind);
       return res.status(200).send(obj.Body);
     } catch (err) {

@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 
-const START_TIMEOUT_MS = 5000;
-const STALL_TIMEOUT_MS = 6000;
+const START_TIMEOUT_MS = 12000;
+const STALL_TIMEOUT_MS = 10000;
 const DEFAULT_FADE_MS = 1400;
+const ATTACH_TRIES = 12;
 
 /**
  * play → outroOut (video out + black) → outroIn (still in, black clears) → still
@@ -113,6 +114,7 @@ export function usePosterLoopPlayback(
     };
 
     let teardown: (() => void) | undefined;
+    let tries = 0;
 
     const attach = () => {
       const video = videoRef.current;
@@ -121,13 +123,18 @@ export function usePosterLoopPlayback(
       return true;
     };
 
-    if (!attach()) {
-      raf = requestAnimationFrame(() => {
-        if (!cancelled && !attach()) {
-          skipToStill();
-        }
-      });
-    }
+    const tryAttach = () => {
+      if (cancelled) return;
+      if (attach()) return;
+      tries += 1;
+      if (tries >= ATTACH_TRIES) {
+        skipToStill();
+        return;
+      }
+      raf = requestAnimationFrame(tryAttach);
+    };
+
+    tryAttach();
 
     return () => {
       cancelled = true;
