@@ -25,7 +25,7 @@ export type AlienDcPromotionModalProps = {
 };
 
 const BEST_RESULTS_LINES = [
-  'face forward',
+  'face forward, eyes open',
   'no hats, no glasses, no shades',
   'no smiling, no frowning',
   'no-one else in the photo, only you',
