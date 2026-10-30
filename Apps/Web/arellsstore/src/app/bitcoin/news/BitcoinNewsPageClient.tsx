@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import TBARLoadReveal from '../../../components/Assets/Crypto/TBAR/LoadReveal';
 import TBARGrid from '../../../components/Assets/Crypto/TBAR/Grid';
+import AlienDcPromotionHost from '../../../components/Assets/shared/AlienDcPromotionHost';
 import AssetGuestLanding from '../../../components/Assets/shared/AssetGuestLanding';
 import AlienDcPromotionHost from '../../../components/Assets/shared/AlienDcPromotionHost';
 import AssetSummaryCircleLoader from '../../../components/Assets/shared/AssetSummaryCircleLoader';
