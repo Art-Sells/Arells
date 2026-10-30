@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
+import NotFoundHomeButton from '../components/Auth/NotFoundHomeButton';
 
 export const metadata: Metadata = {
   title: 'Page Not Found',
@@ -32,12 +32,7 @@ export default function NotFound() {
             <span className="shadow-border" aria-hidden="true" />
             <div className="home-guest-signin-panel myinv-accent-border">
               <div className="home-guest-signin-inner">
-                <Link
-                  href="/"
-                  className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button home-guest-signin-button"
-                >
-                  back to home
-                </Link>
+                <NotFoundHomeButton />
               </div>
             </div>
           </div>

@@ -11758,9 +11758,29 @@ a.growth-metrics-about-button:focus-visible {
 }
 
 .auth-verify-sent.auth-verify-sent--verified-success .auth-verified-phase-section .auth-verify-success-cta {
+	position: relative;
 	width: 100%;
 	margin-top: 10px;
 	margin-bottom: 0;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verify-success-cta.is-loading .auth-verify-success-cta-label {
+	visibility: hidden;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verify-success-cta-spinner {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	pointer-events: none;
 }
 
 /* Sign-in / verified: accent circle loader (same placement as asset summary loader). */
@@ -14529,7 +14549,27 @@ a.asset-action-button--save-signin {
 }
 
 .not-found-page .home-guest-signin-button.auth-submit--accent {
+	position: relative;
 	text-transform: none;
+}
+
+.not-found-page .home-guest-signin-button.is-loading .not-found-home-button-label {
+	visibility: hidden;
+}
+
+.not-found-page .not-found-home-button-spinner {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	pointer-events: none;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel {
