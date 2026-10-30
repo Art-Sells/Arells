@@ -7,6 +7,7 @@
 After Episode 2 (or during):
 
 - If finished early, start path Implement character poster 
+- Add Grok/Stripe variables to dynamic-characters/test
 
 #### If sharing (organic) happens:
 - Prepare to change banners for other assets
