@@ -20,6 +20,10 @@ import {
   sniffAlienPhotoMime,
 } from '../../../lib/server/alienPhoto';
 import { getServerS3 } from '../../../lib/server/awsS3';
+import {
+  consumePaidCredit,
+  findPaidUnusedCredit,
+} from '../../../lib/server/characterGenerationCredit';
 import { s3BucketNameOrThrow } from '../../../lib/server/s3Bucket';
 
 const s3 = getServerS3();
@@ -68,6 +72,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const bucket = s3BucketNameOrThrow();
 
   try {
+    if (mode === 'full') {
+      const credit = await findPaidUnusedCredit(allowed, asset);
+      if (!credit) {
+        return res.status(402).json({
+          error: 'Character generation payment required',
+          code: 'payment_required',
+        });
+      }
+    }
+
     const selfieBuf = await loadSelfie(bucket, allowed, asset);
     const [iris, portraitColor] = await Promise.all([
       readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
@@ -130,6 +144,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         ACL: 'private',
       })
       .promise();
+
+    if (mode === 'full') {
+      await consumePaidCredit(allowed, asset);
+    }
 
     return res.status(200).json({ ok: true, mode });
   } catch (err) {

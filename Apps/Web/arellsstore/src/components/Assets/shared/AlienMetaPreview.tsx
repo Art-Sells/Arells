@@ -9,7 +9,7 @@ type AlienMetaPreviewProps = {
   alt?: string;
 };
 
-/** Launch metaposter still + optional metaloop with fade-through-black. */
+/** Launch metaposter: video→still fade-through-black; still→video crossfade. */
 export default function AlienMetaPreview({
   metaUrl,
   loopUrl,
@@ -18,18 +18,26 @@ export default function AlienMetaPreview({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const stillImgRef = useRef<HTMLImageElement | null>(null);
   const hasLoop = Boolean(loopUrl);
+  const [stillLoaded, setStillLoaded] = useState(false);
+  const [loaderGone, setLoaderGone] = useState(false);
   const {
     videoReady,
     showStillLayer,
     showVideo,
     videoFadingOut,
+    stillFadingOut,
     isHandoff,
     markReady,
     onVideoEnded,
     skipToStill,
-  } = usePosterLoopPlayback(videoRef, hasLoop, loopUrl || '', 5000);
-  const [stillLoaded, setStillLoaded] = useState(false);
-  const [loaderGone, setLoaderGone] = useState(false);
+  } = usePosterLoopPlayback(
+    videoRef,
+    hasLoop,
+    loopUrl || '',
+    5000,
+    undefined,
+    stillLoaded
+  );
   const showStill = !hasLoop ? stillLoaded : showStillLayer && stillLoaded;
   /** Keep loader until something visible is fading in (video or still), so the handoff is a crossfade. */
   const frameReady = hasLoop ? videoReady || showStill : stillLoaded;
@@ -93,8 +101,8 @@ export default function AlienMetaPreview({
       <img
         ref={stillImgRef}
         className={`asset-alien-meta-preview${showStill ? ' is-visible' : ''}${
-          hasLoop ? ' asset-alien-meta-preview--loop-still' : ''
-        }`}
+          stillFadingOut ? ' is-done' : ''
+        }${hasLoop ? ' asset-alien-meta-preview--loop-still' : ''}`}
         src={metaUrl}
         alt={alt}
         onLoad={() => setStillLoaded(true)}

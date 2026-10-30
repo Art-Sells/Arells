@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import AlienCharacterPayModal from './AlienCharacterPayModal';
 import AlienDcPromotionModal from './AlienDcPromotionModal';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { useUser } from '../../../context/UserContext';
@@ -9,6 +10,12 @@ import {
   hasDismissedDcPromotion,
 } from '../../../lib/alienDcPromotion';
 import { ALIEN_PHOTO_ACCEPT } from '../../../lib/client/alienPhotoCompose';
+import {
+  clearOpenGuideFlag,
+  handleCharacterGenerationCheckoutReturn,
+  hasPaidCharacterCredit,
+  peekOpenGuideFlag,
+} from '../../../lib/client/characterGenerationPay';
 
 const THEME_VARS = [
   '--asset-line-color',
@@ -39,8 +46,7 @@ type AlienDcPromotionHostProps = {
 };
 
 /**
- * Auto-shows the DC promo until a photo is recorded (Add Photo → picker → file).
- * PHOTO / Update Photo reopen is handled by those controls.
+ * Auto-show: unpaid → pay modal; paid / post-checkout → ADD YOUR CHARACTER (Add Photo) guide.
  */
 const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
   enabled,
@@ -51,19 +57,11 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
   const { email, shareId, isSignedIn } = useUser();
   const { blockIfCreating, startCreate } = useAlienCharacterCreate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [open, setOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [payOpen, setPayOpen] = useState(false);
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
 
-  useEffect(() => {
-    if (!enabled) return;
-    if (hasDismissedDcPromotion()) return;
-    setOverlayStyle(themeStyleFrom(document.querySelector(themeSelector)));
-    setOpen(true);
-  }, [enabled, themeSelector]);
-
-  const openPicker = useCallback(() => {
-    if (!isSignedIn || !email) return;
-    if (blockIfCreating(overlayStyle)) return;
+  const clickFileInput = useCallback(() => {
     const input = fileInputRef.current;
     if (!input) return;
     try {
@@ -75,7 +73,62 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
       input.value = '';
     }
     input.click();
-  }, [isSignedIn, email, blockIfCreating, overlayStyle]);
+  }, []);
+
+  const openGuide = useCallback(() => {
+    setPayOpen(false);
+    setGuideOpen(true);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled || !isSignedIn || !email) return;
+    let cancelled = false;
+    void (async () => {
+      const style = themeStyleFrom(document.querySelector(themeSelector));
+      setOverlayStyle(style);
+
+      let fromCheckout = false;
+      try {
+        fromCheckout = await handleCharacterGenerationCheckoutReturn();
+      } catch (err) {
+        console.error('character checkout return', err);
+      }
+      if (cancelled) return;
+
+      /* Post-pay / pending guide — always open Add Photo modal (flag survives remounts). */
+      if (fromCheckout || peekOpenGuideFlag()) {
+        openGuide();
+        return;
+      }
+
+      if (hasDismissedDcPromotion()) return;
+
+      try {
+        const paid = await hasPaidCharacterCredit(assetId);
+        if (cancelled) return;
+        if (paid) openGuide();
+        else {
+          setGuideOpen(false);
+          setPayOpen(true);
+        }
+      } catch (err) {
+        console.error('character credit check', err);
+        if (!cancelled) {
+          setGuideOpen(false);
+          setPayOpen(true);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, isSignedIn, email, assetId, themeSelector, openGuide]);
+
+  const onAddPhoto = useCallback(() => {
+    if (!isSignedIn || !email) return;
+    if (blockIfCreating(overlayStyle)) return;
+    clickFileInput();
+  }, [isSignedIn, email, blockIfCreating, overlayStyle, clickFileInput]);
 
   const onFile = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +147,9 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
         overlayStyle,
       });
       dismissDcPromotion();
-      setOpen(false);
+      clearOpenGuideFlag();
+      setGuideOpen(false);
+      setPayOpen(false);
     },
     [email, assetId, assetName, shareId, overlayStyle, startCreate]
   );
@@ -108,11 +163,22 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
         hidden
         onChange={onFile}
       />
+      <AlienCharacterPayModal
+        open={payOpen}
+        assetId={assetId}
+        overlayStyle={overlayStyle}
+        onPaid={openGuide}
+        onDismiss={() => setPayOpen(false)}
+      />
       <AlienDcPromotionModal
-        open={open}
+        open={guideOpen}
         assetName={assetName}
         overlayStyle={overlayStyle}
-        onAddPhoto={openPicker}
+        onAddPhoto={onAddPhoto}
+        onDismiss={() => {
+          clearOpenGuideFlag();
+          setGuideOpen(false);
+        }}
       />
     </>
   );

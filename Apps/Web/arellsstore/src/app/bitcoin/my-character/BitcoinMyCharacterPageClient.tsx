@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import AlienCharacterPayModal from '../../../components/Assets/shared/AlienCharacterPayModal';
 import AlienDcPromotionHost from '../../../components/Assets/shared/AlienDcPromotionHost';
 import AlienDcPromotionModal from '../../../components/Assets/shared/AlienDcPromotionModal';
 import AlienMetaPreview from '../../../components/Assets/shared/AlienMetaPreview';
@@ -19,6 +20,16 @@ import {
 } from '../../../lib/assets/assetSharePath';
 import { dismissDcPromotion } from '../../../lib/alienDcPromotion';
 import { ALIEN_PHOTO_ACCEPT } from '../../../lib/client/alienPhotoCompose';
+import {
+  clearOpenGuideFlag,
+  clearPaidCreditPending,
+  handleCharacterGenerationCheckoutReturn,
+  hasPaidCharacterCredit,
+  markPaidCreditPending,
+  peekOpenGuideFlag,
+  peekPaidCreditPending,
+} from '../../../lib/client/characterGenerationPay';
+import { isPendingNavTarget, usePendingNavHref } from '../../../lib/client/navCircleLoader';
 import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
 const PREMIER_POSTER =
@@ -172,8 +183,14 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const updateBtnRef = useRef<HTMLButtonElement | null>(null);
+  const [payOpen, setPayOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
-  const [guideOverlayStyle, setGuideOverlayStyle] = useState<React.CSSProperties>({});
+  const [payOverlayStyle, setPayOverlayStyle] = useState<React.CSSProperties>({});
+  const [creditChecking, setCreditChecking] = useState(false);
+  /** Unused paid credit → button becomes Update Photo + Add Photo modal. */
+  const [hasPaidCredit, setHasPaidCredit] = useState(() => peekPaidCreditPending('bitcoin'));
+  /** Don't render CTA until credit status known — avoids Update Character → Update Photo flash. */
+  const [creditReady, setCreditReady] = useState(() => peekPaidCreditPending('bitcoin'));
 
   const resolvedShareId = (pathShareId || shareId || '').trim().toLowerCase() || null;
   const isOwner =
@@ -298,7 +315,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     return () => window.removeEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
   }, [resolvedShareId, loadPublicMedia]);
 
-  const triggerFilePicker = useCallback(() => {
+  const clickFileInput = useCallback(() => {
     const input = fileInputRef.current;
     if (!input) return;
     try {
@@ -312,13 +329,106 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     input.click();
   }, []);
 
-  const openPicker = useCallback(() => {
+  const setPaidPending = useCallback((paid: boolean) => {
+    setHasPaidCredit(paid);
+    if (paid) markPaidCreditPending('bitcoin');
+    else clearPaidCreditPending('bitcoin');
+  }, []);
+
+  const openGuide = useCallback(() => {
+    setPayOpen(false);
+    setPaidPending(true);
+    setGuideOpen(true);
+  }, [setPaidPending]);
+
+  /** ADD PHOTO from guide → file picker. */
+  const triggerFilePicker = useCallback(() => {
     if (!isOwner || !email || busy) return;
     const style = themeStyleFrom(updateBtnRef.current);
     if (blockIfCreating(style)) return;
-    setGuideOverlayStyle(style);
-    setGuideOpen(true);
-  }, [isOwner, email, busy, blockIfCreating]);
+    clickFileInput();
+  }, [isOwner, email, busy, blockIfCreating, clickFileInput]);
+
+  const openPicker = useCallback(() => {
+    if (!isOwner || !email || busy || creditChecking) return;
+    const style = themeStyleFrom(updateBtnRef.current);
+    if (blockIfCreating(style)) return;
+    setPayOverlayStyle(style);
+    setCreditChecking(true);
+    void (async () => {
+      try {
+        /* Trust server — session “pending” alone can stick after compose consumed the credit. */
+        const paid = await hasPaidCharacterCredit('bitcoin');
+        setPaidPending(paid);
+        if (paid) openGuide();
+        else setPayOpen(true);
+      } catch (err) {
+        console.error('character credit check', err);
+        setPayOpen(true);
+      } finally {
+        setCreditChecking(false);
+      }
+    })();
+  }, [isOwner, email, busy, creditChecking, blockIfCreating, openGuide, setPaidPending]);
+
+  /* Load credit state; after Stripe return open Add Photo guide + Update Photo button. */
+  useEffect(() => {
+    if (!isOwner || !email) {
+      setCreditReady(false);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      let fromCheckout = false;
+      try {
+        fromCheckout = await handleCharacterGenerationCheckoutReturn();
+      } catch (err) {
+        console.error('character checkout return', err);
+      }
+      if (cancelled) return;
+
+      if (fromCheckout) {
+        setPaidPending(true);
+        setCreditReady(true);
+        setPayOverlayStyle(themeStyleFrom(updateBtnRef.current));
+        openGuide();
+      }
+
+      try {
+        const paid = await hasPaidCharacterCredit('bitcoin');
+        if (cancelled) return;
+        /* After checkout return, keep Update Photo even if credit API lags. Otherwise trust server. */
+        setPaidPending(Boolean(paid || fromCheckout));
+      } catch {
+        if (!cancelled) {
+          setPaidPending(Boolean(fromCheckout || peekPaidCreditPending('bitcoin')));
+        }
+      } finally {
+        if (!cancelled) setCreditReady(true);
+      }
+
+      if (!fromCheckout && peekOpenGuideFlag()) {
+        setPayOverlayStyle(themeStyleFrom(updateBtnRef.current));
+        openGuide();
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isOwner, email, openGuide, setPaidPending]);
+
+  /* After character finishes generating, credit is consumed → back to Update Character. */
+  useEffect(() => {
+    const onDone = (event: Event) => {
+      const detail = (event as CustomEvent<{ assetId?: string }>).detail;
+      if (detail?.assetId !== 'bitcoin') return;
+      setPaidPending(false);
+      clearOpenGuideFlag();
+      setGuideOpen(false);
+    };
+    window.addEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
+    return () => window.removeEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
+  }, [setPaidPending]);
 
   const onFile = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,9 +446,11 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         shareId: resolvedShareId,
         overlayStyle: themeStyleFrom(updateBtnRef.current),
       });
-      /* Guide stays up until a photo is actually recorded. */
       dismissDcPromotion();
+      clearOpenGuideFlag();
+      setPayOpen(false);
       setGuideOpen(false);
+      /* Keep Update Photo until compose succeeds — then ALIEN_COMPOSE_DONE clears it. */
     },
     [email, resolvedShareId, startCreate]
   );
@@ -400,6 +512,12 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
   /** Expand sections immediately; media slots keep their own loaders until HEAD/images land. */
   const sectionsOpen = true;
+  /** Owner photo block waits for credit so the label is correct + visible when height-down starts (no late pop-in). */
+  const photoSectionOpen = sectionsOpen && (!isOwner || creditReady);
+  const updateCtaBusy = busy || creditChecking || payOpen;
+  usePendingNavHref();
+  const bitcoinBadgeHref = assetSharePath('/bitcoin', resolvedShareId);
+  const bitcoinBadgeLoading = isPendingNavTarget(bitcoinBadgeHref);
 
   const portraitMedia = (
     <span
@@ -438,13 +556,20 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           <HeightDownSection open={sectionsOpen} className="bitcoin-my-character-section--badge">
             <div className="asset-bitcoin-season-teaser-badge">
               <Link
-                href={assetSharePath('/bitcoin', resolvedShareId)}
-                className="myinv-asset-home-card home-asset-bitcoin bitcoin-alien-race-asset-card"
+                href={bitcoinBadgeHref}
+                className={`myinv-asset-home-card home-asset-bitcoin bitcoin-alien-race-asset-card${
+                  bitcoinBadgeLoading ? ' is-nav-loading' : ''
+                }`}
                 aria-label="Bitcoin"
+                aria-busy={bitcoinBadgeLoading || undefined}
               >
                 <div className="home-assets-cell home-assets-asset">
                   <span className="home-asset-label home-asset-label-bitcoin">
-                    <span className="home-asset-name asset-action-button asset-action-button--bitcoin asset-action-button--home-asset-chip">
+                    <span
+                      className={`home-asset-name asset-action-button asset-action-button--bitcoin asset-action-button--home-asset-chip${
+                        bitcoinBadgeLoading ? ' is-nav-loading-chip' : ''
+                      }`}
+                    >
                       Bitcoin
                     </span>
                   </span>
@@ -465,8 +590,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           ) : null}
 
           <HeightDownSection
-            open={sectionsOpen}
-            instant
+            open={photoSectionOpen}
             className="bitcoin-my-character-section--photo"
           >
             <div
@@ -480,36 +604,60 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
                   type="button"
                   className="asset-alien-photo-hit"
                   onClick={openPicker}
-                  disabled={busy || !portraitUrl}
-                  aria-label="Update Photo"
+                  disabled={updateCtaBusy || guideOpen || !portraitUrl}
+                  aria-busy={updateCtaBusy}
+                  aria-label={
+                    updateCtaBusy
+                      ? 'Loading'
+                      : hasPaidCredit
+                        ? 'Update Photo'
+                        : 'Update Character'
+                  }
                 >
                   {portraitMedia}
                   <span
-                    className={`asset-alien-photo-plus asset-alien-photo-plus--view bitcoin-my-character-update-photo${
-                      busy || portraitLoaded ? ' is-visible' : ''
-                    }`}
+                    className="asset-alien-photo-plus asset-alien-photo-plus--view bitcoin-my-character-update-photo"
                     aria-hidden="true"
                   >
-                    {busy ? (
+                    <span
+                      className={`bitcoin-my-character-update-photo-layer bitcoin-my-character-update-photo-layer--busy${
+                        updateCtaBusy ? ' is-visible' : ''
+                      }`}
+                    >
                       <span className="asset-alien-photo-busy" />
-                    ) : (
-                      <>
-                        <svg
-                          className="bitcoin-my-character-update-photo-icon"
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fill="currentColor"
-                            fillRule="evenodd"
-                            d="M9.2 3.5 7.6 5.5H5.25A2.25 2.25 0 0 0 3 7.75v9.5A2.25 2.25 0 0 0 5.25 19.5h13.5A2.25 2.25 0 0 0 21 17.25v-9.5A2.25 2.25 0 0 0 18.75 5.5H16.4l-1.6-2H9.2zM12 15.75a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z"
+                    </span>
+                    <span
+                      className={`bitcoin-my-character-update-photo-layer bitcoin-my-character-update-photo-layer--label${
+                        updateCtaBusy ? '' : ' is-visible'
+                      }`}
+                    >
+                      {hasPaidCredit ? (
+                        <>
+                          <svg
+                            className="bitcoin-my-character-update-photo-camera-icon"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            aria-hidden="true"
+                          >
+                            <path
+                              fill="currentColor"
+                              fillRule="evenodd"
+                              d="M9.2 3.5 7.6 5.5H5.25A2.25 2.25 0 0 0 3 7.75v9.5A2.25 2.25 0 0 0 5.25 19.5h13.5A2.25 2.25 0 0 0 21 17.25v-9.5A2.25 2.25 0 0 0 18.75 5.5H16.4l-1.6-2H9.2zM12 15.75a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z"
+                            />
+                          </svg>
+                          <span>Update Photo</span>
+                        </>
+                      ) : (
+                        <>
+                          <span
+                            className="bitcoin-my-character-update-photo-icon"
+                            aria-hidden="true"
                           />
-                        </svg>
-                        <span>Update Photo</span>
-                      </>
-                    )}
+                          <span>Update Character</span>
+                        </>
+                      )}
+                    </span>
                   </span>
                 </button>
               ) : (
@@ -556,15 +704,26 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           </HeightDownSection>
         </div>
       </div>
+      <AlienCharacterPayModal
+        open={payOpen}
+        assetId="bitcoin"
+        mode="update"
+        overlayStyle={payOverlayStyle}
+        onPaid={openGuide}
+        onDismiss={() => setPayOpen(false)}
+      />
       <AlienDcPromotionModal
         open={guideOpen}
         assetName="Bitcoin"
-        overlayStyle={guideOverlayStyle}
+        overlayStyle={payOverlayStyle}
         onAddPhoto={triggerFilePicker}
-        onDismiss={() => setGuideOpen(false)}
+        onDismiss={() => {
+          clearOpenGuideFlag();
+          setGuideOpen(false);
+        }}
       />
       <AlienDcPromotionHost
-        enabled={Boolean(allowSignedIn && isOwner && sectionsOpen)}
+        enabled={Boolean(allowSignedIn && isOwner && sectionsOpen && !portraitUrl)}
         assetName="Bitcoin"
       />
     </>

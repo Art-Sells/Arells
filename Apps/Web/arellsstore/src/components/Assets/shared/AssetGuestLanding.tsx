@@ -49,29 +49,37 @@ export default function AssetGuestLanding({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const posterImgRef = useRef<HTMLImageElement>(null);
   const [posterLoaded, setPosterLoaded] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const {
-    videoReady,
     showStillLayer,
     showVideo,
     videoFadingOut,
+    stillFadingOut,
     isHandoff,
     markReady,
     onVideoEnded,
     skipToStill,
-  } = usePosterLoopPlayback(videoRef, hasLoop, posterLoopSrc, 5000);
+  } = usePosterLoopPlayback(videoRef, hasLoop, posterLoopSrc, 5000, undefined, posterLoaded);
 
   const showStill = !hasLoop ? posterLoaded : showStillLayer && posterLoaded;
-  const frameReady = hasLoop ? videoReady || showStill || posterLoaded : posterLoaded;
-  const showLoader = Boolean(posterSrc) && !posterLoaded;
+  /** With a loop, keep the loader until playback actually starts (not still decode). */
+  const frameReady = hasLoop ? videoPlaying || showStill : posterLoaded;
+  const showLoader = Boolean(posterSrc) && !frameReady;
 
   useEffect(() => {
     setPosterLoaded(false);
+    setVideoPlaying(false);
   }, [posterSrc, posterLoopSrc]);
 
   useEffect(() => {
     const img = posterImgRef.current;
     if (img?.complete && img.naturalWidth > 0) setPosterLoaded(true);
   }, [posterSrc]);
+
+  const onVideoPlaying = () => {
+    markReady();
+    setVideoPlaying(true);
+  };
 
   return (
     <div
@@ -144,9 +152,12 @@ export default function AssetGuestLanding({
                     disablePictureInPicture
                     onLoadedData={markReady}
                     onCanPlay={markReady}
-                    onPlaying={markReady}
+                    onPlaying={onVideoPlaying}
                     onEnded={onVideoEnded}
-                    onError={skipToStill}
+                    onError={() => {
+                      setVideoPlaying(false);
+                      skipToStill();
+                    }}
                     aria-label={posterAlt || 'Launch poster'}
                   />
                 ) : null}
@@ -156,7 +167,9 @@ export default function AssetGuestLanding({
                   alt={posterAlt}
                   width={posterWidth}
                   height={posterHeight}
-                  className={`asset-guest-poster-img${showStill ? ' is-visible' : ''}`}
+                  className={`asset-guest-poster-img${showStill ? ' is-visible' : ''}${
+                    stillFadingOut ? ' is-done' : ''
+                  }`}
                   onLoad={() => setPosterLoaded(true)}
                 />
               </div>

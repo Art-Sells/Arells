@@ -6,8 +6,6 @@ import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthSuccessArellsMark from './AuthSuccessArellsMark';
 import AuthOtpCodeForm from './AuthOtpCodeForm';
-import AuthCircleLoader from './AuthCircleLoader';
-import { useAuthCircleLoader } from './useAuthCircleLoader';
 import { useUser } from '../../context/UserContext';
 import { assetSharePath } from '../../lib/assets/assetSharePath';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
@@ -29,7 +27,6 @@ const COLLAPSE_MS = 1500;
 const SignUpPageClient: React.FC = () => {
   const router = useRouter();
   const { refreshAuthSession, shareId } = useUser();
-  const circleLoader = useAuthCircleLoader();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -186,7 +183,6 @@ const SignUpPageClient: React.FC = () => {
   const onViewPortfolio = () => {
     if (loadingPortfolio) return;
     setLoadingPortfolio(true);
-    circleLoader.show();
     router.push(assetSharePath('/bitcoin', shareId));
     router.refresh();
   };
@@ -227,11 +223,17 @@ const SignUpPageClient: React.FC = () => {
                         type="button"
                         onClick={onViewPortfolio}
                         disabled={loadingPortfolio}
-                        className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta"
+                        aria-busy={loadingPortfolio || undefined}
+                        className={`auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta${
+                          loadingPortfolio ? ' is-nav-loading' : ''
+                        }`}
                       >
-                        {loadingPortfolio
-                          ? emailVerifiedWelcomePhaseCopy.portfolioCtaLoadingLabel
-                          : emailVerifiedWelcomePhaseCopy.portfolioCtaLabel}
+                        <span className="auth-verify-success-cta-label">
+                          {emailVerifiedWelcomePhaseCopy.portfolioCtaLabel}
+                        </span>
+                        {loadingPortfolio ? (
+                          <span className="nav-control-spinner" aria-hidden="true" />
+                        ) : null}
                       </button>
                     </div>
                   </div>
@@ -359,7 +361,6 @@ const SignUpPageClient: React.FC = () => {
           </div>
         ) : null}
       </AuthPageShell>
-      <AuthCircleLoader mounted={circleLoader.mounted} visible={circleLoader.visible} />
     </>
   );
 };

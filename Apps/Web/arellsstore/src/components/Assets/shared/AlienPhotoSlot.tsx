@@ -3,12 +3,18 @@
 import Link from 'next/link';
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import AlienCharacterPayModal from './AlienCharacterPayModal';
 import AlienDcPromotionModal from './AlienDcPromotionModal';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { useUser } from '../../../context/UserContext';
 import { dismissDcPromotion } from '../../../lib/alienDcPromotion';
 import { ALIEN_COMPOSE_DONE_EVENT } from '../../../lib/assets/assetSharePath';
 import { ALIEN_PHOTO_ACCEPT } from '../../../lib/client/alienPhotoCompose';
+import {
+  clearOpenGuideFlag,
+  hasPaidCharacterCredit,
+} from '../../../lib/client/characterGenerationPay';
+import { isPendingNavTarget, usePendingNavHref } from '../../../lib/client/navCircleLoader';
 
 type AlienPhotoSlotProps = {
   assetId: string;
@@ -61,7 +67,9 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [payOpen, setPayOpen] = useState(false);
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
+  const [creditChecking, setCreditChecking] = useState(false);
 
   const busy = isCreatingAsset(assetId);
   const displayName = assetName?.trim() || 'Bitcoin';
@@ -116,7 +124,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         : '/bitcoin/my-character'
       : null;
 
-  const triggerFilePicker = useCallback(() => {
+  const clickFileInput = useCallback(() => {
     const input = fileInputRef.current;
     if (!input) return;
     try {
@@ -130,6 +138,20 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
     input.click();
   }, []);
 
+  const openGuide = useCallback(() => {
+    setPayOpen(false);
+    setGuideOpen(true);
+  }, []);
+
+  /** ADD PHOTO — file picker only (payment already handled). */
+  const triggerFilePicker = useCallback(() => {
+    if (!isSignedIn || !email) return;
+    if (blockIfCreating(themeStyleFrom(triggerRef.current))) return;
+    clickFileInput();
+  }, [isSignedIn, email, blockIfCreating, clickFileInput]);
+
+  /* Post-checkout Add Photo modal is owned by AlienDcPromotionHost on /bitcoin. */
+
   const openPicker = useCallback(() => {
     const style = themeStyleFrom(triggerRef.current);
     setOverlayStyle(style);
@@ -137,13 +159,28 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       setComingSoonOpen(true);
       return;
     }
-    if (!isSignedIn || !email) {
+    if (!isSignedIn || !email || creditChecking) {
       return;
     }
     if (blockIfCreating(style)) return;
-    /* Empty PHOTO: guide modal first, then file picker on OK. */
-    setGuideOpen(true);
-  }, [assetId, email, isSignedIn, blockIfCreating]);
+    setCreditChecking(true);
+    void (async () => {
+      try {
+        const paid = await hasPaidCharacterCredit(assetId);
+        if (paid) openGuide();
+        else {
+          setGuideOpen(false);
+          setPayOpen(true);
+        }
+      } catch (err) {
+        console.error('character credit check', err);
+        setGuideOpen(false);
+        setPayOpen(true);
+      } finally {
+        setCreditChecking(false);
+      }
+    })();
+  }, [assetId, email, isSignedIn, creditChecking, blockIfCreating, openGuide]);
 
   const onFile = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,22 +198,24 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         shareId,
         overlayStyle: themeStyleFrom(triggerRef.current),
       });
-      /* Guide stays up until a photo is actually recorded. */
       dismissDcPromotion();
+      clearOpenGuideFlag();
       setGuideOpen(false);
+      setPayOpen(false);
     },
     [assetId, displayName, email, shareId, startCreate]
   );
 
   const hasCharacter = Boolean(portraitUrl);
-  const emptyLabel = EMPTY_LABEL_LINES.join(' ');
   const hitLabel = busy
     ? 'Creating character'
     : hasCharacter
       ? 'View My Character'
-      : emptyLabel;
+      : 'Create Character';
   const thumbSrc = portraitUrl || PLACEHOLDER_SRC;
   const viewAsLink = Boolean(hasCharacter && myCharacterHref && !busy);
+  usePendingNavHref();
+  const viewNavLoading = Boolean(viewAsLink && isPendingNavTarget(myCharacterHref));
 
   const media = (
     <>
@@ -211,7 +250,9 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       <span
         className={`asset-alien-photo-plus${
           hasCharacter || busy ? ' asset-alien-photo-plus--view' : ''
-        }${busy ? ' asset-alien-photo-plus--creating' : ''}`}
+        }${busy ? ' asset-alien-photo-plus--creating' : ''}${
+          viewNavLoading ? ' is-nav-loading-label' : ''
+        }`}
         aria-hidden="true"
       >
         {busy ? (
@@ -221,14 +262,12 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
             <span className="asset-alien-photo-creating-word">character</span>
           </>
         ) : hasCharacter ? (
-          'View My Character'
+          <span className="asset-alien-photo-plus-label-text">View My Character</span>
         ) : (
-          <svg viewBox="0 0 24 24" width="22" height="22">
-            <path
-              fillRule="evenodd"
-              d="M9.2 3.5 7.6 5.5H5.25A2.25 2.25 0 0 0 3 7.75v9.5A2.25 2.25 0 0 0 5.25 19.5h13.5A2.25 2.25 0 0 0 21 17.25v-9.5A2.25 2.25 0 0 0 18.75 5.5H16.4l-1.6-2H9.2zM12 15.75a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5z"
-            />
-          </svg>
+          <>
+            <span className="asset-alien-photo-create-character-icon" aria-hidden="true" />
+            <span>Create Character</span>
+          </>
         )}
       </span>
     </>
@@ -270,13 +309,25 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         </button>
       )}
       {assetId === 'bitcoin' ? (
-        <AlienDcPromotionModal
-          open={guideOpen}
-          assetName={displayName}
-          overlayStyle={overlayStyle}
-          onAddPhoto={triggerFilePicker}
-          onDismiss={() => setGuideOpen(false)}
-        />
+        <>
+          <AlienCharacterPayModal
+            open={payOpen}
+            assetId={assetId}
+            overlayStyle={overlayStyle}
+            onPaid={openGuide}
+            onDismiss={() => setPayOpen(false)}
+          />
+          <AlienDcPromotionModal
+            open={guideOpen}
+            assetName={displayName}
+            overlayStyle={overlayStyle}
+            onAddPhoto={triggerFilePicker}
+            onDismiss={() => {
+              clearOpenGuideFlag();
+              setGuideOpen(false);
+            }}
+          />
+        </>
       ) : null}
       {mounted && comingSoonOpen
         ? createPortal(

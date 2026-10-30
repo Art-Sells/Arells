@@ -90,6 +90,19 @@ const nextConfig = {
         defs['process.env.COINGECKO_API_KEY'] = JSON.stringify(coingeckoApiKey);
       }
 
+      const stripeSecretKey = process.env.STRIPE_SECRET_KEY?.trim();
+      if (stripeSecretKey) {
+        defs['process.env.STRIPE_SECRET_KEY'] = JSON.stringify(stripeSecretKey);
+      }
+      const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
+      if (stripeWebhookSecret) {
+        defs['process.env.STRIPE_WEBHOOK_SECRET'] = JSON.stringify(stripeWebhookSecret);
+      }
+      const stripePriceCg = process.env.STRIPE_PRICE_CHARACTER_GENERATION?.trim();
+      if (stripePriceCg) {
+        defs['process.env.STRIPE_PRICE_CHARACTER_GENERATION'] = JSON.stringify(stripePriceCg);
+      }
+
       if (Object.keys(defs).length > 0) {
         config.plugins.push(new webpack.DefinePlugin(defs));
       }

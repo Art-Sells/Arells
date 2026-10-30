@@ -1,4 +1,5 @@
 import { ALIEN_COMPOSE_DONE_EVENT } from '../assets/assetSharePath';
+import { clearPaidCreditPending } from './characterGenerationPay';
 
 /** Match server identity prep; keeps JSON upload well under API/body limits. */
 const UPLOAD_MAX_EDGE = 1600;
@@ -160,9 +161,23 @@ export type AlienComposeResult = {
   seasononeloop: boolean;
 };
 
+const GENERATE_POLL_MS = 2500;
+const GENERATE_POLL_MAX_MS = 15 * 60 * 1000;
+
+type AlienGenerateJobClient = {
+  status?: 'running' | 'complete' | 'error';
+  metaloop?: boolean;
+  seasononeloop?: boolean;
+  error?: string;
+};
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
- * Upload selfie → compose stills → generate Season One then metaloop videos.
- * Returns fresh image blobs for the UI.
+ * Upload selfie, then kick a server-owned generate job (compose + loops).
+ * Browser only polls status — leaving the site does not stop the pipeline.
  */
 export async function composeAlienFromPhoto(args: {
   email: string;
@@ -184,51 +199,45 @@ export async function composeAlienFromPhoto(args: {
     throw new Error(uploadJson.error || 'Upload failed');
   }
 
-  const composeRes = await fetch('/api/user/alien-compose', {
+  const startRes = await fetch('/api/user/alien-generate', {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, asset: assetId, mode: 'full' }),
+    body: JSON.stringify({ email, asset: assetId }),
+    // Helps the start request finish even if the tab is closing mid-flight.
+    keepalive: true,
   });
-  const composeJson = await composeRes.json().catch(() => ({}));
-  if (!composeRes.ok) {
-    throw new Error(composeJson.error || 'Character generation failed');
+  const startJson = await startRes.json().catch(() => ({}));
+  if (!startRes.ok && startRes.status !== 202) {
+    throw new Error(startJson.error || 'Character generation failed to start');
   }
 
-  let videosJson: {
-    metaloop?: boolean;
-    seasononeloop?: boolean;
-  } = {};
-  const runVideos = async (kinds: Array<'seasononeloop' | 'metaloop'>) => {
-    const videosRes = await fetch('/api/user/alien-videos', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, asset: assetId, kinds }),
-    });
-    const json = await videosRes.json().catch(() => ({}));
-    if (!videosRes.ok) {
-      console.error('alien-videos failed', kinds, json);
-    } else if (json.errors?.length) {
-      console.error('alien-videos partial', kinds, json.errors);
+  const deadline = Date.now() + GENERATE_POLL_MAX_MS;
+  let job: AlienGenerateJobClient | null =
+    startJson.job && typeof startJson.job === 'object' ? startJson.job : null;
+
+  while (Date.now() < deadline) {
+    if (job?.status === 'complete' || job?.status === 'error') break;
+    await sleep(GENERATE_POLL_MS);
+    const statusRes = await fetch(
+      `/api/user/alien-generate?email=${encodeURIComponent(email)}&asset=${encodeURIComponent(assetId)}`,
+      { credentials: 'include', cache: 'no-store' }
+    );
+    const statusJson = await statusRes.json().catch(() => ({}));
+    if (!statusRes.ok) {
+      throw new Error(statusJson.error || 'Could not check generation status');
     }
-    return json as typeof videosJson;
-  };
-  try {
-    const seasonJson = await runVideos(['seasononeloop']);
-    videosJson.seasononeloop = Boolean(seasonJson.seasononeloop);
-    if (!videosJson.seasononeloop) {
-      const retry = await runVideos(['seasononeloop']);
-      videosJson.seasononeloop = Boolean(retry.seasononeloop);
-    }
-    const metaJson = await runVideos(['metaloop']);
-    videosJson.metaloop = Boolean(metaJson.metaloop);
-    if (!videosJson.metaloop) {
-      const retryMeta = await runVideos(['metaloop']);
-      videosJson.metaloop = Boolean(retryMeta.metaloop);
-    }
-  } catch (videoErr) {
-    console.error('alien-videos request error', videoErr);
+    job =
+      statusJson.job && typeof statusJson.job === 'object'
+        ? (statusJson.job as AlienGenerateJobClient)
+        : null;
+  }
+
+  if (!job || job.status === 'running') {
+    throw new Error('Character generation timed out — check back in a minute');
+  }
+  if (job.status === 'error') {
+    throw new Error(job.error || 'Character generation failed');
   }
 
   const bust = `&t=${Date.now()}`;
@@ -253,14 +262,16 @@ export async function composeAlienFromPhoto(args: {
   const loopBlob = loopRes.ok ? await loopRes.blob() : null;
 
   if (typeof window !== 'undefined') {
+    /* Credit is consumed server-side during compose — drop local “Update Photo” pending. */
+    clearPaidCreditPending(assetId);
     window.dispatchEvent(
       new CustomEvent(ALIEN_COMPOSE_DONE_EVENT, {
         detail: {
           assetId,
           shareId,
           at: Date.now(),
-          metaloop: Boolean(videosJson.metaloop && loopBlob),
-          seasononeloop: Boolean(videosJson.seasononeloop),
+          metaloop: Boolean(job.metaloop && loopBlob),
+          seasononeloop: Boolean(job.seasononeloop),
         },
       })
     );
@@ -270,7 +281,7 @@ export async function composeAlienFromPhoto(args: {
     portraitBlob,
     metaBlob,
     loopBlob,
-    metaloop: Boolean(videosJson.metaloop && loopBlob),
-    seasononeloop: Boolean(videosJson.seasononeloop),
+    metaloop: Boolean(job.metaloop && loopBlob),
+    seasononeloop: Boolean(job.seasononeloop),
   };
 }

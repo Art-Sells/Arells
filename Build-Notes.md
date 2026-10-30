@@ -7,7 +7,9 @@
 After Episode 2 (or during):
 
 - If finished early, start path Implement character poster 
-- Add Grok/Stripe variables to dynamic-characters/test
+- - test no photos (on website/pages and closed websites)
+- - test with photos (on website/pages and closed websites)
+- Add Grok/Stripe variables/webhooks to dynamic-characters/test
 
 #### If sharing (organic) happens:
 - Prepare to change banners for other assets

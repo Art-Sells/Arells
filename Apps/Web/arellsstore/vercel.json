@@ -5,6 +5,9 @@
     },
     "src/pages/api/user/alien-compose.ts": {
       "maxDuration": 300
+    },
+    "src/pages/api/user/alien-generate.ts": {
+      "maxDuration": 800
     }
   }
 }

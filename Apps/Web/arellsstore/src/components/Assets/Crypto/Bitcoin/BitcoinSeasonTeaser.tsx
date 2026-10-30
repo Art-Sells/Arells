@@ -32,11 +32,20 @@ export default function BitcoinSeasonTeaser() {
     showStillLayer,
     showVideo,
     videoFadingOut,
+    stillFadingOut,
     isHandoff,
     markReady,
     onVideoEnded,
     skipToStill,
-  } = usePosterLoopPlayback(videoRef, playbackEnabled, loopSrc, 5000);
+  } = usePosterLoopPlayback(
+    videoRef,
+    playbackEnabled,
+    loopSrc,
+    5000,
+    1500,
+    stillLoaded,
+    'through-black'
+  );
   const showStill = showStillLayer && stillLoaded;
   const frameReady =
     mediaReady && ((playbackEnabled ? videoReady : stillLoaded) || showStill || stillLoaded);
@@ -211,7 +220,9 @@ export default function BitcoinSeasonTeaser() {
                   alt="Season One"
                   width={4561}
                   height={1091}
-                  className={`asset-bitcoin-season-teaser-img${showStill ? ' is-visible' : ''}`}
+                  className={`asset-bitcoin-season-teaser-img${showStill ? ' is-visible' : ''}${
+                    stillFadingOut ? ' is-done' : ''
+                  }`}
                   onLoad={() => setStillLoaded(true)}
                 />
               ) : null}

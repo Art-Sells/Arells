@@ -1343,6 +1343,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	gap: 8px;
 	width: 100%;
 	height: 44px;
 	flex-shrink: 0;
@@ -1351,11 +1352,35 @@ body {
 	border: 1px solid rgba(248, 141, 0, 0.9);
 	background: rgba(248, 141, 0, 0.18);
 	color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: -0.2px;
+	line-height: 1.2;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(209, 142, 55));
 }
 
 .asset-alien-photo-plus svg {
 	display: block;
 	fill: currentColor;
+}
+
+.asset-alien-photo-create-character-icon {
+	display: block;
+	flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	opacity: 0.95;
+	background: currentColor;
+	-webkit-mask-image: url('/images/icons/profile.png');
+	mask-image: url('/images/icons/profile.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	position: relative;
+	top: -1px;
 }
 
 .asset-alien-photo-plus--view {
@@ -1838,8 +1863,14 @@ a.asset-alien-photo-hit {
 
 .asset-bitcoin-season-teaser-img.is-visible {
 	opacity: 1;
-	transition-duration: 1.4s;
+	transition-duration: 1.5s;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-bitcoin-season-teaser-img.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.5s;
 }
 
 @media (max-width: 750px) {
@@ -1956,20 +1987,48 @@ a.asset-alien-photo-hit {
 }
 
 .bitcoin-my-character-photo-slot .bitcoin-my-character-update-photo.asset-alien-photo-plus--view {
+	position: relative;
+	display: block;
+	width: 100%;
+	font-weight: 800;
+}
+
+.bitcoin-my-character-update-photo-layer {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	font-weight: 800;
+	position: absolute;
+	inset: 0;
 	opacity: 0;
 	transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+	pointer-events: none;
 }
 
-.bitcoin-my-character-photo-slot .bitcoin-my-character-update-photo.asset-alien-photo-plus--view.is-visible {
+.bitcoin-my-character-update-photo-layer.is-visible {
 	opacity: 1;
 }
 
 .bitcoin-my-character-update-photo-icon {
+	display: block;
+	flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	opacity: 0.95;
+	background: currentColor;
+	-webkit-mask-image: url('/images/icons/profile.png');
+	mask-image: url('/images/icons/profile.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	position: relative;
+	top: -1px;
+}
+
+.bitcoin-my-character-update-photo-camera-icon {
 	display: block;
 	flex-shrink: 0;
 	fill: currentColor;
@@ -2042,9 +2101,9 @@ a.asset-alien-photo-hit {
 	box-sizing: border-box;
 }
 
-.bitcoin-my-character-section--badge .bitcoin-my-character-height-down-inner,
-.bitcoin-my-character-section--photo .bitcoin-my-character-height-down-inner,
-.bitcoin-my-character-section--launch .bitcoin-my-character-height-down-inner {
+.bitcoin-my-character-section--badge > .bitcoin-my-character-height-down-inner,
+.bitcoin-my-character-section--photo > .bitcoin-my-character-height-down-inner,
+.bitcoin-my-character-section--launch > .bitcoin-my-character-height-down-inner {
 	padding-bottom: 16px;
 }
 
@@ -7298,6 +7357,116 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	top: -1.5px;
 }
 
+.blood-overlay-card--character-pay {
+	height: auto;
+	min-height: 0;
+	max-height: none;
+	overflow: visible;
+	flex-shrink: 0;
+}
+
+.blood-overlay-card--character-pay .blood-ok {
+	width: 100%;
+	margin-top: 0;
+}
+
+.blood-overlay-card--character-pay .asset-dc-promo-section {
+	/* Keep title→video spacing identical to Add Photo modal (gap: 0 + headline margin). */
+	gap: 0;
+	padding-bottom: 10px;
+}
+
+.blood-overlay-card--character-pay-update .asset-dc-promo-section .asset-dc-promo-frame {
+	/* No headline — keep top padding tidy */
+	margin-top: 0;
+}
+
+.blood-overlay-card--character-pay .asset-dc-promo-section .asset-character-pay-section {
+	margin-top: 10px;
+}
+
+.blood-overlay-card--character-pay .asset-dc-promo-section .asset-character-pay-cta {
+	width: 100%;
+	margin-top: 10px;
+}
+
+.asset-character-pay-section {
+	width: 100%;
+	margin: 0;
+	padding: 22px 12px 18px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 4%,
+		#fff
+	);
+}
+
+.asset-character-pay-price {
+	margin: 0;
+	padding: 0;
+	font-size: 42px;
+	font-weight: 800;
+	line-height: 1;
+	letter-spacing: -0.8px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
+.asset-character-pay-cta:disabled {
+	opacity: 1;
+	cursor: wait;
+}
+
+.asset-character-pay-profile-icon {
+	display: block;
+	flex-shrink: 0;
+	width: 26px;
+	height: 26px;
+	opacity: 0.95;
+	background: currentColor;
+	-webkit-mask-image: url('/images/icons/profile.png');
+	mask-image: url('/images/icons/profile.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	position: relative;
+	top: -1px;
+}
+
+.asset-character-pay-loader {
+	display: block;
+	flex-shrink: 0;
+	width: 22px;
+	height: 22px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 3px solid color-mix(in srgb, currentColor 25%, transparent);
+	border-top-color: currentColor;
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+@media (min-width: 751px) {
+	.asset-character-pay-price {
+		font-size: 48px;
+	}
+}
+
 .asset-dc-promo-section {
 	width: 100%;
 	margin: 0;
@@ -7900,6 +8069,13 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 .asset-alien-meta-preview-frame--loop
 	.asset-alien-meta-preview.asset-alien-meta-preview--loop-still.is-visible {
 	opacity: 1;
+	transition-duration: 1.5s;
+}
+
+.asset-alien-meta-preview-frame--loop
+	.asset-alien-meta-preview.asset-alien-meta-preview--loop-still.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
 	transition-duration: 1.5s;
 }
 
@@ -14220,6 +14396,159 @@ a.asset-action-button--save-signin {
 	border: 2px solid color-mix(in srgb, var(--asset-line-color) 28%, transparent);
 	border-top-color: var(--asset-line-color);
 	animation: authCircleLoaderSpin 0.85s linear infinite;
+}
+
+/* Nav control loading: hide words/icons, show only a centered circle. */
+a.is-nav-loading,
+button.is-nav-loading,
+[role='button'].is-nav-loading {
+	position: relative;
+	cursor: wait;
+	pointer-events: none;
+}
+
+/* Never blank the photo card — label-only loading uses .is-nav-loading-label. */
+a.asset-alien-photo-hit.is-nav-loading {
+	color: inherit !important;
+	-webkit-text-fill-color: inherit !important;
+}
+
+a.asset-alien-photo-hit.is-nav-loading > *:not(.nav-control-spinner) {
+	visibility: visible !important;
+}
+
+a.is-nav-loading:not(.home-asset-card):not(.myinv-asset-home-card):not(.bitcoin-alien-race-asset-card):not(.asset-alien-photo-hit),
+button.is-nav-loading,
+[role='button'].is-nav-loading:not(.asset-alien-photo-hit) {
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+a.is-nav-loading:not(.home-asset-card):not(.myinv-asset-home-card):not(.bitcoin-alien-race-asset-card):not(.asset-alien-photo-hit)
+	> *:not(.nav-control-spinner),
+button.is-nav-loading > *:not(.nav-control-spinner),
+[role='button'].is-nav-loading:not(.asset-alien-photo-hit) > *:not(.nav-control-spinner) {
+	visibility: hidden !important;
+}
+
+.nav-control-spinner {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(
+		in srgb,
+		var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 28%,
+		transparent
+	);
+	border-top-color: var(
+		--asset-line-color,
+		var(--myinv-accent-color, rgba(248, 141, 0, 1))
+	);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	visibility: visible !important;
+	opacity: 1 !important;
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+	pointer-events: none;
+}
+
+/* Asset badge chips: keep chip size, hide title ink, show spinner.
+   Specificity must beat `.…chip.asset-action-button--bitcoin` color !important. */
+a.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+a.is-nav-loading .home-asset-name.asset-action-button.is-nav-loading-chip,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip.asset-action-button--bitcoin,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip.asset-action-button--ethereum,
+.myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+.myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip.asset-action-button--bitcoin,
+.myinv-page .myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+.bitcoin-alien-race-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+.bitcoin-alien-race-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip.asset-action-button--bitcoin,
+.asset-action-button--home-asset-chip.is-nav-loading-chip,
+.home-asset-name.asset-action-button.is-nav-loading-chip {
+	position: relative !important;
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+a.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+a.is-nav-loading .home-asset-name.asset-action-button.is-nav-loading-chip > *,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+.myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+.bitcoin-alien-race-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+.asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+.home-asset-name.asset-action-button.is-nav-loading-chip > * {
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+	opacity: 0 !important;
+}
+
+a.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+a.is-nav-loading .home-asset-name.asset-action-button.is-nav-loading-chip::after,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+.myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+.bitcoin-alien-race-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+.asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+.home-asset-name.asset-action-button.is-nav-loading-chip::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 12px;
+	height: 12px;
+	margin: -6px 0 0 -6px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(
+		in srgb,
+		var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 28%,
+		transparent
+	);
+	border-top-color: var(
+		--asset-line-color,
+		var(--myinv-accent-color, rgba(248, 141, 0, 1))
+	);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	opacity: 1 !important;
+}
+
+/* View My Character: spin the words only — photo stays visible. */
+.asset-alien-photo-plus.is-nav-loading-label {
+	position: relative;
+	cursor: wait;
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+.asset-alien-photo-plus.is-nav-loading-label > * {
+	opacity: 0 !important;
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+.asset-alien-photo-plus.is-nav-loading-label::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(
+		in srgb,
+		var(--asset-range-button-label-color, rgb(209, 142, 55)) 28%,
+		transparent
+	);
+	border-top-color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	opacity: 1 !important;
 }
 
 .asset-summary-circle-loader {

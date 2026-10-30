@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { assetSharePath } from '../../../lib/assets/assetSharePath';
+import { markNavControlLoading } from '../../../lib/client/navCircleLoader';
 import AlienMetaPreview from './AlienMetaPreview';
 
 /** True on the asset home (optional shareId) or My Character routes for that asset. */
@@ -84,14 +85,18 @@ export default function AlienCharacterCreateHost() {
     : true;
   const errorAssetHref = assetSharePath(`/${errorAssetId}`, error?.shareId);
 
-  const onErrorAction = useCallback(() => {
-    if (!errorOnAssetSurface && error) {
+  const onErrorAction = useCallback(
+    (event?: React.MouseEvent<HTMLElement>) => {
+      if (!errorOnAssetSurface && error) {
+        if (event?.currentTarget) markNavControlLoading(event.currentTarget);
+        dismissError();
+        router.push(errorAssetHref);
+        return;
+      }
       dismissError();
-      router.push(errorAssetHref);
-      return;
-    }
-    dismissError();
-  }, [dismissError, error, errorAssetHref, errorOnAssetSurface, router]);
+    },
+    [dismissError, error, errorAssetHref, errorOnAssetSurface, router]
+  );
 
   if (!mounted) return null;
 

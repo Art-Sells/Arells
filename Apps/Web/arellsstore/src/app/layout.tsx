@@ -4,6 +4,7 @@ import './css/global.css';
 import { UserProvider } from '../context/UserContext';
 import { AlienCharacterCreateProvider } from '../context/AlienCharacterCreateContext';
 import AlienCharacterCreateHost from '../components/Assets/shared/AlienCharacterCreateHost';
+import AssetNavCircleLoaderHost from '../components/Assets/shared/AssetNavCircleLoaderHost';
 import AnalyticsBeacon from '../components/Analytics/AnalyticsBeacon';
 import ReferralCaptureRoot from './referral-capture';
 import { VavityProvider } from '../context/VavityAggregator';
@@ -65,6 +66,7 @@ const RootLayout = ({ children }: LayoutProps) => {
             <ReferralCaptureRoot />
             <AnalyticsBeacon />
             <VavityProvider>{children}</VavityProvider>
+            <AssetNavCircleLoaderHost />
             <AlienCharacterCreateHost />
           </AlienCharacterCreateProvider>
         </UserProvider>
