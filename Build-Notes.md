@@ -8,8 +8,8 @@ After Episode 2 (or during):
 
 - If finished early, start path Implement character poster 
 - Add Grok/Stripe variables/webhooks to dynamic-characters/test/main
-- - test no photos (on website/pages and closed websites)
-- - test with photos (on website/pages and closed websites)
+- - test no photos (on website/pages and closed websites) - shared links (meta pages)
+- - test with photos (on website/pages and closed websites) - shared links (meta pages)
 
 
 #### If sharing (organic) happens:
