@@ -4,14 +4,8 @@
 
 ### Trigger Organic Growth (AI's public perception problem).
 
-After Episode 2 (or during):
-
-- If finished early, start path Implement character poster {FOR BEST RESULTS [show sample photo white mannequin with black features}}: Good lighting, face forward, no smiling or frowning})(metadata image [implement it in the bitcoin alien race and {if you share this page, this is what your friends/family will see}) {when to implement the videos, differing clothes/voices/etc (if possible))
-
-- Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
-
-- *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
-- *brink1111111@outlook.com and j6767677@outlook.com test emails*
+- Test (dynamic-characters no photo/with photo) - meta shares of bitcoin/news/character pages
+- Test (test no photo/with photo) - meta shares of bitcoin/news/character pages
 
 ### Daily:
 - Verify dmarc email aggregates daily/weekly
@@ -22,8 +16,11 @@ After Episode 2 (or during):
 - - find ~/Library/Application\ Support/Cursor/User/globalStorage
 - - mindepth 1 -mtime +2 
 - - delet
+- *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
+- *brink1111111@outlook.com and j6767677@outlook.com test emails*
 
 #### If sharing (organic) happens:
+- Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
 - Prepare to change banners for other assets
 - Purchase MDR for: Binaural Frequency Meditation (and others) - Positive Relaxing Dreamy Peaceful Ambient 
 - Purchase MDR for: Cinematic Ambient Piano - amadasounds
