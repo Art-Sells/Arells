@@ -1,6 +1,10 @@
 import Stripe from 'stripe';
 
-/** Managed Payments requires preview API (blueprint: 2026-02-25.preview). */
+/**
+ * Preview API required to set managed_payments[enabled]=false.
+ * Account default can leave Managed Payments on (Sold through Link + checkout.stripe.com),
+ * which blocks the billing.arells.com Checkout custom domain.
+ */
 const STRIPE_API_VERSION = '2026-02-25.preview' as Stripe.LatestApiVersion;
 
 let stripeSingleton: Stripe | null = null;

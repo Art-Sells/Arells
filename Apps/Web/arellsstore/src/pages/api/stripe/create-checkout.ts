@@ -23,27 +23,6 @@ function sanitizeReturnPath(raw: unknown): string {
   return path;
 }
 
-/** If Stripe still returns checkout.stripe.com, map to your Checkout custom domain. */
-function rewriteCheckoutToCustomDomain(url: string): string {
-  const raw =
-    process.env.STRIPE_CHECKOUT_CUSTOM_DOMAIN?.trim() ||
-    process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_DOMAIN?.trim() ||
-    'billing.arells.com';
-  const host = raw.replace(/^https?:\/\//i, '').replace(/\/+$/, '');
-  if (!host) return url;
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === 'checkout.stripe.com') {
-      parsed.protocol = 'https:';
-      parsed.hostname = host;
-      return parsed.toString();
-    }
-  } catch {
-    /* keep original */
-  }
-  return url;
-}
-
 async function userHasPortrait(email: string, assetId: string): Promise<boolean> {
   const s3 = getServerS3();
   try {
@@ -121,8 +100,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const successJoin = successPath.includes('?') ? '&' : '?';
     const cancelJoin = cancelPath.includes('?') ? '&' : '?';
 
-    // Do NOT enable managed_payments here — Stripe custom domains (billing.arells.com)
-    // are unsupported with Managed Payments and force checkout.stripe.com URLs.
+    // Explicit false: account default can keep Managed Payments on (Sold through Link),
+    // which Stripe hosts only on checkout.stripe.com — not billing.arells.com.
     const checkout = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{ price, quantity: 1 }],
@@ -135,9 +114,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         product: 'character_generation',
         successPath,
       },
+      managed_payments: { enabled: false },
       success_url: `${origin}${successPath}${successJoin}cg_checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${cancelPath}${cancelJoin}cg_checkout=cancel`,
-    });
+    } as Parameters<typeof stripe.checkout.sessions.create>[0]);
 
     if (!checkout.url) {
       return res.status(500).json({ error: 'Checkout session missing URL' });
@@ -145,12 +125,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     await attachCheckoutSession(session.email, credit.creditId, checkout.id);
 
-    const checkoutUrl = rewriteCheckoutToCustomDomain(checkout.url);
-
+    // Use Stripe's session.url as-is. With a Ready + switched Checkout custom domain,
+    // Stripe returns https://billing.arells.com/c/pay/... — never rewrite the host.
     return res.status(200).json({
       alreadyPaid: false,
       creditId: credit.creditId,
-      url: checkoutUrl,
+      url: checkout.url,
       sessionId: checkout.id,
     });
   } catch (err) {
