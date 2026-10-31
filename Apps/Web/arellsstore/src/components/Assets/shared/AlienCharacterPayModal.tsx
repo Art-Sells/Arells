@@ -18,8 +18,8 @@ export type AlienCharacterPayModalProps = {
 
 /**
  * Paywall before photo upload.
- * create: ADD YOUR CHARACTER + video + $2.49 + Create Character
- * update: video + $2.49 + Update Character (no title)
+ * create: ADD YOUR CHARACTER + video + $4.99 + Create Character
+ * update: video + $4.99 + Update Character (no title)
  */
 const AlienCharacterPayModal: React.FC<AlienCharacterPayModalProps> = ({
   open,
@@ -128,7 +128,7 @@ const AlienCharacterPayModal: React.FC<AlienCharacterPayModalProps> = ({
           </div>
           <div className="asset-character-pay-section">
             <p id={titleId} className="asset-character-pay-price">
-              $2.49
+              $4.99
             </p>
           </div>
           <button
