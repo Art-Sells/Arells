@@ -2534,27 +2534,6 @@ a.asset-alien-photo-hit {
 	gap: 10px;
 }
 
-.tbar-memoriam-section {
-	width: 100%;
-	box-sizing: border-box;
-	border-radius: 14px;
-	padding: 10px;
-	border: 1px solid rgba(248, 141, 0, 0.3);
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.tbar-memoriam-copy {
-	width: 100%;
-	box-sizing: border-box;
-	border-radius: 14px;
-	padding: 10px;
-	padding-bottom: 10px;
-	border: 1px solid rgba(248, 141, 0, 0.3);
-	line-height: normal;
-}
-
 .tbar-thumb {
 	display: block;
 	position: relative;
@@ -2768,120 +2747,6 @@ a.asset-alien-photo-hit {
 	border-color: rgba(248, 141, 0, 0.9) !important;
 	background: rgba(248, 141, 0, 0.18) !important;
 	text-transform: lowercase;
-}
-
-.storyline-opening {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	text-align: center;
-	width: 100%;
-	max-width: 320px;
-	margin-left: auto;
-	margin-right: auto;
-	box-sizing: border-box;
-}
-
-.storyline-opening-label {
-	display: block;
-	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
-	color: inherit;
-	opacity: 0.75;
-	margin: 0 0 6px;
-}
-
-.storyline-opening-rule.site-social-footer-rule {
-	width: min(200px, 70%);
-	height: 1px;
-	margin: 0 0 10px;
-	background: color-mix(in srgb, currentColor 40%, transparent);
-	opacity: 0.7;
-}
-
-.storyline-opening-body.myportfolio-text-chunks {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: center;
-	align-items: baseline;
-	column-gap: 0.35em;
-	row-gap: 0;
-	margin: 0;
-	font-size: 12px;
-	font-weight: 400;
-	line-height: 1.35;
-	letter-spacing: -0.2px;
-	color: inherit;
-}
-
-.storyline-opening-body.myportfolio-text-chunks > span {
-	flex: 0 1 auto;
-	min-width: 0;
-}
-
-.storyline-opening-row-break {
-	flex-basis: 100%;
-	width: 100%;
-	height: 0;
-	margin: 0;
-	padding: 0;
-	border: 0;
-	overflow: hidden;
-}
-
-@media (max-width: 750px) {
-	.storyline-opening-body.myportfolio-text-chunks {
-		flex-direction: column;
-		align-items: center;
-		column-gap: 0;
-	}
-}
-
-.storyline-opening--bitcoin-teaser {
-	max-width: 100%;
-	margin-top: 0;
-	color: var(--asset-unified-text-color, var(--asset-line-color, rgb(209, 142, 55)));
-	-webkit-text-fill-color: var(--asset-unified-text-color, var(--asset-line-color, rgb(209, 142, 55)));
-}
-
-.storyline-opening--bitcoin-teaser .storyline-opening-label {
-	font-weight: 400;
-}
-
-.storyline-opening--bitcoin-teaser .storyline-opening-rule.site-social-footer-rule {
-	background: rgba(248, 141, 0, 0.3);
-	opacity: 1;
-}
-
-.storyline-opening--bitcoin-teaser .storyline-opening-body.myportfolio-text-chunks {
-	flex-direction: column;
-	align-items: center;
-	column-gap: 0;
-	font-size: 13px;
-	font-weight: 400;
-	line-height: 1.35;
-}
-
-.storyline-opening--memoriam .storyline-opening-label {
-	font-weight: 600;
-}
-
-.storyline-opening--memoriam > .storyline-opening-rule.site-social-footer-rule {
-	height: 2px;
-	border-radius: 50px;
-}
-
-.storyline-opening--memoriam .storyline-opening-mid-rule.site-social-footer-rule {
-	height: 2px;
-	border-radius: 50px;
-	margin: 12px 0;
-}
-
-.storyline-opening--memoriam .storyline-opening-body--memoriam-close.myportfolio-text-chunks {
-	margin-bottom: 5px;
 }
 
 .asset-portfolio-summary-box--ethereum {
@@ -5845,7 +5710,7 @@ a.asset-action-button--myinv-asset-link {
 	font-family: Arial, sans-serif;
 	font-weight: 800;
 	letter-spacing: -.6px;
-	/* Match the Home slogan ("investments can live forever") */
+	/* Match the Home slogan ("On a mission to ensure investments never lose value.") */
 	font-size: 14px;
 	color: #000;
 	opacity: .5;
@@ -10810,26 +10675,30 @@ a.myinv-about-button:focus-visible {
 	  #word-logoo {
 		  width: 60px;	
 		  height: 20px;
-		  margin-bottom: -30px;
-		  transform: translateY(-2px);
+		  /* Was -30px; less pull so logo sits on the search border, not through it. */
+		  margin-bottom: -24px;
+		  transform: translateY(-7px);
 	  }
 
 	  .home-header-inner.is-liquid #word-logoo {
-		  transform: translateY(-2px);
+		  transform: translateY(-7px);
 	  }
 	  
 	  #descriptioner-wrapper {
 		font-size: 7.3px;
 		margin-top: 4px;
-		margin-bottom: -21.8px;
+		/* Was -21.8px; match the logo pull so slogan stays flush with the same edge. */
+		margin-bottom: -15.8px;
 	  }
 
 	  #descriptioner {
-		font-size: 11px !important;
+		font-size: 8px !important;
+		transform: translateY(2px);
 	  }
 
 	  .home-assets-wrapper {
-		margin-top: 3.5px;
+		/* Was 3.5px; drop the search card so header/slogan clear the top border. */
+		margin-top: 9.5px;
 	  }
 
 	  .home-investments-slideup-button-text {
@@ -12701,9 +12570,29 @@ a.growth-metrics-about-button:focus-visible {
 }
 
 .auth-verify-sent.auth-verify-sent--verified-success .auth-verified-phase-section .auth-verify-success-cta {
+	position: relative;
 	width: 100%;
 	margin-top: 10px;
 	margin-bottom: 0;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verify-success-cta.is-loading .auth-verify-success-cta-label {
+	visibility: hidden;
+}
+
+.auth-verify-sent.auth-verify-sent--verified-success .auth-verify-success-cta-spinner {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	pointer-events: none;
 }
 
 /* Sign-in / verified: accent circle loader (same placement as asset summary loader). */
@@ -13394,7 +13283,7 @@ a.asset-action-button--save-signin {
 	letter-spacing: -0.5px;
 }
 
-/* Divider shared by Questions/Concerns + storyline (was SiteSocialFooter). */
+/* Divider shared by Questions/Concerns (was SiteSocialFooter). */
 .site-social-footer-rule {
 	display: block;
 	width: min(320px, 88%);
@@ -13484,7 +13373,7 @@ a.asset-action-button--save-signin {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 10px;
+	gap: 5px;
 	/* 20px from the page top, counting the empty 18px `.asset-header` rendered above it. */
 	margin: 2px auto 0;
 	text-align: center;
@@ -13527,7 +13416,7 @@ a.asset-action-button--save-signin {
 }
 
 .asset-page--bitcoin .asset-mission-header {
-	gap: 15px;
+	gap: 10px;
 	margin-bottom: -5px;
 }
 
@@ -13736,17 +13625,17 @@ a.asset-action-button--save-signin {
 }
 
 .asset-guest-icon-wrap {
-	margin-top: 100px;
+	margin-top: 85px;
 }
 
 .asset-page-content--bitcoin.asset-guest-landing:not(.asset-guest-landing--small-icon) .asset-guest-icon-wrap {
-	margin-top: 80px;
+	margin-top: 65px;
 }
 
 .asset-guest-landing--small-icon .asset-guest-icon-wrap {
 	width: 30px;
 	height: 30px;
-	margin-top: 32px;
+	margin-top: 17px;
 }
 
 .asset-guest-landing--small-icon .home-guest-icon-img {
@@ -15658,7 +15547,27 @@ a.is-nav-loading .home-asset-name.asset-action-button.is-nav-loading-chip::after
 }
 
 .not-found-page .home-guest-signin-button.auth-submit--accent {
+	position: relative;
 	text-transform: none;
+}
+
+.not-found-page .home-guest-signin-button.is-loading .not-found-home-button-label {
+	visibility: hidden;
+}
+
+.not-found-page .not-found-home-button-spinner {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(in srgb, var(--myinv-accent-color) 28%, transparent);
+	border-top-color: var(--myinv-accent-color);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	pointer-events: none;
 }
 
 .myinv-page--portfolio:not(.myinv-page--earn-weekly) .myportfolio-share-panel {

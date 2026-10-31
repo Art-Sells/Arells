@@ -1,20 +1,16 @@
 'use client';
 
 import React from 'react';
-import { useAlienCharacterPresent } from '../../../hooks/useAlienCharacterPresent';
 
 type AssetMissionHeaderProps = {
   title: string;
-  /** When set, “My” only after a character photo exists; otherwise “Your”. */
+  /** Kept for call-site compat; mission copy no longer uses Your/My. */
   assetId?: string;
   line?: React.ReactNode;
   children?: React.ReactNode;
 };
 
-export default function AssetMissionHeader({ title, assetId, line, children }: AssetMissionHeaderProps) {
-  const hasCharacter = useAlienCharacterPresent(assetId);
-  const possessive = assetId ? (hasCharacter ? 'My' : 'Your') : 'Your';
-
+export default function AssetMissionHeader({ title, line, children }: AssetMissionHeaderProps) {
   return (
     <div className="asset-mission-header">
       <span className="asset-mission-header-icon" aria-hidden="true">
@@ -23,27 +19,9 @@ export default function AssetMissionHeader({ title, assetId, line, children }: A
       <p className="asset-mission-header-line">
         {line ?? (
           <>
-            <span className="asset-mission-possessive" aria-label={possessive}>
-              <span
-                className={`asset-mission-possessive-word${
-                  possessive === 'Your' ? ' is-active' : ''
-                }`}
-                aria-hidden={possessive !== 'Your'}
-              >
-                Your
-              </span>
-              <span
-                className={`asset-mission-possessive-word${
-                  possessive === 'My' ? ' is-active' : ''
-                }`}
-                aria-hidden={possessive !== 'My'}
-              >
-                My
-              </span>
-            </span>{' '}
-            {title}
+            On a mission to ensure
             <br />
-            investments can live forever.
+            {title} never loses value.
           </>
         )}
       </p>

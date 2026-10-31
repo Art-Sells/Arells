@@ -497,7 +497,7 @@ const Index = () => {
             className={`home-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
             style={{ letterSpacing: '0px', marginLeft: '0px' }}
           >
-            investments can live forever
+            on a mission to ensure investments never lose value
           </p>
         </div>
       </div>
