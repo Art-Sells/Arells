@@ -113,11 +113,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         product: 'character_generation',
         successPath,
       },
-      // @ts-expect-error managed_payments is on Managed Payments preview API
       managed_payments: { enabled: true },
       success_url: `${origin}${successPath}${successJoin}cg_checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${cancelPath}${cancelJoin}cg_checkout=cancel`,
-    });
+    } as Parameters<typeof stripe.checkout.sessions.create>[0]);
 
     if (!checkout.url) {
       return res.status(500).json({ error: 'Checkout session missing URL' });

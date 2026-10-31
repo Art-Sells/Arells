@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signalAppNavigation } from '../../../lib/client/navCircleLoader';
 
 const PORTFOLIO_NAV_DELAY_MS = 280;
 

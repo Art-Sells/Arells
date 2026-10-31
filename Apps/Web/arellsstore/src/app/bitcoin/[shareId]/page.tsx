@@ -46,13 +46,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const email = await resolveReferrerEmailFromCode(shareId);
   const hasComposed = email ? await composedExistsForEmail(email) : false;
+  const fallbackImages = base.openGraph?.images;
+  const firstFallback = Array.isArray(fallbackImages) ? fallbackImages[0] : fallbackImages;
+  const fallbackOgUrl =
+    typeof firstFallback === 'string'
+      ? firstFallback
+      : firstFallback && typeof firstFallback === 'object' && 'url' in firstFallback
+        ? String(firstFallback.url)
+        : undefined;
   const ogImage = hasComposed
     ? publicAlienImagePath({ shareId, asset: assetId, kind: 'composed' })
-    : base.openGraph?.images?.[0] &&
-        typeof base.openGraph.images[0] === 'object' &&
-        'url' in base.openGraph.images[0]
-      ? String(base.openGraph.images[0].url)
-      : undefined;
+    : fallbackOgUrl;
 
   return {
     ...base,
