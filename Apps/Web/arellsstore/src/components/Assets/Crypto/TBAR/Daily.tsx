@@ -4,6 +4,8 @@ import React from 'react';
 import TBARLoadReveal from './LoadReveal';
 import TBARGrid from './Grid';
 import { useTBAR } from './useTBAR';
+import { useUser } from '../../../../context/UserContext';
+import { assetSharePath } from '../../../../lib/assets/assetSharePath';
 import { TBAR_PAGE_SIZE, tbarThumbCount } from '../../../../lib/assets/crypto/TBAR/media';
 
 type TBARDailyProps = {
@@ -12,19 +14,21 @@ type TBARDailyProps = {
 };
 
 export default function TBARDaily({ variant, mountExpand = true }: TBARDailyProps) {
+  const { shareId } = useUser();
   const { days, ready } = useTBAR();
   const hasContent = tbarThumbCount(days) > 0;
   const open = Boolean(mountExpand && ready && hasContent);
   const theme = variant;
+  const newsHref = assetSharePath('/bitcoin/news', shareId);
   const body = (
     <TBARLoadReveal ready={ready} hasContent={hasContent} theme={theme}>
       <TBARGrid
         days={days}
         theme={theme}
-        imageHref="/bitcoin/news"
+        imageHref={newsHref}
         usePreviewThumbs
         seekWidthPx={variant === 'bitcoin' ? 100 : undefined}
-        viewMoreHref="/bitcoin/news"
+        viewMoreHref={newsHref}
         pageSize={TBAR_PAGE_SIZE}
       />
     </TBARLoadReveal>

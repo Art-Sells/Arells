@@ -32,8 +32,9 @@ import {
 import { isPendingNavTarget, usePendingNavHref } from '../../../lib/client/navCircleLoader';
 import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
+/** Same stock launch metaposter as bitcoin share / OG (square), not the wide guest trailer still. */
 const PREMIER_POSTER =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg';
 const PREMIER_POSTER_LOOP =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +
   encodeURIComponent('LaunchLoop(guest).mp4');
@@ -257,6 +258,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
   const loadPublicMedia = useCallback(async (id: string, cacheBust?: number) => {
     const bust = cacheBust ?? Date.now();
+    // Same composed + metaloop as /bitcoin/{shareId} (guestloop normalizes to metaloop).
     const nextMeta = publicAlienImagePath({
       shareId: id,
       asset: 'bitcoin',
@@ -275,6 +277,12 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
       kind: 'portrait',
       cacheBust: bust,
     });
+    const ownerLoopApi = `/api/user/alien-photo?asset=bitcoin&kind=metaloop&t=${bust}`;
+
+    // Optimistic — match bitcoin share page (show personal media, demote if missing).
+    setMetaUrl(nextMeta);
+    setMetaLoopUrl(nextLoop);
+    setPortraitUrl(nextPortrait);
 
     try {
       const [metaHead, loopHead, portraitHead] = await Promise.all([
@@ -282,10 +290,28 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         fetch(nextLoop, { method: 'HEAD', cache: 'no-store' }),
         fetch(nextPortrait, { method: 'HEAD', cache: 'no-store' }),
       ]);
-      setMetaUrl(metaHead.ok ? nextMeta : null);
-      setMetaLoopUrl(metaHead.ok && loopHead.ok ? nextLoop : null);
-      setPortraitUrl(portraitHead.ok ? nextPortrait : null);
-      if (!metaHead.ok && !portraitHead.ok) {
+      const metaOk = metaHead.ok;
+      const portraitOk = portraitHead.ok;
+      let loopSrc: string | null = metaOk && loopHead.ok ? nextLoop : null;
+
+      // Owner: same S3 metaloop via auth route if public HEAD flakes on Amplify.
+      if (metaOk && !loopSrc && isOwner) {
+        try {
+          const ownerLoopHead = await fetch(ownerLoopApi, {
+            method: 'HEAD',
+            credentials: 'include',
+            cache: 'no-store',
+          });
+          if (ownerLoopHead.ok) loopSrc = ownerLoopApi;
+        } catch {
+          /* leave null */
+        }
+      }
+
+      setMetaUrl(metaOk ? nextMeta : null);
+      setMetaLoopUrl(loopSrc);
+      setPortraitUrl(portraitOk ? nextPortrait : null);
+      if (!metaOk && !portraitOk) {
         router.replace(assetSharePath('/bitcoin', id));
       }
     } catch {
@@ -293,7 +319,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
       setMetaLoopUrl(null);
       setPortraitUrl(null);
     }
-  }, [router]);
+  }, [router, isOwner]);
 
   useEffect(() => {
     if (authSessionLoading) return;
@@ -481,8 +507,8 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           posterSrc={PREMIER_POSTER}
           posterLoopSrc={PREMIER_POSTER_LOOP}
           posterWidth={2000}
-          posterHeight={1166}
-          posterAlt="My Character"
+          posterHeight={2000}
+          posterAlt="Bitcoin Alien Race launch poster"
           smallIcon
           showTrailer
           hideWordmark

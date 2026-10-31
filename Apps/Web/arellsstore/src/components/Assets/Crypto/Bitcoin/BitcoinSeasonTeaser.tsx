@@ -91,20 +91,25 @@ export default function BitcoinSeasonTeaser() {
     setLoopEnabled(false);
 
     const bust = cacheBust ? `&t=${cacheBust}` : `&t=${Date.now()}`;
+    const loopApiSrc = `/api/user/alien-photo?asset=bitcoin&kind=seasononeloop${bust}`;
+    let hasPersonalStill = false;
     try {
-      const [stillRes, loopRes] = await Promise.all([
+      // Still: GET + blob (image, small). Loop: HEAD only — GET 302s to S3 and
+      // fetch() then fails CORS, which used to wipe personal media → stock loop.
+      const [stillRes, loopHead] = await Promise.all([
         fetch(`/api/user/alien-photo?asset=bitcoin&kind=seasonone${bust}`, {
           credentials: 'include',
           cache: 'no-store',
         }),
-        fetch(`/api/user/alien-photo?asset=bitcoin&kind=seasononeloop${bust}`, {
+        fetch(loopApiSrc, {
+          method: 'HEAD',
           credentials: 'include',
           cache: 'no-store',
         }),
       ]);
 
-      const hasPersonalStill = stillRes.ok;
-      const hasPersonalLoop = loopRes.ok;
+      hasPersonalStill = stillRes.ok;
+      const hasPersonalLoop = loopHead.ok;
 
       if (hasPersonalStill) {
         const blob = await stillRes.blob();
@@ -121,11 +126,10 @@ export default function BitcoinSeasonTeaser() {
       }
 
       if (hasPersonalLoop) {
-        // Use the API URL as <video src> (server redirects to S3). Do not blob() —
-        // Amplify cannot proxy large MP4s, and fetch→S3 needs CORS the player does not.
+        // <video src> hits API → 302 S3 (player follows; fetch must not).
         setLoopSrc((prev) => {
           if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
-          return `/api/user/alien-photo?asset=bitcoin&kind=seasononeloop${bust}`;
+          return loopApiSrc;
         });
         setLoopEnabled(true);
       } else if (hasPersonalStill) {
@@ -143,8 +147,17 @@ export default function BitcoinSeasonTeaser() {
         setLoopEnabled(true);
       }
     } catch {
-      applyStockSeasonOne();
-      return;
+      // Keep personal still if we already got it; never demote to stock loop over it.
+      if (hasPersonalStill) {
+        setLoopSrc((prev) => {
+          if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+          return '';
+        });
+        setLoopEnabled(false);
+      } else {
+        applyStockSeasonOne();
+        return;
+      }
     } finally {
       setMediaReady(true);
     }

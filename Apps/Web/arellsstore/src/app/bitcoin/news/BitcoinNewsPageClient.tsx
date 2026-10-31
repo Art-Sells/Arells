@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import TBARLoadReveal from '../../../components/Assets/Crypto/TBAR/LoadReveal';
 import TBARGrid from '../../../components/Assets/Crypto/TBAR/Grid';
@@ -11,13 +12,18 @@ import { useAssetSummaryCircleLoader } from '../../../components/Assets/shared/u
 import { useUser } from '../../../context/UserContext';
 import { useTBAR } from '../../../components/Assets/Crypto/TBAR/useTBAR';
 import { useGuestPreview } from '../../../hooks/useGuestPreview';
-import { assetSharePath } from '../../../lib/assets/assetSharePath';
+import {
+  assetSharePath,
+  publicAlienImagePath,
+  publicAlienVideoPath,
+} from '../../../lib/assets/assetSharePath';
 import { splitTBARDaysAt, tbarThumbCount } from '../../../lib/assets/crypto/TBAR/media';
 import { isPendingNavTarget, usePendingNavHref } from '../../../lib/client/navCircleLoader';
 import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
+/** Same stock launch metaposter as bitcoin share / my-character (square). */
 const PREMIER_POSTER =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg';
 const PREMIER_POSTER_LOOP =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +
   encodeURIComponent('LaunchLoop(guest).mp4');
@@ -44,7 +50,15 @@ function measureTBARSectionHeight(
   return Math.ceil(content.scrollHeight + padY);
 }
 
-const BitcoinNewsPageClient: React.FC = () => {
+type BitcoinNewsPageClientProps = {
+  /** Path share id when on /bitcoin/news/{shareId}. */
+  pathShareId?: string | null;
+};
+
+const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
+  pathShareId = null,
+}) => {
+  const router = useRouter();
   const { isSignedIn, authSessionLoading, shareId } = useUser();
   const { days, ready } = useTBAR();
   const hasContent = tbarThumbCount(days) > 0;
@@ -61,12 +75,17 @@ const BitcoinNewsPageClient: React.FC = () => {
   const otherHasContent = tbarThumbCount(otherDays) > 0;
   const guestPreview = useGuestPreview();
   const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
+  const allowSignedIn = !authSessionLoading && isSignedIn && !guestPreview;
   /** Signed-in chrome during auth too — never blank the page while session resolves. */
   const showSignedInShell = !guestPreview && (authSessionLoading || isSignedIn);
   const pageLoader = useAssetSummaryCircleLoader();
   usePendingNavHref();
   const bitcoinBadgeHref = assetSharePath('/bitcoin', shareId);
   const bitcoinBadgeLoading = isPendingNavTarget(bitcoinBadgeHref);
+  // Optimistic personal metaposter on shared news URLs (same as /bitcoin/{shareId}).
+  const [sharePosterReady, setSharePosterReady] = useState(() => Boolean(pathShareId));
+  const [shareLoopReady, setShareLoopReady] = useState(() => Boolean(pathShareId));
+  const [shareMediaBust, setShareMediaBust] = useState(() => Date.now());
   const sectionWrapRef = useRef<HTMLDivElement>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const otherContentRef = useRef<HTMLDivElement>(null);
@@ -81,6 +100,58 @@ const BitcoinNewsPageClient: React.FC = () => {
     () => measureTBARSectionHeight(sectionWrapRef.current, sectionContentRef.current),
     []
   );
+
+  /** Bare /bitcoin/news → /bitcoin/news/{shareId} when signed in. */
+  useEffect(() => {
+    if (authSessionLoading || pathShareId) return;
+    if (allowSignedIn && shareId) {
+      router.replace(assetSharePath('/bitcoin/news', shareId));
+    }
+  }, [authSessionLoading, pathShareId, allowSignedIn, shareId, router]);
+
+  useEffect(() => {
+    if (!showGuest || !pathShareId) {
+      setSharePosterReady(false);
+      setShareLoopReady(false);
+      return;
+    }
+    let cancelled = false;
+    const bust = Date.now();
+    setShareMediaBust(bust);
+    setSharePosterReady(true);
+    setShareLoopReady(true);
+    const posterUrl = publicAlienImagePath({
+      shareId: pathShareId,
+      asset: 'bitcoin',
+      kind: 'composed',
+      cacheBust: bust,
+    });
+    const loopUrl = publicAlienVideoPath({
+      shareId: pathShareId,
+      asset: 'bitcoin',
+      kind: 'metaloop',
+      cacheBust: bust,
+    });
+    void (async () => {
+      try {
+        const [posterHead, loopHead] = await Promise.all([
+          fetch(posterUrl, { method: 'HEAD', cache: 'no-store' }),
+          fetch(loopUrl, { method: 'HEAD', cache: 'no-store' }),
+        ]);
+        if (cancelled) return;
+        setSharePosterReady(posterHead.ok);
+        setShareLoopReady(loopHead.ok);
+      } catch {
+        if (!cancelled) {
+          setSharePosterReady(false);
+          setShareLoopReady(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [showGuest, pathShareId]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -210,6 +281,26 @@ const BitcoinNewsPageClient: React.FC = () => {
   };
 
   if (showGuest) {
+    const useSharePoster = Boolean(pathShareId && sharePosterReady);
+    const useShareLoop = Boolean(pathShareId && shareLoopReady);
+    const guestPosterSrc = useSharePoster
+      ? publicAlienImagePath({
+          shareId: pathShareId!,
+          asset: 'bitcoin',
+          kind: 'composed',
+          cacheBust: shareMediaBust,
+        })
+      : PREMIER_POSTER;
+    const guestLoopSrc = useShareLoop
+      ? publicAlienVideoPath({
+          shareId: pathShareId!,
+          asset: 'bitcoin',
+          kind: 'metaloop',
+          cacheBust: shareMediaBust,
+        })
+      : useSharePoster
+        ? undefined
+        : PREMIER_POSTER_LOOP;
     return (
       <div className="asset-page asset-page--bitcoin">
         <header className="asset-header asset-header--bitcoin" />
@@ -217,15 +308,16 @@ const BitcoinNewsPageClient: React.FC = () => {
           cssModifier="bitcoin"
           ticker="BTC"
           title="Bitcoin"
-          posterSrc={PREMIER_POSTER}
-          posterLoopSrc={PREMIER_POSTER_LOOP}
+          posterSrc={guestPosterSrc}
+          posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={1166}
-          posterAlt="Bitcoin News"
+          posterHeight={2000}
+          posterAlt="Bitcoin Alien Race launch poster"
           smallIcon
-          showTrailer
+          showTrailer={!pathShareId}
           hideWordmark
           hideSigninPrompt
+          possessiveMission={Boolean(pathShareId)}
         />
       </div>
     );

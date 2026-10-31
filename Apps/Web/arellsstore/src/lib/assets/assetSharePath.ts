@@ -1,6 +1,7 @@
 /**
- * Signed-in asset URLs include the user's share id (referral code), e.g. /bitcoin/a1b2c3d4e5f6.
- * Guests / missing id keep the bare path (/bitcoin). Static suffixes like /bitcoin/news stay unchanged.
+ * Signed-in asset URLs include the user's share id (referral code), e.g.
+ * /bitcoin/a1b2c3d4e5f6, /bitcoin/news/a1b2c3d4e5f6, /bitcoin/my-character/a1b2c3d4e5f6.
+ * Guests / missing id keep the bare path.
  */
 export function assetSharePath(baseHref: string, shareId?: string | null): string {
   const base = (baseHref || '/').replace(/\/+$/, '') || '/';
