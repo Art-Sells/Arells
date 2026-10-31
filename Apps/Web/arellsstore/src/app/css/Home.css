@@ -10677,11 +10677,19 @@ a.myinv-about-button:focus-visible {
 		  height: 20px;
 		  /* Was -30px; less pull so logo sits on the search border, not through it. */
 		  margin-bottom: -24px;
-		  transform: translateY(-7px);
+		  transform: translateY(-4px);
 	  }
 
 	  .home-header-inner.is-liquid #word-logoo {
-		  transform: translateY(-7px);
+		  transform: translateY(-4px);
+	  }
+
+	  /*
+	   * Logo left inset: `.home-header-inner` uses padding-left 50px (transform is owned by
+	   * page-slide animation, so translate() overrides do nothing). Trim 15px under narrow.
+	   */
+	  .home-header-inner {
+		  padding-left: 35px;
 	  }
 	  
 	  #descriptioner-wrapper {
