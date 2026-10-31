@@ -7,6 +7,7 @@
 - Test (dynamic-characters no photo/with photo) - meta shares of bitcoin/news/character pages
 - Test (test no photo/with photo) - meta shares of bitcoin/news/character pages
 
+
 ### Daily:
 - Verify dmarc email aggregates daily/weekly
 

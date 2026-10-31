@@ -183,11 +183,7 @@ const SignUpPageClient: React.FC = () => {
   const onViewPortfolio = () => {
     if (loadingPortfolio) return;
     setLoadingPortfolio(true);
-<<<<<<< HEAD
     router.push(assetSharePath('/bitcoin', shareId));
-=======
-    router.push('/bitcoin');
->>>>>>> test
     router.refresh();
   };
 
@@ -229,18 +225,14 @@ const SignUpPageClient: React.FC = () => {
                         disabled={loadingPortfolio}
                         aria-busy={loadingPortfolio || undefined}
                         className={`auth-secondary-link auth-submit--accent asset-range-button myinv-range-button auth-verify-success-cta${
-<<<<<<< HEAD
-                          loadingPortfolio ? ' is-nav-loading' : ''
-=======
-                          <span className="nav-control-spinner" aria-hidden="true" />
+                          loadingPortfolio ? ' is-loading' : ''
+                        }`}
+                      >
+                        <span className="auth-verify-success-cta-label">
                           {emailVerifiedWelcomePhaseCopy.portfolioCtaLabel}
                         </span>
                         {loadingPortfolio ? (
-<<<<<<< HEAD
-                          <span className="nav-control-spinner" aria-hidden="true" />
-=======
                           <span className="auth-verify-success-cta-spinner" aria-hidden="true" />
->>>>>>> test
                         ) : null}
                       </button>
                     </div>
