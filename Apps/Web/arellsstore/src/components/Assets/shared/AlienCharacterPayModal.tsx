@@ -71,6 +71,15 @@ const AlienCharacterPayModal: React.FC<AlienCharacterPayModalProps> = ({
     if (loadingPayment) return;
     setLoadingPayment(true);
     try {
+      // Updates go through Arells billing (Stripe Customer Portal), not Checkout.
+      if (isUpdate) {
+        const billingUrl =
+          (typeof process !== 'undefined' &&
+            process.env.NEXT_PUBLIC_BILLING_URL?.trim()) ||
+          'https://billing.arells.com';
+        window.location.href = billingUrl;
+        return;
+      }
       const result = await startCharacterGenerationCheckout(assetId);
       if (result === 'redirecting') return;
       onPaid?.();
@@ -79,7 +88,7 @@ const AlienCharacterPayModal: React.FC<AlienCharacterPayModalProps> = ({
       window.alert(err instanceof Error ? err.message : 'Payment could not be started');
       setLoadingPayment(false);
     }
-  }, [loadingPayment, assetId, onPaid]);
+  }, [loadingPayment, assetId, onPaid, isUpdate]);
 
   if (!mounted || !open) return null;
 

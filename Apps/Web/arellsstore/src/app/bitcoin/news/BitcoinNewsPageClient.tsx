@@ -118,14 +118,10 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
     let cancelled = false;
     const bust = Date.now();
     setShareMediaBust(bust);
+    // Always prefer character composed/metaloop for share URLs — never fall back to
+    // stock LaunchPoster just because Amplify HEAD flaked.
     setSharePosterReady(true);
     setShareLoopReady(true);
-    const posterUrl = publicAlienImagePath({
-      shareId: pathShareId,
-      asset: 'bitcoin',
-      kind: 'composed',
-      cacheBust: bust,
-    });
     const loopUrl = publicAlienVideoPath({
       shareId: pathShareId,
       asset: 'bitcoin',
@@ -134,18 +130,11 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
     });
     void (async () => {
       try {
-        const [posterHead, loopHead] = await Promise.all([
-          fetch(posterUrl, { method: 'HEAD', cache: 'no-store' }),
-          fetch(loopUrl, { method: 'HEAD', cache: 'no-store' }),
-        ]);
+        const loopHead = await fetch(loopUrl, { method: 'HEAD', cache: 'no-store' });
         if (cancelled) return;
-        setSharePosterReady(posterHead.ok);
         setShareLoopReady(loopHead.ok);
       } catch {
-        if (!cancelled) {
-          setSharePosterReady(false);
-          setShareLoopReady(false);
-        }
+        if (!cancelled) setShareLoopReady(false);
       }
     })();
     return () => {
@@ -281,26 +270,25 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
   };
 
   if (showGuest) {
-    const useSharePoster = Boolean(pathShareId && sharePosterReady);
     const useShareLoop = Boolean(pathShareId && shareLoopReady);
-    const guestPosterSrc = useSharePoster
+    const guestPosterSrc = pathShareId
       ? publicAlienImagePath({
-          shareId: pathShareId!,
+          shareId: pathShareId,
           asset: 'bitcoin',
           kind: 'composed',
           cacheBust: shareMediaBust,
         })
       : PREMIER_POSTER;
-    const guestLoopSrc = useShareLoop
-      ? publicAlienVideoPath({
-          shareId: pathShareId!,
-          asset: 'bitcoin',
-          kind: 'metaloop',
-          cacheBust: shareMediaBust,
-        })
-      : useSharePoster
-        ? undefined
-        : PREMIER_POSTER_LOOP;
+    const guestLoopSrc = pathShareId
+      ? useShareLoop
+        ? publicAlienVideoPath({
+            shareId: pathShareId,
+            asset: 'bitcoin',
+            kind: 'metaloop',
+            cacheBust: shareMediaBust,
+          })
+        : undefined
+      : PREMIER_POSTER_LOOP;
     return (
       <div className="asset-page asset-page--bitcoin">
         <header className="asset-header asset-header--bitcoin" />

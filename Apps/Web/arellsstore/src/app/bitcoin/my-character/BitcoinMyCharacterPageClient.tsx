@@ -258,60 +258,78 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
   const loadPublicMedia = useCallback(async (id: string, cacheBust?: number) => {
     const bust = cacheBust ?? Date.now();
-    // Same composed + metaloop as /bitcoin/{shareId} (guestloop normalizes to metaloop).
-    const nextMeta = publicAlienImagePath({
+    const publicMeta = publicAlienImagePath({
       shareId: id,
       asset: 'bitcoin',
       kind: 'composed',
       cacheBust: bust,
     });
-    const nextLoop = publicAlienVideoPath({
+    const publicLoop = publicAlienVideoPath({
       shareId: id,
       asset: 'bitcoin',
       kind: 'metaloop',
       cacheBust: bust,
     });
-    const nextPortrait = publicAlienImagePath({
+    const publicPortrait = publicAlienImagePath({
       shareId: id,
       asset: 'bitcoin',
       kind: 'portrait',
       cacheBust: bust,
     });
+    const ownerMetaApi = `/api/user/alien-photo?asset=bitcoin&kind=composed&t=${bust}`;
+    const ownerPortraitApi = `/api/user/alien-photo?asset=bitcoin&kind=portrait&t=${bust}`;
     const ownerLoopApi = `/api/user/alien-photo?asset=bitcoin&kind=metaloop&t=${bust}`;
 
-    // Optimistic — match bitcoin share page (show personal media, demote if missing).
-    setMetaUrl(nextMeta);
-    setMetaLoopUrl(nextLoop);
-    setPortraitUrl(nextPortrait);
+    // Never flash stock LaunchPoster — keep personal URLs while verifying.
+    setMetaUrl(isOwner ? null : publicMeta);
+    setMetaLoopUrl(isOwner ? null : publicLoop);
+    setPortraitUrl(isOwner ? null : publicPortrait);
 
     try {
-      const [metaHead, loopHead, portraitHead] = await Promise.all([
-        fetch(nextMeta, { method: 'HEAD', cache: 'no-store' }),
-        fetch(nextLoop, { method: 'HEAD', cache: 'no-store' }),
-        fetch(nextPortrait, { method: 'HEAD', cache: 'no-store' }),
-      ]);
-      const metaOk = metaHead.ok;
-      const portraitOk = portraitHead.ok;
-      let loopSrc: string | null = metaOk && loopHead.ok ? nextLoop : null;
-
-      // Owner: same S3 metaloop via auth route if public HEAD flakes on Amplify.
-      if (metaOk && !loopSrc && isOwner) {
-        try {
-          const ownerLoopHead = await fetch(ownerLoopApi, {
-            method: 'HEAD',
-            credentials: 'include',
-            cache: 'no-store',
+      if (isOwner) {
+        // Owner: auth API (no shareId/referral HEAD flake). Images as blobs; video as API src→S3.
+        const [metaRes, portraitRes, loopHead] = await Promise.all([
+          fetch(ownerMetaApi, { credentials: 'include', cache: 'no-store' }),
+          fetch(ownerPortraitApi, { credentials: 'include', cache: 'no-store' }),
+          fetch(ownerLoopApi, { method: 'HEAD', credentials: 'include', cache: 'no-store' }),
+        ]);
+        if (metaRes.ok) {
+          const blob = await metaRes.blob();
+          setMetaUrl((prev) => {
+            if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+            return URL.createObjectURL(blob);
           });
-          if (ownerLoopHead.ok) loopSrc = ownerLoopApi;
-        } catch {
-          /* leave null */
+        } else {
+          setMetaUrl(null);
         }
+        if (portraitRes.ok) {
+          const blob = await portraitRes.blob();
+          setPortraitUrl((prev) => {
+            if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+            return URL.createObjectURL(blob);
+          });
+        } else {
+          setPortraitUrl(null);
+        }
+        setMetaLoopUrl(metaRes.ok && loopHead.ok ? ownerLoopApi : null);
+        if (!metaRes.ok && !portraitRes.ok) {
+          router.replace(assetSharePath('/bitcoin', id));
+        }
+        return;
       }
 
-      setMetaUrl(metaOk ? nextMeta : null);
-      setMetaLoopUrl(loopSrc);
-      setPortraitUrl(portraitOk ? nextPortrait : null);
-      if (!metaOk && !portraitOk) {
+      // Guest share viewer: keep public personal URLs. Do not demote to stock on HEAD flake.
+      const [metaHead, loopHead, portraitHead] = await Promise.all([
+        fetch(publicMeta, { method: 'HEAD', cache: 'no-store' }),
+        fetch(publicLoop, { method: 'HEAD', cache: 'no-store' }),
+        fetch(publicPortrait, { method: 'HEAD', cache: 'no-store' }),
+      ]);
+      if (metaHead.ok) setMetaUrl(publicMeta);
+      else setMetaUrl(null);
+      setMetaLoopUrl(metaHead.ok && loopHead.ok ? publicLoop : null);
+      if (portraitHead.ok) setPortraitUrl(publicPortrait);
+      else setPortraitUrl(null);
+      if (!metaHead.ok && !portraitHead.ok) {
         router.replace(assetSharePath('/bitcoin', id));
       }
     } catch {

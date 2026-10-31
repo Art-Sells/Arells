@@ -97,12 +97,6 @@ const VavityBitcoin: React.FC = () => {
     setShareMediaBust(bust);
     setSharePosterReady(true);
     setShareLoopReady(true);
-    const posterUrl = publicAlienImagePath({
-      shareId: pathShareId,
-      asset: 'bitcoin',
-      kind: 'composed',
-      cacheBust: bust,
-    });
     const loopUrl = publicAlienVideoPath({
       shareId: pathShareId,
       asset: 'bitcoin',
@@ -111,16 +105,14 @@ const VavityBitcoin: React.FC = () => {
     });
     void (async () => {
       try {
-        const [posterHead, loopHead] = await Promise.all([
-          fetch(posterUrl, { method: 'HEAD', cache: 'no-store' }),
-          fetch(loopUrl, { method: 'HEAD', cache: 'no-store' }),
-        ]);
+        // Keep character composed poster even if HEAD flakes; only demote missing loop.
+        const loopHead = await fetch(loopUrl, { method: 'HEAD', cache: 'no-store' });
         if (cancelled) return;
-        setSharePosterReady(posterHead.ok);
+        setSharePosterReady(true);
         setShareLoopReady(loopHead.ok);
       } catch {
         if (!cancelled) {
-          setSharePosterReady(false);
+          setSharePosterReady(true);
           setShareLoopReady(false);
         }
       }
@@ -3695,26 +3687,25 @@ const VavityBitcoin: React.FC = () => {
   ]);
 
   if (isGuestView) {
-    const useSharePoster = Boolean(pathShareId && sharePosterReady);
     const useShareLoop = Boolean(pathShareId && shareLoopReady);
-    const guestPosterSrc = useSharePoster
+    const guestPosterSrc = pathShareId
       ? publicAlienImagePath({
-          shareId: pathShareId!,
+          shareId: pathShareId,
           asset: 'bitcoin',
           kind: 'composed',
           cacheBust: shareMediaBust,
         })
       : PREMIER_POSTER;
-    const guestLoopSrc = useShareLoop
-      ? publicAlienVideoPath({
-          shareId: pathShareId!,
-          asset: 'bitcoin',
-          kind: 'guestloop',
-          cacheBust: shareMediaBust,
-        })
-      : useSharePoster
-        ? undefined
-        : PREMIER_POSTER_LOOP;
+    const guestLoopSrc = pathShareId
+      ? useShareLoop
+        ? publicAlienVideoPath({
+            shareId: pathShareId,
+            asset: 'bitcoin',
+            kind: 'guestloop',
+            cacheBust: shareMediaBust,
+          })
+        : undefined
+      : PREMIER_POSTER_LOOP;
     return (
       <AssetGuestLanding
         cssModifier={ASSET.cssModifier}
