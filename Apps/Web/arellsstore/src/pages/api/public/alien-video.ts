@@ -7,7 +7,7 @@ import {
   normalizeAlienPhotoAsset,
   normalizeAlienPhotoKind,
 } from '../../../lib/server/alienPhoto';
-import { getServerS3 } from '../../../lib/server/awsS3';
+import { getServerS3, getServerS3SignedGetUrl } from '../../../lib/server/awsS3';
 import { s3BucketNameOrThrow } from '../../../lib/server/s3Bucket';
 
 const s3 = getServerS3();
@@ -15,6 +15,8 @@ const s3 = getServerS3();
 /**
  * Public personalized alien videos for shared /bitcoin/{shareId} guest.
  * Query: shareId, asset, kind=metaloop|seasononeloop|guestloop
+ *
+ * GET redirects to a short-lived S3 URL — Amplify compute cannot proxy large MP4s.
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -46,18 +48,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const key = alienPhotoObjectKey(email, asset, kind);
   try {
+    const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
+    const contentType = head.ContentType || 'video/mp4';
     if (req.method === 'HEAD') {
-      const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
-      res.setHeader('Content-Type', head.ContentType || 'video/mp4');
+      res.setHeader('Content-Type', contentType);
       res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=86400');
       res.setHeader('Accept-Ranges', 'bytes');
       return res.status(200).end();
     }
-    const obj = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
-    res.setHeader('Content-Type', obj.ContentType || 'video/mp4');
-    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=86400');
-    res.setHeader('Accept-Ranges', 'bytes');
-    return res.status(200).send(obj.Body);
+    const signed = getServerS3SignedGetUrl({
+      key,
+      expiresSec: 3600,
+      responseContentType: contentType,
+    });
+    res.setHeader('Cache-Control', 'private, no-store');
+    return res.redirect(302, signed);
   } catch (err) {
     if (isMissingS3Object(err)) {
       return res.status(404).json({ error: 'Not found' });

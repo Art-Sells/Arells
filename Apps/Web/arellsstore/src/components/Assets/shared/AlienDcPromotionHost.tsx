@@ -5,6 +5,7 @@ import AlienCharacterPayModal from './AlienCharacterPayModal';
 import AlienDcPromotionModal from './AlienDcPromotionModal';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { useUser } from '../../../context/UserContext';
+import { useAlienCharacterPresent } from '../../../hooks/useAlienCharacterPresent';
 import {
   dismissDcPromotion,
   hasDismissedDcPromotion,
@@ -56,6 +57,7 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
 }) => {
   const { email, shareId, isSignedIn } = useUser();
   const { blockIfCreating, startCreate } = useAlienCharacterCreate();
+  const hasCharacter = useAlienCharacterPresent(assetId);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
@@ -82,6 +84,14 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
 
   useEffect(() => {
     if (!enabled || !isSignedIn || !email) return;
+    // Already has a My Character portrait — never auto-spam the promo.
+    if (hasCharacter) {
+      dismissDcPromotion();
+      clearOpenGuideFlag();
+      setGuideOpen(false);
+      setPayOpen(false);
+      return;
+    }
     let cancelled = false;
     void (async () => {
       const style = themeStyleFrom(document.querySelector(themeSelector));
@@ -122,7 +132,7 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [enabled, isSignedIn, email, assetId, themeSelector, openGuide]);
+  }, [enabled, isSignedIn, email, assetId, themeSelector, openGuide, hasCharacter]);
 
   const onAddPhoto = useCallback(() => {
     if (!isSignedIn || !email) return;
@@ -176,6 +186,7 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
         overlayStyle={overlayStyle}
         onAddPhoto={onAddPhoto}
         onDismiss={() => {
+          dismissDcPromotion();
           clearOpenGuideFlag();
           setGuideOpen(false);
         }}

@@ -121,10 +121,11 @@ export default function BitcoinSeasonTeaser() {
       }
 
       if (hasPersonalLoop) {
-        const blob = await loopRes.blob();
+        // Use the API URL as <video src> (server redirects to S3). Do not blob() —
+        // Amplify cannot proxy large MP4s, and fetch→S3 needs CORS the player does not.
         setLoopSrc((prev) => {
           if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
-          return URL.createObjectURL(blob);
+          return `/api/user/alien-photo?asset=bitcoin&kind=seasononeloop${bust}`;
         });
         setLoopEnabled(true);
       } else if (hasPersonalStill) {

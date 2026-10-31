@@ -1291,13 +1291,12 @@ body {
 .asset-alien-photo-slot {
 	width: 92%;
 	margin: 0 auto 10px;
-	padding: 10px;
+	padding: 8px;
 	box-sizing: border-box;
 	border-radius: 14px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 180px;
 	position: relative;
 	transition: transform 0.2s ease;
 }
@@ -1327,12 +1326,11 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	gap: 14px;
 	width: 100%;
-	min-height: 160px;
 	margin: 0;
-	padding: 16px 12px;
+	padding: 10px 10px 12px;
 	border: none;
 	background: transparent;
 	cursor: pointer;
@@ -1402,6 +1400,7 @@ a.asset-alien-photo-hit {
 
 .asset-alien-photo-slot-placeholder-wrap {
 	display: block;
+	position: relative;
 	width: 100%;
 	box-sizing: border-box;
 	padding: 1px;
@@ -1409,12 +1408,14 @@ a.asset-alien-photo-hit {
 	overflow: hidden;
 	background: rgba(248, 141, 0, 0.3);
 	flex-shrink: 0;
-	/* Match personalalienplaceholder.jpg (1792×1008) so first-add remount
-	   doesn't grow the photo block mid height-down (delete-all keeps RO live). */
-	aspect-ratio: 1792 / 1008;
+	/* Personal Bitcoin Alien portrait is 2:1. Absolute img fill avoids mobile
+	   Safari %height gaps under aspect-ratio (looked like extra orange padding). */
+	aspect-ratio: 2 / 1;
 }
 
 .asset-alien-photo-slot-placeholder {
+	position: absolute;
+	inset: 0;
 	display: block;
 	width: 100%;
 	height: 100%;

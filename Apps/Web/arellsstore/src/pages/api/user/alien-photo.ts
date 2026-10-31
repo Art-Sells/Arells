@@ -11,7 +11,7 @@ import {
   normalizeAlienPhotoKind,
   sniffAlienPhotoMime,
 } from '../../../lib/server/alienPhoto';
-import { getServerS3 } from '../../../lib/server/awsS3';
+import { getServerS3, getServerS3SignedGetUrl } from '../../../lib/server/awsS3';
 import { s3BucketNameOrThrow } from '../../../lib/server/s3Bucket';
 
 const s3 = getServerS3();
@@ -48,25 +48,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const isVideo = isAlienVideoKind(kind);
     const fallbackType = isVideo ? 'video/mp4' : 'application/octet-stream';
     try {
-      if (req.method === 'HEAD') {
-        const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
-        const type = head.ContentType && head.ContentType !== 'application/octet-stream'
+      const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
+      const type =
+        head.ContentType && head.ContentType !== 'application/octet-stream'
           ? head.ContentType
           : fallbackType;
+      res.setHeader('X-Alien-Photo-Kind', kind);
+      if (req.method === 'HEAD') {
         res.setHeader('Content-Type', type);
         res.setHeader('Cache-Control', 'private, no-store');
         if (isVideo) res.setHeader('Accept-Ranges', 'bytes');
-        res.setHeader('X-Alien-Photo-Kind', kind);
         return res.status(200).end();
       }
+      // Videos: redirect to S3 — Amplify compute cannot proxy large MP4 bodies.
+      if (isVideo) {
+        const signed = getServerS3SignedGetUrl({
+          key,
+          expiresSec: 3600,
+          responseContentType: type,
+        });
+        res.setHeader('Cache-Control', 'private, no-store');
+        return res.redirect(302, signed);
+      }
       const obj = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
-      const type = obj.ContentType && obj.ContentType !== 'application/octet-stream'
-        ? obj.ContentType
-        : fallbackType;
       res.setHeader('Content-Type', type);
       res.setHeader('Cache-Control', 'private, no-store');
-      if (isVideo) res.setHeader('Accept-Ranges', 'bytes');
-      res.setHeader('X-Alien-Photo-Kind', kind);
       return res.status(200).send(obj.Body);
     } catch (err) {
       if (isMissingS3Object(err)) {

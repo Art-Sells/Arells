@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+import { s3BucketNameOrThrow } from './s3Bucket';
 
 let s3Singleton: AWS.S3 | null = null;
 
@@ -26,4 +27,23 @@ export function getServerS3(): AWS.S3 {
 
   s3Singleton = new AWS.S3(config);
   return s3Singleton;
+}
+
+/**
+ * Presigned GET so browsers/players fetch media from S3 directly.
+ * Amplify Hosting compute cannot proxy large MP4s through the API Lambda.
+ */
+export function getServerS3SignedGetUrl(args: {
+  key: string;
+  expiresSec?: number;
+  responseContentType?: string;
+}): string {
+  return getServerS3().getSignedUrl('getObject', {
+    Bucket: s3BucketNameOrThrow(),
+    Key: args.key,
+    Expires: args.expiresSec ?? 3600,
+    ...(args.responseContentType
+      ? { ResponseContentType: args.responseContentType }
+      : {}),
+  });
 }
