@@ -4,31 +4,8 @@
 
 ### Trigger Organic Growth (AI's public perception problem).
 
-After Episode 2 (or during):
-
-- If finished early, start path Implement character poster 
-- Add Grok/Stripe variables/webhooks to dynamic-characters/test/main
-- - test no photos (on website/pages and closed websites) - shared links (meta pages)
-- - test with photos (on website/pages and closed websites) - shared links (meta pages)
-
-
-#### If sharing (organic) happens:
-- Prepare to change banners for other assets
-- Purchase MDR for: Binaural Frequency Meditation (and others) - Positive Relaxing Dreamy Peaceful Ambient 
-- Purchase MDR for: Cinematic Ambient Piano - amadasounds
-- Add Worst Case Scenarios (in notes)
-- - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
-- - Add User location/etc
-
-
-### App and AI Model Building (if/after PMF/Organic-Growth:
-
-- Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
-
-- Start Process of running Localized AI models (port from best AI open source and build the memory from there) [Transition away from Grok API].
-
-- *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
-- *brink1111111@outlook.com and j6767677@outlook.com test emails*
+- Test (dynamic-characters no photo/with photo) - meta shares of bitcoin/news/character pages
+- Test (test no photo/with photo) - meta shares of bitcoin/news/character pages
 
 ### Daily:
 - Verify dmarc email aggregates daily/weekly
@@ -39,6 +16,17 @@ After Episode 2 (or during):
 - - find ~/Library/Application\ Support/Cursor/User/globalStorage
 - - mindepth 1 -mtime +2 
 - - delet
+- *Continue chipping away at junk folder issue (novelisticpictures@gmail.com and arellstester4@outlook.com (or create new emails))*
+- *brink1111111@outlook.com and j6767677@outlook.com test emails*
+
+#### If sharing (organic) happens:
+- Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
+- Prepare to change banners for other assets
+- Purchase MDR for: Binaural Frequency Meditation (and others) - Positive Relaxing Dreamy Peaceful Ambient 
+- Purchase MDR for: Cinematic Ambient Piano - amadasounds
+- Add Worst Case Scenarios (in notes)
+- - Update WAU (for Advertisers Value (Finance Value, benefit from first mover advantage since our users will know, recognize your brand first [USA users {figure out how to read IP addresses}])) "Advertising is (also) Investing into their brand awareness for brand recognition into future infrastructure to use our infrastructure to sell their products on the platform.
+- - Add User location/etc
 
 ---------------------
 

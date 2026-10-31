@@ -7,6 +7,7 @@ import { ALIEN_COMPOSE_DONE_EVENT } from '../../../../lib/assets/assetSharePath'
 import { usePosterLoopPlayback } from '../../../../hooks/usePosterLoopPlayback';
 import { SIGNED_IN_TRAILER_POSTER, SIGNED_IN_TRAILER_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/videos';
 import { EPISODE_ONE_POSTER, EPISODE_ONE_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodeone';
+import { EPISODE_TWO_POSTER, EPISODE_TWO_SOURCES } from '../../../../lib/marketing/assets/crypto/bitcoin/seasonone/episodetwo';
 
 const SEASON_ONE_POSTERS_BASE =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters';
@@ -264,6 +265,27 @@ export default function BitcoinSeasonTeaser() {
           </div>
           <div className="asset-bitcoin-season-teaser-episode">
             <p className="asset-bitcoin-season-teaser-cadence">
+              <span>Episode Two</span>
+            </p>
+            <VideoPlayer
+              theme="bitcoin"
+              sources={EPISODE_TWO_SOURCES}
+              poster={EPISODE_TWO_POSTER}
+              notchPlay
+            />
+          </div>
+          <div className="asset-bitcoin-season-teaser-episode">
+            <p className="asset-bitcoin-season-teaser-cadence">
+              <span>Episode Three</span>
+            </p>
+            <div className="asset-bitcoin-season-teaser-cadence-wrap">
+              <p className="asset-bitcoin-season-teaser-cadence">
+                <span>Coming November 28th 2026</span>
+              </p>
+            </div>
+          </div>
+          <div className="asset-bitcoin-season-teaser-episode">
+            <p className="asset-bitcoin-season-teaser-cadence">
               <span>Episode One</span>
             </p>
             <VideoPlayer
@@ -272,16 +294,6 @@ export default function BitcoinSeasonTeaser() {
               poster={EPISODE_ONE_POSTER}
               notchPlay
             />
-          </div>
-          <div className="asset-bitcoin-season-teaser-episode">
-            <p className="asset-bitcoin-season-teaser-cadence">
-              <span>Episode Two</span>
-            </p>
-            <div className="asset-bitcoin-season-teaser-cadence-wrap">
-              <p className="asset-bitcoin-season-teaser-cadence">
-                <span>Coming October 31st 2026</span>
-              </p>
-            </div>
           </div>
         </div>
       </div>
