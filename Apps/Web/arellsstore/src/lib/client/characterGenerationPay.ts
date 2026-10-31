@@ -85,6 +85,33 @@ export async function startCharacterGenerationCheckout(
   throw new Error('Checkout URL missing');
 }
 
+/**
+ * Open Stripe Customer Portal (billing.arells.com when that custom domain is set in Stripe).
+ * Requires a portal session — do not navigate to the bare billing host.
+ */
+export async function startCharacterGenerationBillingPortal(
+  returnPath?: string
+): Promise<'redirecting'> {
+  const portalRes = await fetch('/api/stripe/create-portal', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      returnPath: returnPath || currentReturnPath(),
+      origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+    }),
+  });
+  const portalJson = await portalRes.json().catch(() => ({}));
+  if (!portalRes.ok) {
+    throw new Error(portalJson.error || 'Could not open billing');
+  }
+  if (typeof portalJson.url === 'string' && portalJson.url) {
+    window.location.href = portalJson.url;
+    return 'redirecting';
+  }
+  throw new Error('Billing URL missing');
+}
+
 /** @deprecated prefer hasPaidCharacterCredit + startCharacterGenerationCheckout */
 export async function ensureCharacterGenerationPayment(
   assetId: string,

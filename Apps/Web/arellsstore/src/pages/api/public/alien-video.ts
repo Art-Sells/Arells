@@ -62,7 +62,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       responseContentType: contentType,
     });
     res.setHeader('Cache-Control', 'private, no-store');
-    return res.redirect(302, signed);
+    res.redirect(302, signed);
+    return;
   } catch (err) {
     if (isMissingS3Object(err)) {
       return res.status(404).json({ error: 'Not found' });

@@ -68,7 +68,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           responseContentType: type,
         });
         res.setHeader('Cache-Control', 'private, no-store');
-        return res.redirect(302, signed);
+        res.redirect(302, signed);
+        return;
       }
       const obj = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
       res.setHeader('Content-Type', type);
