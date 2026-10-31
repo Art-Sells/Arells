@@ -499,6 +499,9 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     [email, resolvedShareId, startCreate]
   );
 
+  // Must run every render (before any early return) — React #300 otherwise.
+  usePendingNavHref();
+
   /** Guest + share id: redirecting to /bitcoin/{shareId}. */
   if (!authSessionLoading && pathShareId && showGuest) {
     return (
@@ -559,7 +562,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   /** Owner photo block waits for credit so the label is correct + visible when height-down starts (no late pop-in). */
   const photoSectionOpen = sectionsOpen && (!isOwner || creditReady);
   const updateCtaBusy = busy || creditChecking || payOpen;
-  usePendingNavHref();
   const bitcoinBadgeHref = assetSharePath('/bitcoin', resolvedShareId);
   const bitcoinBadgeLoading = isPendingNavTarget(bitcoinBadgeHref);
 
