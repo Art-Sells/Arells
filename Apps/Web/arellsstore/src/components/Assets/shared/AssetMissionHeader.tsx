@@ -13,7 +13,13 @@ export default function AssetMissionHeader({ title, line, children }: AssetMissi
         <span className="home-guest-icon-tint asset-guest-icon-tint" />
       </span>
       <p className="asset-mission-header-line">
-        {line ?? <>{title} investments can live forever.</>}
+        {line ?? (
+          <>
+            On a mission to ensure
+            <br />
+            {title} never loses value.
+          </>
+        )}
       </p>
       {children}
     </div>

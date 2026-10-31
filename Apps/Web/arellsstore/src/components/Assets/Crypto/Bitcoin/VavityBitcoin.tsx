@@ -3655,9 +3655,9 @@ const VavityBitcoin: React.FC = () => {
         title={ASSET.label}
         line={
           <>
-            Your {ASSET.label}
+            On a mission to ensure
             <br />
-            investments can live forever.
+            {ASSET.label} never loses value.
           </>
         }
       />

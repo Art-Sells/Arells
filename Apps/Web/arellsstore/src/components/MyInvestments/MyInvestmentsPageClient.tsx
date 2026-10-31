@@ -23,6 +23,7 @@ import {
   toVapaAssetSnapshot,
   type VapaAssetSnapshot,
 } from '../../lib/vavity/portfolioValuation';
+import { useGuestPreview } from '../../hooks/useGuestPreview';
 import { useMyInvEngagementEvent } from '../../hooks/useMyInvEngagementEvent';
 import { runAfterMaxHeightTransitionEnd } from '../../lib/client/documentScroll';
 import { emailVerifiedWelcomePhaseCopy } from '../../content/emailVerifiedWelcomeCopy';
@@ -64,6 +65,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     assets,
   } = useVavity();
   const { recordEngagement } = useMyInvEngagementEvent();
+  const guestPreview = useGuestPreview();
   const forceSessionPreview = false;
   const [myInvEmptyPreview, setMyInvEmptyPreview] = useState(false);
   const supportedAssets = useMemo(() => ['bitcoin'], []);
@@ -86,8 +88,19 @@ const MyInvestmentsPageClient: React.FC = () => {
     () => supportedAssets.filter((asset) => !sessionAssetsPresent.includes(asset)),
     [sessionAssetsPresent, supportedAssets]
   );
-  const effectiveSignedIn = myInvEmptyPreview || forceSessionPreview ? true : isSignedIn;
-  const effectiveEmail = myInvEmptyPreview ? 'preview' : forceSessionPreview ? 'session' : email;
+  /** `?guestPreview=1` forces signed-out UI even while signed in. */
+  const effectiveSignedIn = guestPreview
+    ? false
+    : myInvEmptyPreview || forceSessionPreview
+      ? true
+      : isSignedIn;
+  const effectiveEmail = guestPreview
+    ? null
+    : myInvEmptyPreview
+      ? 'preview'
+      : forceSessionPreview
+        ? 'session'
+        : email;
   const effectiveInvestments = myInvEmptyPreview
     ? []
     : forceSessionPreview
@@ -267,7 +280,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const lastFormattedProfitRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (myInvEmptyPreview) {
+    if (myInvEmptyPreview || guestPreview) {
       if (!initialFetchDoneRef.current) {
         initialFetchDoneRef.current = true;
         setInitialDataReady(true);
@@ -311,6 +324,7 @@ const MyInvestmentsPageClient: React.FC = () => {
       window.clearInterval(id);
     };
   }, [
+    guestPreview,
     myInvEmptyPreview,
     forceSessionPreview,
     fetchVavityAggregatorAll,
@@ -1270,7 +1284,7 @@ const MyInvestmentsPageClient: React.FC = () => {
             <p
               className={`myinv-descriptioner myinv-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
             >
-              can live forever
+              can never lose value
             </p>
           </div>
         </div>
@@ -1292,7 +1306,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                 <span />
               </div>
 
-              {!effectiveSignedIn && !authSessionLoading ? (
+              {!effectiveSignedIn && (guestPreview || !authSessionLoading) ? (
                 <div className="myinv-panel">
                   <div className="myinv-cta-row">
                     <Link href="/signin" className="myinv-cta-button">

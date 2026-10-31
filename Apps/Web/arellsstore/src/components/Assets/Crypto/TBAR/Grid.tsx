@@ -4,7 +4,6 @@ import Link from 'next/link';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import VideoPlayer from '../../../VideoPlayer';
 import TBARImage from './Image';
-import { BitcoinMemoriamStoryline } from '../../../StorylineOpening';
 import {
   TBAR_PAGE_SIZE,
   tbarThumbCount,
@@ -29,11 +28,6 @@ type TBARGridProps = {
 
 function videoSources(url: string): TrailerSources {
   return { '480': url, '720': url, '1080': url };
-}
-
-function isBitcoinMemoriamStill(name: string): boolean {
-  const file = name.split('/').filter(Boolean).pop() || name;
-  return /TheBitcoinMemoriam/i.test(file);
 }
 
 export default function TBARGrid({
@@ -111,27 +105,11 @@ export default function TBARGrid({
   }, []);
 
   const renderDay = (day: (typeof visibleDays)[number]) => {
-    const hubMemoriam = theme === 'bitcoin' && !usePreviewThumbs;
-    const memoriamItems = hubMemoriam
-      ? day.media.filter((item) => item.kind === 'image' && isBitcoinMemoriamStill(item.name))
-      : [];
-    const rest = hubMemoriam
-      ? day.media.filter((item) => !(item.kind === 'image' && isBitcoinMemoriamStill(item.name)))
-      : day.media;
-
     return (
       <div key={day.folder} className="tbar-day">
         <h3 className="tbar-date">{day.label}</h3>
         <div className="tbar-thumbs">
-          {memoriamItems.map((item) => (
-            <div key={item.key} className="tbar-memoriam-section">
-              <TBARImage src={item.url} theme={theme} label={`${day.label} update`} />
-              <div className="tbar-memoriam-copy">
-                <BitcoinMemoriamStoryline />
-              </div>
-            </div>
-          ))}
-          {rest.map((item) =>
+          {day.media.map((item) =>
             item.kind === 'video' ? (
               <div key={item.key} className="tbar-thumb tbar-thumb--player">
                 <VideoPlayer
