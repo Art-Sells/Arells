@@ -621,9 +621,8 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   /** Expand sections immediately; media slots keep their own loaders until HEAD/images land. */
   const sectionsOpen = true;
   /**
-   * Open once auth + credit are known, with `instant` (no height-down pop-in).
-   * Waiting on credit avoids Update Character ↔ Update Photo flash; instant avoids
-   * the 0→height animation that looked like the badge “popping in”.
+   * Open once auth + credit are known (avoids Update Character ↔ Update Photo flash),
+   * then height-down like the other sections — not `instant` (that skipped the animation).
    */
   const photoSectionOpen =
     sectionsOpen &&
@@ -705,7 +704,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
           <HeightDownSection
             open={photoSectionOpen}
-            instant
             className="bitcoin-my-character-section--photo"
           >
             <div
