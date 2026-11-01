@@ -25,6 +25,24 @@ applications:
             - npx --yes yarn@1.22.22 install --frozen-lockfile
         build:
           commands:
+            # Grok key is inlined at next build (Amplify API Lambda often has no runtime env).
+            # Value must be the raw xAI key (xai-...), no wrapping quotes, no "Bearer " prefix.
+            - |
+              KEY="${GROK_API_KEY:-$XAI_API_KEY}"
+              KEY="${KEY%\"}"; KEY="${KEY#\"}"; KEY="${KEY%\'}"; KEY="${KEY#\'}"
+              KEY="$(echo "$KEY" | sed -E 's/^[Bb]earer[[:space:]]+//')"
+              export GROK_API_KEY="$KEY"
+              if [ -z "$GROK_API_KEY" ]; then
+                echo "ERROR: Set GROK_API_KEY (or XAI_API_KEY) in Amplify branch env — required for character create"
+                exit 1
+              fi
+              case "$GROK_API_KEY" in
+                xai-*) echo "GROK_API_KEY ok (len=${#GROK_API_KEY})";;
+                *)
+                  echo "ERROR: GROK_API_KEY must start with xai- (got prefix '${GROK_API_KEY:0:8}'). Remove quotes in Amplify Console."
+                  exit 1
+                  ;;
+              esac
             - echo "🚀 next build..."
             - npx --yes yarn@1.22.22 run build
             - echo "✅ Deploy complete — Safari/iOS may show stale CSS until hard refresh (see amplify.yml cache-bust note)"
