@@ -15,9 +15,9 @@ export default function AssetMissionHeader({ title, line, children }: AssetMissi
       <p className="asset-mission-header-line">
         {line ?? (
           <>
-            On a mission to ensure
+            on a mission to ensure
             <br />
-            your {title} never loses value.
+            your {title} never loses value
           </>
         )}
       </p>

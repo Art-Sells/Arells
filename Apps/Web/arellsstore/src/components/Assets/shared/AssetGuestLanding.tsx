@@ -97,9 +97,9 @@ export default function AssetGuestLanding({
           className={`home-guest-slogan asset-guest-landing-mission asset-guest-landing-mission--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
         >
           <span className="asset-guest-landing-mission-tail">
-            On a mission to ensure
+            on a mission to ensure
             <br />
-            your {title} never loses value.
+            your {title} never loses value
           </span>
         </p>
         <div

@@ -61,9 +61,9 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
           priority
         />
         <p className="home-guest-slogan myportfolio-weekly-guest-mission home-guest-mount-slide home-guest-mount-slide--slogan">
-          On a mission to ensure
+          on a mission to ensure
           <br />
-          investments never lose value.
+          investments never lose value
         </p>
         <div className="home-guest-signin-shell shadow-border-wrap home-guest-mount-slide home-guest-mount-slide--signin">
           <span className="shadow-border" aria-hidden="true" />
