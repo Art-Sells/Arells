@@ -54,12 +54,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
+    const force = Boolean(req.body?.force);
     const existing = await readAlienGenerateJob(allowed, asset);
-    if (existing?.status === 'running') {
+    if (!force && existing?.status === 'running') {
       const startedMs = Date.parse(existing.startedAt || '') || 0;
       const ageMs = Date.now() - startedMs;
-      /* Reuse in-flight job; allow restart if a prior run looks wedged. */
-      if (ageMs >= 0 && ageMs < 20 * 60 * 1000) {
+      /* Only reuse a truly in-flight job. Longer windows left dead Amplify runs
+         stuck as "running" so the next upload polled for many minutes. */
+      if (ageMs >= 0 && ageMs < 2 * 60 * 1000) {
         return res.status(202).json({ ok: true, status: 'running', job: existing });
       }
     }

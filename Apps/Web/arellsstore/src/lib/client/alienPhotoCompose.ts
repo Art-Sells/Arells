@@ -161,8 +161,9 @@ export type AlienComposeResult = {
   seasononeloop: boolean;
 };
 
-const GENERATE_POLL_MS = 2500;
-const GENERATE_POLL_MAX_MS = 15 * 60 * 1000;
+const GENERATE_POLL_MS = 2000;
+/** Hard cap so a wedged job can't leave the UI spinning for a quarter hour. */
+const GENERATE_POLL_MAX_MS = 8 * 60 * 1000;
 
 type AlienGenerateJobClient = {
   status?: 'running' | 'complete' | 'error';
@@ -203,7 +204,9 @@ export async function composeAlienFromPhoto(args: {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, asset: assetId }),
+    // force: always start a new pipeline after a fresh selfie upload — don't attach
+    // to a prior Amplify job left as "running" after a timeout/crash.
+    body: JSON.stringify({ email, asset: assetId, force: true }),
     // Helps the start request finish even if the tab is closing mid-flight.
     keepalive: true,
   });

@@ -195,6 +195,8 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const [creditReady, setCreditReady] = useState(() => peekPaidCreditPending('bitcoin'));
   const [shareCopied, setShareCopied] = useState(false);
   const shareCopiedTimerRef = useRef<number | null>(null);
+  /** Empty on SSR + first client paint — avoids origin hydration mismatch. */
+  const [shareOrigin, setShareOrigin] = useState('');
 
   const resolvedShareId = (pathShareId || shareId || '').trim().toLowerCase() || null;
   const isOwner =
@@ -209,13 +211,14 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const busy = isCreatingAsset('bitcoin');
 
   const sharePath = assetSharePath('/bitcoin', resolvedShareId);
-  const shareHref =
-    typeof window !== 'undefined' ? `${window.location.origin}${sharePath}` : sharePath;
+  const shareHref = shareOrigin ? `${shareOrigin}${sharePath}` : sharePath;
 
   const copyShareLink = useCallback(async () => {
     if (!resolvedShareId) return;
     try {
-      await navigator.clipboard.writeText(shareHref);
+      const absolute =
+        typeof window !== 'undefined' ? `${window.location.origin}${sharePath}` : shareHref;
+      await navigator.clipboard.writeText(absolute);
       setShareCopied(true);
       if (shareCopiedTimerRef.current != null) {
         window.clearTimeout(shareCopiedTimerRef.current);
@@ -227,7 +230,11 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     } catch (err) {
       console.error('share copy failed', err);
     }
-  }, [resolvedShareId, shareHref]);
+  }, [resolvedShareId, sharePath, shareHref]);
+
+  useEffect(() => {
+    setShareOrigin(window.location.origin);
+  }, []);
 
   useEffect(() => {
     return () => {
