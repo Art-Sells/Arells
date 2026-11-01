@@ -1,32 +1,24 @@
 import { ALIEN_COMPOSE_DONE_EVENT } from '../assets/assetSharePath';
 import { clearPaidCreditPending } from './characterGenerationPay';
 
-/** Match server identity prep; keeps JSON upload well under API/body limits. */
-const UPLOAD_MAX_EDGE = 1600;
-const UPLOAD_JPEG_QUALITY = 0.85;
-/** Raw base64 JSON must stay under alien-photo bodyParser (~7mb) + server 5MB decode. */
-const UPLOAD_MAX_DATA_URL_CHARS = 6.5 * 1024 * 1024;
+/**
+ * Keep JSON body under Amplify / API Gateway limits (~6MB). Base64 inflates ~33%,
+ * so target a much smaller JPEG than the server's 5MB decode ceiling.
+ */
+const UPLOAD_MAX_EDGE = 1280;
+const UPLOAD_MIN_EDGE = 720;
+const UPLOAD_JPEG_QUALITY = 0.78;
+const UPLOAD_MAX_DATA_URL_CHARS = 3.2 * 1024 * 1024;
 
-/** File picker accept — iPhone HEIC included; everything is re-encoded to JPEG before upload. */
-export const ALIEN_PHOTO_ACCEPT =
-  'image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif,.heic,.heif';
-
-function isHeicLike(file: File): boolean {
-  const type = (file.type || '').toLowerCase();
-  const name = (file.name || '').toLowerCase();
-  return (
-    type.includes('heic') ||
-    type.includes('heif') ||
-    name.endsWith('.heic') ||
-    name.endsWith('.heif')
-  );
-}
+/** Broad accept — iOS camera roll is often HEIC; Safari may still hand us a JPEG. */
+export const ALIEN_PHOTO_ACCEPT = 'image/*,.heic,.heif,image/heic,image/heif';
 
 /**
- * iPhone camera rolls often store HEIC. Convert to JPEG so canvas / Grok can use it.
- * Safari sometimes already hands us a JPEG — then this is a no-op.
+ * Last-resort HEIC→JPEG for browsers that cannot decode HEIC natively.
+ * Avoid on iOS Safari when possible — heic2any/WASM often fails there instantly
+ * even though Safari can draw the same HEIC into a canvas.
  */
-async function heicToJpegFile(file: File): Promise<File> {
+async function heicToJpegFile(file: Blob, nameHint?: string): Promise<File> {
   const heic2any = (await import('heic2any')).default;
   const converted = await heic2any({
     blob: file,
@@ -37,18 +29,9 @@ async function heicToJpegFile(file: File): Promise<File> {
   if (!(blob instanceof Blob)) {
     throw new Error('Could not convert HEIC photo');
   }
-  const base = (file.name || 'photo').replace(/\.(heic|heif)$/i, '') || 'photo';
+  const base =
+    (nameHint || 'photo').replace(/\.(heic|heif)$/i, '') || 'photo';
   return new File([blob], `${base}.jpg`, { type: 'image/jpeg' });
-}
-
-async function ensureDecodableImageFile(file: File): Promise<File> {
-  if (!isHeicLike(file)) return file;
-  try {
-    return await heicToJpegFile(file);
-  } catch (err) {
-    console.error('HEIC convert failed', err);
-    throw new Error('Could not convert iPhone photo. Try exporting as JPEG.');
-  }
 }
 
 function fileToDataUrl(file: Blob): Promise<string> {
@@ -67,9 +50,13 @@ function canvasToJpegDataUrl(
   source: CanvasImageSource,
   srcW: number,
   srcH: number,
-  quality: number
+  quality: number,
+  maxEdge: number
 ): Promise<string> {
-  const scale = Math.min(1, UPLOAD_MAX_EDGE / Math.max(srcW, srcH));
+  if (!srcW || !srcH) {
+    return Promise.reject(new Error('Could not decode photo'));
+  }
+  const scale = Math.min(1, maxEdge / Math.max(srcW, srcH));
   const width = Math.max(1, Math.round(srcW * scale));
   const height = Math.max(1, Math.round(srcH * scale));
   const canvas = document.createElement('canvas');
@@ -93,14 +80,28 @@ function canvasToJpegDataUrl(
   });
 }
 
-/** Fallback when createImageBitmap fails (some social-download / progressive JPEGs). */
-function imageElementToJpegDataUrl(file: File, quality: number): Promise<string> {
+/** Fallback when createImageBitmap fails (HEIC on Safari, progressive JPEGs, etc.). */
+function imageElementToJpegDataUrl(
+  file: Blob,
+  quality: number,
+  maxEdge: number
+): Promise<string> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
       URL.revokeObjectURL(url);
-      void canvasToJpegDataUrl(img, img.naturalWidth, img.naturalHeight, quality).then(resolve, reject);
+      if (!img.naturalWidth || !img.naturalHeight) {
+        reject(new Error('Could not decode photo'));
+        return;
+      }
+      void canvasToJpegDataUrl(
+        img,
+        img.naturalWidth,
+        img.naturalHeight,
+        quality,
+        maxEdge
+      ).then(resolve, reject);
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
@@ -110,41 +111,69 @@ function imageElementToJpegDataUrl(file: File, quality: number): Promise<string>
   });
 }
 
-/**
- * Resize + JPEG-compress before upload. Filename is never sent — only pixels.
- * HEIC/HEIF (iPhone) is converted first; then everything is re-encoded to JPEG.
- * Social / CDN downloads often fail createImageBitmap or are too large as raw
- * base64; we always re-encode and never upload the original file.
- */
-async function fileToUploadDataUrl(file: File): Promise<string> {
-  const source = await ensureDecodableImageFile(file);
-  let dataUrl: string | null = null;
-  let quality = UPLOAD_JPEG_QUALITY;
-
+/** Prefer Safari/Chrome native decode (works for many iPhone HEICs). */
+async function tryNativeJpegDataUrl(
+  source: Blob,
+  quality: number,
+  maxEdge: number
+): Promise<string | null> {
   try {
     const bitmap = await createImageBitmap(source);
     try {
-      dataUrl = await canvasToJpegDataUrl(bitmap, bitmap.width, bitmap.height, quality);
+      if (!bitmap.width || !bitmap.height) return null;
+      return await canvasToJpegDataUrl(
+        bitmap,
+        bitmap.width,
+        bitmap.height,
+        quality,
+        maxEdge
+      );
     } finally {
       bitmap.close();
     }
   } catch {
-    dataUrl = await imageElementToJpegDataUrl(source, quality);
+    /* try <img> */
+  }
+  try {
+    return await imageElementToJpegDataUrl(source, quality, maxEdge);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Resize + JPEG-compress before upload. Filename is never sent — only pixels.
+ * Native decode first (iOS Safari HEIC); heic2any only if the browser cannot draw it.
+ */
+async function fileToUploadDataUrl(file: File): Promise<string> {
+  let quality = UPLOAD_JPEG_QUALITY;
+  let maxEdge = UPLOAD_MAX_EDGE;
+  let source: Blob = file;
+
+  let dataUrl = await tryNativeJpegDataUrl(source, quality, maxEdge);
+
+  if (!dataUrl) {
+    try {
+      source = await heicToJpegFile(file, file.name);
+      dataUrl = await tryNativeJpegDataUrl(source, quality, maxEdge);
+    } catch (err) {
+      console.error('HEIC convert failed', err);
+    }
   }
 
-  // Shrink further if still too big for the JSON body limit.
-  while (dataUrl.length > UPLOAD_MAX_DATA_URL_CHARS && quality > 0.45) {
-    quality = Math.max(0.45, quality - 0.15);
-    try {
-      const bitmap = await createImageBitmap(source);
-      try {
-        dataUrl = await canvasToJpegDataUrl(bitmap, bitmap.width, bitmap.height, quality);
-      } finally {
-        bitmap.close();
-      }
-    } catch {
-      dataUrl = await imageElementToJpegDataUrl(source, quality);
+  if (!dataUrl) {
+    throw new Error('Could not read this photo. Try another from your camera roll.');
+  }
+
+  while (dataUrl.length > UPLOAD_MAX_DATA_URL_CHARS && (quality > 0.4 || maxEdge > UPLOAD_MIN_EDGE)) {
+    if (quality > 0.45) {
+      quality = Math.max(0.4, quality - 0.12);
+    } else {
+      maxEdge = Math.max(UPLOAD_MIN_EDGE, Math.round(maxEdge * 0.75));
     }
+    const next = await tryNativeJpegDataUrl(source, quality, maxEdge);
+    if (!next) break;
+    dataUrl = next;
   }
 
   if (dataUrl.length > UPLOAD_MAX_DATA_URL_CHARS) {
@@ -319,7 +348,19 @@ async function postJson(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  const text = await res.text();
+  let json: Record<string, unknown> = {};
+  if (text) {
+    try {
+      json = JSON.parse(text) as Record<string, unknown>;
+    } catch {
+      /* Amplify/gateway HTML or plain text on 413/502 */
+    }
+  }
+  if (!res.ok && res.status !== 202 && typeof json.error !== 'string') {
+    if (res.status === 413) json.error = 'Photo too large for upload';
+    else if (res.status >= 500) json.error = 'Upload server error — try again';
+  }
   return { ok: res.ok || res.status === 202, status: res.status, json };
 }
 
