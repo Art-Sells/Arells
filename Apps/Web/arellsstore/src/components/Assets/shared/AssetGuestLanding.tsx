@@ -116,7 +116,7 @@ export default function AssetGuestLanding({
           <span className="asset-guest-landing-mission-tail">
             On a mission to ensure
             <br />
-            {title} never loses value.
+            your {title} never loses value.
           </span>
         </p>
         <div
