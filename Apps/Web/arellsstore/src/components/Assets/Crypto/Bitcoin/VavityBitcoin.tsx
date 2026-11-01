@@ -3651,16 +3651,7 @@ const VavityBitcoin: React.FC = () => {
 
   return (
     <>
-      <AssetMissionHeader
-        title={ASSET.label}
-        line={
-          <>
-            On a mission to ensure
-            <br />
-            {ASSET.label} never loses value.
-          </>
-        }
-      />
+      <AssetMissionHeader title={ASSET.label} />
       <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
       <div
         className={`asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide${
