@@ -6,6 +6,7 @@ import {
   type AlienGenerateJob,
 } from '../../../lib/server/alienGenerateJob';
 import { normalizeAlienPhotoAsset } from '../../../lib/server/alienPhoto';
+import { promoteAlienStagedMedia } from '../../../lib/server/alienStaging';
 import { findPaidUnusedCredit } from '../../../lib/server/characterGenerationCredit';
 
 export const config = {
@@ -65,6 +66,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (action === 'finalize') {
       const prev = await readAlienGenerateJob(allowed, asset);
+      if (prev?.status === 'complete') {
+        return res.status(200).json({ ok: true, status: 'complete', job: prev });
+      }
+      /* Swap staging → live so poster/video never mix mid-create. */
+      await promoteAlienStagedMedia(allowed, asset, {
+        require: ['composed', 'portrait'],
+      });
       const now = new Date().toISOString();
       const job: AlienGenerateJob = {
         email: allowed,
@@ -84,6 +92,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (action === 'fail') {
       const prev = await readAlienGenerateJob(allowed, asset);
+      /* Never overwrite a successful create from a second browser's failed resume. */
+      if (prev?.status === 'complete') {
+        return res.status(200).json({ ok: true, status: 'complete', job: prev });
+      }
       const now = new Date().toISOString();
       const message =
         typeof req.body?.error === 'string' && req.body.error.trim()

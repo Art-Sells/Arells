@@ -12,10 +12,12 @@ import React, {
 } from 'react';
 import { overlayStyleForAsset } from '../lib/client/alienCreateTheme';
 import {
+  alienCreateFailureStage,
   awaitAlienGenerateJob,
   composeAlienFromPhoto,
   fetchAlienGenerateJob,
   isAlienGenerateJobFreshRunning,
+  type AlienCreateFailureStage,
 } from '../lib/client/alienPhotoCompose';
 import { useUser } from './UserContext';
 
@@ -34,6 +36,7 @@ type AlienCreateError = {
   assetName: string;
   shareId: string | null;
   message?: string | null;
+  stage?: AlienCreateFailureStage;
 };
 
 type AlienCharacterCreateContextValue = {
@@ -153,12 +156,14 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       assetName: string;
       shareId?: string | null;
       message?: string | null;
+      stage?: AlienCreateFailureStage;
     }) => {
       setError({
         assetId: args.assetId,
         assetName: args.assetName,
         shareId: args.shareId ?? null,
         message: args.message ?? null,
+        stage: args.stage ?? 'generate',
       });
       setErrorOpen(true);
       setStatus('error');
@@ -233,6 +238,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetName: name,
             shareId: args.shareId,
             message: err instanceof Error ? err.message : null,
+            stage: alienCreateFailureStage(err),
           });
         } finally {
           clearCreatingSlot();
@@ -308,6 +314,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetName: name,
             shareId,
             message: err instanceof Error ? err.message : null,
+            stage: 'generate',
           });
         } finally {
           if (!cancelled) clearCreatingSlot();

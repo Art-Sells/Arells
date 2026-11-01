@@ -139,7 +139,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3
         .putObject({
           Bucket: bucket,
-          Key: alienComposedKey(allowed, asset),
+          Key: alienComposedKey(allowed, asset, true),
           Body: composed,
           ContentType: 'image/jpeg',
           ACL: 'private',
@@ -163,7 +163,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3
         .putObject({
           Bucket: bucket,
-          Key: alienSeasonOneKey(allowed, asset),
+          Key: alienSeasonOneKey(allowed, asset, true),
           Body: seasonOne,
           ContentType: 'image/jpeg',
           ACL: 'private',
@@ -176,7 +176,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const [iris, seasonBase, prev] = await Promise.all([
         readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
         readAlienComposeRef(ALIEN_SEASONONE_BASE_REL),
-        loadJpegKey(bucket, alienSeasonOneKey(allowed, asset)),
+        loadJpegKey(bucket, alienSeasonOneKey(allowed, asset, true)),
       ]);
       const seasonOne = await composePersonalBitcoinAlienSeasonOnePass2({
         previous: prev,
@@ -186,7 +186,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3
         .putObject({
           Bucket: bucket,
-          Key: alienSeasonOneKey(allowed, asset),
+          Key: alienSeasonOneKey(allowed, asset, true),
           Body: seasonOne,
           ContentType: 'image/jpeg',
           ACL: 'private',
@@ -198,7 +198,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (mode === 'seasonone-iris') {
       const [iris, prev] = await Promise.all([
         readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
-        loadJpegKey(bucket, alienSeasonOneKey(allowed, asset)),
+        loadJpegKey(bucket, alienSeasonOneKey(allowed, asset, true)),
       ]);
       const seasonOne = await composePersonalBitcoinAlienSeasonOnePass3({
         previous: prev,
@@ -207,7 +207,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3
         .putObject({
           Bucket: bucket,
-          Key: alienSeasonOneKey(allowed, asset),
+          Key: alienSeasonOneKey(allowed, asset, true),
           Body: seasonOne,
           ContentType: 'image/jpeg',
           ACL: 'private',
@@ -229,7 +229,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3
         .putObject({
           Bucket: bucket,
-          Key: alienSeasonOneKey(allowed, asset),
+          Key: alienSeasonOneKey(allowed, asset, true),
           Body: seasonOne,
           ContentType: 'image/jpeg',
           ACL: 'private',
@@ -250,7 +250,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3
         .putObject({
           Bucket: bucket,
-          Key: alienPortraitKey(allowed, asset),
+          Key: alienPortraitKey(allowed, asset, true),
           Body: portrait,
           ContentType: 'image/jpeg',
           ACL: 'private',
@@ -263,7 +263,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const [iris, portraitColor, prev] = await Promise.all([
         readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
         readAlienComposeRef(ALIEN_PORTRAIT_COLOR_REL),
-        loadJpegKey(bucket, alienPortraitKey(allowed, asset)),
+        loadJpegKey(bucket, alienPortraitKey(allowed, asset, true)),
       ]);
       const portrait = await composePersonalBitcoinAlienPortraitPass2({
         previous: prev,
@@ -273,7 +273,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3
         .putObject({
           Bucket: bucket,
-          Key: alienPortraitKey(allowed, asset),
+          Key: alienPortraitKey(allowed, asset, true),
           Body: portrait,
           ContentType: 'image/jpeg',
           ACL: 'private',
@@ -296,7 +296,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3
         .putObject({
           Bucket: bucket,
-          Key: alienPortraitKey(allowed, asset),
+          Key: alienPortraitKey(allowed, asset, true),
           Body: portrait,
           ContentType: 'image/jpeg',
           ACL: 'private',

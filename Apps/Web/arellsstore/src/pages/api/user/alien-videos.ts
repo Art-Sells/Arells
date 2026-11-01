@@ -35,14 +35,6 @@ async function loadJpeg(bucket: string, key: string): Promise<Buffer> {
   return Buffer.isBuffer(body) ? body : Buffer.from(body as ArrayBuffer);
 }
 
-async function deleteQuiet(bucket: string, key: string): Promise<void> {
-  try {
-    await s3.deleteObject({ Bucket: bucket, Key: key }).promise();
-  } catch {
-    /* missing is fine */
-  }
-}
-
 function wantKind(raw: unknown, kind: 'metaloop' | 'seasononeloop'): boolean {
   if (raw == null) return true;
   if (!Array.isArray(raw)) return true;
@@ -51,9 +43,8 @@ function wantKind(raw: unknown, kind: 'metaloop' | 'seasononeloop'): boolean {
 }
 
 /**
- * After image compose: delete old loop(s), generate 480p replacements, put to S3.
- * Prefer calling with kinds: ['seasononeloop'] then ['metaloop'] so Season One
- * is not starved by the longer metaloop job in one request.
+ * Generate loops into staging keys only. Live loops stay untouched until finalize promotes.
+ * Prefer kinds: ['seasononeloop'] then ['metaloop'].
  */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -82,11 +73,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const errors: string[] = [];
 
     if (doSeason) {
-      const key = alienSeasonOneLoopKey(allowed, asset);
-      // Delete first so a failed regen cannot leave a stale face loop.
-      await deleteQuiet(bucket, key);
+      const key = alienSeasonOneLoopKey(allowed, asset, true);
       try {
-        const seasonOneJpeg = await loadJpeg(bucket, alienSeasonOneKey(allowed, asset));
+        const seasonOneJpeg = await loadJpeg(bucket, alienSeasonOneKey(allowed, asset, true));
         const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOneJpeg);
         await s3
           .putObject({
@@ -107,10 +96,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     if (doMetaloop) {
-      const key = alienMetaloopKey(allowed, asset);
-      await deleteQuiet(bucket, key);
+      const key = alienMetaloopKey(allowed, asset, true);
       try {
-        const composedJpeg = await loadJpeg(bucket, alienComposedKey(allowed, asset));
+        const composedJpeg = await loadJpeg(bucket, alienComposedKey(allowed, asset, true));
         const metaloop = await generateAlienMetaloopVideo(composedJpeg);
         await s3
           .putObject({

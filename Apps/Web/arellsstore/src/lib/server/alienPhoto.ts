@@ -16,28 +16,52 @@ export function alienPhotoKey(email: string, asset: string): string {
 }
 
 /** Personalized launch / share metaposter after compose. */
-export function alienComposedKey(email: string, asset: string): string {
-  return `users/${normalizeEmailKey(email)}/aliens/${asset}-composed`;
+export function alienComposedKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-composed`;
 }
 
 /** Personalized SEASON ONE banner after compose. */
-export function alienSeasonOneKey(email: string, asset: string): string {
-  return `users/${normalizeEmailKey(email)}/aliens/${asset}-seasonone`;
+export function alienSeasonOneKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-seasonone`;
 }
 
 /** Wide 2:1 Personal Bitcoin Alien portrait. */
-export function alienPortraitKey(email: string, asset: string): string {
-  return `users/${normalizeEmailKey(email)}/aliens/${asset}-portrait`;
+export function alienPortraitKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-portrait`;
 }
 
 /** Personalized metaposter / guest loop (image-to-video). */
-export function alienMetaloopKey(email: string, asset: string): string {
-  return `users/${normalizeEmailKey(email)}/aliens/${asset}-metaloop.mp4`;
+export function alienMetaloopKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-metaloop.mp4`;
 }
 
 /** Personalized Season One banner loop (image-to-video). */
-export function alienSeasonOneLoopKey(email: string, asset: string): string {
-  return `users/${normalizeEmailKey(email)}/aliens/${asset}-seasonone-loop.mp4`;
+export function alienSeasonOneLoopKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-seasonone-loop.mp4`;
+}
+
+/** Live media kinds that are staged during create, then promoted on finalize. */
+export const ALIEN_STAGED_MEDIA_KINDS = [
+  'composed',
+  'seasonone',
+  'portrait',
+  'metaloop',
+  'seasononeloop',
+] as const;
+
+export type AlienStagedMediaKind = (typeof ALIEN_STAGED_MEDIA_KINDS)[number];
+
+export function alienStagedObjectKey(
+  email: string,
+  asset: string,
+  kind: AlienStagedMediaKind,
+  staging: boolean
+): string {
+  if (kind === 'composed') return alienComposedKey(email, asset, staging);
+  if (kind === 'seasonone') return alienSeasonOneKey(email, asset, staging);
+  if (kind === 'portrait') return alienPortraitKey(email, asset, staging);
+  if (kind === 'metaloop') return alienMetaloopKey(email, asset, staging);
+  return alienSeasonOneLoopKey(email, asset, staging);
 }
 
 export type AlienPhotoKind =

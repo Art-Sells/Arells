@@ -186,6 +186,24 @@ export type AlienComposeResult = {
   seasononeloop: boolean;
 };
 
+export type AlienCreateFailureStage = 'upload' | 'generate';
+
+/** Thrown so the create host can show upload-specific modal copy. */
+export class AlienCreateStageError extends Error {
+  stage: AlienCreateFailureStage;
+
+  constructor(message: string, stage: AlienCreateFailureStage) {
+    super(message);
+    this.name = 'AlienCreateStageError';
+    this.stage = stage;
+  }
+}
+
+export function alienCreateFailureStage(err: unknown): AlienCreateFailureStage {
+  if (err instanceof AlienCreateStageError) return err.stage;
+  return 'generate';
+}
+
 const GENERATE_POLL_MS = 2000;
 /** Short poll only — Amplify never finishes jobs in the background. */
 const GENERATE_POLL_MAX_MS = 45 * 1000;
@@ -284,8 +302,8 @@ async function loadComposeResultFromJob(
 }
 
 /**
- * Other tab / reload: briefly poll, then drive compose from the existing selfie
- * (Amplify has no background pipeline — polling alone always timed out).
+ * Other tab / reload: poll-only follower. Never start a second pipeline —
+ * that burned the credit and could failJob over browser A's success.
  */
 export async function awaitAlienGenerateJob(args: {
   email: string;
@@ -294,24 +312,24 @@ export async function awaitAlienGenerateJob(args: {
   initialJob?: AlienGenerateJobClient | null;
 }): Promise<AlienComposeResult> {
   const { email, assetId, shareId } = args;
-  const deadline = Date.now() + GENERATE_POLL_MAX_MS;
+  const hardDeadline = Date.now() + ALIEN_GENERATE_STALE_MS + GENERATE_POLL_MAX_MS;
   let job: AlienGenerateJobClient | null = args.initialJob ?? null;
 
-  while (Date.now() < deadline) {
-    if (job?.status === 'complete' || job?.status === 'error') break;
+  while (Date.now() < hardDeadline) {
+    if (job?.status === 'complete') {
+      return loadComposeResultFromJob(assetId, shareId, job);
+    }
+    if (job?.status === 'error') {
+      throw new Error(job.error || 'Character generation failed');
+    }
+    if (job && !isAlienGenerateJobFreshRunning(job)) {
+      throw new Error('Character generation timed out — try again');
+    }
     await sleep(GENERATE_POLL_MS);
     job = await fetchAlienGenerateJob(email, assetId);
   }
 
-  if (job?.status === 'complete') {
-    return loadComposeResultFromJob(assetId, shareId, job);
-  }
-  if (job?.status === 'error') {
-    throw new Error(job.error || 'Character generation failed');
-  }
-
-  /* Still running — finish client-side from selfie already on S3. */
-  return runAlienGeneratePipeline({ email, assetId, shareId });
+  throw new Error('Character generation timed out — try again');
 }
 
 const COMPOSE_STEPS = [
@@ -533,14 +551,19 @@ export async function composeAlienFromPhoto(args: {
   shareId?: string | null;
 }): Promise<AlienComposeResult> {
   const { email, assetId, shareId } = args;
-  const file = await cloneAlienPhotoFile(args.file);
-  const jpeg = await withTimeout(
-    fileToUploadJpegBlob(file),
-    90_000,
-    'Could not process photo — try a smaller JPEG'
-  );
 
-  await uploadAlienSelfieJpeg(email, assetId, jpeg);
+  try {
+    const file = await cloneAlienPhotoFile(args.file);
+    const jpeg = await withTimeout(
+      fileToUploadJpegBlob(file),
+      90_000,
+      'Could not process photo — try a smaller JPEG'
+    );
+    await uploadAlienSelfieJpeg(email, assetId, jpeg);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to Upload Photo';
+    throw new AlienCreateStageError(message, 'upload');
+  }
 
   /* Arm job for cross-tab status — do NOT start server background work. */
   const arm = await postJson('/api/user/alien-generate', {
