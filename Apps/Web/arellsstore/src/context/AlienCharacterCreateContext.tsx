@@ -10,6 +10,7 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
+import { overlayStyleForAsset } from '../lib/client/alienCreateTheme';
 import {
   awaitAlienGenerateJob,
   composeAlienFromPhoto,
@@ -117,11 +118,12 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
 
   const blockIfCreating = useCallback((style?: AlienCreateThemeStyle) => {
     if (!creatingRef.current) return false;
-    if (style) setOverlayStyle(style);
+    const assetId = creatingAssetId || 'bitcoin';
+    setOverlayStyle(overlayStyleForAsset(assetId, style));
     setWaitAssetName(creatingNameRef.current);
     setWaitModalOpen(true);
     return true;
-  }, []);
+  }, [creatingAssetId]);
 
   const finishCreateSuccess = useCallback(
     (args: {
@@ -175,7 +177,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       overlayStyle?: AlienCreateThemeStyle;
     }) => {
       const name = args.assetName.trim() || args.assetId;
-      if (args.overlayStyle) setOverlayStyle(args.overlayStyle);
+      setOverlayStyle(overlayStyleForAsset(args.assetId, args.overlayStyle));
 
       if (creatingRef.current) {
         setWaitAssetName(creatingNameRef.current || name);
@@ -259,6 +261,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
         creatingNameRef.current = name;
         setCreatingAssetId(asset.id);
         setCreatingAssetName(name);
+        setOverlayStyle(overlayStyleForAsset(asset.id));
         setStatus('creating');
         setCreatingModalOpen(true);
         setWaitModalOpen(false);

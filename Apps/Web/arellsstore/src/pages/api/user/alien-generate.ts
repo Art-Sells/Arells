@@ -1,10 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { assertUserEmailMatchesSession } from '../../../lib/auth/requireUserApi';
 import {
-  continueAfterResponse,
   readAlienGenerateJob,
-  runAlienGeneratePipeline,
   writeAlienGenerateJob,
+  type AlienGenerateJob,
 } from '../../../lib/server/alienGenerateJob';
 import { normalizeAlienPhotoAsset } from '../../../lib/server/alienPhoto';
 import { findPaidUnusedCredit } from '../../../lib/server/characterGenerationCredit';
@@ -15,14 +14,18 @@ export const config = {
       sizeLimit: '1mb',
     },
   },
-  // Compose + both loops — same ceiling as alien-videos.
-  maxDuration: 800,
 };
 
 /**
- * POST — start full character generate (compose + loops) and return immediately.
- * Work continues on the server after the response (set-and-forget).
- * GET  — poll job status for the signed-in user.
+ * GET  — poll job status.
+ * POST — job control only (no background pipeline).
+ *
+ * Amplify freezes the Lambda after the HTTP response, so fire-and-forget
+ * compose/loops never finish in production. The browser drives:
+ *   action: 'arm'      → mark running (after selfie upload)
+ *   action: 'phase'    → update phase while client awaits compose/videos
+ *   action: 'finalize' → mark complete
+ *   action: 'fail'     → mark error
  */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
@@ -53,15 +56,86 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ error: 'Unsupported asset' });
   }
 
+  const actionRaw = typeof req.body?.action === 'string' ? req.body.action.trim().toLowerCase() : 'arm';
+  const action =
+    actionRaw === 'finalize' || actionRaw === 'fail' || actionRaw === 'phase' || actionRaw === 'arm'
+      ? actionRaw
+      : 'arm';
+
   try {
+    if (action === 'finalize') {
+      const prev = await readAlienGenerateJob(allowed, asset);
+      const now = new Date().toISOString();
+      const job: AlienGenerateJob = {
+        email: allowed,
+        assetId: asset,
+        status: 'complete',
+        phase: 'done',
+        metaloop: Boolean(req.body?.metaloop),
+        seasononeloop: Boolean(req.body?.seasononeloop),
+        error: typeof req.body?.error === 'string' ? req.body.error : prev?.error,
+        startedAt: prev?.startedAt || now,
+        updatedAt: now,
+        finishedAt: now,
+      };
+      await writeAlienGenerateJob(job);
+      return res.status(200).json({ ok: true, status: 'complete', job });
+    }
+
+    if (action === 'fail') {
+      const prev = await readAlienGenerateJob(allowed, asset);
+      const now = new Date().toISOString();
+      const message =
+        typeof req.body?.error === 'string' && req.body.error.trim()
+          ? req.body.error.trim()
+          : 'Character generation failed';
+      const job: AlienGenerateJob = {
+        email: allowed,
+        assetId: asset,
+        status: 'error',
+        error: message,
+        startedAt: prev?.startedAt || now,
+        updatedAt: now,
+        finishedAt: now,
+      };
+      await writeAlienGenerateJob(job);
+      return res.status(200).json({ ok: true, status: 'error', job });
+    }
+
+    if (action === 'phase') {
+      const prev = await readAlienGenerateJob(allowed, asset);
+      if (!prev || prev.status !== 'running') {
+        return res.status(409).json({ error: 'No running generate job' });
+      }
+      const phaseRaw = typeof req.body?.phase === 'string' ? req.body.phase.trim().toLowerCase() : '';
+      const phase =
+        phaseRaw === 'compose' ||
+        phaseRaw === 'seasononeloop' ||
+        phaseRaw === 'metaloop' ||
+        phaseRaw === 'done'
+          ? phaseRaw
+          : prev.phase || 'compose';
+      const job: AlienGenerateJob = {
+        ...prev,
+        phase,
+        metaloop: req.body?.metaloop != null ? Boolean(req.body.metaloop) : prev.metaloop,
+        seasononeloop:
+          req.body?.seasononeloop != null ? Boolean(req.body.seasononeloop) : prev.seasononeloop,
+        updatedAt: new Date().toISOString(),
+      };
+      await writeAlienGenerateJob(job);
+      return res.status(200).json({ ok: true, status: 'running', job });
+    }
+
+    /* action === 'arm' — mark running; client runs compose + videos while connected. */
     const force = Boolean(req.body?.force);
     const existing = await readAlienGenerateJob(allowed, asset);
     if (!force && existing?.status === 'running') {
       const startedMs = Date.parse(existing.startedAt || '') || 0;
       const ageMs = Date.now() - startedMs;
-      /* Only reuse a truly in-flight job. Longer windows left dead Amplify runs
-         stuck as "running" so the next upload polled for many minutes. */
-      if (ageMs >= 0 && ageMs < 2 * 60 * 1000) {
+      /* Reuse only while a client-driven generate could still be in flight.
+         Older “running” rows are usually Amplify-killed leftovers — force a new arm. */
+      if (ageMs >= 0 && ageMs < 8 * 60 * 1000) {
         return res.status(202).json({ ok: true, status: 'running', job: existing });
       }
     }
@@ -75,21 +149,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const startedAt = new Date().toISOString();
-    const job = {
+    const job: AlienGenerateJob = {
       email: allowed,
       assetId: asset,
-      status: 'running' as const,
-      phase: 'compose' as const,
+      status: 'running',
+      phase: 'compose',
       startedAt,
       updatedAt: startedAt,
     };
     await writeAlienGenerateJob(job);
-
-    continueAfterResponse(
-      runAlienGeneratePipeline(allowed, asset).catch((err) => {
-        console.error('alien-generate pipeline', err);
-      })
-    );
 
     return res.status(202).json({ ok: true, status: 'running', job });
   } catch (err) {

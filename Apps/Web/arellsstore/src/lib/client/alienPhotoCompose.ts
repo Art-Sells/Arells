@@ -164,8 +164,11 @@ export type AlienComposeResult = {
 const GENERATE_POLL_MS = 2000;
 /** Hard cap so a wedged job can't leave the UI spinning for a quarter hour. */
 const GENERATE_POLL_MAX_MS = 8 * 60 * 1000;
-/** Treat Amplify “running” jobs older than this as dead (same as server reuse window). */
-export const ALIEN_GENERATE_STALE_MS = 2 * 60 * 1000;
+/**
+ * Treat “running” jobs older than this as dead for remote-resume attach.
+ * Must cover a full client-driven compose + both loops (Amplify has no background work).
+ */
+export const ALIEN_GENERATE_STALE_MS = 8 * 60 * 1000;
 
 export type AlienGenerateJobClient = {
   status?: 'running' | 'complete' | 'error';
@@ -282,8 +285,50 @@ export async function awaitAlienGenerateJob(args: {
 }
 
 /**
- * Upload selfie, then kick a server-owned generate job (compose + loops).
- * Browser only polls status — leaving the site does not stop the pipeline.
+ * iOS Safari can invalidate File blobs when the <input type="file"> is cleared.
+ * Copy bytes into a new File before resetting the input / yielding to React.
+ */
+export async function cloneAlienPhotoFile(file: File): Promise<File> {
+  const buf = await file.arrayBuffer();
+  const name = file.name || 'photo.jpg';
+  const type = file.type || 'application/octet-stream';
+  return new File([buf], name, { type, lastModified: file.lastModified || Date.now() });
+}
+
+async function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(message)), ms);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+async function postJson(
+  url: string,
+  body: Record<string, unknown>
+): Promise<{ ok: boolean; status: number; json: Record<string, unknown> }> {
+  const res = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  return { ok: res.ok || res.status === 202, status: res.status, json };
+}
+
+/**
+ * Upload selfie, then run compose + loops from the browser (Amplify-safe).
+ *
+ * Amplify kills work after the HTTP response (no Vercel waitUntil), so the old
+ * fire-and-forget /api/user/alien-generate pipeline left jobs stuck "running"
+ * forever — infinite "Creating character", photo never applied until reload.
  */
 export async function composeAlienFromPhoto(args: {
   email: string;
@@ -291,39 +336,106 @@ export async function composeAlienFromPhoto(args: {
   file: File;
   shareId?: string | null;
 }): Promise<AlienComposeResult> {
-  const { email, assetId, file, shareId } = args;
-  const data = await fileToUploadDataUrl(file);
+  const { email, assetId, shareId } = args;
+  const file = await cloneAlienPhotoFile(args.file);
+  const data = await withTimeout(
+    fileToUploadDataUrl(file),
+    90_000,
+    'Could not process photo — try a smaller JPEG'
+  );
 
-  const uploadRes = await fetch('/api/user/alien-photo', {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, asset: assetId, data }),
-  });
-  const uploadJson = await uploadRes.json().catch(() => ({}));
-  if (!uploadRes.ok) {
-    throw new Error(uploadJson.error || 'Upload failed');
+  const upload = await postJson('/api/user/alien-photo', { email, asset: assetId, data });
+  if (!upload.ok) {
+    throw new Error(
+      typeof upload.json.error === 'string' ? upload.json.error : 'Upload failed'
+    );
   }
 
-  const startRes = await fetch('/api/user/alien-generate', {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    // force: always start a new pipeline after a fresh selfie upload — don't attach
-    // to a prior Amplify job left as "running" after a timeout/crash.
-    body: JSON.stringify({ email, asset: assetId, force: true }),
-    // Helps the start request finish even if the tab is closing mid-flight.
-    keepalive: true,
+  /* Arm job for cross-tab status — do NOT start server background work. */
+  const arm = await postJson('/api/user/alien-generate', {
+    email,
+    asset: assetId,
+    force: true,
+    action: 'arm',
   });
-  const startJson = await startRes.json().catch(() => ({}));
-  if (!startRes.ok && startRes.status !== 202) {
-    throw new Error(startJson.error || 'Character generation failed to start');
+  if (!arm.ok) {
+    throw new Error(
+      typeof arm.json.error === 'string'
+        ? arm.json.error
+        : 'Character generation failed to start'
+    );
   }
 
-  const initialJob =
-    startJson.job && typeof startJson.job === 'object'
-      ? (startJson.job as AlienGenerateJobClient)
-      : null;
+  const failJob = async (message: string) => {
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'fail',
+      error: message,
+    }).catch(() => undefined);
+  };
 
-  return awaitAlienGenerateJob({ email, assetId, shareId, initialJob });
+  try {
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'phase',
+      phase: 'compose',
+    });
+
+    const compose = await postJson('/api/user/alien-compose', {
+      email,
+      asset: assetId,
+    });
+    if (!compose.ok) {
+      throw new Error(
+        typeof compose.json.error === 'string' ? compose.json.error : 'Compose failed'
+      );
+    }
+
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'phase',
+      phase: 'seasononeloop',
+    });
+    const season = await postJson('/api/user/alien-videos', {
+      email,
+      asset: assetId,
+      kinds: ['seasononeloop'],
+    });
+    const seasonOk = Boolean(season.ok && season.json.seasononeloop);
+
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'phase',
+      phase: 'metaloop',
+      seasononeloop: seasonOk,
+    });
+    const metaloop = await postJson('/api/user/alien-videos', {
+      email,
+      asset: assetId,
+      kinds: ['metaloop'],
+    });
+    const metaloopOk = Boolean(metaloop.ok && metaloop.json.metaloop);
+
+    const finalize = await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'finalize',
+      metaloop: metaloopOk,
+      seasononeloop: seasonOk,
+    });
+    const job =
+      finalize.json.job && typeof finalize.json.job === 'object'
+        ? (finalize.json.job as AlienGenerateJobClient)
+        : { status: 'complete' as const, metaloop: metaloopOk, seasononeloop: seasonOk };
+
+    return loadComposeResultFromJob(assetId, shareId, job);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Character generation failed';
+    await failJob(message);
+    throw err;
+  }
 }

@@ -10,7 +10,10 @@ import {
   dismissDcPromotion,
   hasDismissedDcPromotion,
 } from '../../../lib/alienDcPromotion';
-import { ALIEN_PHOTO_ACCEPT } from '../../../lib/client/alienPhotoCompose';
+import {
+  ALIEN_PHOTO_ACCEPT,
+  cloneAlienPhotoFile,
+} from '../../../lib/client/alienPhotoCompose';
 import {
   clearOpenGuideFlag,
   handleCharacterGenerationCheckoutReturn,
@@ -147,19 +150,31 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
         event.target.value = '';
         return;
       }
-      event.target.value = '';
-      startCreate({
-        email,
-        assetId,
-        assetName,
-        file,
-        shareId,
-        overlayStyle,
-      });
-      dismissDcPromotion();
-      clearOpenGuideFlag();
-      setGuideOpen(false);
-      setPayOpen(false);
+      const input = event.target;
+      void (async () => {
+        let stable: File;
+        try {
+          /* Snapshot before clearing — iOS can revoke the input's File blob. */
+          stable = await cloneAlienPhotoFile(file);
+        } catch (err) {
+          console.error('alien photo clone', err);
+          input.value = '';
+          return;
+        }
+        input.value = '';
+        startCreate({
+          email,
+          assetId,
+          assetName,
+          file: stable,
+          shareId,
+          overlayStyle,
+        });
+        dismissDcPromotion();
+        clearOpenGuideFlag();
+        setGuideOpen(false);
+        setPayOpen(false);
+      })();
     },
     [email, assetId, assetName, shareId, overlayStyle, startCreate]
   );

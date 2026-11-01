@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { assetSharePath } from '../../../lib/assets/assetSharePath';
+import { overlayStyleForAsset } from '../../../lib/client/alienCreateTheme';
 import { markNavControlLoading } from '../../../lib/client/navCircleLoader';
 import AlienMetaPreview from './AlienMetaPreview';
 
@@ -29,6 +30,7 @@ export default function AlienCharacterCreateHost() {
     error,
     errorOpen,
     overlayStyle,
+    creatingAssetId,
     creatingAssetName,
     dismissCreatingModal,
     dismissWaitModal,
@@ -46,6 +48,12 @@ export default function AlienCharacterCreateHost() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  /** Portal sits on document.body — force asset accents (bitcoin orange, etc.). */
+  const themedOverlayStyle = overlayStyleForAsset(
+    creatingAssetId || error?.assetId || success?.assetId || 'bitcoin',
+    overlayStyle
+  );
 
   useEffect(() => {
     return () => {
@@ -106,7 +114,7 @@ export default function AlienCharacterCreateHost() {
         ? createPortal(
             <div
               className="blood-overlay is-visible"
-              style={overlayStyle}
+              style={themedOverlayStyle}
               role="presentation"
             >
               <div
@@ -143,7 +151,7 @@ export default function AlienCharacterCreateHost() {
         ? createPortal(
             <div
               className="blood-overlay is-visible"
-              style={overlayStyle}
+              style={themedOverlayStyle}
               onClick={dismissWaitModal}
               role="presentation"
             >
@@ -178,7 +186,7 @@ export default function AlienCharacterCreateHost() {
         ? createPortal(
             <div
               className="blood-overlay is-visible"
-              style={overlayStyle}
+              style={themedOverlayStyle}
               onClick={onErrorAction}
               role="presentation"
             >
@@ -209,7 +217,7 @@ export default function AlienCharacterCreateHost() {
 
       {success
         ? createPortal(
-            <div className="blood-overlay is-visible" style={overlayStyle} role="presentation">
+            <div className="blood-overlay is-visible" style={themedOverlayStyle} role="presentation">
               <div
                 className="blood-overlay-card blood-overlay-card--alien-meta"
                 role="dialog"

@@ -9,7 +9,10 @@ import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateCo
 import { useUser } from '../../../context/UserContext';
 import { dismissDcPromotion } from '../../../lib/alienDcPromotion';
 import { ALIEN_COMPOSE_DONE_EVENT } from '../../../lib/assets/assetSharePath';
-import { ALIEN_PHOTO_ACCEPT } from '../../../lib/client/alienPhotoCompose';
+import {
+  ALIEN_PHOTO_ACCEPT,
+  cloneAlienPhotoFile,
+} from '../../../lib/client/alienPhotoCompose';
 import {
   clearOpenGuideFlag,
   hasPaidCharacterCredit,
@@ -189,19 +192,32 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         event.target.value = '';
         return;
       }
-      event.target.value = '';
-      startCreate({
-        email,
-        assetId,
-        assetName: displayName,
-        file,
-        shareId,
-        overlayStyle: themeStyleFrom(triggerRef.current),
-      });
-      dismissDcPromotion();
-      clearOpenGuideFlag();
-      setGuideOpen(false);
-      setPayOpen(false);
+      const input = event.target;
+      const overlayStyle = themeStyleFrom(triggerRef.current);
+      void (async () => {
+        let stable: File;
+        try {
+          /* Snapshot before clearing — iOS can revoke the input's File blob. */
+          stable = await cloneAlienPhotoFile(file);
+        } catch (err) {
+          console.error('alien photo clone', err);
+          input.value = '';
+          return;
+        }
+        input.value = '';
+        startCreate({
+          email,
+          assetId,
+          assetName: displayName,
+          file: stable,
+          shareId,
+          overlayStyle,
+        });
+        dismissDcPromotion();
+        clearOpenGuideFlag();
+        setGuideOpen(false);
+        setPayOpen(false);
+      })();
     },
     [assetId, displayName, email, shareId, startCreate]
   );

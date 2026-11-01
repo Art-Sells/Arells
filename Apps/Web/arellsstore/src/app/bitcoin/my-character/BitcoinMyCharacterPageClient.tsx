@@ -19,7 +19,10 @@ import {
   publicAlienVideoPath,
 } from '../../../lib/assets/assetSharePath';
 import { dismissDcPromotion } from '../../../lib/alienDcPromotion';
-import { ALIEN_PHOTO_ACCEPT } from '../../../lib/client/alienPhotoCompose';
+import {
+  ALIEN_PHOTO_ACCEPT,
+  cloneAlienPhotoFile,
+} from '../../../lib/client/alienPhotoCompose';
 import {
   clearOpenGuideFlag,
   clearPaidCreditPending,
@@ -526,20 +529,33 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         event.target.value = '';
         return;
       }
-      event.target.value = '';
-      startCreate({
-        email,
-        assetId: 'bitcoin',
-        assetName: 'Bitcoin',
-        file,
-        shareId: resolvedShareId,
-        overlayStyle: themeStyleFrom(updateBtnRef.current),
-      });
-      dismissDcPromotion();
-      clearOpenGuideFlag();
-      setPayOpen(false);
-      setGuideOpen(false);
-      /* Keep Update Photo until compose succeeds — then ALIEN_COMPOSE_DONE clears it. */
+      const input = event.target;
+      const overlayStyle = themeStyleFrom(updateBtnRef.current);
+      void (async () => {
+        let stable: File;
+        try {
+          /* Snapshot before clearing — iOS can revoke the input's File blob. */
+          stable = await cloneAlienPhotoFile(file);
+        } catch (err) {
+          console.error('alien photo clone', err);
+          input.value = '';
+          return;
+        }
+        input.value = '';
+        startCreate({
+          email,
+          assetId: 'bitcoin',
+          assetName: 'Bitcoin',
+          file: stable,
+          shareId: resolvedShareId,
+          overlayStyle,
+        });
+        dismissDcPromotion();
+        clearOpenGuideFlag();
+        setPayOpen(false);
+        setGuideOpen(false);
+        /* Keep Update Photo until compose succeeds — then ALIEN_COMPOSE_DONE clears it. */
+      })();
     },
     [email, resolvedShareId, startCreate]
   );
