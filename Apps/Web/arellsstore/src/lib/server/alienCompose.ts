@@ -422,11 +422,30 @@ export async function readAlienComposeRef(
   return { buffer, mime: 'image/jpeg' };
 }
 
+function normalizeGrokApiKey(raw: string | undefined | null): string {
+  if (!raw) return '';
+  let key = String(raw).trim();
+  if (
+    (key.startsWith('"') && key.endsWith('"')) ||
+    (key.startsWith("'") && key.endsWith("'"))
+  ) {
+    key = key.slice(1, -1).trim();
+  }
+  if (/^bearer\s+/i.test(key)) {
+    key = key.replace(/^bearer\s+/i, '').trim();
+  }
+  return key;
+}
+
 export function grokApiKeyOrThrow(): string {
+  /*
+   * Prefer live env (Amplify Console / local .env). Bracket access avoids webpack
+   * accidentally replacing these. Build-time fallback is ARELLS_GROK_API_KEY_BUILD only.
+   */
   const key =
-    process.env.GROK_API_KEY?.trim() ||
-    process.env.XAI_API_KEY?.trim() ||
-    process.env.OPENAI_API_KEY?.trim();
+    normalizeGrokApiKey(process.env['GROK_API_KEY']) ||
+    normalizeGrokApiKey(process.env['XAI_API_KEY']) ||
+    normalizeGrokApiKey(process.env['ARELLS_GROK_API_KEY_BUILD']);
   if (!key) {
     throw new Error('GROK_API_KEY is not set');
   }

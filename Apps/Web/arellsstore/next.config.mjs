@@ -111,11 +111,36 @@ const nextConfig = {
         defs['process.env.STRIPE_PRICE_CHARACTER_GENERATION'] = JSON.stringify(stripePriceCg);
       }
 
-      /* Character compose / loops — Amplify API Lambda often has no runtime env. */
-      const grokApiKey =
-        process.env.GROK_API_KEY?.trim() || process.env.XAI_API_KEY?.trim();
+      /*
+       * Grok: do NOT DefinePlugin-replace process.env.GROK_API_KEY.
+       * Replacing it baked the build-time value forever, so fixing the Amplify Console
+       * key did nothing until rebuild — and a wrong bake kept returning "Incorrect API key".
+       * Inline a fallback name only; runtime GROK_API_KEY / XAI_API_KEY win when present.
+       */
+      const normalizeSecret = (raw) => {
+        if (!raw) return '';
+        let k = String(raw).trim();
+        if (
+          (k.startsWith('"') && k.endsWith('"')) ||
+          (k.startsWith("'") && k.endsWith("'"))
+        ) {
+          k = k.slice(1, -1).trim();
+        }
+        if (/^bearer\s+/i.test(k)) k = k.replace(/^bearer\s+/i, '').trim();
+        return k;
+      };
+      const grokApiKey = normalizeSecret(
+        process.env.GROK_API_KEY || process.env.XAI_API_KEY
+      );
       if (grokApiKey) {
-        defs['process.env.GROK_API_KEY'] = JSON.stringify(grokApiKey);
+        defs['process.env.ARELLS_GROK_API_KEY_BUILD'] = JSON.stringify(grokApiKey);
+        console.log(
+          `[next.config] Grok build fallback set (len=${grokApiKey.length}, prefix=${grokApiKey.slice(0, 4)})`
+        );
+      } else {
+        console.warn(
+          '[next.config] GROK_API_KEY missing at build — runtime Amplify env must supply it'
+        );
       }
       const grokImageModel = process.env.GROK_IMAGE_MODEL?.trim();
       if (grokImageModel) {
