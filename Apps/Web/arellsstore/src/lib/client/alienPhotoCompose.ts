@@ -2,13 +2,15 @@ import { ALIEN_COMPOSE_DONE_EVENT } from '../assets/assetSharePath';
 import { clearPaidCreditPending } from './characterGenerationPay';
 
 /**
- * Keep JSON body under Amplify / API Gateway limits (~6MB). Base64 inflates ~33%,
- * so target a much smaller JPEG than the server's 5MB decode ceiling.
+ * Amplify Hosting rejects API bodies around ~1MB. Never POST a full camera-roll
+ * photo through /api — use S3 presign or chunked uploads instead.
  */
 const UPLOAD_MAX_EDGE = 1280;
-const UPLOAD_MIN_EDGE = 720;
-const UPLOAD_JPEG_QUALITY = 0.78;
-const UPLOAD_MAX_DATA_URL_CHARS = 3.2 * 1024 * 1024;
+const UPLOAD_MIN_EDGE = 640;
+const UPLOAD_JPEG_QUALITY = 0.82;
+const UPLOAD_HARD_MAX_BYTES = 2_500_000;
+/** Stay well under Amplify’s ~1MB API body after JSON wrapping. */
+const CHUNK_BASE64_CHARS = 450_000;
 
 /** Broad accept — iOS camera roll is often HEIC; Safari may still hand us a JPEG. */
 export const ALIEN_PHOTO_ACCEPT = 'image/*,.heic,.heif,image/heic,image/heif';
@@ -34,25 +36,13 @@ async function heicToJpegFile(file: Blob, nameHint?: string): Promise<File> {
   return new File([blob], `${base}.jpg`, { type: 'image/jpeg' });
 }
 
-function fileToDataUrl(file: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') resolve(reader.result);
-      else reject(new Error('Could not read photo'));
-    };
-    reader.onerror = () => reject(new Error('Could not read photo'));
-    reader.readAsDataURL(file);
-  });
-}
-
-function canvasToJpegDataUrl(
+function canvasToJpegBlob(
   source: CanvasImageSource,
   srcW: number,
   srcH: number,
   quality: number,
   maxEdge: number
-): Promise<string> {
+): Promise<Blob> {
   if (!srcW || !srcH) {
     return Promise.reject(new Error('Could not decode photo'));
   }
@@ -72,7 +62,7 @@ function canvasToJpegDataUrl(
           reject(new Error('Could not compress photo'));
           return;
         }
-        void fileToDataUrl(blob).then(resolve, reject);
+        resolve(blob);
       },
       'image/jpeg',
       quality
@@ -80,12 +70,11 @@ function canvasToJpegDataUrl(
   });
 }
 
-/** Fallback when createImageBitmap fails (HEIC on Safari, progressive JPEGs, etc.). */
-function imageElementToJpegDataUrl(
+function imageElementToJpegBlob(
   file: Blob,
   quality: number,
   maxEdge: number
-): Promise<string> {
+): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -95,7 +84,7 @@ function imageElementToJpegDataUrl(
         reject(new Error('Could not decode photo'));
         return;
       }
-      void canvasToJpegDataUrl(
+      void canvasToJpegBlob(
         img,
         img.naturalWidth,
         img.naturalHeight,
@@ -111,17 +100,16 @@ function imageElementToJpegDataUrl(
   });
 }
 
-/** Prefer Safari/Chrome native decode (works for many iPhone HEICs). */
-async function tryNativeJpegDataUrl(
+async function tryNativeJpegBlob(
   source: Blob,
   quality: number,
   maxEdge: number
-): Promise<string | null> {
+): Promise<Blob | null> {
   try {
     const bitmap = await createImageBitmap(source);
     try {
       if (!bitmap.width || !bitmap.height) return null;
-      return await canvasToJpegDataUrl(
+      return await canvasToJpegBlob(
         bitmap,
         bitmap.width,
         bitmap.height,
@@ -135,52 +123,60 @@ async function tryNativeJpegDataUrl(
     /* try <img> */
   }
   try {
-    return await imageElementToJpegDataUrl(source, quality, maxEdge);
+    return await imageElementToJpegBlob(source, quality, maxEdge);
   } catch {
     return null;
   }
 }
 
-/**
- * Resize + JPEG-compress before upload. Filename is never sent — only pixels.
- * Native decode first (iOS Safari HEIC); heic2any only if the browser cannot draw it.
- */
-async function fileToUploadDataUrl(file: File): Promise<string> {
+/** Resize + JPEG-compress. Native decode first (iOS HEIC); heic2any only as fallback. */
+async function fileToUploadJpegBlob(file: File): Promise<Blob> {
   let quality = UPLOAD_JPEG_QUALITY;
   let maxEdge = UPLOAD_MAX_EDGE;
   let source: Blob = file;
 
-  let dataUrl = await tryNativeJpegDataUrl(source, quality, maxEdge);
+  let blob = await tryNativeJpegBlob(source, quality, maxEdge);
 
-  if (!dataUrl) {
+  if (!blob) {
     try {
       source = await heicToJpegFile(file, file.name);
-      dataUrl = await tryNativeJpegDataUrl(source, quality, maxEdge);
+      blob = await tryNativeJpegBlob(source, quality, maxEdge);
     } catch (err) {
       console.error('HEIC convert failed', err);
     }
   }
 
-  if (!dataUrl) {
+  if (!blob) {
     throw new Error('Could not read this photo. Try another from your camera roll.');
   }
 
-  while (dataUrl.length > UPLOAD_MAX_DATA_URL_CHARS && (quality > 0.4 || maxEdge > UPLOAD_MIN_EDGE)) {
-    if (quality > 0.45) {
-      quality = Math.max(0.4, quality - 0.12);
-    } else {
-      maxEdge = Math.max(UPLOAD_MIN_EDGE, Math.round(maxEdge * 0.75));
-    }
-    const next = await tryNativeJpegDataUrl(source, quality, maxEdge);
+  while (blob.size > UPLOAD_HARD_MAX_BYTES && (quality > 0.4 || maxEdge > UPLOAD_MIN_EDGE)) {
+    if (quality > 0.45) quality = Math.max(0.4, quality - 0.1);
+    else maxEdge = Math.max(UPLOAD_MIN_EDGE, Math.round(maxEdge * 0.75));
+    const next = await tryNativeJpegBlob(source, quality, maxEdge);
     if (!next) break;
-    dataUrl = next;
+    blob = next;
   }
 
-  if (dataUrl.length > UPLOAD_MAX_DATA_URL_CHARS) {
+  if (blob.size > UPLOAD_HARD_MAX_BYTES) {
     throw new Error('Photo is too large after compression');
   }
-  return dataUrl;
+  return blob;
 }
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      const comma = result.indexOf(',');
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => reject(new Error('Could not read photo'));
+    reader.readAsDataURL(blob);
+  });
+}
+
 
 export type AlienComposeResult = {
   portraitBlob: Blob;
@@ -365,6 +361,64 @@ async function postJson(
 }
 
 /**
+ * Always chunk through the API — Amplify rejects ~1MB+ bodies, and S3 browser
+ * PUT needs bucket CORS (often missing). Each chunk stays well under 1MB.
+ */
+async function uploadAlienSelfieJpeg(
+  email: string,
+  assetId: string,
+  jpeg: Blob
+): Promise<void> {
+  const begin = await postJson('/api/user/alien-photo', {
+    email,
+    asset: assetId,
+    action: 'begin',
+  });
+  const uploadId =
+    typeof begin.json.uploadId === 'string' ? begin.json.uploadId : '';
+  if (!begin.ok || !uploadId) {
+    throw new Error(
+      typeof begin.json.error === 'string' ? begin.json.error : 'Upload failed to start'
+    );
+  }
+
+  const b64 = await blobToBase64(jpeg);
+  if (!b64) throw new Error('Could not encode photo');
+  const parts = Math.max(1, Math.ceil(b64.length / CHUNK_BASE64_CHARS));
+  for (let i = 0; i < parts; i++) {
+    const data = b64.slice(i * CHUNK_BASE64_CHARS, (i + 1) * CHUNK_BASE64_CHARS);
+    const chunk = await postJson('/api/user/alien-photo', {
+      email,
+      asset: assetId,
+      action: 'chunk',
+      uploadId,
+      index: i,
+      data,
+    });
+    if (!chunk.ok) {
+      throw new Error(
+        typeof chunk.json.error === 'string'
+          ? chunk.json.error
+          : `Upload failed (chunk ${i + 1}/${parts})`
+      );
+    }
+  }
+
+  const commit = await postJson('/api/user/alien-photo', {
+    email,
+    asset: assetId,
+    action: 'commit',
+    uploadId,
+    parts,
+  });
+  if (!commit.ok) {
+    throw new Error(
+      typeof commit.json.error === 'string' ? commit.json.error : 'Upload failed to finish'
+    );
+  }
+}
+
+/**
  * Upload selfie, then run compose + loops from the browser (Amplify-safe).
  *
  * Amplify kills work after the HTTP response (no Vercel waitUntil), so the old
@@ -379,18 +433,13 @@ export async function composeAlienFromPhoto(args: {
 }): Promise<AlienComposeResult> {
   const { email, assetId, shareId } = args;
   const file = await cloneAlienPhotoFile(args.file);
-  const data = await withTimeout(
-    fileToUploadDataUrl(file),
+  const jpeg = await withTimeout(
+    fileToUploadJpegBlob(file),
     90_000,
     'Could not process photo — try a smaller JPEG'
   );
 
-  const upload = await postJson('/api/user/alien-photo', { email, asset: assetId, data });
-  if (!upload.ok) {
-    throw new Error(
-      typeof upload.json.error === 'string' ? upload.json.error : 'Upload failed'
-    );
-  }
+  await uploadAlienSelfieJpeg(email, assetId, jpeg);
 
   /* Arm job for cross-tab status — do NOT start server background work. */
   const arm = await postJson('/api/user/alien-generate', {
@@ -417,21 +466,26 @@ export async function composeAlienFromPhoto(args: {
   };
 
   try {
+    /* One Grok still per request — Amplify kills API routes around ~30s. */
     await postJson('/api/user/alien-generate', {
       email,
       asset: assetId,
       action: 'phase',
       phase: 'compose',
     });
-
-    const compose = await postJson('/api/user/alien-compose', {
-      email,
-      asset: assetId,
-    });
-    if (!compose.ok) {
-      throw new Error(
-        typeof compose.json.error === 'string' ? compose.json.error : 'Compose failed'
-      );
+    for (const mode of ['meta', 'seasonone', 'portrait'] as const) {
+      const compose = await postJson('/api/user/alien-compose', {
+        email,
+        asset: assetId,
+        mode,
+      });
+      if (!compose.ok) {
+        throw new Error(
+          typeof compose.json.error === 'string'
+            ? compose.json.error
+            : `Character create failed (${mode})`
+        );
+      }
     }
 
     await postJson('/api/user/alien-generate', {

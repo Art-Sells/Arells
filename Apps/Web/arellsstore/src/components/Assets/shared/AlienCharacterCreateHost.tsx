@@ -198,9 +198,14 @@ export default function AlienCharacterCreateHost() {
                 onClick={(event) => event.stopPropagation()}
               >
                 <p id={errorTitleId} className="blood-overlay-copy">
-                  <span className="blood-overlay-line">Failed to</span>
-                  <span className="blood-overlay-line">Upload Photo</span>
+                  <span className="blood-overlay-line">Couldn’t finish</span>
+                  <span className="blood-overlay-line">character create</span>
                   <span className="blood-overlay-line">Try Again</span>
+                  {error.message ? (
+                    <span className="blood-overlay-line blood-overlay-line--detail">
+                      {error.message}
+                    </span>
+                  ) : null}
                 </p>
                 <button
                   type="button"

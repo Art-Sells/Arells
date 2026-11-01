@@ -51,6 +51,20 @@ async function loadSelfie(bucket: string, email: string, asset: string): Promise
   return selfieBuf;
 }
 
+type ComposeMode = 'meta' | 'seasonone' | 'portrait' | 'full';
+
+function normalizeMode(raw: unknown): ComposeMode {
+  if (raw === 'meta' || raw === 'seasonone' || raw === 'portrait' || raw === 'full') {
+    return raw;
+  }
+  return 'full';
+}
+
+/**
+ * Amplify API routes die around ~30s. Run one Grok still per request:
+ *   mode: 'meta' | 'seasonone' | 'portrait'
+ * Legacy mode: 'full' still does all three (local/dev only — too slow for Amplify).
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -68,88 +82,95 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ error: 'Unsupported asset' });
   }
 
-  const mode = rawMode === 'portrait' ? 'portrait' : 'full';
+  const mode = normalizeMode(rawMode);
   const bucket = s3BucketNameOrThrow();
 
   try {
-    if (mode === 'full') {
-      const credit = await findPaidUnusedCredit(allowed, asset);
-      if (!credit) {
-        return res.status(402).json({
-          error: 'Character generation payment required',
-          code: 'payment_required',
-        });
-      }
+    const credit = await findPaidUnusedCredit(allowed, asset);
+    if (!credit) {
+      return res.status(402).json({
+        error: 'Character generation payment required',
+        code: 'payment_required',
+      });
     }
 
     const selfieBuf = await loadSelfie(bucket, allowed, asset);
-    const [iris, portraitColor] = await Promise.all([
-      readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
-      readAlienComposeRef(ALIEN_PORTRAIT_COLOR_REL),
-    ]);
 
-    if (mode === 'full') {
-      const [metaBase, seasonBase] = await Promise.all([
+    if (mode === 'meta' || mode === 'full') {
+      const [iris, metaBase] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
         readAlienComposeRef(ALIEN_COMPOSE_BASE_REL),
+      ]);
+      const composed = await composePersonalBitcoinAlien({
+        selfie: selfieBuf,
+        selfieMime: 'image/jpeg',
+        base: metaBase.buffer,
+        baseMime: metaBase.mime,
+        iris: iris.buffer,
+        irisMime: iris.mime,
+      });
+      await s3
+        .putObject({
+          Bucket: bucket,
+          Key: alienComposedKey(allowed, asset),
+          Body: composed,
+          ContentType: 'image/jpeg',
+          ACL: 'private',
+        })
+        .promise();
+      if (mode === 'meta') {
+        return res.status(200).json({ ok: true, mode });
+      }
+    }
+
+    if (mode === 'seasonone' || mode === 'full') {
+      const [iris, seasonBase] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
         readAlienComposeRef(ALIEN_SEASONONE_BASE_REL),
       ]);
-      const [composed, seasonOne] = await Promise.all([
-        composePersonalBitcoinAlien({
-          selfie: selfieBuf,
-          selfieMime: 'image/jpeg',
-          base: metaBase.buffer,
-          baseMime: metaBase.mime,
-          iris: iris.buffer,
-          irisMime: iris.mime,
-        }),
-        composePersonalBitcoinAlienSeasonOne({
-          selfie: selfieBuf,
-          base: seasonBase.buffer,
-          iris: iris.buffer,
-        }),
-      ]);
-      await Promise.all([
-        s3
-          .putObject({
-            Bucket: bucket,
-            Key: alienComposedKey(allowed, asset),
-            Body: composed,
-            ContentType: 'image/jpeg',
-            ACL: 'private',
-          })
-          .promise(),
-        s3
-          .putObject({
-            Bucket: bucket,
-            Key: alienSeasonOneKey(allowed, asset),
-            Body: seasonOne,
-            ContentType: 'image/jpeg',
-            ACL: 'private',
-          })
-          .promise(),
-      ]);
+      const seasonOne = await composePersonalBitcoinAlienSeasonOne({
+        selfie: selfieBuf,
+        base: seasonBase.buffer,
+        iris: iris.buffer,
+      });
+      await s3
+        .putObject({
+          Bucket: bucket,
+          Key: alienSeasonOneKey(allowed, asset),
+          Body: seasonOne,
+          ContentType: 'image/jpeg',
+          ACL: 'private',
+        })
+        .promise();
+      if (mode === 'seasonone') {
+        return res.status(200).json({ ok: true, mode });
+      }
     }
 
-    const portrait = await composePersonalBitcoinAlienPortrait({
-      selfie: selfieBuf,
-      iris: iris.buffer,
-      colorRef: portraitColor.buffer,
-    });
-    await s3
-      .putObject({
-        Bucket: bucket,
-        Key: alienPortraitKey(allowed, asset),
-        Body: portrait,
-        ContentType: 'image/jpeg',
-        ACL: 'private',
-      })
-      .promise();
-
-    if (mode === 'full') {
+    if (mode === 'portrait' || mode === 'full') {
+      const [iris, portraitColor] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
+        readAlienComposeRef(ALIEN_PORTRAIT_COLOR_REL),
+      ]);
+      const portrait = await composePersonalBitcoinAlienPortrait({
+        selfie: selfieBuf,
+        iris: iris.buffer,
+        colorRef: portraitColor.buffer,
+      });
+      await s3
+        .putObject({
+          Bucket: bucket,
+          Key: alienPortraitKey(allowed, asset),
+          Body: portrait,
+          ContentType: 'image/jpeg',
+          ACL: 'private',
+        })
+        .promise();
       await consumePaidCredit(allowed, asset);
+      return res.status(200).json({ ok: true, mode });
     }
 
-    return res.status(200).json({ ok: true, mode });
+    return res.status(400).json({ error: 'Unsupported compose mode' });
   } catch (err) {
     if (isMissingS3Object(err)) {
       return res.status(404).json({ error: 'Upload a face photo first' });

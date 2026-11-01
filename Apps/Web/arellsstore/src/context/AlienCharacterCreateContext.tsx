@@ -33,6 +33,7 @@ type AlienCreateError = {
   assetId: string;
   assetName: string;
   shareId: string | null;
+  message?: string | null;
 };
 
 type AlienCharacterCreateContextValue = {
@@ -147,11 +148,17 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   );
 
   const finishCreateError = useCallback(
-    (args: { assetId: string; assetName: string; shareId?: string | null }) => {
+    (args: {
+      assetId: string;
+      assetName: string;
+      shareId?: string | null;
+      message?: string | null;
+    }) => {
       setError({
         assetId: args.assetId,
         assetName: args.assetName,
         shareId: args.shareId ?? null,
+        message: args.message ?? null,
       });
       setErrorOpen(true);
       setStatus('error');
@@ -225,6 +232,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetId: args.assetId,
             assetName: name,
             shareId: args.shareId,
+            message: err instanceof Error ? err.message : null,
           });
         } finally {
           clearCreatingSlot();
@@ -299,6 +307,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetId: asset.id,
             assetName: name,
             shareId,
+            message: err instanceof Error ? err.message : null,
           });
         } finally {
           if (!cancelled) clearCreatingSlot();

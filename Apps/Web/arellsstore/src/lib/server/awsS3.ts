@@ -47,3 +47,18 @@ export function getServerS3SignedGetUrl(args: {
       : {}),
   });
 }
+
+/** Presigned PUT — browser uploads the selfie binary straight to S3 (bypasses Amplify ~1MB API body). */
+export function getServerS3SignedPutUrl(args: {
+  key: string;
+  contentType: string;
+  expiresSec?: number;
+}): string {
+  return getServerS3().getSignedUrl('putObject', {
+    Bucket: s3BucketNameOrThrow(),
+    Key: args.key,
+    ContentType: args.contentType,
+    Expires: args.expiresSec ?? 600,
+    ACL: 'private',
+  });
+}
