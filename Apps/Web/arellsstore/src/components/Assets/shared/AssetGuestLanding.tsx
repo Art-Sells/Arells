@@ -59,8 +59,17 @@ export default function AssetGuestLanding({
     markReady,
     onVideoEnded,
     skipToStill,
-  } = usePosterLoopPlayback(videoRef, hasLoop, posterLoopSrc, 5000, undefined, posterLoaded);
+  } = usePosterLoopPlayback(
+    videoRef,
+    hasLoop,
+    posterLoopSrc,
+    5000,
+    undefined,
+    posterLoaded,
+    'through-black'
+  );
 
+  // Same as test / Season One: fade-through-black both directions.
   const showStill = !hasLoop ? posterLoaded : showStillLayer && posterLoaded;
   /** With a loop, keep the loader until playback actually starts (not still decode). */
   const frameReady = hasLoop ? videoPlaying || showStill : posterLoaded;

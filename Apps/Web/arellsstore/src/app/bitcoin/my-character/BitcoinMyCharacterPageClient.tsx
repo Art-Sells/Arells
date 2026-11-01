@@ -39,8 +39,8 @@ const PREMIER_POSTER_LOOP =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +
   encodeURIComponent('LaunchLoop(guest).mp4');
 
-/** Match Bitcoin news / TBAR hub height-down. */
-const MY_CHARACTER_HEIGHT_MS = 2500;
+/** Page-mount height-down (photo CTA shouldn’t sit closed for 2.5s). */
+const MY_CHARACTER_HEIGHT_MS = 1000;
 
 const THEME_VARS = [
   '--asset-line-color',
@@ -68,11 +68,13 @@ function HeightDownSection({
   children,
   /** Skip entrance animation — content (e.g. Update Photo) is visible immediately. */
   instant = false,
+  durationMs = MY_CHARACTER_HEIGHT_MS,
 }: {
   open: boolean;
   className?: string;
   children: React.ReactNode;
   instant?: boolean;
+  durationMs?: number;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -140,13 +142,13 @@ function HeightDownSection({
         setPx(Math.max(measure(), 1));
         setMode('auto');
       },
-      { timeoutMs: MY_CHARACTER_HEIGHT_MS + 500 }
+      { timeoutMs: durationMs + 500 }
     );
     return () => {
       pendingRef.current?.();
       pendingRef.current = null;
     };
-  }, [open, mode, measure]);
+  }, [open, mode, measure, durationMs]);
 
   const maxHeight = !open ? '0px' : mode === 'auto' ? 'none' : `${px}px`;
 
@@ -157,8 +159,7 @@ function HeightDownSection({
       style={{
         maxHeight,
         overflow: mode === 'auto' ? 'visible' : 'hidden',
-        transition:
-          mode === 'animate' ? `max-height ${MY_CHARACTER_HEIGHT_MS}ms ease` : 'none',
+        transition: mode === 'animate' ? `max-height ${durationMs}ms ease` : 'none',
       }}
     >
       <div ref={contentRef} className="bitcoin-my-character-height-down-inner">
@@ -287,17 +288,17 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
     try {
       if (isOwner) {
-        // Owner: auth API (no shareId/referral HEAD flake). Images as blobs; video as API src→S3.
-        const [metaRes, portraitRes, loopHead] = await Promise.all([
-          fetch(ownerMetaApi, { credentials: 'include', cache: 'no-store' }),
+        // Owner: auth API. Metaposter/loop use API URLs (one loader in AlienMetaPreview).
+        // Portrait still blobs so the photo slot can fade without a second network decode.
+        const [metaHead, portraitRes, loopHead] = await Promise.all([
+          fetch(ownerMetaApi, { method: 'HEAD', credentials: 'include', cache: 'no-store' }),
           fetch(ownerPortraitApi, { credentials: 'include', cache: 'no-store' }),
           fetch(ownerLoopApi, { method: 'HEAD', credentials: 'include', cache: 'no-store' }),
         ]);
-        if (metaRes.ok) {
-          const blob = await metaRes.blob();
+        if (metaHead.ok) {
           setMetaUrl((prev) => {
             if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-            return URL.createObjectURL(blob);
+            return ownerMetaApi;
           });
         } else {
           setMetaUrl(null);
@@ -311,8 +312,8 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         } else {
           setPortraitUrl(null);
         }
-        setMetaLoopUrl(metaRes.ok && loopHead.ok ? ownerLoopApi : null);
-        if (!metaRes.ok && !portraitRes.ok) {
+        setMetaLoopUrl(metaHead.ok && loopHead.ok ? ownerLoopApi : null);
+        if (!metaHead.ok && !portraitRes.ok) {
           router.replace(assetSharePath('/bitcoin', id));
         }
         return;
@@ -415,33 +416,39 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     })();
   }, [isOwner, email, busy, creditChecking, blockIfCreating, openGuide, setPaidPending]);
 
-  /* Load credit state; after Stripe return open Add Photo guide + Update Photo button. */
+  /* Load credit as soon as session email exists — don't block photo height-down on it. */
   useEffect(() => {
-    if (!isOwner || !email) {
-      setCreditReady(false);
+    if (authSessionLoading || !allowSignedIn || !email) {
+      // Keep peek while auth/shareId settle; only clear once we're sure this isn't the owner view.
+      if (!authSessionLoading && !allowSignedIn) setCreditReady(false);
       return;
     }
     let cancelled = false;
     void (async () => {
-      let fromCheckout = false;
-      try {
-        fromCheckout = await handleCharacterGenerationCheckoutReturn();
-      } catch (err) {
-        console.error('character checkout return', err);
-      }
-      if (cancelled) return;
+      const returningFromCheckout =
+        typeof window !== 'undefined' &&
+        new URLSearchParams(window.location.search).get('cg_checkout') === 'success';
 
-      if (fromCheckout) {
-        setPaidPending(true);
-        setCreditReady(true);
-        setPayOverlayStyle(themeStyleFrom(updateBtnRef.current));
-        openGuide();
+      let fromCheckout = false;
+      // Only hit confirm-session when actually returning from Stripe.
+      if (returningFromCheckout) {
+        try {
+          fromCheckout = await handleCharacterGenerationCheckoutReturn();
+        } catch (err) {
+          console.error('character checkout return', err);
+        }
+        if (cancelled) return;
+        if (fromCheckout) {
+          setPaidPending(true);
+          setCreditReady(true);
+          setPayOverlayStyle(themeStyleFrom(updateBtnRef.current));
+          openGuide();
+        }
       }
 
       try {
         const paid = await hasPaidCharacterCredit('bitcoin');
         if (cancelled) return;
-        /* After checkout return, keep Update Photo even if credit API lags. Otherwise trust server. */
         setPaidPending(Boolean(paid || fromCheckout));
       } catch {
         if (!cancelled) {
@@ -459,7 +466,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     return () => {
       cancelled = true;
     };
-  }, [isOwner, email, openGuide, setPaidPending]);
+  }, [allowSignedIn, email, authSessionLoading, openGuide, setPaidPending]);
 
   /* After character finishes generating, credit is consumed → back to Update Character. */
   useEffect(() => {
@@ -559,9 +566,15 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
   /** Expand sections immediately; media slots keep their own loaders until HEAD/images land. */
   const sectionsOpen = true;
-  /** Owner photo block waits for credit so the label is correct + visible when height-down starts (no late pop-in). */
-  const photoSectionOpen = sectionsOpen && (!isOwner || creditReady);
-  const updateCtaBusy = busy || creditChecking || payOpen;
+  /**
+   * Height-down immediately when share id is in the URL (don't wait auth + credit).
+   * Without pathShareId, wait for auth so we don't open then unmount on redirect.
+   * CTA stays busy until creditReady so Update Character ↔ Update Photo doesn't flash.
+   */
+  const photoSectionOpen =
+    sectionsOpen && (Boolean(pathShareId) || !authSessionLoading);
+  const updateCtaBusy =
+    busy || creditChecking || payOpen || (allowSignedIn && !creditReady);
   const bitcoinBadgeHref = assetSharePath('/bitcoin', resolvedShareId);
   const bitcoinBadgeLoading = isPendingNavTarget(bitcoinBadgeHref);
 
@@ -721,15 +734,12 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
                   alt="Bitcoin Alien Race launch poster"
                 />
               ) : (
+                /* Empty frame only — AlienMetaPreview owns the spinner (avoids double rings). */
                 <div
                   className="bitcoin-my-character-launch--loading"
                   role="status"
                   aria-label="Loading launch poster"
-                >
-                  <div className="asset-alien-meta-preview-loader" aria-hidden="true">
-                    <div className="asset-alien-meta-preview-loader-ring" />
-                  </div>
-                </div>
+                />
               )}
             </div>
           </HeightDownSection>

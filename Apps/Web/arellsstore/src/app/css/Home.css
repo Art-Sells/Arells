@@ -1789,6 +1789,7 @@ a.asset-alien-photo-hit {
 	background: transparent;
 }
 
+/* Under video/still — video fades out to black, then still fades in (sequential). */
 .asset-bitcoin-season-teaser-media::after {
 	content: '';
 	position: absolute;
@@ -13510,7 +13511,7 @@ a.asset-action-button--save-signin {
 	background: transparent;
 }
 
-/* Fade-through-black plate — held for fade-out AND fade-in (no empty flash). */
+/* Under video/still — sequential fade through black (no video↔still crossfade). */
 .asset-guest-poster-media::after {
 	content: '';
 	position: absolute;
@@ -13520,7 +13521,7 @@ a.asset-action-button--save-signin {
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
-	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .asset-guest-poster-frame.is-handoff .asset-guest-poster-media::after {
@@ -13560,7 +13561,7 @@ a.asset-action-button--save-signin {
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
-	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
 	border: none;
 	background: transparent;
@@ -13581,7 +13582,13 @@ a.asset-action-button--save-signin {
 .asset-guest-poster-video.is-visible.is-done {
 	opacity: 0;
 	pointer-events: none;
-	transition-duration: 1.5s;
+	transition-duration: 1.4s;
+}
+
+.asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.4s;
 }
 
 .asset-guest-poster-img {
@@ -13590,7 +13597,7 @@ a.asset-action-button--save-signin {
 	display: block;
 	border-radius: 0;
 	opacity: 0;
-	transition: opacity 1.5s ease;
+	transition: opacity 0.9s ease;
 }
 
 .asset-guest-poster-img.is-visible {
@@ -13601,12 +13608,6 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 	transition-duration: 1.4s;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible.is-done {
-	opacity: 0;
-	pointer-events: none;
-	transition-duration: 1.4s;
 }
 
 /* Space between launch poster and Sign In (trailer removed on home guest) */
