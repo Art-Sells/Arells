@@ -552,8 +552,8 @@ export async function composePersonalBitcoinAlien(args: {
   });
 }
 
-/** Ultra-wide SEASON ONE banner with mannequin replaced + iris-ref locked. */
-export async function composePersonalBitcoinAlienSeasonOne(args: {
+/** Season One pass 1 — one Grok call (Amplify ~30s). */
+export async function composePersonalBitcoinAlienSeasonOnePass1(args: {
   selfie: Buffer;
   base: Buffer;
   iris: Buffer;
@@ -563,50 +563,80 @@ export async function composePersonalBitcoinAlienSeasonOne(args: {
     toIdentityJpeg(args.selfie),
     toCleanJpeg(args.iris),
   ]);
-
-  const firstPass = await grokImageEdit({
+  return grokImageEdit({
     prompt: ALIEN_SEASONONE_PROMPT,
     images: [
       { url: toDataUri(baseJpeg), type: 'image_url' },
       { url: toDataUri(identityJpeg), type: 'image_url' },
       { url: toDataUri(irisJpeg), type: 'image_url' },
     ],
-    // Banner is ~4:1; follow IMAGE_0 so “SEASON” / “ONE” stay.
     aspectRatio: 'auto',
   });
+}
 
-  // Second pass: layout harden + iris from iris-ref (<IMAGE_2>).
-  const firstJpeg = await toCleanJpeg(firstPass, 4561);
-  const secondPass = await grokImageEdit({
+/** Season One pass 2 — layout harden. */
+export async function composePersonalBitcoinAlienSeasonOnePass2(args: {
+  previous: Buffer;
+  base: Buffer;
+  iris: Buffer;
+}): Promise<Buffer> {
+  const [prevJpeg, baseJpeg, irisJpeg] = await Promise.all([
+    toCleanJpeg(args.previous, 4561),
+    toCleanJpeg(args.base, 4561),
+    toCleanJpeg(args.iris),
+  ]);
+  return grokImageEdit({
     prompt: ALIEN_SEASONONE_FIX_PROMPT,
     images: [
-      { url: toDataUri(firstJpeg), type: 'image_url' },
+      { url: toDataUri(prevJpeg), type: 'image_url' },
       { url: toDataUri(baseJpeg), type: 'image_url' },
-      { url: toDataUri(irisJpeg), type: 'image_url' },
-    ],
-    aspectRatio: 'auto',
-  });
-
-  // Third pass: IRIS ONLY — iris-ref as <IMAGE_1> so it cannot be ignored on the wide banner.
-  const secondJpeg = await toCleanJpeg(secondPass, 4561);
-  return grokImageEdit({
-    prompt: ALIEN_SEASONONE_IRIS_ONLY_PROMPT,
-    images: [
-      { url: toDataUri(secondJpeg), type: 'image_url' },
       { url: toDataUri(irisJpeg), type: 'image_url' },
     ],
     aspectRatio: 'auto',
   });
 }
 
-/**
- * Wide 2:1 Personal Bitcoin Alien portrait — neutral expression, iris locked.
- * Order: selfie identity, iris-ref texture, personalalienplaceholder orange COLOR LOCK.
- */
-export async function composePersonalBitcoinAlienPortrait(args: {
+/** Season One pass 3 — iris only. */
+export async function composePersonalBitcoinAlienSeasonOnePass3(args: {
+  previous: Buffer;
+  iris: Buffer;
+}): Promise<Buffer> {
+  const [prevJpeg, irisJpeg] = await Promise.all([
+    toCleanJpeg(args.previous, 4561),
+    toCleanJpeg(args.iris),
+  ]);
+  return grokImageEdit({
+    prompt: ALIEN_SEASONONE_IRIS_ONLY_PROMPT,
+    images: [
+      { url: toDataUri(prevJpeg), type: 'image_url' },
+      { url: toDataUri(irisJpeg), type: 'image_url' },
+    ],
+    aspectRatio: 'auto',
+  });
+}
+
+/** Ultra-wide SEASON ONE banner — all passes (local/dev; too slow for one Amplify request). */
+export async function composePersonalBitcoinAlienSeasonOne(args: {
+  selfie: Buffer;
+  base: Buffer;
+  iris: Buffer;
+}): Promise<Buffer> {
+  const firstPass = await composePersonalBitcoinAlienSeasonOnePass1(args);
+  const secondPass = await composePersonalBitcoinAlienSeasonOnePass2({
+    previous: firstPass,
+    base: args.base,
+    iris: args.iris,
+  });
+  return composePersonalBitcoinAlienSeasonOnePass3({
+    previous: secondPass,
+    iris: args.iris,
+  });
+}
+
+/** Portrait pass 1 — one Grok call (Amplify ~30s). */
+export async function composePersonalBitcoinAlienPortraitPass1(args: {
   selfie: Buffer;
   iris: Buffer;
-  /** Default My Character plate — bright orange field for jacket / iris hue. */
   colorRef: Buffer;
 }): Promise<Buffer> {
   const [identityJpeg, irisJpeg, colorJpeg] = await Promise.all([
@@ -614,8 +644,7 @@ export async function composePersonalBitcoinAlienPortrait(args: {
     toCleanJpeg(args.iris),
     toCleanJpeg(args.colorRef, 2048),
   ]);
-
-  const firstPass = await grokImageEdit({
+  return grokImageEdit({
     prompt: ALIEN_PORTRAIT_PROMPT,
     images: [
       { url: toDataUri(identityJpeg), type: 'image_url' },
@@ -624,19 +653,48 @@ export async function composePersonalBitcoinAlienPortrait(args: {
     ],
     aspectRatio: '2:1',
   });
+}
 
-  const firstJpeg = await toCleanJpeg(firstPass, 2048);
+/** Portrait pass 2 — studio / color fix. */
+export async function composePersonalBitcoinAlienPortraitPass2(args: {
+  previous: Buffer;
+  iris: Buffer;
+  colorRef: Buffer;
+}): Promise<Buffer> {
+  const [prevJpeg, irisJpeg, colorJpeg] = await Promise.all([
+    toCleanJpeg(args.previous, 2048),
+    toCleanJpeg(args.iris),
+    toCleanJpeg(args.colorRef, 2048),
+  ]);
   return grokImageEdit({
     prompt: [
       ALIEN_PORTRAIT_STUDIO_FIX_PROMPT,
       'COLOR + IRIS: Jacket/iris HUE = <IMAGE_2> bright orange field; iris texture = <IMAGE_1>. NO dark/rust orange. NO GLOWING EYES — matte only.',
     ].join(' '),
     images: [
-      { url: toDataUri(firstJpeg), type: 'image_url' },
+      { url: toDataUri(prevJpeg), type: 'image_url' },
       { url: toDataUri(irisJpeg), type: 'image_url' },
       { url: toDataUri(colorJpeg), type: 'image_url' },
     ],
     aspectRatio: '2:1',
+  });
+}
+
+/**
+ * Wide 2:1 Personal Bitcoin Alien portrait — both passes (local/dev).
+ * Order: selfie identity, iris-ref texture, personalalienplaceholder orange COLOR LOCK.
+ */
+export async function composePersonalBitcoinAlienPortrait(args: {
+  selfie: Buffer;
+  iris: Buffer;
+  /** Default My Character plate — bright orange field for jacket / iris hue. */
+  colorRef: Buffer;
+}): Promise<Buffer> {
+  const firstPass = await composePersonalBitcoinAlienPortraitPass1(args);
+  return composePersonalBitcoinAlienPortraitPass2({
+    previous: firstPass,
+    iris: args.iris,
+    colorRef: args.colorRef,
   });
 }
 

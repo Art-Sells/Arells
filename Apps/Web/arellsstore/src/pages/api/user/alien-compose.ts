@@ -7,7 +7,12 @@ import {
   ALIEN_SEASONONE_BASE_REL,
   composePersonalBitcoinAlien,
   composePersonalBitcoinAlienPortrait,
+  composePersonalBitcoinAlienPortraitPass1,
+  composePersonalBitcoinAlienPortraitPass2,
   composePersonalBitcoinAlienSeasonOne,
+  composePersonalBitcoinAlienSeasonOnePass1,
+  composePersonalBitcoinAlienSeasonOnePass2,
+  composePersonalBitcoinAlienSeasonOnePass3,
   readAlienComposeRef,
 } from '../../../lib/server/alienCompose';
 import {
@@ -51,19 +56,41 @@ async function loadSelfie(bucket: string, email: string, asset: string): Promise
   return selfieBuf;
 }
 
-type ComposeMode = 'meta' | 'seasonone' | 'portrait' | 'full';
+async function loadJpegKey(bucket: string, key: string): Promise<Buffer> {
+  const obj = await s3.getObject({ Bucket: bucket, Key: key }).promise();
+  const body = obj.Body;
+  if (!body) throw Object.assign(new Error('Missing image'), { code: 'NoSuchKey' });
+  return Buffer.isBuffer(body) ? body : Buffer.from(body as ArrayBuffer);
+}
+
+type ComposeMode =
+  | 'meta'
+  | 'seasonone'
+  | 'seasonone-fix'
+  | 'seasonone-iris'
+  | 'portrait'
+  | 'portrait-fix'
+  | 'full';
 
 function normalizeMode(raw: unknown): ComposeMode {
-  if (raw === 'meta' || raw === 'seasonone' || raw === 'portrait' || raw === 'full') {
+  if (
+    raw === 'meta' ||
+    raw === 'seasonone' ||
+    raw === 'seasonone-fix' ||
+    raw === 'seasonone-iris' ||
+    raw === 'portrait' ||
+    raw === 'portrait-fix' ||
+    raw === 'full'
+  ) {
     return raw;
   }
   return 'full';
 }
 
 /**
- * Amplify API routes die around ~30s. Run one Grok still per request:
- *   mode: 'meta' | 'seasonone' | 'portrait'
- * Legacy mode: 'full' still does all three (local/dev only — too slow for Amplify).
+ * Amplify API routes die around ~30s — one Grok edit per request.
+ * Client drives: meta → seasonone → seasonone-fix → seasonone-iris →
+ * portrait → portrait-fix → videos.
  */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -123,7 +150,73 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    if (mode === 'seasonone' || mode === 'full') {
+    if (mode === 'seasonone') {
+      const [iris, seasonBase] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
+        readAlienComposeRef(ALIEN_SEASONONE_BASE_REL),
+      ]);
+      const seasonOne = await composePersonalBitcoinAlienSeasonOnePass1({
+        selfie: selfieBuf,
+        base: seasonBase.buffer,
+        iris: iris.buffer,
+      });
+      await s3
+        .putObject({
+          Bucket: bucket,
+          Key: alienSeasonOneKey(allowed, asset),
+          Body: seasonOne,
+          ContentType: 'image/jpeg',
+          ACL: 'private',
+        })
+        .promise();
+      return res.status(200).json({ ok: true, mode });
+    }
+
+    if (mode === 'seasonone-fix') {
+      const [iris, seasonBase, prev] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
+        readAlienComposeRef(ALIEN_SEASONONE_BASE_REL),
+        loadJpegKey(bucket, alienSeasonOneKey(allowed, asset)),
+      ]);
+      const seasonOne = await composePersonalBitcoinAlienSeasonOnePass2({
+        previous: prev,
+        base: seasonBase.buffer,
+        iris: iris.buffer,
+      });
+      await s3
+        .putObject({
+          Bucket: bucket,
+          Key: alienSeasonOneKey(allowed, asset),
+          Body: seasonOne,
+          ContentType: 'image/jpeg',
+          ACL: 'private',
+        })
+        .promise();
+      return res.status(200).json({ ok: true, mode });
+    }
+
+    if (mode === 'seasonone-iris') {
+      const [iris, prev] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
+        loadJpegKey(bucket, alienSeasonOneKey(allowed, asset)),
+      ]);
+      const seasonOne = await composePersonalBitcoinAlienSeasonOnePass3({
+        previous: prev,
+        iris: iris.buffer,
+      });
+      await s3
+        .putObject({
+          Bucket: bucket,
+          Key: alienSeasonOneKey(allowed, asset),
+          Body: seasonOne,
+          ContentType: 'image/jpeg',
+          ACL: 'private',
+        })
+        .promise();
+      return res.status(200).json({ ok: true, mode });
+    }
+
+    if (mode === 'full') {
       const [iris, seasonBase] = await Promise.all([
         readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
         readAlienComposeRef(ALIEN_SEASONONE_BASE_REL),
@@ -142,12 +235,55 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ACL: 'private',
         })
         .promise();
-      if (mode === 'seasonone') {
-        return res.status(200).json({ ok: true, mode });
-      }
     }
 
-    if (mode === 'portrait' || mode === 'full') {
+    if (mode === 'portrait') {
+      const [iris, portraitColor] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
+        readAlienComposeRef(ALIEN_PORTRAIT_COLOR_REL),
+      ]);
+      const portrait = await composePersonalBitcoinAlienPortraitPass1({
+        selfie: selfieBuf,
+        iris: iris.buffer,
+        colorRef: portraitColor.buffer,
+      });
+      await s3
+        .putObject({
+          Bucket: bucket,
+          Key: alienPortraitKey(allowed, asset),
+          Body: portrait,
+          ContentType: 'image/jpeg',
+          ACL: 'private',
+        })
+        .promise();
+      return res.status(200).json({ ok: true, mode });
+    }
+
+    if (mode === 'portrait-fix') {
+      const [iris, portraitColor, prev] = await Promise.all([
+        readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
+        readAlienComposeRef(ALIEN_PORTRAIT_COLOR_REL),
+        loadJpegKey(bucket, alienPortraitKey(allowed, asset)),
+      ]);
+      const portrait = await composePersonalBitcoinAlienPortraitPass2({
+        previous: prev,
+        iris: iris.buffer,
+        colorRef: portraitColor.buffer,
+      });
+      await s3
+        .putObject({
+          Bucket: bucket,
+          Key: alienPortraitKey(allowed, asset),
+          Body: portrait,
+          ContentType: 'image/jpeg',
+          ACL: 'private',
+        })
+        .promise();
+      await consumePaidCredit(allowed, asset);
+      return res.status(200).json({ ok: true, mode });
+    }
+
+    if (mode === 'full') {
       const [iris, portraitColor] = await Promise.all([
         readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
         readAlienComposeRef(ALIEN_PORTRAIT_COLOR_REL),

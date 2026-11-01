@@ -187,13 +187,13 @@ export type AlienComposeResult = {
 };
 
 const GENERATE_POLL_MS = 2000;
-/** Hard cap so a wedged job can't leave the UI spinning for a quarter hour. */
-const GENERATE_POLL_MAX_MS = 8 * 60 * 1000;
+/** Short poll only — Amplify never finishes jobs in the background. */
+const GENERATE_POLL_MAX_MS = 45 * 1000;
 /**
- * Treat “running” jobs older than this as dead for remote-resume attach.
- * Must cover a full client-driven compose + both loops (Amplify has no background work).
+ * Fresh “running” window for remote-resume. If still running after this, the
+ * browser must drive compose again (no server pipeline).
  */
-export const ALIEN_GENERATE_STALE_MS = 8 * 60 * 1000;
+export const ALIEN_GENERATE_STALE_MS = 3 * 60 * 1000;
 
 export type AlienGenerateJobClient = {
   status?: 'running' | 'complete' | 'error';
@@ -283,7 +283,10 @@ async function loadComposeResultFromJob(
   };
 }
 
-/** Poll an already-started server job until complete/error (other tab / browser resume). */
+/**
+ * Other tab / reload: briefly poll, then drive compose from the existing selfie
+ * (Amplify has no background pipeline — polling alone always timed out).
+ */
 export async function awaitAlienGenerateJob(args: {
   email: string;
   assetId: string;
@@ -300,13 +303,111 @@ export async function awaitAlienGenerateJob(args: {
     job = await fetchAlienGenerateJob(email, assetId);
   }
 
-  if (!job || job.status === 'running') {
-    throw new Error('Character generation timed out — check back in a minute');
+  if (job?.status === 'complete') {
+    return loadComposeResultFromJob(assetId, shareId, job);
   }
-  if (job.status === 'error') {
+  if (job?.status === 'error') {
     throw new Error(job.error || 'Character generation failed');
   }
-  return loadComposeResultFromJob(assetId, shareId, job);
+
+  /* Still running — finish client-side from selfie already on S3. */
+  return runAlienGeneratePipeline({ email, assetId, shareId });
+}
+
+const COMPOSE_STEPS = [
+  'meta',
+  'seasonone',
+  'seasonone-fix',
+  'seasonone-iris',
+  'portrait',
+  'portrait-fix',
+] as const;
+
+/** Compose stills + loops after selfie upload / arm (one Grok call per Amplify request). */
+export async function runAlienGeneratePipeline(args: {
+  email: string;
+  assetId: string;
+  shareId?: string | null;
+}): Promise<AlienComposeResult> {
+  const { email, assetId, shareId } = args;
+
+  const failJob = async (message: string) => {
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'fail',
+      error: message,
+    }).catch(() => undefined);
+  };
+
+  try {
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'phase',
+      phase: 'compose',
+    });
+
+    for (const mode of COMPOSE_STEPS) {
+      const compose = await postJson('/api/user/alien-compose', {
+        email,
+        asset: assetId,
+        mode,
+      });
+      if (!compose.ok) {
+        throw new Error(
+          typeof compose.json.error === 'string'
+            ? compose.json.error
+            : `Character create failed (${mode})`
+        );
+      }
+    }
+
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'phase',
+      phase: 'seasononeloop',
+    });
+    const season = await postJson('/api/user/alien-videos', {
+      email,
+      asset: assetId,
+      kinds: ['seasononeloop'],
+    });
+    const seasonOk = Boolean(season.ok && season.json.seasononeloop);
+
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'phase',
+      phase: 'metaloop',
+      seasononeloop: seasonOk,
+    });
+    const metaloop = await postJson('/api/user/alien-videos', {
+      email,
+      asset: assetId,
+      kinds: ['metaloop'],
+    });
+    const metaloopOk = Boolean(metaloop.ok && metaloop.json.metaloop);
+
+    const finalize = await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'finalize',
+      metaloop: metaloopOk,
+      seasononeloop: seasonOk,
+    });
+    const job =
+      finalize.json.job && typeof finalize.json.job === 'object'
+        ? (finalize.json.job as AlienGenerateJobClient)
+        : { status: 'complete' as const, metaloop: metaloopOk, seasononeloop: seasonOk };
+
+    return loadComposeResultFromJob(assetId, shareId, job);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Character generation failed';
+    await failJob(message);
+    throw err;
+  }
 }
 
 /**
@@ -456,81 +557,5 @@ export async function composeAlienFromPhoto(args: {
     );
   }
 
-  const failJob = async (message: string) => {
-    await postJson('/api/user/alien-generate', {
-      email,
-      asset: assetId,
-      action: 'fail',
-      error: message,
-    }).catch(() => undefined);
-  };
-
-  try {
-    /* One Grok still per request — Amplify kills API routes around ~30s. */
-    await postJson('/api/user/alien-generate', {
-      email,
-      asset: assetId,
-      action: 'phase',
-      phase: 'compose',
-    });
-    for (const mode of ['meta', 'seasonone', 'portrait'] as const) {
-      const compose = await postJson('/api/user/alien-compose', {
-        email,
-        asset: assetId,
-        mode,
-      });
-      if (!compose.ok) {
-        throw new Error(
-          typeof compose.json.error === 'string'
-            ? compose.json.error
-            : `Character create failed (${mode})`
-        );
-      }
-    }
-
-    await postJson('/api/user/alien-generate', {
-      email,
-      asset: assetId,
-      action: 'phase',
-      phase: 'seasononeloop',
-    });
-    const season = await postJson('/api/user/alien-videos', {
-      email,
-      asset: assetId,
-      kinds: ['seasononeloop'],
-    });
-    const seasonOk = Boolean(season.ok && season.json.seasononeloop);
-
-    await postJson('/api/user/alien-generate', {
-      email,
-      asset: assetId,
-      action: 'phase',
-      phase: 'metaloop',
-      seasononeloop: seasonOk,
-    });
-    const metaloop = await postJson('/api/user/alien-videos', {
-      email,
-      asset: assetId,
-      kinds: ['metaloop'],
-    });
-    const metaloopOk = Boolean(metaloop.ok && metaloop.json.metaloop);
-
-    const finalize = await postJson('/api/user/alien-generate', {
-      email,
-      asset: assetId,
-      action: 'finalize',
-      metaloop: metaloopOk,
-      seasononeloop: seasonOk,
-    });
-    const job =
-      finalize.json.job && typeof finalize.json.job === 'object'
-        ? (finalize.json.job as AlienGenerateJobClient)
-        : { status: 'complete' as const, metaloop: metaloopOk, seasononeloop: seasonOk };
-
-    return loadComposeResultFromJob(assetId, shareId, job);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Character generation failed';
-    await failJob(message);
-    throw err;
-  }
+  return runAlienGeneratePipeline({ email, assetId, shareId });
 }
