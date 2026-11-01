@@ -164,16 +164,121 @@ export type AlienComposeResult = {
 const GENERATE_POLL_MS = 2000;
 /** Hard cap so a wedged job can't leave the UI spinning for a quarter hour. */
 const GENERATE_POLL_MAX_MS = 8 * 60 * 1000;
+/** Treat Amplify “running” jobs older than this as dead (same as server reuse window). */
+export const ALIEN_GENERATE_STALE_MS = 2 * 60 * 1000;
 
-type AlienGenerateJobClient = {
+export type AlienGenerateJobClient = {
   status?: 'running' | 'complete' | 'error';
+  phase?: string;
   metaloop?: boolean;
   seasononeloop?: boolean;
   error?: string;
+  startedAt?: string;
 };
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function fetchAlienGenerateJob(
+  email: string,
+  assetId: string
+): Promise<AlienGenerateJobClient | null> {
+  const statusRes = await fetch(
+    `/api/user/alien-generate?email=${encodeURIComponent(email)}&asset=${encodeURIComponent(assetId)}`,
+    { credentials: 'include', cache: 'no-store' }
+  );
+  const statusJson = await statusRes.json().catch(() => ({}));
+  if (!statusRes.ok) {
+    throw new Error(statusJson.error || 'Could not check generation status');
+  }
+  return statusJson.job && typeof statusJson.job === 'object'
+    ? (statusJson.job as AlienGenerateJobClient)
+    : null;
+}
+
+export function isAlienGenerateJobFreshRunning(job: AlienGenerateJobClient | null | undefined): boolean {
+  if (!job || job.status !== 'running') return false;
+  const startedMs = Date.parse(job.startedAt || '') || 0;
+  if (!startedMs) return true;
+  const ageMs = Date.now() - startedMs;
+  return ageMs >= 0 && ageMs < ALIEN_GENERATE_STALE_MS;
+}
+
+async function loadComposeResultFromJob(
+  assetId: string,
+  shareId: string | null | undefined,
+  job: AlienGenerateJobClient
+): Promise<AlienComposeResult> {
+  const bust = `&t=${Date.now()}`;
+  const [portraitRes, metaRes, loopRes] = await Promise.all([
+    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=portrait${bust}`, {
+      credentials: 'include',
+      cache: 'no-store',
+    }),
+    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
+      credentials: 'include',
+      cache: 'no-store',
+    }),
+    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop${bust}`, {
+      credentials: 'include',
+      cache: 'no-store',
+    }),
+  ]);
+  if (!portraitRes.ok || !metaRes.ok) {
+    throw new Error('Could not load generated images');
+  }
+  const [portraitBlob, metaBlob] = await Promise.all([portraitRes.blob(), metaRes.blob()]);
+  const loopBlob = loopRes.ok ? await loopRes.blob() : null;
+
+  if (typeof window !== 'undefined') {
+    clearPaidCreditPending(assetId);
+    window.dispatchEvent(
+      new CustomEvent(ALIEN_COMPOSE_DONE_EVENT, {
+        detail: {
+          assetId,
+          shareId,
+          at: Date.now(),
+          metaloop: Boolean(job.metaloop && loopBlob),
+          seasononeloop: Boolean(job.seasononeloop),
+        },
+      })
+    );
+  }
+
+  return {
+    portraitBlob,
+    metaBlob,
+    loopBlob,
+    metaloop: Boolean(job.metaloop && loopBlob),
+    seasononeloop: Boolean(job.seasononeloop),
+  };
+}
+
+/** Poll an already-started server job until complete/error (other tab / browser resume). */
+export async function awaitAlienGenerateJob(args: {
+  email: string;
+  assetId: string;
+  shareId?: string | null;
+  initialJob?: AlienGenerateJobClient | null;
+}): Promise<AlienComposeResult> {
+  const { email, assetId, shareId } = args;
+  const deadline = Date.now() + GENERATE_POLL_MAX_MS;
+  let job: AlienGenerateJobClient | null = args.initialJob ?? null;
+
+  while (Date.now() < deadline) {
+    if (job?.status === 'complete' || job?.status === 'error') break;
+    await sleep(GENERATE_POLL_MS);
+    job = await fetchAlienGenerateJob(email, assetId);
+  }
+
+  if (!job || job.status === 'running') {
+    throw new Error('Character generation timed out — check back in a minute');
+  }
+  if (job.status === 'error') {
+    throw new Error(job.error || 'Character generation failed');
+  }
+  return loadComposeResultFromJob(assetId, shareId, job);
 }
 
 /**
@@ -215,76 +320,10 @@ export async function composeAlienFromPhoto(args: {
     throw new Error(startJson.error || 'Character generation failed to start');
   }
 
-  const deadline = Date.now() + GENERATE_POLL_MAX_MS;
-  let job: AlienGenerateJobClient | null =
-    startJson.job && typeof startJson.job === 'object' ? startJson.job : null;
+  const initialJob =
+    startJson.job && typeof startJson.job === 'object'
+      ? (startJson.job as AlienGenerateJobClient)
+      : null;
 
-  while (Date.now() < deadline) {
-    if (job?.status === 'complete' || job?.status === 'error') break;
-    await sleep(GENERATE_POLL_MS);
-    const statusRes = await fetch(
-      `/api/user/alien-generate?email=${encodeURIComponent(email)}&asset=${encodeURIComponent(assetId)}`,
-      { credentials: 'include', cache: 'no-store' }
-    );
-    const statusJson = await statusRes.json().catch(() => ({}));
-    if (!statusRes.ok) {
-      throw new Error(statusJson.error || 'Could not check generation status');
-    }
-    job =
-      statusJson.job && typeof statusJson.job === 'object'
-        ? (statusJson.job as AlienGenerateJobClient)
-        : null;
-  }
-
-  if (!job || job.status === 'running') {
-    throw new Error('Character generation timed out — check back in a minute');
-  }
-  if (job.status === 'error') {
-    throw new Error(job.error || 'Character generation failed');
-  }
-
-  const bust = `&t=${Date.now()}`;
-  const [portraitRes, metaRes, loopRes] = await Promise.all([
-    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=portrait${bust}`, {
-      credentials: 'include',
-      cache: 'no-store',
-    }),
-    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
-      credentials: 'include',
-      cache: 'no-store',
-    }),
-    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop${bust}`, {
-      credentials: 'include',
-      cache: 'no-store',
-    }),
-  ]);
-  if (!portraitRes.ok || !metaRes.ok) {
-    throw new Error('Could not load generated images');
-  }
-  const [portraitBlob, metaBlob] = await Promise.all([portraitRes.blob(), metaRes.blob()]);
-  const loopBlob = loopRes.ok ? await loopRes.blob() : null;
-
-  if (typeof window !== 'undefined') {
-    /* Credit is consumed server-side during compose — drop local “Update Photo” pending. */
-    clearPaidCreditPending(assetId);
-    window.dispatchEvent(
-      new CustomEvent(ALIEN_COMPOSE_DONE_EVENT, {
-        detail: {
-          assetId,
-          shareId,
-          at: Date.now(),
-          metaloop: Boolean(job.metaloop && loopBlob),
-          seasononeloop: Boolean(job.seasononeloop),
-        },
-      })
-    );
-  }
-
-  return {
-    portraitBlob,
-    metaBlob,
-    loopBlob,
-    metaloop: Boolean(job.metaloop && loopBlob),
-    seasononeloop: Boolean(job.seasononeloop),
-  };
+  return awaitAlienGenerateJob({ email, assetId, shareId, initialJob });
 }

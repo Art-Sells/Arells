@@ -4,12 +4,19 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
 } from 'react';
-import { composeAlienFromPhoto } from '../lib/client/alienPhotoCompose';
+import {
+  awaitAlienGenerateJob,
+  composeAlienFromPhoto,
+  fetchAlienGenerateJob,
+  isAlienGenerateJobFreshRunning,
+} from '../lib/client/alienPhotoCompose';
+import { useUser } from './UserContext';
 
 export type AlienCreateThemeStyle = React.CSSProperties;
 
@@ -60,11 +67,16 @@ const AlienCharacterCreateContext = createContext<AlienCharacterCreateContextVal
   undefined
 );
 
+/** Assets we resume across browsers when a server job is already running. */
+const REMOTE_WATCH = [{ id: 'bitcoin', name: 'Bitcoin' }] as const;
+const REMOTE_POLL_MS = 4000;
+
 function revokeIfBlob(url: string | null | undefined) {
   if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
 }
 
 export function AlienCharacterCreateProvider({ children }: { children: ReactNode }) {
+  const { email, shareId, isSignedIn, authSessionLoading } = useUser();
   const [status, setStatus] = useState<'idle' | 'creating' | 'success' | 'error'>('idle');
   const [creatingAssetId, setCreatingAssetId] = useState<string | null>(null);
   const [creatingAssetName, setCreatingAssetName] = useState<string | null>(null);
@@ -109,6 +121,48 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
     setWaitAssetName(creatingNameRef.current);
     setWaitModalOpen(true);
     return true;
+  }, []);
+
+  const finishCreateSuccess = useCallback(
+    (args: {
+      assetId: string;
+      assetName: string;
+      shareId?: string | null;
+      metaUrl: string;
+      loopUrl: string | null;
+    }) => {
+      setSuccess({
+        assetId: args.assetId,
+        assetName: args.assetName,
+        shareId: args.shareId ?? null,
+        metaUrl: args.metaUrl,
+        loopUrl: args.loopUrl,
+      });
+      setStatus('success');
+      setCreatingModalOpen(false);
+    },
+    []
+  );
+
+  const finishCreateError = useCallback(
+    (args: { assetId: string; assetName: string; shareId?: string | null }) => {
+      setError({
+        assetId: args.assetId,
+        assetName: args.assetName,
+        shareId: args.shareId ?? null,
+      });
+      setErrorOpen(true);
+      setStatus('error');
+      setCreatingModalOpen(false);
+    },
+    []
+  );
+
+  const clearCreatingSlot = useCallback(() => {
+    creatingRef.current = false;
+    creatingNameRef.current = null;
+    setCreatingAssetId(null);
+    setCreatingAssetName(null);
   }, []);
 
   const startCreate = useCallback(
@@ -156,37 +210,118 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
           });
           const metaUrl = URL.createObjectURL(result.metaBlob);
           const loopUrl = result.loopBlob ? URL.createObjectURL(result.loopBlob) : null;
-          setSuccess({
+          finishCreateSuccess({
             assetId: args.assetId,
             assetName: name,
-            shareId: args.shareId ?? null,
+            shareId: args.shareId,
             metaUrl,
             loopUrl,
           });
-          setStatus('success');
-          setCreatingModalOpen(false);
         } catch (err) {
           console.error('alien character create', err);
-          setError({
+          finishCreateError({
             assetId: args.assetId,
             assetName: name,
-            shareId: args.shareId ?? null,
+            shareId: args.shareId,
           });
-          setErrorOpen(true);
-          setStatus('error');
-          setCreatingModalOpen(false);
         } finally {
-          creatingRef.current = false;
-          creatingNameRef.current = null;
-          setCreatingAssetId(null);
-          setCreatingAssetName(null);
+          clearCreatingSlot();
         }
       })();
 
       return true;
     },
-    []
+    [clearCreatingSlot, finishCreateError, finishCreateSuccess]
   );
+
+  /**
+   * Other browser / tab: if the server already has a fresh running job, show the
+   * same creating modal and follow it to success/error.
+   */
+  useEffect(() => {
+    if (authSessionLoading || !isSignedIn || !email) return;
+    let cancelled = false;
+
+    const resumeRemote = async () => {
+      if (creatingRef.current || cancelled) return;
+      for (const asset of REMOTE_WATCH) {
+        if (creatingRef.current || cancelled) return;
+        let job;
+        try {
+          job = await fetchAlienGenerateJob(email, asset.id);
+        } catch {
+          continue;
+        }
+        if (!isAlienGenerateJobFreshRunning(job) || !job) continue;
+
+        const name = asset.name;
+        creatingRef.current = true;
+        creatingNameRef.current = name;
+        setCreatingAssetId(asset.id);
+        setCreatingAssetName(name);
+        setStatus('creating');
+        setCreatingModalOpen(true);
+        setWaitModalOpen(false);
+        setErrorOpen(false);
+        setError(null);
+        setSuccess((prev) => {
+          if (prev) {
+            revokeIfBlob(prev.metaUrl);
+            revokeIfBlob(prev.loopUrl);
+          }
+          return null;
+        });
+
+        try {
+          const result = await awaitAlienGenerateJob({
+            email,
+            assetId: asset.id,
+            shareId,
+            initialJob: job,
+          });
+          if (cancelled) return;
+          const metaUrl = URL.createObjectURL(result.metaBlob);
+          const loopUrl = result.loopBlob ? URL.createObjectURL(result.loopBlob) : null;
+          finishCreateSuccess({
+            assetId: asset.id,
+            assetName: name,
+            shareId,
+            metaUrl,
+            loopUrl,
+          });
+        } catch (err) {
+          if (cancelled) return;
+          console.error('alien character remote resume', err);
+          finishCreateError({
+            assetId: asset.id,
+            assetName: name,
+            shareId,
+          });
+        } finally {
+          if (!cancelled) clearCreatingSlot();
+        }
+        return;
+      }
+    };
+
+    void resumeRemote();
+    const interval = window.setInterval(() => {
+      void resumeRemote();
+    }, REMOTE_POLL_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [
+    authSessionLoading,
+    isSignedIn,
+    email,
+    shareId,
+    clearCreatingSlot,
+    finishCreateError,
+    finishCreateSuccess,
+  ]);
 
   const isCreatingAsset = useCallback(
     (assetId: string) => status === 'creating' && creatingAssetId === assetId,

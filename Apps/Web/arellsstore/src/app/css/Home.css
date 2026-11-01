@@ -2029,6 +2029,18 @@ a.asset-alien-photo-hit {
 	opacity: 1;
 }
 
+.bitcoin-my-character-update-photo-layer--busy {
+	gap: 8px;
+}
+
+.bitcoin-my-character-update-photo-creating {
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: 1.1;
+	letter-spacing: inherit;
+	white-space: nowrap;
+}
+
 .bitcoin-my-character-update-photo-icon {
 	display: block;
 	flex-shrink: 0;
