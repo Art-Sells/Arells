@@ -2,36 +2,67 @@ import fs from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
 
-const ALIEN_COMPOSE_DIR = path.join(
-  'public',
-  'images',
-  'banners',
-  'assets',
-  'crypto',
-  'Bitcoin',
-  'AlienCompose'
-);
+/**
+ * Bundled under `src/server-data/` so Amplify/Next file tracing packs them into the
+ * API Lambda. `public/...` alone is often missing at runtime (`ENOENT` under `/tmp/app/public`).
+ */
+const ALIEN_COMPOSE_DATA_DIR = path.join('src', 'server-data', 'alien-compose');
 
 /** Launch / share metaposter base (white mannequin). */
-export const ALIEN_COMPOSE_BASE_REL = path.join(ALIEN_COMPOSE_DIR, 'metaposter-base.jpg');
+export const ALIEN_COMPOSE_BASE_REL = path.join(ALIEN_COMPOSE_DATA_DIR, 'metaposter-base.jpg');
 /** Wide SEASON ONE banner base (white mannequin between SEASON / ONE). */
-export const ALIEN_SEASONONE_BASE_REL = path.join(ALIEN_COMPOSE_DIR, 'seasonone-base.jpg');
+export const ALIEN_SEASONONE_BASE_REL = path.join(ALIEN_COMPOSE_DATA_DIR, 'seasonone-base.jpg');
 /** Permanent iris color/detail reference (not tmp). */
-export const ALIEN_COMPOSE_IRIS_REL = path.join(ALIEN_COMPOSE_DIR, 'iris-ref.jpg');
+export const ALIEN_COMPOSE_IRIS_REL = path.join(ALIEN_COMPOSE_DATA_DIR, 'iris-ref.jpg');
 /**
  * Default My Character profile plate — solid bright Bitcoin-orange field behind white mannequin.
  * Portrait wardrobe / iris HUE lock (not scene background).
  */
-export const ALIEN_PORTRAIT_COLOR_REL = path.join(
-  'public',
-  'images',
-  'banners',
-  'assets',
-  'crypto',
-  'Bitcoin',
-  'Posters',
-  'personalalienplaceholder.jpg'
-);
+export const ALIEN_PORTRAIT_COLOR_REL = path.join(ALIEN_COMPOSE_DATA_DIR, 'portrait-color.jpg');
+
+/** Legacy public/ paths — still tried if server-data is missing locally. */
+const ALIEN_COMPOSE_PUBLIC_FALLBACKS: Record<string, string> = {
+  [path.basename(ALIEN_COMPOSE_BASE_REL)]: path.join(
+    'public',
+    'images',
+    'banners',
+    'assets',
+    'crypto',
+    'Bitcoin',
+    'AlienCompose',
+    'metaposter-base.jpg'
+  ),
+  [path.basename(ALIEN_SEASONONE_BASE_REL)]: path.join(
+    'public',
+    'images',
+    'banners',
+    'assets',
+    'crypto',
+    'Bitcoin',
+    'AlienCompose',
+    'seasonone-base.jpg'
+  ),
+  [path.basename(ALIEN_COMPOSE_IRIS_REL)]: path.join(
+    'public',
+    'images',
+    'banners',
+    'assets',
+    'crypto',
+    'Bitcoin',
+    'AlienCompose',
+    'iris-ref.jpg'
+  ),
+  [path.basename(ALIEN_PORTRAIT_COLOR_REL)]: path.join(
+    'public',
+    'images',
+    'banners',
+    'assets',
+    'crypto',
+    'Bitcoin',
+    'Posters',
+    'personalalienplaceholder.jpg'
+  ),
+};
 
 /**
  * Grok multi-image edit: <IMAGE_0> base poster (canvas first), <IMAGE_1> selfie.
@@ -358,11 +389,35 @@ function toDataUri(jpeg: Buffer): string {
   return `data:image/jpeg;base64,${jpeg.toString('base64')}`;
 }
 
+/**
+ * Load a compose reference JPEG.
+ * Prefer `src/server-data/alien-compose` (file-traced into Amplify Lambda). Fall back to
+ * legacy `public/...` paths for local/dev.
+ */
 export async function readAlienComposeRef(
   relPath: string
 ): Promise<{ buffer: Buffer; mime: 'image/jpeg' }> {
-  const abs = path.join(process.cwd(), relPath);
-  const raw = await fs.readFile(abs);
+  const candidates = [relPath];
+  const fallback = ALIEN_COMPOSE_PUBLIC_FALLBACKS[path.basename(relPath)];
+  if (fallback && fallback !== relPath) candidates.push(fallback);
+
+  const tried: string[] = [];
+  let raw: Buffer | null = null;
+  for (const rel of candidates) {
+    const abs = path.join(process.cwd(), rel);
+    tried.push(abs);
+    try {
+      raw = await fs.readFile(abs);
+      break;
+    } catch {
+      /* try next */
+    }
+  }
+  if (!raw) {
+    throw new Error(
+      `Missing compose ref ${path.basename(relPath)} (tried: ${tried.join(' | ')})`
+    );
+  }
   const buffer = await toCleanJpeg(raw);
   return { buffer, mime: 'image/jpeg' };
 }

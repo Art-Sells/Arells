@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Pack Bitcoin alien compose JPEGs into API Lambdas (Amplify otherwise ENOENT on /tmp/app/public/...).
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/user/alien-compose': ['./src/server-data/alien-compose/**/*'],
+      '/api/user/alien-generate': ['./src/server-data/alien-compose/**/*'],
+      '/api/user/alien-videos': ['./src/server-data/alien-compose/**/*'],
+    },
+  },
   async redirects() {
     return [
       { source: '/analytics-internal', destination: '/metrics', permanent: true },
