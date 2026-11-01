@@ -435,7 +435,7 @@ export function grokApiKeyOrThrow(): string {
 
 /** Prompt constants are string[]; xAI requires a single string (array → 4xx). */
 function grokPromptText(prompt: string | readonly string[]): string {
-  return Array.isArray(prompt) ? prompt.join(' ') : prompt;
+  return typeof prompt === 'string' ? prompt : prompt.join(' ');
 }
 
 async function grokImageEdit(args: {
