@@ -433,8 +433,13 @@ export function grokApiKeyOrThrow(): string {
   return key;
 }
 
+/** Prompt constants are string[]; xAI requires a single string (array → 4xx). */
+function grokPromptText(prompt: string | readonly string[]): string {
+  return Array.isArray(prompt) ? prompt.join(' ') : prompt;
+}
+
 async function grokImageEdit(args: {
-  prompt: string;
+  prompt: string | readonly string[];
   images: Array<{ url: string; type: string }>;
   aspectRatio: string;
 }): Promise<Buffer> {
@@ -447,7 +452,7 @@ async function grokImageEdit(args: {
     },
     body: JSON.stringify({
       model: process.env.GROK_IMAGE_MODEL?.trim() || 'grok-imagine-image-2.0',
-      prompt: args.prompt,
+      prompt: grokPromptText(args.prompt),
       images: args.images,
       aspect_ratio: args.aspectRatio,
       resolution: '1k',
@@ -458,17 +463,26 @@ async function grokImageEdit(args: {
   const raw = await res.text();
   let json: {
     data?: Array<{ b64_json?: string; url?: string }>;
-    error?: { message?: string };
+    error?: { message?: string } | string;
     message?: string;
   };
   try {
     json = JSON.parse(raw) as typeof json;
   } catch {
-    throw new Error(`Grok image edit returned non-JSON (${res.status})`);
+    throw new Error(
+      raw.trim()
+        ? `Grok image edit failed (${res.status}): ${raw.trim().slice(0, 280)}`
+        : `Grok image edit returned non-JSON (${res.status})`
+    );
   }
 
   if (!res.ok) {
-    throw new Error(json.error?.message || json.message || `Grok image edit failed (${res.status})`);
+    const detail =
+      (typeof json.error === 'string' ? json.error : json.error?.message) ||
+      json.message ||
+      raw.trim().slice(0, 280) ||
+      `status ${res.status}`;
+    throw new Error(`Grok image edit failed (${res.status}): ${detail}`);
   }
 
   const b64 = json.data?.[0]?.b64_json;
@@ -620,7 +634,7 @@ function sleep(ms: number): Promise<void> {
  */
 export async function generateAlienImageToVideo(args: {
   imageJpeg: Buffer;
-  prompt: string;
+  prompt: string | readonly string[];
   durationSeconds: number;
   /** When true, send args.imageJpeg as-is (already prepared JPEG). */
   skipResize?: boolean;
@@ -645,7 +659,7 @@ export async function generateAlienImageToVideo(args: {
     },
     body: JSON.stringify({
       model,
-      prompt: args.prompt,
+      prompt: grokPromptText(args.prompt),
       image: { url: toDataUri(imageJpeg) },
       duration,
       resolution,
