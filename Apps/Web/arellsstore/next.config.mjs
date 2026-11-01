@@ -111,6 +111,25 @@ const nextConfig = {
         defs['process.env.STRIPE_PRICE_CHARACTER_GENERATION'] = JSON.stringify(stripePriceCg);
       }
 
+      /* Character compose / loops — Amplify API Lambda often has no runtime env. */
+      const grokApiKey =
+        process.env.GROK_API_KEY?.trim() || process.env.XAI_API_KEY?.trim();
+      if (grokApiKey) {
+        defs['process.env.GROK_API_KEY'] = JSON.stringify(grokApiKey);
+      }
+      const grokImageModel = process.env.GROK_IMAGE_MODEL?.trim();
+      if (grokImageModel) {
+        defs['process.env.GROK_IMAGE_MODEL'] = JSON.stringify(grokImageModel);
+      }
+      const grokVideoModel = process.env.GROK_VIDEO_MODEL?.trim();
+      if (grokVideoModel) {
+        defs['process.env.GROK_VIDEO_MODEL'] = JSON.stringify(grokVideoModel);
+      }
+      const grokVideoResolution = process.env.GROK_VIDEO_RESOLUTION?.trim();
+      if (grokVideoResolution) {
+        defs['process.env.GROK_VIDEO_RESOLUTION'] = JSON.stringify(grokVideoResolution);
+      }
+
       if (Object.keys(defs).length > 0) {
         config.plugins.push(new webpack.DefinePlugin(defs));
       }
