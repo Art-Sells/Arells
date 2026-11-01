@@ -1920,11 +1920,29 @@ a.asset-alien-photo-hit {
 	box-sizing: border-box;
 }
 
+.bitcoin-my-character-launch-panel {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 12px;
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 14px;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	background: transparent;
+	padding: 10px;
+}
+
 .bitcoin-my-character-launch {
 	position: relative;
 	width: 100%;
 	aspect-ratio: 1 / 1;
 	box-sizing: border-box;
+}
+
+.bitcoin-my-character-share.asset-alien-meta-share {
+	width: 100%;
+	margin: 0;
 }
 
 /* Loader + AlienMetaPreview share the same 1:1 box so media swap can't grow mid height-down. */

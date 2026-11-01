@@ -193,6 +193,8 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const [hasPaidCredit, setHasPaidCredit] = useState(() => peekPaidCreditPending('bitcoin'));
   /** Don't render CTA until credit status known — avoids Update Character → Update Photo flash. */
   const [creditReady, setCreditReady] = useState(() => peekPaidCreditPending('bitcoin'));
+  const [shareCopied, setShareCopied] = useState(false);
+  const shareCopiedTimerRef = useRef<number | null>(null);
 
   const resolvedShareId = (pathShareId || shareId || '').trim().toLowerCase() || null;
   const isOwner =
@@ -205,6 +207,35 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const [portraitLoaderGone, setPortraitLoaderGone] = useState(false);
   const portraitImgRef = useRef<HTMLImageElement | null>(null);
   const busy = isCreatingAsset('bitcoin');
+
+  const sharePath = assetSharePath('/bitcoin', resolvedShareId);
+  const shareHref =
+    typeof window !== 'undefined' ? `${window.location.origin}${sharePath}` : sharePath;
+
+  const copyShareLink = useCallback(async () => {
+    if (!resolvedShareId) return;
+    try {
+      await navigator.clipboard.writeText(shareHref);
+      setShareCopied(true);
+      if (shareCopiedTimerRef.current != null) {
+        window.clearTimeout(shareCopiedTimerRef.current);
+      }
+      shareCopiedTimerRef.current = window.setTimeout(() => {
+        setShareCopied(false);
+        shareCopiedTimerRef.current = null;
+      }, 1600);
+    } catch (err) {
+      console.error('share copy failed', err);
+    }
+  }, [resolvedShareId, shareHref]);
+
+  useEffect(() => {
+    return () => {
+      if (shareCopiedTimerRef.current != null) {
+        window.clearTimeout(shareCopiedTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setPortraitLoaded(false);
@@ -726,21 +757,41 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           </HeightDownSection>
 
           <HeightDownSection open className="bitcoin-my-character-section--launch">
-            <div className="bitcoin-my-character-launch">
-              {metaUrl ? (
-                <AlienMetaPreview
-                  metaUrl={metaUrl}
-                  loopUrl={metaLoopUrl}
-                  alt="Bitcoin Alien Race launch poster"
-                />
-              ) : (
-                /* Empty frame only — AlienMetaPreview owns the spinner (avoids double rings). */
-                <div
-                  className="bitcoin-my-character-launch--loading"
-                  role="status"
-                  aria-label="Loading launch poster"
-                />
-              )}
+            <div className="bitcoin-my-character-launch-panel">
+              <div className="bitcoin-my-character-launch">
+                {metaUrl ? (
+                  <AlienMetaPreview
+                    metaUrl={metaUrl}
+                    loopUrl={metaLoopUrl}
+                    alt="Bitcoin Alien Race launch poster"
+                  />
+                ) : (
+                  /* Empty frame only — AlienMetaPreview owns the spinner (avoids double rings). */
+                  <div
+                    className="bitcoin-my-character-launch--loading"
+                    role="status"
+                    aria-label="Loading launch poster"
+                  />
+                )}
+              </div>
+              {resolvedShareId ? (
+                <div className="asset-alien-meta-share bitcoin-my-character-share">
+                  <p className="asset-alien-meta-share-title">Share</p>
+                  <div className="asset-alien-meta-share-row">
+                    <button
+                      type="button"
+                      className="asset-alien-meta-share-copy"
+                      onClick={() => void copyShareLink()}
+                      aria-label="Copy share link"
+                    >
+                      {shareCopied ? 'Copied' : 'COPY'}
+                    </button>
+                    <span className="asset-alien-meta-share-link" title={shareHref}>
+                      {shareHref}
+                    </span>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </HeightDownSection>
 
