@@ -23,7 +23,7 @@ export default function AssetMissionHeader({ title, assetId, line, children }: A
       <p className="asset-mission-header-line">
         {line ?? (
           <>
-            On a mission to ensure
+            on a mission to ensure
             <br />
             <span className="asset-mission-possessive" aria-label={possessive}>
               <span
@@ -43,7 +43,7 @@ export default function AssetMissionHeader({ title, assetId, line, children }: A
                 my
               </span>
             </span>{' '}
-            {title} never loses value.
+            {title} never loses value
           </>
         )}
       </p>
