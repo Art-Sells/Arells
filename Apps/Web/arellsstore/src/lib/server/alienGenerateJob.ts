@@ -167,43 +167,7 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
       readAlienComposeRef(ALIEN_SEASONONE_BASE_REL),
     ]);
 
-    const [composed, seasonOne] = await Promise.all([
-      composePersonalBitcoinAlien({
-        selfie: selfieBuf,
-        selfieMime: 'image/jpeg',
-        base: metaBase.buffer,
-        baseMime: metaBase.mime,
-        iris: iris.buffer,
-        irisMime: iris.mime,
-      }),
-      composePersonalBitcoinAlienSeasonOne({
-        selfie: selfieBuf,
-        base: seasonBase.buffer,
-        iris: iris.buffer,
-      }),
-    ]);
-
-    await Promise.all([
-      s3
-        .putObject({
-          Bucket: bucket,
-          Key: alienComposedKey(email, assetId),
-          Body: composed,
-          ContentType: 'image/jpeg',
-          ACL: 'private',
-        })
-        .promise(),
-      s3
-        .putObject({
-          Bucket: bucket,
-          Key: alienSeasonOneKey(email, assetId),
-          Body: seasonOne,
-          ContentType: 'image/jpeg',
-          ACL: 'private',
-        })
-        .promise(),
-    ]);
-
+    /* Portrait first — iris source for Season One + launch. */
     const portrait = await composePersonalBitcoinAlienPortrait({
       selfie: selfieBuf,
       iris: iris.buffer,
@@ -214,6 +178,38 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
         Bucket: bucket,
         Key: alienPortraitKey(email, assetId),
         Body: portrait,
+        ContentType: 'image/jpeg',
+        ACL: 'private',
+      })
+      .promise();
+
+    const seasonOne = await composePersonalBitcoinAlienSeasonOne({
+      selfie: selfieBuf,
+      base: seasonBase.buffer,
+      iris: portrait,
+    });
+    await s3
+      .putObject({
+        Bucket: bucket,
+        Key: alienSeasonOneKey(email, assetId),
+        Body: seasonOne,
+        ContentType: 'image/jpeg',
+        ACL: 'private',
+      })
+      .promise();
+
+    const composed = await composePersonalBitcoinAlien({
+      selfie: selfieBuf,
+      selfieMime: 'image/jpeg',
+      base: metaBase.buffer,
+      baseMime: metaBase.mime,
+      portrait,
+    });
+    await s3
+      .putObject({
+        Bucket: bucket,
+        Key: alienComposedKey(email, assetId),
+        Body: composed,
         ContentType: 'image/jpeg',
         ACL: 'private',
       })

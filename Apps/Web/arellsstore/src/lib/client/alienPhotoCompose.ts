@@ -332,13 +332,14 @@ export async function awaitAlienGenerateJob(args: {
   throw new Error('Character generation timed out — try again');
 }
 
+/** Portrait first (iris source) → Season One → launch meta; videos follow in pipeline. */
 const COMPOSE_STEPS = [
-  'meta',
+  'portrait',
+  'portrait-fix',
   'seasonone',
   'seasonone-fix',
   'seasonone-iris',
-  'portrait',
-  'portrait-fix',
+  'meta',
 ] as const;
 
 /** Compose stills + loops after selfie upload / arm (one Grok call per Amplify request). */
