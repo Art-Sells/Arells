@@ -112,30 +112,10 @@ const nextConfig = {
       }
 
       /* Character compose / loops — Amplify API Lambda often has no runtime env. */
-      const normalizeSecret = (raw) => {
-        if (!raw) return '';
-        let k = String(raw).trim();
-        if (
-          (k.startsWith('"') && k.endsWith('"')) ||
-          (k.startsWith("'") && k.endsWith("'"))
-        ) {
-          k = k.slice(1, -1).trim();
-        }
-        if (/^bearer\s+/i.test(k)) k = k.replace(/^bearer\s+/i, '').trim();
-        return k;
-      };
-      const grokApiKey = normalizeSecret(
-        process.env.GROK_API_KEY || process.env.XAI_API_KEY
-      );
+      const grokApiKey =
+        process.env.GROK_API_KEY?.trim() || process.env.XAI_API_KEY?.trim();
       if (grokApiKey) {
         defs['process.env.GROK_API_KEY'] = JSON.stringify(grokApiKey);
-        console.log(
-          `[next.config] Inlining GROK_API_KEY for Amplify (len=${grokApiKey.length}, prefix=${grokApiKey.slice(0, 4)})`
-        );
-      } else {
-        console.warn(
-          '[next.config] GROK_API_KEY / XAI_API_KEY missing at build — character create will fail on Amplify'
-        );
       }
       const grokImageModel = process.env.GROK_IMAGE_MODEL?.trim();
       if (grokImageModel) {

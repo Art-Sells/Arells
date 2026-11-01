@@ -422,34 +422,13 @@ export async function readAlienComposeRef(
   return { buffer, mime: 'image/jpeg' };
 }
 
-/** Amplify Console often stores secrets with wrapping quotes or a pasted `Bearer ` prefix. */
-function normalizeGrokApiKey(raw: string | undefined | null): string {
-  if (!raw) return '';
-  let key = String(raw).trim();
-  if (
-    (key.startsWith('"') && key.endsWith('"')) ||
-    (key.startsWith("'") && key.endsWith("'"))
-  ) {
-    key = key.slice(1, -1).trim();
-  }
-  if (/^bearer\s+/i.test(key)) {
-    key = key.replace(/^bearer\s+/i, '').trim();
-  }
-  return key;
-}
-
 export function grokApiKeyOrThrow(): string {
-  /* Do not fall back to OPENAI_API_KEY — that produces “Incorrect API key” from xAI. */
   const key =
-    normalizeGrokApiKey(process.env.GROK_API_KEY) ||
-    normalizeGrokApiKey(process.env.XAI_API_KEY);
+    process.env.GROK_API_KEY?.trim() ||
+    process.env.XAI_API_KEY?.trim() ||
+    process.env.OPENAI_API_KEY?.trim();
   if (!key) {
     throw new Error('GROK_API_KEY is not set');
-  }
-  if (!key.startsWith('xai-')) {
-    throw new Error(
-      'GROK_API_KEY looks invalid (expected an xAI key starting with xai-). Check Amplify env — no quotes around the value.'
-    );
   }
   return key;
 }
