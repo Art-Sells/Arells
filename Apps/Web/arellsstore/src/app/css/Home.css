@@ -13406,7 +13406,7 @@ a.asset-action-button--save-signin {
 	-webkit-text-fill-color: var(--asset-line-color);
 }
 
-/* Crossfade Your → My (stacked; width stays at the wider word). */
+/* Crossfade your → my (stacked; cell width = “your”; end-align so “my” isn’t gappy). */
 .asset-mission-possessive {
 	display: inline-grid;
 	vertical-align: baseline;
