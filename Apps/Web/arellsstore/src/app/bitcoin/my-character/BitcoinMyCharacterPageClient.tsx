@@ -211,6 +211,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const [portraitLoaded, setPortraitLoaded] = useState(false);
   const [portraitLoaderGone, setPortraitLoaderGone] = useState(false);
   const portraitImgRef = useRef<HTMLImageElement | null>(null);
+  const mediaLoadGenRef = useRef(0);
   const busy = isCreatingAsset('bitcoin');
 
   const sharePath = assetSharePath('/bitcoin', resolvedShareId);
@@ -299,6 +300,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   }, [authSessionLoading, pathShareId, allowSignedIn, shareId, router]);
 
   const loadPublicMedia = useCallback(async (id: string, cacheBust?: number) => {
+    const loadGen = ++mediaLoadGenRef.current;
     const bust = cacheBust ?? Date.now();
     const publicMeta = publicAlienImagePath({
       shareId: id,
@@ -329,23 +331,30 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
     try {
       if (isOwner) {
-        // Owner: auth API. Metaposter/loop use API URLs (one loader in AlienMetaPreview).
-        // Portrait still blobs so the photo slot can fade without a second network decode.
-        const [metaHead, portraitRes, loopHead] = await Promise.all([
-          fetch(ownerMetaApi, { method: 'HEAD', credentials: 'include', cache: 'no-store' }),
+        /*
+         * Owner: blob the still (and skip sticky API <img>/<video> URLs) so a
+         * successful recreate always paints the newly promoted bytes — not a
+         * prior in-flight load or cached decoder frame.
+         */
+        const [metaRes, portraitRes, loopHead] = await Promise.all([
+          fetch(ownerMetaApi, { credentials: 'include', cache: 'no-store' }),
           fetch(ownerPortraitApi, { credentials: 'include', cache: 'no-store' }),
           fetch(ownerLoopApi, { method: 'HEAD', credentials: 'include', cache: 'no-store' }),
         ]);
-        if (metaHead.ok) {
+        if (loadGen !== mediaLoadGenRef.current) return;
+        if (metaRes.ok) {
+          const blob = await metaRes.blob();
+          if (loadGen !== mediaLoadGenRef.current) return;
           setMetaUrl((prev) => {
             if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-            return ownerMetaApi;
+            return URL.createObjectURL(blob);
           });
         } else {
           setMetaUrl(null);
         }
         if (portraitRes.ok) {
           const blob = await portraitRes.blob();
+          if (loadGen !== mediaLoadGenRef.current) return;
           setPortraitUrl((prev) => {
             if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
             return URL.createObjectURL(blob);
@@ -353,8 +362,8 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         } else {
           setPortraitUrl(null);
         }
-        setMetaLoopUrl(metaHead.ok && loopHead.ok ? ownerLoopApi : null);
-        if (!metaHead.ok && !portraitRes.ok) {
+        setMetaLoopUrl(metaRes.ok && loopHead.ok ? ownerLoopApi : null);
+        if (!metaRes.ok && !portraitRes.ok) {
           router.replace(assetSharePath('/bitcoin', id));
         }
         return;
@@ -366,6 +375,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         fetch(publicLoop, { method: 'HEAD', cache: 'no-store' }),
         fetch(publicPortrait, { method: 'HEAD', cache: 'no-store' }),
       ]);
+      if (loadGen !== mediaLoadGenRef.current) return;
       if (metaHead.ok) setMetaUrl(publicMeta);
       else setMetaUrl(null);
       setMetaLoopUrl(metaHead.ok && loopHead.ok ? publicLoop : null);
@@ -375,6 +385,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         router.replace(assetSharePath('/bitcoin', id));
       }
     } catch {
+      if (loadGen !== mediaLoadGenRef.current) return;
       setMetaUrl(null);
       setMetaLoopUrl(null);
       setPortraitUrl(null);

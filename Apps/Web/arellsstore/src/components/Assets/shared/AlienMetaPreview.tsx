@@ -79,6 +79,7 @@ export default function AlienMetaPreview({
       ) : null}
       {hasLoop && loopUrl ? (
         <video
+          key={loopUrl}
           ref={videoRef}
           className={`asset-alien-meta-preview-video${showVideo ? ' is-visible' : ''}${
             videoFadingOut ? ' is-done' : ''
@@ -99,6 +100,7 @@ export default function AlienMetaPreview({
         />
       ) : null}
       <img
+        key={metaUrl}
         ref={stillImgRef}
         className={`asset-alien-meta-preview${showStill ? ' is-visible' : ''}${
           stillFadingOut ? ' is-done' : ''

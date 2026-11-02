@@ -67,21 +67,59 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (action === 'finalize') {
       const prev = await readAlienGenerateJob(allowed, asset);
-      if (prev?.status === 'complete') {
+      const startedAtBody =
+        typeof req.body?.startedAt === 'string' ? req.body.startedAt.trim() : '';
+      /*
+       * Stale pipeline after a newer force-arm: do not promote old staging over a
+       * fresher create, and do not mark error on the winning job.
+       */
+      if (
+        startedAtBody &&
+        prev?.startedAt &&
+        startedAtBody !== prev.startedAt &&
+        prev.status === 'running'
+      ) {
+        return res.status(409).json({
+          error: 'Stale generate job — a newer create is in progress',
+          code: 'stale_job',
+        });
+      }
+
+      const metaloop = Boolean(req.body?.metaloop);
+      const seasononeloop = Boolean(req.body?.seasononeloop);
+      const alreadyComplete = prev?.status === 'complete';
+      /*
+       * Always promote leftover staging (second pipeline after the first marked
+       * complete used to skip promote and leave NEW -next objects unpublished,
+       * so the page kept showing the previous character).
+       */
+      const require: Array<'composed' | 'portrait' | 'seasonone' | 'metaloop' | 'seasononeloop'> =
+        alreadyComplete ? [] : ['composed', 'portrait', 'seasonone'];
+      if (!alreadyComplete && metaloop) require.push('metaloop');
+      if (!alreadyComplete && seasononeloop) require.push('seasononeloop');
+
+      try {
+        await promoteAlienStagedMedia(allowed, asset, {
+          require,
+          clearMissingLoops: !alreadyComplete,
+        });
+      } catch (err) {
+        if (!alreadyComplete) throw err;
+        /* complete + empty staging: nothing left to publish */
+      }
+
+      if (alreadyComplete) {
         return res.status(200).json({ ok: true, status: 'complete', job: prev });
       }
-      /* Swap staging → live so poster/video never mix mid-create. */
-      await promoteAlienStagedMedia(allowed, asset, {
-        require: ['composed', 'portrait'],
-      });
+
       const now = new Date().toISOString();
       const job: AlienGenerateJob = {
         email: allowed,
         assetId: asset,
         status: 'complete',
         phase: 'done',
-        metaloop: Boolean(req.body?.metaloop),
-        seasononeloop: Boolean(req.body?.seasononeloop),
+        metaloop,
+        seasononeloop,
         error: typeof req.body?.error === 'string' ? req.body.error : prev?.error,
         startedAt: prev?.startedAt || now,
         updatedAt: now,
@@ -96,6 +134,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       /* Never overwrite a successful create from a second browser's failed resume. */
       if (prev?.status === 'complete') {
         return res.status(200).json({ ok: true, status: 'complete', job: prev });
+      }
+      const startedAtBody =
+        typeof req.body?.startedAt === 'string' ? req.body.startedAt.trim() : '';
+      /* Stale pipeline after force-arm must not fail the newer running job. */
+      if (startedAtBody && prev?.startedAt && startedAtBody !== prev.startedAt) {
+        return res.status(200).json({ ok: true, status: prev?.status || 'running', job: prev });
       }
       const now = new Date().toISOString();
       const message =

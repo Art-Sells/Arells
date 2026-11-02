@@ -330,7 +330,9 @@ export async function awaitAlienGenerateJob(args: {
   }
 
   /* Still running — finish client-side from selfie already on S3. */
-  return runAlienGeneratePipeline({ email, assetId, shareId });
+  const startedAt =
+    typeof job?.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
+  return runAlienGeneratePipeline({ email, assetId, shareId, startedAt });
 }
 
 /** Portrait first (iris source) → Season One → launch meta; videos follow in pipeline. */
@@ -348,8 +350,10 @@ export async function runAlienGeneratePipeline(args: {
   email: string;
   assetId: string;
   shareId?: string | null;
+  /** From arm response — stale pipelines must not finalize over a newer force-arm. */
+  startedAt?: string | null;
 }): Promise<AlienComposeResult> {
-  const { email, assetId, shareId } = args;
+  const { email, assetId, shareId, startedAt } = args;
 
   const failJob = async (message: string) => {
     await postJson('/api/user/alien-generate', {
@@ -357,6 +361,7 @@ export async function runAlienGeneratePipeline(args: {
       asset: assetId,
       action: 'fail',
       error: message,
+      ...(startedAt ? { startedAt } : {}),
     }).catch(() => undefined);
   };
 
@@ -366,6 +371,7 @@ export async function runAlienGeneratePipeline(args: {
       asset: assetId,
       action: 'phase',
       phase: 'compose',
+      ...(startedAt ? { startedAt } : {}),
     });
 
     for (const mode of COMPOSE_STEPS) {
@@ -388,6 +394,7 @@ export async function runAlienGeneratePipeline(args: {
       asset: assetId,
       action: 'phase',
       phase: 'seasononeloop',
+      ...(startedAt ? { startedAt } : {}),
     });
     const season = await postJson('/api/user/alien-videos', {
       email,
@@ -402,6 +409,7 @@ export async function runAlienGeneratePipeline(args: {
       action: 'phase',
       phase: 'metaloop',
       seasononeloop: seasonOk,
+      ...(startedAt ? { startedAt } : {}),
     });
     const metaloop = await postJson('/api/user/alien-videos', {
       email,
@@ -416,7 +424,20 @@ export async function runAlienGeneratePipeline(args: {
       action: 'finalize',
       metaloop: metaloopOk,
       seasononeloop: seasonOk,
+      ...(startedAt ? { startedAt } : {}),
     });
+    if (!finalize.ok) {
+      const code = typeof finalize.json.code === 'string' ? finalize.json.code : '';
+      if (code === 'stale_job') {
+        /* Newer create won — stop quietly; the winning pipeline publishes. */
+        throw new Error('Character create superseded by a newer attempt');
+      }
+      throw new Error(
+        typeof finalize.json.error === 'string'
+          ? finalize.json.error
+          : 'Character generation failed to publish'
+      );
+    }
     const job =
       finalize.json.job && typeof finalize.json.job === 'object'
         ? (finalize.json.job as AlienGenerateJobClient)
@@ -425,7 +446,9 @@ export async function runAlienGeneratePipeline(args: {
     return loadComposeResultFromJob(assetId, shareId, job);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Character generation failed';
-    await failJob(message);
+    if (!/superseded by a newer attempt/i.test(message)) {
+      await failJob(message);
+    }
     throw err;
   }
 }
@@ -592,6 +615,14 @@ export async function composeAlienFromPhoto(args: {
         : 'Character generation failed to start'
     );
   }
+  const armJob =
+    arm.json.job && typeof arm.json.job === 'object'
+      ? (arm.json.job as AlienGenerateJobClient)
+      : null;
+  const startedAt =
+    typeof armJob?.startedAt === 'string' && armJob.startedAt.trim()
+      ? armJob.startedAt.trim()
+      : null;
 
-  return runAlienGeneratePipeline({ email, assetId, shareId });
+  return runAlienGeneratePipeline({ email, assetId, shareId, startedAt });
 }

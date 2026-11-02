@@ -18,6 +18,7 @@ const SEASON_ONE_LOOP_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneLoop.mp4`;
 export default function BitcoinSeasonTeaser() {
   const { isSignedIn, authSessionLoading, sessionReady } = useUser();
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const seasonLoadGenRef = useRef(0);
   // Empty until auth settles — never seed stock loop (flashes before personal media).
   const [stillSrc, setStillSrc] = useState('');
   const [loopSrc, setLoopSrc] = useState('');
@@ -66,6 +67,7 @@ export default function BitcoinSeasonTeaser() {
   }, []);
 
   const loadPersonalizedSeasonOne = useCallback(async (cacheBust?: number) => {
+    const loadGen = ++seasonLoadGenRef.current;
     // Hold loader until we know signed-in vs guest — avoids stock loop flash.
     if (authSessionLoading || !sessionReady) {
       setMediaReady(false);
@@ -107,12 +109,14 @@ export default function BitcoinSeasonTeaser() {
           cache: 'no-store',
         }),
       ]);
+      if (loadGen !== seasonLoadGenRef.current) return;
 
       hasPersonalStill = stillRes.ok;
       const hasPersonalLoop = loopHead.ok;
 
       if (hasPersonalStill) {
         const blob = await stillRes.blob();
+        if (loadGen !== seasonLoadGenRef.current) return;
         setStillSrc((prev) => {
           if (prev.startsWith('blob:')) URL.revokeObjectURL(prev);
           return URL.createObjectURL(blob);
@@ -147,6 +151,7 @@ export default function BitcoinSeasonTeaser() {
         setLoopEnabled(true);
       }
     } catch {
+      if (loadGen !== seasonLoadGenRef.current) return;
       // Keep personal still if we already got it; never demote to stock loop over it.
       if (hasPersonalStill) {
         setLoopSrc((prev) => {
@@ -159,7 +164,7 @@ export default function BitcoinSeasonTeaser() {
         return;
       }
     } finally {
-      setMediaReady(true);
+      if (loadGen === seasonLoadGenRef.current) setMediaReady(true);
     }
   }, [authSessionLoading, sessionReady, isSignedIn, applyStockSeasonOne]);
 
