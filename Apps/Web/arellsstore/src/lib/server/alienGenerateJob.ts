@@ -21,6 +21,7 @@ import {
   sniffAlienPhotoMime,
 } from './alienPhoto';
 import { getServerS3 } from './awsS3';
+import { CHARACTER_GENERATION_PAYMENT_DISABLED } from '../characterGenerationPaymentGate';
 import {
   consumePaidCredit,
   findPaidUnusedCredit,
@@ -152,11 +153,13 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
   });
 
   try {
-    const credit = await findPaidUnusedCredit(email, assetId);
-    if (!credit) {
-      throw Object.assign(new Error('Character generation payment required'), {
-        code: 'payment_required',
-      });
+    if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
+      const credit = await findPaidUnusedCredit(email, assetId);
+      if (!credit) {
+        throw Object.assign(new Error('Character generation payment required'), {
+          code: 'payment_required',
+        });
+      }
     }
 
     const selfieBuf = await loadSelfie(bucket, email, assetId);
@@ -215,7 +218,9 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
       })
       .promise();
 
-    await consumePaidCredit(email, assetId);
+    if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
+      await consumePaidCredit(email, assetId);
+    }
 
     let seasonOk = false;
     let metaloopOk = false;

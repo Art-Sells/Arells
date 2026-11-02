@@ -71,7 +71,8 @@ const AlienCharacterPayModal: React.FC<AlienCharacterPayModalProps> = ({
     if (loadingPayment) return;
     setLoadingPayment(true);
     try {
-      // Create + Update both buy a one-time credit via Checkout (not Customer Portal).
+      // Normally Stripe Checkout; when payment is temporarily disabled this returns
+      // ready immediately and onPaid opens the Add Photo upload modal.
       const result = await startCharacterGenerationCheckout(assetId);
       if (result === 'redirecting') return;
       onPaid?.();

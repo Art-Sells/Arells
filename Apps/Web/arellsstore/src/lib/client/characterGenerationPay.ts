@@ -1,3 +1,5 @@
+import { CHARACTER_GENERATION_PAYMENT_DISABLED } from '../characterGenerationPaymentGate';
+
 export const CG_OPEN_GUIDE_KEY = 'arells:cg-open-guide';
 /** Paid credit waiting for photo — drives Update Photo vs Update Character on my-character. */
 export const CG_PAID_PENDING_KEY = 'arells:cg-paid-pending';
@@ -63,6 +65,13 @@ export async function startCharacterGenerationCheckout(
   assetId: string,
   returnPath?: string
 ): Promise<EnsureCharacterPayResult> {
+  /* TEMP: skip Stripe Checkout launcher — caller opens Add Photo modal via onPaid. */
+  if (CHARACTER_GENERATION_PAYMENT_DISABLED) {
+    markPaidCreditPending(assetId);
+    markOpenGuidePending();
+    return 'ready';
+  }
+
   const checkoutRes = await fetch('/api/stripe/create-checkout', {
     method: 'POST',
     credentials: 'include',

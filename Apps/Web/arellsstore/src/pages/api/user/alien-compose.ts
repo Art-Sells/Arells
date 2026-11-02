@@ -25,6 +25,7 @@ import {
   sniffAlienPhotoMime,
 } from '../../../lib/server/alienPhoto';
 import { getServerS3 } from '../../../lib/server/awsS3';
+import { CHARACTER_GENERATION_PAYMENT_DISABLED } from '../../../lib/characterGenerationPaymentGate';
 import {
   consumePaidCredit,
   findPaidUnusedCredit,
@@ -118,12 +119,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const bucket = s3BucketNameOrThrow();
 
   try {
-    const credit = await findPaidUnusedCredit(allowed, asset);
-    if (!credit) {
-      return res.status(402).json({
-        error: 'Character generation payment required',
-        code: 'payment_required',
-      });
+    if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
+      const credit = await findPaidUnusedCredit(allowed, asset);
+      if (!credit) {
+        return res.status(402).json({
+          error: 'Character generation payment required',
+          code: 'payment_required',
+        });
+      }
     }
 
     const selfieBuf = await loadSelfie(bucket, allowed, asset);
@@ -260,7 +263,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ACL: 'private',
         })
         .promise();
-      await consumePaidCredit(allowed, asset);
+      if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
+        await consumePaidCredit(allowed, asset);
+      }
       return res.status(200).json({ ok: true, mode });
     }
 
@@ -318,7 +323,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ACL: 'private',
         })
         .promise();
-      await consumePaidCredit(allowed, asset);
+      if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
+        await consumePaidCredit(allowed, asset);
+      }
       return res.status(200).json({ ok: true, mode });
     }
 

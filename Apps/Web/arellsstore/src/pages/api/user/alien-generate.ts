@@ -7,6 +7,7 @@ import {
 } from '../../../lib/server/alienGenerateJob';
 import { normalizeAlienPhotoAsset } from '../../../lib/server/alienPhoto';
 import { promoteAlienStagedMedia } from '../../../lib/server/alienStaging';
+import { CHARACTER_GENERATION_PAYMENT_DISABLED } from '../../../lib/characterGenerationPaymentGate';
 import { findPaidUnusedCredit } from '../../../lib/server/characterGenerationCredit';
 
 export const config = {
@@ -152,12 +153,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    const credit = await findPaidUnusedCredit(allowed, asset);
-    if (!credit) {
-      return res.status(402).json({
-        error: 'Character generation payment required',
-        code: 'payment_required',
-      });
+    if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
+      const credit = await findPaidUnusedCredit(allowed, asset);
+      if (!credit) {
+        return res.status(402).json({
+          error: 'Character generation payment required',
+          code: 'payment_required',
+        });
+      }
     }
 
     const startedAt = new Date().toISOString();
