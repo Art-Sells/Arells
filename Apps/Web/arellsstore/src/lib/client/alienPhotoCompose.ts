@@ -205,13 +205,21 @@ export function alienCreateFailureStage(err: unknown): AlienCreateFailureStage {
 }
 
 const GENERATE_POLL_MS = 2000;
-/** Short poll only — Amplify never finishes jobs in the background. */
-const GENERATE_POLL_MAX_MS = 45 * 1000;
 /**
- * Fresh “running” window for remote-resume. If still running after this, the
- * browser must drive compose again (no server pipeline).
+ * Absolute max age from startedAt for remote-resume follow.
+ * Stills + two videos (Amplify maxDuration 800s each) can run a long time.
  */
-export const ALIEN_GENERATE_STALE_MS = 3 * 60 * 1000;
+export const ALIEN_GENERATE_STALE_MS = 40 * 60 * 1000;
+/**
+ * No phase/finalize update within this window ⇒ driver abandoned the job.
+ * Must cover one alien-videos request (server maxDuration 800s).
+ */
+export const ALIEN_GENERATE_PROGRESS_STALE_MS = 15 * 60 * 1000;
+/**
+ * Must see a very recent update before attaching remote-resume.
+ * Stops orphans (armed then abandoned) from opening the creating modal.
+ */
+export const ALIEN_GENERATE_ACTIVE_MS = 90 * 1000;
 
 export type AlienGenerateJobClient = {
   status?: 'running' | 'complete' | 'error';
@@ -220,6 +228,7 @@ export type AlienGenerateJobClient = {
   seasononeloop?: boolean;
   error?: string;
   startedAt?: string;
+  updatedAt?: string;
 };
 
 function sleep(ms: number): Promise<void> {
@@ -243,12 +252,50 @@ export async function fetchAlienGenerateJob(
     : null;
 }
 
+export async function failAlienGenerateJob(
+  email: string,
+  assetId: string,
+  message: string
+): Promise<void> {
+  await postJson('/api/user/alien-generate', {
+    email,
+    asset: assetId,
+    action: 'fail',
+    error: message,
+  }).catch(() => undefined);
+}
+
+function jobUpdatedMs(job: AlienGenerateJobClient): number {
+  return Date.parse(job.updatedAt || '') || Date.parse(job.startedAt || '') || 0;
+}
+
+/** True while a followed remote job still looks driven (phase updates flowing). */
 export function isAlienGenerateJobFreshRunning(job: AlienGenerateJobClient | null | undefined): boolean {
   if (!job || job.status !== 'running') return false;
   const startedMs = Date.parse(job.startedAt || '') || 0;
-  if (!startedMs) return true;
-  const ageMs = Date.now() - startedMs;
-  return ageMs >= 0 && ageMs < ALIEN_GENERATE_STALE_MS;
+  const updatedMs = jobUpdatedMs(job);
+  const now = Date.now();
+  if (startedMs && (now - startedMs < 0 || now - startedMs >= ALIEN_GENERATE_STALE_MS)) {
+    return false;
+  }
+  if (updatedMs && (now - updatedMs < 0 || now - updatedMs >= ALIEN_GENERATE_PROGRESS_STALE_MS)) {
+    return false;
+  }
+  return true;
+}
+
+/** True only if another tab is mid-pipeline right now — safe to attach creating UI. */
+export function isAlienGenerateJobActivelyDriven(
+  job: AlienGenerateJobClient | null | undefined
+): boolean {
+  if (!isAlienGenerateJobFreshRunning(job) || !job) return false;
+  const startedMs = Date.parse(job.startedAt || '') || 0;
+  const updatedMs = jobUpdatedMs(job);
+  if (!updatedMs) return false;
+  /* Arm sets startedAt === updatedAt; require at least one phase tick from the driver. */
+  if (startedMs && updatedMs <= startedMs) return false;
+  const age = Date.now() - updatedMs;
+  return age >= 0 && age < ALIEN_GENERATE_ACTIVE_MS;
 }
 
 async function loadComposeResultFromJob(
@@ -312,7 +359,7 @@ export async function awaitAlienGenerateJob(args: {
   initialJob?: AlienGenerateJobClient | null;
 }): Promise<AlienComposeResult> {
   const { email, assetId, shareId } = args;
-  const hardDeadline = Date.now() + ALIEN_GENERATE_STALE_MS + GENERATE_POLL_MAX_MS;
+  const hardDeadline = Date.now() + ALIEN_GENERATE_STALE_MS;
   let job: AlienGenerateJobClient | null = args.initialJob ?? null;
 
   while (Date.now() < hardDeadline) {
@@ -322,6 +369,7 @@ export async function awaitAlienGenerateJob(args: {
     if (job?.status === 'error') {
       throw new Error(job.error || 'Character generation failed');
     }
+    /* Follower only — never failJob here (that can clobber the driving tab). */
     if (job && !isAlienGenerateJobFreshRunning(job)) {
       throw new Error('Character generation timed out — try again');
     }
