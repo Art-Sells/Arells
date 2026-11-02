@@ -95,6 +95,9 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   const [overlayStyle, setOverlayStyle] = useState<AlienCreateThemeStyle>({});
   const creatingRef = useRef(false);
   const creatingNameRef = useRef<string | null>(null);
+  /** Stable across pathname/session churn so remote-resume isn't cancelled mid-create. */
+  const shareIdRef = useRef(shareId);
+  shareIdRef.current = shareId;
 
   const dismissSuccess = useCallback(() => {
     setSuccess((prev) => {
@@ -178,6 +181,8 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
     creatingNameRef.current = null;
     setCreatingAssetId(null);
     setCreatingAssetName(null);
+    /* Always drop creating — otherwise the sitewide badge sticks until full reload. */
+    setStatus((prev) => (prev === 'creating' ? 'idle' : prev));
   }, []);
 
   const startCreate = useCallback(
@@ -254,6 +259,8 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   /**
    * Other browser / tab: if the server already has a fresh running job, show the
    * same creating modal and follow it to success/error.
+   * Do NOT depend on shareId — session refetch on navigate was cancelling resume
+   * and skipping clearCreatingSlot, leaving “Creating Character” stuck sitewide.
    */
   useEffect(() => {
     if (authSessionLoading || !isSignedIn || !email) return;
@@ -274,6 +281,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
         if (!isAlienGenerateJobFreshRunning(job) || !job) continue;
 
         const name = asset.name;
+        const resumeShareId = shareIdRef.current;
         creatingRef.current = true;
         creatingNameRef.current = name;
         setCreatingAssetId(asset.id);
@@ -296,7 +304,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
           const result = await awaitAlienGenerateJob({
             email,
             assetId: asset.id,
-            shareId,
+            shareId: resumeShareId,
             initialJob: job,
           });
           if (cancelled) return;
@@ -305,7 +313,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
           finishCreateSuccess({
             assetId: asset.id,
             assetName: name,
-            shareId,
+            shareId: resumeShareId,
             metaUrl,
             loopUrl,
           });
@@ -315,12 +323,13 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
           finishCreateError({
             assetId: asset.id,
             assetName: name,
-            shareId,
+            shareId: resumeShareId,
             message: err instanceof Error ? err.message : null,
             stage: 'generate',
           });
         } finally {
-          if (!cancelled) clearCreatingSlot();
+          /* Always clear — cancelled resume used to skip this and freeze the badge. */
+          clearCreatingSlot();
         }
         return;
       }
@@ -339,7 +348,6 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
     authSessionLoading,
     isSignedIn,
     email,
-    shareId,
     clearCreatingSlot,
     finishCreateError,
     finishCreateSuccess,

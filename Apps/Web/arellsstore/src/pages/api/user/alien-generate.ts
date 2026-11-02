@@ -89,23 +89,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const seasononeloop = Boolean(req.body?.seasononeloop);
       const alreadyComplete = prev?.status === 'complete';
       /*
-       * Always promote leftover staging (second pipeline after the first marked
-       * complete used to skip promote and leave NEW -next objects unpublished,
-       * so the page kept showing the previous character).
+       * Publish is atomic: stills + both loops together. Even a racing finalize
+       * after complete must have the full staging set — never promote stills alone.
        */
-      const require: Array<'composed' | 'portrait' | 'seasonone' | 'metaloop' | 'seasononeloop'> =
-        alreadyComplete ? [] : ['composed', 'portrait', 'seasonone'];
-      if (!alreadyComplete && metaloop) require.push('metaloop');
-      if (!alreadyComplete && seasononeloop) require.push('seasononeloop');
+      const require: Array<'composed' | 'portrait' | 'seasonone' | 'metaloop' | 'seasononeloop'> = [
+        'composed',
+        'portrait',
+        'seasonone',
+        'metaloop',
+        'seasononeloop',
+      ];
 
       try {
         await promoteAlienStagedMedia(allowed, asset, {
           require,
-          clearMissingLoops: !alreadyComplete,
+          clearMissingLoops: false,
         });
       } catch (err) {
         if (!alreadyComplete) throw err;
-        /* complete + empty staging: nothing left to publish */
+        /* complete + empty/partial staging: leave live as-is */
       }
 
       if (alreadyComplete) {

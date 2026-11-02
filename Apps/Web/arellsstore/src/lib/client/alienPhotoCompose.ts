@@ -205,13 +205,16 @@ export function alienCreateFailureStage(err: unknown): AlienCreateFailureStage {
 }
 
 const GENERATE_POLL_MS = 2000;
-/** Short poll only — Amplify never finishes jobs in the background. */
-const GENERATE_POLL_MAX_MS = 45 * 1000;
 /**
- * Fresh “running” window for remote-resume. If still running after this, the
- * browser must drive compose again (no server pipeline).
+ * Fresh “running” window for remote-resume attach.
+ * Full stills + videos can exceed this — after that, resume must re-drive only if abandoned.
  */
-export const ALIEN_GENERATE_STALE_MS = 3 * 60 * 1000;
+export const ALIEN_GENERATE_STALE_MS = 12 * 60 * 1000;
+/**
+ * No phase/finalize update within this window ⇒ the driving tab died.
+ * Only then may another tab start a second client pipeline.
+ */
+export const ALIEN_GENERATE_PROGRESS_STALE_MS = 90 * 1000;
 
 export type AlienGenerateJobClient = {
   status?: 'running' | 'complete' | 'error';
@@ -250,6 +253,16 @@ export function isAlienGenerateJobFreshRunning(job: AlienGenerateJobClient | nul
   if (!startedMs) return true;
   const ageMs = Date.now() - startedMs;
   return ageMs >= 0 && ageMs < ALIEN_GENERATE_STALE_MS;
+}
+
+/** True when a running job has stopped receiving phase updates (driver abandoned). */
+export function isAlienGenerateJobAbandoned(job: AlienGenerateJobClient | null | undefined): boolean {
+  if (!job || job.status !== 'running') return false;
+  const updatedMs =
+    Date.parse(job.updatedAt || '') || Date.parse(job.startedAt || '') || 0;
+  if (!updatedMs) return true;
+  const idleMs = Date.now() - updatedMs;
+  return idleMs < 0 || idleMs >= ALIEN_GENERATE_PROGRESS_STALE_MS;
 }
 
 async function loadComposeResultFromJob(
@@ -303,8 +316,9 @@ async function loadComposeResultFromJob(
 }
 
 /**
- * Other tab / reload: briefly poll, then drive compose from the existing selfie
- * (Amplify has no background pipeline — polling alone always timed out / spun forever).
+ * Other tab / reload: poll while another client is driving; only re-drive compose
+ * when the job looks abandoned. Starting a second pipeline while the first is
+ * still writing staging caused early finalize (new stills live) + stuck creating UI.
  */
 export async function awaitAlienGenerateJob(args: {
   email: string;
@@ -313,11 +327,21 @@ export async function awaitAlienGenerateJob(args: {
   initialJob?: AlienGenerateJobClient | null;
 }): Promise<AlienComposeResult> {
   const { email, assetId, shareId } = args;
-  const deadline = Date.now() + GENERATE_POLL_MAX_MS;
+  const hardDeadline = Date.now() + ALIEN_GENERATE_STALE_MS;
   let job: AlienGenerateJobClient | null = args.initialJob ?? null;
 
-  while (Date.now() < deadline) {
-    if (job?.status === 'complete' || job?.status === 'error') break;
+  while (Date.now() < hardDeadline) {
+    if (job?.status === 'complete') {
+      return loadComposeResultFromJob(assetId, shareId, job);
+    }
+    if (job?.status === 'error') {
+      throw new Error(job.error || 'Character generation failed');
+    }
+    if (job?.status === 'running' && isAlienGenerateJobAbandoned(job)) {
+      const startedAt =
+        typeof job.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
+      return runAlienGeneratePipeline({ email, assetId, shareId, startedAt });
+    }
     await sleep(GENERATE_POLL_MS);
     job = await fetchAlienGenerateJob(email, assetId);
   }
@@ -329,7 +353,7 @@ export async function awaitAlienGenerateJob(args: {
     throw new Error(job.error || 'Character generation failed');
   }
 
-  /* Still running — finish client-side from selfie already on S3. */
+  /* Absolute age exceeded — last chance to finish from the selfie on S3. */
   const startedAt =
     typeof job?.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
   return runAlienGeneratePipeline({ email, assetId, shareId, startedAt });
@@ -418,12 +442,26 @@ export async function runAlienGeneratePipeline(args: {
     });
     const metaloopOk = Boolean(metaloop.ok && metaloop.json.metaloop);
 
+    /*
+     * Do not promote stills to live until both loops exist — otherwise Season One /
+     * launch posters update while Creating Character is still running (or old loops linger).
+     */
+    if (!seasonOk || !metaloopOk) {
+      const detail =
+        typeof season.json.error === 'string'
+          ? season.json.error
+          : typeof metaloop.json.error === 'string'
+            ? metaloop.json.error
+            : 'Character video generation failed — try again';
+      throw new Error(detail);
+    }
+
     const finalize = await postJson('/api/user/alien-generate', {
       email,
       asset: assetId,
       action: 'finalize',
-      metaloop: metaloopOk,
-      seasononeloop: seasonOk,
+      metaloop: true,
+      seasononeloop: true,
       ...(startedAt ? { startedAt } : {}),
     });
     if (!finalize.ok) {
