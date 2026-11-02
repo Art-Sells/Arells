@@ -6,6 +6,7 @@
 
 - Test (dynamic-characters no photo/with photo) - meta shares of bitcoin/news/character pages
 - Test (test no photo/with photo) - meta shares of bitcoin/news/character pages
+- - put back generalized error message for Photo upload/character creation error modal.
 
 
 ### Daily:
