@@ -812,12 +812,15 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
                     alt="Bitcoin Alien Race launch poster"
                   />
                 ) : (
-                  /* Empty frame only — AlienMetaPreview owns the spinner (avoids double rings). */
                   <div
                     className="bitcoin-my-character-launch--loading"
                     role="status"
                     aria-label="Loading launch poster"
-                  />
+                  >
+                    <div className="asset-alien-meta-preview-loader" aria-hidden="true">
+                      <div className="asset-alien-meta-preview-loader-ring" />
+                    </div>
+                  </div>
                 )}
               </div>
               {resolvedShareId ? (

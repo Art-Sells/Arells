@@ -248,8 +248,9 @@ export const ALIEN_METALOOP_VIDEO_PROMPT = [
   'IMAGE-TO-VIDEO from this exact input still. Only add the motion below.',
   'PEOPLE COUNT LOCK (HARD FAIL IF BROKEN): The still has EXACTLY three people — (1) LEFT = the orange-jacket figure already in the still, (2) Sam (bearded man), (3) the little girl. Keep EXACTLY those three for the entire clip. FORBIDDEN: a 4th person, a new floating stranger, a cream/beige hoodie duplicate, cloning LEFT into a second body, or any extra human entering frame.',
   'LEVITATION LOCK (HARD FAIL IF BROKEN): The ONLY person who leaves the ground is LEFT — the same orange-jacket body already on the left of the still. That orange-jacket person RISES; they do NOT stay grounded while someone else flies. FORBIDDEN: inventing a separate flying person while the orange-jacket LEFT stays on the ground looking up; swapping who flies; levitating Sam or the girl.',
+  'HEIGHT / PROXIMITY LOCK (HARD FAIL IF BROKEN): LEFT only rises a SHORT distance — hover close to Sam and the little girl, still in the same group. Feet stay roughly near Sam’s head / upper chest height — NOT high into the sky, NOT tiny/distant, NOT drifting away. Keep LEFT large in frame at roughly the same scale as in the still. FORBIDDEN: shooting into the clouds, shrinking into the distance, leaving the group, or floating far above everyone.',
   'LOCKS: LEFT face + orange jacket + white shirt locked to the still — no crossfade / dissolve / identity swap. Irises matte / locked to the still — NO iris glow, NO eye glow, NO glow from the figure (no aura, bloom, emissive light). Sam + girl stay the same people as in the still (no crossfade / identity swap). The man (Sam) never touches the LEFT figure — his hand NEVER EXTENDS toward LEFT (no reach, grab, hold, point, or arm stretch toward her). Titles / on-image words / wall lettering stay LOCKED in frame for the entire clip exactly as in the still — NEVER fade out, NEVER dissolve, NEVER move, NEVER erase. NO NEW WORDS ALSO — do not invent, add, or spawn any new text/lettering. FORBIDDEN UNDER LEFT FEET / SHOES (HARD FAIL IF PRESENT): NO wind trails, NO motion trails, NO speed lines, NO dust streaks, NO sand streaks, NO vapor wisps, NO smoke ribbons, NO particle streams, NO afterimages under or behind LEFT’s feet/shoes — clean ground/air only, same as the still.',
-  'BEAT: From 0:00, the orange-jacket LEFT figure (the same person already on the left in the still — NOT a new person) levitates straight up into an evening sky and looks UP into the sky — clean levitation with ZERO trail FX under the feet/shoes. As that orange-jacket LEFT rises, Sam and the little girl (still on the ground) turn their heads / gaze to look UP at that same orange-jacket LEFT — never at a different floating stranger. At 0:00, Sam’s free hand adjusts his own jacket and stays on his jacket for the rest of the clip (never reaches toward LEFT). Evening sky has soft clouds tinted the same colors as LEFT’s jacket and white shirt from the still. Camera stays on orange-jacket LEFT — entire body must stay fully visible (do not cut off feet). No wardrobe change, no lighting effects, no new props.',
+  'BEAT: From 0:00, the orange-jacket LEFT figure (the same person already on the left in the still — NOT a new person) lifts only a little way off the ground — a gentle hover close beside Sam and the little girl — and looks UP — clean levitation with ZERO trail FX under the feet/shoes. As that orange-jacket LEFT rises slightly, Sam and the little girl (still on the ground) turn their heads / gaze to look UP at that same orange-jacket LEFT — never at a different floating stranger. At 0:00, Sam’s free hand adjusts his own jacket and stays on his jacket for the rest of the clip (never reaches toward LEFT). Evening sky has soft clouds tinted the same colors as LEFT’s jacket and white shirt from the still. Camera stays on the group — orange-jacket LEFT stays large and nearby (do not cut off feet; do not pull away into a distant sky shot). No wardrobe change, no lighting effects, no new props.',
 ].join(' ');
 
 /**
@@ -747,7 +748,7 @@ function sleep(ms: number): Promise<void> {
 
 /**
  * Image-to-video via xAI Grok Imagine (async generations + poll).
- * Default 480p; launch metaloop uses 720p. GROK_VIDEO_RESOLUTION overrides all.
+ * Default 480p; metaloop + Season One loop use 720p. GROK_VIDEO_RESOLUTION overrides all.
  */
 export async function generateAlienImageToVideo(args: {
   imageJpeg: Buffer;
@@ -852,5 +853,6 @@ export async function generateAlienSeasonOneLoopVideo(seasonOneJpeg: Buffer): Pr
     prompt: ALIEN_SEASONONE_VIDEO_PROMPT,
     durationSeconds: 10,
     skipResize: true,
+    resolution: '720p',
   });
 }
