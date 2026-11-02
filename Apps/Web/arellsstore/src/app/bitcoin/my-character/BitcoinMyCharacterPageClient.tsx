@@ -805,23 +805,11 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           <HeightDownSection open className="bitcoin-my-character-section--launch">
             <div className="bitcoin-my-character-launch-panel">
               <div className="bitcoin-my-character-launch">
-                {metaUrl ? (
-                  <AlienMetaPreview
-                    metaUrl={metaUrl}
-                    loopUrl={metaLoopUrl}
-                    alt="Bitcoin Alien Race launch poster"
-                  />
-                ) : (
-                  <div
-                    className="bitcoin-my-character-launch--loading"
-                    role="status"
-                    aria-label="Loading launch poster"
-                  >
-                    <div className="asset-alien-meta-preview-loader" aria-hidden="true">
-                      <div className="asset-alien-meta-preview-loader-ring" />
-                    </div>
-                  </div>
-                )}
+                <AlienMetaPreview
+                  metaUrl={metaUrl}
+                  loopUrl={metaLoopUrl}
+                  alt="Bitcoin Alien Race launch poster"
+                />
               </div>
               {resolvedShareId ? (
                 <div className="asset-alien-meta-share bitcoin-my-character-share">

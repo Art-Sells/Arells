@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { usePosterLoopPlayback } from '../../../hooks/usePosterLoopPlayback';
 
 type AlienMetaPreviewProps = {
-  metaUrl: string;
+  /** Null = loader-only (page mount before media arrives). */
+  metaUrl: string | null;
   loopUrl: string | null;
   alt?: string;
 };
@@ -17,7 +18,8 @@ export default function AlienMetaPreview({
 }: AlienMetaPreviewProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const stillImgRef = useRef<HTMLImageElement | null>(null);
-  const hasLoop = Boolean(loopUrl);
+  const hasStill = Boolean(metaUrl);
+  const hasLoop = Boolean(hasStill && loopUrl);
   const [stillLoaded, setStillLoaded] = useState(false);
   const [loaderGone, setLoaderGone] = useState(false);
   const {
@@ -40,9 +42,13 @@ export default function AlienMetaPreview({
   );
   const showStill = !hasLoop ? stillLoaded : showStillLayer && stillLoaded;
   /** Keep loader until something visible is fading in (video or still), so the handoff is a crossfade. */
-  const frameReady = hasLoop ? videoReady || showStill : stillLoaded;
+  const frameReady = hasStill && (hasLoop ? videoReady || showStill : stillLoaded);
 
   useEffect(() => {
+    if (!metaUrl) {
+      setStillLoaded(false);
+      return;
+    }
     const img = stillImgRef.current;
     if (img?.complete && img.naturalWidth > 0) setStillLoaded(true);
   }, [metaUrl]);
@@ -68,6 +74,8 @@ export default function AlienMetaPreview({
       }${hasLoop ? ' asset-alien-meta-preview-frame--loop' : ''}${
         isHandoff ? ' is-handoff' : ''
       }`}
+      role={!hasStill ? 'status' : undefined}
+      aria-label={!hasStill ? 'Loading launch poster' : undefined}
     >
       {!loaderGone ? (
         <div
@@ -99,16 +107,18 @@ export default function AlienMetaPreview({
           aria-label={alt}
         />
       ) : null}
-      <img
-        key={metaUrl}
-        ref={stillImgRef}
-        className={`asset-alien-meta-preview${showStill ? ' is-visible' : ''}${
-          stillFadingOut ? ' is-done' : ''
-        }${hasLoop ? ' asset-alien-meta-preview--loop-still' : ''}`}
-        src={metaUrl}
-        alt={alt}
-        onLoad={() => setStillLoaded(true)}
-      />
+      {metaUrl ? (
+        <img
+          key={metaUrl}
+          ref={stillImgRef}
+          className={`asset-alien-meta-preview${showStill ? ' is-visible' : ''}${
+            stillFadingOut ? ' is-done' : ''
+          }${hasLoop ? ' asset-alien-meta-preview--loop-still' : ''}`}
+          src={metaUrl}
+          alt={alt}
+          onLoad={() => setStillLoaded(true)}
+        />
+      ) : null}
     </div>
   );
 }
