@@ -182,9 +182,17 @@ export type AlienComposeResult = {
   portraitBlob: Blob;
   metaBlob: Blob;
   loopBlob: Blob | null;
+  /** Prefer this for <video src> — metaloop GET 302s to S3 and fetch() fails CORS. */
+  loopUrl?: string | null;
   metaloop: boolean;
   seasononeloop: boolean;
 };
+
+export type AlienCreateProgressFn = (percent: number) => void;
+
+function clampProgress(n: number): number {
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
 
 export type AlienCreateFailureStage = 'upload' | 'generate';
 
@@ -271,25 +279,40 @@ async function loadComposeResultFromJob(
   job: AlienGenerateJobClient
 ): Promise<AlienComposeResult> {
   const bust = `&t=${Date.now()}`;
-  const [portraitRes, metaRes, loopRes] = await Promise.all([
-    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=portrait${bust}`, {
-      credentials: 'include',
-      cache: 'no-store',
-    }),
-    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
-      credentials: 'include',
-      cache: 'no-store',
-    }),
-    fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop${bust}`, {
-      credentials: 'include',
-      cache: 'no-store',
-    }),
-  ]);
+  const loopApi = `/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop${bust}`;
+  let portraitRes: Response;
+  let metaRes: Response;
+  let loopHead: Response;
+  try {
+    [portraitRes, metaRes, loopHead] = await Promise.all([
+      fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=portrait${bust}`, {
+        credentials: 'include',
+        cache: 'no-store',
+      }),
+      fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
+        credentials: 'include',
+        cache: 'no-store',
+      }),
+      /* HEAD only — GET 302s to S3 and fetch() fails CORS (“Load failed” on Safari). */
+      fetch(loopApi, {
+        method: 'HEAD',
+        credentials: 'include',
+        cache: 'no-store',
+      }),
+    ]);
+  } catch (err) {
+    const why = err instanceof Error ? err.message : 'network error';
+    throw new Error(`Could not load generated images — ${why}`);
+  }
   if (!portraitRes.ok || !metaRes.ok) {
-    throw new Error('Could not load generated images');
+    throw new Error(
+      `Could not load generated images (${!portraitRes.ok ? 'portrait' : 'poster'} ${
+        !portraitRes.ok ? portraitRes.status : metaRes.status
+      })`
+    );
   }
   const [portraitBlob, metaBlob] = await Promise.all([portraitRes.blob(), metaRes.blob()]);
-  const loopBlob = loopRes.ok ? await loopRes.blob() : null;
+  const hasLoop = loopHead.ok;
 
   if (typeof window !== 'undefined') {
     clearPaidCreditPending(assetId);
@@ -299,7 +322,7 @@ async function loadComposeResultFromJob(
           assetId,
           shareId,
           at: Date.now(),
-          metaloop: Boolean(job.metaloop && loopBlob),
+          metaloop: Boolean(job.metaloop && hasLoop),
           seasononeloop: Boolean(job.seasononeloop),
         },
       })
@@ -309,8 +332,9 @@ async function loadComposeResultFromJob(
   return {
     portraitBlob,
     metaBlob,
-    loopBlob,
-    metaloop: Boolean(job.metaloop && loopBlob),
+    loopBlob: null,
+    loopUrl: hasLoop ? loopApi : null,
+    metaloop: Boolean(job.metaloop && hasLoop),
     seasononeloop: Boolean(job.seasononeloop),
   };
 }
@@ -320,18 +344,30 @@ async function loadComposeResultFromJob(
  * when the job looks abandoned. Starting a second pipeline while the first is
  * still writing staging caused early finalize (new stills live) + stuck creating UI.
  */
+export function progressForRemotePhase(job: AlienGenerateJobClient | null | undefined): number {
+  const phase = job?.phase || 'compose';
+  if (phase === 'compose') return 35;
+  if (phase === 'seasononeloop') return 72;
+  if (phase === 'metaloop') return 88;
+  if (phase === 'done') return 98;
+  return 30;
+}
+
 export async function awaitAlienGenerateJob(args: {
   email: string;
   assetId: string;
   shareId?: string | null;
   initialJob?: AlienGenerateJobClient | null;
+  onProgress?: AlienCreateProgressFn;
 }): Promise<AlienComposeResult> {
-  const { email, assetId, shareId } = args;
+  const { email, assetId, shareId, onProgress } = args;
   const hardDeadline = Date.now() + ALIEN_GENERATE_STALE_MS;
   let job: AlienGenerateJobClient | null = args.initialJob ?? null;
+  onProgress?.(progressForRemotePhase(job));
 
   while (Date.now() < hardDeadline) {
     if (job?.status === 'complete') {
+      onProgress?.(100);
       return loadComposeResultFromJob(assetId, shareId, job);
     }
     if (job?.status === 'error') {
@@ -340,13 +376,15 @@ export async function awaitAlienGenerateJob(args: {
     if (job?.status === 'running' && isAlienGenerateJobAbandoned(job)) {
       const startedAt =
         typeof job.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
-      return runAlienGeneratePipeline({ email, assetId, shareId, startedAt });
+      return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
     }
+    onProgress?.(progressForRemotePhase(job));
     await sleep(GENERATE_POLL_MS);
     job = await fetchAlienGenerateJob(email, assetId);
   }
 
   if (job?.status === 'complete') {
+    onProgress?.(100);
     return loadComposeResultFromJob(assetId, shareId, job);
   }
   if (job?.status === 'error') {
@@ -356,7 +394,7 @@ export async function awaitAlienGenerateJob(args: {
   /* Absolute age exceeded — last chance to finish from the selfie on S3. */
   const startedAt =
     typeof job?.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
-  return runAlienGeneratePipeline({ email, assetId, shareId, startedAt });
+  return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
 }
 
 /** Portrait first (iris source) → Season One → launch meta; videos follow in pipeline. */
@@ -376,8 +414,10 @@ export async function runAlienGeneratePipeline(args: {
   shareId?: string | null;
   /** From arm response — stale pipelines must not finalize over a newer force-arm. */
   startedAt?: string | null;
+  onProgress?: AlienCreateProgressFn;
 }): Promise<AlienComposeResult> {
-  const { email, assetId, shareId, startedAt } = args;
+  const { email, assetId, shareId, startedAt, onProgress } = args;
+  const report = (n: number) => onProgress?.(clampProgress(n));
 
   const failJob = async (message: string) => {
     await postJson('/api/user/alien-generate', {
@@ -390,6 +430,7 @@ export async function runAlienGeneratePipeline(args: {
   };
 
   try {
+    report(22);
     await postJson('/api/user/alien-generate', {
       email,
       asset: assetId,
@@ -398,7 +439,9 @@ export async function runAlienGeneratePipeline(args: {
       ...(startedAt ? { startedAt } : {}),
     });
 
-    for (const mode of COMPOSE_STEPS) {
+    for (let i = 0; i < COMPOSE_STEPS.length; i++) {
+      const mode = COMPOSE_STEPS[i];
+      report(24 + ((i + 1) / COMPOSE_STEPS.length) * 46);
       const compose = await postJson('/api/user/alien-compose', {
         email,
         asset: assetId,
@@ -413,6 +456,7 @@ export async function runAlienGeneratePipeline(args: {
       }
     }
 
+    report(72);
     await postJson('/api/user/alien-generate', {
       email,
       asset: assetId,
@@ -427,6 +471,7 @@ export async function runAlienGeneratePipeline(args: {
     });
     const seasonOk = Boolean(season.ok && season.json.seasononeloop);
 
+    report(85);
     await postJson('/api/user/alien-generate', {
       email,
       asset: assetId,
@@ -456,6 +501,7 @@ export async function runAlienGeneratePipeline(args: {
       throw new Error(detail);
     }
 
+    report(96);
     const finalize = await postJson('/api/user/alien-generate', {
       email,
       asset: assetId,
@@ -481,6 +527,7 @@ export async function runAlienGeneratePipeline(args: {
         ? (finalize.json.job as AlienGenerateJobClient)
         : { status: 'complete' as const, metaloop: metaloopOk, seasononeloop: seasonOk };
 
+    report(100);
     return loadComposeResultFromJob(assetId, shareId, job);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Character generation failed';
@@ -496,7 +543,14 @@ export async function runAlienGeneratePipeline(args: {
  * Copy bytes into a new File before resetting the input / yielding to React.
  */
 export async function cloneAlienPhotoFile(file: File): Promise<File> {
-  const buf = await file.arrayBuffer();
+  let buf: ArrayBuffer;
+  try {
+    buf = await file.arrayBuffer();
+  } catch (err) {
+    const why = err instanceof Error ? err.message : 'could not read file';
+    throw new Error(`Could not read photo — ${why}`);
+  }
+  if (!buf.byteLength) throw new Error('Photo file is empty');
   const name = file.name || 'photo.jpg';
   const type = file.type || 'application/octet-stream';
   return new File([buf], name, { type, lastModified: file.lastModified || Date.now() });
@@ -520,12 +574,22 @@ async function postJson(
   url: string,
   body: Record<string, unknown>
 ): Promise<{ ok: boolean; status: number; json: Record<string, unknown> }> {
-  const res = await fetch(url, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    const why = err instanceof Error ? err.message : 'network error';
+    return {
+      ok: false,
+      status: 0,
+      json: { error: `Connection failed — ${why}` },
+    };
+  }
   const text = await res.text();
   let json: Record<string, unknown> = {};
   if (text) {
@@ -560,8 +624,11 @@ async function postJson(
 async function uploadAlienSelfieJpeg(
   email: string,
   assetId: string,
-  jpeg: Blob
+  jpeg: Blob,
+  onProgress?: AlienCreateProgressFn
 ): Promise<void> {
+  const report = (n: number) => onProgress?.(clampProgress(n));
+  report(6);
   const begin = await postJson('/api/user/alien-photo', {
     email,
     asset: assetId,
@@ -575,11 +642,13 @@ async function uploadAlienSelfieJpeg(
     );
   }
 
+  report(8);
   const b64 = await blobToBase64(jpeg);
   if (!b64) throw new Error('Could not encode photo');
   const parts = Math.max(1, Math.ceil(b64.length / CHUNK_BASE64_CHARS));
   for (let i = 0; i < parts; i++) {
     const data = b64.slice(i * CHUNK_BASE64_CHARS, (i + 1) * CHUNK_BASE64_CHARS);
+    report(8 + ((i + 1) / parts) * 10);
     const chunk = await postJson('/api/user/alien-photo', {
       email,
       asset: assetId,
@@ -597,6 +666,7 @@ async function uploadAlienSelfieJpeg(
     }
   }
 
+  report(19);
   const commit = await postJson('/api/user/alien-photo', {
     email,
     asset: assetId,
@@ -609,6 +679,7 @@ async function uploadAlienSelfieJpeg(
       typeof commit.json.error === 'string' ? commit.json.error : 'Upload failed to finish'
     );
   }
+  report(20);
 }
 
 /**
@@ -623,23 +694,32 @@ export async function composeAlienFromPhoto(args: {
   assetId: string;
   file: File;
   shareId?: string | null;
+  onProgress?: AlienCreateProgressFn;
 }): Promise<AlienComposeResult> {
-  const { email, assetId, shareId } = args;
+  const { email, assetId, shareId, onProgress } = args;
+  const report = (n: number) => onProgress?.(clampProgress(n));
 
   try {
+    report(2);
     const file = await cloneAlienPhotoFile(args.file);
+    report(4);
     const jpeg = await withTimeout(
       fileToUploadJpegBlob(file),
       90_000,
       'Could not process photo — try a smaller JPEG'
     );
-    await uploadAlienSelfieJpeg(email, assetId, jpeg);
+    await uploadAlienSelfieJpeg(email, assetId, jpeg, onProgress);
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Failed to Upload Photo';
+    const raw = err instanceof Error ? err.message : 'Failed to Upload Photo';
+    const message =
+      !raw || raw === 'Load failed' || raw === 'Failed to fetch'
+        ? `Photo upload failed — ${raw || 'unknown error'}`
+        : raw;
     throw new AlienCreateStageError(message, 'upload');
   }
 
   /* Arm job for cross-tab status — do NOT start server background work. */
+  report(21);
   const arm = await postJson('/api/user/alien-generate', {
     email,
     asset: assetId,
@@ -662,5 +742,5 @@ export async function composeAlienFromPhoto(args: {
       ? armJob.startedAt.trim()
       : null;
 
-  return runAlienGeneratePipeline({ email, assetId, shareId, startedAt });
+  return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
 }

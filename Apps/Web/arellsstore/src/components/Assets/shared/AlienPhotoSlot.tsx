@@ -63,7 +63,8 @@ function themeStyleFrom(el: HTMLElement | null): React.CSSProperties {
 const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) => {
   const titleId = useId();
   const { email, shareId, isSignedIn } = useUser();
-  const { isCreatingAsset, blockIfCreating, startCreate } = useAlienCharacterCreate();
+  const { isCreatingAsset, blockIfCreating, startCreate, createProgress } =
+    useAlienCharacterCreate();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -274,7 +275,9 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         {busy ? (
           <>
             <span className="asset-alien-photo-creating-word">creating</span>
-            <span className="asset-alien-photo-busy" />
+            <span className="asset-alien-photo-busy asset-alien-photo-busy--pct">
+              <span className="asset-alien-photo-busy-pct">{createProgress}%</span>
+            </span>
             <span className="asset-alien-photo-creating-word">character</span>
           </>
         ) : hasCharacter ? (
@@ -367,9 +370,6 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
                   <span className="blood-overlay-line">{displayName}</span>
                   <span className="blood-overlay-line">Alien Race</span>
                   <span className="blood-overlay-line">Episodes.</span>
-                  <span className="blood-overlay-line">-</span>
-                  <span className="blood-overlay-line">coming soon</span>
-                  <span className="blood-overlay-line">stay tuned</span>
                 </p>
                 <button type="button" className="asset-range-button blood-ok" onClick={closeComingSoon}>
                   Ok

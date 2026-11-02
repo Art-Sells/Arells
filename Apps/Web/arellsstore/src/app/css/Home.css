@@ -1504,6 +1504,39 @@ a.asset-alien-photo-hit {
 	animation: asset-alien-photo-spin 0.7s linear infinite;
 }
 
+.asset-alien-photo-busy--pct {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-width: 2.5px;
+}
+
+.asset-alien-photo-busy-pct {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 9px;
+	font-weight: 800;
+	letter-spacing: -0.3px;
+	line-height: 1;
+	color: inherit;
+	-webkit-text-fill-color: inherit;
+	font-variant-numeric: tabular-nums;
+	animation: asset-alien-photo-spin-counter 0.7s linear infinite;
+	user-select: none;
+}
+
+@keyframes asset-alien-photo-spin-counter {
+	to {
+		transform: rotate(-360deg);
+	}
+}
+
 @keyframes asset-alien-photo-spin {
 	to {
 		transform: rotate(360deg);
@@ -7680,6 +7713,18 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	mask-repeat: no-repeat;
 	-webkit-mask-position: center;
 	mask-position: center;
+}
+
+.blood-overlay-creating-percent {
+	position: relative;
+	z-index: 1;
+	font-size: 15px;
+	font-weight: 800;
+	letter-spacing: -0.4px;
+	line-height: 1;
+	color: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	font-variant-numeric: tabular-nums;
+	user-select: none;
 }
 
 .blood-overlay-card--alien-meta {

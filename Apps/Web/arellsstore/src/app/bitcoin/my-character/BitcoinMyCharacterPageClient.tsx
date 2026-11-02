@@ -182,7 +182,8 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 }) => {
   const router = useRouter();
   const { email, shareId, isSignedIn, authSessionLoading } = useUser();
-  const { isCreatingAsset, blockIfCreating, startCreate } = useAlienCharacterCreate();
+  const { isCreatingAsset, blockIfCreating, startCreate, createProgress } =
+    useAlienCharacterCreate();
   const guestPreview = useGuestPreview();
   const allowSignedIn = !authSessionLoading && isSignedIn && !guestPreview;
   const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
@@ -755,7 +756,9 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
                         updateCtaBusy ? ' is-visible' : ''
                       }`}
                     >
-                      <span className="asset-alien-photo-busy" />
+                      <span className="asset-alien-photo-busy asset-alien-photo-busy--pct">
+                        <span className="asset-alien-photo-busy-pct">{createProgress}%</span>
+                      </span>
                       {busy ? (
                         <span className="bitcoin-my-character-update-photo-creating">
                           Creating Character

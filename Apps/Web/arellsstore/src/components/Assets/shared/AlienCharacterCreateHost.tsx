@@ -32,6 +32,7 @@ export default function AlienCharacterCreateHost() {
     overlayStyle,
     creatingAssetId,
     creatingAssetName,
+    createProgress,
     dismissCreatingModal,
     dismissWaitModal,
     dismissSuccess,
@@ -124,9 +125,13 @@ export default function AlienCharacterCreateHost() {
                 aria-labelledby={creatingTitleId}
                 onClick={(event) => event.stopPropagation()}
               >
-                <div className="blood-overlay-creating-spinner" aria-hidden="true">
+                <div
+                  className="blood-overlay-creating-spinner"
+                  aria-hidden="true"
+                  aria-valuenow={createProgress}
+                >
                   <span className="blood-overlay-creating-spinner-ring" />
-                  <span className="blood-overlay-creating-profile" />
+                  <span className="blood-overlay-creating-percent">{createProgress}%</span>
                 </div>
                 <p id={creatingTitleId} className="blood-overlay-copy">
                   <span className="blood-overlay-line">Creating your character</span>
@@ -210,11 +215,12 @@ export default function AlienCharacterCreateHost() {
                       <span className="blood-overlay-line">Try Again</span>
                     </>
                   )}
-                  {error.message ? (
-                    <span className="blood-overlay-line blood-overlay-line--detail">
-                      {error.message}
-                    </span>
-                  ) : null}
+                  <span className="blood-overlay-line blood-overlay-line--detail">
+                    {error.message?.trim() ||
+                      (error.stage === 'upload'
+                        ? 'Unknown upload error — check connection and try a smaller JPEG'
+                        : 'Unknown create error — try again')}
+                  </span>
                 </p>
                 <button
                   type="button"

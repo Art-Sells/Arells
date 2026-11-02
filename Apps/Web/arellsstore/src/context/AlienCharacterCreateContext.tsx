@@ -17,6 +17,7 @@ import {
   composeAlienFromPhoto,
   fetchAlienGenerateJob,
   isAlienGenerateJobFreshRunning,
+  progressForRemotePhase,
   type AlienCreateFailureStage,
   type AlienGenerateJobClient,
 } from '../lib/client/alienPhotoCompose';
@@ -44,6 +45,8 @@ type AlienCharacterCreateContextValue = {
   status: 'idle' | 'creating' | 'success' | 'error';
   creatingAssetId: string | null;
   creatingAssetName: string | null;
+  /** 0–100 while creating; shown inside the loading circle. */
+  createProgress: number;
   creatingModalOpen: boolean;
   waitModalOpen: boolean;
   waitAssetName: string | null;
@@ -89,6 +92,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   const [creatingModalOpen, setCreatingModalOpen] = useState(false);
   const [waitModalOpen, setWaitModalOpen] = useState(false);
   const [waitAssetName, setWaitAssetName] = useState<string | null>(null);
+  const [createProgress, setCreateProgress] = useState(0);
   const [success, setSuccess] = useState<AlienCreateSuccess | null>(null);
   const [error, setError] = useState<AlienCreateError | null>(null);
   const [errorOpen, setErrorOpen] = useState(false);
@@ -181,6 +185,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
     creatingNameRef.current = null;
     setCreatingAssetId(null);
     setCreatingAssetName(null);
+    setCreateProgress(0);
     /* Always drop creating — otherwise the sitewide badge sticks until full reload. */
     setStatus((prev) => (prev === 'creating' ? 'idle' : prev));
   }, []);
@@ -207,6 +212,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       creatingNameRef.current = name;
       setCreatingAssetId(args.assetId);
       setCreatingAssetName(name);
+      setCreateProgress(1);
       setStatus('creating');
       setCreatingModalOpen(true);
       setWaitModalOpen(false);
@@ -227,9 +233,12 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetId: args.assetId,
             file: args.file,
             shareId: args.shareId,
+            onProgress: setCreateProgress,
           });
           const metaUrl = URL.createObjectURL(result.metaBlob);
-          const loopUrl = result.loopBlob ? URL.createObjectURL(result.loopBlob) : null;
+          const loopUrl =
+            result.loopUrl ||
+            (result.loopBlob ? URL.createObjectURL(result.loopBlob) : null);
           finishCreateSuccess({
             assetId: args.assetId,
             assetName: name,
@@ -243,7 +252,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetId: args.assetId,
             assetName: name,
             shareId: args.shareId,
-            message: err instanceof Error ? err.message : null,
+            message: err instanceof Error ? err.message : 'Unknown create error',
             stage: alienCreateFailureStage(err),
           });
         } finally {
@@ -286,6 +295,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
         creatingNameRef.current = name;
         setCreatingAssetId(asset.id);
         setCreatingAssetName(name);
+        setCreateProgress(progressForRemotePhase(job));
         setOverlayStyle(overlayStyleForAsset(asset.id));
         setStatus('creating');
         setCreatingModalOpen(true);
@@ -306,10 +316,13 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetId: asset.id,
             shareId: resumeShareId,
             initialJob: job,
+            onProgress: setCreateProgress,
           });
           if (cancelled) return;
           const metaUrl = URL.createObjectURL(result.metaBlob);
-          const loopUrl = result.loopBlob ? URL.createObjectURL(result.loopBlob) : null;
+          const loopUrl =
+            result.loopUrl ||
+            (result.loopBlob ? URL.createObjectURL(result.loopBlob) : null);
           finishCreateSuccess({
             assetId: asset.id,
             assetName: name,
@@ -324,7 +337,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetId: asset.id,
             assetName: name,
             shareId: resumeShareId,
-            message: err instanceof Error ? err.message : null,
+            message: err instanceof Error ? err.message : 'Unknown create error',
             stage: 'generate',
           });
         } finally {
@@ -363,6 +376,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       status,
       creatingAssetId,
       creatingAssetName,
+      createProgress,
       creatingModalOpen,
       waitModalOpen,
       waitAssetName,
@@ -383,6 +397,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       status,
       creatingAssetId,
       creatingAssetName,
+      createProgress,
       creatingModalOpen,
       waitModalOpen,
       waitAssetName,
