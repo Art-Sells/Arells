@@ -208,13 +208,13 @@ export default function AlienCharacterCreateHost() {
                       <span className="blood-overlay-line">Couldn’t finish</span>
                       <span className="blood-overlay-line">character create</span>
                       <span className="blood-overlay-line">Try Again</span>
-                      {error.message ? (
-                        <span className="blood-overlay-line blood-overlay-line--detail">
-                          {error.message}
-                        </span>
-                      ) : null}
                     </>
                   )}
+                  {error.message ? (
+                    <span className="blood-overlay-line blood-overlay-line--detail">
+                      {error.message}
+                    </span>
+                  ) : null}
                 </p>
                 <button
                   type="button"

@@ -475,7 +475,18 @@ async function postJson(
   }
   if (!res.ok && res.status !== 202 && typeof json.error !== 'string') {
     if (res.status === 413) json.error = 'Photo too large for upload';
+    else if (res.status === 402) json.error = 'Character generation payment required';
     else if (res.status >= 500) json.error = 'Upload server error — try again';
+    else if (text && text.length < 280) json.error = text.trim();
+    else json.error = `Request failed (${res.status})`;
+  }
+  if (
+    !res.ok &&
+    res.status !== 202 &&
+    json.code === 'payment_required' &&
+    typeof json.error === 'string'
+  ) {
+    json.error = `${json.error} (payment_required)`;
   }
   return { ok: res.ok || res.status === 202, status: res.status, json };
 }
