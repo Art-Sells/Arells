@@ -193,9 +193,12 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const [payOverlayStyle, setPayOverlayStyle] = useState<React.CSSProperties>({});
   const [creditChecking, setCreditChecking] = useState(false);
   /** Unused paid credit → button becomes Update Photo + Add Photo modal. */
-  const [hasPaidCredit, setHasPaidCredit] = useState(() => peekPaidCreditPending('bitcoin'));
-  /** Don't render CTA until credit status known — avoids Update Character → Update Photo flash. */
-  const [creditReady, setCreditReady] = useState(() => peekPaidCreditPending('bitcoin'));
+  const [hasPaidCredit, setHasPaidCredit] = useState(false);
+  /**
+   * Hold the Update Photo / Update Character badge until the server credit check
+   * finishes — sessionStorage peek alone was flashing Update Photo first.
+   */
+  const [creditReady, setCreditReady] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const shareCopiedTimerRef = useRef<number | null>(null);
   /** Empty on SSR + first client paint — avoids origin hydration mismatch. */
@@ -468,11 +471,13 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     })();
   }, [isOwner, email, busy, creditChecking, blockIfCreating, openGuide, setPaidPending]);
 
-  /* Load credit as soon as session email exists — don't block photo height-down on it. */
+  /* Load credit before revealing the Update Photo / Update Character badge. */
   useEffect(() => {
     if (authSessionLoading || !allowSignedIn || !email) {
-      // Keep peek while auth/shareId settle; only clear once we're sure this isn't the owner view.
-      if (!authSessionLoading && !allowSignedIn) setCreditReady(false);
+      if (!authSessionLoading && !allowSignedIn) {
+        setCreditReady(false);
+        setHasPaidCredit(false);
+      }
       return;
     }
     let cancelled = false;
