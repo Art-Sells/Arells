@@ -12,13 +12,10 @@ import React, {
 } from 'react';
 import { overlayStyleForAsset } from '../lib/client/alienCreateTheme';
 import {
-  ALIEN_GENERATE_ACTIVE_MS,
   alienCreateFailureStage,
   awaitAlienGenerateJob,
   composeAlienFromPhoto,
-  failAlienGenerateJob,
   fetchAlienGenerateJob,
-  isAlienGenerateJobActivelyDriven,
   isAlienGenerateJobFreshRunning,
   type AlienCreateFailureStage,
   type AlienGenerateJobClient,
@@ -274,25 +271,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
         }
         /* Local create claimed the slot while we were fetching — do not steal it. */
         if (creatingRef.current || cancelled) return;
-        if (!job || job.status !== 'running') continue;
-
-        /* Abandoned / idle running row: clear quietly — do not open the fail modal. */
-        if (!isAlienGenerateJobActivelyDriven(job)) {
-          const updatedMs =
-            Date.parse(job.updatedAt || '') || Date.parse(job.startedAt || '') || 0;
-          const startedMs = Date.parse(job.startedAt || '') || 0;
-          const onlyArmed = Boolean(startedMs && updatedMs && updatedMs <= startedMs);
-          const armedAbandoned =
-            onlyArmed && updatedMs > 0 && Date.now() - updatedMs >= ALIEN_GENERATE_ACTIVE_MS;
-          if (!isAlienGenerateJobFreshRunning(job) || armedAbandoned) {
-            void failAlienGenerateJob(
-              email,
-              asset.id,
-              'Character generation timed out — try again'
-            );
-          }
-          continue;
-        }
+        if (!isAlienGenerateJobFreshRunning(job) || !job) continue;
 
         const name = asset.name;
         creatingRef.current = true;
