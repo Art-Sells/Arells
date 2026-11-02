@@ -73,14 +73,14 @@ export const ALIEN_COMPOSE_PROMPT = [
   'PRIORITY ORDER (ABSOLUTE — SINGLE PASS): (1) LEFT identity + skin albedo from <IMAGE_1>. (2) LEFT BOTH iris color/texture/detail LOCKED to <IMAGE_2> portrait face ONLY. (3) Sam + girl iris color/detail LOCKED to <IMAGE_0>. (4) Sam + girl otherwise untouched from <IMAGE_0>. (5) locked square launch canvas / titles from <IMAGE_0>. (6) everything else.',
   'EDIT TASK (not a new generation): Start from <IMAGE_0> and change as little as possible.',
   'OUTPUT MUST still be the same square Launch / “now playing” metaposter as <IMAGE_0> — same beige wall, same left-side orange title stack (“THE BITCOIN ALIEN RACE” / “Season One” / “now playing”), same framing, same lighting family, same rust-orange jacket / white tee / white pants on the LEFT white-mannequin figure (jacket cut may become feminine if <IMAGE_1> is female — see GENDER FIT), same gold A / triangular necklace.',
-  'IDENTITY LOCK LEFT (CRITICAL — ABSOLUTE #1): The LEFT orange-jacket face MUST be an exact photorealistic identity lock to <IMAGE_1> — same face shape, eyes spacing, nose, mouth, lips, brow, cheekbones, jaw, chin, skin tone, skin texture, age, hairline, hair style/color, facial hair. Pixel-faithful likeness of the uploaded person. Eye COLOR comes from <IMAGE_2>, not <IMAGE_1>. FORBIDDEN: inventing a different face, blending with anyone else, or replacing LEFT with the RIGHT bearded man’s (Sam’s) face, beard, hair, or bone structure. If LEFT is not clearly the same person as <IMAGE_1>, the edit FAILED — repaint LEFT from <IMAGE_1> before finishing.',
+  'IDENTITY LOCK LEFT (CRITICAL — ABSOLUTE #1): The LEFT orange-jacket face MUST match <IMAGE_1> — same face shape, eyes spacing, nose, mouth, lips, brow, cheekbones, jaw, chin, skin tone, skin texture, age, hairline, hair style/color, facial hair. Clear likeness of the uploaded adult. Eye COLOR comes from <IMAGE_2>, not <IMAGE_1>. FORBIDDEN: inventing a different face, blending with anyone else, or replacing LEFT with the RIGHT bearded man’s (Sam’s) face, beard, hair, or bone structure. If LEFT is not clearly the same person as <IMAGE_1>, the edit FAILED — repaint LEFT from <IMAGE_1> before finishing.',
   'LEFT EYES (CRITICAL — IRIS LOCK TO <IMAGE_2> PORTRAIT): Paint BOTH LEFT irises using ONLY the eyes on <IMAGE_2> (Personal Bitcoin Alien portrait) — copy iris hue, saturation, brightness, AND radial iris fiber texture/detail from <IMAGE_2>. Typically clear amber / burnt-orange / Bitcoin-orange like the portrait. Complete eyes (pupil + iris + sclera). FORBIDDEN: <IMAGE_1> selfie/natural eye color; brown/hazel/blue/green selfie irises; inventing a new eye color; glow, bloom, neon. If LEFT irises do not match <IMAGE_2>, FAILED — repaint from <IMAGE_2>.',
-  'SKIN ALBEDO LOCK (CRITICAL — LEFT FACE / NECK / HANDS — ABSOLUTE #2): LEFT skin is a SKIN GRAFT from <IMAGE_1> — copy the SAME complexion, undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. Face, neck, and hands = ONE continuous living complexion sampled from <IMAGE_1> only. Compare LEFT face brightness side-by-side to <IMAGE_1>’s face: if LEFT looks lighter OR darker OR redder OR muddier than <IMAGE_1>, FAILED — repaint from <IMAGE_1>. FORBIDDEN: matching LEFT exposure to Sam / the girl / the beige wall; lightening OR darkening vs <IMAGE_1>; warming/cooling; plastic/mannequin skin; borrowing Sam’s or the girl’s complexion; crushing medium/deep/Black skin charcoal/muddy; face darker than neck (classic failure). Soft scene light may hit the jacket/wall — NEVER rewrite LEFT skin albedo to “fit” that light.',
-  'IDENTITY LOCK RIGHT / SEPARATION (CRITICAL): LEFT = <IMAGE_1> only. RIGHT Sam + girl = <IMAGE_0> only. Two separate people always. NEVER clone Sam onto LEFT. NEVER clone <IMAGE_1> onto Sam. NEVER twin / mirror / average the two men.',
-  'SAM + GIRL LOCK (CRITICAL — DO NOT TOUCH): The bearded man and young girl on the RIGHT must stay identical to <IMAGE_0> — faces, skin, hair, clothing, hands, lighting.',
-  'SAM + GIRL IRIS LOCK (CRITICAL — ABSOLUTE): Sam and the girl MUST keep their EXACT iris colors, saturation, brightness, and iris fiber/detail from <IMAGE_0> — do NOT recolor, orange-tint, amber-shift, brighten, or rewrite their eyes. Complete open living eyes — pupils, irises, sclera, eyelids, lashes as in <IMAGE_0>. FORBIDDEN: blank/white-out/missing/melted eyes; painting their irises amber/orange/glowing; transferring <IMAGE_1> eye color onto them. If their eyes drift vs <IMAGE_0>, FAILED — restore from <IMAGE_0>.',
+  'SKIN ALBEDO LOCK (CRITICAL — LEFT FACE / NECK / HANDS — ABSOLUTE #2): LEFT skin matches <IMAGE_1> — same complexion, undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. Face, neck, and hands = ONE continuous living complexion from <IMAGE_1> only. Compare LEFT face brightness side-by-side to <IMAGE_1>’s face: if LEFT looks lighter OR darker OR redder OR muddier than <IMAGE_1>, FAILED — repaint from <IMAGE_1>. FORBIDDEN: matching LEFT exposure to Sam / the companion / the beige wall; lightening OR darkening vs <IMAGE_1>; warming/cooling; plastic/mannequin skin; borrowing Sam’s or the companion’s complexion; crushing medium/deep/Black skin charcoal/muddy; face darker than neck (classic failure). Soft scene light may hit the jacket/wall — NEVER rewrite LEFT skin albedo to “fit” that light.',
+  'IDENTITY LOCK RIGHT / SEPARATION (CRITICAL): LEFT = <IMAGE_1> only. RIGHT Sam + companion = <IMAGE_0> only. Two separate people always. NEVER clone Sam onto LEFT. NEVER clone <IMAGE_1> onto Sam. NEVER twin / mirror / average the two adults.',
+  'SAM + COMPANION LOCK (CRITICAL — DO NOT TOUCH): The bearded man and the smaller companion figure already on the RIGHT in <IMAGE_0> must stay identical to <IMAGE_0> — faces, skin, hair, clothing, hands, lighting. Do not invent or replace them.',
+  'SAM + COMPANION IRIS LOCK (CRITICAL — ABSOLUTE): Sam and the companion MUST keep their EXACT iris colors, saturation, brightness, and iris fiber/detail from <IMAGE_0> — do NOT recolor, orange-tint, amber-shift, brighten, or rewrite their eyes. Complete open living eyes — pupils, irises, sclera, eyelids, lashes as in <IMAGE_0>. FORBIDDEN: blank/white-out/missing/melted eyes; painting their irises amber/orange/glowing; transferring <IMAGE_1> eye color onto them. If their eyes drift vs <IMAGE_0>, FAILED — restore from <IMAGE_0>.',
   'TEXT: Copy on-image lettering from <IMAGE_0> exactly. Do NOT invent premiere dates or new words.',
-  'Replace ONLY the featureless matte-white silhouette head (and any white neck/hands/skin) on the LEFT mannequin figure in the orange jacket with <IMAGE_1>’s locked identity. Do NOT replace the bearded man or the girl. Do NOT fill the white silhouette with Sam’s face from the RIGHT.',
+  'Replace ONLY the featureless matte-white silhouette head (and any white neck/hands/skin) on the LEFT mannequin figure in the orange jacket with <IMAGE_1>’s locked identity. Do NOT replace the bearded man or the companion. Do NOT fill the white silhouette with Sam’s face from the RIGHT.',
   'HEAD SIZE (CRITICAL — #1 CONSTRAINT AFTER CANVAS): LEFT head + hair MUST be ~5% LARGER than the white mannequin head in <IMAGE_0> (≈1.05× mannequin width and chin-to-crown). Measure vs orange-jacket shoulders / collar. Target: slightly bigger than the mannequin — NOT 1:1, NOT dramatically oversized vs Sam. FORBIDDEN: matching mannequin 1:1 (too small), shrinking into the mannequin bound, OR growing far past ~5% (big hair that blows past the 1.05× target). Center on the same neck/collar as <IMAGE_0>. A LEFT head at mannequin size or much larger than ~5% = FAILED edit.',
   'IDENTITY (LEFT MANNEQUIN ONLY): Apply the IDENTITY LOCK LEFT above at the ~5% larger head-size target. <IMAGE_1> is the sole identity/skin source for LEFT; <IMAGE_2> is the sole iris source.',
   'EXPRESSION (CRITICAL — NEUTRAL): LEFT face must be neutral / calm — relaxed mouth, no smile, no frown. If <IMAGE_1> is smiling, laughing, frowning, scowling, or expressive, convert to this calm neutral while keeping identity. Smile is ONLY for the video loop, never this still. NOT a smile, grin, laugh, frown, scowl, or surprise.',
@@ -135,8 +135,8 @@ export const ALIEN_COMPOSE_DETAIL_FIX_PROMPT = ALIEN_COMPOSE_IRIS_ONLY_PROMPT;
  */
 export const ALIEN_COMPOSE_SKIN_LOCK_PROMPT = [
   'EDIT TASK: Start from <IMAGE_0> (launch poster). <IMAGE_1> is the uploaded person — the ONLY allowed source for LEFT face identity and LEFT skin albedo.',
-  'SOLE JOB (CRITICAL — SKIN GRAFT): Transplant <IMAGE_1>’s face complexion onto the LEFT orange-jacket face, neck, and hands. Match likeness + skin tone + texture + lightness/darkness + undertone EXACTLY. Face, neck, and hands = ONE continuous living complexion sampled from <IMAGE_1> only — same brightness family as <IMAGE_1>’s face when compared side-by-side.',
-  'WHITE NECK / CRUSHED OR DRIFTED FACE (MOST COMMON LAUNCH FAILURE): If the neck is white, porcelain, mannequin, or lighter than the face — REPAINT jaw→collar from <IMAGE_1>. If the face is lighter, darker, muddier, redder, or charcoalized vs <IMAGE_1> (especially Black / deep / rich brown skin) — REPAINT the whole face from <IMAGE_1>. FORBIDDEN: face darker than neck; neck white while face is dark; any brightness drift vs <IMAGE_1>; borrowing Sam’s or the girl’s complexion; “studio correcting” LEFT skin to match the right-side cast.',
+  'SOLE JOB (CRITICAL — SKIN MATCH): Match <IMAGE_1>’s face complexion onto the LEFT orange-jacket face, neck, and hands. Match likeness + skin tone + texture + lightness/darkness + undertone. Face, neck, and hands = ONE continuous living complexion from <IMAGE_1> only — same brightness family as <IMAGE_1>’s face when compared side-by-side.',
+  'WHITE NECK / CRUSHED OR DRIFTED FACE (MOST COMMON LAUNCH FAILURE): If the neck is white, porcelain, mannequin, or lighter than the face — REPAINT jaw→collar from <IMAGE_1>. If the face is lighter, darker, muddier, redder, or charcoalized vs <IMAGE_1> (especially Black / deep / rich brown skin) — REPAINT the whole face from <IMAGE_1>. FORBIDDEN: face darker than neck; neck white while face is dark; any brightness drift vs <IMAGE_1>; borrowing Sam’s or the companion’s complexion; “studio correcting” LEFT skin to match the right-side cast.',
   'Keep LEFT amber/orange iris color already on the eyes (do not change eye color). Soft scene light on jacket/wall is fine — do NOT rewrite LEFT skin albedo to match that light or Sam/girl.',
   'GLASSES (IF PRESENT — NO GLOW): If glasses are on, remove glow/bloom/neon/luminous lens shine — natural matte glass only.',
   'Do NOT change Sam or the girl. Do NOT change LEFT head size, text, background, framing, jacket color, or pose.',
@@ -451,21 +451,33 @@ function grokPromptText(prompt: string | readonly string[]): string {
   return typeof prompt === 'string' ? prompt : prompt.join(' ');
 }
 
-async function grokImageEdit(args: {
-  prompt: string | readonly string[];
+function isGrokContentModerationDetail(detail: string): boolean {
+  return /content moderation|moderation|safety|rejected by content/i.test(detail);
+}
+
+function formatGrokImageEditError(status: number, detail: string): string {
+  if (isGrokContentModerationDetail(detail)) {
+    /* Selfie is usually fine — Grok’s output filter flakes on face→poster edits. */
+    return 'Grok blocked this edit (content filter) — your photo is fine; tap Try Again';
+  }
+  return `Grok image edit failed (${status}): ${detail}`;
+}
+
+async function grokImageEditOnce(args: {
+  prompt: string;
   images: Array<{ url: string; type: string }>;
   aspectRatio: string;
+  apiKey: string;
 }): Promise<Buffer> {
-  const apiKey = grokApiKeyOrThrow();
   const res = await fetch('https://api.x.ai/v1/images/edits', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${args.apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       model: process.env.GROK_IMAGE_MODEL?.trim() || 'grok-imagine-image-2.0',
-      prompt: grokPromptText(args.prompt),
+      prompt: args.prompt,
       images: args.images,
       aspect_ratio: args.aspectRatio,
       resolution: '1k',
@@ -484,7 +496,7 @@ async function grokImageEdit(args: {
   } catch {
     throw new Error(
       raw.trim()
-        ? `Grok image edit failed (${res.status}): ${raw.trim().slice(0, 280)}`
+        ? formatGrokImageEditError(res.status, raw.trim().slice(0, 280))
         : `Grok image edit returned non-JSON (${res.status})`
     );
   }
@@ -495,7 +507,7 @@ async function grokImageEdit(args: {
       json.message ||
       raw.trim().slice(0, 280) ||
       `status ${res.status}`;
-    throw new Error(`Grok image edit failed (${res.status}): ${detail}`);
+    throw new Error(formatGrokImageEditError(res.status, detail));
   }
 
   const b64 = json.data?.[0]?.b64_json;
@@ -513,6 +525,41 @@ async function grokImageEdit(args: {
   }
 
   throw new Error('Grok image edit returned no image data');
+}
+
+/**
+ * xAI content moderation often flakes on face→poster edits even with a clean selfie.
+ * Retry a couple times before surfacing the error to the user.
+ */
+async function grokImageEdit(args: {
+  prompt: string | readonly string[];
+  images: Array<{ url: string; type: string }>;
+  aspectRatio: string;
+}): Promise<Buffer> {
+  const apiKey = grokApiKeyOrThrow();
+  const prompt = grokPromptText(args.prompt);
+  const maxAttempts = 3;
+  let lastErr: unknown;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await grokImageEditOnce({
+        prompt,
+        images: args.images,
+        aspectRatio: args.aspectRatio,
+        apiKey,
+      });
+    } catch (err) {
+      lastErr = err;
+      const message = err instanceof Error ? err.message : String(err);
+      const moderation = isGrokContentModerationDetail(message);
+      if (!moderation || attempt >= maxAttempts) break;
+      console.warn(`grokImageEdit moderation retry ${attempt}/${maxAttempts}`, message);
+      await new Promise((r) => setTimeout(r, 400 * attempt));
+    }
+  }
+
+  throw lastErr instanceof Error ? lastErr : new Error('Grok image edit failed');
 }
 
 /**
