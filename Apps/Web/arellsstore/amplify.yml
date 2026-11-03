@@ -27,6 +27,8 @@ applications:
           commands:
             - echo "🚀 next build..."
             - npx --yes yarn@1.22.22 run build
+            - echo "🛸 Building + publishing alien-generate worker Lambda (same Amplify pipeline)..."
+            - node workers/alien-generate/deploy-amplify.mjs
             - echo "✅ Deploy complete — Safari/iOS may show stale CSS until hard refresh (see amplify.yml cache-bust note)"
       artifacts:
         baseDirectory: .next

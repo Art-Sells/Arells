@@ -28,6 +28,7 @@ import {
 } from './characterGenerationCredit';
 import { normalizeEmailKey } from '../auth/normalize';
 import { s3BucketNameOrThrow } from './s3Bucket';
+import { promoteAlienStagedMedia } from './alienStaging';
 
 export type AlienGenerateJobStatus = 'running' | 'complete' | 'error';
 
@@ -36,8 +37,10 @@ export type AlienGenerateJob = {
   assetId: string;
   status: AlienGenerateJobStatus;
   phase?: 'compose' | 'seasononeloop' | 'metaloop' | 'done';
-  /** 0–100 from the driving browser — other tabs poll this for the creating %. */
+  /** 0–100 — browser or worker updates this for the creating %. */
   progress?: number;
+  /** Who runs Grok: worker Lambda (Amplify-safe) vs browser-driven API calls. */
+  driver?: 'worker' | 'client';
   metaloop?: boolean;
   seasononeloop?: boolean;
   error?: string;
@@ -137,21 +140,42 @@ async function patchJob(
   });
 }
 
+async function assertJobStillCurrent(
+  email: string,
+  assetId: string,
+  startedAt: string
+): Promise<void> {
+  const cur = await readAlienGenerateJob(email, assetId);
+  if (cur?.startedAt && cur.startedAt !== startedAt) {
+    throw Object.assign(new Error('Stale generate job — a newer create is in progress'), {
+      code: 'stale_job',
+    });
+  }
+}
+
 /**
- * Full character pipeline (compose stills → Season One loop → metaloop).
- * Safe to run after the HTTP response — does not need the browser.
+ * Full character pipeline (compose stills → loops → promote).
+ * Runs on the alien-generate worker Lambda (long timeout) — not Amplify SSR.
  */
-export async function runAlienGeneratePipeline(email: string, assetId: string): Promise<AlienGenerateJob> {
+export async function runAlienGeneratePipeline(
+  email: string,
+  assetId: string,
+  opts?: { startedAt?: string; driver?: 'worker' | 'client' }
+): Promise<AlienGenerateJob> {
   const bucket = s3BucketNameOrThrow();
-  const startedAt = new Date().toISOString();
+  const prev = await readAlienGenerateJob(email, assetId);
+  const startedAt = opts?.startedAt || prev?.startedAt || new Date().toISOString();
+  const driver = opts?.driver || prev?.driver || 'worker';
 
   await writeAlienGenerateJob({
     email,
     assetId,
     status: 'running',
     phase: 'compose',
+    progress: prev?.progress ?? 5,
+    driver,
     startedAt,
-    updatedAt: startedAt,
+    updatedAt: new Date().toISOString(),
   });
 
   try {
@@ -164,6 +188,7 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
       }
     }
 
+    await assertJobStillCurrent(email, assetId, startedAt);
     const selfieBuf = await loadSelfie(bucket, email, assetId);
     const [iris, portraitColor, metaBase, seasonBase] = await Promise.all([
       readAlienComposeRef(ALIEN_COMPOSE_IRIS_REL),
@@ -172,37 +197,41 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
       readAlienComposeRef(ALIEN_SEASONONE_BASE_REL),
     ]);
 
-    /* Portrait first — iris source for Season One + launch. */
+    await patchJob(email, assetId, { phase: 'compose', progress: 20, driver });
     const portrait = await composePersonalBitcoinAlienPortrait({
       selfie: selfieBuf,
       iris: iris.buffer,
       colorRef: portraitColor.buffer,
     });
+    await assertJobStillCurrent(email, assetId, startedAt);
     await s3
       .putObject({
         Bucket: bucket,
-        Key: alienPortraitKey(email, assetId),
+        Key: alienPortraitKey(email, assetId, true),
         Body: portrait,
         ContentType: 'image/jpeg',
         ACL: 'private',
       })
       .promise();
 
+    await patchJob(email, assetId, { phase: 'compose', progress: 40, driver });
     const seasonOne = await composePersonalBitcoinAlienSeasonOne({
       selfie: selfieBuf,
       base: seasonBase.buffer,
       iris: portrait,
     });
+    await assertJobStillCurrent(email, assetId, startedAt);
     await s3
       .putObject({
         Bucket: bucket,
-        Key: alienSeasonOneKey(email, assetId),
+        Key: alienSeasonOneKey(email, assetId, true),
         Body: seasonOne,
         ContentType: 'image/jpeg',
         ACL: 'private',
       })
       .promise();
 
+    await patchJob(email, assetId, { phase: 'compose', progress: 55, driver });
     const composed = await composePersonalBitcoinAlien({
       selfie: selfieBuf,
       selfieMime: 'image/jpeg',
@@ -210,10 +239,11 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
       baseMime: metaBase.mime,
       portrait,
     });
+    await assertJobStillCurrent(email, assetId, startedAt);
     await s3
       .putObject({
         Bucket: bucket,
-        Key: alienComposedKey(email, assetId),
+        Key: alienComposedKey(email, assetId, true),
         Body: composed,
         ContentType: 'image/jpeg',
         ACL: 'private',
@@ -228,13 +258,13 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
     let metaloopOk = false;
     const errors: string[] = [];
 
-    await patchJob(email, assetId, { phase: 'seasononeloop' });
+    await patchJob(email, assetId, { phase: 'seasononeloop', progress: 70, driver });
     {
-      const key = alienSeasonOneLoopKey(email, assetId);
+      const key = alienSeasonOneLoopKey(email, assetId, true);
       await deleteQuiet(bucket, key);
       try {
-        const seasonOneJpeg = await loadJpeg(bucket, alienSeasonOneKey(email, assetId));
-        const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOneJpeg);
+        const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOne);
+        await assertJobStillCurrent(email, assetId, startedAt);
         await s3
           .putObject({
             Bucket: bucket,
@@ -251,8 +281,8 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
         console.error('alien-generate seasononeloop', err);
         errors.push(message);
         try {
-          const seasonOneJpeg = await loadJpeg(bucket, alienSeasonOneKey(email, assetId));
-          const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOneJpeg);
+          const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOne);
+          await assertJobStillCurrent(email, assetId, startedAt);
           await s3
             .putObject({
               Bucket: bucket,
@@ -270,13 +300,18 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
       }
     }
 
-    await patchJob(email, assetId, { phase: 'metaloop', seasononeloop: seasonOk });
+    await patchJob(email, assetId, {
+      phase: 'metaloop',
+      progress: 85,
+      seasononeloop: seasonOk,
+      driver,
+    });
     {
-      const key = alienMetaloopKey(email, assetId);
+      const key = alienMetaloopKey(email, assetId, true);
       await deleteQuiet(bucket, key);
       try {
-        const composedJpeg = await loadJpeg(bucket, alienComposedKey(email, assetId));
-        const metaloop = await generateAlienMetaloopVideo(composedJpeg);
+        const metaloop = await generateAlienMetaloopVideo(composed);
+        await assertJobStillCurrent(email, assetId, startedAt);
         await s3
           .putObject({
             Bucket: bucket,
@@ -293,8 +328,8 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
         console.error('alien-generate metaloop', err);
         errors.push(message);
         try {
-          const composedJpeg = await loadJpeg(bucket, alienComposedKey(email, assetId));
-          const metaloop = await generateAlienMetaloopVideo(composedJpeg);
+          const metaloop = await generateAlienMetaloopVideo(composed);
+          await assertJobStillCurrent(email, assetId, startedAt);
           await s3
             .putObject({
               Bucket: bucket,
@@ -312,15 +347,26 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
       }
     }
 
+    if (!seasonOk || !metaloopOk) {
+      throw new Error(errors[0] || 'Character video generation failed — try again');
+    }
+
+    await assertJobStillCurrent(email, assetId, startedAt);
+    await promoteAlienStagedMedia(email, assetId, {
+      require: ['composed', 'portrait', 'seasonone', 'metaloop', 'seasononeloop'],
+      clearMissingLoops: false,
+    });
+
     const finishedAt = new Date().toISOString();
     const done: AlienGenerateJob = {
       email,
       assetId,
       status: 'complete',
       phase: 'done',
-      metaloop: metaloopOk,
-      seasononeloop: seasonOk,
-      error: errors.length ? errors.join('; ') : undefined,
+      progress: 100,
+      driver,
+      metaloop: true,
+      seasononeloop: true,
       startedAt,
       updatedAt: finishedAt,
       finishedAt,
@@ -328,12 +374,20 @@ export async function runAlienGeneratePipeline(email: string, assetId: string): 
     await writeAlienGenerateJob(done);
     return done;
   } catch (err) {
+    if ((err as { code?: string })?.code === 'stale_job') {
+      throw err;
+    }
     const message = err instanceof Error ? err.message : 'Character generation failed';
     const finishedAt = new Date().toISOString();
+    const cur = await readAlienGenerateJob(email, assetId);
+    if (cur?.startedAt && cur.startedAt !== startedAt) {
+      throw err;
+    }
     const failed: AlienGenerateJob = {
       email,
       assetId,
       status: 'error',
+      driver,
       error: message,
       startedAt,
       updatedAt: finishedAt,

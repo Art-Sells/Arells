@@ -9,6 +9,10 @@ import { normalizeAlienPhotoAsset } from '../../../lib/server/alienPhoto';
 import { promoteAlienStagedMedia } from '../../../lib/server/alienStaging';
 import { CHARACTER_GENERATION_PAYMENT_DISABLED } from '../../../lib/characterGenerationPaymentGate';
 import { findPaidUnusedCredit } from '../../../lib/server/characterGenerationCredit';
+import {
+  enqueueAlienGenerateWorker,
+  isAlienGenerateWorkerConfigured,
+} from '../../../lib/server/alienGenerateWorkerEnqueue';
 
 export const config = {
   api: {
@@ -22,11 +26,12 @@ export const config = {
  * GET  — poll job status.
  * POST — job control only (no background pipeline).
  *
- * Amplify freezes the Lambda after the HTTP response, so fire-and-forget
- * compose/loops never finish in production. The browser drives:
- *   action: 'arm'      → mark running (after selfie upload)
- *   action: 'phase'    → update phase while client awaits compose/videos
- *   action: 'finalize' → mark complete
+ * When ALIEN_GENERATE_WORKER_FUNCTION_NAME is set, arm enqueues a long-timeout
+ * worker Lambda (Grok runs there). Browser only polls GET.
+ * Without a worker (local): browser still drives compose/videos.
+ *   action: 'arm'      → mark running (+ enqueue worker when configured)
+ *   action: 'phase'    → update phase (client-driven fallback)
+ *   action: 'finalize' → promote staging + mark complete (client-driven fallback)
  *   action: 'fail'     → mark error
  */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -195,16 +200,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({ ok: true, status: 'running', job });
     }
 
-    /* action === 'arm' — mark running; client runs compose + videos while connected. */
+    /* action === 'arm' — mark running; enqueue worker when configured. */
     const force = Boolean(req.body?.force);
+    const useWorker = isAlienGenerateWorkerConfigured();
     const existing = await readAlienGenerateJob(allowed, asset);
     if (!force && existing?.status === 'running') {
       const startedMs = Date.parse(existing.startedAt || '') || 0;
       const ageMs = Date.now() - startedMs;
-      /* Reuse only while a client-driven generate could still be in flight.
-         Older “running” rows are usually Amplify-killed leftovers — force a new arm. */
-      if (ageMs >= 0 && ageMs < 8 * 60 * 1000) {
-        return res.status(202).json({ ok: true, status: 'running', job: existing });
+      /* Reuse fresh running jobs (worker or client). Older leftovers get re-armed. */
+      if (ageMs >= 0 && ageMs < 20 * 60 * 1000) {
+        if (useWorker && existing.driver === 'worker') {
+          await enqueueAlienGenerateWorker({
+            email: allowed,
+            assetId: asset,
+            startedAt: existing.startedAt,
+          }).catch((err) => console.error('alien-generate re-enqueue', err));
+        }
+        return res.status(202).json({
+          ok: true,
+          status: 'running',
+          job: existing,
+          worker: existing.driver === 'worker',
+        });
       }
     }
 
@@ -225,12 +242,43 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       status: 'running',
       phase: 'compose',
       progress: 1,
+      driver: useWorker ? 'worker' : 'client',
       startedAt,
       updatedAt: startedAt,
     };
     await writeAlienGenerateJob(job);
 
-    return res.status(202).json({ ok: true, status: 'running', job });
+    if (useWorker) {
+      try {
+        const queued = await enqueueAlienGenerateWorker({
+          email: allowed,
+          assetId: asset,
+          startedAt,
+        });
+        if (!queued.enqueued) {
+          console.error('alien-generate enqueue skipped', queued.reason);
+        }
+      } catch (err) {
+        console.error('alien-generate enqueue', err);
+        const message =
+          err instanceof Error ? err.message : 'Could not start character worker';
+        await writeAlienGenerateJob({
+          ...job,
+          status: 'error',
+          error: message,
+          finishedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        return res.status(500).json({ error: message });
+      }
+    }
+
+    return res.status(202).json({
+      ok: true,
+      status: 'running',
+      job,
+      worker: useWorker,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Could not start generation';
     console.error('alien-generate POST', err);

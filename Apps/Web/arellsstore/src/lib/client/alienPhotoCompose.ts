@@ -217,10 +217,11 @@ const GENERATE_POLL_MS = 2000;
  * Fresh “running” window for remote-resume attach.
  * Full stills + videos can exceed this — after that, resume must re-drive only if abandoned.
  */
-export const ALIEN_GENERATE_STALE_MS = 12 * 60 * 1000;
+/** Absolute wait for worker Grok stills + two videos. */
+export const ALIEN_GENERATE_STALE_MS = 20 * 60 * 1000;
 /**
  * No phase/finalize update within this window ⇒ the driving tab died.
- * Only then may another tab start a second client pipeline.
+ * Only then may another tab start a second client pipeline (never for worker jobs).
  */
 export const ALIEN_GENERATE_PROGRESS_STALE_MS = 90 * 1000;
 
@@ -228,6 +229,7 @@ export type AlienGenerateJobClient = {
   status?: 'running' | 'complete' | 'error';
   phase?: string;
   progress?: number;
+  driver?: 'worker' | 'client';
   metaloop?: boolean;
   seasononeloop?: boolean;
   error?: string;
@@ -267,6 +269,8 @@ export function isAlienGenerateJobFreshRunning(job: AlienGenerateJobClient | nul
 /** True when a running job has stopped receiving phase updates (driver abandoned). */
 export function isAlienGenerateJobAbandoned(job: AlienGenerateJobClient | null | undefined): boolean {
   if (!job || job.status !== 'running') return false;
+  /* Worker jobs heartbeat slowly during Grok video — never steal the pipeline. */
+  if (job.driver === 'worker') return false;
   const updatedMs =
     Date.parse(job.updatedAt || '') || Date.parse(job.startedAt || '') || 0;
   if (!updatedMs) return true;
@@ -421,7 +425,11 @@ export async function awaitAlienGenerateJob(args: {
     throw new Error(job.error || 'Character generation failed');
   }
 
-  /* Absolute age exceeded — last chance to finish from the selfie on S3. */
+  if (job?.driver === 'worker') {
+    throw new Error('Character generation timed out — try again');
+  }
+
+  /* Absolute age exceeded — last chance to finish from the selfie on S3 (client driver). */
   const startedAt =
     typeof job?.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
   return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
@@ -745,11 +753,9 @@ async function uploadAlienSelfieJpeg(
 }
 
 /**
- * Upload selfie, then run compose + loops from the browser (Amplify-safe).
- *
- * Amplify kills work after the HTTP response (no Vercel waitUntil), so the old
- * fire-and-forget /api/user/alien-generate pipeline left jobs stuck "running"
- * forever — infinite "Creating character", photo never applied until reload.
+ * Upload selfie, arm job, then either:
+ * - worker driver: poll until complete (Grok runs on a long-timeout Lambda)
+ * - client driver: browser calls compose/videos (local / no worker configured)
  */
 export async function composeAlienFromPhoto(args: {
   email: string;
@@ -778,7 +784,6 @@ export async function composeAlienFromPhoto(args: {
     throw new AlienCreateStageError(message, 'upload');
   }
 
-  /* Arm job for cross-tab status — do NOT start server background work. */
   onProgress?.(20);
   const arm = await postJson('/api/user/alien-generate', {
     email,
@@ -801,6 +806,17 @@ export async function composeAlienFromPhoto(args: {
     typeof armJob?.startedAt === 'string' && armJob.startedAt.trim()
       ? armJob.startedAt.trim()
       : null;
+  const useWorker = Boolean(arm.json.worker) || armJob?.driver === 'worker';
+
+  if (useWorker) {
+    return awaitAlienGenerateJob({
+      email,
+      assetId,
+      shareId,
+      initialJob: armJob,
+      onProgress,
+    });
+  }
 
   return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
 }
