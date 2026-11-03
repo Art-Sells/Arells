@@ -176,10 +176,9 @@ export const ALIEN_METALOOP_VIDEO_PROMPT = [
  * Do NOT narrate wardrobe/letters/crop already in the still — only motion + anti-drift.
  */
 export const ALIEN_SEASONONE_VIDEO_PROMPT = [
-  'IMAGE-TO-VIDEO from this exact input still. Do NOT restate framing, letters, wardrobe, or pose already in the image — only add the face motion below.',
-  'CAMERA (CRITICAL): Frozen / locked for the entire clip — no zoom, dolly, pan, tilt, Ken Burns, drift, or shake. Frame 0 and last frame match the input crop/scale. ONLY the face may move.',
-  'FRAME FILL (CRITICAL): Edge-to-edge pixels — NO letterbox, NO pillarbox, NO beige/black/empty bars on left/right/top/bottom. The still already fills the frame; keep it filled.',
-  'STATION (CRITICAL): Do not move the person in frame — no walk-closer, no left/right drift, no scale change, no crowding/covering lettering that is already clear in the input.',
+  'IMAGE-TO-VIDEO from this exact input still. Do NOT restate framing, letters, wardrobe, crop, banner size, or pose already in the image — only add the face motion below.',
+  'CAMERA (CRITICAL): Frozen / locked for the entire clip — no zoom, dolly, pan, tilt, Ken Burns, drift, or shake. ONLY the face may move.',
+  'STATION (CRITICAL): Do not move the person in frame — no walk-closer, no left/right drift, no crowding/covering lettering that is already clear in the input.',
   'KEEP AS-IS (anti-drift only): no extra people, no text/wardrobe/identity morph, irises stay matte (no glow).',
   'NO NEW EYE / FACE LINES: Do not add crow’s feet, under-eye creases, tear troughs, contour rings, or wrinkles not in the input while smiling/laughing.',
   'MOTION — FACE ONLY (silent, no audio): Body below neck still — zero shoulder bounce. (1) glance left, (2) glance right, (3) return to camera + soft smile, (4) soft silent laugh with mouth/eyes only (no shoulder heave / body bob), (5) settle to original neutral facing camera. Natural blinks (~every 2–4s).',
@@ -515,6 +514,27 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function grokVideoErrorMessage(
+  payload: {
+    error?: { message?: string; code?: string } | string;
+    message?: string;
+  },
+  fallback: string
+): string {
+  if (typeof payload.error === 'string' && payload.error.trim()) return payload.error.trim();
+  if (payload.error && typeof payload.error === 'object') {
+    const msg = payload.error.message?.trim();
+    const code = payload.error.code?.trim();
+    if (msg && code) return `${msg} (${code})`;
+    if (msg) return msg;
+    if (code) return code;
+  }
+  if (typeof payload.message === 'string' && payload.message.trim()) {
+    return payload.message.trim();
+  }
+  return fallback;
+}
+
 /**
  * Image-to-video via xAI Grok Imagine (async generations + poll).
  * Default 480p; metaloop + Season One loop use 720p. GROK_VIDEO_RESOLUTION overrides all.
@@ -527,8 +547,6 @@ export async function generateAlienImageToVideo(args: {
   skipResize?: boolean;
   /** Grok resolution: 480p | 720p. Default 480p. */
   resolution?: '480p' | '720p';
-  /** Optional Grok aspect_ratio (e.g. "5:2"). Image-to-video keeps source ratio if omitted. */
-  aspectRatio?: string;
 }): Promise<Buffer> {
   const apiKey = grokApiKeyOrThrow();
   const model =
@@ -552,12 +570,15 @@ export async function generateAlienImageToVideo(args: {
       image: { url: toDataUri(imageJpeg) },
       duration,
       resolution,
-      ...(args.aspectRatio ? { aspect_ratio: args.aspectRatio } : {}),
     }),
   });
 
   const startRaw = await startRes.text();
-  let startJson: { request_id?: string; error?: { message?: string }; message?: string };
+  let startJson: {
+    request_id?: string;
+    error?: { message?: string; code?: string } | string;
+    message?: string;
+  };
   try {
     startJson = JSON.parse(startRaw) as typeof startJson;
   } catch {
@@ -565,34 +586,65 @@ export async function generateAlienImageToVideo(args: {
   }
   if (!startRes.ok || !startJson.request_id) {
     throw new Error(
-      startJson.error?.message || startJson.message || `Grok video start failed (${startRes.status})`
+      grokVideoErrorMessage(startJson, `Grok video start failed (${startRes.status})`)
     );
   }
 
   const requestId = startJson.request_id;
   const deadline = Date.now() + VIDEO_POLL_MAX_MS;
+  let transientPollFails = 0;
   while (Date.now() < deadline) {
     await sleep(VIDEO_POLL_MS);
-    const pollRes = await fetch(`https://api.x.ai/v1/videos/${encodeURIComponent(requestId)}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
+    let pollRes: Response;
+    try {
+      pollRes = await fetch(`https://api.x.ai/v1/videos/${encodeURIComponent(requestId)}`, {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+    } catch (err) {
+      transientPollFails += 1;
+      if (transientPollFails >= 5) {
+        const why = err instanceof Error ? err.message : 'network error';
+        throw new Error(`Grok video poll connection failed — ${why}`);
+      }
+      continue;
+    }
     const pollRaw = await pollRes.text();
     let pollJson: {
       status?: string;
       video?: { url?: string };
-      error?: { message?: string };
+      error?: { message?: string; code?: string } | string;
       message?: string;
     };
     try {
       pollJson = JSON.parse(pollRaw) as typeof pollJson;
     } catch {
-      throw new Error(`Grok video poll returned non-JSON (${pollRes.status})`);
+      transientPollFails += 1;
+      if (transientPollFails >= 5) {
+        throw new Error(`Grok video poll returned non-JSON (${pollRes.status})`);
+      }
+      continue;
     }
+    /* Rate limit / overload — keep polling the same request_id. */
     if (!pollRes.ok) {
+      if (
+        pollRes.status === 429 ||
+        pollRes.status === 502 ||
+        pollRes.status === 503 ||
+        pollRes.status === 504
+      ) {
+        transientPollFails += 1;
+        if (transientPollFails >= 8) {
+          throw new Error(
+            grokVideoErrorMessage(pollJson, `Grok video poll failed (${pollRes.status})`)
+          );
+        }
+        continue;
+      }
       throw new Error(
-        pollJson.error?.message || pollJson.message || `Grok video poll failed (${pollRes.status})`
+        grokVideoErrorMessage(pollJson, `Grok video poll failed (${pollRes.status})`)
       );
     }
+    transientPollFails = 0;
     const status = (pollJson.status || '').toLowerCase();
     if (status === 'done' || status === 'completed' || status === 'succeeded') {
       const url = pollJson.video?.url;
@@ -602,7 +654,7 @@ export async function generateAlienImageToVideo(args: {
       return Buffer.from(await vidRes.arrayBuffer());
     }
     if (status === 'failed' || status === 'error' || status === 'cancelled') {
-      throw new Error(pollJson.error?.message || pollJson.message || `Grok video ${status}`);
+      throw new Error(grokVideoErrorMessage(pollJson, `Grok video ${status}`));
     }
   }
   throw new Error('Grok video generation timed out');
@@ -618,7 +670,7 @@ export async function generateAlienMetaloopVideo(composedJpeg: Buffer): Promise<
 }
 
 export async function generateAlienSeasonOneLoopVideo(seasonOneJpeg: Buffer): Promise<Buffer> {
-  // Pass the banner as-is — Grok i2v keeps the source aspect; do not letterbox/crop to 5:2.
+  // Banner as-is — Grok i2v keeps source aspect; do not crop/letterbox or narrate size in the prompt.
   return generateAlienImageToVideo({
     imageJpeg: seasonOneJpeg,
     prompt: ALIEN_SEASONONE_VIDEO_PROMPT,
