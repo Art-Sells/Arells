@@ -761,6 +761,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
                           createProgress != null ? ' asset-alien-photo-busy--pct' : ''
                         }`}
                       >
+                        <span className="asset-alien-photo-busy-ring" aria-hidden="true" />
                         {createProgress != null ? (
                           <span className="asset-alien-photo-busy-pct">{createProgress}%</span>
                         ) : null}

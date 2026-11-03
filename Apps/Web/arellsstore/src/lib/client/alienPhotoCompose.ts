@@ -466,7 +466,7 @@ export async function runAlienGeneratePipeline(args: {
     for (let i = 0; i < COMPOSE_STEPS.length; i++) {
       const mode = COMPOSE_STEPS[i];
       report(24 + ((i + 1) / COMPOSE_STEPS.length) * 46);
-      const compose = await postJson('/api/user/alien-compose', {
+      const compose = await postJsonRetry('/api/user/alien-compose', {
         email,
         asset: assetId,
         mode,
@@ -489,7 +489,7 @@ export async function runAlienGeneratePipeline(args: {
       progress: 72,
       ...(startedAt ? { startedAt } : {}),
     });
-    const season = await postJson('/api/user/alien-videos', {
+    const season = await postJsonRetry('/api/user/alien-videos', {
       email,
       asset: assetId,
       kinds: ['seasononeloop'],
@@ -506,7 +506,7 @@ export async function runAlienGeneratePipeline(args: {
       seasononeloop: seasonOk,
       ...(startedAt ? { startedAt } : {}),
     });
-    const metaloop = await postJson('/api/user/alien-videos', {
+    const metaloop = await postJsonRetry('/api/user/alien-videos', {
       email,
       asset: assetId,
       kinds: ['metaloop'],
@@ -610,10 +610,15 @@ async function postJson(
     });
   } catch (err) {
     const why = err instanceof Error ? err.message : 'network error';
+    /* Safari often reports gateway kills as bare "Load failed". */
+    const tip =
+      /load failed|failed to fetch|networkerror/i.test(why)
+        ? ' (server timed out or dropped — retrying helps)'
+        : '';
     return {
       ok: false,
       status: 0,
-      json: { error: `Connection failed — ${why}` },
+      json: { error: `Connection failed — ${why}${tip}` },
     };
   }
   const text = await res.text();
@@ -646,6 +651,32 @@ async function postJson(
     json.error = `${json.error} (payment_required)`;
   }
   return { ok: res.ok || res.status === 202, status: res.status, json };
+}
+
+function isTransientPostFailure(result: {
+  ok: boolean;
+  status: number;
+  json: Record<string, unknown>;
+}): boolean {
+  if (result.ok) return false;
+  if (result.status === 0) return true;
+  if (result.status === 502 || result.status === 503 || result.status === 504) return true;
+  const err = typeof result.json.error === 'string' ? result.json.error : '';
+  return /connection failed|load failed|failed to fetch|timed out|gateway/i.test(err);
+}
+
+/** Compose / video can die on Amplify ~30s gateway kills — retry a few times. */
+async function postJsonRetry(
+  url: string,
+  body: Record<string, unknown>,
+  attempts = 3
+): Promise<{ ok: boolean; status: number; json: Record<string, unknown> }> {
+  let last = await postJson(url, body);
+  for (let i = 1; i < attempts && isTransientPostFailure(last); i++) {
+    await new Promise((r) => setTimeout(r, 800 * i));
+    last = await postJson(url, body);
+  }
+  return last;
 }
 
 /**

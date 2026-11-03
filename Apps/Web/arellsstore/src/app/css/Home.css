@@ -1493,11 +1493,21 @@ a.asset-alien-photo-hit {
 	-webkit-text-fill-color: inherit;
 }
 
+/* Match blood-overlay creating spinner: ring spins, % stays upright (no counter-rotate). */
 .asset-alien-photo-busy {
-	display: block;
+	position: relative;
+	display: inline-flex;
 	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
 	width: 22px;
 	height: 22px;
+}
+
+.asset-alien-photo-busy-ring {
+	position: absolute;
+	inset: 0;
+	box-sizing: border-box;
 	border-radius: 50%;
 	border: 2px solid rgba(248, 141, 0, 0.25);
 	border-top-color: rgba(248, 141, 0, 0.95);
@@ -1505,18 +1515,17 @@ a.asset-alien-photo-hit {
 }
 
 .asset-alien-photo-busy--pct {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
 	width: 34px;
 	height: 34px;
+}
+
+.asset-alien-photo-busy--pct .asset-alien-photo-busy-ring {
 	border-width: 2.5px;
 }
 
 .asset-alien-photo-busy-pct {
-	position: absolute;
-	inset: 0;
+	position: relative;
+	z-index: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1527,14 +1536,9 @@ a.asset-alien-photo-hit {
 	color: inherit;
 	-webkit-text-fill-color: inherit;
 	font-variant-numeric: tabular-nums;
-	animation: asset-alien-photo-spin-counter 0.7s linear infinite;
 	user-select: none;
-}
-
-@keyframes asset-alien-photo-spin-counter {
-	to {
-		transform: rotate(-360deg);
-	}
+	transform: none;
+	animation: none;
 }
 
 @keyframes asset-alien-photo-spin {

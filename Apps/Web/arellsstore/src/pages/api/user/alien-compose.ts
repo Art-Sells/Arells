@@ -35,6 +35,8 @@ export const config = {
       sizeLimit: '1mb',
     },
   },
+  /* Long Grok image edits — platforms that honor this (Vercel); Amplify may still cap ~30s. */
+  maxDuration: 300,
 };
 
 async function loadSelfie(bucket: string, email: string, asset: string): Promise<Buffer> {
