@@ -120,6 +120,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         assetId: asset,
         status: 'complete',
         phase: 'done',
+        progress: 100,
         metaloop,
         seasononeloop,
         error: typeof req.body?.error === 'string' ? req.body.error : prev?.error,
@@ -174,9 +175,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         phaseRaw === 'done'
           ? phaseRaw
           : prev.phase || 'compose';
+      const progressRaw = req.body?.progress;
+      const progress =
+        typeof progressRaw === 'number' && Number.isFinite(progressRaw)
+          ? Math.max(0, Math.min(100, Math.round(progressRaw)))
+          : typeof progressRaw === 'string' && progressRaw.trim() && Number.isFinite(Number(progressRaw))
+            ? Math.max(0, Math.min(100, Math.round(Number(progressRaw))))
+            : prev.progress;
       const job: AlienGenerateJob = {
         ...prev,
         phase,
+        ...(progress != null ? { progress } : {}),
         metaloop: req.body?.metaloop != null ? Boolean(req.body.metaloop) : prev.metaloop,
         seasononeloop:
           req.body?.seasononeloop != null ? Boolean(req.body.seasononeloop) : prev.seasononeloop,
@@ -215,6 +224,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       assetId: asset,
       status: 'running',
       phase: 'compose',
+      progress: 1,
       startedAt,
       updatedAt: startedAt,
     };

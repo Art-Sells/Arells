@@ -227,6 +227,7 @@ export const ALIEN_GENERATE_PROGRESS_STALE_MS = 90 * 1000;
 export type AlienGenerateJobClient = {
   status?: 'running' | 'complete' | 'error';
   phase?: string;
+  progress?: number;
   metaloop?: boolean;
   seasononeloop?: boolean;
   error?: string;
@@ -345,12 +346,41 @@ async function loadComposeResultFromJob(
  * still writing staging caused early finalize (new stills live) + stuck creating UI.
  */
 export function progressForRemotePhase(job: AlienGenerateJobClient | null | undefined): number {
+  if (typeof job?.progress === 'number' && Number.isFinite(job.progress)) {
+    return clampProgress(job.progress);
+  }
   const phase = job?.phase || 'compose';
   if (phase === 'compose') return 35;
   if (phase === 'seasononeloop') return 72;
   if (phase === 'metaloop') return 88;
   if (phase === 'done') return 98;
   return 30;
+}
+
+/** Push % to the job JSON so other browsers can poll the same number. */
+function createProgressPublisher(args: {
+  email: string;
+  assetId: string;
+  startedAt?: string | null;
+  onProgress?: AlienCreateProgressFn;
+}): AlienCreateProgressFn {
+  let lastPosted = -1;
+  let lastPostAt = 0;
+  return (percent: number) => {
+    const pct = clampProgress(percent);
+    args.onProgress?.(pct);
+    const now = Date.now();
+    if (pct < 100 && pct - lastPosted < 3 && now - lastPostAt < 1200) return;
+    lastPosted = pct;
+    lastPostAt = now;
+    void postJson('/api/user/alien-generate', {
+      email: args.email,
+      asset: args.assetId,
+      action: 'phase',
+      progress: pct,
+      ...(args.startedAt ? { startedAt: args.startedAt } : {}),
+    }).catch(() => undefined);
+  };
 }
 
 export async function awaitAlienGenerateJob(args: {
@@ -417,7 +447,7 @@ export async function runAlienGeneratePipeline(args: {
   onProgress?: AlienCreateProgressFn;
 }): Promise<AlienComposeResult> {
   const { email, assetId, shareId, startedAt, onProgress } = args;
-  const report = (n: number) => onProgress?.(clampProgress(n));
+  const report = createProgressPublisher({ email, assetId, startedAt, onProgress });
 
   const failJob = async (message: string) => {
     await postJson('/api/user/alien-generate', {
@@ -436,6 +466,7 @@ export async function runAlienGeneratePipeline(args: {
       asset: assetId,
       action: 'phase',
       phase: 'compose',
+      progress: 22,
       ...(startedAt ? { startedAt } : {}),
     });
 
@@ -462,6 +493,7 @@ export async function runAlienGeneratePipeline(args: {
       asset: assetId,
       action: 'phase',
       phase: 'seasononeloop',
+      progress: 72,
       ...(startedAt ? { startedAt } : {}),
     });
     const season = await postJson('/api/user/alien-videos', {
@@ -477,6 +509,7 @@ export async function runAlienGeneratePipeline(args: {
       asset: assetId,
       action: 'phase',
       phase: 'metaloop',
+      progress: 85,
       seasononeloop: seasonOk,
       ...(startedAt ? { startedAt } : {}),
     });
@@ -602,9 +635,14 @@ async function postJson(
   if (!res.ok && res.status !== 202 && typeof json.error !== 'string') {
     if (res.status === 413) json.error = 'Photo too large for upload';
     else if (res.status === 402) json.error = 'Character generation payment required';
-    else if (res.status >= 500) json.error = 'Upload server error — try again';
-    else if (text && text.length < 280) json.error = text.trim();
-    else json.error = `Request failed (${res.status})`;
+    else if (res.status >= 500) {
+      json.error =
+        text && text.length < 280 && !text.trim().startsWith('<')
+          ? text.trim()
+          : `Server error (${res.status}) — try again`;
+    } else if (text && text.length < 280 && !text.trim().startsWith('<')) {
+      json.error = text.trim();
+    } else json.error = `Request failed (${res.status})`;
   }
   if (
     !res.ok &&
@@ -628,7 +666,6 @@ async function uploadAlienSelfieJpeg(
   onProgress?: AlienCreateProgressFn
 ): Promise<void> {
   const report = (n: number) => onProgress?.(clampProgress(n));
-  report(6);
   const begin = await postJson('/api/user/alien-photo', {
     email,
     asset: assetId,
@@ -642,6 +679,7 @@ async function uploadAlienSelfieJpeg(
     );
   }
 
+  /* First visible % — only after upload has actually started. */
   report(8);
   const b64 = await blobToBase64(jpeg);
   if (!b64) throw new Error('Could not encode photo');
@@ -697,12 +735,10 @@ export async function composeAlienFromPhoto(args: {
   onProgress?: AlienCreateProgressFn;
 }): Promise<AlienComposeResult> {
   const { email, assetId, shareId, onProgress } = args;
-  const report = (n: number) => onProgress?.(clampProgress(n));
 
   try {
-    report(2);
+    /* No % yet — only show after upload begin succeeds. */
     const file = await cloneAlienPhotoFile(args.file);
-    report(4);
     const jpeg = await withTimeout(
       fileToUploadJpegBlob(file),
       90_000,
@@ -719,7 +755,7 @@ export async function composeAlienFromPhoto(args: {
   }
 
   /* Arm job for cross-tab status — do NOT start server background work. */
-  report(21);
+  onProgress?.(20);
   const arm = await postJson('/api/user/alien-generate', {
     email,
     asset: assetId,

@@ -45,8 +45,8 @@ type AlienCharacterCreateContextValue = {
   status: 'idle' | 'creating' | 'success' | 'error';
   creatingAssetId: string | null;
   creatingAssetName: string | null;
-  /** 0–100 while creating; shown inside the loading circle. */
-  createProgress: number;
+  /** 0–100 once upload starts; null = hide % (pre-upload). */
+  createProgress: number | null;
   creatingModalOpen: boolean;
   waitModalOpen: boolean;
   waitAssetName: string | null;
@@ -92,7 +92,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   const [creatingModalOpen, setCreatingModalOpen] = useState(false);
   const [waitModalOpen, setWaitModalOpen] = useState(false);
   const [waitAssetName, setWaitAssetName] = useState<string | null>(null);
-  const [createProgress, setCreateProgress] = useState(0);
+  const [createProgress, setCreateProgress] = useState<number | null>(null);
   const [success, setSuccess] = useState<AlienCreateSuccess | null>(null);
   const [error, setError] = useState<AlienCreateError | null>(null);
   const [errorOpen, setErrorOpen] = useState(false);
@@ -185,7 +185,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
     creatingNameRef.current = null;
     setCreatingAssetId(null);
     setCreatingAssetName(null);
-    setCreateProgress(0);
+    setCreateProgress(null);
     /* Always drop creating — otherwise the sitewide badge sticks until full reload. */
     setStatus((prev) => (prev === 'creating' ? 'idle' : prev));
   }, []);
@@ -212,7 +212,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       creatingNameRef.current = name;
       setCreatingAssetId(args.assetId);
       setCreatingAssetName(name);
-      setCreateProgress(1);
+      setCreateProgress(null);
       setStatus('creating');
       setCreatingModalOpen(true);
       setWaitModalOpen(false);

@@ -275,8 +275,14 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         {busy ? (
           <>
             <span className="asset-alien-photo-creating-word">creating</span>
-            <span className="asset-alien-photo-busy asset-alien-photo-busy--pct">
-              <span className="asset-alien-photo-busy-pct">{createProgress}%</span>
+            <span
+              className={`asset-alien-photo-busy${
+                createProgress != null ? ' asset-alien-photo-busy--pct' : ''
+              }`}
+            >
+              {createProgress != null ? (
+                <span className="asset-alien-photo-busy-pct">{createProgress}%</span>
+              ) : null}
             </span>
             <span className="asset-alien-photo-creating-word">character</span>
           </>

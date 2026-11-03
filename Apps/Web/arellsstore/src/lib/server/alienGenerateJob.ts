@@ -36,6 +36,8 @@ export type AlienGenerateJob = {
   assetId: string;
   status: AlienGenerateJobStatus;
   phase?: 'compose' | 'seasononeloop' | 'metaloop' | 'done';
+  /** 0–100 from the driving browser — other tabs poll this for the creating %. */
+  progress?: number;
   metaloop?: boolean;
   seasononeloop?: boolean;
   error?: string;

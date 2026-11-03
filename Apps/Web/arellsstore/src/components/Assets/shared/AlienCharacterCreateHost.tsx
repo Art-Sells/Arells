@@ -128,10 +128,14 @@ export default function AlienCharacterCreateHost() {
                 <div
                   className="blood-overlay-creating-spinner"
                   aria-hidden="true"
-                  aria-valuenow={createProgress}
+                  aria-valuenow={createProgress ?? undefined}
                 >
                   <span className="blood-overlay-creating-spinner-ring" />
-                  <span className="blood-overlay-creating-percent">{createProgress}%</span>
+                  {createProgress != null ? (
+                    <span className="blood-overlay-creating-percent">{createProgress}%</span>
+                  ) : (
+                    <span className="blood-overlay-creating-profile" />
+                  )}
                 </div>
                 <p id={creatingTitleId} className="blood-overlay-copy">
                   <span className="blood-overlay-line">Creating your character</span>

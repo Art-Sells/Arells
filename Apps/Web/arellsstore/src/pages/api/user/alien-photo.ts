@@ -239,7 +239,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error('alien-photo POST', err);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    const message = err instanceof Error ? err.message : 'Internal Server Error';
+    return res.status(500).json({
+      error: message.includes('S3') || message.includes('bucket') || message.includes('credentials')
+        ? `Photo upload failed — ${message}`
+        : `Photo upload failed — ${message.slice(0, 200)}`,
+    });
   }
 };
 
