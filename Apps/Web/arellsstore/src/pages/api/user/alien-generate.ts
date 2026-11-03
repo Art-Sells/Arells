@@ -26,13 +26,9 @@ export const config = {
  * GET  — poll job status.
  * POST — job control only (no background pipeline).
  *
- * When ALIEN_GENERATE_WORKER_FUNCTION_NAME is set, arm enqueues a long-timeout
- * worker Lambda (Grok runs there). Browser only polls GET.
- * Without a worker (local): browser still drives compose/videos.
- *   action: 'arm'      → mark running (+ enqueue worker when configured)
- *   action: 'phase'    → update phase (client-driven fallback)
- *   action: 'finalize' → promote staging + mark complete (client-driven fallback)
- *   action: 'fail'     → mark error
+ * When ALIEN_GENERATE_WORKER_FUNCTION_NAME is set, arm async-invokes the
+ * console-managed worker Lambda; browser only polls GET.
+ * Without that env (local): browser still drives compose/videos.
  */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {

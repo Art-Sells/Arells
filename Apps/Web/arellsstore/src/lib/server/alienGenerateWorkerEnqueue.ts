@@ -6,12 +6,9 @@ export type AlienGenerateWorkerPayload = {
   startedAt: string;
 };
 
-/** Set on Amplify to the worker Lambda name or ARN (15‑min timeout, not SSR). */
+/** Amplify env: worker Lambda name or ARN (console-managed, long timeout). */
 export function alienGenerateWorkerTarget(): string | null {
-  const raw =
-    process.env.ALIEN_GENERATE_WORKER_FUNCTION_NAME?.trim() ||
-    process.env.ALIEN_GENERATE_WORKER_ARN?.trim() ||
-    '';
+  const raw = process.env.ALIEN_GENERATE_WORKER_FUNCTION_NAME?.trim() || '';
   return raw || null;
 }
 
