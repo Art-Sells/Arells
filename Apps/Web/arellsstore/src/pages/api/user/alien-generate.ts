@@ -205,12 +205,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ? phaseRaw
           : prev.phase || 'compose';
       const progressRaw = req.body?.progress;
-      const progress =
+      const progressIncoming =
         typeof progressRaw === 'number' && Number.isFinite(progressRaw)
           ? Math.max(0, Math.min(100, Math.round(progressRaw)))
           : typeof progressRaw === 'string' && progressRaw.trim() && Number.isFinite(Number(progressRaw))
             ? Math.max(0, Math.min(100, Math.round(Number(progressRaw))))
-            : prev.progress;
+            : null;
+      const progress =
+        progressIncoming != null
+          ? typeof prev.progress === 'number' && Number.isFinite(prev.progress)
+            ? Math.max(prev.progress, progressIncoming)
+            : progressIncoming
+          : prev.progress;
       const job: AlienGenerateJob = {
         ...prev,
         phase,

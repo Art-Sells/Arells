@@ -136,11 +136,18 @@ async function patchJob(
       startedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     } as AlienGenerateJob);
+  const nextProgress =
+    typeof patch.progress === 'number' && Number.isFinite(patch.progress)
+      ? typeof prev.progress === 'number' && Number.isFinite(prev.progress)
+        ? Math.max(prev.progress, patch.progress)
+        : patch.progress
+      : prev.progress;
   await writeAlienGenerateJob({
     ...prev,
     ...patch,
     email,
     assetId,
+    ...(nextProgress != null ? { progress: nextProgress } : {}),
     updatedAt: new Date().toISOString(),
   });
 }
@@ -172,12 +179,18 @@ export async function runAlienGeneratePipeline(
   const startedAt = opts?.startedAt || prev?.startedAt || new Date().toISOString();
   const driver = opts?.driver || prev?.driver || 'worker';
 
+  const resumeProgress =
+    typeof prev?.progress === 'number' && Number.isFinite(prev.progress)
+      ? Math.max(5, prev.progress)
+      : 5;
   await writeAlienGenerateJob({
     email,
     assetId,
     status: 'running',
-    phase: 'compose',
-    progress: prev?.progress ?? 5,
+    phase: prev?.phase === 'seasononeloop' || prev?.phase === 'metaloop' || prev?.phase === 'done'
+      ? prev.phase
+      : 'compose',
+    progress: resumeProgress,
     driver,
     startedAt,
     updatedAt: new Date().toISOString(),

@@ -391,6 +391,18 @@ export function progressForRemotePhase(job: AlienGenerateJobClient | null | unde
 }
 
 /** Push % to the job JSON so other browsers can poll the same number. */
+/** UI + job % only move forward within one create (arm/worker re-entry used to yank 39% → 1%). */
+export function createMonotonicProgress(
+  onProgress?: AlienCreateProgressFn
+): AlienCreateProgressFn {
+  let last = 0;
+  return (percent: number) => {
+    const pct = Math.max(last, clampProgress(percent));
+    last = pct;
+    onProgress?.(pct);
+  };
+}
+
 function createProgressPublisher(args: {
   email: string;
   assetId: string;
@@ -399,11 +411,14 @@ function createProgressPublisher(args: {
 }): AlienCreateProgressFn {
   let lastPosted = -1;
   let lastPostAt = 0;
+  const reportUi = createMonotonicProgress(args.onProgress);
   return (percent: number) => {
     const pct = clampProgress(percent);
-    args.onProgress?.(pct);
+    reportUi(pct);
     const now = Date.now();
     if (pct < 100 && pct - lastPosted < 3 && now - lastPostAt < 1200) return;
+    /* Never POST a lower % than the last one we already published for this run. */
+    if (pct < lastPosted) return;
     lastPosted = pct;
     lastPostAt = now;
     void postJson('/api/user/alien-generate', {
@@ -423,14 +438,15 @@ export async function awaitAlienGenerateJob(args: {
   initialJob?: AlienGenerateJobClient | null;
   onProgress?: AlienCreateProgressFn;
 }): Promise<AlienComposeResult> {
-  const { email, assetId, shareId, onProgress } = args;
+  const { email, assetId, shareId } = args;
+  const onProgress = createMonotonicProgress(args.onProgress);
   const hardDeadline = Date.now() + ALIEN_GENERATE_STALE_MS;
   let job: AlienGenerateJobClient | null = args.initialJob ?? null;
-  onProgress?.(progressForRemotePhase(job));
+  onProgress(progressForRemotePhase(job));
 
   while (Date.now() < hardDeadline) {
     if (job?.status === 'complete') {
-      onProgress?.(100);
+      onProgress(100);
       return loadComposeResultFromJob(assetId, shareId, job);
     }
     if (job?.status === 'error') {
@@ -441,13 +457,13 @@ export async function awaitAlienGenerateJob(args: {
         typeof job.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
       return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
     }
-    onProgress?.(progressForRemotePhase(job));
+    onProgress(progressForRemotePhase(job));
     await sleep(GENERATE_POLL_MS);
     job = await fetchAlienGenerateJob(email, assetId);
   }
 
   if (job?.status === 'complete') {
-    onProgress?.(100);
+    onProgress(100);
     return loadComposeResultFromJob(assetId, shareId, job);
   }
   if (job?.status === 'error') {

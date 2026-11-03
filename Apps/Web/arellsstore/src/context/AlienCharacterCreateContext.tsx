@@ -16,6 +16,7 @@ import {
   alienCreateFailureStage,
   awaitAlienGenerateJob,
   composeAlienFromPhoto,
+  createMonotonicProgress,
   fetchAlienGenerateJob,
   isAlienGenerateJobFreshRunning,
   isAlienGenerateJobPendingSuccess,
@@ -249,13 +250,14 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
 
       void (async () => {
         let jobStartedAt: string | null = null;
+        const onProgress = createMonotonicProgress(setCreateProgress);
         try {
           const result = await composeAlienFromPhoto({
             email: args.email,
             assetId: args.assetId,
             file: args.file,
             shareId: args.shareId,
-            onProgress: setCreateProgress,
+            onProgress,
           });
           try {
             const job = await fetchAlienGenerateJob(args.email, args.assetId);
@@ -352,7 +354,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
               assetId: asset.id,
               shareId: resumeShareId,
               initialJob: job,
-              onProgress: setCreateProgress,
+              onProgress: createMonotonicProgress(setCreateProgress),
             });
             if (cancelled) return;
             const metaUrl = URL.createObjectURL(result.metaBlob);
@@ -411,7 +413,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             assetId: asset.id,
             shareId: resumeShareId,
             initialJob: job,
-            onProgress: setCreateProgress,
+            onProgress: createMonotonicProgress(setCreateProgress),
           });
           if (cancelled) return;
           const metaUrl = URL.createObjectURL(result.metaBlob);
