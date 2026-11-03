@@ -12,11 +12,13 @@ import React, {
 } from 'react';
 import { overlayStyleForAsset } from '../lib/client/alienCreateTheme';
 import {
+  ackAlienGenerateSuccess,
   alienCreateFailureStage,
   awaitAlienGenerateJob,
   composeAlienFromPhoto,
   fetchAlienGenerateJob,
   isAlienGenerateJobFreshRunning,
+  isAlienGenerateJobPendingSuccess,
   progressForRemotePhase,
   type AlienCreateFailureStage,
   type AlienGenerateJobClient,
@@ -31,6 +33,8 @@ type AlienCreateSuccess = {
   shareId: string | null;
   metaUrl: string;
   loopUrl: string | null;
+  /** Job startedAt — used to ack dismiss for this exact create. */
+  jobStartedAt?: string | null;
 };
 
 type AlienCreateError = {
@@ -99,16 +103,29 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   const [overlayStyle, setOverlayStyle] = useState<AlienCreateThemeStyle>({});
   const creatingRef = useRef(false);
   const creatingNameRef = useRef<string | null>(null);
+  /** Job startedAt currently shown as success — skip re-opening the same modal. */
+  const successJobStartedAtRef = useRef<string | null>(null);
   /** Stable across pathname/session churn so remote-resume isn't cancelled mid-create. */
   const shareIdRef = useRef(shareId);
   shareIdRef.current = shareId;
+  const emailRef = useRef(email);
+  emailRef.current = email;
 
   const dismissSuccess = useCallback(() => {
     setSuccess((prev) => {
       if (prev) {
+        const ackEmail = emailRef.current;
+        if (ackEmail) {
+          void ackAlienGenerateSuccess({
+            email: ackEmail,
+            assetId: prev.assetId,
+            startedAt: prev.jobStartedAt,
+          }).catch((err) => console.error('alien success ack', err));
+        }
         revokeIfBlob(prev.metaUrl);
         revokeIfBlob(prev.loopUrl);
       }
+      successJobStartedAtRef.current = null;
       return null;
     });
     setStatus((prev) => (prev === 'success' ? 'idle' : prev));
@@ -144,13 +161,17 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       shareId?: string | null;
       metaUrl: string;
       loopUrl: string | null;
+      jobStartedAt?: string | null;
     }) => {
+      const jobStartedAt = args.jobStartedAt?.trim() || null;
+      successJobStartedAtRef.current = jobStartedAt;
       setSuccess({
         assetId: args.assetId,
         assetName: args.assetName,
         shareId: args.shareId ?? null,
         metaUrl: args.metaUrl,
         loopUrl: args.loopUrl,
+        jobStartedAt,
       });
       setStatus('success');
       setCreatingModalOpen(false);
@@ -227,6 +248,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       });
 
       void (async () => {
+        let jobStartedAt: string | null = null;
         try {
           const result = await composeAlienFromPhoto({
             email: args.email,
@@ -235,6 +257,15 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             shareId: args.shareId,
             onProgress: setCreateProgress,
           });
+          try {
+            const job = await fetchAlienGenerateJob(args.email, args.assetId);
+            jobStartedAt =
+              typeof job?.startedAt === 'string' && job.startedAt.trim()
+                ? job.startedAt.trim()
+                : null;
+          } catch {
+            /* success UI still works without ack key */
+          }
           const metaUrl = URL.createObjectURL(result.metaBlob);
           const loopUrl =
             result.loopUrl ||
@@ -245,6 +276,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             shareId: args.shareId,
             metaUrl,
             loopUrl,
+            jobStartedAt,
           });
         } catch (err) {
           console.error('alien character create', err);
@@ -266,8 +298,9 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   );
 
   /**
-   * Other browser / tab: if the server already has a fresh running job, show the
-   * same creating modal and follow it to success/error.
+   * Other browser / tab / return visit:
+   * - fresh running job → creating modal, then success
+   * - complete job never dismissed → reopen success modal
    * Do NOT depend on shareId — session refetch on navigate was cancelling resume
    * and skipping clearCreatingSlot, leaving “Creating Character” stuck sitewide.
    */
@@ -287,10 +320,71 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
         }
         /* Local create claimed the slot while we were fetching — do not steal it. */
         if (creatingRef.current || cancelled) return;
-        if (!isAlienGenerateJobFreshRunning(job) || !job) continue;
+        if (!job) continue;
 
         const name = asset.name;
         const resumeShareId = shareIdRef.current;
+        const jobStartedAt =
+          typeof job.startedAt === 'string' && job.startedAt.trim()
+            ? job.startedAt.trim()
+            : null;
+
+        if (isAlienGenerateJobPendingSuccess(job)) {
+          if (
+            jobStartedAt &&
+            successJobStartedAtRef.current &&
+            successJobStartedAtRef.current === jobStartedAt
+          ) {
+            return;
+          }
+          creatingRef.current = true;
+          creatingNameRef.current = name;
+          setCreatingAssetId(asset.id);
+          setCreatingAssetName(name);
+          setCreateProgress(100);
+          setOverlayStyle(overlayStyleForAsset(asset.id));
+          setWaitModalOpen(false);
+          setErrorOpen(false);
+          setError(null);
+          try {
+            const result = await awaitAlienGenerateJob({
+              email,
+              assetId: asset.id,
+              shareId: resumeShareId,
+              initialJob: job,
+              onProgress: setCreateProgress,
+            });
+            if (cancelled) return;
+            const metaUrl = URL.createObjectURL(result.metaBlob);
+            const loopUrl =
+              result.loopUrl ||
+              (result.loopBlob ? URL.createObjectURL(result.loopBlob) : null);
+            finishCreateSuccess({
+              assetId: asset.id,
+              assetName: name,
+              shareId: resumeShareId,
+              metaUrl,
+              loopUrl,
+              jobStartedAt,
+            });
+          } catch (err) {
+            if (cancelled) return;
+            console.error('alien character pending success', err);
+            finishCreateError({
+              assetId: asset.id,
+              assetName: name,
+              shareId: resumeShareId,
+              message: err instanceof Error ? err.message : 'Unknown create error',
+              stage: 'generate',
+            });
+          } finally {
+            clearCreatingSlot();
+          }
+          return;
+        }
+
+        if (!isAlienGenerateJobFreshRunning(job)) continue;
+
         creatingRef.current = true;
         creatingNameRef.current = name;
         setCreatingAssetId(asset.id);
@@ -307,6 +401,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             revokeIfBlob(prev.metaUrl);
             revokeIfBlob(prev.loopUrl);
           }
+          successJobStartedAtRef.current = null;
           return null;
         });
 
@@ -329,6 +424,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             shareId: resumeShareId,
             metaUrl,
             loopUrl,
+            jobStartedAt,
           });
         } catch (err) {
           if (cancelled) return;

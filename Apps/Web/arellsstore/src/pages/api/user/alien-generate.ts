@@ -11,6 +11,7 @@ import { CHARACTER_GENERATION_PAYMENT_DISABLED } from '../../../lib/characterGen
 import { findPaidUnusedCredit } from '../../../lib/server/characterGenerationCredit';
 import {
   enqueueAlienGenerateWorker,
+  isAlienGenerateClientDriverAllowed,
   isAlienGenerateWorkerConfigured,
 } from '../../../lib/server/alienGenerateWorkerEnqueue';
 
@@ -61,11 +62,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const actionRaw = typeof req.body?.action === 'string' ? req.body.action.trim().toLowerCase() : 'arm';
   const action =
-    actionRaw === 'finalize' || actionRaw === 'fail' || actionRaw === 'phase' || actionRaw === 'arm'
+    actionRaw === 'finalize' ||
+    actionRaw === 'fail' ||
+    actionRaw === 'phase' ||
+    actionRaw === 'arm' ||
+    actionRaw === 'ack-success'
       ? actionRaw
       : 'arm';
 
   try {
+    if (action === 'ack-success') {
+      const prev = await readAlienGenerateJob(allowed, asset);
+      if (!prev || prev.status !== 'complete') {
+        return res.status(200).json({ ok: true, job: prev });
+      }
+      const startedAtBody =
+        typeof req.body?.startedAt === 'string' ? req.body.startedAt.trim() : '';
+      if (startedAtBody && prev.startedAt && startedAtBody !== prev.startedAt) {
+        return res.status(200).json({ ok: true, job: prev });
+      }
+      if (prev.successDismissedAt) {
+        return res.status(200).json({ ok: true, job: prev });
+      }
+      const now = new Date().toISOString();
+      const job: AlienGenerateJob = {
+        ...prev,
+        successDismissedAt: now,
+        updatedAt: now,
+      };
+      await writeAlienGenerateJob(job);
+      return res.status(200).json({ ok: true, job });
+    }
+
     if (action === 'finalize') {
       const prev = await readAlienGenerateJob(allowed, asset);
       const startedAtBody =
@@ -199,6 +227,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     /* action === 'arm' — mark running; enqueue worker when configured. */
     const force = Boolean(req.body?.force);
     const useWorker = isAlienGenerateWorkerConfigured();
+    if (!useWorker && !isAlienGenerateClientDriverAllowed()) {
+      return res.status(503).json({
+        error:
+          'Character generation worker is not configured — set ALIEN_GENERATE_WORKER_FUNCTION_NAME on Amplify (build) so create can finish after you leave the page',
+        code: 'worker_unconfigured',
+      });
+    }
     const existing = await readAlienGenerateJob(allowed, asset);
     if (!force && existing?.status === 'running') {
       const startedMs = Date.parse(existing.startedAt || '') || 0;
@@ -252,7 +287,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           startedAt,
         });
         if (!queued.enqueued) {
-          console.error('alien-generate enqueue skipped', queued.reason);
+          const message = queued.reason || 'Could not enqueue character worker';
+          console.error('alien-generate enqueue skipped', message);
+          await writeAlienGenerateJob({
+            ...job,
+            status: 'error',
+            error: message,
+            finishedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+          return res.status(500).json({ error: message });
         }
       } catch (err) {
         console.error('alien-generate enqueue', err);

@@ -4,13 +4,16 @@ Long-timeout Lambda for Grok stills + videos. Managed in the **AWS Lambda consol
 
 ## Amplify (Next app)
 
-Set:
+Set at **build** time (next.config inlines it — Amplify often drops custom runtime env):
 
 ```
 ALIEN_GENERATE_WORKER_FUNCTION_NAME=arells-alien-generate-worker
 ```
 
-SSR compute role needs `lambda:InvokeFunction` on that function.
+Without that, create falls back to the browser and **stops when you leave the page**.
+Do **not** set `ALIEN_GENERATE_ALLOW_CLIENT=1` on Amplify.
+
+SSR (WS keys or compute role) needs `lambda:InvokeFunction` on that function.
 
 ## Rebuild + upload code
 

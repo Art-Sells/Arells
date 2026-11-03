@@ -17,6 +17,14 @@ export function isAlienGenerateWorkerConfigured(): boolean {
 }
 
 /**
+ * Local/dev only: allow browser-driven Grok when the worker Lambda is unset.
+ * Production must use the worker so create survives leaving the page.
+ */
+export function isAlienGenerateClientDriverAllowed(): boolean {
+  return process.env.ALIEN_GENERATE_ALLOW_CLIENT?.trim() === '1';
+}
+
+/**
  * Fire-and-forget invoke of the dedicated alien-generate worker.
  * Amplify SSR returns immediately; the worker holds Grok for minutes.
  */
@@ -28,9 +36,25 @@ export async function enqueueAlienGenerateWorker(
     return { enqueued: false, reason: 'ALIEN_GENERATE_WORKER_FUNCTION_NAME unset' };
   }
 
-  const lambda = new AWS.Lambda({
-    region: process.env.WS_REGION || process.env.AWS_REGION || 'us-west-1',
-  });
+  const region =
+    process.env.WS_REGION?.trim() ||
+    process.env.AWS_REGION?.trim() ||
+    process.env.AWS_DEFAULT_REGION?.trim() ||
+    'us-west-1';
+  const accessKeyId =
+    process.env.WS_ACCESS_KEY_ID?.trim() || process.env.AWS_ACCESS_KEY_ID?.trim() || '';
+  const secretAccessKey =
+    process.env.WS_SECRET_ACCESS_KEY?.trim() ||
+    process.env.AWS_SECRET_ACCESS_KEY?.trim() ||
+    '';
+
+  const config: AWS.Lambda.ClientConfiguration = { region };
+  if (accessKeyId && secretAccessKey) {
+    config.accessKeyId = accessKeyId;
+    config.secretAccessKey = secretAccessKey;
+  }
+
+  const lambda = new AWS.Lambda(config);
 
   await lambda
     .invoke({

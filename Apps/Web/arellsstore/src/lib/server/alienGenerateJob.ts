@@ -47,6 +47,11 @@ export type AlienGenerateJob = {
   startedAt: string;
   updatedAt: string;
   finishedAt?: string;
+  /**
+   * Set when the user closes “Character Creation Successful”.
+   * Until then, any signed-in session should reopen that success modal for this job.
+   */
+  successDismissedAt?: string;
 };
 
 const s3 = getServerS3();

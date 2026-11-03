@@ -155,6 +155,20 @@ const nextConfig = {
         defs['process.env.GROK_VIDEO_RESOLUTION'] = JSON.stringify(grokVideoResolution);
       }
 
+      /* Non-secret Lambda name — must be inlined; Amplify often drops custom runtime env. */
+      const alienGenerateWorker =
+        process.env.ALIEN_GENERATE_WORKER_FUNCTION_NAME?.trim();
+      if (alienGenerateWorker) {
+        defs['process.env.ALIEN_GENERATE_WORKER_FUNCTION_NAME'] =
+          JSON.stringify(alienGenerateWorker);
+      }
+      const alienGenerateAllowClient =
+        process.env.ALIEN_GENERATE_ALLOW_CLIENT?.trim();
+      if (alienGenerateAllowClient) {
+        defs['process.env.ALIEN_GENERATE_ALLOW_CLIENT'] =
+          JSON.stringify(alienGenerateAllowClient);
+      }
+
       if (Object.keys(defs).length > 0) {
         config.plugins.push(new webpack.DefinePlugin(defs));
       }

@@ -235,6 +235,9 @@ export type AlienGenerateJobClient = {
   error?: string;
   startedAt?: string;
   updatedAt?: string;
+  finishedAt?: string;
+  /** ISO — user closed the success modal for this completed job. */
+  successDismissedAt?: string;
 };
 
 function sleep(ms: number): Promise<void> {
@@ -264,6 +267,32 @@ export function isAlienGenerateJobFreshRunning(job: AlienGenerateJobClient | nul
   if (!startedMs) return true;
   const ageMs = Date.now() - startedMs;
   return ageMs >= 0 && ageMs < ALIEN_GENERATE_STALE_MS;
+}
+
+/** Complete job whose success modal was never closed — reopen on any signed-in visit. */
+export function isAlienGenerateJobPendingSuccess(
+  job: AlienGenerateJobClient | null | undefined
+): boolean {
+  if (!job || job.status !== 'complete') return false;
+  if (job.successDismissedAt) return false;
+  const finishedMs = Date.parse(job.finishedAt || job.updatedAt || job.startedAt || '') || 0;
+  if (!finishedMs) return true;
+  /* Drop ancient completes so an undismissed job from months ago never loops forever. */
+  const ageMs = Date.now() - finishedMs;
+  return ageMs >= 0 && ageMs < 7 * 24 * 60 * 60 * 1000;
+}
+
+export async function ackAlienGenerateSuccess(args: {
+  email: string;
+  assetId: string;
+  startedAt?: string | null;
+}): Promise<void> {
+  await postJson('/api/user/alien-generate', {
+    email: args.email,
+    asset: args.assetId,
+    action: 'ack-success',
+    ...(args.startedAt ? { startedAt: args.startedAt } : {}),
+  });
 }
 
 /** True when a running job has stopped receiving phase updates (driver abandoned). */
