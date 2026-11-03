@@ -24,8 +24,6 @@ export const config = {
     },
     responseLimit: false,
   },
-  // Vercel / Next — allow long Grok video polls (up to ~10 min).
-  maxDuration: 800,
 };
 
 async function loadJpeg(bucket: string, key: string): Promise<Buffer> {
