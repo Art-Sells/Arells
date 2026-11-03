@@ -101,87 +101,30 @@ export const ALIEN_COMPOSE_PROMPT = [
 ].join(' ');
 
 /**
- * Pass 2 — HEAD SIZE ONLY.
- * <IMAGE_0> compose result, <IMAGE_1> original mannequin base, <IMAGE_2> selfie (identity/skin stay locked while scaling).
- */
-export const ALIEN_COMPOSE_HEAD_SIZE_FIX_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0>. ONLY job: fix LEFT head size. Change nothing else unless required for scale.',
-  'HEAD SIZE (SOLE PRIORITY — CRITICAL): Compare LEFT orange-jacket head in <IMAGE_0> to the white mannequin head in <IMAGE_1>. Target = ~5% LARGER than <IMAGE_1> mannequin (≈1.05× width and chin-to-crown vs shoulders/collar). If LEFT head is smaller than ~1.05×, GROW it to that target. If LEFT head is larger than ~1.05×, SHRINK it to that target. Center on the same neck/collar as <IMAGE_1>. Keep head upright — no tilt to the right while scaling.',
-  'IDENTITY + SKIN WHILE SCALING (CRITICAL — <IMAGE_2>): <IMAGE_2> is the uploaded person. While resizing, KEEP LEFT face identity AND skin albedo locked to <IMAGE_2> — same complexion, lightness/darkness, undertone, pores. FORBIDDEN: lightening/darkening LEFT skin, borrowing Sam/girl complexion, or inventing a new face while scaling. Keep amber iris color.',
-  'FORBIDDEN: leaving a 1:1 mannequin-sized head (too small), leaving a head much larger than ~5%, growing hair far past the 1.05× bound, matching Sam’s head size instead of the 1.05× mannequin target, tilting LEFT head to the right.',
-  'Do NOT change Sam or the girl. Do NOT change text, background, framing, or jacket color.',
-].join(' ');
-
-/**
- * Launch pass 2 — IRIS ONLY (Season One-style harden).
- * <IMAGE_0> first compose, <IMAGE_1> iris-ref, <IMAGE_2> selfie (do not drift skin/identity).
- */
-export const ALIEN_COMPOSE_IRIS_ONLY_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0> (launch poster). Change NOTHING except the two irises on the LEFT orange-jacket figure.',
-  'IRIS ONLY — LOCK TO <IMAGE_1> (CRITICAL): Repaint BOTH LEFT irises to match <IMAGE_1> iris-ref exactly — amber / burnt-orange / Bitcoin-orange hue, saturation, brightness, AND radial iris fiber texture. This is the ONLY allowed LEFT eye color source.',
-  'FORBIDDEN: brown, dark brown, chocolate, hazel, blue, green, gray, black, selfie eye color, glow, bloom, neon. If either LEFT iris still looks brown or not clearly orange like <IMAGE_1>, FAILED — repaint again from <IMAGE_1>.',
-  'LEFT ONLY: Do NOT change Sam or the girl eyes (keep whatever they already have in <IMAGE_0>).',
-  'DO NOT TOUCH: LEFT face shape, hair, skin tone/texture, neck, hands, head size, jacket, text, background, framing, pose, or Sam/girl. <IMAGE_2> is the uploaded person — keep LEFT identity + skin locked to <IMAGE_2> while painting irises only.',
-  'NO GLOWING EYES. GLASSES (IF PRESENT — NO GLOW): natural matte glass only.',
-].join(' ');
-
-/** @deprecated kept for any external imports — use ALIEN_COMPOSE_IRIS_ONLY_PROMPT */
-export const ALIEN_COMPOSE_DETAIL_FIX_PROMPT = ALIEN_COMPOSE_IRIS_ONLY_PROMPT;
-
-/**
- * Pass 4 — SKIN / FACE / NECK / HANDS ONLY (final gate).
- * Selfie stays in-context every pass now; this pass still FORCE-grafts complexion from the upload.
- * <IMAGE_0> poster after detail, <IMAGE_1> uploaded selfie identity.
- */
-export const ALIEN_COMPOSE_SKIN_LOCK_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0> (launch poster). <IMAGE_1> is the uploaded person — the ONLY allowed source for LEFT face identity and LEFT skin albedo.',
-  'SOLE JOB (CRITICAL — SKIN MATCH): Match <IMAGE_1>’s face complexion onto the LEFT orange-jacket face, neck, and hands. Match likeness + skin tone + texture + lightness/darkness + undertone. Face, neck, and hands = ONE continuous living complexion from <IMAGE_1> only — same brightness family as <IMAGE_1>’s face when compared side-by-side.',
-  'WHITE NECK / CRUSHED OR DRIFTED FACE (MOST COMMON LAUNCH FAILURE): If the neck is white, porcelain, mannequin, or lighter than the face — REPAINT jaw→collar from <IMAGE_1>. If the face is lighter, darker, muddier, redder, or charcoalized vs <IMAGE_1> (especially Black / deep / rich brown skin) — REPAINT the whole face from <IMAGE_1>. FORBIDDEN: face darker than neck; neck white while face is dark; any brightness drift vs <IMAGE_1>; borrowing Sam’s or the companion’s complexion; “studio correcting” LEFT skin to match the right-side cast.',
-  'Keep LEFT amber/orange iris color already on the eyes (do not change eye color). Soft scene light on jacket/wall is fine — do NOT rewrite LEFT skin albedo to match that light or Sam/girl.',
-  'GLASSES (IF PRESENT — NO GLOW): If glasses are on, remove glow/bloom/neon/luminous lens shine — natural matte glass only.',
-  'Do NOT change Sam or the girl. Do NOT change LEFT head size, text, background, framing, jacket color, or pose.',
-  'FINAL GATE: Hold <IMAGE_1> next to LEFT face — if complexion/identity still do not clearly match, FAILED — repaint face+neck+hands from <IMAGE_1> again until they do.',
-].join(' ');
-
-/**
  * Wide 2:1 Personal Bitcoin Alien portrait.
- * <IMAGE_0> selfie identity, <IMAGE_1> iris-ref (fiber texture), <IMAGE_2> personalalienplaceholder (bright orange COLOR LOCK).
+ * <IMAGE_0> selfie identity/skin, <IMAGE_1> iris-ref (fiber texture), <IMAGE_2> personalalienplaceholder (bright orange COLOR LOCK).
  */
 export const ALIEN_PORTRAIT_PROMPT = [
-  'PRIORITY ORDER (HIGHEST FIRST): (1) identity + skin tone/texture from <IMAGE_0>, (2) COLOR LOCK from <IMAGE_2> orange field for jacket / iris HUE, (3) iris fiber texture from <IMAGE_1>, (4) CREAM scene background, (5) soft even studio lighting, (6) front pose.',
+  'PRIORITY ORDER (ABSOLUTE): (1) identity + SKIN ALBEDO from <IMAGE_0> selfie. (2) COLOR LOCK from <IMAGE_2> orange field for jacket / iris HUE. (3) iris fiber texture from <IMAGE_1>. (4) CREAM scene background. (5) soft even studio lighting. (6) front pose.',
   'Create a wide portrait (aspect 2:1) of the SAME person as <IMAGE_0> as their Personal Bitcoin Alien character.',
-  'SKIN TONE / TEXTURE LOCK (CRITICAL): Face, neck, and any visible skin MUST match <IMAGE_0> exactly — same undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. FORBIDDEN: lightening, darkening, warming, cooling, airbrushed plastic skin, or inventing a different complexion.',
+  'SKIN ALBEDO LOCK (CRITICAL — ABSOLUTE #1 — FACE / NECK / HANDS): Face, neck, and any visible skin MUST match <IMAGE_0> exactly — same complexion, undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. Compare side-by-side to <IMAGE_0>: if the portrait looks lighter OR darker OR redder OR muddier OR charcoalized vs <IMAGE_0> (especially Black / deep / rich brown skin), FAILED — repaint skin from <IMAGE_0>. FORBIDDEN: lightening, darkening, warming, cooling, “beauty” bleach, airbrushed plastic skin, inventing a different complexion, or rewriting albedo to “fit” the cream studio light.',
   'NO EYESHADOW / NO DARK EYE RINGS (CRITICAL): Do NOT add eyeshadow, smoky lids, under-eye dark circles, contour bands, or heavy shading around the eyes that is not clearly in <IMAGE_0>. Keep the eye area clean like the photo — natural lids/lashes only.',
   'COLOR LOCK FROM <IMAGE_2> (CRITICAL — JACKET / IRIS HUE): <IMAGE_2> is the default My Character profile plate — a white mannequin on a solid BRIGHT Bitcoin-orange field (~#F07317 / #F88D00 family). Jacket and iris HUE MUST match that exact bright orange field — same hue, saturation, and brightness. FORBIDDEN: dark orange, burnt orange, rust, copper, brown-orange, muddy orange, desaturated orange. If jacket/eyes look darker or rustier than <IMAGE_2>’s background, the edit FAILED — recolor to match <IMAGE_2> before finishing.',
   'IRIS (CRITICAL): BOTH irises — HUE/saturation/brightness from <IMAGE_2>’s orange field; radial fiber TEXTURE/detail from <IMAGE_1>. Matte photorealistic, natural wetness OK. FORBIDDEN: brown, blue, green, hazel, black, gray, dark/burnt iris, any <IMAGE_0> eye color; glow; bloom; neon. Complete eyes (pupil + iris + sclera).',
   'NO GLOWING EYES (CRITICAL): Eyes must be matte / natural photorealistic only. FORBIDDEN: glowing eyes, luminous pupils, light beams, bloom, neon, emissive/HDR eye glow, sci-fi shine.',
   'GLASSES (IF PRESENT — NO GLOW): If <IMAGE_0> wears glasses, keep the frames/lenses but REMOVE any glow, bloom, neon, luminous reflections, lens flare, or emissive shine on the glasses. Natural matte glass only — soft real-world reflections OK; glowing glasses = FAILED.',
   'BACKGROUND (CRITICAL — CREAM SCENE — NOT <IMAGE_2>): Plain solid cream background edge-to-edge behind the subject — warm cream / ivory / off-white cream (not pure white, not beige-tan wall). Soft even light on the cream field. FORBIDDEN: filling the whole canvas with <IMAGE_2>’s orange (orange is for jacket/iris only), gray, charcoal, busy scenes, outdoors, windows.',
-  'IDENTITY ONLY FROM <IMAGE_0>: Use <IMAGE_0> ONLY for face identity (shape, features, skin tone, skin texture, hair). Discard <IMAGE_0>\'s lighting, camera angle, pose, background, and eye color.',
+  'IDENTITY ONLY FROM <IMAGE_0>: Use <IMAGE_0> ONLY for face identity (shape, features, skin albedo, skin texture, hair). Discard <IMAGE_0>\'s lighting, camera angle, pose, background, and eye color — but NEVER discard or “correct” <IMAGE_0>’s skin color.',
   'POSE (CRITICAL — FACE FORWARD): Head and face straight-on / front view. Eyes into camera. FORBIDDEN: 3/4 turn, looking left/right, profile, chin-down selfie angle. If <IMAGE_0> is turned, straighten to full frontal.',
   'EXPRESSION (CRITICAL — NEUTRAL): Neutral / calm mouth. If <IMAGE_0> is expressive, convert to neutral while keeping identity.',
-  'LIGHTING (CRITICAL — SOFT EVEN STUDIO): Ignore <IMAGE_0> photo lighting. Soft even indoor studio light on face/neck — flat gentle key + soft fill. Do NOT change the underlying skin tone/texture while relighting. FORBIDDEN: outdoor sun, golden-hour, cinematic drama, ring light, phone selfie flash, shiny plastic hotspots.',
+  'LIGHTING (CRITICAL — SOFT EVEN STUDIO): Ignore <IMAGE_0> photo lighting. Soft even indoor studio light on face/neck — flat gentle key + soft fill. SKIN ALBEDO still locks to <IMAGE_0> while matching that studio light — do NOT bleach/crush complexion. FORBIDDEN: outdoor sun, golden-hour, cinematic drama, ring light, phone selfie flash, shiny plastic hotspots.',
   'HATS (REQUIRED — REMOVE): Remove hats/caps/beanies; show natural hair.',
   'HEADWEAR (CRITICAL — DEFAULT NONE): Do NOT invent bandanas/wraps. Only keep if clearly in <IMAGE_0>, then recolor to <IMAGE_2>’s bright orange.',
   'WARDROBE: zip/button jacket over a light tee (no poster text, no other people, no necklace required). Jacket hue MUST match <IMAGE_2>’s bright orange field — never rust/dark/burnt.',
   'GENDER FIT: Feminine <IMAGE_0> → feminine orange jacket cut + proportions. Masculine → menswear jacket cut. Do not feminize males.',
   'JACKET COLOR (CRITICAL): Exact match to <IMAGE_2> orange background field — bright Bitcoin orange, not rust.',
   'Head-and-shoulders framing, wide 2:1. No extra text, logos, or watermarks.',
-].join(' ');
-
-/** Second pass: color lock + iris + cream background + studio lighting + frontal pose. */
-export const ALIEN_PORTRAIT_STUDIO_FIX_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0>. Keep the same person. <IMAGE_1> = iris-ref texture. <IMAGE_2> = My Character default orange field (COLOR LOCK).',
-  'SKIN TONE / TEXTURE: Do NOT alter face/neck skin tone or texture — keep exact match to the person.',
-  'NO EYESHADOW / NO DARK EYE RINGS: Remove any added eyeshadow, smoky lids, or under-eye dark rings that are not in the original person — clean lids like the photo.',
-  'COLOR FIX FROM <IMAGE_2> (CRITICAL): Recolor jacket and iris HUE to match <IMAGE_2>’s solid bright Bitcoin-orange background exactly. FORBIDDEN: dark/burnt/rust/copper/muddy orange. If jacket/eyes read darker than <IMAGE_2>’s field, fix now.',
-  'IRIS FIX: BOTH irises — hue from <IMAGE_2> orange field + radial texture from <IMAGE_1>. Never brown/blue/green/selfie eye color. Matte, NO glow.',
-  'NO GLOWING EYES (CRITICAL): Keep eyes matte — no glow, bloom, neon, luminous pupils, or emissive shine.',
-  'GLASSES (IF PRESENT — NO GLOW): If glasses are on, remove glow/bloom/neon/luminous lens shine — natural matte glass only.',
-  'BACKGROUND FIX (CRITICAL — CREAM SCENE): Replace any wrong background with a plain solid cream / ivory / off-white cream field edge-to-edge. Do NOT use <IMAGE_2>’s orange as the scene background. FORBIDDEN: gray, beige-tan wall, busy scene.',
-  'LIGHTING FIX (CRITICAL — SOFT EVEN STUDIO): Relight face/neck with soft even indoor studio light without changing skin tone/texture. REMOVE outdoor sun, golden-hour, selfie-flash, cinematic lighting.',
-  'POSE FIX (CRITICAL): Full front-facing — straight at camera, no 3/4 turn left or right. Eyes forward.',
-  'EXPRESSION: Keep neutral / calm.',
+  'FINAL GATE: Hold <IMAGE_0> next to the portrait face — if complexion/identity do not clearly match, FAILED — repaint face+neck from <IMAGE_0> until they do.',
 ].join(' ');
 
 /**
@@ -206,33 +149,6 @@ export const ALIEN_SEASONONE_PROMPT = [
   'LETTER CLEARANCE (CRITICAL — KEEP DISTANCE FROM “ONE”): The close-up head/shoulders stay centered in the open gap between “SEASON” (left) and “ONE” (right) with a clear empty margin of wall on BOTH sides — especially a comfortable gap from the “O” and “N” of “ONE” on the right (and from the end of “SEASON” on the left). FORBIDDEN: drifting so hair/shoulder/jacket crowds, touches, or overlaps the O or N.',
   'JACKET COLOR (CRITICAL): Exact rust-orange / Bitcoin orange from <IMAGE_0>.',
   'FINAL GATE: (a) crop matches <IMAGE_0> close-up — if more torso/arms/hands appear than in <IMAGE_0>, FAILED; (b) zoom the eyes — if either iris does not match <IMAGE_2> portrait irises, FAILED; fix irises from <IMAGE_2> now.',
-].join(' ');
-
-/**
- * Second-pass Season One: layout + identity; iris from <IMAGE_2> portrait.
- * <IMAGE_0> first compose, <IMAGE_1> original seasonone-base, <IMAGE_2> portrait.
- */
-export const ALIEN_SEASONONE_FIX_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0>. Change as little as possible except eyes / framing if needed.',
-  'FRAMING LOCK TO <IMAGE_1>: Keep the same head/shoulders CLOSE-UP crop and figure scale as <IMAGE_1> (the original Season One base). If the figure was zoomed out past that crop (extra torso/arms), restore <IMAGE_1>’s close-up. FORBIDDEN: hands, pockets, waist, medium shot.',
-  'SKIN TONE / TEXTURE: Do NOT alter face/neck skin tone or texture — keep exact match to the locked identity.',
-  'IRIS FIX FROM <IMAGE_2> PORTRAIT (SOLE JOB IF EYES ARE WRONG): BOTH irises MUST match the eyes on <IMAGE_2> (Personal Bitcoin Alien portrait) — hue + radial fiber texture. Brown / selfie eye color from the upload is FORBIDDEN. If either iris does not match <IMAGE_2>, REPAINT both irises from <IMAGE_2> immediately. Matte only — NO glow.',
-  'NO GLOWING EYES.',
-  'GLASSES (IF PRESENT — NO GLOW): If glasses are on, remove glow/bloom/neon/luminous lens shine — natural matte glass only.',
-  'SOLE FIGURE: Keep ONE person — center orange-jacket figure. Keep “SEASON” / “ONE” and beige wall from <IMAGE_1>.',
-  'LETTER CLEARANCE: Keep a clear gap from the “O” and “N” of “ONE” (and from “SEASON”) — do not crowd the letters.',
-].join(' ');
-
-/**
- * Third-pass Season One: IRIS ONLY from portrait face.
- * <IMAGE_0> banner after fix, <IMAGE_1> My Character portrait (iris source).
- */
-export const ALIEN_SEASONONE_IRIS_ONLY_PROMPT = [
-  'EDIT TASK: Start from <IMAGE_0> (Season One banner). Change NOTHING except the two irises on the center figure’s face.',
-  'IRIS ONLY — LOCK TO <IMAGE_1> PORTRAIT: Repaint BOTH irises to match the eyes on <IMAGE_1> (Personal Bitcoin Alien portrait) exactly — hue, saturation, brightness, radial fiber texture. This is the ONLY allowed eye color source.',
-  'FORBIDDEN: brown, dark brown, chocolate, hazel, blue, green, gray, black, selfie eye color, glow, bloom, neon.',
-  'Do NOT change face shape, hair, skin tone, skin texture, jacket, necklace, text “SEASON”/“ONE”, beige wall, close-up framing/crop, or expression beyond the iris paint. Do NOT introduce hands, arms, or a wider body crop.',
-  'If the eyes still do not match <IMAGE_1> after this pass, the edit failed — repaint again from <IMAGE_1> until they match.',
 ].join(' ');
 
 /**
@@ -262,6 +178,7 @@ export const ALIEN_METALOOP_VIDEO_PROMPT = [
 export const ALIEN_SEASONONE_VIDEO_PROMPT = [
   'IMAGE-TO-VIDEO from this exact input still. Do NOT restate framing, letters, wardrobe, or pose already in the image — only add the face motion below.',
   'CAMERA (CRITICAL): Frozen / locked for the entire clip — no zoom, dolly, pan, tilt, Ken Burns, drift, or shake. Frame 0 and last frame match the input crop/scale. ONLY the face may move.',
+  'FRAME FILL (CRITICAL): Edge-to-edge pixels — NO letterbox, NO pillarbox, NO beige/black/empty bars on left/right/top/bottom. The still already fills the frame; keep it filled.',
   'STATION (CRITICAL): Do not move the person in frame — no walk-closer, no left/right drift, no scale change, no crowding/covering lettering that is already clear in the input.',
   'KEEP AS-IS (anti-drift only): no extra people, no text/wardrobe/identity morph, irises stay matte (no glow).',
   'NO NEW EYE / FACE LINES: Do not add crow’s feet, under-eye creases, tear troughs, contour rings, or wrinkles not in the input while smiling/laughing.',
@@ -286,60 +203,6 @@ async function toCleanJpeg(buffer: Buffer, maxEdge = 1536): Promise<Buffer> {
     const detail = err instanceof Error ? err.message : 'unknown';
     throw new Error(`Could not read that photo (${detail}). Try a different JPEG or PNG.`);
   }
-}
-
-/**
- * Season One banners are ~4.18:1 — wider than Grok video's max (5:2 / 21:9).
- * Letterbox onto 5:2 with banner-beige so image-to-video is accepted; playback
- * object-fit:cover crops the pads back out in the ultra-wide frame.
- */
-async function toSeasonOneVideoJpeg(buffer: Buffer): Promise<Buffer> {
-  const MAX_W = 1920;
-  const RATIO = 5 / 2;
-  const base = sharp(buffer, { failOn: 'none' }).rotate();
-  const meta = await base.metadata();
-  const srcW = meta.width || 0;
-  const srcH = meta.height || 0;
-  if (srcW < 32 || srcH < 32) {
-    return toCleanJpeg(buffer, MAX_W);
-  }
-
-  const fitted = await sharp(buffer, { failOn: 'none' })
-    .rotate()
-    .resize({
-      width: MAX_W,
-      height: Math.round(MAX_W / RATIO),
-      fit: 'inside',
-      withoutEnlargement: true,
-    })
-    .toColorspace('srgb')
-    .jpeg({ quality: 95, mozjpeg: true })
-    .toBuffer({ resolveWithObject: true });
-
-  const fw = fitted.info.width;
-  const fh = fitted.info.height;
-  const outW = Math.max(fw, Math.round(fh * RATIO));
-  const outH = Math.max(fh, Math.round(fw / RATIO));
-  // Beige wall approx from Season One banner.
-  const beige = { r: 214, g: 196, b: 168 };
-
-  return sharp({
-    create: {
-      width: outW,
-      height: outH,
-      channels: 3,
-      background: beige,
-    },
-  })
-    .composite([
-      {
-        input: fitted.data,
-        left: Math.max(0, Math.round((outW - fw) / 2)),
-        top: Math.max(0, Math.round((outH - fh) / 2)),
-      },
-    ])
-    .jpeg({ quality: 95, mozjpeg: true })
-    .toBuffer();
 }
 
 /** Tight head/shoulders crop so clothing/background don't dilute identity. */
@@ -594,8 +457,11 @@ export async function composePersonalBitcoinAlien(args: {
   });
 }
 
-/** Season One pass 1 — one Grok call (Amplify ~30s). `iris` = portrait face. */
-export async function composePersonalBitcoinAlienSeasonOnePass1(args: {
+/**
+ * Ultra-wide SEASON ONE banner — single Grok edit.
+ * `iris` = My Character portrait face (iris color/texture source).
+ */
+export async function composePersonalBitcoinAlienSeasonOne(args: {
   selfie: Buffer;
   base: Buffer;
   iris: Buffer;
@@ -616,69 +482,14 @@ export async function composePersonalBitcoinAlienSeasonOnePass1(args: {
   });
 }
 
-/** Season One pass 2 — layout harden. `iris` = portrait face. */
-export async function composePersonalBitcoinAlienSeasonOnePass2(args: {
-  previous: Buffer;
-  base: Buffer;
-  iris: Buffer;
-}): Promise<Buffer> {
-  const [prevJpeg, baseJpeg, irisJpeg] = await Promise.all([
-    toCleanJpeg(args.previous, 4561),
-    toCleanJpeg(args.base, 4561),
-    toIdentityJpeg(args.iris),
-  ]);
-  return grokImageEdit({
-    prompt: ALIEN_SEASONONE_FIX_PROMPT,
-    images: [
-      { url: toDataUri(prevJpeg), type: 'image_url' },
-      { url: toDataUri(baseJpeg), type: 'image_url' },
-      { url: toDataUri(irisJpeg), type: 'image_url' },
-    ],
-    aspectRatio: 'auto',
-  });
-}
-
-/** Season One pass 3 — iris only from portrait face. */
-export async function composePersonalBitcoinAlienSeasonOnePass3(args: {
-  previous: Buffer;
-  iris: Buffer;
-}): Promise<Buffer> {
-  const [prevJpeg, irisJpeg] = await Promise.all([
-    toCleanJpeg(args.previous, 4561),
-    toIdentityJpeg(args.iris),
-  ]);
-  return grokImageEdit({
-    prompt: ALIEN_SEASONONE_IRIS_ONLY_PROMPT,
-    images: [
-      { url: toDataUri(prevJpeg), type: 'image_url' },
-      { url: toDataUri(irisJpeg), type: 'image_url' },
-    ],
-    aspectRatio: 'auto',
-  });
-}
-
-/** Ultra-wide SEASON ONE banner — all passes (local/dev; too slow for one Amplify request). */
-export async function composePersonalBitcoinAlienSeasonOne(args: {
-  selfie: Buffer;
-  base: Buffer;
-  iris: Buffer;
-}): Promise<Buffer> {
-  const firstPass = await composePersonalBitcoinAlienSeasonOnePass1(args);
-  const secondPass = await composePersonalBitcoinAlienSeasonOnePass2({
-    previous: firstPass,
-    base: args.base,
-    iris: args.iris,
-  });
-  return composePersonalBitcoinAlienSeasonOnePass3({
-    previous: secondPass,
-    iris: args.iris,
-  });
-}
-
-/** Portrait pass 1 — one Grok call (Amplify ~30s). */
-export async function composePersonalBitcoinAlienPortraitPass1(args: {
+/**
+ * Wide 2:1 Personal Bitcoin Alien portrait — single Grok edit.
+ * Order: selfie identity/skin, iris-ref texture, personalalienplaceholder orange COLOR LOCK.
+ */
+export async function composePersonalBitcoinAlienPortrait(args: {
   selfie: Buffer;
   iris: Buffer;
+  /** Default My Character plate — bright orange field for jacket / iris hue. */
   colorRef: Buffer;
 }): Promise<Buffer> {
   const [identityJpeg, irisJpeg, colorJpeg] = await Promise.all([
@@ -694,49 +505,6 @@ export async function composePersonalBitcoinAlienPortraitPass1(args: {
       { url: toDataUri(colorJpeg), type: 'image_url' },
     ],
     aspectRatio: '2:1',
-  });
-}
-
-/** Portrait pass 2 — studio / color fix. */
-export async function composePersonalBitcoinAlienPortraitPass2(args: {
-  previous: Buffer;
-  iris: Buffer;
-  colorRef: Buffer;
-}): Promise<Buffer> {
-  const [prevJpeg, irisJpeg, colorJpeg] = await Promise.all([
-    toCleanJpeg(args.previous, 2048),
-    toCleanJpeg(args.iris),
-    toCleanJpeg(args.colorRef, 2048),
-  ]);
-  return grokImageEdit({
-    prompt: [
-      ALIEN_PORTRAIT_STUDIO_FIX_PROMPT,
-      'COLOR + IRIS: Jacket/iris HUE = <IMAGE_2> bright orange field; iris texture = <IMAGE_1>. NO dark/rust orange. NO GLOWING EYES — matte only.',
-    ].join(' '),
-    images: [
-      { url: toDataUri(prevJpeg), type: 'image_url' },
-      { url: toDataUri(irisJpeg), type: 'image_url' },
-      { url: toDataUri(colorJpeg), type: 'image_url' },
-    ],
-    aspectRatio: '2:1',
-  });
-}
-
-/**
- * Wide 2:1 Personal Bitcoin Alien portrait — both passes (local/dev).
- * Order: selfie identity, iris-ref texture, personalalienplaceholder orange COLOR LOCK.
- */
-export async function composePersonalBitcoinAlienPortrait(args: {
-  selfie: Buffer;
-  iris: Buffer;
-  /** Default My Character plate — bright orange field for jacket / iris hue. */
-  colorRef: Buffer;
-}): Promise<Buffer> {
-  const firstPass = await composePersonalBitcoinAlienPortraitPass1(args);
-  return composePersonalBitcoinAlienPortraitPass2({
-    previous: firstPass,
-    iris: args.iris,
-    colorRef: args.colorRef,
   });
 }
 
@@ -759,6 +527,8 @@ export async function generateAlienImageToVideo(args: {
   skipResize?: boolean;
   /** Grok resolution: 480p | 720p. Default 480p. */
   resolution?: '480p' | '720p';
+  /** Optional Grok aspect_ratio (e.g. "5:2"). Image-to-video keeps source ratio if omitted. */
+  aspectRatio?: string;
 }): Promise<Buffer> {
   const apiKey = grokApiKeyOrThrow();
   const model =
@@ -782,6 +552,7 @@ export async function generateAlienImageToVideo(args: {
       image: { url: toDataUri(imageJpeg) },
       duration,
       resolution,
+      ...(args.aspectRatio ? { aspect_ratio: args.aspectRatio } : {}),
     }),
   });
 
@@ -847,13 +618,11 @@ export async function generateAlienMetaloopVideo(composedJpeg: Buffer): Promise<
 }
 
 export async function generateAlienSeasonOneLoopVideo(seasonOneJpeg: Buffer): Promise<Buffer> {
-  // Letterbox to a Grok-supported aspect before i2v (raw banner is too wide).
-  const videoStill = await toSeasonOneVideoJpeg(seasonOneJpeg);
+  // Pass the banner as-is — Grok i2v keeps the source aspect; do not letterbox/crop to 5:2.
   return generateAlienImageToVideo({
-    imageJpeg: videoStill,
+    imageJpeg: seasonOneJpeg,
     prompt: ALIEN_SEASONONE_VIDEO_PROMPT,
     durationSeconds: 10,
-    skipResize: true,
     resolution: '720p',
   });
 }

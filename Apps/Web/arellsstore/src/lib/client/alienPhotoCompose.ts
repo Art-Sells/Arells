@@ -427,15 +427,8 @@ export async function awaitAlienGenerateJob(args: {
   return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
 }
 
-/** Portrait first (iris source) → Season One → launch meta; videos follow in pipeline. */
-const COMPOSE_STEPS = [
-  'portrait',
-  'portrait-fix',
-  'seasonone',
-  'seasonone-fix',
-  'seasonone-iris',
-  'meta',
-] as const;
+/** Portrait → Season One → launch meta; videos follow in pipeline. One Grok edit each. */
+const COMPOSE_STEPS = ['portrait', 'seasonone', 'meta'] as const;
 
 /** Compose stills + loops after selfie upload / arm (one Grok call per Amplify request). */
 export async function runAlienGeneratePipeline(args: {
