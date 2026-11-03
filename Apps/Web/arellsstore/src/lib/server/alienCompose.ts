@@ -19,7 +19,7 @@ export const ALIEN_SEASONONE_BASE_REL = path.join(ALIEN_COMPOSE_DATA_DIR, 'seaso
 export const ALIEN_COMPOSE_IRIS_REL = path.join(ALIEN_COMPOSE_DATA_DIR, 'iris-ref.jpg');
 /**
  * Default My Character profile plate — solid bright Bitcoin-orange field behind white mannequin.
- * Portrait robe / iris HUE lock (not scene background).
+ * Portrait jacket / iris HUE lock (not scene background).
  */
 export const ALIEN_PORTRAIT_COLOR_REL = path.join(ALIEN_COMPOSE_DATA_DIR, 'portrait-color.jpg');
 
@@ -105,28 +105,28 @@ export const ALIEN_COMPOSE_PROMPT = [
 
 /**
  * Wide 2:1 Personal Bitcoin Alien portrait.
- * <IMAGE_0> selfie identity/skin, <IMAGE_1> iris-ref (fiber texture), <IMAGE_2> orange COLOR LOCK plate.
+ * <IMAGE_0> selfie identity/skin, <IMAGE_1> iris-ref (fiber texture), <IMAGE_2> personalalienplaceholder (bright orange COLOR LOCK).
  */
 export const ALIEN_PORTRAIT_PROMPT = [
-  'PRIORITY ORDER (ABSOLUTE): (1) identity + SKIN ALBEDO from <IMAGE_0> selfie. (2) COLOR LOCK from <IMAGE_2> orange field for robe / iris HUE. (3) iris fiber texture from <IMAGE_1>. (4) CREAM scene background. (5) soft even studio lighting. (6) front pose.',
+  'PRIORITY ORDER (ABSOLUTE): (1) identity + SKIN ALBEDO from <IMAGE_0> selfie. (2) COLOR LOCK from <IMAGE_2> orange field for jacket / iris HUE. (3) iris fiber texture from <IMAGE_1>. (4) CREAM scene background. (5) soft even studio lighting. (6) front pose.',
   'Create a wide portrait (aspect 2:1) of the SAME person as <IMAGE_0> as their Personal Bitcoin Alien character.',
   'SKIN ALBEDO LOCK (CRITICAL — ABSOLUTE #1 — FACE / NECK / HANDS): Face, neck, and any visible skin MUST match <IMAGE_0> exactly — same complexion, undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. Compare side-by-side to <IMAGE_0>: if the portrait looks lighter OR darker OR redder OR muddier OR charcoalized vs <IMAGE_0> (especially Black / deep / rich brown skin), FAILED — repaint skin from <IMAGE_0>. FORBIDDEN: lightening, darkening, warming, cooling, “beauty” bleach, airbrushed plastic skin, inventing a different complexion, or rewriting albedo to “fit” the cream studio light.',
   'NO EYESHADOW / NO DARK EYE RINGS (CRITICAL): Do NOT add eyeshadow, smoky lids, under-eye dark circles, contour bands, or heavy shading around the eyes that is not clearly in <IMAGE_0>. Keep the eye area clean like the photo — natural lids/lashes only.',
-  'COLOR LOCK FROM <IMAGE_2> (CRITICAL — ROBE / IRIS HUE): <IMAGE_2> is the default My Character profile plate — a white mannequin on a solid BRIGHT Bitcoin-orange field (~#F07317 / #F88D00 family). Robe and iris HUE MUST match that exact bright orange field — same hue, saturation, and brightness. FORBIDDEN: dark orange, burnt orange, rust, copper, brown-orange, muddy orange, desaturated orange. If robe/eyes look darker or rustier than <IMAGE_2>’s background, the edit FAILED — recolor to match <IMAGE_2> before finishing.',
+  'COLOR LOCK FROM <IMAGE_2> (CRITICAL — JACKET / IRIS HUE): <IMAGE_2> is the default My Character profile plate — a white mannequin on a solid BRIGHT Bitcoin-orange field (~#F07317 / #F88D00 family). Jacket and iris HUE MUST match that exact bright orange field — same hue, saturation, and brightness. FORBIDDEN: dark orange, burnt orange, rust, copper, brown-orange, muddy orange, desaturated orange. If jacket/eyes look darker or rustier than <IMAGE_2>’s background, the edit FAILED — recolor to match <IMAGE_2> before finishing.',
   'IRIS (CRITICAL): BOTH irises — HUE/saturation/brightness from <IMAGE_2>’s orange field; radial fiber TEXTURE/detail from <IMAGE_1>. Matte photorealistic, natural wetness OK. FORBIDDEN: brown, blue, green, hazel, black, gray, dark/burnt iris, any <IMAGE_0> eye color; glow; bloom; neon. Complete eyes (pupil + iris + sclera).',
   'NO GLOWING EYES (CRITICAL): Eyes must be matte / natural photorealistic only. FORBIDDEN: glowing eyes, luminous pupils, light beams, bloom, neon, emissive/HDR eye glow, sci-fi shine.',
   'GLASSES (IF PRESENT — NO GLOW): If <IMAGE_0> wears glasses, keep the frames/lenses but REMOVE any glow, bloom, neon, luminous reflections, lens flare, or emissive shine on the glasses. Natural matte glass only — soft real-world reflections OK; glowing glasses = FAILED.',
-  'BACKGROUND (CRITICAL — CREAM SCENE — NOT <IMAGE_2>): Plain solid cream background edge-to-edge behind the subject — warm cream / ivory / off-white cream (not pure white, not beige-tan wall). Soft even light on the cream field. FORBIDDEN: filling the whole canvas with <IMAGE_2>’s orange (orange is for robe/iris only), gray, charcoal, busy scenes, outdoors, windows.',
+  'BACKGROUND (CRITICAL — CREAM SCENE — NOT <IMAGE_2>): Plain solid cream background edge-to-edge behind the subject — warm cream / ivory / off-white cream (not pure white, not beige-tan wall). Soft even light on the cream field. FORBIDDEN: filling the whole canvas with <IMAGE_2>’s orange (orange is for jacket/iris only), gray, charcoal, busy scenes, outdoors, windows.',
   'IDENTITY ONLY FROM <IMAGE_0>: Use <IMAGE_0> ONLY for face identity (shape, features, skin albedo, skin texture, hair). Discard <IMAGE_0>\'s lighting, camera angle, pose, background, and eye color — but NEVER discard or “correct” <IMAGE_0>’s skin color.',
   'POSE (CRITICAL — FACE FORWARD): Head and face straight-on / front view. Eyes into camera. FORBIDDEN: 3/4 turn, looking left/right, profile, chin-down selfie angle. If <IMAGE_0> is turned, straighten to full frontal.',
   'EXPRESSION (CRITICAL — NEUTRAL): Neutral / calm mouth. If <IMAGE_0> is expressive, convert to neutral while keeping identity.',
   'LIGHTING (CRITICAL — SOFT EVEN STUDIO): Ignore <IMAGE_0> photo lighting. Soft even indoor studio light on face/neck — flat gentle key + soft fill. SKIN ALBEDO still locks to <IMAGE_0> while matching that studio light — do NOT bleach/crush complexion. FORBIDDEN: outdoor sun, golden-hour, cinematic drama, ring light, phone selfie flash, shiny plastic hotspots.',
-  'HATS (REQUIRED — REMOVE): Remove hats/caps/beanies; show natural hair. Keep the robe hood down the back (hood is wardrobe, not a hat).',
+  'HATS (REQUIRED — REMOVE): Remove hats/caps/beanies; show natural hair.',
   'HEADWEAR (CRITICAL — DEFAULT NONE): Do NOT invent bandanas/wraps. Only keep if clearly in <IMAGE_0>, then recolor to <IMAGE_2>’s bright orange.',
-  'WARDROBE: long bright-orange hooded robe with white embroidery along the front edges/sleeves, hood resting down the back, over a light tee (no poster text, no other people, no necklace required). Robe hue MUST match <IMAGE_2>’s bright orange field — never rust/dark/burnt. FORBIDDEN: short zip jacket, trenchcoat, cape.',
-  'GENDER FIT: Feminine <IMAGE_0> → feminine orange robe cut + proportions. Masculine → keep the robe cut masculine. Do not feminize males.',
-  'ROBE COLOR (CRITICAL): Exact match to <IMAGE_2> orange background field — bright Bitcoin orange, not rust.',
-  'Head-and-shoulders framing, wide 2:1 — robe hood + embroidery + neckline visible. No extra text, logos, or watermarks.',
+  'WARDROBE: zip/button jacket over a light tee (no poster text, no other people, no necklace required). Jacket hue MUST match <IMAGE_2>’s bright orange field — never rust/dark/burnt.',
+  'GENDER FIT: Feminine <IMAGE_0> → feminine orange jacket cut + proportions. Masculine → menswear jacket cut. Do not feminize males.',
+  'JACKET COLOR (CRITICAL): Exact match to <IMAGE_2> orange background field — bright Bitcoin orange, not rust.',
+  'Head-and-shoulders framing, wide 2:1. No extra text, logos, or watermarks.',
   'FINAL GATE: Hold <IMAGE_0> next to the portrait face — if complexion/identity do not clearly match, FAILED — repaint face+neck from <IMAGE_0> until they do.',
 ].join(' ');
 
@@ -136,21 +136,21 @@ export const ALIEN_PORTRAIT_PROMPT = [
  */
 export const ALIEN_SEASONONE_PROMPT = [
   'PRIORITY ORDER (ABSOLUTE): (1) PIXEL-LOCK the head/shoulders CLOSE-UP crop from <IMAGE_0> — do not pull out. (2) BOTH irises from <IMAGE_2> portrait face ONLY — same iris color/texture/detail as the Personal Bitcoin Alien portrait. (3) locked ultra-wide canvas / “SEASON” / “ONE” from <IMAGE_0>. (4) face identity + skin tone/texture from <IMAGE_1> EXCEPT eye color. (5) everything else.',
-  'EDIT TASK (not a new generation): Start from <IMAGE_0>. Put <IMAGE_1>’s face on the sole center figure — NOT a new poster. Restyle the center figure’s outerwear to a bright-orange hooded robe with white embroidery and hood down the back (replace any short jacket collar).',
-  'FRAMING LOCK (CRITICAL — MATCH <IMAGE_0> CLOSE-UP): <IMAGE_0> is already a head + neck + upper-shoulders CLOSE-UP. Keep that EXACT crop and figure scale — face large between “SEASON” and “ONE”, same amount of shoulders/neckline visible as the mannequin. FORBIDDEN: zooming out, revealing mid-torso, waist, arms, pockets, or hands; medium shot; making the person smaller in frame. If the result shows more body than <IMAGE_0>, the edit FAILED — restore <IMAGE_0>’s close-up crop.',
-  'LOCKED CANVAS from <IMAGE_0>: same ultra-wide banner aspect, same beige wall, same “SEASON” (left) and “ONE” (right) lettering, same soft studio light, same close-up silhouette slot. ONE figure only — the center orange-robe person. Do NOT invent extra people.',
-  'Keep gold triangular / “A” necklace and white tee collar within the close-up. Outerwear = bright-orange hooded robe with white embroidery + hood resting down the back. FORBIDDEN: hands, pockets, arms below the crop, any wider body pose; short zip jacket; trenchcoat; cape.',
+  'EDIT TASK (not a new generation): Start from <IMAGE_0>. Put <IMAGE_1>’s face on the sole center orange-jacket figure — NOT a new poster.',
+  'FRAMING LOCK (CRITICAL — MATCH <IMAGE_0> CLOSE-UP): <IMAGE_0> is already a head + neck + upper-shoulders / collar CLOSE-UP. Keep that EXACT crop and figure scale — face large between “SEASON” and “ONE”, same amount of shoulders/collar visible as the mannequin. FORBIDDEN: zooming out, revealing mid-torso, waist, arms, pockets, or hands; medium shot; making the person smaller in frame. If the result shows more body than <IMAGE_0>, the edit FAILED — restore <IMAGE_0>’s close-up crop.',
+  'LOCKED CANVAS from <IMAGE_0>: same ultra-wide banner aspect, same beige wall, same “SEASON” (left) and “ONE” (right) lettering, same soft studio light, same close-up silhouette slot. ONE figure only — the center orange-jacket person. Do NOT invent extra people.',
+  'Keep gold triangular / “A” necklace, white tee collar, and jacket hue/collar from <IMAGE_0> within the close-up only. FORBIDDEN: hands, pockets, arms below the crop, or any wider body pose.',
   'SKIN TONE / TEXTURE LOCK (CRITICAL): Face, neck, and any visible skin in the close-up MUST match <IMAGE_1> exactly — same undertone, lightness/darkness, warmth/coolness, freckles/moles, pores, and surface texture. FORBIDDEN: lightening, darkening, warming, cooling, airbrushed plastic skin, mannequin-white neck, or inventing a different complexion.',
   'IRIS LOCK TO <IMAGE_2> PORTRAIT (CRITICAL — BANNER FAILS WITHOUT THIS): Paint BOTH left and right irises using ONLY the eyes on <IMAGE_2> (Personal Bitcoin Alien portrait). Copy hue, saturation, brightness, AND radial iris fiber texture from <IMAGE_2> into the banner face. Typically clear amber / burnt-orange / #F88D00-family Bitcoin orange like the portrait — NOT dark brown, chocolate, hazel-brown, or selfie-brown from <IMAGE_1>. FORBIDDEN: brown irises, coffee irises, muddy irises, any <IMAGE_1> natural eye color, glow, bloom, neon. If eyes do not match <IMAGE_2>, the edit FAILED — repaint irises from <IMAGE_2> before finishing. Complete eyes (pupil + iris + sclera) required.',
   'NO GLOWING EYES (CRITICAL): Matte photorealistic only.',
   'GLASSES (IF PRESENT — NO GLOW): If <IMAGE_1> wears glasses, keep the frames/lenses but REMOVE any glow, bloom, neon, luminous reflections, lens flare, or emissive shine on the glasses. Natural matte glass only — soft real-world reflections OK; glowing glasses = FAILED.',
   'IDENTITY: Photorealistic likeness of <IMAGE_1> — face shape, hair, skin tone, skin texture, age — on that sole figure only. NEVER transfer <IMAGE_1> eye color.',
   'EXPRESSION (CRITICAL — NEUTRAL): Neutral / calm face. If <IMAGE_1> is expressive, convert to neutral while keeping identity.',
-  'LIGHTING (CRITICAL — MATCH THE SETTING): Light the center figure to match <IMAGE_0>’s scene lighting exactly — same soft even key/fill direction, intensity, color temperature, and shadow softness as the beige wall / robe already have in <IMAGE_0>. The person must look photographed in that same room under the same lights — not a pasted-on selfie. FORBIDDEN: selfie flash, outdoor sun, golden-hour, ring light, cinematic drama, plastic hotspots. SKIN ALBEDO still locks to <IMAGE_1> while matching that scene light — do NOT bleach/crush complexion; only match the lighting, not invent a new undertone.',
-  'HATS (REMOVE) / HEADWEAR DEFAULT NONE: No invented bandanas/wraps; natural hair from <IMAGE_1> unless <IMAGE_1> already wears headwear (then recolor to robe orange). Keep robe hood down the back.',
-  'WARDROBE LOCK (CLOSE-UP ONLY): Keep bright-orange hooded robe with white embroidery + hood down the back + white tee + gold necklace in the close-up. Face/skin/hair/iris only beyond that — do NOT recompose outfit or add lower body. FORBIDDEN: short jacket collar instead of the embroidered robe.',
-  'LETTER CLEARANCE (CRITICAL — KEEP DISTANCE FROM “ONE”): The close-up head/shoulders stay centered in the open gap between “SEASON” (left) and “ONE” (right) with a clear empty margin of wall on BOTH sides — especially a comfortable gap from the “O” and “N” of “ONE” on the right (and from the end of “SEASON” on the left). FORBIDDEN: drifting so hair/shoulder/robe crowds, touches, or overlaps the O or N.',
-  'ROBE COLOR (CRITICAL): Exact bright Bitcoin orange with white embroidery — never rust/dark/burnt.',
+  'LIGHTING (CRITICAL — MATCH THE SETTING): Light the center figure to match <IMAGE_0>’s scene lighting exactly — same soft even key/fill direction, intensity, color temperature, and shadow softness as the beige wall / jacket already have in <IMAGE_0>. The person must look photographed in that same room under the same lights — not a pasted-on selfie. FORBIDDEN: selfie flash, outdoor sun, golden-hour, ring light, cinematic drama, plastic hotspots. SKIN ALBEDO still locks to <IMAGE_1> while matching that scene light — do NOT bleach/crush complexion; only match the lighting, not invent a new undertone.',
+  'HATS (REMOVE) / HEADWEAR DEFAULT NONE: No invented bandanas/wraps; natural hair from <IMAGE_1> unless <IMAGE_1> already wears headwear (then recolor to jacket rust-orange).',
+  'WARDROBE LOCK (CLOSE-UP ONLY): Keep orange jacket collar + white tee + gold necklace as in <IMAGE_0>. Face/skin/hair/iris only beyond that — do NOT recompose outfit or add lower body.',
+  'LETTER CLEARANCE (CRITICAL — KEEP DISTANCE FROM “ONE”): The close-up head/shoulders stay centered in the open gap between “SEASON” (left) and “ONE” (right) with a clear empty margin of wall on BOTH sides — especially a comfortable gap from the “O” and “N” of “ONE” on the right (and from the end of “SEASON” on the left). FORBIDDEN: drifting so hair/shoulder/jacket crowds, touches, or overlaps the O or N.',
+  'JACKET COLOR (CRITICAL): Exact rust-orange / Bitcoin orange from <IMAGE_0>.',
   'FINAL GATE: (a) crop matches <IMAGE_0> close-up — if more torso/arms/hands appear than in <IMAGE_0>, FAILED; (b) zoom the eyes — if either iris does not match <IMAGE_2> portrait irises, FAILED; fix irises from <IMAGE_2> now.',
 ].join(' ');
 
@@ -492,7 +492,7 @@ export async function composePersonalBitcoinAlienSeasonOne(args: {
 export async function composePersonalBitcoinAlienPortrait(args: {
   selfie: Buffer;
   iris: Buffer;
-  /** Solid orange plate — robe + iris HUE lock only (not scene background). */
+  /** Solid orange plate — jacket + iris HUE lock only (not scene background). */
   colorRef: Buffer;
 }): Promise<Buffer> {
   const [identityJpeg, irisJpeg, colorJpeg] = await Promise.all([
