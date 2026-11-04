@@ -18,8 +18,8 @@ export type AlienCharacterPayModalProps = {
 
 /**
  * Paywall before photo upload.
- * create: ADD YOUR CHARACTER + video + $4.99 + Create Character
- * update: video + $4.99 + Update Character (no title)
+ * create: ADD YOUR CHARACTER + $4.99 + Create Character (no Season One video)
+ * update: Season One video + $4.99 + Update Character (no title)
  */
 const AlienCharacterPayModal: React.FC<AlienCharacterPayModalProps> = ({
   open,
@@ -49,14 +49,14 @@ const AlienCharacterPayModal: React.FC<AlienCharacterPayModalProps> = ({
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !isUpdate) return;
     const video = videoRef.current;
     if (!video) return;
     video.currentTime = 0;
     void video.play().catch(() => {
       /* autoplay may be blocked */
     });
-  }, [open, videoReady]);
+  }, [open, videoReady, isUpdate]);
 
   useEffect(() => {
     if (!open || !onDismiss || loadingPayment) return;
@@ -106,29 +106,31 @@ const AlienCharacterPayModal: React.FC<AlienCharacterPayModalProps> = ({
           {!isUpdate ? (
             <p className="asset-dc-promo-headline">ADD YOUR CHARACTER</p>
           ) : null}
-          <div className={`asset-dc-promo-frame${videoReady ? ' is-loaded' : ''}`}>
-            <div className="asset-dc-promo-stage">
-              <div
-                className={`asset-dc-promo-loader${videoReady ? ' is-fading' : ''}`}
-                aria-hidden="true"
-              >
-                <div className="asset-dc-promo-loader-ring" />
+          {isUpdate ? (
+            <div className={`asset-dc-promo-frame${videoReady ? ' is-loaded' : ''}`}>
+              <div className="asset-dc-promo-stage">
+                <div
+                  className={`asset-dc-promo-loader${videoReady ? ' is-fading' : ''}`}
+                  aria-hidden="true"
+                >
+                  <div className="asset-dc-promo-loader-ring" />
+                </div>
+                <video
+                  ref={videoRef}
+                  className={`asset-dc-promo-video${videoReady ? ' is-visible' : ''}`}
+                  src={DC_PROMOTION_VIDEO_URL}
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                  preload="auto"
+                  onLoadedData={() => setVideoReady(true)}
+                  onCanPlay={() => setVideoReady(true)}
+                  aria-label="Dynamic characters promotion"
+                />
               </div>
-              <video
-                ref={videoRef}
-                className={`asset-dc-promo-video${videoReady ? ' is-visible' : ''}`}
-                src={DC_PROMOTION_VIDEO_URL}
-                muted
-                playsInline
-                loop
-                autoPlay
-                preload="auto"
-                onLoadedData={() => setVideoReady(true)}
-                onCanPlay={() => setVideoReady(true)}
-                aria-label="Dynamic characters promotion"
-              />
             </div>
-          </div>
+          ) : null}
           <div className="asset-character-pay-section">
             <p id={titleId} className="asset-character-pay-price">
               $4.99

@@ -327,7 +327,52 @@ function grokPromptText(prompt: string | readonly string[]): string {
 }
 
 function isGrokContentModerationDetail(detail: string): boolean {
-  return /content moderation|moderation|safety|rejected by content/i.test(detail);
+  return /content moderation|moderation|safety|rejected by content|rejected by moderation/i.test(
+    detail
+  );
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * xAI content filter flakes often — keep retrying moderation rejects until success
+ * or the wall-clock budget runs out (Lambda / create window).
+ */
+async function withGrokModerationRetries<T>(label: string, run: () => Promise<T>): Promise<T> {
+  const budgetMs = (() => {
+    const raw = process.env.GROK_MODERATION_RETRY_MS?.trim();
+    if (raw && Number.isFinite(Number(raw))) return Math.max(60_000, Number(raw));
+    /* Default: leave a little headroom under the 15m create / Lambda window. */
+    return 14 * 60 * 1000;
+  })();
+  const deadline = Date.now() + budgetMs;
+  let attempt = 0;
+  let lastErr: unknown;
+
+  while (Date.now() < deadline) {
+    attempt += 1;
+    try {
+      return await run();
+    } catch (err) {
+      lastErr = err;
+      const message = err instanceof Error ? err.message : String(err);
+      if (!isGrokContentModerationDetail(message)) throw err;
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) break;
+      const wait = Math.min(30_000, Math.max(800, 400 * attempt), remaining);
+      console.warn(
+        `${label} content moderation reject — retry ${attempt}, wait ${wait}ms`,
+        message
+      );
+      await sleep(wait);
+    }
+  }
+
+  throw lastErr instanceof Error
+    ? lastErr
+    : new Error(`${label} failed after content moderation retries`);
 }
 
 function formatGrokImageEditError(status: number, detail: string): string {
@@ -404,7 +449,7 @@ async function grokImageEditOnce(args: {
 
 /**
  * xAI content moderation often flakes on face→poster edits even with a clean selfie.
- * Retry a couple times before surfacing the error to the user.
+ * Keep retrying moderation rejects until success (or retry budget expires).
  */
 async function grokImageEdit(args: {
   prompt: string | readonly string[];
@@ -413,28 +458,14 @@ async function grokImageEdit(args: {
 }): Promise<Buffer> {
   const apiKey = grokApiKeyOrThrow();
   const prompt = grokPromptText(args.prompt);
-  const maxAttempts = 3;
-  let lastErr: unknown;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await grokImageEditOnce({
-        prompt,
-        images: args.images,
-        aspectRatio: args.aspectRatio,
-        apiKey,
-      });
-    } catch (err) {
-      lastErr = err;
-      const message = err instanceof Error ? err.message : String(err);
-      const moderation = isGrokContentModerationDetail(message);
-      if (!moderation || attempt >= maxAttempts) break;
-      console.warn(`grokImageEdit moderation retry ${attempt}/${maxAttempts}`, message);
-      await new Promise((r) => setTimeout(r, 400 * attempt));
-    }
-  }
-
-  throw lastErr instanceof Error ? lastErr : new Error('Grok image edit failed');
+  return withGrokModerationRetries('grokImageEdit', () =>
+    grokImageEditOnce({
+      prompt,
+      images: args.images,
+      aspectRatio: args.aspectRatio,
+      apiKey,
+    })
+  );
 }
 
 /**
@@ -521,10 +552,6 @@ export async function composePersonalBitcoinAlienPortrait(args: {
 const VIDEO_POLL_MS = 5000;
 const VIDEO_POLL_MAX_MS = 8 * 60 * 1000;
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 function grokVideoErrorMessage(
   payload: {
     error?: { message?: string; code?: string } | string;
@@ -550,37 +577,25 @@ function grokVideoErrorMessage(
  * Image-to-video via xAI Grok Imagine (async generations + poll).
  * Default 480p; metaloop + Season One loop use 720p. GROK_VIDEO_RESOLUTION overrides all.
  */
-export async function generateAlienImageToVideo(args: {
+async function generateAlienImageToVideoOnce(args: {
   imageJpeg: Buffer;
-  prompt: string | readonly string[];
+  prompt: string;
   durationSeconds: number;
-  /** When true, send args.imageJpeg as-is (already prepared JPEG). */
-  skipResize?: boolean;
-  /** Grok resolution: 480p | 720p. Default 480p. */
-  resolution?: '480p' | '720p';
+  resolution: string;
+  apiKey: string;
 }): Promise<Buffer> {
-  const apiKey = grokApiKeyOrThrow();
-  const model =
-    process.env.GROK_VIDEO_MODEL?.trim() || 'grok-imagine-video-1.5-lite';
-  const resolution =
-    process.env.GROK_VIDEO_RESOLUTION?.trim() || args.resolution || '480p';
-  const duration = Math.max(1, Math.min(15, Math.round(args.durationSeconds)));
-  const imageJpeg = args.skipResize
-    ? args.imageJpeg
-    : await toCleanJpeg(args.imageJpeg, 2048);
-
   const startRes = await fetch('https://api.x.ai/v1/videos/generations', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${args.apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model,
-      prompt: grokPromptText(args.prompt),
-      image: { url: toDataUri(imageJpeg) },
-      duration,
-      resolution,
+      model: process.env.GROK_VIDEO_MODEL?.trim() || 'grok-imagine-video-1.5-lite',
+      prompt: args.prompt,
+      image: { url: toDataUri(args.imageJpeg) },
+      duration: args.durationSeconds,
+      resolution: args.resolution,
     }),
   });
 
@@ -609,7 +624,7 @@ export async function generateAlienImageToVideo(args: {
     let pollRes: Response;
     try {
       pollRes = await fetch(`https://api.x.ai/v1/videos/${encodeURIComponent(requestId)}`, {
-        headers: { Authorization: `Bearer ${apiKey}` },
+        headers: { Authorization: `Bearer ${args.apiKey}` },
       });
     } catch (err) {
       transientPollFails += 1;
@@ -669,6 +684,40 @@ export async function generateAlienImageToVideo(args: {
     }
   }
   throw new Error('Grok video generation timed out');
+}
+
+/**
+ * Image-to-video via xAI Grok Imagine (async generations + poll).
+ * Default 480p; metaloop + Season One loop use 720p. GROK_VIDEO_RESOLUTION overrides all.
+ * Content-moderation rejects start a fresh generation until success (retry budget).
+ */
+export async function generateAlienImageToVideo(args: {
+  imageJpeg: Buffer;
+  prompt: string | readonly string[];
+  durationSeconds: number;
+  /** When true, send args.imageJpeg as-is (already prepared JPEG). */
+  skipResize?: boolean;
+  /** Grok resolution: 480p | 720p. Default 480p. */
+  resolution?: '480p' | '720p';
+}): Promise<Buffer> {
+  const apiKey = grokApiKeyOrThrow();
+  const resolution =
+    process.env.GROK_VIDEO_RESOLUTION?.trim() || args.resolution || '480p';
+  const duration = Math.max(1, Math.min(15, Math.round(args.durationSeconds)));
+  const imageJpeg = args.skipResize
+    ? args.imageJpeg
+    : await toCleanJpeg(args.imageJpeg, 2048);
+  const prompt = grokPromptText(args.prompt);
+
+  return withGrokModerationRetries('grokImageToVideo', () =>
+    generateAlienImageToVideoOnce({
+      imageJpeg,
+      prompt,
+      durationSeconds: duration,
+      resolution,
+      apiKey,
+    })
+  );
 }
 
 export async function generateAlienMetaloopVideo(composedJpeg: Buffer): Promise<Buffer> {

@@ -4,14 +4,15 @@ import React from 'react';
 import { useAlienSeasonOneLoopPresent } from '../../../hooks/useAlienSeasonOneLoopPresent';
 
 type AssetMissionHeaderProps = {
-  title: string;
+  /** Kept for call-site compatibility; slogan always says “investments”. */
+  title?: string;
   /** When set, “my” only after a personal Season One loop exists; otherwise “your”. */
   assetId?: string;
   line?: React.ReactNode;
   children?: React.ReactNode;
 };
 
-export default function AssetMissionHeader({ title, assetId, line, children }: AssetMissionHeaderProps) {
+export default function AssetMissionHeader({ assetId, line, children }: AssetMissionHeaderProps) {
   const hasSeasonOneLoop = useAlienSeasonOneLoopPresent(assetId);
   const possessive = assetId && hasSeasonOneLoop ? 'my' : 'your';
 
@@ -43,7 +44,7 @@ export default function AssetMissionHeader({ title, assetId, line, children }: A
                 my
               </span>
             </span>{' '}
-            {title} never loses value
+            investments never lose value
           </>
         )}
       </p>

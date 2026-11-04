@@ -13,7 +13,8 @@ const imageLoader = ({ src, width, quality }: { src: string; width: number; qual
 type AssetGuestLandingProps = {
   cssModifier: string;
   ticker: string;
-  title: string;
+  /** Kept for call-site compatibility; slogan always says “investments”. */
+  title?: string;
   slogan?: string;
   /** When set on Bitcoin guest landing, shown above the trailer. */
   posterSrc?: string;
@@ -26,13 +27,12 @@ type AssetGuestLandingProps = {
   showTrailer?: boolean;
   hideWordmark?: boolean;
   hideSigninPrompt?: boolean;
-  /** When true, mission reads “My {title} investments…”. */
+  /** Legacy; guest mission always uses “your investments”. */
   possessiveMission?: boolean;
 };
 
 export default function AssetGuestLanding({
   cssModifier,
-  title,
   posterSrc,
   posterLoopSrc,
   posterWidth = 3000,
@@ -125,7 +125,7 @@ export default function AssetGuestLanding({
           <span className="asset-guest-landing-mission-tail">
             on a mission to ensure
             <br />
-            your {title} never loses value
+            your investments never lose value
           </span>
         </p>
         <div

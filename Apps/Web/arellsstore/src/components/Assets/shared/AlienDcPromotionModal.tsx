@@ -1,11 +1,8 @@
 'use client';
 
-import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
-import {
-  DC_PROMOTION_VIDEO_URL,
-  DC_PROMO_BEST_RESULTS_GUIDE_SRC,
-} from '../../../lib/alienDcPromotion';
+import { DC_PROMO_BEST_RESULTS_GUIDE_SRC } from '../../../lib/alienDcPromotion';
 
 export type AlienDcPromotionModalProps = {
   open: boolean;
@@ -43,29 +40,11 @@ const AlienDcPromotionModal: React.FC<AlienDcPromotionModalProps> = ({
   onDismiss,
 }) => {
   const titleId = useId();
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [videoReady, setVideoReady] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (!open) {
-      setVideoReady(false);
-    }
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const video = videoRef.current;
-    if (!video) return;
-    video.currentTime = 0;
-    void video.play().catch(() => {
-      /* autoplay may be blocked; muted + playsInline usually ok */
-    });
-  }, [open, videoReady]);
 
   useEffect(() => {
     if (!open || !onDismiss) return;
@@ -100,29 +79,6 @@ const AlienDcPromotionModal: React.FC<AlienDcPromotionModalProps> = ({
           <p id={titleId} className="asset-dc-promo-headline">
             ADD YOUR CHARACTER
           </p>
-          <div className={`asset-dc-promo-frame${videoReady ? ' is-loaded' : ''}`}>
-            <div className="asset-dc-promo-stage">
-              <div
-                className={`asset-dc-promo-loader${videoReady ? ' is-fading' : ''}`}
-                aria-hidden="true"
-              >
-                <div className="asset-dc-promo-loader-ring" />
-              </div>
-              <video
-                ref={videoRef}
-                className={`asset-dc-promo-video${videoReady ? ' is-visible' : ''}`}
-                src={DC_PROMOTION_VIDEO_URL}
-                muted
-                playsInline
-                loop
-                autoPlay
-                preload="auto"
-                onLoadedData={() => setVideoReady(true)}
-                onCanPlay={() => setVideoReady(true)}
-                aria-label="Dynamic characters promotion"
-              />
-            </div>
-          </div>
           <div className="asset-dc-promo-best-results">
             <div className="asset-dc-promo-best-results-guide">
               <img

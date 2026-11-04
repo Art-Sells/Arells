@@ -290,6 +290,7 @@ export async function runAlienGeneratePipeline(
       const key = alienSeasonOneLoopKey(email, assetId, true);
       await deleteQuiet(bucket, key);
       try {
+        /* generateAlien* already retries content-moderation rejects until success. */
         const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOne);
         await assertJobStillCurrent(email, assetId, startedAt);
         await s3()
@@ -307,23 +308,6 @@ export async function runAlienGeneratePipeline(
         const message = err instanceof Error ? err.message : 'seasonone loop failed';
         console.error('alien-generate seasononeloop', err);
         errors.push(message);
-        try {
-          const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOne);
-          await assertJobStillCurrent(email, assetId, startedAt);
-          await s3()
-            .putObject({
-              Bucket: bucket,
-              Key: key,
-              Body: seasonLoop,
-              ContentType: 'video/mp4',
-              ACL: 'private',
-              Metadata: { replacedAt: String(Date.now()) },
-            })
-            .promise();
-          seasonOk = true;
-        } catch (retryErr) {
-          console.error('alien-generate seasononeloop retry', retryErr);
-        }
       }
     }
 
@@ -354,23 +338,6 @@ export async function runAlienGeneratePipeline(
         const message = err instanceof Error ? err.message : 'metaloop failed';
         console.error('alien-generate metaloop', err);
         errors.push(message);
-        try {
-          const metaloop = await generateAlienMetaloopVideo(composed);
-          await assertJobStillCurrent(email, assetId, startedAt);
-          await s3()
-            .putObject({
-              Bucket: bucket,
-              Key: key,
-              Body: metaloop,
-              ContentType: 'video/mp4',
-              ACL: 'private',
-              Metadata: { replacedAt: String(Date.now()) },
-            })
-            .promise();
-          metaloopOk = true;
-        } catch (retryErr) {
-          console.error('alien-generate metaloop retry', retryErr);
-        }
       }
     }
 

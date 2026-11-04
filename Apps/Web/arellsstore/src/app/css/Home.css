@@ -7678,6 +7678,10 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	padding-bottom: 24px;
 }
 
+.blood-overlay-card--alien-creating .blood-overlay-copy {
+	font-weight: 800;
+}
+
 .blood-overlay-creating-spinner {
 	position: relative;
 	width: 72px;

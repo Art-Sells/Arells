@@ -138,10 +138,7 @@ export default function AlienCharacterCreateHost() {
                   )}
                 </div>
                 <p id={creatingTitleId} className="blood-overlay-copy">
-                  <span className="blood-overlay-line">Creating your character</span>
-                  <span className="blood-overlay-line">feel free to continue</span>
-                  <span className="blood-overlay-line">to browse Arells</span>
-                  <span className="blood-overlay-line">while you wait.</span>
+                  <span className="blood-overlay-line">Creating Character</span>
                 </p>
                 <div className="blood-overlay-creating-eta" aria-label="Estimated completion time">
                   <span className="blood-overlay-creating-eta-line">estimated</span>
