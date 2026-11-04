@@ -66,7 +66,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     actionRaw === 'fail' ||
     actionRaw === 'phase' ||
     actionRaw === 'arm' ||
-    actionRaw === 'ack-success'
+    actionRaw === 'ack-success' ||
+    actionRaw === 'ack-error'
       ? actionRaw
       : 'arm';
 
@@ -88,6 +89,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const job: AlienGenerateJob = {
         ...prev,
         successDismissedAt: now,
+        updatedAt: now,
+      };
+      await writeAlienGenerateJob(job);
+      return res.status(200).json({ ok: true, job });
+    }
+
+    if (action === 'ack-error') {
+      const prev = await readAlienGenerateJob(allowed, asset);
+      if (!prev || prev.status !== 'error') {
+        return res.status(200).json({ ok: true, job: prev });
+      }
+      const startedAtBody =
+        typeof req.body?.startedAt === 'string' ? req.body.startedAt.trim() : '';
+      if (startedAtBody && prev.startedAt && startedAtBody !== prev.startedAt) {
+        return res.status(200).json({ ok: true, job: prev });
+      }
+      if (prev.errorDismissedAt) {
+        return res.status(200).json({ ok: true, job: prev });
+      }
+      const now = new Date().toISOString();
+      const job: AlienGenerateJob = {
+        ...prev,
+        errorDismissedAt: now,
         updatedAt: now,
       };
       await writeAlienGenerateJob(job);

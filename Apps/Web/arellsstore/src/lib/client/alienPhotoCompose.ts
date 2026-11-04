@@ -217,8 +217,8 @@ const GENERATE_POLL_MS = 2000;
  * Fresh “running” window for remote-resume attach.
  * Full stills + videos can exceed this — after that, resume must re-drive only if abandoned.
  */
-/** Absolute wait for worker Grok stills + two videos. */
-export const ALIEN_GENERATE_STALE_MS = 20 * 60 * 1000;
+/** Absolute wait for worker Grok stills + two videos (~Lambda sync cap). */
+export const ALIEN_GENERATE_STALE_MS = 15 * 60 * 1000;
 /**
  * No phase/finalize update within this window ⇒ the driving tab died.
  * Only then may another tab start a second client pipeline (never for worker jobs).
@@ -238,6 +238,8 @@ export type AlienGenerateJobClient = {
   finishedAt?: string;
   /** ISO — user closed the success modal for this completed job. */
   successDismissedAt?: string;
+  /** ISO — user closed the create-failed modal for this job. */
+  errorDismissedAt?: string;
 };
 
 function sleep(ms: number): Promise<void> {
@@ -282,6 +284,43 @@ export function isAlienGenerateJobPendingSuccess(
   return ageMs >= 0 && ageMs < 7 * 24 * 60 * 60 * 1000;
 }
 
+/** Failed job whose error modal was never closed — reopen on any signed-in visit. */
+export function isAlienGenerateJobPendingError(
+  job: AlienGenerateJobClient | null | undefined
+): boolean {
+  if (!job || job.status !== 'error') return false;
+  if (job.errorDismissedAt) return false;
+  const finishedMs = Date.parse(job.finishedAt || job.updatedAt || job.startedAt || '') || 0;
+  if (!finishedMs) return true;
+  const ageMs = Date.now() - finishedMs;
+  return ageMs >= 0 && ageMs < 7 * 24 * 60 * 60 * 1000;
+}
+
+/** Running longer than the hard create window — treat as failed for UI + job JSON. */
+export function isAlienGenerateJobTimedOut(
+  job: AlienGenerateJobClient | null | undefined
+): boolean {
+  if (!job || job.status !== 'running') return false;
+  const startedMs = Date.parse(job.startedAt || '') || 0;
+  if (!startedMs) return false;
+  const ageMs = Date.now() - startedMs;
+  return ageMs >= ALIEN_GENERATE_STALE_MS;
+}
+
+/** Worker armed but never wrote progress — Lambda likely crashed (e.g. bad S3 keys). */
+export function isAlienGenerateWorkerNeverStarted(
+  job: AlienGenerateJobClient | null | undefined,
+  graceMs = 90_000
+): boolean {
+  if (!job || job.status !== 'running' || job.driver !== 'worker') return false;
+  const progress = typeof job.progress === 'number' ? job.progress : 0;
+  if (progress > 5) return false;
+  const startedMs = Date.parse(job.startedAt || '') || 0;
+  if (!startedMs) return false;
+  const ageMs = Date.now() - startedMs;
+  return ageMs >= graceMs;
+}
+
 export async function ackAlienGenerateSuccess(args: {
   email: string;
   assetId: string;
@@ -291,6 +330,34 @@ export async function ackAlienGenerateSuccess(args: {
     email: args.email,
     asset: args.assetId,
     action: 'ack-success',
+    ...(args.startedAt ? { startedAt: args.startedAt } : {}),
+  });
+}
+
+export async function ackAlienGenerateError(args: {
+  email: string;
+  assetId: string;
+  startedAt?: string | null;
+}): Promise<void> {
+  await postJson('/api/user/alien-generate', {
+    email: args.email,
+    asset: args.assetId,
+    action: 'ack-error',
+    ...(args.startedAt ? { startedAt: args.startedAt } : {}),
+  });
+}
+
+export async function failAlienGenerateJob(args: {
+  email: string;
+  assetId: string;
+  error: string;
+  startedAt?: string | null;
+}): Promise<void> {
+  await postJson('/api/user/alien-generate', {
+    email: args.email,
+    asset: args.assetId,
+    action: 'fail',
+    error: args.error,
     ...(args.startedAt ? { startedAt: args.startedAt } : {}),
   });
 }
@@ -442,6 +509,7 @@ export async function awaitAlienGenerateJob(args: {
   const onProgress = createMonotonicProgress(args.onProgress);
   const hardDeadline = Date.now() + ALIEN_GENERATE_STALE_MS;
   let job: AlienGenerateJobClient | null = args.initialJob ?? null;
+  let workerRequeued = false;
   onProgress(progressForRemotePhase(job));
 
   while (Date.now() < hardDeadline) {
@@ -457,6 +525,32 @@ export async function awaitAlienGenerateJob(args: {
         typeof job.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
       return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
     }
+    /*
+     * Worker armed but never left 1% — Lambda never wrote. Re-enqueue once; if still
+     * stuck, fail so reopen doesn't spin forever (YouTube-style needs a live worker).
+     */
+    if (isAlienGenerateWorkerNeverStarted(job, 90_000)) {
+      if (!workerRequeued) {
+        workerRequeued = true;
+        await postJson('/api/user/alien-generate', {
+          email,
+          asset: assetId,
+          action: 'arm',
+          force: false,
+        }).catch(() => undefined);
+      } else if (isAlienGenerateWorkerNeverStarted(job, 180_000)) {
+        const message =
+          'Character worker failed to start — check Lambda execution role / remove dead AWS keys from the worker env';
+        await postJson('/api/user/alien-generate', {
+          email,
+          asset: assetId,
+          action: 'fail',
+          error: message,
+          ...(job?.startedAt ? { startedAt: job.startedAt } : {}),
+        }).catch(() => undefined);
+        throw new Error(message);
+      }
+    }
     onProgress(progressForRemotePhase(job));
     await sleep(GENERATE_POLL_MS);
     job = await fetchAlienGenerateJob(email, assetId);
@@ -470,13 +564,23 @@ export async function awaitAlienGenerateJob(args: {
     throw new Error(job.error || 'Character generation failed');
   }
 
+  const startedAt =
+    typeof job?.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
+
   if (job?.driver === 'worker') {
-    throw new Error('Character generation timed out — try again');
+    const message =
+      'Character creation timed out after 15 minutes — try again';
+    await postJson('/api/user/alien-generate', {
+      email,
+      asset: assetId,
+      action: 'fail',
+      error: message,
+      ...(startedAt ? { startedAt } : {}),
+    }).catch(() => undefined);
+    throw new Error(message);
   }
 
   /* Absolute age exceeded — last chance to finish from the selfie on S3 (client driver). */
-  const startedAt =
-    typeof job?.startedAt === 'string' && job.startedAt.trim() ? job.startedAt.trim() : null;
   return runAlienGeneratePipeline({ email, assetId, shareId, startedAt, onProgress });
 }
 

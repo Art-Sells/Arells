@@ -6,6 +6,9 @@ let s3Singleton: AWS.S3 | null = null;
 /**
  * S3 for server / API routes. Reads WS_* (or standard AWS_* fallbacks).
  * If access keys are unset, credentials are omitted so the SDK can use the host IAM role (e.g. Amplify compute role).
+ *
+ * Alien-generate worker Lambda: always use the execution role. Static WS_ or AWS_ access
+ * keys in that function's env override the role; dead keys leave jobs stuck at 1% forever.
  */
 export function getServerS3(): AWS.S3 {
   if (s3Singleton) return s3Singleton;
@@ -19,8 +22,12 @@ export function getServerS3(): AWS.S3 {
   const secretAccessKey =
     process.env.WS_SECRET_ACCESS_KEY?.trim() || process.env.AWS_SECRET_ACCESS_KEY?.trim() || '';
 
+  const functionName = process.env.AWS_LAMBDA_FUNCTION_NAME || '';
+  const preferIamRole =
+    process.env.ARELLS_S3_USE_IAM_ROLE?.trim() === '1' || /alien-generate/i.test(functionName);
+
   const config: AWS.S3.ClientConfiguration = { region };
-  if (accessKeyId && secretAccessKey) {
+  if (!preferIamRole && accessKeyId && secretAccessKey) {
     config.accessKeyId = accessKeyId;
     config.secretAccessKey = secretAccessKey;
   }

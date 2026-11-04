@@ -24,4 +24,8 @@ node workers/alien-generate/pack-zip.mjs
 
 Handler: `index.handler`
 
-Lambda env: `S3_BUCKET_NAME`, `GROK_API_KEY`, `WS_REGION`
+Lambda env: `S3_BUCKET_NAME`, `GROK_API_KEY`, `WS_REGION` (and region via AWS).
+
+**Do not set `WS_ACCESS_KEY_ID` / `AWS_ACCESS_KEY_ID` on this function** — they override the
+execution role. Dead keys leave create stuck at 1% forever. Give the role S3 read/write on
+`arellsusers` instead.

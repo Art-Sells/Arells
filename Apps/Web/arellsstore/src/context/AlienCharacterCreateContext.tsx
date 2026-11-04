@@ -12,14 +12,18 @@ import React, {
 } from 'react';
 import { overlayStyleForAsset } from '../lib/client/alienCreateTheme';
 import {
+  ackAlienGenerateError,
   ackAlienGenerateSuccess,
   alienCreateFailureStage,
   awaitAlienGenerateJob,
   composeAlienFromPhoto,
   createMonotonicProgress,
+  failAlienGenerateJob,
   fetchAlienGenerateJob,
   isAlienGenerateJobFreshRunning,
+  isAlienGenerateJobPendingError,
   isAlienGenerateJobPendingSuccess,
+  isAlienGenerateJobTimedOut,
   progressForRemotePhase,
   type AlienCreateFailureStage,
   type AlienGenerateJobClient,
@@ -44,6 +48,8 @@ type AlienCreateError = {
   shareId: string | null;
   message?: string | null;
   stage?: AlienCreateFailureStage;
+  /** Job startedAt — used to ack dismiss for this exact failed create. */
+  jobStartedAt?: string | null;
 };
 
 type AlienCharacterCreateContextValue = {
@@ -106,6 +112,8 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   const creatingNameRef = useRef<string | null>(null);
   /** Job startedAt currently shown as success — skip re-opening the same modal. */
   const successJobStartedAtRef = useRef<string | null>(null);
+  /** Job startedAt currently shown as error — skip re-opening the same modal. */
+  const errorJobStartedAtRef = useRef<string | null>(null);
   /** Stable across pathname/session churn so remote-resume isn't cancelled mid-create. */
   const shareIdRef = useRef(shareId);
   shareIdRef.current = shareId;
@@ -133,8 +141,21 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   }, []);
 
   const dismissError = useCallback(() => {
+    setError((prev) => {
+      if (prev) {
+        const ackEmail = emailRef.current;
+        if (ackEmail) {
+          void ackAlienGenerateError({
+            email: ackEmail,
+            assetId: prev.assetId,
+            startedAt: prev.jobStartedAt,
+          }).catch((err) => console.error('alien error ack', err));
+        }
+      }
+      errorJobStartedAtRef.current = null;
+      return null;
+    });
     setErrorOpen(false);
-    setError(null);
     setStatus((prev) => (prev === 'error' ? 'idle' : prev));
   }, []);
 
@@ -187,13 +208,17 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       shareId?: string | null;
       message?: string | null;
       stage?: AlienCreateFailureStage;
+      jobStartedAt?: string | null;
     }) => {
+      const jobStartedAt = args.jobStartedAt?.trim() || null;
+      errorJobStartedAtRef.current = jobStartedAt;
       setError({
         assetId: args.assetId,
         assetName: args.assetName,
         shareId: args.shareId ?? null,
         message: args.message ?? null,
         stage: args.stage ?? 'generate',
+        jobStartedAt,
       });
       setErrorOpen(true);
       setStatus('error');
@@ -282,12 +307,24 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
           });
         } catch (err) {
           console.error('alien character create', err);
+          if (!jobStartedAt) {
+            try {
+              const job = await fetchAlienGenerateJob(args.email, args.assetId);
+              jobStartedAt =
+                typeof job?.startedAt === 'string' && job.startedAt.trim()
+                  ? job.startedAt.trim()
+                  : null;
+            } catch {
+              /* ack still optional */
+            }
+          }
           finishCreateError({
             assetId: args.assetId,
             assetName: name,
             shareId: args.shareId,
             message: err instanceof Error ? err.message : 'Unknown create error',
             stage: alienCreateFailureStage(err),
+            jobStartedAt,
           });
         } finally {
           clearCreatingSlot();
@@ -378,10 +415,43 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
               shareId: resumeShareId,
               message: err instanceof Error ? err.message : 'Unknown create error',
               stage: 'generate',
+              jobStartedAt,
             });
           } finally {
             clearCreatingSlot();
           }
+          return;
+        }
+
+        if (isAlienGenerateJobPendingError(job) || isAlienGenerateJobTimedOut(job)) {
+          if (
+            jobStartedAt &&
+            errorJobStartedAtRef.current &&
+            errorJobStartedAtRef.current === jobStartedAt
+          ) {
+            return;
+          }
+          let message =
+            typeof job.error === 'string' && job.error.trim()
+              ? job.error.trim()
+              : 'Couldn’t finish character create';
+          if (isAlienGenerateJobTimedOut(job)) {
+            message = 'Character creation timed out after 15 minutes — try again';
+            await failAlienGenerateJob({
+              email,
+              assetId: asset.id,
+              error: message,
+              startedAt: jobStartedAt,
+            }).catch(() => undefined);
+          }
+          finishCreateError({
+            assetId: asset.id,
+            assetName: name,
+            shareId: resumeShareId,
+            message,
+            stage: 'generate',
+            jobStartedAt,
+          });
           return;
         }
 
@@ -437,6 +507,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
             shareId: resumeShareId,
             message: err instanceof Error ? err.message : 'Unknown create error',
             stage: 'generate',
+            jobStartedAt,
           });
         } finally {
           /* Always clear — cancelled resume used to skip this and freeze the badge. */

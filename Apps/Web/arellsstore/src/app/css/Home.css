@@ -7731,6 +7731,45 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	user-select: none;
 }
 
+.blood-overlay-creating-eta {
+	width: 100%;
+	max-width: 200px;
+	margin: 0 auto;
+	padding: 10px 12px 11px;
+	box-sizing: border-box;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 45%,
+		transparent
+	);
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	text-align: center;
+}
+
+.blood-overlay-creating-eta-line {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.2px;
+	line-height: 1.25;
+	color: rgba(40, 40, 40, 0.72);
+	text-transform: lowercase;
+}
+
+.blood-overlay-creating-eta-time {
+	display: block;
+	margin-top: 4px;
+	font-size: 13px;
+	font-weight: 800;
+	letter-spacing: -0.2px;
+	line-height: 1.2;
+	color: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
 .blood-overlay-card--alien-meta {
 	width: 280px;
 	height: auto;

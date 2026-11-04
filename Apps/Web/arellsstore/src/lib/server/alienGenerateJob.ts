@@ -52,9 +52,16 @@ export type AlienGenerateJob = {
    * Until then, any signed-in session should reopen that success modal for this job.
    */
   successDismissedAt?: string;
+  /**
+   * Set when the user closes the create-failed modal.
+   * Until then, any signed-in session should reopen that error modal for this job.
+   */
+  errorDismissedAt?: string;
 };
 
-const s3 = getServerS3();
+function s3() {
+  return getServerS3();
+}
 
 export function alienGenerateJobKey(email: string, assetId: string): string {
   return `users/${normalizeEmailKey(email)}/aliens/${assetId}-generate-job.json`;
@@ -66,7 +73,7 @@ export async function readAlienGenerateJob(
 ): Promise<AlienGenerateJob | null> {
   const bucket = s3BucketNameOrThrow();
   try {
-    const obj = await s3
+    const obj = await s3()
       .getObject({ Bucket: bucket, Key: alienGenerateJobKey(email, assetId) })
       .promise();
     const body = obj.Body;
@@ -81,7 +88,7 @@ export async function readAlienGenerateJob(
 
 export async function writeAlienGenerateJob(job: AlienGenerateJob): Promise<void> {
   const bucket = s3BucketNameOrThrow();
-  await s3
+  await s3()
     .putObject({
       Bucket: bucket,
       Key: alienGenerateJobKey(job.email, job.assetId),
@@ -93,7 +100,9 @@ export async function writeAlienGenerateJob(job: AlienGenerateJob): Promise<void
 }
 
 async function loadSelfie(bucket: string, email: string, asset: string): Promise<Buffer> {
-  const selfieObj = await s3.getObject({ Bucket: bucket, Key: alienPhotoKey(email, asset) }).promise();
+  const selfieObj = await s3()
+    .getObject({ Bucket: bucket, Key: alienPhotoKey(email, asset) })
+    .promise();
   const selfieBody = selfieObj.Body;
   if (!selfieBody) {
     throw Object.assign(new Error('Upload a face photo first'), { code: 'NoSuchKey' });
@@ -108,7 +117,7 @@ async function loadSelfie(bucket: string, email: string, asset: string): Promise
 }
 
 async function loadJpeg(bucket: string, key: string): Promise<Buffer> {
-  const obj = await s3.getObject({ Bucket: bucket, Key: key }).promise();
+  const obj = await s3().getObject({ Bucket: bucket, Key: key }).promise();
   const body = obj.Body;
   if (!body) throw Object.assign(new Error('Missing image'), { code: 'NoSuchKey' });
   return Buffer.isBuffer(body) ? body : Buffer.from(body as ArrayBuffer);
@@ -116,7 +125,7 @@ async function loadJpeg(bucket: string, key: string): Promise<Buffer> {
 
 async function deleteQuiet(bucket: string, key: string): Promise<void> {
   try {
-    await s3.deleteObject({ Bucket: bucket, Key: key }).promise();
+    await s3().deleteObject({ Bucket: bucket, Key: key }).promise();
   } catch {
     /* missing is fine */
   }
@@ -222,7 +231,7 @@ export async function runAlienGeneratePipeline(
       colorRef: portraitColor.buffer,
     });
     await assertJobStillCurrent(email, assetId, startedAt);
-    await s3
+    await s3()
       .putObject({
         Bucket: bucket,
         Key: alienPortraitKey(email, assetId, true),
@@ -239,7 +248,7 @@ export async function runAlienGeneratePipeline(
       iris: portrait,
     });
     await assertJobStillCurrent(email, assetId, startedAt);
-    await s3
+    await s3()
       .putObject({
         Bucket: bucket,
         Key: alienSeasonOneKey(email, assetId, true),
@@ -258,7 +267,7 @@ export async function runAlienGeneratePipeline(
       portrait,
     });
     await assertJobStillCurrent(email, assetId, startedAt);
-    await s3
+    await s3()
       .putObject({
         Bucket: bucket,
         Key: alienComposedKey(email, assetId, true),
@@ -283,7 +292,7 @@ export async function runAlienGeneratePipeline(
       try {
         const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOne);
         await assertJobStillCurrent(email, assetId, startedAt);
-        await s3
+        await s3()
           .putObject({
             Bucket: bucket,
             Key: key,
@@ -301,7 +310,7 @@ export async function runAlienGeneratePipeline(
         try {
           const seasonLoop = await generateAlienSeasonOneLoopVideo(seasonOne);
           await assertJobStillCurrent(email, assetId, startedAt);
-          await s3
+          await s3()
             .putObject({
               Bucket: bucket,
               Key: key,
@@ -330,7 +339,7 @@ export async function runAlienGeneratePipeline(
       try {
         const metaloop = await generateAlienMetaloopVideo(composed);
         await assertJobStillCurrent(email, assetId, startedAt);
-        await s3
+        await s3()
           .putObject({
             Bucket: bucket,
             Key: key,
@@ -348,7 +357,7 @@ export async function runAlienGeneratePipeline(
         try {
           const metaloop = await generateAlienMetaloopVideo(composed);
           await assertJobStillCurrent(email, assetId, startedAt);
-          await s3
+          await s3()
             .putObject({
               Bucket: bucket,
               Key: key,

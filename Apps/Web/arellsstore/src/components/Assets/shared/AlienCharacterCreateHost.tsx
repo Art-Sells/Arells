@@ -143,6 +143,11 @@ export default function AlienCharacterCreateHost() {
                   <span className="blood-overlay-line">to browse Arells</span>
                   <span className="blood-overlay-line">while you wait.</span>
                 </p>
+                <div className="blood-overlay-creating-eta" aria-label="Estimated completion time">
+                  <span className="blood-overlay-creating-eta-line">estimated</span>
+                  <span className="blood-overlay-creating-eta-line">completion time</span>
+                  <span className="blood-overlay-creating-eta-time">5-10~ minutes</span>
+                </div>
                 <button
                   type="button"
                   className="asset-range-button blood-ok"
