@@ -14518,6 +14518,12 @@ button.is-nav-loading > *:not(.nav-control-spinner),
 	pointer-events: none;
 }
 
+/* View More News sits on solid orange — the default orange ring disappears. */
+.tbar-more--hub-link a.is-nav-loading .nav-control-spinner {
+	border: 2px solid rgba(255, 255, 255, 0.55);
+	border-top-color: #fff;
+}
+
 /* Asset badge chips: keep chip size, hide title ink, show spinner.
    Specificity must beat `.…chip.asset-action-button--bitcoin` color !important. */
 a.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
