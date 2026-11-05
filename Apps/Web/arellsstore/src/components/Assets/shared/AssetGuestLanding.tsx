@@ -27,7 +27,7 @@ type AssetGuestLandingProps = {
   showTrailer?: boolean;
   hideWordmark?: boolean;
   hideSigninPrompt?: boolean;
-  /** Legacy; guest mission always uses “your investments”. */
+  /** Legacy; guest mission says “investments”. */
   possessiveMission?: boolean;
 };
 
@@ -125,7 +125,7 @@ export default function AssetGuestLanding({
           <span className="asset-guest-landing-mission-tail">
             on a mission to ensure
             <br />
-            your investments never lose value
+            investments never lose value
           </span>
         </p>
         <div
