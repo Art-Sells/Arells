@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import BitcoinPageClient from '../../../components/Assets/Crypto/Bitcoin/BitcoinPageClient';
-import { resolveReferrerEmailFromCode } from '../../../lib/auth/referral';
+import { ensureReferralCodeForUser, resolveReferrerEmailFromCode } from '../../../lib/auth/referral';
+import { getSessionFromAppCookies } from '../../../lib/auth/session';
 import { publicAlienImagePath } from '../../../lib/assets/assetSharePath';
 import {
   buildCryptoAssetPageMetadata,
@@ -86,7 +87,17 @@ const BitcoinSharePage = async ({ params }: PageProps) => {
 
   const email = await resolveReferrerEmailFromCode(shareId);
   if (!email) {
-    redirect('/bitcoin');
+    const session = await getSessionFromAppCookies();
+    let own = '';
+    if (session?.email) {
+      try {
+        own = (await ensureReferralCodeForUser(session.email)).trim().toLowerCase();
+      } catch (err) {
+        console.error('bitcoin share own id', err);
+      }
+    }
+    // /bitcoin sends a signed-in user here. Bouncing back to /bitcoin loops forever.
+    if (own !== shareId) redirect('/bitcoin');
   }
 
   const { title, description } = getCryptoAssetPageSeo(assetId);

@@ -51,6 +51,8 @@ export default function BitcoinSeasonTeaser() {
   const showStill = showStillLayer && stillLoaded;
   const frameReady =
     mediaReady && ((playbackEnabled ? videoReady : stillLoaded) || showStill || stillLoaded);
+  /** No personal still: same 2660×382 frame as the stock Season One poster. */
+  const stockSeasonFrame = !stillSrc.startsWith('blob:');
 
   const applyStockSeasonOne = useCallback(() => {
     setStillSrc((prev) => {
@@ -200,9 +202,9 @@ export default function BitcoinSeasonTeaser() {
       <div className="asset-bitcoin-season-teaser-show">
         <div className="asset-bitcoin-season-teaser-season">
           <div
-            className={`asset-bitcoin-season-teaser-frame${frameReady ? ' is-loaded' : ''}${
-              showStill ? ' is-still' : ''
-            }${isHandoff ? ' is-handoff' : ''}`}
+            className={`asset-bitcoin-season-teaser-frame${stockSeasonFrame ? ' is-stock' : ''}${
+              frameReady ? ' is-loaded' : ''
+            }${showStill ? ' is-still' : ''}${isHandoff ? ' is-handoff' : ''}`}
           >
             {/* Same media + black-plate structure as launch / AssetGuestLanding */}
             <div className="asset-bitcoin-season-teaser-media">
@@ -238,8 +240,8 @@ export default function BitcoinSeasonTeaser() {
                   key={stillSrc}
                   src={stillSrc}
                   alt="Season One"
-                  width={4561}
-                  height={1091}
+                  width={stockSeasonFrame ? 2660 : 4561}
+                  height={stockSeasonFrame ? 382 : 1091}
                   className={`asset-bitcoin-season-teaser-img${showStill ? ' is-visible' : ''}${
                     stillFadingOut ? ' is-done' : ''
                   }`}

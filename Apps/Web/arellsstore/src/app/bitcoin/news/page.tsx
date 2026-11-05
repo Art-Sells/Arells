@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
+import { STOCK_SQUARE_METAPOSTER_SRC } from '../../../lib/assets/assetSharePath';
 import { iconAssetUrl as u } from '../../../lib/iconAssetUrl';
 import BitcoinNewsPageClient from './BitcoinNewsPageClient';
 
 const path = '/bitcoin/news';
 const title = 'Bitcoin News';
 /** Same metaposter as the Bitcoin asset page. */
-const banner =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg';
+const banner = STOCK_SQUARE_METAPOSTER_SRC;
 /** Same favicon as the Bitcoin asset page. */
 const favicon = u('/images/favicons/BtcBadge.svg');
 

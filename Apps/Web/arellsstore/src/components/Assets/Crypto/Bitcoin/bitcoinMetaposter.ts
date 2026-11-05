@@ -1,8 +1,11 @@
-import { publicAlienImagePath, publicAlienVideoPath } from '../../../../lib/assets/assetSharePath';
+import {
+  publicAlienImagePath,
+  publicAlienVideoPath,
+  STOCK_GUEST_METAPOSTER_SRC,
+} from '../../../../lib/assets/assetSharePath';
 
 /** Same stock launch poster as the Bitcoin guest page (no character yet). */
-export const BITCOIN_GUEST_METAPOSTER_SRC =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
+export const BITCOIN_GUEST_METAPOSTER_SRC = STOCK_GUEST_METAPOSTER_SRC;
 
 export const BITCOIN_GUEST_METAPOSTER_LOOP =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +

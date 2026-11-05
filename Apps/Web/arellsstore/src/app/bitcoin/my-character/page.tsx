@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { STOCK_SQUARE_METAPOSTER_SRC } from '../../../lib/assets/assetSharePath';
 import { iconAssetUrl as u } from '../../../lib/iconAssetUrl';
 import BitcoinMyCharacterPageClient from './BitcoinMyCharacterPageClient';
 

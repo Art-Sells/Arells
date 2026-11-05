@@ -1811,6 +1811,10 @@ a.asset-alien-photo-hit {
 	aspect-ratio: 4561 / 1091;
 }
 
+.asset-bitcoin-season-teaser-frame.is-stock {
+	aspect-ratio: 2660 / 382;
+}
+
 .asset-bitcoin-season-teaser-frame::before,
 .asset-bitcoin-season-teaser-frame::after {
 	content: none;

@@ -25,6 +25,7 @@ import { useAssetSummaryCircleLoader } from '../../shared/useAssetSummaryCircleL
 import BitcoinChart from './BitcoinChart';
 import BitcoinSeasonTeaser from './BitcoinSeasonTeaser';
 import TBARDaily from '../TBAR/Daily';
+import { useBitcoinGuestCharacterMedia } from '../../../../hooks/useBitcoinGuestCharacterMedia';
 import { useGuestPreview } from '../../../../hooks/useGuestPreview';
 import {
   publicAlienImagePath,
@@ -81,46 +82,7 @@ const VavityBitcoin: React.FC = () => {
   const guestPreview = useGuestPreview();
   const isGuestView = guestPreview || (!bitcoinEmptyPreview && !isSignedIn && !email);
   const pathShareId = useMemo(() => bitcoinPathShareId(pathname), [pathname]);
-  // Optimistic: show share poster/loop on first paint; demote only if HEAD says missing.
-  const [sharePosterReady, setSharePosterReady] = useState(() => Boolean(pathShareId));
-  const [shareLoopReady, setShareLoopReady] = useState(() => Boolean(pathShareId));
-  const [shareMediaBust, setShareMediaBust] = useState(() => Date.now());
-
-  useEffect(() => {
-    if (!isGuestView || !pathShareId) {
-      setSharePosterReady(false);
-      setShareLoopReady(false);
-      return;
-    }
-    let cancelled = false;
-    const bust = Date.now();
-    setShareMediaBust(bust);
-    setSharePosterReady(true);
-    setShareLoopReady(true);
-    const loopUrl = publicAlienVideoPath({
-      shareId: pathShareId,
-      asset: 'bitcoin',
-      kind: 'guestloop',
-      cacheBust: bust,
-    });
-    void (async () => {
-      try {
-        // Keep character composed poster even if HEAD flakes; only demote missing loop.
-        const loopHead = await fetch(loopUrl, { method: 'HEAD', cache: 'no-store' });
-        if (cancelled) return;
-        setSharePosterReady(true);
-        setShareLoopReady(loopHead.ok);
-      } catch {
-        if (!cancelled) {
-          setSharePosterReady(true);
-          setShareLoopReady(false);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [isGuestView, pathShareId]);
+  const shareGuest = useBitcoinGuestCharacterMedia(pathShareId, isGuestView);
   const summaryCircleLoader = useAssetSummaryCircleLoader();
   const summaryCircleLoaderDismissRef = useRef<(() => void) | null>(null);
   summaryCircleLoaderDismissRef.current = summaryCircleLoader.dismissOnSummaryExpandComplete;
@@ -3687,22 +3649,22 @@ const VavityBitcoin: React.FC = () => {
   ]);
 
   if (isGuestView) {
-    const useShareLoop = Boolean(pathShareId && shareLoopReady);
-    const guestPosterSrc = pathShareId
+    const personalGuest = Boolean(pathShareId && shareGuest.personal);
+    const guestPosterSrc = personalGuest
       ? publicAlienImagePath({
-          shareId: pathShareId,
+          shareId: pathShareId as string,
           asset: 'bitcoin',
           kind: 'composed',
-          cacheBust: shareMediaBust,
+          cacheBust: shareGuest.bust,
         })
       : PREMIER_POSTER;
-    const guestLoopSrc = pathShareId
-      ? useShareLoop
+    const guestLoopSrc = personalGuest
+      ? shareGuest.loopReady
         ? publicAlienVideoPath({
-            shareId: pathShareId,
+            shareId: pathShareId as string,
             asset: 'bitcoin',
             kind: 'guestloop',
-            cacheBust: shareMediaBust,
+            cacheBust: shareGuest.bust,
           })
         : undefined
       : PREMIER_POSTER_LOOP;
@@ -3714,12 +3676,12 @@ const VavityBitcoin: React.FC = () => {
         posterSrc={guestPosterSrc}
         posterLoopSrc={guestLoopSrc}
         posterWidth={2000}
-        posterHeight={pathShareId ? 2000 : 1166}
+        posterHeight={personalGuest ? 2000 : 1166}
         posterAlt="The Bitcoin Alien Race"
         smallIcon
-        showTrailer={!pathShareId}
+        showTrailer={!personalGuest}
         hideWordmark
-        possessiveMission={Boolean(pathShareId)}
+        possessiveMission={personalGuest}
       />
     );
   }

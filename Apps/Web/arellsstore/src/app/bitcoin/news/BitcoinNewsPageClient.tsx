@@ -11,6 +11,7 @@ import AssetSummaryCircleLoader from '../../../components/Assets/shared/AssetSum
 import { useAssetSummaryCircleLoader } from '../../../components/Assets/shared/useAssetSummaryCircleLoader';
 import { useUser } from '../../../context/UserContext';
 import { useTBAR } from '../../../components/Assets/Crypto/TBAR/useTBAR';
+import { useBitcoinGuestCharacterMedia } from '../../../hooks/useBitcoinGuestCharacterMedia';
 import { useGuestPreview } from '../../../hooks/useGuestPreview';
 import {
   assetSharePath,
@@ -82,10 +83,7 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
   usePendingNavHref();
   const bitcoinBadgeHref = assetSharePath('/bitcoin', shareId);
   const bitcoinBadgeLoading = isPendingNavTarget(bitcoinBadgeHref);
-  // Optimistic personal metaposter on shared news URLs (same as /bitcoin/{shareId}).
-  const [sharePosterReady, setSharePosterReady] = useState(() => Boolean(pathShareId));
-  const [shareLoopReady, setShareLoopReady] = useState(() => Boolean(pathShareId));
-  const [shareMediaBust, setShareMediaBust] = useState(() => Date.now());
+  const shareGuest = useBitcoinGuestCharacterMedia(pathShareId, showGuest);
   const sectionWrapRef = useRef<HTMLDivElement>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const otherContentRef = useRef<HTMLDivElement>(null);
@@ -108,39 +106,6 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
       router.replace(assetSharePath('/bitcoin/news', shareId));
     }
   }, [authSessionLoading, pathShareId, allowSignedIn, shareId, router]);
-
-  useEffect(() => {
-    if (!showGuest || !pathShareId) {
-      setSharePosterReady(false);
-      setShareLoopReady(false);
-      return;
-    }
-    let cancelled = false;
-    const bust = Date.now();
-    setShareMediaBust(bust);
-    // Always prefer character composed/metaloop for share URLs — never fall back to
-    // stock LaunchPoster just because Amplify HEAD flaked.
-    setSharePosterReady(true);
-    setShareLoopReady(true);
-    const loopUrl = publicAlienVideoPath({
-      shareId: pathShareId,
-      asset: 'bitcoin',
-      kind: 'metaloop',
-      cacheBust: bust,
-    });
-    void (async () => {
-      try {
-        const loopHead = await fetch(loopUrl, { method: 'HEAD', cache: 'no-store' });
-        if (cancelled) return;
-        setShareLoopReady(loopHead.ok);
-      } catch {
-        if (!cancelled) setShareLoopReady(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [showGuest, pathShareId]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -270,22 +235,22 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
   };
 
   if (showGuest) {
-    const useShareLoop = Boolean(pathShareId && shareLoopReady);
-    const guestPosterSrc = pathShareId
+    const personalGuest = Boolean(pathShareId && shareGuest.personal);
+    const guestPosterSrc = personalGuest
       ? publicAlienImagePath({
-          shareId: pathShareId,
+          shareId: pathShareId as string,
           asset: 'bitcoin',
           kind: 'composed',
-          cacheBust: shareMediaBust,
+          cacheBust: shareGuest.bust,
         })
       : PREMIER_POSTER;
-    const guestLoopSrc = pathShareId
-      ? useShareLoop
+    const guestLoopSrc = personalGuest
+      ? shareGuest.loopReady
         ? publicAlienVideoPath({
-            shareId: pathShareId,
+            shareId: pathShareId as string,
             asset: 'bitcoin',
             kind: 'metaloop',
-            cacheBust: shareMediaBust,
+            cacheBust: shareGuest.bust,
           })
         : undefined
       : PREMIER_POSTER_LOOP;
@@ -299,13 +264,13 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
           posterSrc={guestPosterSrc}
           posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={pathShareId ? 2000 : 1166}
+          posterHeight={personalGuest ? 2000 : 1166}
           posterAlt="Bitcoin Alien Race launch poster"
           smallIcon
-          showTrailer={!pathShareId}
+          showTrailer={!personalGuest}
           hideWordmark
-          hideSigninPrompt
-          possessiveMission={Boolean(pathShareId)}
+          hideSigninPrompt={!pathShareId || personalGuest}
+          possessiveMission={personalGuest}
         />
       </div>
     );

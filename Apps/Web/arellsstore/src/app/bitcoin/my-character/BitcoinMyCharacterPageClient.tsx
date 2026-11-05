@@ -11,6 +11,7 @@ import AssetGuestLanding from '../../../components/Assets/shared/AssetGuestLandi
 import AssetQuestionsSupport from '../../../components/Assets/shared/AssetQuestionsSupport';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { useUser } from '../../../context/UserContext';
+import { useBitcoinGuestCharacterMedia } from '../../../hooks/useBitcoinGuestCharacterMedia';
 import { guestPreviewFromLocation, useGuestPreview } from '../../../hooks/useGuestPreview';
 import {
   ALIEN_COMPOSE_DONE_EVENT,
@@ -187,6 +188,10 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const guestPreview = useGuestPreview();
   const allowSignedIn = !authSessionLoading && isSignedIn && !guestPreview;
   const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
+  const shareGuest = useBitcoinGuestCharacterMedia(
+    pathShareId,
+    Boolean(pathShareId && showGuest && guestPreview)
+  );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const updateBtnRef = useRef<HTMLButtonElement | null>(null);
   const [payOpen, setPayOpen] = useState(false);
@@ -581,18 +586,25 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
   /** Signed-in preview of /bitcoin/my-character/{shareId}. */
   if (!authSessionLoading && pathShareId && showGuest && guestPreview) {
-    const guestPosterSrc = publicAlienImagePath({
-      shareId: pathShareId,
-      asset: 'bitcoin',
-      kind: 'composed',
-      cacheBust: posterBust,
-    });
-    const guestLoopSrc = publicAlienVideoPath({
-      shareId: pathShareId,
-      asset: 'bitcoin',
-      kind: 'guestloop',
-      cacheBust: posterBust,
-    });
+    const personalGuest = shareGuest.personal;
+    const guestPosterSrc = personalGuest
+      ? publicAlienImagePath({
+          shareId: pathShareId,
+          asset: 'bitcoin',
+          kind: 'composed',
+          cacheBust: shareGuest.bust,
+        })
+      : PREMIER_POSTER;
+    const guestLoopSrc = personalGuest
+      ? shareGuest.loopReady
+        ? publicAlienVideoPath({
+            shareId: pathShareId,
+            asset: 'bitcoin',
+            kind: 'guestloop',
+            cacheBust: shareGuest.bust,
+          })
+        : undefined
+      : PREMIER_POSTER_LOOP;
     return (
       <div className="asset-page asset-page--bitcoin">
         <header className="asset-header asset-header--bitcoin" />
@@ -603,11 +615,12 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           posterSrc={guestPosterSrc}
           posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={2000}
-          posterAlt="Bitcoin Alien Race launch poster"
+          posterHeight={personalGuest ? 2000 : 1166}
+          posterAlt="The Bitcoin Alien Race"
           smallIcon
+          showTrailer={!personalGuest}
           hideWordmark
-          possessiveMission
+          possessiveMission={personalGuest}
         />
       </div>
     );
