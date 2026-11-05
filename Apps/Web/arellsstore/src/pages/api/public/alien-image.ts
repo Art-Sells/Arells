@@ -48,12 +48,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'HEAD') {
       const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
       res.setHeader('Content-Type', head.ContentType || 'image/jpeg');
-      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=86400');
+      res.setHeader('Cache-Control', 'public, max-age=5, must-revalidate');
       return res.status(200).end();
     }
     const obj = await s3.getObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
     res.setHeader('Content-Type', obj.ContentType || 'image/jpeg');
-    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=86400');
+    res.setHeader('Cache-Control', 'public, max-age=5, must-revalidate');
     return res.status(200).send(obj.Body);
   } catch (err) {
     if (isMissingS3Object(err)) {
