@@ -7323,6 +7323,18 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	margin-top: 10px;
 }
 
+/* Create modal: title sits on the $4.99 box. Update keeps the gap under the video. */
+.blood-overlay-card--character-pay:not(.blood-overlay-card--character-pay-update)
+	.asset-dc-promo-section
+	.asset-character-pay-section {
+	margin-top: 0;
+}
+
+.blood-overlay-card--character-pay:not(.blood-overlay-card--character-pay-update)
+	.asset-dc-promo-headline {
+	margin-bottom: 10px;
+}
+
 .blood-overlay-card--character-pay .asset-dc-promo-section .asset-character-pay-cta {
 	width: 100%;
 	margin-top: 10px;
