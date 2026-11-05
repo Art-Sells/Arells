@@ -18,6 +18,18 @@ function isOnAssetOrCharacterPage(pathname: string, assetId: string): boolean {
   return assetHome.test(pathname) || myCharacter.test(pathname);
 }
 
+/** TEMP: force the success modal open for the flush check. Remove after verify. */
+const TEMP_CHARACTER_SUCCESS_PREVIEW = {
+  assetId: 'bitcoin',
+  assetName: 'Bitcoin',
+  shareId: '115b56be62c3',
+  metaUrl:
+    '/api/public/alien-image?shareId=115b56be62c3&asset=bitcoin&kind=composedsquare',
+  loopUrl:
+    '/api/public/alien-video?shareId=115b56be62c3&asset=bitcoin&kind=metaloop',
+  jobStartedAt: null,
+};
+
 /** Sitewide alien create modals: creating / wait / success / error. */
 export default function AlienCharacterCreateHost() {
   const router = useRouter();
@@ -38,6 +50,7 @@ export default function AlienCharacterCreateHost() {
     dismissSuccess,
     dismissError,
   } = useAlienCharacterCreate();
+  const visibleSuccess = success ?? TEMP_CHARACTER_SUCCESS_PREVIEW;
 
   const [mounted, setMounted] = useState(false);
   const [closingSuccess, setClosingSuccess] = useState(false);
@@ -53,7 +66,7 @@ export default function AlienCharacterCreateHost() {
 
   /** Portal sits on document.body — force asset accents (bitcoin orange, etc.). */
   const themedOverlayStyle = overlayStyleForAsset(
-    creatingAssetId || error?.assetId || success?.assetId || 'bitcoin',
+    creatingAssetId || error?.assetId || visibleSuccess?.assetId || 'bitcoin',
     overlayStyle
   );
 
@@ -66,8 +79,8 @@ export default function AlienCharacterCreateHost() {
   }, []);
 
   const sharePath = assetSharePath(
-    `/${success?.assetId === 'bitcoin' || !success?.assetId ? 'bitcoin' : success.assetId}`,
-    success?.shareId
+    `/${visibleSuccess?.assetId === 'bitcoin' || !visibleSuccess?.assetId ? 'bitcoin' : visibleSuccess.assetId}`,
+    visibleSuccess?.shareId
   );
   const shareHref =
     typeof window !== 'undefined' ? `${window.location.origin}${sharePath}` : sharePath;
@@ -80,7 +93,7 @@ export default function AlienCharacterCreateHost() {
   }, [closingSuccess, dismissSuccess]);
 
   const copyShareLink = useCallback(async () => {
-    if (!success?.shareId) return;
+    if (!visibleSuccess?.shareId) return;
     try {
       await navigator.clipboard.writeText(shareHref);
       setShareCopied(true);
@@ -94,7 +107,7 @@ export default function AlienCharacterCreateHost() {
     } catch (err) {
       console.error('share copy failed', err);
     }
-  }, [success?.shareId, shareHref]);
+  }, [visibleSuccess?.shareId, shareHref]);
 
   const errorAssetId = error?.assetId || 'bitcoin';
   const errorOnAssetSurface = error
@@ -243,7 +256,7 @@ export default function AlienCharacterCreateHost() {
           )
         : null}
 
-      {success
+      {visibleSuccess
         ? createPortal(
             <div className="blood-overlay is-visible" style={themedOverlayStyle} role="presentation">
               <div
@@ -259,9 +272,9 @@ export default function AlienCharacterCreateHost() {
                   </p>
                 </div>
                 <AlienMetaPreview
-                  metaUrl={success.metaUrl}
-                  loopUrl={success.loopUrl}
-                  alt={`${success.assetName} Alien Race launch poster`}
+                  metaUrl={visibleSuccess.metaUrl}
+                  loopUrl={visibleSuccess.loopUrl}
+                  alt={`${visibleSuccess.assetName} Alien Race launch poster`}
                 />
                 <div className="asset-alien-meta-share">
                   <p className="asset-alien-meta-share-title">Share</p>
@@ -270,7 +283,7 @@ export default function AlienCharacterCreateHost() {
                       type="button"
                       className="asset-alien-meta-share-copy"
                       onClick={() => void copyShareLink()}
-                      disabled={!success.shareId}
+                      disabled={!visibleSuccess.shareId}
                       aria-label="Copy share link"
                     >
                       {shareCopied ? 'Copied' : 'COPY'}

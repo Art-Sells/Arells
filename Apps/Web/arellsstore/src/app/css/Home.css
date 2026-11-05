@@ -1551,7 +1551,8 @@ a.asset-alien-photo-hit {
 	opacity: 0.85;
 }
 
-/* Beats `.asset-page-content button:disabled { opacity: 0.6 !important }`. */
+/* Beats `.asset-page-content button:disabled { opacity: 0.6 !important }`.
+   Portrait stays full; only the locked creating button is slightly off. */
 .asset-page-content .asset-alien-photo-slot--bitcoin.is-busy,
 .asset-page-content .asset-alien-photo-slot--bitcoin.is-busy button.asset-alien-photo-hit:disabled {
 	opacity: 1 !important;
@@ -1564,6 +1565,7 @@ a.asset-alien-photo-hit {
 	letter-spacing: -0.3px;
 	line-height: 1.2;
 	text-transform: lowercase;
+	opacity: 0.85;
 }
 
 .asset-alien-photo-creating-word {
@@ -8172,6 +8174,17 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 
 .asset-alien-meta-preview:not(.asset-alien-meta-preview--loop-still).is-visible {
 	opacity: 1;
+}
+
+/* Success modal only: 5px past the frame on every side so cover sits flush under the border. */
+.blood-overlay-card--alien-meta .asset-alien-meta-preview-frame > .asset-alien-meta-preview-video,
+.blood-overlay-card--alien-meta .asset-alien-meta-preview-frame > .asset-alien-meta-preview {
+	position: absolute;
+	inset: -5px;
+	width: calc(100% + 10px) !important;
+	height: calc(100% + 10px) !important;
+	max-width: none;
+	object-fit: cover;
 }
 
 .blood-overlay-card.myinv-accent-border {

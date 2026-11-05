@@ -5,8 +5,6 @@
 ### Trigger Organic Growth (AI's public perception problem).
 
 - Test (test no-photo/with-photo/guest) - meta shares of bitcoin/news/character pages
-- - put back generalized error message for Photo upload/character creation error modal.
-
 
 ### Daily:
 - Verify dmarc email aggregates daily/weekly
