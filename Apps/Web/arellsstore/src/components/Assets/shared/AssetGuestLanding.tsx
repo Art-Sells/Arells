@@ -71,14 +71,18 @@ export default function AssetGuestLanding({
 
   // Same as test / Season One: fade-through-black both directions.
   const showStill = !hasLoop ? posterLoaded : showStillLayer && posterLoaded;
-  /** With a loop, keep the loader until playback actually starts (not still decode). */
-  const frameReady = hasLoop ? videoPlaying || showStill : posterLoaded;
+  /** Hide once the video is on screen. `videoPlaying` alone misses a mount where playback already started. */
+  const frameReady = hasLoop ? videoPlaying || showVideo || showStill : posterLoaded;
   const showLoader = Boolean(posterSrc) && !frameReady;
 
+  const mediaKey = `${posterSrc ?? ''}\0${posterLoopSrc ?? ''}`;
+  const mediaKeyRef = useRef(mediaKey);
   useEffect(() => {
+    if (mediaKeyRef.current === mediaKey) return;
+    mediaKeyRef.current = mediaKey;
     setPosterLoaded(false);
     setVideoPlaying(false);
-  }, [posterSrc, posterLoopSrc]);
+  }, [mediaKey]);
 
   useEffect(() => {
     const img = posterImgRef.current;

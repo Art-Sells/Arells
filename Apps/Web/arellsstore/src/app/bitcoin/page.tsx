@@ -36,9 +36,9 @@ const BitcoinPage = async ({ searchParams }: BitcoinPageProps) => {
       console.error('bitcoin page shareId', err);
     }
     // redirect() throws NEXT_REDIRECT — must NOT be inside try/catch
-    if (shareId) {
-      const target = assetSharePath('/bitcoin', shareId);
-      redirect(preview ? `${target}?guestPreview=1` : target);
+    // ?guestPreview=1 stays on /bitcoin. The user-id guest link is /bitcoin/{id}?guestPreview=1.
+    if (shareId && !preview) {
+      redirect(assetSharePath('/bitcoin', shareId));
     }
   }
 

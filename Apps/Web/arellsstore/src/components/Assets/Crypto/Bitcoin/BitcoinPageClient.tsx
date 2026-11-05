@@ -27,11 +27,10 @@ const BitcoinPageClient: React.FC = () => {
     if (authSessionLoading) return;
     const path = (pathname || '').replace(/\/+$/, '') || '/';
     if (path !== '/bitcoin') return;
-    const preview = guestPreview || guestPreviewFromLocation();
-    const withPreview = (target: string) => (preview ? `${target}?guestPreview=1` : target);
+    if (guestPreview || guestPreviewFromLocation()) return;
 
     if (isSignedIn && shareId) {
-      const target = withPreview(assetSharePath('/bitcoin', shareId));
+      const target = assetSharePath('/bitcoin', shareId);
       if (target !== path) {
         router.replace(target);
       }
@@ -53,7 +52,7 @@ const BitcoinPageClient: React.FC = () => {
         const id =
           typeof data?.shareId === 'string' ? data.shareId.trim().toLowerCase() : '';
         if (!cancelled && id) {
-          router.replace(withPreview(assetSharePath('/bitcoin', id)));
+          router.replace(assetSharePath('/bitcoin', id));
         }
       } catch {
         /* ignore */
