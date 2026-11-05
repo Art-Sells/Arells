@@ -160,8 +160,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         readAlienComposeRef(ALIEN_COMPOSE_BASE_REL),
       ]);
       const composed = await composePersonalBitcoinAlien({
-        selfie: selfieBuf,
-        selfieMime: 'image/jpeg',
         base: metaBase.buffer,
         baseMime: metaBase.mime,
         portrait,
@@ -219,8 +217,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       const metaBase = await readAlienComposeRef(ALIEN_COMPOSE_BASE_REL);
       const composed = await composePersonalBitcoinAlien({
-        selfie: selfieBuf,
-        selfieMime: 'image/jpeg',
         base: metaBase.buffer,
         baseMime: metaBase.mime,
         portrait,

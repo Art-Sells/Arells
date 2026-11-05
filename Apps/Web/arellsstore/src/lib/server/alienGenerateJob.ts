@@ -260,8 +260,6 @@ export async function runAlienGeneratePipeline(
 
     await patchJob(email, assetId, { phase: 'compose', progress: 55, driver });
     const composed = await composePersonalBitcoinAlien({
-      selfie: selfieBuf,
-      selfieMime: 'image/jpeg',
       base: metaBase.buffer,
       baseMime: metaBase.mime,
       portrait,

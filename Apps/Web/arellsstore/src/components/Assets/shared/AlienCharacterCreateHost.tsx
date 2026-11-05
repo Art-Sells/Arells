@@ -229,12 +229,6 @@ export default function AlienCharacterCreateHost() {
                       <span className="blood-overlay-line">Try Again</span>
                     </>
                   )}
-                  <span className="blood-overlay-line blood-overlay-line--detail">
-                    {error.message?.trim() ||
-                      (error.stage === 'upload'
-                        ? 'Unknown upload error — check connection and try a smaller JPEG'
-                        : 'Unknown create error — try again')}
-                  </span>
                 </p>
                 <button
                   type="button"
