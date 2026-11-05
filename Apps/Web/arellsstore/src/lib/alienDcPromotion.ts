@@ -1,7 +1,10 @@
-/** DC (dynamic characters) promo — one-shot until OK, reopen via PHOTO. */
+/** DC (dynamic characters) promo — one-shot until OK, reopen via PHOTO / Update Photo. */
 
 export const DC_PROMOTION_VIDEO_URL =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/DCPromotion.mp4';
+
+export const DC_PROMO_BEST_RESULTS_GUIDE_SRC =
+  '/images/banners/assets/crypto/Bitcoin/Posters/dc-promo-best-results-guide.jpg';
 
 const STORAGE_KEY = 'arells:dc-promotion-ok';
 

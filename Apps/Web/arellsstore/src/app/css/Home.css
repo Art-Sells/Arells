@@ -1291,13 +1291,12 @@ body {
 .asset-alien-photo-slot {
 	width: 92%;
 	margin: 0 auto 10px;
-	padding: 10px;
+	padding: 8px;
 	box-sizing: border-box;
 	border-radius: 14px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 180px;
 	position: relative;
 	transition: transform 0.2s ease;
 }
@@ -1327,12 +1326,11 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	gap: 14px;
 	width: 100%;
-	min-height: 160px;
 	margin: 0;
-	padding: 16px 12px;
+	padding: 10px 10px 12px;
 	border: none;
 	background: transparent;
 	cursor: pointer;
@@ -1343,6 +1341,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	gap: 8px;
 	width: 100%;
 	height: 44px;
 	flex-shrink: 0;
@@ -1351,6 +1350,11 @@ body {
 	border: 1px solid rgba(248, 141, 0, 0.9);
 	background: rgba(248, 141, 0, 0.18);
 	color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: -0.2px;
+	line-height: 1.2;
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(209, 142, 55));
 }
 
 .asset-alien-photo-plus svg {
@@ -1358,24 +1362,76 @@ body {
 	fill: currentColor;
 }
 
+.asset-alien-photo-create-character-icon {
+	display: block;
+	flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	opacity: 0.95;
+	background: currentColor;
+	-webkit-mask-image: url('/images/icons/profile.png');
+	mask-image: url('/images/icons/profile.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	position: relative;
+	top: -1px;
+}
+
+.asset-alien-photo-plus--view {
+	font-size: 12px;
+	font-weight: 400;
+	letter-spacing: -0.3px;
+	line-height: 1.2;
+	text-align: center;
+	padding: 0 10px;
+	border-radius: 6px;
+	color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+	-webkit-text-fill-color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+}
+
+a.asset-alien-photo-hit {
+	text-decoration: none;
+	color: inherit;
+}
+
 .asset-alien-photo-slot-placeholder-wrap {
 	display: block;
+	position: relative;
 	width: 100%;
 	box-sizing: border-box;
-	border-radius: 10px;
+	padding: 1px;
+	border-radius: 11px;
 	overflow: hidden;
-	background: rgba(248, 141, 0, 0.08);
+	background: rgba(248, 141, 0, 0.3);
 	flex-shrink: 0;
-	/* Match personalalienplaceholder.jpg (1792×1008) so first-add remount
-	   doesn't grow the photo block mid height-down (delete-all keeps RO live). */
-	aspect-ratio: 1792 / 1008;
+	/* Personal Bitcoin Alien portrait is 2:1. Absolute img fill avoids mobile
+	   Safari %height gaps under aspect-ratio (looked like extra orange padding). */
+	aspect-ratio: 2 / 1;
 }
 
 .asset-alien-photo-slot-placeholder {
+	position: absolute;
+	inset: 0;
 	display: block;
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	border-radius: 10px;
+	box-sizing: border-box;
+}
+
+@media screen and (max-width: 750px) {
+	.asset-alien-photo-slot-placeholder-wrap {
+		border-radius: 7px;
+	}
+
+	.asset-alien-photo-slot-placeholder {
+		border-radius: 6px;
+	}
 }
 
 .asset-alien-photo-label {
@@ -1402,6 +1458,79 @@ body {
 	display: none;
 }
 
+.asset-alien-photo-creating {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	box-sizing: border-box;
+	text-align: center;
+	padding: 16px 12px 14px;
+	border-radius: 12px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: none;
+}
+
+.asset-alien-photo-creating-loader {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 14px 12px;
+	border-radius: 10px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 45%,
+		transparent
+	);
+	background: none;
+}
+
+.asset-alien-photo-creating .blood-overlay-creating-eta {
+	width: 100%;
+	max-width: none;
+}
+
+.asset-alien-photo-creating .blood-overlay-creating-eta-line,
+.asset-alien-photo-creating .blood-overlay-creating-eta-time {
+	font-weight: 400;
+}
+
+.asset-alien-photo-creating-title {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 12px;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 12px;
+	border-radius: 10px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 45%,
+		transparent
+	);
+	background: none;
+}
+
+.asset-alien-photo-creating-title-text {
+	font-size: 13px;
+	font-weight: 800;
+	letter-spacing: -0.3px;
+	line-height: 1.2;
+	text-align: center;
+	color: var(--asset-line-color, rgb(209, 142, 55));
+	-webkit-text-fill-color: var(--asset-line-color, rgb(209, 142, 55));
+}
+
+
 @media screen and (max-width: 750px) {
 	.asset-alien-photo-label {
 		font-size: 18px;
@@ -1414,6 +1543,97 @@ body {
 	.asset-alien-photo-label-line--mobile {
 		display: block;
 	}
+}
+
+.asset-alien-photo-slot.is-busy,
+.asset-alien-photo-hit:disabled {
+	cursor: wait;
+	opacity: 0.85;
+}
+
+/* Beats `.asset-page-content button:disabled { opacity: 0.6 !important }`. */
+.asset-page-content .asset-alien-photo-slot--bitcoin.is-busy,
+.asset-page-content .asset-alien-photo-slot--bitcoin.is-busy button.asset-alien-photo-hit:disabled {
+	opacity: 1 !important;
+}
+
+.asset-alien-photo-plus--creating {
+	gap: 10px;
+	font-size: 12px;
+	font-weight: 400;
+	letter-spacing: -0.3px;
+	line-height: 1.2;
+	text-transform: lowercase;
+}
+
+.asset-alien-photo-creating-word {
+	flex: 0 0 auto;
+	color: inherit;
+	-webkit-text-fill-color: inherit;
+}
+
+/* Match blood-overlay creating spinner: ring spins, % stays upright (no counter-rotate). */
+.asset-alien-photo-busy {
+	position: relative;
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+}
+
+.asset-alien-photo-busy-ring {
+	position: absolute;
+	inset: 0;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 2px solid rgba(248, 141, 0, 0.25);
+	border-top-color: rgba(248, 141, 0, 0.95);
+	animation: asset-alien-photo-spin 0.7s linear infinite;
+}
+
+.asset-alien-photo-busy--pct {
+	width: 34px;
+	height: 34px;
+}
+
+.asset-alien-photo-busy--pct .asset-alien-photo-busy-ring {
+	border-width: 2.5px;
+}
+
+.asset-alien-photo-busy-pct {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 9px;
+	font-weight: 800;
+	letter-spacing: -0.3px;
+	line-height: 1;
+	color: inherit;
+	-webkit-text-fill-color: inherit;
+	font-variant-numeric: tabular-nums;
+	user-select: none;
+	transform: none;
+	animation: none;
+}
+
+@keyframes asset-alien-photo-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.asset-alien-photo-error {
+	margin: 8px 4px 0;
+	padding: 0;
+	font-size: 12px;
+	line-height: 15px;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: #b42318;
 }
 
 .asset-bitcoin-season-teaser {
@@ -1656,42 +1876,53 @@ body {
 	}
 }
 
+/* Same border model as guest poster: 1px orange border, media clipped to same radius */
 .asset-bitcoin-season-teaser-frame {
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
-	padding: 1px;
+	padding: 0;
 	line-height: 0;
-	border-radius: 13px;
+	border-radius: 12px;
 	overflow: hidden;
-	background: rgba(248, 141, 0, 0.3);
+	border: 1px solid rgba(248, 141, 0, 0.55);
+	background: transparent;
+	aspect-ratio: 4561 / 1091;
+}
+
+.asset-bitcoin-season-teaser-frame.is-stock {
 	aspect-ratio: 2660 / 382;
 }
 
-.asset-bitcoin-season-teaser-frame::before {
-	content: '';
-	position: absolute;
-	inset: 1px;
-	z-index: 3;
-	border-radius: 12px;
-	background: rgba(248, 141, 0, 0.06);
-	pointer-events: none;
+.asset-bitcoin-season-teaser-frame::before,
+.asset-bitcoin-season-teaser-frame::after {
+	content: none;
 }
 
-/* Black under media only (inside border). Snap on so video/still never reveal the frame tint; fade off under the next layer. */
-.asset-bitcoin-season-teaser-frame::after {
+/* Same media shell as launch guest poster — black plate lives here. */
+.asset-bitcoin-season-teaser-media {
+	position: absolute;
+	inset: 0;
+	border-radius: 0;
+	overflow: hidden;
+	isolation: isolate;
+	background: transparent;
+}
+
+/* Under video/still — video fades out to black, then still fades in (sequential). */
+.asset-bitcoin-season-teaser-media::after {
 	content: '';
 	position: absolute;
-	inset: 1px;
+	inset: 0;
 	z-index: 0;
-	border-radius: 12px;
+	border-radius: 0;
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
-	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.asset-bitcoin-season-teaser-frame.is-handoff::after {
+.asset-bitcoin-season-teaser-frame.is-handoff .asset-bitcoin-season-teaser-media::after {
 	opacity: 1;
 	transition-duration: 0.01s;
 }
@@ -1704,6 +1935,7 @@ body {
 	align-items: center;
 	justify-content: center;
 	pointer-events: none;
+	background: rgba(248, 141, 0, 0.08);
 }
 
 .asset-bitcoin-season-teaser-loader-ring {
@@ -1719,16 +1951,27 @@ body {
 .asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-img {
 	position: absolute;
-	inset: 1px;
-	width: calc(100% - 2px);
-	height: calc(100% - 2px);
+	/* Stock banner: exact frame size — a bleed changes the box shape and cover zooms the wide banner. */
+	inset: 0;
+	width: 100% !important;
+	height: 100% !important;
 	display: block;
-	border-radius: 12px;
+	border-radius: 0;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
-	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
+	border: none;
+	background: transparent;
+}
+
+/* Character Season One only: 5px past the frame; the frame's rounded overflow clips it to the stroke. */
+.asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-video,
+.asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-img {
+	inset: -5px;
+	width: calc(100% + 10px) !important;
+	height: calc(100% + 10px) !important;
 }
 
 .asset-bitcoin-season-teaser-video {
@@ -1743,28 +1986,27 @@ body {
 	opacity: 1;
 }
 
-.asset-bitcoin-season-teaser-video.is-done {
+.asset-bitcoin-season-teaser-video.is-visible.is-done {
 	opacity: 0;
 	pointer-events: none;
-	transition-duration: 1.4s;
+	transition-duration: 1.5s;
 }
 
 .asset-bitcoin-season-teaser-img.is-visible {
 	opacity: 1;
-	transition-duration: 1.4s;
+	transition-duration: 1.5s;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-bitcoin-season-teaser-img.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.5s;
 }
 
 @media (max-width: 750px) {
 	.asset-bitcoin-season-teaser-frame {
 		border-radius: 6px;
-	}
-
-	.asset-bitcoin-season-teaser-frame::before,
-	.asset-bitcoin-season-teaser-frame::after,
-	.asset-bitcoin-season-teaser-video,
-	.asset-bitcoin-season-teaser-img {
-		border-radius: 5px;
 	}
 }
 
@@ -1790,6 +2032,266 @@ body {
 	min-height: 100vh;
 }
 
+.bitcoin-my-character-body {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 16px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-launch-panel {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 12px;
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 14px;
+	border: 1px solid rgba(248, 141, 0, 0.3);
+	background: transparent;
+	padding: 10px;
+}
+
+.bitcoin-my-character-launch {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-share.asset-alien-meta-share {
+	width: 100%;
+	margin: 0;
+}
+
+/* Loader + AlienMetaPreview share the same 1:1 box so media swap can't grow mid height-down. */
+.bitcoin-my-character-launch .asset-alien-meta-preview-frame,
+.bitcoin-my-character-launch--loading {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	aspect-ratio: auto;
+}
+
+.bitcoin-my-character-page--booting {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 50vh;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-boot-loader {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+}
+
+.bitcoin-my-character-boot-loader .asset-alien-meta-preview-loader-ring {
+	width: 42px;
+	height: 42px;
+	border-width: 5px;
+}
+
+.bitcoin-my-character-launch--loading {
+	border-radius: 10px;
+	overflow: hidden;
+	border: 1px solid rgba(248, 141, 0, 0.35);
+	background: rgba(248, 141, 0, 0.06);
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-launch--loading .asset-alien-meta-preview-loader {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: transparent;
+}
+
+.bitcoin-my-character-launch--loading .asset-alien-meta-preview-loader-ring {
+	width: 42px;
+	height: 42px;
+	border-width: 5px;
+}
+
+.bitcoin-my-character-photo-slot {
+	width: 100%;
+	margin: 0;
+}
+
+.bitcoin-my-character-photo-slot .bitcoin-my-character-update-photo.asset-alien-photo-plus--view {
+	position: relative;
+	display: block;
+	width: 100%;
+	font-weight: 800;
+}
+
+.bitcoin-my-character-update-photo-layer {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+	pointer-events: none;
+}
+
+.bitcoin-my-character-update-photo-layer.is-visible {
+	opacity: 1;
+}
+
+.bitcoin-my-character-update-photo-layer--busy {
+	gap: 8px;
+}
+
+.bitcoin-my-character-update-photo-creating {
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: 1.1;
+	letter-spacing: inherit;
+	white-space: nowrap;
+}
+
+.bitcoin-my-character-update-photo-icon {
+	display: block;
+	flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	opacity: 0.95;
+	background: currentColor;
+	-webkit-mask-image: url('/images/icons/profile.png');
+	mask-image: url('/images/icons/profile.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	position: relative;
+	top: -1px;
+}
+
+.bitcoin-my-character-update-photo-camera-icon {
+	display: block;
+	flex-shrink: 0;
+	fill: currentColor;
+	position: relative;
+	top: -1.5px;
+}
+
+.bitcoin-my-character-photo-slot .asset-alien-photo-hit {
+	cursor: pointer;
+}
+
+.bitcoin-my-character-photo-slot > .asset-alien-photo-hit:not(button) {
+	cursor: default;
+	pointer-events: none;
+}
+
+.bitcoin-my-character-photo-frame {
+	position: relative;
+	background: rgba(248, 141, 0, 0.08);
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-photo-loader {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	opacity: 1;
+	transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+	background: color-mix(in srgb, rgba(248, 141, 0, 1) 8%, transparent);
+}
+
+.bitcoin-my-character-photo-loader.is-fading {
+	opacity: 0;
+}
+
+.bitcoin-my-character-photo-loader .asset-alien-meta-preview-loader-ring {
+	width: 42px;
+	height: 42px;
+	border-width: 5px;
+}
+
+.bitcoin-my-character-photo-img {
+	opacity: 0;
+	transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bitcoin-my-character-photo-img.is-visible {
+	opacity: 1;
+}
+
+.bitcoin-my-character-page .bitcoin-alien-race-page-inner {
+	gap: 0;
+	/* Keep mobile column width on desktop too (do not jump to 665px). */
+	width: min(340px, calc(100% - 20px));
+	max-width: min(340px, calc(100% - 20px));
+}
+
+.bitcoin-my-character-height-down {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-height-down-inner {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bitcoin-my-character-section--badge > .bitcoin-my-character-height-down-inner,
+.bitcoin-my-character-section--photo > .bitcoin-my-character-height-down-inner,
+.bitcoin-my-character-section--launch > .bitcoin-my-character-height-down-inner {
+	padding-bottom: 16px;
+}
+
+.bitcoin-my-character-section--questions .bitcoin-my-character-height-down-inner,
+.bitcoin-my-character-section--footer .bitcoin-my-character-height-down-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.bitcoin-my-character-section--footer .asset-footer {
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	margin-top: 8px;
+	margin-bottom: 15px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+.bitcoin-my-character-section--footer .asset-footer .asset-footer-about-button {
+	padding-left: 16px;
+	padding-right: 16px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.bitcoin-my-character-section--footer .asset-footer .asset-footer-about-text {
+	margin-right: 0;
+}
+
 .bitcoin-alien-race-page-inner {
 	/* Match Bitcoin asset `.asset-page-content > .asset-header-panel` (340 under 750 / 665 over). */
 	width: min(340px, calc(100% - 20px));
@@ -1804,6 +2306,11 @@ body {
 	.bitcoin-alien-race-page-inner {
 		width: 665px;
 		max-width: 665px;
+	}
+
+	.bitcoin-my-character-page .bitcoin-alien-race-page-inner {
+		width: min(340px, calc(100% - 20px));
+		max-width: min(340px, calc(100% - 20px));
 	}
 
 	/* Weekly News / Other Updates titles: 4px under the shared 27px season-title size. */
@@ -6786,9 +7293,13 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	background: rgba(255, 255, 255, 0.86);
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	/* flex-start + card margin:auto so tall modals stay scrollable (center clips top). */
+	align-items: flex-start;
 	padding: 16px;
+	overflow-x: hidden;
 	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
 	z-index: 2500;
 	box-sizing: border-box;
 	font-family: Arial, sans-serif;
@@ -6808,6 +7319,9 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	align-items: center;
 	justify-content: flex-start;
 	gap: 16px;
+	margin-top: auto;
+	margin-bottom: auto;
+	flex-shrink: 0;
 	animation: pageSlideUp 1s ease both;
 	will-change: transform, opacity;
 }
@@ -6835,17 +7349,152 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	);
 }
 
-@media (min-width: 751px) {
-	.blood-overlay-card--dc-promo {
-		width: 665px;
-		max-width: 665px;
-	}
-}
-
-/* gap: 10px on the card — kill .blood-ok's extra margin-top so spacing stays 10px */
 .blood-overlay-card--dc-promo .blood-ok {
 	width: 100%;
 	margin-top: 0;
+}
+
+.asset-dc-promo-add-photo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	height: 56px;
+	font-size: 16px;
+	font-weight: 800;
+	letter-spacing: 0.6px;
+}
+
+.asset-dc-promo-add-photo-icon {
+	display: block;
+	flex-shrink: 0;
+	width: 26px;
+	height: 26px;
+	fill: currentColor;
+	position: relative;
+	top: -1.5px;
+}
+
+.blood-overlay-card--character-pay {
+	height: auto;
+	min-height: 0;
+	max-height: none;
+	overflow: visible;
+	flex-shrink: 0;
+}
+
+.blood-overlay-card--character-pay .blood-ok {
+	width: 100%;
+	margin-top: 0;
+}
+
+.blood-overlay-card--character-pay .asset-dc-promo-section {
+	/* Keep title→video spacing identical to Add Photo modal (gap: 0 + headline margin). */
+	gap: 0;
+	padding-bottom: 10px;
+}
+
+.blood-overlay-card--character-pay-update .asset-dc-promo-section .asset-dc-promo-frame {
+	/* No headline — keep top padding tidy */
+	margin-top: 0;
+}
+
+.blood-overlay-card--character-pay .asset-dc-promo-section .asset-character-pay-section {
+	margin-top: 10px;
+}
+
+/* Create modal: title sits on the $4.99 box. Update keeps the gap under the video. */
+.blood-overlay-card--character-pay:not(.blood-overlay-card--character-pay-update)
+	.asset-dc-promo-section
+	.asset-character-pay-section {
+	margin-top: 0;
+}
+
+.blood-overlay-card--character-pay:not(.blood-overlay-card--character-pay-update)
+	.asset-dc-promo-headline {
+	margin-bottom: 10px;
+}
+
+.blood-overlay-card--character-pay .asset-dc-promo-section .asset-character-pay-cta {
+	width: 100%;
+	margin-top: 10px;
+}
+
+.asset-character-pay-section {
+	width: 100%;
+	margin: 0;
+	padding: 22px 12px 18px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 4%,
+		#fff
+	);
+}
+
+.asset-character-pay-price {
+	margin: 0;
+	padding: 0;
+	font-size: 42px;
+	font-weight: 800;
+	line-height: 1;
+	letter-spacing: -0.8px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
+.asset-character-pay-cta:disabled {
+	opacity: 1;
+	cursor: wait;
+}
+
+.asset-character-pay-profile-icon {
+	display: block;
+	flex-shrink: 0;
+	width: 26px;
+	height: 26px;
+	opacity: 0.95;
+	background: currentColor;
+	-webkit-mask-image: url('/images/icons/profile.png');
+	mask-image: url('/images/icons/profile.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	position: relative;
+	top: -1px;
+}
+
+.asset-character-pay-loader {
+	display: block;
+	flex-shrink: 0;
+	width: 22px;
+	height: 22px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 3px solid color-mix(in srgb, currentColor 25%, transparent);
+	border-top-color: currentColor;
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+@media (min-width: 751px) {
+	.asset-character-pay-price {
+		font-size: 48px;
+	}
 }
 
 .asset-dc-promo-section {
@@ -6885,7 +7534,6 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
 }
 
-/* Orange ring — stage clips the video so size/shift stay inside the border */
 .asset-dc-promo-frame {
 	position: relative;
 	width: 100%;
@@ -6896,7 +7544,6 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	overflow: hidden;
 	box-sizing: border-box;
 	background: rgba(248, 141, 0, 0.3);
-	/* DCPromotion.mp4 is 2100×480 */
 	aspect-ratio: 2100 / 480;
 }
 
@@ -6909,7 +7556,6 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	inset: 1px;
 	border-radius: 12px;
 	overflow: hidden;
-	/* Never #000 — it shows as a black outline around rounded clips */
 	background: transparent;
 }
 
@@ -6956,7 +7602,6 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	opacity: 0;
 	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 	background: transparent;
-	/* Zoom past dark encoded edges (~3px) + 5px larger; shift 5px left. Stage clips to the ring. */
 	transform: translateX(-2.5px) scale(1.06);
 	transform-origin: center center;
 }
@@ -6975,29 +7620,119 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	}
 }
 
-.asset-dc-promo-coming-soon {
-	/* letter-spacing trails after the last char; nudge by half so glyphs sit on true center — no padding */
+.asset-dc-promo-best-results {
+	margin: 6px 0 0;
+	padding: 10px 8px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 4%,
+		#fff
+	);
+}
+
+.asset-dc-promo-best-results-guide {
+	position: relative;
+	width: 100%;
+	line-height: 0;
+	border-radius: 8px;
+	overflow: hidden;
+	box-sizing: border-box;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 40%,
+		transparent
+	);
+	background: rgba(248, 141, 0, 0.12);
+	/* Guide plate: cumulative crop 15px top / 30px bottom from 1792×1008 */
+	aspect-ratio: 1792 / 963;
+}
+
+.asset-dc-promo-best-results-img {
 	display: block;
 	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.asset-dc-promo-best-results-body {
+	margin: 0;
+	padding: 10px 8px;
 	box-sizing: border-box;
-	margin: 6px 0 0;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 6%,
+		#fff
+	);
+}
+
+.asset-dc-promo-best-results-title {
+	margin: 0;
 	padding: 0;
-	font-size: 9px;
+	font-size: 12px;
 	font-weight: 700;
 	line-height: 1.2;
-	letter-spacing: 20px;
+	letter-spacing: -0.2px;
 	text-align: center;
-	transform: translateX(10px);
 	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
 	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
 }
 
-@media (min-width: 751px) {
-	.asset-dc-promo-headline {
-		font-size: 16px;
-	}
+.asset-dc-promo-best-results-list {
+	margin: 0;
+	padding: 8px 10px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 2px;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 4%,
+		#fff
+	);
+}
 
-	.asset-dc-promo-coming-soon {
+.asset-dc-promo-best-results-line {
+	display: block;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.35;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	opacity: 0.85;
+}
+
+@media (min-width: 751px) {
+	.asset-dc-promo-best-results-title {
 		font-size: 14px;
 	}
 }
@@ -7008,6 +7743,435 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 		overflow: visible;
 		flex-shrink: 0;
 	}
+}
+
+.blood-overlay-card--alien-error {
+	height: auto;
+	min-height: 200px;
+	justify-content: center;
+	gap: 20px;
+	padding-top: 24px;
+	padding-bottom: 24px;
+}
+
+.blood-overlay-card--alien-creating {
+	height: auto;
+	min-height: 270px;
+	justify-content: center;
+	gap: 18px;
+	padding-top: 28px;
+	padding-bottom: 24px;
+}
+
+.blood-overlay-card--alien-creating .blood-overlay-copy {
+	font-weight: 800;
+}
+
+.blood-overlay-creating-spinner {
+	position: relative;
+	width: 72px;
+	height: 72px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.blood-overlay-creating-spinner-ring {
+	position: absolute;
+	inset: 0;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 5px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 22%,
+		transparent
+	);
+	border-top-color: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+.blood-overlay-creating-profile {
+	width: 34px;
+	height: 34px;
+	display: block;
+	flex-shrink: 0;
+	opacity: 0.9;
+	background: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-mask-image: url('/images/icons/profile.png');
+	mask-image: url('/images/icons/profile.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+
+.blood-overlay-creating-percent {
+	position: relative;
+	z-index: 1;
+	font-size: 15px;
+	font-weight: 800;
+	letter-spacing: -0.4px;
+	line-height: 1;
+	color: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	font-variant-numeric: tabular-nums;
+	user-select: none;
+}
+
+.blood-overlay-creating-eta {
+	width: 100%;
+	max-width: 200px;
+	margin: 0 auto;
+	padding: 10px 12px 11px;
+	box-sizing: border-box;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 45%,
+		transparent
+	);
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	text-align: center;
+}
+
+.blood-overlay-creating-eta-line {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.2px;
+	line-height: 1.25;
+	color: rgba(40, 40, 40, 0.72);
+	text-transform: lowercase;
+}
+
+.blood-overlay-creating-eta-time {
+	display: block;
+	margin-top: 4px;
+	font-size: 13px;
+	font-weight: 800;
+	letter-spacing: -0.2px;
+	line-height: 1.2;
+	color: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
+.blood-overlay-card--alien-meta {
+	width: 280px;
+	height: auto;
+	min-height: 0;
+	max-height: none;
+	padding: 15px 10px 11px;
+	border-radius: 12px;
+	overflow: visible;
+	flex-shrink: 0;
+	gap: 0;
+	/* Keep accent border even if portal loses asset CSS vars */
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+}
+
+.asset-alien-meta-created {
+	width: calc(100% - 10px);
+	margin: 0 auto 10px;
+	padding: 10px 8px;
+	box-sizing: border-box;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 6%,
+		#fff
+	);
+}
+
+.asset-alien-meta-created-title {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
+@media (max-height: 499px) {
+	.blood-overlay-card--alien-meta {
+		max-height: none;
+		overflow: visible;
+		flex-shrink: 0;
+	}
+}
+
+.asset-alien-meta-share {
+	width: calc(100% - 10px);
+	margin: 12px auto 0;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+	padding: 10px 8px;
+	box-sizing: border-box;
+	border-radius: 8px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 6%,
+		#fff
+	);
+}
+
+.asset-alien-meta-share-title {
+	margin: 0;
+	padding: 0;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: -0.2px;
+	text-align: center;
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+}
+
+.asset-alien-meta-share-row {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	justify-content: center;
+	gap: 0;
+	width: 100%;
+	min-width: 0;
+}
+
+.asset-alien-meta-share-copy {
+	flex: 0 0 auto;
+	min-width: 64px;
+	margin: 0 -14px 0 0;
+	padding: 10px 12px;
+	box-sizing: border-box;
+	border-radius: 6px;
+	position: relative;
+	z-index: 2;
+	/* Same solid CTA fill as View Trailer / save-signin */
+	border: 1px solid var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	background: var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	color: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 18%,
+		white 82%
+	);
+	-webkit-text-fill-color: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 18%,
+		white 82%
+	);
+	font-size: 11px;
+	font-weight: 800;
+	line-height: 1.1;
+	letter-spacing: 0.4px;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.asset-alien-meta-share-copy:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.asset-alien-meta-share-link {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	padding: 8px 10px 8px 20px;
+	border-radius: 6px;
+	box-sizing: border-box;
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 10%,
+		#fff
+	);
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 28%,
+		transparent
+	);
+	color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	-webkit-text-fill-color: var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1)));
+	font-size: 11px;
+	line-height: 1.2;
+	font-weight: 400;
+	overflow-wrap: anywhere;
+	word-break: break-all;
+	text-align: left;
+}
+
+.blood-overlay-card--alien-meta .blood-ok--alien-close {
+	width: calc(100% - 10px);
+	height: 30px;
+	margin-top: 12px;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+/* Same border model as guest poster / Season One */
+.asset-alien-meta-preview-frame {
+	position: relative;
+	width: calc(100% - 10px);
+	margin: 2px auto 0;
+	line-height: 0;
+	border-radius: 10px;
+	overflow: hidden;
+	box-sizing: border-box;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: transparent;
+	aspect-ratio: 1 / 1;
+}
+
+.asset-alien-meta-preview-frame::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: 0;
+	background: #000;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-alien-meta-preview-frame.is-handoff::after {
+	opacity: 1;
+	transition-duration: 0.01s;
+}
+
+.asset-alien-meta-preview-frame:not(.is-loaded) {
+	min-height: 180px;
+}
+
+.asset-alien-meta-preview-loader {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	opacity: 1;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 8%,
+		transparent
+	);
+}
+
+.asset-alien-meta-preview-loader.is-fading {
+	opacity: 0;
+}
+
+.asset-alien-meta-preview-loader-ring {
+	width: 36px;
+	height: 36px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 5px solid rgba(248, 141, 0, 0.2);
+	border-top-color: rgba(248, 141, 0, 0.75);
+	animation: assetSummaryCircleLoaderSpin 1s linear infinite;
+}
+
+.asset-alien-meta-preview-video,
+.asset-alien-meta-preview-frame--loop .asset-alien-meta-preview.asset-alien-meta-preview--loop-still {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	object-fit: cover;
+	box-sizing: border-box;
+	opacity: 0;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+}
+
+.asset-alien-meta-preview-video {
+	z-index: 1;
+}
+
+.asset-alien-meta-preview-frame--loop .asset-alien-meta-preview.asset-alien-meta-preview--loop-still {
+	z-index: 2;
+}
+
+.asset-alien-meta-preview-video.is-visible {
+	opacity: 1;
+}
+
+.asset-alien-meta-preview-video.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.5s;
+}
+
+.asset-alien-meta-preview {
+	display: block;
+	width: 100%;
+	max-width: none;
+	height: auto;
+	border-radius: 0;
+	border: none;
+	box-sizing: border-box;
+	object-fit: contain;
+	background: transparent;
+}
+
+.asset-alien-meta-preview-frame--loop
+	.asset-alien-meta-preview.asset-alien-meta-preview--loop-still.is-visible {
+	opacity: 1;
+	transition-duration: 1.5s;
+}
+
+.asset-alien-meta-preview-frame--loop
+	.asset-alien-meta-preview.asset-alien-meta-preview--loop-still.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.5s;
+}
+
+.asset-alien-meta-preview:not(.asset-alien-meta-preview--loop-still) {
+	opacity: 0;
+	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-alien-meta-preview:not(.asset-alien-meta-preview--loop-still).is-visible {
+	opacity: 1;
 }
 
 .blood-overlay-card.myinv-accent-border {
@@ -8596,6 +9760,30 @@ a.myinv-about-button:focus-visible {
 	min-width: 350px;
 	opacity: 1;
 	transition: opacity 0.4s ease;
+}
+
+.asset-page > .asset-questions-support-shell {
+	opacity: 1;
+	transition: opacity 0.4s ease;
+}
+
+/* Mount: collapsed until height-down ends, then fade in. */
+.asset-page--footer-held > .asset-footer,
+.asset-page--footer-held > .asset-questions-support-shell {
+	opacity: 0;
+	height: 0;
+	min-height: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+	overflow: hidden;
+	pointer-events: none;
+	transition: none;
+}
+
+.asset-page--footer-fade > .asset-footer,
+.asset-page--footer-fade > .asset-questions-support-shell {
+	opacity: 0;
+	pointer-events: none;
 }
 
 .asset-footer--session-reset-hidden {
@@ -11475,6 +12663,17 @@ a.growth-metrics-about-button:focus-visible {
 	border-radius: 15px;
 }
 
+a.auth-secondary-link.auth-submit--accent,
+a.auth-secondary-link.auth-submit--accent:hover,
+a.auth-secondary-link.auth-submit--accent:active,
+a.auth-secondary-link.auth-submit--accent:focus,
+a.auth-secondary-link.auth-submit--accent:focus-visible {
+	border: none !important;
+	outline: none !important;
+	box-shadow: none !important;
+	transform: none !important;
+}
+
 .auth-below-card {
 	margin-top: 20px;
 	text-align: center;
@@ -12462,6 +13661,24 @@ a.asset-action-button--save-signin {
 	-webkit-text-fill-color: var(--asset-line-color);
 }
 
+/* Crossfade your → my (stacked; cell width = “your”; end-align so “my” isn’t gappy). */
+.asset-mission-possessive {
+	display: inline-grid;
+	vertical-align: baseline;
+	justify-items: end;
+}
+
+.asset-mission-possessive-word {
+	grid-area: 1 / 1;
+	opacity: 0;
+	transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+	pointer-events: none;
+}
+
+.asset-mission-possessive-word.is-active {
+	opacity: 1;
+}
+
 .asset-page--bitcoin .asset-mission-header {
 	gap: 10px;
 	margin-bottom: -5px;
@@ -12518,49 +13735,50 @@ a.asset-action-button--save-signin {
 	color: var(--asset-slogan-color);
 }
 
+/*
+ * Shell keeps 10px padding (gap to outer card).
+ * Poster uses a real 1px orange border; media fills inside it (no bg-ring / no clip black edge).
+ */
 .asset-guest-poster-frame {
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
-	padding: 1px;
+	padding: 0;
 	line-height: 0;
-	border-radius: 13px;
+	/* Same radius as .asset-guest-action-shell; overflow clips media to this curve */
+	border-radius: 12px;
 	overflow: hidden;
-	background: rgba(248, 141, 0, 0.3);
+	border: 1px solid rgba(248, 141, 0, 0.55);
+	background: transparent;
 }
 
 .asset-guest-poster-frame:not(.is-loaded) {
 	min-height: 120px;
 }
 
-.asset-guest-poster-frame--loop {
-	aspect-ratio: 2000 / 1166;
+.asset-guest-poster-media {
+	position: absolute;
+	inset: 0;
+	border-radius: 0;
+	overflow: hidden;
+	isolation: isolate;
+	background: transparent;
 }
 
-.asset-guest-poster-frame--loop::before {
+/* Under video/still — sequential fade through black (no video↔still crossfade). */
+.asset-guest-poster-media::after {
 	content: '';
 	position: absolute;
-	inset: 1px;
-	z-index: 3;
-	border-radius: 12px;
-	background: rgba(248, 141, 0, 0.06);
-	pointer-events: none;
-}
-
-/* Black under media only (inside border). Snap on so video/still never reveal the frame tint; fade off under the next layer. */
-.asset-guest-poster-frame--loop::after {
-	content: '';
-	position: absolute;
-	inset: 1px;
+	inset: 0;
 	z-index: 0;
-	border-radius: 12px;
+	border-radius: 0;
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
 	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.asset-guest-poster-frame.is-handoff::after {
+.asset-guest-poster-frame.is-handoff .asset-guest-poster-media::after {
 	opacity: 1;
 	transition-duration: 0.01s;
 }
@@ -12573,6 +13791,7 @@ a.asset-action-button--save-signin {
 	align-items: center;
 	justify-content: center;
 	pointer-events: none;
+	background: rgba(248, 141, 0, 0.08);
 }
 
 .asset-guest-poster-loader-ring {
@@ -12588,16 +13807,18 @@ a.asset-action-button--save-signin {
 .asset-guest-poster-video,
 .asset-guest-poster-frame--loop .asset-guest-poster-img {
 	position: absolute;
-	inset: 1px;
-	width: calc(100% - 2px);
-	height: calc(100% - 2px);
+	inset: 0;
+	width: 100% !important;
+	height: 100% !important;
 	display: block;
-	border-radius: 12px;
+	border-radius: 0;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
 	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
+	border: none;
+	background: transparent;
 }
 
 .asset-guest-poster-video {
@@ -12612,7 +13833,13 @@ a.asset-action-button--save-signin {
 	opacity: 1;
 }
 
-.asset-guest-poster-video.is-done {
+.asset-guest-poster-video.is-visible.is-done {
+	opacity: 0;
+	pointer-events: none;
+	transition-duration: 1.4s;
+}
+
+.asset-guest-poster-frame--loop .asset-guest-poster-img.is-visible.is-done {
 	opacity: 0;
 	pointer-events: none;
 	transition-duration: 1.4s;
@@ -12622,7 +13849,7 @@ a.asset-action-button--save-signin {
 	width: 100%;
 	height: auto;
 	display: block;
-	border-radius: 12px;
+	border-radius: 0;
 	opacity: 0;
 	transition: opacity 0.9s ease;
 }
@@ -12648,8 +13875,13 @@ a.asset-action-button--save-signin {
 		border-radius: 6px;
 	}
 
+	.asset-guest-action-shell {
+		border-radius: 6px;
+	}
+
 	.asset-guest-poster-frame--loop::before,
 	.asset-guest-poster-frame--loop::after,
+	.asset-guest-poster-media,
 	.asset-guest-poster-video,
 	.asset-guest-poster-frame--loop .asset-guest-poster-img {
 		border-radius: 5px;
@@ -13317,6 +14549,171 @@ a.asset-action-button--save-signin {
 	border: 2px solid color-mix(in srgb, var(--asset-line-color) 28%, transparent);
 	border-top-color: var(--asset-line-color);
 	animation: authCircleLoaderSpin 0.85s linear infinite;
+}
+
+/* Nav control loading: hide words/icons, show only a centered circle. */
+a.is-nav-loading,
+button.is-nav-loading,
+[role='button'].is-nav-loading {
+	position: relative;
+	cursor: wait;
+	pointer-events: none;
+}
+
+/* Never blank the photo card — label-only loading uses .is-nav-loading-label. */
+a.asset-alien-photo-hit.is-nav-loading {
+	color: inherit !important;
+	-webkit-text-fill-color: inherit !important;
+}
+
+a.asset-alien-photo-hit.is-nav-loading > *:not(.nav-control-spinner) {
+	visibility: visible !important;
+}
+
+a.is-nav-loading:not(.home-asset-card):not(.myinv-asset-home-card):not(.bitcoin-alien-race-asset-card):not(.asset-alien-photo-hit),
+button.is-nav-loading,
+[role='button'].is-nav-loading:not(.asset-alien-photo-hit) {
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+a.is-nav-loading:not(.home-asset-card):not(.myinv-asset-home-card):not(.bitcoin-alien-race-asset-card):not(.asset-alien-photo-hit)
+	> *:not(.nav-control-spinner),
+button.is-nav-loading > *:not(.nav-control-spinner),
+[role='button'].is-nav-loading:not(.asset-alien-photo-hit) > *:not(.nav-control-spinner) {
+	visibility: hidden !important;
+}
+
+.nav-control-spinner {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(
+		in srgb,
+		var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 28%,
+		transparent
+	);
+	border-top-color: var(
+		--asset-line-color,
+		var(--myinv-accent-color, rgba(248, 141, 0, 1))
+	);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	visibility: visible !important;
+	opacity: 1 !important;
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+	pointer-events: none;
+}
+
+/* View More News sits on solid orange — the default orange ring disappears. */
+.tbar-more--hub-link a.is-nav-loading .nav-control-spinner {
+	border: 2px solid rgba(255, 255, 255, 0.55);
+	border-top-color: #fff;
+}
+
+/* Sign up under the sign-in card is the same solid accent. */
+a.auth-secondary-link.auth-submit--accent.is-nav-loading .nav-control-spinner {
+	border: 2px solid rgba(255, 255, 255, 0.55);
+	border-top-color: #fff;
+}
+
+/* Asset badge chips: keep chip size, hide title ink, show spinner.
+   Specificity must beat `.…chip.asset-action-button--bitcoin` color !important. */
+a.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+a.is-nav-loading .home-asset-name.asset-action-button.is-nav-loading-chip,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip.asset-action-button--bitcoin,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip.asset-action-button--ethereum,
+.myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+.myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip.asset-action-button--bitcoin,
+.myinv-page .myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+.bitcoin-alien-race-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip,
+.bitcoin-alien-race-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip.asset-action-button--bitcoin,
+.asset-action-button--home-asset-chip.is-nav-loading-chip,
+.home-asset-name.asset-action-button.is-nav-loading-chip {
+	position: relative !important;
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+a.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+a.is-nav-loading .home-asset-name.asset-action-button.is-nav-loading-chip > *,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+.myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+.bitcoin-alien-race-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+.asset-action-button--home-asset-chip.is-nav-loading-chip > *,
+.home-asset-name.asset-action-button.is-nav-loading-chip > * {
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+	opacity: 0 !important;
+}
+
+a.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+a.is-nav-loading .home-asset-name.asset-action-button.is-nav-loading-chip::after,
+.home-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+.myinv-asset-home-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+.bitcoin-alien-race-asset-card.is-nav-loading .asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+.asset-action-button--home-asset-chip.is-nav-loading-chip::after,
+.home-asset-name.asset-action-button.is-nav-loading-chip::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 12px;
+	height: 12px;
+	margin: -6px 0 0 -6px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(
+		in srgb,
+		var(--asset-line-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 28%,
+		transparent
+	);
+	border-top-color: var(
+		--asset-line-color,
+		var(--myinv-accent-color, rgba(248, 141, 0, 1))
+	);
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	opacity: 1 !important;
+}
+
+/* View My Character: spin the words only — photo stays visible. */
+.asset-alien-photo-plus.is-nav-loading-label {
+	position: relative;
+	cursor: wait;
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+.asset-alien-photo-plus.is-nav-loading-label > * {
+	opacity: 0 !important;
+	color: transparent !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+.asset-alien-photo-plus.is-nav-loading-label::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	box-sizing: border-box;
+	border: 2px solid color-mix(
+		in srgb,
+		var(--asset-range-button-label-color, rgb(209, 142, 55)) 28%,
+		transparent
+	);
+	border-top-color: var(--asset-range-button-label-color, rgb(209, 142, 55));
+	animation: authCircleLoaderSpin 0.85s linear infinite;
+	opacity: 1 !important;
 }
 
 .asset-summary-circle-loader {
@@ -14632,6 +16029,37 @@ a.asset-action-button--save-signin {
 /* Asset pages: below about button; accent + panel wash match `.asset-panel--*`. */
 .asset-page .asset-questions-support-shell {
 	margin: 24px auto 80px;
+}
+
+/* My Character: Questions above about — modest gap (not the asset-page 80px bottom). */
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell {
+	margin: 8px auto 12px;
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	align-items: center;
+}
+
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell .myportfolio-questions-panel {
+	width: 100%;
+	max-width: 100%;
+}
+
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell .myinv-panel-title--add {
+	width: 100%;
+	text-align: center;
+}
+
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell .myportfolio-email-support-copy {
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.asset-page.bitcoin-my-character-page .asset-questions-support-shell .myportfolio-email-support-copy .site-social-footer-link {
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .asset-page--bitcoin .asset-questions-support-shell {

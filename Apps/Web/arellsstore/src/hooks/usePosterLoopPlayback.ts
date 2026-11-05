@@ -2,34 +2,53 @@
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 
-const START_TIMEOUT_MS = 5000;
-const STALL_TIMEOUT_MS = 6000;
+const START_TIMEOUT_MS = 12000;
+const STALL_TIMEOUT_MS = 10000;
 const DEFAULT_FADE_MS = 1400;
+const ATTACH_TRIES = 12;
+
+export type StillToVideoMode = 'crossfade' | 'through-black';
 
 /**
- * play → (video ends) → outroIn (still fades in from black) → still
- * → introOut (still fades out to black) → introIn (video fades in from black) → play …
+ * through-black (guest / Season One): sequential, no crossfade
+ *   play → outroOut (video fades to black) → outroIn (still fades from black) → still
+ *   → introOut (still fades to black) → introIn (video fades from black) → play
  *
- * No separate video fade-out after ended — the clip is already done, so a full
- * outroOut just left a long black sit that photo→video never had.
+ * crossfade (meta preview):
+ *   play → outroOut → outroIn → still → introOut (still↔video) → play
  */
-type LoopPhase = 'play' | 'outroIn' | 'still' | 'introOut' | 'introIn';
+type LoopPhase =
+  | 'play'
+  | 'outroOut'
+  | 'outroIn'
+  | 'still'
+  | 'introOut'
+  | 'introIn'
+  | 'awaitStill';
 
 /**
- * Poster loop with fade-through-black both ways, matched timing:
- * one fade beat out, one fade beat in (fadeMs each). Video end skips straight
- * to still fade-in (no extra black hold on a finished clip).
+ * Poster / Season loop playback.
+ * Guest + Season One: pass stillToVideoMode='through-black'.
+ * Meta preview launch loop: default crossfade still→video.
  */
 export function usePosterLoopPlayback(
   videoRef: RefObject<HTMLVideoElement | null>,
   enabled = true,
-  /** Hold still this many ms, then fade through black and replay. Omit = one-shot. */
+  /** Remount/reset when the video src changes (blob URL, share media, etc.). */
+  sourceKey?: string,
+  /** Hold still this many ms, then return to video. Omit = one-shot. */
   restartAfterStillMs?: number,
-  fadeMs = DEFAULT_FADE_MS
+  fadeMs = DEFAULT_FADE_MS,
+  /** Don’t start video→still until the image can cover after black. */
+  stillReady = true,
+  /** Season One / guest: through-black both ways. Meta: crossfade still→video. */
+  stillToVideoMode: StillToVideoMode = 'crossfade'
 ) {
   const [videoReady, setVideoReady] = useState(false);
   const [phase, setPhase] = useState<LoopPhase>(enabled ? 'play' : 'still');
   const startedRef = useRef(false);
+  const endedWhileWaitingRef = useRef(false);
+  const throughBlack = stillToVideoMode === 'through-black';
 
   const skipToStill = useCallback(() => {
     setPhase('still');
@@ -47,6 +66,7 @@ export function usePosterLoopPlayback(
     }
 
     startedRef.current = false;
+    endedWhileWaitingRef.current = false;
     setVideoReady(false);
     setPhase('play');
 
@@ -107,6 +127,7 @@ export function usePosterLoopPlayback(
     };
 
     let teardown: (() => void) | undefined;
+    let tries = 0;
 
     const attach = () => {
       const video = videoRef.current;
@@ -115,13 +136,18 @@ export function usePosterLoopPlayback(
       return true;
     };
 
-    if (!attach()) {
-      raf = requestAnimationFrame(() => {
-        if (!cancelled && !attach()) {
-          skipToStill();
-        }
-      });
-    }
+    const tryAttach = () => {
+      if (cancelled) return;
+      if (attach()) return;
+      tries += 1;
+      if (tries >= ATTACH_TRIES) {
+        skipToStill();
+        return;
+      }
+      raf = requestAnimationFrame(tryAttach);
+    };
+
+    tryAttach();
 
     return () => {
       cancelled = true;
@@ -130,12 +156,34 @@ export function usePosterLoopPlayback(
       clearStall();
       teardown?.();
     };
-  }, [enabled, videoRef, markReady, skipToStill]);
+  }, [enabled, videoRef, markReady, skipToStill, sourceKey]);
 
-  // Video already finished — go straight to still fade-in (no extra black hold).
+  // Video ended → fade out to black, then still fades in (never overlap = no crossfade).
   const onVideoEnded = useCallback(() => {
-    setPhase((prev) => (prev === 'play' || prev === 'introIn' ? 'outroIn' : prev));
-  }, []);
+    setPhase((prev) => {
+      if (prev !== 'play' && prev !== 'introIn') return prev;
+      if (!stillReady) {
+        endedWhileWaitingRef.current = true;
+        return 'awaitStill';
+      }
+      endedWhileWaitingRef.current = false;
+      return 'outroOut';
+    });
+  }, [stillReady]);
+
+  useEffect(() => {
+    if (!enabled || !stillReady) return;
+    if (phase === 'awaitStill' || endedWhileWaitingRef.current) {
+      endedWhileWaitingRef.current = false;
+      setPhase('outroOut');
+    }
+  }, [enabled, stillReady, phase]);
+
+  useEffect(() => {
+    if (!enabled || phase !== 'outroOut') return;
+    const timer = window.setTimeout(() => setPhase('outroIn'), fadeMs);
+    return () => window.clearTimeout(timer);
+  }, [enabled, phase, fadeMs]);
 
   useEffect(() => {
     if (!enabled || phase !== 'outroIn') return;
@@ -143,7 +191,7 @@ export function usePosterLoopPlayback(
     return () => window.clearTimeout(timer);
   }, [enabled, phase, fadeMs]);
 
-  // Hold still, then fade still out through black (same fadeMs as still fade-in).
+  // Hold still, then return to video.
   useEffect(() => {
     if (!enabled || !restartAfterStillMs || phase !== 'still') return;
     const timer = window.setTimeout(() => {
@@ -157,12 +205,19 @@ export function usePosterLoopPlayback(
         }
       }
       setPhase('introOut');
+      if (!throughBlack && video) {
+        void video.play().catch(() => setPhase('still'));
+      }
     }, restartAfterStillMs);
     return () => window.clearTimeout(timer);
-  }, [enabled, restartAfterStillMs, phase, videoRef]);
+  }, [enabled, restartAfterStillMs, phase, videoRef, throughBlack]);
 
   useEffect(() => {
     if (!enabled || phase !== 'introOut') return;
+    if (!throughBlack) {
+      const timer = window.setTimeout(() => setPhase('play'), fadeMs);
+      return () => window.clearTimeout(timer);
+    }
     const timer = window.setTimeout(() => {
       setPhase('introIn');
       const video = videoRef.current;
@@ -175,22 +230,42 @@ export function usePosterLoopPlayback(
       void video.play().catch(() => setPhase('still'));
     }, fadeMs);
     return () => window.clearTimeout(timer);
-  }, [enabled, phase, fadeMs, videoRef]);
+  }, [enabled, phase, fadeMs, throughBlack, videoRef]);
 
   useEffect(() => {
-    if (!enabled || phase !== 'introIn') return;
+    if (!enabled || !throughBlack || phase !== 'introIn') return;
     const timer = window.setTimeout(() => setPhase('play'), fadeMs);
     return () => window.clearTimeout(timer);
-  }, [enabled, phase, fadeMs]);
+  }, [enabled, throughBlack, phase, fadeMs]);
 
-  // Sequential: never show still + video fading at the same time.
-  const showVideo = videoReady && (phase === 'play' || phase === 'introIn');
+  const showVideo = throughBlack
+    ? videoReady &&
+      (phase === 'play' ||
+        phase === 'outroOut' ||
+        phase === 'introIn' ||
+        phase === 'awaitStill')
+    : videoReady &&
+      (phase === 'play' ||
+        phase === 'outroOut' ||
+        phase === 'introOut' ||
+        phase === 'awaitStill');
+
+  const videoFadingOut = phase === 'outroOut';
+  /** Through-black: still fades out on introOut; crossfade also uses introOut for still↔video. */
+  const stillFadingOut = phase === 'introOut';
   const onStill = phase === 'still';
-  const showStillLayer = phase === 'still' || phase === 'outroIn';
-  // Black under the OUT: still→black (introOut) and black→still (outroIn start).
-  // Cleared when the IN layer is settled / while video fades in.
-  const isHandoff = phase === 'introOut' || phase === 'outroIn';
-  const videoDone = phase !== 'play' && phase !== 'introIn';
+  const showStillLayer =
+    phase === 'still' || phase === 'outroIn' || phase === 'introOut';
+  // Black under the OUT beats (and still IN for through-black so image rises from black).
+  const isHandoff = throughBlack
+    ? phase === 'outroOut' || phase === 'introOut' || phase === 'outroIn'
+    : phase === 'outroOut';
+  const videoDone = throughBlack
+    ? phase !== 'play' &&
+      phase !== 'outroOut' &&
+      phase !== 'introIn' &&
+      phase !== 'awaitStill'
+    : phase !== 'play' && phase !== 'introOut' && phase !== 'awaitStill';
 
   return {
     videoReady,
@@ -198,8 +273,8 @@ export function usePosterLoopPlayback(
     onStill,
     showStillLayer,
     showVideo,
-    /** Video is hidden as soon as it ends — no lingering fade-out beat. */
-    videoFadingOut: false,
+    videoFadingOut,
+    stillFadingOut,
     isHandoff,
     markReady,
     skipToStill,

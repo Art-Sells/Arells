@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import TBARLoadReveal from '../../../components/Assets/Crypto/TBAR/LoadReveal';
 import TBARGrid from '../../../components/Assets/Crypto/TBAR/Grid';
@@ -10,10 +11,18 @@ import AssetSummaryCircleLoader from '../../../components/Assets/shared/AssetSum
 import { useAssetSummaryCircleLoader } from '../../../components/Assets/shared/useAssetSummaryCircleLoader';
 import { useUser } from '../../../context/UserContext';
 import { useTBAR } from '../../../components/Assets/Crypto/TBAR/useTBAR';
+import { useBitcoinGuestCharacterMedia } from '../../../hooks/useBitcoinGuestCharacterMedia';
 import { useGuestPreview } from '../../../hooks/useGuestPreview';
+import {
+  assetSharePath,
+  publicAlienImagePath,
+  publicAlienVideoPath,
+} from '../../../lib/assets/assetSharePath';
 import { splitTBARDaysAt, tbarThumbCount } from '../../../lib/assets/crypto/TBAR/media';
+import { isPendingNavTarget, usePendingNavHref } from '../../../lib/client/navCircleLoader';
 import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
+/** Same still as the Bitcoin page when there is no character. */
 const PREMIER_POSTER =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
 const PREMIER_POSTER_LOOP =
@@ -42,8 +51,16 @@ function measureTBARSectionHeight(
   return Math.ceil(content.scrollHeight + padY);
 }
 
-const BitcoinNewsPageClient: React.FC = () => {
-  const { isSignedIn, authSessionLoading } = useUser();
+type BitcoinNewsPageClientProps = {
+  /** Path share id when on /bitcoin/news/{shareId}. */
+  pathShareId?: string | null;
+};
+
+const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
+  pathShareId = null,
+}) => {
+  const router = useRouter();
+  const { isSignedIn, authSessionLoading, shareId } = useUser();
   const { days, ready } = useTBAR();
   const hasContent = tbarThumbCount(days) > 0;
   /** Mounted in DOM (like showInvestmentsList). */
@@ -59,9 +76,14 @@ const BitcoinNewsPageClient: React.FC = () => {
   const otherHasContent = tbarThumbCount(otherDays) > 0;
   const guestPreview = useGuestPreview();
   const showGuest = !authSessionLoading && (guestPreview || !isSignedIn);
+  const allowSignedIn = !authSessionLoading && isSignedIn && !guestPreview;
   /** Signed-in chrome during auth too — never blank the page while session resolves. */
   const showSignedInShell = !guestPreview && (authSessionLoading || isSignedIn);
   const pageLoader = useAssetSummaryCircleLoader();
+  usePendingNavHref();
+  const bitcoinBadgeHref = assetSharePath('/bitcoin', shareId);
+  const bitcoinBadgeLoading = isPendingNavTarget(bitcoinBadgeHref);
+  const shareGuest = useBitcoinGuestCharacterMedia(pathShareId, showGuest);
   const sectionWrapRef = useRef<HTMLDivElement>(null);
   const sectionContentRef = useRef<HTMLDivElement>(null);
   const otherContentRef = useRef<HTMLDivElement>(null);
@@ -76,6 +98,14 @@ const BitcoinNewsPageClient: React.FC = () => {
     () => measureTBARSectionHeight(sectionWrapRef.current, sectionContentRef.current),
     []
   );
+
+  /** Bare /bitcoin/news → /bitcoin/news/{shareId} when signed in. */
+  useEffect(() => {
+    if (authSessionLoading || pathShareId) return;
+    if (allowSignedIn && shareId) {
+      router.replace(assetSharePath('/bitcoin/news', shareId));
+    }
+  }, [authSessionLoading, pathShareId, allowSignedIn, shareId, router]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -205,6 +235,25 @@ const BitcoinNewsPageClient: React.FC = () => {
   };
 
   if (showGuest) {
+    const personalGuest = Boolean(pathShareId && shareGuest.personal);
+    const guestPosterSrc = personalGuest
+      ? publicAlienImagePath({
+          shareId: pathShareId as string,
+          asset: 'bitcoin',
+          kind: 'composedsquare',
+          cacheBust: shareGuest.bust,
+        })
+      : PREMIER_POSTER;
+    const guestLoopSrc = personalGuest
+      ? shareGuest.loopReady
+        ? publicAlienVideoPath({
+            shareId: pathShareId as string,
+            asset: 'bitcoin',
+            kind: 'metaloop',
+            cacheBust: shareGuest.bust,
+          })
+        : undefined
+      : PREMIER_POSTER_LOOP;
     return (
       <div className="asset-page asset-page--bitcoin">
         <header className="asset-header asset-header--bitcoin" />
@@ -212,15 +261,16 @@ const BitcoinNewsPageClient: React.FC = () => {
           cssModifier="bitcoin"
           ticker="BTC"
           title="Bitcoin"
-          posterSrc={PREMIER_POSTER}
-          posterLoopSrc={PREMIER_POSTER_LOOP}
+          posterSrc={guestPosterSrc}
+          posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={1166}
-          posterAlt="Bitcoin News"
+          posterHeight={personalGuest ? 2000 : 1166}
+          posterAlt="Bitcoin Alien Race launch poster"
           smallIcon
-          showTrailer
+          showTrailer={!personalGuest}
           hideWordmark
-          hideSigninPrompt
+          hideSigninPrompt={!pathShareId || personalGuest}
+          possessiveMission={personalGuest}
         />
       </div>
     );
@@ -243,13 +293,20 @@ const BitcoinNewsPageClient: React.FC = () => {
           <div className="bitcoin-alien-race-mount-slide bitcoin-alien-race-mount-slide--title asset-guest-mount-slide">
             <div className="asset-bitcoin-season-teaser-badge">
               <Link
-                href="/bitcoin"
-                className="myinv-asset-home-card home-asset-bitcoin bitcoin-alien-race-asset-card"
+                href={bitcoinBadgeHref}
+                className={`myinv-asset-home-card home-asset-bitcoin bitcoin-alien-race-asset-card${
+                  bitcoinBadgeLoading ? ' is-nav-loading' : ''
+                }`}
                 aria-label="Bitcoin"
+                aria-busy={bitcoinBadgeLoading || undefined}
               >
                 <div className="home-assets-cell home-assets-asset">
                   <span className="home-asset-label home-asset-label-bitcoin">
-                    <span className="home-asset-name asset-action-button asset-action-button--bitcoin asset-action-button--home-asset-chip">
+                    <span
+                      className={`home-asset-name asset-action-button asset-action-button--bitcoin asset-action-button--home-asset-chip${
+                        bitcoinBadgeLoading ? ' is-nav-loading-chip' : ''
+                      }`}
+                    >
                       Bitcoin
                     </span>
                   </span>

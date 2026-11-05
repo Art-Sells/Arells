@@ -1,0 +1,126 @@
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import BitcoinPageClient from '../../../components/Assets/Crypto/Bitcoin/BitcoinPageClient';
+import { ensureReferralCodeForUser, resolveReferrerEmailFromCode } from '../../../lib/auth/referral';
+import { getSessionFromAppCookies } from '../../../lib/auth/session';
+import { publicAlienImagePath } from '../../../lib/assets/assetSharePath';
+import {
+  buildCryptoAssetPageMetadata,
+  getCryptoAssetPageSeo,
+} from '../../../lib/assets/cryptoAssetRegistry';
+import { buildWebPageJsonLd } from '../../../lib/pageWebPageJsonLd';
+import { isMissingS3Object, alienComposedKey } from '../../../lib/server/alienPhoto';
+import { getServerS3 } from '../../../lib/server/awsS3';
+import { s3BucketNameOrThrow } from '../../../lib/server/s3Bucket';
+
+const assetId = 'bitcoin' as const;
+
+type PageProps = {
+  params: Promise<{ shareId: string }>;
+};
+
+async function composedExistsForEmail(email: string): Promise<boolean> {
+  try {
+    await getServerS3()
+      .headObject({
+        Bucket: s3BucketNameOrThrow(),
+        Key: alienComposedKey(email, assetId),
+      })
+      .promise();
+    return true;
+  } catch (err) {
+    if (isMissingS3Object(err)) return false;
+    return false;
+  }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { shareId: raw } = await params;
+  const shareId = (raw || '').trim().toLowerCase();
+  const base = buildCryptoAssetPageMetadata(assetId);
+  const { title, description } = getCryptoAssetPageSeo(assetId);
+  const path = `/bitcoin/${shareId}`;
+
+  if (!shareId || shareId === 'news' || shareId === 'my-character') {
+    return base;
+  }
+
+  const email = await resolveReferrerEmailFromCode(shareId);
+  const hasComposed = email ? await composedExistsForEmail(email) : false;
+  const fallbackImages = base.openGraph?.images;
+  const firstFallback = Array.isArray(fallbackImages) ? fallbackImages[0] : fallbackImages;
+  const fallbackOgUrl =
+    typeof firstFallback === 'string'
+      ? firstFallback
+      : firstFallback && typeof firstFallback === 'object' && 'url' in firstFallback
+        ? String(firstFallback.url)
+        : undefined;
+  const ogImage = hasComposed
+    ? publicAlienImagePath({ shareId, asset: assetId, kind: 'composed' })
+    : fallbackOgUrl;
+
+  return {
+    ...base,
+    alternates: { canonical: path },
+    openGraph: {
+      ...base.openGraph,
+      title,
+      description,
+      url: path,
+      images: ogImage ? [{ url: ogImage }] : base.openGraph?.images,
+    },
+    twitter: {
+      ...base.twitter,
+      title,
+      description,
+      images: ogImage ? [{ url: ogImage }] : base.twitter?.images,
+    },
+  };
+}
+
+const BitcoinSharePage = async ({ params }: PageProps) => {
+  const { shareId: raw } = await params;
+  const shareId = (raw || '').trim().toLowerCase();
+  if (!shareId || shareId === 'news' || shareId === 'my-character') {
+    redirect('/bitcoin');
+  }
+
+  const email = await resolveReferrerEmailFromCode(shareId);
+  if (!email) {
+    const session = await getSessionFromAppCookies();
+    let own = '';
+    if (session?.email) {
+      try {
+        own = (await ensureReferralCodeForUser(session.email)).trim().toLowerCase();
+      } catch (err) {
+        console.error('bitcoin share own id', err);
+      }
+    }
+    // /bitcoin sends a signed-in user here. Bouncing back to /bitcoin loops forever.
+    if (own !== shareId) redirect('/bitcoin');
+  }
+
+  const { title, description } = getCryptoAssetPageSeo(assetId);
+  const path = `/bitcoin/${shareId}`;
+
+  return (
+    <>
+      <main>
+        <div className="server-seo-summary">
+          <h1>{title}</h1>
+          <p>{description}</p>
+        </div>
+        <BitcoinPageClient />
+      </main>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger -- JSON-LD requires raw script injection
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildWebPageJsonLd({ title, description, path })),
+        }}
+      />
+    </>
+  );
+};
+
+export default BitcoinSharePage;

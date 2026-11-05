@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { formatHomeAssetNumber } from '../../lib/formatHomeAssetNumber';
+import { isPendingNavTarget, usePendingNavHref } from '../../lib/client/navCircleLoader';
 
 export type HomeCryptoAssetRowData = {
   id: string;
@@ -46,14 +47,22 @@ const HomeCryptoAssetRow: React.FC<HomeCryptoAssetRowProps> = ({
   const changeAll = displayIsLiquidMode ? row.liquidChangeAll : row.solidChangeAll;
   const hasData = row.liquidPrice > 0 || row.solidPrice > 0;
   const numberFadeStyle = hasData ? cardFadeStyle : { opacity: 0 };
+  usePendingNavHref();
+  const badgeLoading = isPendingNavTarget(row.href);
 
   return (
     <div className={className}>
-      <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
+      <Link
+        href={row.href}
+        className={`home-asset-card home-asset-${row.id}${badgeLoading ? ' is-nav-loading' : ''}`}
+        aria-busy={badgeLoading || undefined}
+      >
         <div className="home-assets-cell home-assets-asset">
           <span className={`home-asset-label home-asset-label-${row.id}`}>
             <span
-              className={`home-asset-name asset-action-button asset-action-button--${row.id} asset-action-button--invest-add asset-action-button--home-asset-chip`}
+              className={`home-asset-name asset-action-button asset-action-button--${row.id} asset-action-button--invest-add asset-action-button--home-asset-chip${
+                badgeLoading ? ' is-nav-loading-chip' : ''
+              }`}
             >
               {row.id === 'bch' ? (
                 <>

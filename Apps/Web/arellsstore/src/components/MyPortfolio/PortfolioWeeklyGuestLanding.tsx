@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import GuestLandingCopyright from '../GuestLandingCopyright';
 import { usePosterLoopPlayback } from '../../hooks/usePosterLoopPlayback';
+
 const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) =>
   `/${src}?w=${width}&q=${quality || 100}`;
 
@@ -16,25 +17,40 @@ const LAUNCH_POSTER_LOOP = `${LAUNCH_POSTERS_BASE}/${encodeURIComponent('LaunchL
 const PortfolioWeeklyGuestLanding: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const stillImgRef = useRef<HTMLImageElement | null>(null);
+  const [stillLoaded, setStillLoaded] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const {
-    videoReady,
     showStillLayer,
     showVideo,
+    videoFadingOut,
+    stillFadingOut,
     isHandoff,
     markReady,
     onVideoEnded,
     skipToStill,
-  } = usePosterLoopPlayback(videoRef, true, 5000);
-  const [stillLoaded, setStillLoaded] = useState(false);
+  } = usePosterLoopPlayback(
+    videoRef,
+    true,
+    LAUNCH_POSTER_LOOP,
+    5000,
+    undefined,
+    stillLoaded,
+    'through-black'
+  );
 
-  // Same as Season One: fade-through-black both directions.
   const showStill = showStillLayer && stillLoaded;
-  const frameReady = videoReady || showStill || stillLoaded;
+  /** Keep loader until the launch loop is actually playing — not just the still image. */
+  const frameReady = videoPlaying || showStill;
 
   useEffect(() => {
     const img = stillImgRef.current;
     if (img?.complete && img.naturalWidth > 0) setStillLoaded(true);
   }, []);
+
+  const onVideoPlaying = () => {
+    markReady();
+    setVideoPlaying(true);
+  };
 
   return (
     <div className="home-guest-landing">
@@ -73,39 +89,46 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
             }${showStill ? ' is-still' : ''}${isHandoff ? ' is-handoff' : ''}`}
             style={{ aspectRatio: '2000 / 1166' }}
           >
-            {!frameReady ? (
-              <div className="asset-guest-poster-loader" aria-hidden="true">
-                <div className="asset-guest-poster-loader-ring" />
-              </div>
-            ) : null}
-            <video
-              ref={videoRef}
-              className={`asset-guest-poster-video${showVideo ? ' is-visible' : ''}${
-                !showVideo ? ' is-done' : ''
-              }`}
-              src={LAUNCH_POSTER_LOOP}
-              muted
-              playsInline
-              preload="auto"
-              autoPlay
-              controls={false}
-              disablePictureInPicture
-              onLoadedData={markReady}
-              onCanPlay={markReady}
-              onPlaying={markReady}
-              onEnded={onVideoEnded}
-              onError={skipToStill}
-              aria-label="The Bitcoin Alien Race"
-            />
-            <img
-              ref={stillImgRef}
-              src={LAUNCH_POSTER}
-              alt="The Bitcoin Alien Race"
-              width={2000}
-              height={1166}
-              className={`asset-guest-poster-img${showStill ? ' is-visible' : ''}`}
-              onLoad={() => setStillLoaded(true)}
-            />
+            <div className="asset-guest-poster-media">
+              {!frameReady ? (
+                <div className="asset-guest-poster-loader" aria-hidden="true">
+                  <div className="asset-guest-poster-loader-ring" />
+                </div>
+              ) : null}
+              <video
+                ref={videoRef}
+                className={`asset-guest-poster-video${showVideo ? ' is-visible' : ''}${
+                  videoFadingOut || !showVideo ? ' is-done' : ''
+                }`}
+                src={LAUNCH_POSTER_LOOP}
+                muted
+                playsInline
+                preload="auto"
+                autoPlay
+                controls={false}
+                disablePictureInPicture
+                onLoadedData={markReady}
+                onCanPlay={markReady}
+                onPlaying={onVideoPlaying}
+                onEnded={onVideoEnded}
+                onError={() => {
+                  setVideoPlaying(false);
+                  skipToStill();
+                }}
+                aria-label="The Bitcoin Alien Race"
+              />
+              <img
+                ref={stillImgRef}
+                src={LAUNCH_POSTER}
+                alt="The Bitcoin Alien Race"
+                width={2000}
+                height={1166}
+                className={`asset-guest-poster-img${showStill ? ' is-visible' : ''}${
+                  stillFadingOut ? ' is-done' : ''
+                }`}
+                onLoad={() => setStillLoaded(true)}
+              />
+            </div>
           </div>
           <div className="home-guest-signin-panel myinv-accent-border">
             <div className="home-guest-signin-inner">

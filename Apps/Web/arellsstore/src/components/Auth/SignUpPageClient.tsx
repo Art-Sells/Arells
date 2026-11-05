@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthSuccessArellsMark from './AuthSuccessArellsMark';
 import AuthOtpCodeForm from './AuthOtpCodeForm';
 import { useUser } from '../../context/UserContext';
+import { assetSharePath } from '../../lib/assets/assetSharePath';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import {
   isConfirmFieldAuthError,
@@ -24,8 +24,7 @@ import {
 const COLLAPSE_MS = 1500;
 
 const SignUpPageClient: React.FC = () => {
-  const router = useRouter();
-  const { refreshAuthSession } = useUser();
+  const { refreshAuthSession, shareId } = useUser();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -182,8 +181,7 @@ const SignUpPageClient: React.FC = () => {
   const onViewPortfolio = () => {
     if (loadingPortfolio) return;
     setLoadingPortfolio(true);
-    router.push('/bitcoin');
-    router.refresh();
+    window.location.assign(assetSharePath('/bitcoin', shareId));
   };
 
   const formDisabled = phase === 'exiting';

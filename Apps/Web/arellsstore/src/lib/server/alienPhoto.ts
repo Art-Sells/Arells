@@ -1,0 +1,164 @@
+import { normalizeEmailKey } from '../auth/normalize';
+
+export const ALIEN_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+export const ALIEN_PHOTO_ASSETS = new Set(['bitcoin']);
+
+export type AlienPhotoMime = 'image/jpeg' | 'image/png' | 'image/webp';
+
+export function normalizeAlienPhotoAsset(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null;
+  const asset = raw.trim().toLowerCase();
+  return ALIEN_PHOTO_ASSETS.has(asset) ? asset : null;
+}
+
+export function alienPhotoKey(email: string, asset: string): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}`;
+}
+
+/** Personalized launch / share metaposter after compose. */
+export function alienComposedKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-composed`;
+}
+
+/**
+ * Uncropped square still. The metaposter loop is built from this.
+ * The public composed key is the wide crop.
+ */
+export function alienMetaloopSourceKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-metaloop-source`;
+}
+
+/** Personalized SEASON ONE banner after compose. */
+export function alienSeasonOneKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-seasonone`;
+}
+
+/** Wide 2:1 Personal Bitcoin Alien portrait. */
+export function alienPortraitKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-portrait`;
+}
+
+/** Personalized metaposter / guest loop (image-to-video). */
+export function alienMetaloopKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-metaloop.mp4`;
+}
+
+/** Personalized Season One banner loop (image-to-video). */
+export function alienSeasonOneLoopKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-seasonone-loop.mp4`;
+}
+
+/** Live media kinds that are staged during create, then promoted on finalize. */
+export const ALIEN_STAGED_MEDIA_KINDS = [
+  'composed',
+  'seasonone',
+  'portrait',
+  'metaloop',
+  'seasononeloop',
+] as const;
+
+export type AlienStagedMediaKind = (typeof ALIEN_STAGED_MEDIA_KINDS)[number];
+
+export function alienStagedObjectKey(
+  email: string,
+  asset: string,
+  kind: AlienStagedMediaKind,
+  staging: boolean
+): string {
+  if (kind === 'composed') return alienComposedKey(email, asset, staging);
+  if (kind === 'seasonone') return alienSeasonOneKey(email, asset, staging);
+  if (kind === 'portrait') return alienPortraitKey(email, asset, staging);
+  if (kind === 'metaloop') return alienMetaloopKey(email, asset, staging);
+  return alienSeasonOneLoopKey(email, asset, staging);
+}
+
+export type AlienPhotoKind =
+  | 'selfie'
+  | 'composed'
+  | 'composedsquare'
+  | 'portrait'
+  | 'seasonone'
+  | 'metaloop'
+  | 'seasononeloop';
+
+export function normalizeAlienPhotoKind(raw: unknown): AlienPhotoKind {
+  if (typeof raw !== 'string') return 'selfie';
+  const kind = raw.trim().toLowerCase();
+  if (kind === 'composed' || kind === 'metaposter' || kind === 'guestposter') return 'composed';
+  if (kind === 'composedsquare') return 'composedsquare';
+  if (kind === 'portrait') return 'portrait';
+  if (kind === 'seasonone' || kind === 'season-one') return 'seasonone';
+  if (kind === 'metaloop' || kind === 'guestloop') return 'metaloop';
+  if (kind === 'seasononeloop' || kind === 'seasonone-loop' || kind === 'season-one-loop') {
+    return 'seasononeloop';
+  }
+  return 'selfie';
+}
+
+/**
+ * Square page still. Characters made before the crop only have a square `composed`
+ * and no separate square file, so fall back to it.
+ */
+export function alienPhotoFallbackKey(email: string, asset: string, kind: AlienPhotoKind): string | null {
+  return kind === 'composedsquare' ? alienComposedKey(email, asset) : null;
+}
+
+export function isAlienVideoKind(kind: AlienPhotoKind): boolean {
+  return kind === 'metaloop' || kind === 'seasononeloop';
+}
+
+export function alienPhotoObjectKey(email: string, asset: string, kind: AlienPhotoKind = 'selfie'): string {
+  if (kind === 'composed') return alienComposedKey(email, asset);
+  if (kind === 'composedsquare') return alienMetaloopSourceKey(email, asset);
+  if (kind === 'portrait') return alienPortraitKey(email, asset);
+  if (kind === 'seasonone') return alienSeasonOneKey(email, asset);
+  if (kind === 'metaloop') return alienMetaloopKey(email, asset);
+  if (kind === 'seasononeloop') return alienSeasonOneLoopKey(email, asset);
+  return alienPhotoKey(email, asset);
+}
+
+export function sniffAlienPhotoMime(buf: Buffer): AlienPhotoMime | null {
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) {
+    return 'image/jpeg';
+  }
+  if (
+    buf.length >= 8 &&
+    buf[0] === 0x89 &&
+    buf[1] === 0x50 &&
+    buf[2] === 0x4e &&
+    buf[3] === 0x47 &&
+    buf[4] === 0x0d &&
+    buf[5] === 0x0a &&
+    buf[6] === 0x1a &&
+    buf[7] === 0x0a
+  ) {
+    return 'image/png';
+  }
+  if (
+    buf.length >= 12 &&
+    buf.toString('ascii', 0, 4) === 'RIFF' &&
+    buf.toString('ascii', 8, 12) === 'WEBP'
+  ) {
+    return 'image/webp';
+  }
+  return null;
+}
+
+export function decodeAlienPhotoDataUrl(raw: unknown): Buffer | null {
+  if (typeof raw !== 'string' || !raw.length) return null;
+  const comma = raw.indexOf(',');
+  const payload = comma >= 0 ? raw.slice(comma + 1) : raw;
+  try {
+    const buf = Buffer.from(payload, 'base64');
+    return buf.length ? buf : null;
+  } catch {
+    return null;
+  }
+}
+
+export function isMissingS3Object(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const code = 'code' in err ? String((err as { code?: unknown }).code) : '';
+  const status = 'statusCode' in err ? Number((err as { statusCode?: unknown }).statusCode) : 0;
+  return code === 'NoSuchKey' || code === 'NotFound' || status === 404;
+}
