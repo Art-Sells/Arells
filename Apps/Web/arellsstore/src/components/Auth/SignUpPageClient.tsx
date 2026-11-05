@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthSuccessArellsMark from './AuthSuccessArellsMark';
@@ -25,7 +24,6 @@ import {
 const COLLAPSE_MS = 1500;
 
 const SignUpPageClient: React.FC = () => {
-  const router = useRouter();
   const { refreshAuthSession, shareId } = useUser();
 
   const [email, setEmail] = useState('');
@@ -183,8 +181,7 @@ const SignUpPageClient: React.FC = () => {
   const onViewPortfolio = () => {
     if (loadingPortfolio) return;
     setLoadingPortfolio(true);
-    router.push(assetSharePath('/bitcoin', shareId));
-    router.refresh();
+    window.location.assign(assetSharePath('/bitcoin', shareId));
   };
 
   const formDisabled = phase === 'exiting';
