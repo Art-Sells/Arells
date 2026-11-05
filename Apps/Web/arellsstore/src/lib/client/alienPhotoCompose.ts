@@ -390,7 +390,7 @@ async function loadComposeResultFromJob(
         credentials: 'include',
         cache: 'no-store',
       }),
-      fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composed${bust}`, {
+      fetch(`/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=composedsquare${bust}`, {
         credentials: 'include',
         cache: 'no-store',
       }),

@@ -14,7 +14,8 @@ export function assetSharePath(baseHref: string, shareId?: string | null): strin
 export function publicAlienImagePath(args: {
   shareId: string;
   asset?: string;
-  kind: 'composed' | 'seasonone' | 'portrait';
+  /** `composed` = cropped share/link-preview poster. `composedsquare` = square page still. */
+  kind: 'composed' | 'composedsquare' | 'seasonone' | 'portrait';
   cacheBust?: number | string;
 }): string {
   const params = new URLSearchParams({

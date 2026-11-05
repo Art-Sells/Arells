@@ -1951,20 +1951,27 @@ a.asset-alien-photo-hit {
 .asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-img {
 	position: absolute;
-	/* 5px past the frame on every side, then clipped back so the stroke sits on the picture. */
-	inset: -5px;
-	width: calc(100% + 10px) !important;
-	height: calc(100% + 10px) !important;
+	/* Stock banner: exact frame size — a bleed changes the box shape and cover zooms the wide banner. */
+	inset: 0;
+	width: 100% !important;
+	height: 100% !important;
 	display: block;
 	border-radius: 0;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
-	clip-path: inset(5px round 12px);
 	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
 	border: none;
 	background: transparent;
+}
+
+/* Character Season One only: 5px past the frame; the frame's rounded overflow clips it to the stroke. */
+.asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-video,
+.asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-img {
+	inset: -5px;
+	width: calc(100% + 10px) !important;
+	height: calc(100% + 10px) !important;
 }
 
 .asset-bitcoin-season-teaser-video {
@@ -2000,11 +2007,6 @@ a.asset-alien-photo-hit {
 @media (max-width: 750px) {
 	.asset-bitcoin-season-teaser-frame {
 		border-radius: 6px;
-	}
-
-	.asset-bitcoin-season-teaser-video,
-	.asset-bitcoin-season-teaser-img {
-		clip-path: inset(5px round 6px);
 	}
 }
 
@@ -2055,7 +2057,7 @@ a.asset-alien-photo-hit {
 .bitcoin-my-character-launch {
 	position: relative;
 	width: 100%;
-	aspect-ratio: 2000 / 1166;
+	aspect-ratio: 1 / 1;
 	box-sizing: border-box;
 }
 
@@ -2064,7 +2066,7 @@ a.asset-alien-photo-hit {
 	margin: 0;
 }
 
-/* Loader + AlienMetaPreview share the metaposter box so media swap can't grow mid height-down. */
+/* Loader + AlienMetaPreview share the same 1:1 box so media swap can't grow mid height-down. */
 .bitcoin-my-character-launch .asset-alien-meta-preview-frame,
 .bitcoin-my-character-launch--loading {
 	position: absolute;
@@ -8059,7 +8061,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 		transparent
 	);
 	background: transparent;
-	aspect-ratio: 2000 / 1166;
+	aspect-ratio: 1 / 1;
 }
 
 .asset-alien-meta-preview-frame::after {

@@ -240,7 +240,7 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
       ? publicAlienImagePath({
           shareId: pathShareId as string,
           asset: 'bitcoin',
-          kind: 'composed',
+          kind: 'composedsquare',
           cacheBust: shareGuest.bust,
         })
       : PREMIER_POSTER;
@@ -264,7 +264,7 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
           posterSrc={guestPosterSrc}
           posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={1166}
+          posterHeight={personalGuest ? 2000 : 1166}
           posterAlt="Bitcoin Alien Race launch poster"
           smallIcon
           showTrailer={!personalGuest}

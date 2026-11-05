@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { resolveReferrerEmailFromCode } from '../../../lib/auth/referral';
 import {
+  alienPhotoFallbackKey,
   alienPhotoObjectKey,
   isMissingS3Object,
   normalizeAlienPhotoAsset,
@@ -13,7 +14,7 @@ const s3 = getServerS3();
 
 /**
  * Public composed alien images for OG / share pages.
- * Query: shareId (referral code), asset, kind=composed|seasonone|portrait
+ * Query: shareId (referral code), asset, kind=composed|composedsquare|seasonone|portrait
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -43,7 +44,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const key = alienPhotoObjectKey(email, asset, kind);
+  let key = alienPhotoObjectKey(email, asset, kind);
+  const fallbackKey = alienPhotoFallbackKey(email, asset, kind);
+  if (fallbackKey) {
+    try {
+      await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
+    } catch (err) {
+      if (!isMissingS3Object(err)) {
+        console.error('public alien-image', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      key = fallbackKey;
+    }
+  }
   try {
     if (req.method === 'HEAD') {
       const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();

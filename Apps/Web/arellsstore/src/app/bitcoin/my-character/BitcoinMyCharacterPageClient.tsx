@@ -219,7 +219,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     ? publicAlienImagePath({
         shareId: resolvedShareId,
         asset: 'bitcoin',
-        kind: 'composed',
+        kind: 'composedsquare',
         cacheBust: posterBust,
       })
     : PREMIER_POSTER;
@@ -329,7 +329,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     const publicMeta = publicAlienImagePath({
       shareId: id,
       asset: 'bitcoin',
-      kind: 'composed',
+      kind: 'composedsquare',
       cacheBust: bust,
     });
     const publicLoop = publicAlienVideoPath({
@@ -344,7 +344,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
       kind: 'portrait',
       cacheBust: bust,
     });
-    const ownerMetaApi = `/api/user/alien-photo?asset=bitcoin&kind=composed&t=${bust}`;
+    const ownerMetaApi = `/api/user/alien-photo?asset=bitcoin&kind=composedsquare&t=${bust}`;
     const ownerPortraitApi = `/api/user/alien-photo?asset=bitcoin&kind=portrait&t=${bust}`;
     const ownerLoopApi = `/api/user/alien-photo?asset=bitcoin&kind=metaloop&t=${bust}`;
 
@@ -591,7 +591,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
       ? publicAlienImagePath({
           shareId: pathShareId,
           asset: 'bitcoin',
-          kind: 'composed',
+          kind: 'composedsquare',
           cacheBust: shareGuest.bust,
         })
       : PREMIER_POSTER;
@@ -615,7 +615,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           posterSrc={guestPosterSrc}
           posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={1166}
+          posterHeight={personalGuest ? 2000 : 1166}
           posterAlt="The Bitcoin Alien Race"
           smallIcon
           showTrailer={!personalGuest}

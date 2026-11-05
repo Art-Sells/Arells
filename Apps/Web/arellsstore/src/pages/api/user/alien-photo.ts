@@ -3,6 +3,7 @@ import { assertUserEmailMatchesSession } from '../../../lib/auth/requireUserApi'
 import { getSessionFromRequest } from '../../../lib/auth/session';
 import {
   ALIEN_PHOTO_MAX_BYTES,
+  alienPhotoFallbackKey,
   alienPhotoObjectKey,
   decodeAlienPhotoDataUrl,
   isAlienVideoKind,
@@ -82,11 +83,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     const rawKind = Array.isArray(req.query.kind) ? req.query.kind[0] : req.query.kind;
     const kind = normalizeAlienPhotoKind(rawKind);
-    const key = alienPhotoObjectKey(email, asset, kind);
+    let key = alienPhotoObjectKey(email, asset, kind);
+    const fallbackObjectKey = alienPhotoFallbackKey(email, asset, kind);
     const isVideo = isAlienVideoKind(kind);
     const fallbackType = isVideo ? 'video/mp4' : 'application/octet-stream';
     try {
-      const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
+      let head;
+      try {
+        head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
+      } catch (err) {
+        if (!fallbackObjectKey || !isMissingS3Object(err)) throw err;
+        key = fallbackObjectKey;
+        head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
+      }
       const type =
         head.ContentType && head.ContentType !== 'application/octet-stream'
           ? head.ContentType

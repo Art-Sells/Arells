@@ -75,6 +75,7 @@ export function alienStagedObjectKey(
 export type AlienPhotoKind =
   | 'selfie'
   | 'composed'
+  | 'composedsquare'
   | 'portrait'
   | 'seasonone'
   | 'metaloop'
@@ -84,6 +85,7 @@ export function normalizeAlienPhotoKind(raw: unknown): AlienPhotoKind {
   if (typeof raw !== 'string') return 'selfie';
   const kind = raw.trim().toLowerCase();
   if (kind === 'composed' || kind === 'metaposter' || kind === 'guestposter') return 'composed';
+  if (kind === 'composedsquare') return 'composedsquare';
   if (kind === 'portrait') return 'portrait';
   if (kind === 'seasonone' || kind === 'season-one') return 'seasonone';
   if (kind === 'metaloop' || kind === 'guestloop') return 'metaloop';
@@ -93,12 +95,21 @@ export function normalizeAlienPhotoKind(raw: unknown): AlienPhotoKind {
   return 'selfie';
 }
 
+/**
+ * Square page still. Characters made before the crop only have a square `composed`
+ * and no separate square file, so fall back to it.
+ */
+export function alienPhotoFallbackKey(email: string, asset: string, kind: AlienPhotoKind): string | null {
+  return kind === 'composedsquare' ? alienComposedKey(email, asset) : null;
+}
+
 export function isAlienVideoKind(kind: AlienPhotoKind): boolean {
   return kind === 'metaloop' || kind === 'seasononeloop';
 }
 
 export function alienPhotoObjectKey(email: string, asset: string, kind: AlienPhotoKind = 'selfie'): string {
   if (kind === 'composed') return alienComposedKey(email, asset);
+  if (kind === 'composedsquare') return alienMetaloopSourceKey(email, asset);
   if (kind === 'portrait') return alienPortraitKey(email, asset);
   if (kind === 'seasonone') return alienSeasonOneKey(email, asset);
   if (kind === 'metaloop') return alienMetaloopKey(email, asset);

@@ -3654,7 +3654,7 @@ const VavityBitcoin: React.FC = () => {
       ? publicAlienImagePath({
           shareId: pathShareId as string,
           asset: 'bitcoin',
-          kind: 'composed',
+          kind: 'composedsquare',
           cacheBust: shareGuest.bust,
         })
       : PREMIER_POSTER;
@@ -3676,7 +3676,7 @@ const VavityBitcoin: React.FC = () => {
         posterSrc={guestPosterSrc}
         posterLoopSrc={guestLoopSrc}
         posterWidth={2000}
-        posterHeight={1166}
+        posterHeight={personalGuest ? 2000 : 1166}
         posterAlt="The Bitcoin Alien Race"
         smallIcon
         showTrailer={!personalGuest}
