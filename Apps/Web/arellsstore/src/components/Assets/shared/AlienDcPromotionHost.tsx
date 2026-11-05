@@ -6,10 +6,7 @@ import AlienDcPromotionModal from './AlienDcPromotionModal';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { useUser } from '../../../context/UserContext';
 import { useAlienCharacterPresent } from '../../../hooks/useAlienCharacterPresent';
-import {
-  dismissDcPromotion,
-  hasDismissedDcPromotion,
-} from '../../../lib/alienDcPromotion';
+import { dismissDcPromotion } from '../../../lib/alienDcPromotion';
 import {
   ALIEN_PHOTO_ACCEPT,
   cloneAlienPhotoFile,
@@ -17,7 +14,6 @@ import {
 import {
   clearOpenGuideFlag,
   handleCharacterGenerationCheckoutReturn,
-  hasPaidCharacterCredit,
   peekOpenGuideFlag,
 } from '../../../lib/client/characterGenerationPay';
 
@@ -50,7 +46,7 @@ type AlienDcPromotionHostProps = {
 };
 
 /**
- * Auto-show: unpaid → pay modal; paid / post-checkout → ADD YOUR CHARACTER (Add Photo) guide.
+ * Auto-show only right after Stripe checkout. A normal Bitcoin mount does not open either modal.
  */
 const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
   enabled,
@@ -60,7 +56,7 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
 }) => {
   const { email, shareId, isSignedIn } = useUser();
   const { blockIfCreating, startCreate } = useAlienCharacterCreate();
-  const hasCharacter = useAlienCharacterPresent(assetId);
+  const { hasCharacter, ready: characterReady } = useAlienCharacterPresent(assetId);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
@@ -86,7 +82,7 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!enabled || !isSignedIn || !email) return;
+    if (!enabled || !isSignedIn || !email || !characterReady) return;
     // Already has a My Character portrait — never auto-spam the promo.
     if (hasCharacter) {
       dismissDcPromotion();
@@ -108,34 +104,15 @@ const AlienDcPromotionHost: React.FC<AlienDcPromotionHostProps> = ({
       }
       if (cancelled) return;
 
-      /* Post-pay / pending guide — always open Add Photo modal (flag survives remounts). */
+      /* Only the payment return (and its immediate redirect) opens Add Photo. */
       if (fromCheckout || peekOpenGuideFlag()) {
         openGuide();
-        return;
-      }
-
-      if (hasDismissedDcPromotion()) return;
-
-      try {
-        const paid = await hasPaidCharacterCredit(assetId);
-        if (cancelled) return;
-        if (paid) openGuide();
-        else {
-          setGuideOpen(false);
-          setPayOpen(true);
-        }
-      } catch (err) {
-        console.error('character credit check', err);
-        if (!cancelled) {
-          setGuideOpen(false);
-          setPayOpen(true);
-        }
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [enabled, isSignedIn, email, assetId, themeSelector, openGuide, hasCharacter]);
+  }, [enabled, isSignedIn, email, assetId, themeSelector, openGuide, hasCharacter, characterReady]);
 
   const onAddPhoto = useCallback(() => {
     if (!isSignedIn || !email) return;

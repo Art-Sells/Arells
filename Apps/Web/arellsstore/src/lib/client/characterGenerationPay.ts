@@ -178,20 +178,33 @@ export async function handleCharacterGenerationCheckoutReturn(): Promise<boolean
   return true;
 }
 
+/** Long enough for the post-pay redirect remount, not a later visit. */
+const OPEN_GUIDE_MAX_AGE_MS = 60_000;
+
 export function markOpenGuidePending(): void {
   if (typeof window === 'undefined') return;
   try {
-    window.sessionStorage.setItem(CG_OPEN_GUIDE_KEY, '1');
+    window.sessionStorage.setItem(CG_OPEN_GUIDE_KEY, String(Date.now()));
   } catch {
     /* ignore */
   }
 }
 
-/** Read without clearing — survives React Strict Mode remounts. */
+/**
+ * Read without clearing — survives React Strict Mode and the share-id redirect.
+ * A stale flag from an earlier visit does not reopen the photo guide.
+ */
 export function peekOpenGuideFlag(): boolean {
   if (typeof window === 'undefined') return false;
   try {
-    return window.sessionStorage.getItem(CG_OPEN_GUIDE_KEY) === '1';
+    const raw = window.sessionStorage.getItem(CG_OPEN_GUIDE_KEY);
+    if (!raw) return false;
+    const at = Number(raw);
+    if (!Number.isFinite(at) || Date.now() - at > OPEN_GUIDE_MAX_AGE_MS) {
+      window.sessionStorage.removeItem(CG_OPEN_GUIDE_KEY);
+      return false;
+    }
+    return true;
   } catch {
     return false;
   }

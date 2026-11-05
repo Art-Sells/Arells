@@ -4,16 +4,22 @@ import { useEffect, useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { ALIEN_COMPOSE_DONE_EVENT } from '../lib/assets/assetSharePath';
 
-/** True once the signed-in user has a portrait for this asset (My Character photo). */
-export function useAlienCharacterPresent(assetId?: string | null) {
+/** Portrait check for this asset. `ready` is false while the request is still in flight. */
+export function useAlienCharacterPresent(assetId?: string | null): {
+  hasCharacter: boolean;
+  ready: boolean;
+} {
   const { isSignedIn } = useUser();
   const [hasCharacter, setHasCharacter] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (!assetId || !isSignedIn) {
       setHasCharacter(false);
+      setReady(true);
       return;
     }
+    setReady(false);
     let cancelled = false;
     void (async () => {
       try {
@@ -24,6 +30,8 @@ export function useAlienCharacterPresent(assetId?: string | null) {
         if (!cancelled) setHasCharacter(res.ok);
       } catch {
         if (!cancelled) setHasCharacter(false);
+      } finally {
+        if (!cancelled) setReady(true);
       }
     })();
 
@@ -38,5 +46,5 @@ export function useAlienCharacterPresent(assetId?: string | null) {
     };
   }, [assetId, isSignedIn]);
 
-  return hasCharacter;
+  return { hasCharacter, ready };
 }
