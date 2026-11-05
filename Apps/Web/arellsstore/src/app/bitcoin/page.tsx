@@ -15,8 +15,19 @@ const { title, description, path } = getCryptoAssetPageSeo(assetId);
 
 export const metadata: Metadata = buildCryptoAssetPageMetadata(assetId);
 
-const BitcoinPage = async () => {
+type BitcoinPageProps = {
+  searchParams?: { guestPreview?: string | string[] };
+};
+
+function wantsGuestPreview(value: string | string[] | undefined) {
+  const raw = Array.isArray(value) ? value[0] : value;
+  const v = (raw || '').toLowerCase();
+  return v === '1' || v === 'true' || v === 'yes' || v === 'on';
+}
+
+const BitcoinPage = async ({ searchParams }: BitcoinPageProps) => {
   const session = await getSessionFromAppCookies();
+  const preview = wantsGuestPreview(searchParams?.guestPreview);
   if (session?.email) {
     let shareId = '';
     try {
@@ -26,7 +37,8 @@ const BitcoinPage = async () => {
     }
     // redirect() throws NEXT_REDIRECT — must NOT be inside try/catch
     if (shareId) {
-      redirect(assetSharePath('/bitcoin', shareId));
+      const target = assetSharePath('/bitcoin', shareId);
+      redirect(preview ? `${target}?guestPreview=1` : target);
     }
   }
 

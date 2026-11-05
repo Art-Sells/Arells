@@ -11,7 +11,7 @@ import AssetGuestLanding from '../../../components/Assets/shared/AssetGuestLandi
 import AssetQuestionsSupport from '../../../components/Assets/shared/AssetQuestionsSupport';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
 import { useUser } from '../../../context/UserContext';
-import { useGuestPreview } from '../../../hooks/useGuestPreview';
+import { guestPreviewFromLocation, useGuestPreview } from '../../../hooks/useGuestPreview';
 import {
   ALIEN_COMPOSE_DONE_EVENT,
   assetSharePath,
@@ -297,19 +297,26 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     };
   }, [allowSignedIn, showGuest, resolvedShareId]);
 
-  /** Guests on /bitcoin/my-character/{shareId} → guest bitcoin share page. */
+  /** Logged-out guests on /bitcoin/my-character/{shareId} → bitcoin share page.
+   * Signed-in ?guestPreview=1 stays here so the user-id guest link can be seen. */
   useEffect(() => {
     if (authSessionLoading || !pathShareId || !showGuest) return;
+    if (guestPreview || guestPreviewFromLocation()) return;
     router.replace(assetSharePath('/bitcoin', pathShareId));
-  }, [authSessionLoading, pathShareId, showGuest, router]);
+  }, [authSessionLoading, pathShareId, showGuest, guestPreview, router]);
 
   /** Bare /bitcoin/my-character → own share path when signed in. */
   useEffect(() => {
-    if (authSessionLoading || pathShareId) return;
-    if (allowSignedIn && shareId) {
+    if (authSessionLoading || pathShareId || !shareId) return;
+    const preview = guestPreview || guestPreviewFromLocation();
+    if (preview) {
+      router.replace(`/bitcoin/my-character/${shareId}?guestPreview=1`);
+      return;
+    }
+    if (allowSignedIn) {
       router.replace(`/bitcoin/my-character/${shareId}`);
     }
-  }, [authSessionLoading, pathShareId, allowSignedIn, shareId, router]);
+  }, [authSessionLoading, pathShareId, allowSignedIn, shareId, guestPreview, router]);
 
   const loadPublicMedia = useCallback(async (id: string, cacheBust?: number) => {
     const loadGen = ++mediaLoadGenRef.current;
@@ -391,12 +398,12 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
 
   useEffect(() => {
     if (authSessionLoading) return;
-    if (showGuest && pathShareId) return;
+    if (pathShareId && (showGuest || guestPreview || guestPreviewFromLocation())) return;
     if (!resolvedShareId) return;
     setMetaLoopUrl(null);
     setPortraitUrl(null);
     void loadPublicMedia(resolvedShareId);
-  }, [authSessionLoading, showGuest, pathShareId, resolvedShareId, loadPublicMedia]);
+  }, [authSessionLoading, showGuest, guestPreview, pathShareId, resolvedShareId, loadPublicMedia]);
 
   useEffect(() => {
     const onDone = (event: Event) => {
@@ -572,7 +579,41 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   // Must run every render (before any early return) — React #300 otherwise.
   usePendingNavHref();
 
-  /** Guest + share id: redirecting to /bitcoin/{shareId}. */
+  /** Signed-in preview of /bitcoin/my-character/{shareId}. */
+  if (!authSessionLoading && pathShareId && showGuest && guestPreview) {
+    const guestPosterSrc = publicAlienImagePath({
+      shareId: pathShareId,
+      asset: 'bitcoin',
+      kind: 'composed',
+      cacheBust: posterBust,
+    });
+    const guestLoopSrc = publicAlienVideoPath({
+      shareId: pathShareId,
+      asset: 'bitcoin',
+      kind: 'guestloop',
+      cacheBust: posterBust,
+    });
+    return (
+      <div className="asset-page asset-page--bitcoin">
+        <header className="asset-header asset-header--bitcoin" />
+        <AssetGuestLanding
+          cssModifier="bitcoin"
+          ticker="BTC"
+          title="Bitcoin"
+          posterSrc={guestPosterSrc}
+          posterLoopSrc={guestLoopSrc}
+          posterWidth={2000}
+          posterHeight={2000}
+          posterAlt="Bitcoin Alien Race launch poster"
+          smallIcon
+          hideWordmark
+          possessiveMission
+        />
+      </div>
+    );
+  }
+
+  /** Logged-out guest + share id: redirecting to /bitcoin/{shareId}. */
   if (!authSessionLoading && pathShareId && showGuest) {
     return (
       <div
@@ -604,6 +645,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           showTrailer
           hideWordmark
           hideSigninPrompt
+          possessiveMission
         />
       </div>
     );

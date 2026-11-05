@@ -27,7 +27,7 @@ type AssetGuestLandingProps = {
   showTrailer?: boolean;
   hideWordmark?: boolean;
   hideSigninPrompt?: boolean;
-  /** Legacy; guest mission says “investments”. */
+  /** User-id guest pages keep “your”. Plain guest pages leave it off. */
   possessiveMission?: boolean;
 };
 
@@ -42,7 +42,7 @@ export default function AssetGuestLanding({
   showTrailer = false,
   hideWordmark = false,
   hideSigninPrompt = false,
-  possessiveMission: _possessiveMission = false,
+  possessiveMission = false,
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
   const hasLoop = Boolean(posterSrc && posterLoopSrc);
@@ -125,7 +125,7 @@ export default function AssetGuestLanding({
           <span className="asset-guest-landing-mission-tail">
             on a mission to ensure
             <br />
-            investments never lose value
+            {possessiveMission ? 'your investments never lose value' : 'investments never lose value'}
           </span>
         </p>
         <div
