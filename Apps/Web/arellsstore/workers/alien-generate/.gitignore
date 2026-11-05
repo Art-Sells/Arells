@@ -1,0 +1,4 @@
+dist/
+.lambda-pack/
+function.zip
+env.json
