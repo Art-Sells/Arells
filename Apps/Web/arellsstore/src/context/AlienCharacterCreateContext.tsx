@@ -79,7 +79,7 @@ type AlienCharacterCreateContextValue = {
   }) => boolean;
   dismissCreatingModal: () => void;
   dismissWaitModal: () => void;
-  dismissSuccess: () => void;
+  dismissSuccess: () => Promise<void>;
   dismissError: () => void;
 };
 
@@ -105,6 +105,8 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   const [waitAssetName, setWaitAssetName] = useState<string | null>(null);
   const [createProgress, setCreateProgress] = useState<number | null>(null);
   const [success, setSuccess] = useState<AlienCreateSuccess | null>(null);
+  const successRef = useRef<AlienCreateSuccess | null>(null);
+  successRef.current = success;
   const [error, setError] = useState<AlienCreateError | null>(null);
   const [errorOpen, setErrorOpen] = useState(false);
   const [overlayStyle, setOverlayStyle] = useState<AlienCreateThemeStyle>({});
@@ -120,24 +122,26 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
   const emailRef = useRef(email);
   emailRef.current = email;
 
-  const dismissSuccess = useCallback(() => {
-    setSuccess((prev) => {
-      if (prev) {
-        const ackEmail = emailRef.current;
-        if (ackEmail) {
-          void ackAlienGenerateSuccess({
-            email: ackEmail,
-            assetId: prev.assetId,
-            startedAt: prev.jobStartedAt,
-          }).catch((err) => console.error('alien success ack', err));
-        }
-        revokeIfBlob(prev.metaUrl);
-        revokeIfBlob(prev.loopUrl);
-      }
-      successJobStartedAtRef.current = null;
-      return null;
-    });
-    setStatus((prev) => (prev === 'success' ? 'idle' : prev));
+  const dismissSuccess = useCallback(async () => {
+    const prev = successRef.current;
+    successRef.current = null;
+    successJobStartedAtRef.current = null;
+    setSuccess(null);
+    setStatus((statusPrev) => (statusPrev === 'success' ? 'idle' : statusPrev));
+    if (!prev) return;
+    revokeIfBlob(prev.metaUrl);
+    revokeIfBlob(prev.loopUrl);
+    const ackEmail = emailRef.current;
+    if (!ackEmail) return;
+    try {
+      await ackAlienGenerateSuccess({
+        email: ackEmail,
+        assetId: prev.assetId,
+        startedAt: prev.jobStartedAt,
+      });
+    } catch (err) {
+      console.error('alien success ack', err);
+    }
   }, []);
 
   const dismissError = useCallback(() => {
@@ -259,7 +263,7 @@ export function AlienCharacterCreateProvider({ children }: { children: ReactNode
       creatingNameRef.current = name;
       setCreatingAssetId(args.assetId);
       setCreatingAssetName(name);
-      setCreateProgress(null);
+      setCreateProgress(1);
       setStatus('creating');
       setCreatingModalOpen(true);
       setWaitModalOpen(false);

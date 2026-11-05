@@ -40,6 +40,7 @@ export default function AlienCharacterCreateHost() {
   } = useAlienCharacterCreate();
 
   const [mounted, setMounted] = useState(false);
+  const [closingSuccess, setClosingSuccess] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const shareCopiedTimerRef = useRef<number | null>(null);
   const creatingTitleId = useId();
@@ -70,6 +71,13 @@ export default function AlienCharacterCreateHost() {
   );
   const shareHref =
     typeof window !== 'undefined' ? `${window.location.origin}${sharePath}` : sharePath;
+
+  const onSuccessClose = useCallback(async () => {
+    if (closingSuccess) return;
+    setClosingSuccess(true);
+    await dismissSuccess();
+    window.location.reload();
+  }, [closingSuccess, dismissSuccess]);
 
   const copyShareLink = useCallback(async () => {
     if (!success?.shareId) return;
@@ -281,7 +289,9 @@ export default function AlienCharacterCreateHost() {
                 <button
                   type="button"
                   className="asset-range-button blood-ok blood-ok--alien-close"
-                  onClick={dismissSuccess}
+                  onClick={() => void onSuccessClose()}
+                  disabled={closingSuccess}
+                  aria-busy={closingSuccess || undefined}
                 >
                   Close
                 </button>

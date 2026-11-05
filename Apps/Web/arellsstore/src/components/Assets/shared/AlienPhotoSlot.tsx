@@ -77,6 +77,8 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
 
   const busy = isCreatingAsset(assetId);
   const displayName = assetName?.trim() || 'Bitcoin';
+  /** Circle on the Create Character button from click until a photo is chosen. */
+  const createCtaLoading = !busy && (creditChecking || payOpen || guideOpen);
 
   useEffect(() => {
     setMounted(true);
@@ -268,7 +270,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
         className={`asset-alien-photo-plus${
           hasCharacter || busy ? ' asset-alien-photo-plus--view' : ''
         }${busy ? ' asset-alien-photo-plus--creating' : ''}${
-          viewNavLoading ? ' is-nav-loading-label' : ''
+          viewNavLoading || createCtaLoading ? ' is-nav-loading-label' : ''
         }`}
         aria-hidden="true"
       >
