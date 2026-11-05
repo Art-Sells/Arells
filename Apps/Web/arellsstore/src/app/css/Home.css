@@ -1951,14 +1951,16 @@ a.asset-alien-photo-hit {
 .asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-img {
 	position: absolute;
-	inset: 0;
-	width: 100% !important;
-	height: 100% !important;
+	/* 5px past the frame on every side, then clipped back so the stroke sits on the picture. */
+	inset: -5px;
+	width: calc(100% + 10px) !important;
+	height: calc(100% + 10px) !important;
 	display: block;
 	border-radius: 0;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
+	clip-path: inset(5px round 12px);
 	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
 	border: none;
@@ -2000,12 +2002,9 @@ a.asset-alien-photo-hit {
 		border-radius: 6px;
 	}
 
-	.asset-bitcoin-season-teaser-frame::before,
-	.asset-bitcoin-season-teaser-frame::after,
-	.asset-bitcoin-season-teaser-media,
 	.asset-bitcoin-season-teaser-video,
 	.asset-bitcoin-season-teaser-img {
-		border-radius: 5px;
+		clip-path: inset(5px round 6px);
 	}
 }
 
@@ -2056,7 +2055,7 @@ a.asset-alien-photo-hit {
 .bitcoin-my-character-launch {
 	position: relative;
 	width: 100%;
-	aspect-ratio: 1 / 1;
+	aspect-ratio: 2000 / 1166;
 	box-sizing: border-box;
 }
 
@@ -2065,7 +2064,7 @@ a.asset-alien-photo-hit {
 	margin: 0;
 }
 
-/* Loader + AlienMetaPreview share the same 1:1 box so media swap can't grow mid height-down. */
+/* Loader + AlienMetaPreview share the metaposter box so media swap can't grow mid height-down. */
 .bitcoin-my-character-launch .asset-alien-meta-preview-frame,
 .bitcoin-my-character-launch--loading {
 	position: absolute;
@@ -8060,7 +8059,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 		transparent
 	);
 	background: transparent;
-	aspect-ratio: 1 / 1;
+	aspect-ratio: 2000 / 1166;
 }
 
 .asset-alien-meta-preview-frame::after {

@@ -615,7 +615,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           posterSrc={guestPosterSrc}
           posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={personalGuest ? 2000 : 1166}
+          posterHeight={1166}
           posterAlt="The Bitcoin Alien Race"
           smallIcon
           showTrailer={!personalGuest}

@@ -4,8 +4,8 @@ import {
   generateAlienMetaloopVideo,
   generateAlienSeasonOneLoopVideo,
 } from '../../../lib/server/alienCompose';
+import { loadCharacterMetaloopSource } from '../../../lib/server/characterMetaposterCrop';
 import {
-  alienComposedKey,
   alienMetaloopKey,
   alienSeasonOneKey,
   alienSeasonOneLoopKey,

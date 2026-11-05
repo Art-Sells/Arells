@@ -10,8 +10,8 @@ import {
   composePersonalBitcoinAlienSeasonOne,
   readAlienComposeRef,
 } from '../../../lib/server/alienCompose';
+import { saveCharacterMetaposter } from '../../../lib/server/characterMetaposterCrop';
 import {
-  alienComposedKey,
   alienPhotoKey,
   alienPortraitKey,
   alienSeasonOneKey,
@@ -166,15 +166,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         baseMime: metaBase.mime,
         portrait,
       });
-      await s3
-        .putObject({
-          Bucket: bucket,
-          Key: alienComposedKey(allowed, asset, true),
-          Body: composed,
-          ContentType: 'image/jpeg',
-          ACL: 'private',
-        })
-        .promise();
+      await saveCharacterMetaposter({
+        s3,
+        bucket,
+        email: allowed,
+        asset,
+        staging: true,
+        squareJpeg: composed,
+      });
       if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
         await consumePaidCredit(allowed, asset);
       }
@@ -226,15 +225,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         baseMime: metaBase.mime,
         portrait,
       });
-      await s3
-        .putObject({
-          Bucket: bucket,
-          Key: alienComposedKey(allowed, asset, true),
-          Body: composed,
-          ContentType: 'image/jpeg',
-          ACL: 'private',
-        })
-        .promise();
+      await saveCharacterMetaposter({
+        s3,
+        bucket,
+        email: allowed,
+        asset,
+        staging: true,
+        squareJpeg: composed,
+      });
       if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
         await consumePaidCredit(allowed, asset);
       }

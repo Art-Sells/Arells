@@ -20,6 +20,14 @@ export function alienComposedKey(email: string, asset: string, staging = false):
   return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-composed`;
 }
 
+/**
+ * Uncropped square still. The metaposter loop is built from this.
+ * The public composed key is the wide crop.
+ */
+export function alienMetaloopSourceKey(email: string, asset: string, staging = false): string {
+  return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-metaloop-source`;
+}
+
 /** Personalized SEASON ONE banner after compose. */
 export function alienSeasonOneKey(email: string, asset: string, staging = false): string {
   return `users/${normalizeEmailKey(email)}/aliens/${asset}${staging ? '-next' : ''}-seasonone`;

@@ -1,5 +1,6 @@
 import {
   ALIEN_STAGED_MEDIA_KINDS,
+  alienMetaloopSourceKey,
   alienStagedObjectKey,
   isMissingS3Object,
   type AlienStagedMediaKind,
@@ -70,6 +71,25 @@ export async function promoteAlienStagedMedia(
       })
       .promise();
     await deleteQuiet(bucket, stagingKey);
+    if (kind === 'composed') {
+      const sourceStaging = alienMetaloopSourceKey(email, asset, true);
+      const sourceLive = alienMetaloopSourceKey(email, asset, false);
+      try {
+        await s3.headObject({ Bucket: bucket, Key: sourceStaging }).promise();
+        await s3
+          .copyObject({
+            Bucket: bucket,
+            CopySource: s3CopySource(bucket, sourceStaging),
+            Key: sourceLive,
+            ACL: 'private',
+            MetadataDirective: 'COPY',
+          })
+          .promise();
+        await deleteQuiet(bucket, sourceStaging);
+      } catch (err) {
+        if (!isMissingS3Object(err)) throw err;
+      }
+    }
     promoted.push(kind);
   }
 

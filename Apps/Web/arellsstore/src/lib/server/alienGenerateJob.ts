@@ -10,8 +10,8 @@ import {
   generateAlienSeasonOneLoopVideo,
   readAlienComposeRef,
 } from './alienCompose';
+import { saveCharacterMetaposter } from './characterMetaposterCrop';
 import {
-  alienComposedKey,
   alienMetaloopKey,
   alienPhotoKey,
   alienPortraitKey,
@@ -267,15 +267,14 @@ export async function runAlienGeneratePipeline(
       portrait,
     });
     await assertJobStillCurrent(email, assetId, startedAt);
-    await s3()
-      .putObject({
-        Bucket: bucket,
-        Key: alienComposedKey(email, assetId, true),
-        Body: composed,
-        ContentType: 'image/jpeg',
-        ACL: 'private',
-      })
-      .promise();
+    await saveCharacterMetaposter({
+      s3: s3(),
+      bucket,
+      email,
+      asset: assetId,
+      staging: true,
+      squareJpeg: composed,
+    });
 
     if (!CHARACTER_GENERATION_PAYMENT_DISABLED) {
       await consumePaidCredit(email, assetId);

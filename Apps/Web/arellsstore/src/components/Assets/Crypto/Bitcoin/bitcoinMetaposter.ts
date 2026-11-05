@@ -20,7 +20,7 @@ export const BITCOIN_GUEST_METAPOSTER = {
 
 export const BITCOIN_METAPOSTER_ALT = 'The Bitcoin Alien Race';
 
-/** Created character: same still + guestloop the Bitcoin share page plays, square. */
+/** Created character: wide metaposter still (2000×1166) plus the uncropped guest loop. */
 export function bitcoinPersonalMetaposter(shareId: string, cacheBust: number, hasLoop: boolean) {
   return {
     src: publicAlienImagePath({
@@ -38,6 +38,6 @@ export function bitcoinPersonalMetaposter(shareId: string, cacheBust: number, ha
         })
       : undefined,
     width: 2000,
-    height: 2000,
+    height: 1166,
   };
 }

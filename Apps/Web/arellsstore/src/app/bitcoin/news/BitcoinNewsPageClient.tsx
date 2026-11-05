@@ -264,7 +264,7 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
           posterSrc={guestPosterSrc}
           posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={personalGuest ? 2000 : 1166}
+          posterHeight={1166}
           posterAlt="Bitcoin Alien Race launch poster"
           smallIcon
           showTrailer={!personalGuest}
