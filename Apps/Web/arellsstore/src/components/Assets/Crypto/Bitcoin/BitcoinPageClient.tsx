@@ -16,6 +16,20 @@ import { useUser } from '../../../../context/UserContext';
 import { guestPreviewFromLocation, useGuestPreview } from '../../../../hooks/useGuestPreview';
 import { assetSharePath } from '../../../../lib/assets/assetSharePath';
 
+/** Keep Stripe's return on the share URL so the Add Photo modal can open. */
+function sharePathKeepingCheckout(shareId: string): string {
+  const target = assetSharePath('/bitcoin', shareId);
+  if (typeof window === 'undefined') return target;
+  const current = new URLSearchParams(window.location.search);
+  const keep = new URLSearchParams();
+  const cg = current.get('cg_checkout');
+  const sessionId = current.get('session_id');
+  if (cg) keep.set('cg_checkout', cg);
+  if (sessionId) keep.set('session_id', sessionId);
+  const q = keep.toString();
+  return q ? `${target}?${q}` : target;
+}
+
 const BitcoinPageClient: React.FC = () => {
   const { email, isSignedIn, authSessionLoading, shareId, refreshAuthSession } = useUser();
   const guestPreview = useGuestPreview();
@@ -30,8 +44,9 @@ const BitcoinPageClient: React.FC = () => {
     if (guestPreview || guestPreviewFromLocation()) return;
 
     if (isSignedIn && shareId) {
-      const target = assetSharePath('/bitcoin', shareId);
-      if (target !== path) {
+      const target = sharePathKeepingCheckout(shareId);
+      const here = `${path}${window.location.search || ''}`;
+      if (target !== here && target.split('?')[0] !== path) {
         router.replace(target);
       }
       return;
@@ -52,7 +67,7 @@ const BitcoinPageClient: React.FC = () => {
         const id =
           typeof data?.shareId === 'string' ? data.shareId.trim().toLowerCase() : '';
         if (!cancelled && id) {
-          router.replace(assetSharePath('/bitcoin', id));
+          router.replace(sharePathKeepingCheckout(id));
         }
       } catch {
         /* ignore */

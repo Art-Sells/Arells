@@ -16,13 +16,35 @@ const { title, description, path } = getCryptoAssetPageSeo(assetId);
 export const metadata: Metadata = buildCryptoAssetPageMetadata(assetId);
 
 type BitcoinPageProps = {
-  searchParams?: { guestPreview?: string | string[] };
+  searchParams?: {
+    guestPreview?: string | string[];
+    cg_checkout?: string | string[];
+    session_id?: string | string[];
+  };
 };
 
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 function wantsGuestPreview(value: string | string[] | undefined) {
-  const raw = Array.isArray(value) ? value[0] : value;
+  const raw = firstParam(value);
   const v = (raw || '').toLowerCase();
   return v === '1' || v === 'true' || v === 'yes' || v === 'on';
+}
+
+/** Signed-in /bitcoin → /bitcoin/{id} must keep the Stripe return or the Add Photo modal never opens. */
+function bitcoinShareRedirect(
+  shareId: string,
+  searchParams?: BitcoinPageProps['searchParams']
+) {
+  const params = new URLSearchParams();
+  const cg = firstParam(searchParams?.cg_checkout);
+  const sessionId = firstParam(searchParams?.session_id);
+  if (cg) params.set('cg_checkout', cg);
+  if (sessionId) params.set('session_id', sessionId);
+  const q = params.toString();
+  redirect(`${assetSharePath('/bitcoin', shareId)}${q ? `?${q}` : ''}`);
 }
 
 const BitcoinPage = async ({ searchParams }: BitcoinPageProps) => {
@@ -38,7 +60,7 @@ const BitcoinPage = async ({ searchParams }: BitcoinPageProps) => {
     // redirect() throws NEXT_REDIRECT — must NOT be inside try/catch
     // ?guestPreview=1 stays on /bitcoin. The user-id guest link is /bitcoin/{id}?guestPreview=1.
     if (shareId && !preview) {
-      redirect(assetSharePath('/bitcoin', shareId));
+      bitcoinShareRedirect(shareId, searchParams);
     }
   }
 
