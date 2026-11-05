@@ -3,6 +3,8 @@ import { CHARACTER_GENERATION_PAYMENT_DISABLED } from '../characterGenerationPay
 export const CG_OPEN_GUIDE_KEY = 'arells:cg-open-guide';
 /** Paid credit waiting for photo — drives Update Photo vs Update Character on my-character. */
 export const CG_PAID_PENDING_KEY = 'arells:cg-paid-pending';
+/** Same-tab notice so the Bitcoin Create Character button can switch to Upload Photo. */
+export const CG_PAID_PENDING_EVENT = 'arells:cg-paid-pending';
 
 /** @deprecated use CG_OPEN_GUIDE_KEY */
 export const CG_OPEN_PICKER_KEY = CG_OPEN_GUIDE_KEY;
@@ -15,6 +17,7 @@ export function markPaidCreditPending(assetId: string): void {
   if (typeof window === 'undefined') return;
   try {
     window.sessionStorage.setItem(paidPendingKey(assetId), '1');
+    window.dispatchEvent(new Event(CG_PAID_PENDING_EVENT));
   } catch {
     /* ignore */
   }

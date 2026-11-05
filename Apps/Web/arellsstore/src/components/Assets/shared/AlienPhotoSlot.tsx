@@ -14,8 +14,10 @@ import {
   cloneAlienPhotoFile,
 } from '../../../lib/client/alienPhotoCompose';
 import {
+  CG_PAID_PENDING_EVENT,
   clearOpenGuideFlag,
   hasPaidCharacterCredit,
+  peekPaidCreditPending,
 } from '../../../lib/client/characterGenerationPay';
 import { isPendingNavTarget, usePendingNavHref } from '../../../lib/client/navCircleLoader';
 
@@ -69,6 +71,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
+  const [awaitingPhoto, setAwaitingPhoto] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
@@ -115,11 +118,39 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   useEffect(() => {
     const onDone = (event: Event) => {
       const detail = (event as CustomEvent<{ assetId?: string }>).detail;
-      if (detail?.assetId === assetId) void loadExisting();
+      if (detail?.assetId === assetId) {
+        setAwaitingPhoto(false);
+        void loadExisting();
+      }
     };
     window.addEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
     return () => window.removeEventListener(ALIEN_COMPOSE_DONE_EVENT, onDone);
   }, [assetId, loadExisting]);
+
+  useEffect(() => {
+    if (!isSignedIn || assetId !== 'bitcoin') {
+      setAwaitingPhoto(false);
+      return;
+    }
+    if (peekPaidCreditPending(assetId)) setAwaitingPhoto(true);
+    let cancelled = false;
+    void (async () => {
+      try {
+        const paid = await hasPaidCharacterCredit(assetId);
+        if (!cancelled) {
+          setAwaitingPhoto((prev) => paid || prev || peekPaidCreditPending(assetId));
+        }
+      } catch {
+        if (!cancelled && peekPaidCreditPending(assetId)) setAwaitingPhoto(true);
+      }
+    })();
+    const onPaid = () => setAwaitingPhoto(true);
+    window.addEventListener(CG_PAID_PENDING_EVENT, onPaid);
+    return () => {
+      cancelled = true;
+      window.removeEventListener(CG_PAID_PENDING_EVENT, onPaid);
+    };
+  }, [assetId, isSignedIn]);
 
   const closeComingSoon = useCallback(() => setComingSoonOpen(false), []);
 
@@ -146,6 +177,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
 
   const openGuide = useCallback(() => {
     setPayOpen(false);
+    setAwaitingPhoto(true);
     setGuideOpen(true);
   }, []);
 
@@ -226,11 +258,13 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   );
 
   const hasCharacter = Boolean(portraitUrl);
-  const hitLabel = busy
-    ? 'Creating character'
-    : hasCharacter
-      ? 'View My Character'
+  const showCreating = !hasCharacter && busy;
+  const ctaLabel = hasCharacter
+    ? 'View My Character'
+    : awaitingPhoto
+      ? 'Upload Photo'
       : 'Create Character';
+  const hitLabel = showCreating ? 'Creating Character' : ctaLabel;
   const thumbSrc = portraitUrl || PLACEHOLDER_SRC;
   const viewAsLink = Boolean(hasCharacter && myCharacterHref && !busy);
   usePendingNavHref();
@@ -246,7 +280,28 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           aria-hidden="true"
         />
       </span>
-      {!hasCharacter ? (
+      {showCreating ? (
+        <span className="asset-alien-photo-creating">
+          <span className="asset-alien-photo-creating-title">
+            <span className="asset-alien-photo-creating-title-text">Creating Character</span>
+            <span className="asset-alien-photo-creating-loader">
+              <span className="blood-overlay-creating-spinner" aria-hidden="true">
+                <span className="blood-overlay-creating-spinner-ring" />
+                {createProgress != null ? (
+                  <span className="blood-overlay-creating-percent">{createProgress}%</span>
+                ) : (
+                  <span className="blood-overlay-creating-profile" />
+                )}
+              </span>
+            </span>
+            <span className="blood-overlay-creating-eta" aria-label="Estimated completion time">
+              <span className="blood-overlay-creating-eta-line">estimated</span>
+              <span className="blood-overlay-creating-eta-line">completion time</span>
+              <span className="blood-overlay-creating-eta-time">5-10~ minutes</span>
+            </span>
+          </span>
+        </span>
+      ) : !hasCharacter ? (
         <span className="asset-alien-photo-label">
           {EMPTY_LABEL_LINES_DESKTOP.map((line) => (
             <span
@@ -268,33 +323,16 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       ) : null}
       <span
         className={`asset-alien-photo-plus${
-          hasCharacter || busy ? ' asset-alien-photo-plus--view' : ''
-        }${busy ? ' asset-alien-photo-plus--creating' : ''}${
-          viewNavLoading || createCtaLoading ? ' is-nav-loading-label' : ''
-        }`}
+          hasCharacter ? ' asset-alien-photo-plus--view' : ''
+        }${viewNavLoading || createCtaLoading || showCreating ? ' is-nav-loading-label' : ''}`}
         aria-hidden="true"
       >
-        {busy ? (
-          <>
-            <span className="asset-alien-photo-creating-word">creating</span>
-            <span
-              className={`asset-alien-photo-busy${
-                createProgress != null ? ' asset-alien-photo-busy--pct' : ''
-              }`}
-            >
-              <span className="asset-alien-photo-busy-ring" aria-hidden="true" />
-              {createProgress != null ? (
-                <span className="asset-alien-photo-busy-pct">{createProgress}%</span>
-              ) : null}
-            </span>
-            <span className="asset-alien-photo-creating-word">character</span>
-          </>
-        ) : hasCharacter ? (
+        {hasCharacter ? (
           <span className="asset-alien-photo-plus-label-text">View My Character</span>
         ) : (
           <>
             <span className="asset-alien-photo-create-character-icon" aria-hidden="true" />
-            <span>Create Character</span>
+            <span>{ctaLabel}</span>
           </>
         )}
       </span>
@@ -304,7 +342,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   return (
     <div
       className={`asset-alien-photo-slot asset-alien-photo-slot--${assetId}${
-        busy ? ' is-busy' : ''
+        showCreating || busy ? ' is-busy' : ''
       }`}
     >
       <input
@@ -328,7 +366,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           type="button"
           className="asset-alien-photo-hit"
           onClick={openPicker}
-          disabled={busy}
+          disabled={showCreating || busy}
           aria-expanded={comingSoonOpen}
           aria-haspopup="dialog"
           aria-label={hitLabel}

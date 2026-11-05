@@ -1458,6 +1458,79 @@ a.asset-alien-photo-hit {
 	display: none;
 }
 
+.asset-alien-photo-creating {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	box-sizing: border-box;
+	text-align: center;
+	padding: 16px 12px 14px;
+	border-radius: 12px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
+	background: none;
+}
+
+.asset-alien-photo-creating-loader {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 14px 12px;
+	border-radius: 10px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 45%,
+		transparent
+	);
+	background: none;
+}
+
+.asset-alien-photo-creating .blood-overlay-creating-eta {
+	width: 100%;
+	max-width: none;
+}
+
+.asset-alien-photo-creating .blood-overlay-creating-eta-line,
+.asset-alien-photo-creating .blood-overlay-creating-eta-time {
+	font-weight: 400;
+}
+
+.asset-alien-photo-creating-title {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 12px;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 12px;
+	border-radius: 10px;
+	border: 1px solid color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 45%,
+		transparent
+	);
+	background: none;
+}
+
+.asset-alien-photo-creating-title-text {
+	font-size: 13px;
+	font-weight: 800;
+	letter-spacing: -0.3px;
+	line-height: 1.2;
+	text-align: center;
+	color: var(--asset-line-color, rgb(209, 142, 55));
+	-webkit-text-fill-color: var(--asset-line-color, rgb(209, 142, 55));
+}
+
+
 @media screen and (max-width: 750px) {
 	.asset-alien-photo-label {
 		font-size: 18px;
@@ -1476,6 +1549,12 @@ a.asset-alien-photo-hit {
 .asset-alien-photo-hit:disabled {
 	cursor: wait;
 	opacity: 0.85;
+}
+
+/* Beats `.asset-page-content button:disabled { opacity: 0.6 !important }`. */
+.asset-page-content .asset-alien-photo-slot--bitcoin.is-busy,
+.asset-page-content .asset-alien-photo-slot--bitcoin.is-busy button.asset-alien-photo-hit:disabled {
+	opacity: 1 !important;
 }
 
 .asset-alien-photo-plus--creating {
