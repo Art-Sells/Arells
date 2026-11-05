@@ -35,9 +35,9 @@ import {
 import { isPendingNavTarget, usePendingNavHref } from '../../../lib/client/navCircleLoader';
 import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
-/** Same stock launch metaposter as bitcoin share / OG (square), not the wide guest trailer still. */
+/** Same still as the Bitcoin page when there is no character. */
 const PREMIER_POSTER =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg';
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
 const PREMIER_POSTER_LOOP =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +
   encodeURIComponent('LaunchLoop(guest).mp4');
@@ -209,7 +209,15 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
   const isOwner =
     Boolean(allowSignedIn && shareId && resolvedShareId && shareId.toLowerCase() === resolvedShareId);
 
-  const [metaUrl, setMetaUrl] = useState<string | null>(null);
+  const [posterBust] = useState(() => Date.now());
+  const posterStill = resolvedShareId
+    ? publicAlienImagePath({
+        shareId: resolvedShareId,
+        asset: 'bitcoin',
+        kind: 'composed',
+        cacheBust: posterBust,
+      })
+    : PREMIER_POSTER;
   const [metaLoopUrl, setMetaLoopUrl] = useState<string | null>(null);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [portraitLoaded, setPortraitLoaded] = useState(false);
@@ -328,8 +336,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     const ownerPortraitApi = `/api/user/alien-photo?asset=bitcoin&kind=portrait&t=${bust}`;
     const ownerLoopApi = `/api/user/alien-photo?asset=bitcoin&kind=metaloop&t=${bust}`;
 
-    // Never flash stock LaunchPoster — keep personal URLs while verifying.
-    setMetaUrl(isOwner ? null : publicMeta);
     setMetaLoopUrl(isOwner ? null : publicLoop);
     setPortraitUrl(isOwner ? null : publicPortrait);
 
@@ -346,16 +352,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           fetch(ownerLoopApi, { method: 'HEAD', credentials: 'include', cache: 'no-store' }),
         ]);
         if (loadGen !== mediaLoadGenRef.current) return;
-        if (metaRes.ok) {
-          const blob = await metaRes.blob();
-          if (loadGen !== mediaLoadGenRef.current) return;
-          setMetaUrl((prev) => {
-            if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-            return URL.createObjectURL(blob);
-          });
-        } else {
-          setMetaUrl(null);
-        }
         if (portraitRes.ok) {
           const blob = await portraitRes.blob();
           if (loadGen !== mediaLoadGenRef.current) return;
@@ -380,8 +376,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         fetch(publicPortrait, { method: 'HEAD', cache: 'no-store' }),
       ]);
       if (loadGen !== mediaLoadGenRef.current) return;
-      if (metaHead.ok) setMetaUrl(publicMeta);
-      else setMetaUrl(null);
       setMetaLoopUrl(metaHead.ok && loopHead.ok ? publicLoop : null);
       if (portraitHead.ok) setPortraitUrl(publicPortrait);
       else setPortraitUrl(null);
@@ -390,7 +384,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
       }
     } catch {
       if (loadGen !== mediaLoadGenRef.current) return;
-      setMetaUrl(null);
       setMetaLoopUrl(null);
       setPortraitUrl(null);
     }
@@ -400,7 +393,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
     if (authSessionLoading) return;
     if (showGuest && pathShareId) return;
     if (!resolvedShareId) return;
-    setMetaUrl(null);
     setMetaLoopUrl(null);
     setPortraitUrl(null);
     void loadPublicMedia(resolvedShareId);
@@ -606,7 +598,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           posterSrc={PREMIER_POSTER}
           posterLoopSrc={PREMIER_POSTER_LOOP}
           posterWidth={2000}
-          posterHeight={2000}
+          posterHeight={1166}
           posterAlt="Bitcoin Alien Race launch poster"
           smallIcon
           showTrailer
@@ -816,7 +808,7 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
             <div className="bitcoin-my-character-launch-panel">
               <div className="bitcoin-my-character-launch">
                 <AlienMetaPreview
-                  metaUrl={metaUrl}
+                  metaUrl={posterStill}
                   loopUrl={metaLoopUrl}
                   alt="Bitcoin Alien Race launch poster"
                 />

@@ -21,9 +21,9 @@ import { splitTBARDaysAt, tbarThumbCount } from '../../../lib/assets/crypto/TBAR
 import { isPendingNavTarget, usePendingNavHref } from '../../../lib/client/navCircleLoader';
 import { runAfterMaxHeightTransitionEnd } from '../../../lib/client/documentScroll';
 
-/** Same stock launch metaposter as bitcoin share / my-character (square). */
+/** Same still as the Bitcoin page when there is no character. */
 const PREMIER_POSTER =
-  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg';
+  'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(guest).jpg';
 const PREMIER_POSTER_LOOP =
   'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/' +
   encodeURIComponent('LaunchLoop(guest).mp4');
@@ -299,7 +299,7 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
           posterSrc={guestPosterSrc}
           posterLoopSrc={guestLoopSrc}
           posterWidth={2000}
-          posterHeight={2000}
+          posterHeight={pathShareId ? 2000 : 1166}
           posterAlt="Bitcoin Alien Race launch poster"
           smallIcon
           showTrailer={!pathShareId}
