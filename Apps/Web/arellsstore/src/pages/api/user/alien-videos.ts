@@ -96,7 +96,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (doMetaloop) {
       const key = alienMetaloopKey(allowed, asset, true);
       try {
-        const composedJpeg = await loadJpeg(bucket, alienComposedKey(allowed, asset, true));
+        const composedJpeg = await loadCharacterMetaloopSource(s3, bucket, allowed, asset);
         const metaloop = await generateAlienMetaloopVideo(composedJpeg);
         await s3
           .putObject({
