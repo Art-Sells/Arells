@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAlienCharacterCreate } from '../../../context/AlienCharacterCreateContext';
+import { useUser } from '../../../context/UserContext';
 import { assetSharePath } from '../../../lib/assets/assetSharePath';
 import { overlayStyleForAsset } from '../../../lib/client/alienCreateTheme';
 import { markNavControlLoading } from '../../../lib/client/navCircleLoader';
@@ -18,22 +19,11 @@ function isOnAssetOrCharacterPage(pathname: string, assetId: string): boolean {
   return assetHome.test(pathname) || myCharacter.test(pathname);
 }
 
-/** TEMP: force the success modal open for the flush check. Remove after verify. */
-const TEMP_CHARACTER_SUCCESS_PREVIEW = {
-  assetId: 'bitcoin',
-  assetName: 'Bitcoin',
-  shareId: '115b56be62c3',
-  metaUrl:
-    '/api/public/alien-image?shareId=115b56be62c3&asset=bitcoin&kind=composedsquare',
-  loopUrl:
-    '/api/public/alien-video?shareId=115b56be62c3&asset=bitcoin&kind=metaloop',
-  jobStartedAt: null,
-};
-
 /** Sitewide alien create modals: creating / wait / success / error. */
 export default function AlienCharacterCreateHost() {
   const router = useRouter();
   const pathname = usePathname() || '';
+  const { shareId: userShareId } = useUser();
   const {
     creatingModalOpen,
     waitModalOpen,
@@ -50,7 +40,11 @@ export default function AlienCharacterCreateHost() {
     dismissSuccess,
     dismissError,
   } = useAlienCharacterCreate();
-  const visibleSuccess = success ?? TEMP_CHARACTER_SUCCESS_PREVIEW;
+
+  const ownerShareId = userShareId.trim().toLowerCase();
+  const visibleSuccess = success
+    ? { ...success, shareId: ownerShareId || success.shareId }
+    : null;
 
   const [mounted, setMounted] = useState(false);
   const [closingSuccess, setClosingSuccess] = useState(false);
@@ -113,7 +107,7 @@ export default function AlienCharacterCreateHost() {
   const errorOnAssetSurface = error
     ? isOnAssetOrCharacterPage(pathname, errorAssetId)
     : true;
-  const errorAssetHref = assetSharePath(`/${errorAssetId}`, error?.shareId);
+  const errorAssetHref = assetSharePath(`/${errorAssetId}`, ownerShareId || error?.shareId);
 
   const onErrorAction = useCallback(
     (event?: React.MouseEvent<HTMLElement>) => {
@@ -164,7 +158,7 @@ export default function AlienCharacterCreateHost() {
                 <div className="blood-overlay-creating-eta" aria-label="Estimated completion time">
                   <span className="blood-overlay-creating-eta-line">estimated</span>
                   <span className="blood-overlay-creating-eta-line">completion time</span>
-                  <span className="blood-overlay-creating-eta-time">5-10~ minutes</span>
+                  <span className="blood-overlay-creating-eta-time">3-5~ minutes</span>
                 </div>
                 <button
                   type="button"

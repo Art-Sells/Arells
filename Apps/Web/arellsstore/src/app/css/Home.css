@@ -1565,7 +1565,9 @@ a.asset-alien-photo-hit {
 	letter-spacing: -0.3px;
 	line-height: 1.2;
 	text-transform: lowercase;
-	opacity: 0.85;
+	/* The busy hit is forced to full opacity so the portrait stays solid.
+	   Dim this bar itself, or that override leaves it looking undimmed. */
+	opacity: 0.45 !important;
 }
 
 .asset-alien-photo-creating-word {

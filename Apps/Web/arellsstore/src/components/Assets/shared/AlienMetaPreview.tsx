@@ -47,15 +47,15 @@ export default function AlienMetaPreview({
   useEffect(() => {
     if (!metaUrl) {
       setStillLoaded(false);
+      setLoaderGone(false);
       return;
     }
     const img = stillImgRef.current;
-    if (img?.complete && img.naturalWidth > 0) setStillLoaded(true);
-  }, [metaUrl]);
-
-  useEffect(() => {
-    setStillLoaded(false);
-    setLoaderGone(false);
+    const alreadyDecoded = Boolean(img?.complete && img.naturalWidth > 0);
+    // The loop URL arrives after the poster. Do not clear a decoded still, or
+    // playback waits on awaitStill and the video never restarts.
+    setStillLoaded(alreadyDecoded);
+    if (!alreadyDecoded) setLoaderGone(false);
   }, [metaUrl, loopUrl]);
 
   useEffect(() => {

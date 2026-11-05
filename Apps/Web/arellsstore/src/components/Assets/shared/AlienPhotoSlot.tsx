@@ -259,7 +259,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
 
   const hasCharacter = Boolean(portraitUrl);
   const showCreating = !hasCharacter && busy;
-  /** Update Character: View My Character button turns into the locked creating % ring. */
+  /** Existing character: View My Character becomes the locked creating ring. */
   const showUpdating = hasCharacter && busy;
   const ctaLabel = hasCharacter
     ? 'View My Character'
@@ -268,7 +268,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       : 'Create Character';
   const hitLabel = showCreating || showUpdating ? 'Creating Character' : ctaLabel;
   const thumbSrc = portraitUrl || PLACEHOLDER_SRC;
-  const viewAsLink = Boolean(hasCharacter && myCharacterHref && !busy);
+  const viewAsLink = Boolean(hasCharacter && myCharacterHref && !showUpdating);
   usePendingNavHref();
   const viewNavLoading = Boolean(viewAsLink && isPendingNavTarget(myCharacterHref));
 
@@ -299,7 +299,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
             <span className="blood-overlay-creating-eta" aria-label="Estimated completion time">
               <span className="blood-overlay-creating-eta-line">estimated</span>
               <span className="blood-overlay-creating-eta-line">completion time</span>
-              <span className="blood-overlay-creating-eta-time">5-10~ minutes</span>
+              <span className="blood-overlay-creating-eta-time">3-5~ minutes</span>
             </span>
           </span>
         </span>
@@ -361,7 +361,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
   return (
     <div
       className={`asset-alien-photo-slot asset-alien-photo-slot--${assetId}${
-        showCreating || busy ? ' is-busy' : ''
+        showCreating || showUpdating ? ' is-busy' : ''
       }`}
     >
       <input
@@ -385,7 +385,7 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
           type="button"
           className="asset-alien-photo-hit"
           onClick={openPicker}
-          disabled={showCreating || busy}
+          disabled={showCreating || showUpdating}
           aria-expanded={comingSoonOpen}
           aria-haspopup="dialog"
           aria-label={hitLabel}
