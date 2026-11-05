@@ -18,10 +18,13 @@ export default function AssetMissionHeader({ assetId, line, children }: AssetMis
 
   return (
     <div className="asset-mission-header">
-      <span className="asset-mission-header-icon" aria-hidden="true">
+      <span
+        className="asset-mission-header-icon asset-guest-mount-slide asset-guest-mount-slide--badge"
+        aria-hidden="true"
+      >
         <span className="home-guest-icon-tint asset-guest-icon-tint" />
       </span>
-      <p className="asset-mission-header-line">
+      <p className="asset-mission-header-line asset-guest-mount-slide asset-guest-mount-slide--slogan">
         {line ?? (
           <>
             on a mission to ensure

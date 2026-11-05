@@ -9677,6 +9677,30 @@ a.myinv-about-button:focus-visible {
 	transition: opacity 0.4s ease;
 }
 
+.asset-page > .asset-questions-support-shell {
+	opacity: 1;
+	transition: opacity 0.4s ease;
+}
+
+/* Mount: collapsed until height-down ends, then fade in. */
+.asset-page--footer-held > .asset-footer,
+.asset-page--footer-held > .asset-questions-support-shell {
+	opacity: 0;
+	height: 0;
+	min-height: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+	overflow: hidden;
+	pointer-events: none;
+	transition: none;
+}
+
+.asset-page--footer-fade > .asset-footer,
+.asset-page--footer-fade > .asset-questions-support-shell {
+	opacity: 0;
+	pointer-events: none;
+}
+
 .asset-footer--session-reset-hidden {
 	opacity: 0;
 	pointer-events: none;

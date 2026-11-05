@@ -5,4 +5,4 @@
  * - Create Character / Update Character skips Stripe and opens Add Photo
  * - Server compose/generate skips paid-credit requirement
  */
-export const CHARACTER_GENERATION_PAYMENT_DISABLED = true;
+export const CHARACTER_GENERATION_PAYMENT_DISABLED = false;
