@@ -12673,6 +12673,17 @@ a.growth-metrics-about-button:focus-visible {
 	border-radius: 15px;
 }
 
+a.auth-secondary-link.auth-submit--accent,
+a.auth-secondary-link.auth-submit--accent:hover,
+a.auth-secondary-link.auth-submit--accent:active,
+a.auth-secondary-link.auth-submit--accent:focus,
+a.auth-secondary-link.auth-submit--accent:focus-visible {
+	border: none !important;
+	outline: none !important;
+	box-shadow: none !important;
+	transform: none !important;
+}
+
 .auth-below-card {
 	margin-top: 20px;
 	text-align: center;
@@ -14611,6 +14622,12 @@ button.is-nav-loading > *:not(.nav-control-spinner),
 
 /* View More News sits on solid orange — the default orange ring disappears. */
 .tbar-more--hub-link a.is-nav-loading .nav-control-spinner {
+	border: 2px solid rgba(255, 255, 255, 0.55);
+	border-top-color: #fff;
+}
+
+/* Sign up under the sign-in card is the same solid accent. */
+a.auth-secondary-link.auth-submit--accent.is-nav-loading .nav-control-spinner {
 	border: 2px solid rgba(255, 255, 255, 0.55);
 	border-top-color: #fff;
 }

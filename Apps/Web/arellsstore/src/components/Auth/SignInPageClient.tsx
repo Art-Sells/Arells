@@ -178,8 +178,14 @@ const SignInPageClient: React.FC = () => {
           Forgot Password
         </Link>
         <AuthFormMessage error={error} errorCode={errorCode} />
-        <button type="submit" className="auth-submit asset-range-button myinv-range-button" disabled={submitting}>
-          {submitting ? 'Signing in…' : 'Sign in'}
+        <button
+          type="submit"
+          className={`auth-submit asset-range-button myinv-range-button${submitting ? ' is-nav-loading' : ''}`}
+          disabled={submitting}
+          aria-busy={submitting || undefined}
+        >
+          Sign in
+          {submitting ? <span className="nav-control-spinner" aria-hidden="true" /> : null}
         </button>
       </form>
     </AuthPageShell>
