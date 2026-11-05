@@ -259,12 +259,14 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
 
   const hasCharacter = Boolean(portraitUrl);
   const showCreating = !hasCharacter && busy;
+  /** Update Character: View My Character button turns into the locked creating % ring. */
+  const showUpdating = hasCharacter && busy;
   const ctaLabel = hasCharacter
     ? 'View My Character'
     : awaitingPhoto
       ? 'Upload Photo'
       : 'Create Character';
-  const hitLabel = showCreating ? 'Creating Character' : ctaLabel;
+  const hitLabel = showCreating || showUpdating ? 'Creating Character' : ctaLabel;
   const thumbSrc = portraitUrl || PLACEHOLDER_SRC;
   const viewAsLink = Boolean(hasCharacter && myCharacterHref && !busy);
   usePendingNavHref();
@@ -324,10 +326,26 @@ const AlienPhotoSlot: React.FC<AlienPhotoSlotProps> = ({ assetId, assetName }) =
       <span
         className={`asset-alien-photo-plus${
           hasCharacter ? ' asset-alien-photo-plus--view' : ''
-        }${viewNavLoading || createCtaLoading || showCreating ? ' is-nav-loading-label' : ''}`}
+        }${showUpdating ? ' asset-alien-photo-plus--creating' : ''}${
+          viewNavLoading || createCtaLoading || showCreating ? ' is-nav-loading-label' : ''
+        }`}
         aria-hidden="true"
       >
-        {hasCharacter ? (
+        {showUpdating ? (
+          <>
+            <span className="asset-alien-photo-creating-word">creating</span>
+            <span
+              className={`asset-alien-photo-busy${
+                createProgress != null ? ' asset-alien-photo-busy--pct' : ''
+              }`}
+            >
+              {createProgress != null ? (
+                <span className="asset-alien-photo-busy-pct">{createProgress}%</span>
+              ) : null}
+            </span>
+            <span className="asset-alien-photo-creating-word">character</span>
+          </>
+        ) : hasCharacter ? (
           <span className="asset-alien-photo-plus-label-text">View My Character</span>
         ) : (
           <>
