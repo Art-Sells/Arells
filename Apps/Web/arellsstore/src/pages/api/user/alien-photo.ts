@@ -66,7 +66,7 @@ async function putSelfieBuffer(
       Key: alienPhotoObjectKey(email, asset, 'selfie'),
       Body: buf,
       ContentType: mime,
-      ACL: 'private',
+      // No ACL — Bucket owner enforced rejects ACL and breaks Add Photo commit.
     })
     .promise();
   return { ok: true };
