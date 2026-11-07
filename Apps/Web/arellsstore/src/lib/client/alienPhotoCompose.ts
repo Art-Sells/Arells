@@ -414,6 +414,13 @@ async function loadComposeResultFromJob(
   }
   const [portraitBlob, metaBlob] = await Promise.all([portraitRes.blob(), metaRes.blob()]);
   const hasLoop = loopHead.ok;
+  const loopVersion =
+    (loopHead.headers.get('x-alien-video-version') || '').trim() ||
+    (loopHead.headers.get('etag') || '').replace(/"/g, '').trim() ||
+    String(Date.now());
+  const loopUrl = hasLoop
+    ? `/api/user/alien-photo?asset=${encodeURIComponent(assetId)}&kind=metaloop&t=${encodeURIComponent(loopVersion)}`
+    : null;
 
   if (typeof window !== 'undefined') {
     clearPaidCreditPending(assetId);
@@ -434,7 +441,7 @@ async function loadComposeResultFromJob(
     portraitBlob,
     metaBlob,
     loopBlob: null,
-    loopUrl: hasLoop ? loopApi : null,
+    loopUrl,
     metaloop: Boolean(job.metaloop && hasLoop),
     seasononeloop: Boolean(job.seasononeloop),
   };

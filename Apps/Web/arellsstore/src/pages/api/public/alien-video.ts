@@ -50,11 +50,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const head = await s3.headObject({ Bucket: s3BucketNameOrThrow(), Key: key }).promise();
     const contentType = head.ContentType || 'video/mp4';
+    const etag = (head.ETag || '').replace(/"/g, '');
+    const versionId = head.VersionId || null;
+    if (etag) res.setHeader('ETag', `"${etag}"`);
+    if (versionId) res.setHeader('X-Alien-Video-Version', versionId);
+    if (head.LastModified) {
+      res.setHeader('Last-Modified', new Date(head.LastModified).toUTCString());
+    }
+    // Amplify CDN + browsers both stick to old MP4s if these are missing.
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('CDN-Cache-Control', 'no-store');
     if (req.method === 'HEAD') {
       res.setHeader('Content-Type', contentType);
-      // Do not let Amplify/CloudFront keep a stale HEAD for a day — that makes
-      // guest pages think an old loop is current after a regenerate.
-      res.setHeader('Cache-Control', 'private, no-store');
       res.setHeader('Accept-Ranges', 'bytes');
       return res.status(200).end();
     }
@@ -62,8 +69,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       key,
       expiresSec: 3600,
       responseContentType: contentType,
+      versionId,
+      responseCacheControl: 'no-store, max-age=0',
     });
-    res.setHeader('Cache-Control', 'private, no-store');
     res.redirect(302, signed);
     return;
   } catch (err) {

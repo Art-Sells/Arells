@@ -104,6 +104,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             Key: key,
             Body: metaloop,
             ContentType: 'video/mp4',
+            CacheControl: 'no-store, max-age=0',
             ACL: 'private',
             Metadata: { replacedAt: String(Date.now()) },
           })

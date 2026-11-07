@@ -3,19 +3,32 @@
 import { useEffect, useState } from 'react';
 import { publicAlienImagePath, publicAlienVideoPath } from '../lib/assets/assetSharePath';
 
+function mediaVersionFromHead(res: Response): string {
+  const version = (res.headers.get('x-alien-video-version') || '').trim();
+  if (version) return version;
+  const etag = (res.headers.get('etag') || '').replace(/"/g, '').trim();
+  if (etag) return etag;
+  const modified = (res.headers.get('last-modified') || '').trim();
+  if (modified) return String(Date.parse(modified) || modified);
+  return String(Date.now());
+}
+
 /**
  * Share-id guest pages start on the personal metaposter.
  * A real 404 means no character, so the page can use the default Bitcoin guest poster.
  * A failed request stays on the personal poster.
+ *
+ * `bust` is the live S3 object version/ETag so Amplify/browsers cannot keep an
+ * old metaloop after regenerate (Date.now() alone was not enough on deploy).
  */
 export function useBitcoinGuestCharacterMedia(
   shareId: string | null | undefined,
   enabled: boolean
-): { personal: boolean; loopReady: boolean; bust: number } {
+): { personal: boolean; loopReady: boolean; bust: string } {
   const id = (shareId || '').trim().toLowerCase();
   const [personal, setPersonal] = useState(() => Boolean(id));
   const [loopReady, setLoopReady] = useState(() => Boolean(id));
-  const [bust, setBust] = useState(() => Date.now());
+  const [bust, setBust] = useState(() => String(Date.now()));
 
   useEffect(() => {
     if (!id) {
@@ -26,22 +39,21 @@ export function useBitcoinGuestCharacterMedia(
     if (!enabled) return;
 
     let cancelled = false;
-    const nextBust = Date.now();
-    setBust(nextBust);
     setPersonal(true);
     setLoopReady(true);
 
+    const probeBust = String(Date.now());
     const posterUrl = publicAlienImagePath({
       shareId: id,
       asset: 'bitcoin',
       kind: 'composed',
-      cacheBust: nextBust,
+      cacheBust: probeBust,
     });
-    const loopUrl = publicAlienVideoPath({
+    const loopProbeUrl = publicAlienVideoPath({
       shareId: id,
       asset: 'bitcoin',
       kind: 'guestloop',
-      cacheBust: nextBust,
+      cacheBust: probeBust,
     });
 
     void (async () => {
@@ -60,8 +72,14 @@ export function useBitcoinGuestCharacterMedia(
       }
       setPersonal(true);
       try {
-        const loopHead = await fetch(loopUrl, { method: 'HEAD', cache: 'no-store' });
-        if (!cancelled) setLoopReady(loopHead.ok);
+        const loopHead = await fetch(loopProbeUrl, { method: 'HEAD', cache: 'no-store' });
+        if (cancelled) return;
+        if (!loopHead.ok) {
+          setLoopReady(false);
+          return;
+        }
+        setBust(mediaVersionFromHead(loopHead));
+        setLoopReady(true);
       } catch {
         if (!cancelled) setLoopReady(false);
       }

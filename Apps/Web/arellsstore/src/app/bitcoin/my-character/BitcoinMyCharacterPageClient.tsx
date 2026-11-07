@@ -374,7 +374,17 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         } else {
           setPortraitUrl(null);
         }
-        setMetaLoopUrl(metaRes.ok && loopHead.ok ? ownerLoopApi : null);
+        if (metaRes.ok && loopHead.ok) {
+          const version =
+            (loopHead.headers.get('x-alien-video-version') || '').trim() ||
+            (loopHead.headers.get('etag') || '').replace(/"/g, '').trim() ||
+            String(bust);
+          setMetaLoopUrl(
+            `/api/user/alien-photo?asset=bitcoin&kind=metaloop&t=${encodeURIComponent(version)}`
+          );
+        } else {
+          setMetaLoopUrl(null);
+        }
         if (!metaRes.ok && !portraitRes.ok) {
           router.replace(assetSharePath('/bitcoin', id));
         }
@@ -388,7 +398,22 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
         fetch(publicPortrait, { method: 'HEAD', cache: 'no-store' }),
       ]);
       if (loadGen !== mediaLoadGenRef.current) return;
-      setMetaLoopUrl(metaHead.ok && loopHead.ok ? publicLoop : null);
+      if (metaHead.ok && loopHead.ok) {
+        const version =
+          (loopHead.headers.get('x-alien-video-version') || '').trim() ||
+          (loopHead.headers.get('etag') || '').replace(/"/g, '').trim() ||
+          String(bust);
+        setMetaLoopUrl(
+          publicAlienVideoPath({
+            shareId: id,
+            asset: 'bitcoin',
+            kind: 'metaloop',
+            cacheBust: version,
+          })
+        );
+      } else {
+        setMetaLoopUrl(null);
+      }
       if (portraitHead.ok) setPortraitUrl(publicPortrait);
       else setPortraitUrl(null);
       if (!metaHead.ok && !portraitHead.ok) {

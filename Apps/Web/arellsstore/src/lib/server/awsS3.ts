@@ -39,11 +39,16 @@ export function getServerS3(): AWS.S3 {
 /**
  * Presigned GET so browsers/players fetch media from S3 directly.
  * Amplify Hosting compute cannot proxy large MP4s through the API Lambda.
+ *
+ * Pass `versionId` when present so a replaced metaloop is a new URL (browsers
+ * otherwise keep playing a cached MP4 for the same S3 key).
  */
 export function getServerS3SignedGetUrl(args: {
   key: string;
   expiresSec?: number;
   responseContentType?: string;
+  versionId?: string | null;
+  responseCacheControl?: string;
 }): string {
   return getServerS3().getSignedUrl('getObject', {
     Bucket: s3BucketNameOrThrow(),
@@ -52,6 +57,8 @@ export function getServerS3SignedGetUrl(args: {
     ...(args.responseContentType
       ? { ResponseContentType: args.responseContentType }
       : {}),
+    ...(args.versionId ? { VersionId: args.versionId } : {}),
+    ResponseCacheControl: args.responseCacheControl || 'no-store, max-age=0',
   });
 }
 

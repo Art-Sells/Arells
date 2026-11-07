@@ -101,6 +101,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ? head.ContentType
           : fallbackType;
       res.setHeader('X-Alien-Photo-Kind', kind);
+      if (isVideo) {
+        const etag = (head.ETag || '').replace(/"/g, '');
+        if (etag) res.setHeader('ETag', `"${etag}"`);
+        if (head.VersionId) res.setHeader('X-Alien-Video-Version', head.VersionId);
+        if (head.LastModified) {
+          res.setHeader('Last-Modified', new Date(head.LastModified).toUTCString());
+        }
+        res.setHeader('CDN-Cache-Control', 'no-store');
+      }
       if (req.method === 'HEAD') {
         res.setHeader('Content-Type', type);
         res.setHeader('Cache-Control', 'private, no-store');
@@ -113,6 +122,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           key,
           expiresSec: 3600,
           responseContentType: type,
+          versionId: head.VersionId || null,
+          responseCacheControl: 'no-store, max-age=0',
         });
         res.setHeader('Cache-Control', 'private, no-store');
         res.redirect(302, signed);
