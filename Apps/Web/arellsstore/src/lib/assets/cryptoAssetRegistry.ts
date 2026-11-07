@@ -54,8 +54,7 @@ export const CRYPTO_ASSETS: readonly CryptoAssetConfig[] = [
     s3VapaKey: 'vavity/bitcoinVAPA.json',
     metaTitle: 'Bitcoin can never lose value',
     faviconPath: '/images/favicons/BtcBadge.svg',
-    ogBannerPath:
-      'https://arellsusers.s3.us-west-1.amazonaws.com/marketing/assets/crypto/bitcoin/SignedIn/season1/posters/LaunchPoster(metaposter).jpg',
+    ogBannerPath: '/api/public/stock-metaposter?file=metaposter',
   },
   {
     id: 'ethereum',

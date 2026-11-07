@@ -3439,7 +3439,7 @@ const VavityApple: React.FC = () => {
 
   return (
     <>
-      <AssetMissionHeader title={ASSET.label} />
+      <AssetMissionHeader title={ASSET.label} assetId={ASSET.id} />
       <div className="asset-page-content asset-page-content--apple page-slide-down">
       <div
         className="asset-panel asset-panel--apple asset-header-panel asset-section-slide"

@@ -37,7 +37,9 @@ export default function HomeAboutMountLoader({
 
   return (
     <div
-      className={`home-loader-overlay home-loader-overlay--about${fadeOut ? ' home-loader-overlay-fade' : ''}`}
+      className={`home-loader-overlay home-loader-overlay--about${
+        fadeOut ? ' home-loader-overlay-fade' : ''
+      }`}
       aria-hidden="true"
     >
       <div className={`home-loader-ring${fadeOut ? ' home-loader-fade' : ''}`}>

@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Pack Bitcoin alien compose JPEGs into API Lambdas (Amplify otherwise ENOENT on /tmp/app/public/...).
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/user/alien-compose': ['./src/server-data/alien-compose/**/*'],
+      '/api/user/alien-generate': ['./src/server-data/alien-compose/**/*'],
+      '/api/user/alien-videos': ['./src/server-data/alien-compose/**/*'],
+    },
+  },
   async redirects() {
     return [
       { source: '/analytics-internal', destination: '/metrics', permanent: true },
@@ -88,6 +96,77 @@ const nextConfig = {
       const coingeckoApiKey = process.env.COINGECKO_API_KEY?.trim();
       if (coingeckoApiKey) {
         defs['process.env.COINGECKO_API_KEY'] = JSON.stringify(coingeckoApiKey);
+      }
+
+      const stripeSecretKey = process.env.STRIPE_SECRET_KEY?.trim();
+      if (stripeSecretKey) {
+        defs['process.env.STRIPE_SECRET_KEY'] = JSON.stringify(stripeSecretKey);
+      }
+      const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
+      if (stripeWebhookSecret) {
+        defs['process.env.STRIPE_WEBHOOK_SECRET'] = JSON.stringify(stripeWebhookSecret);
+      }
+      const stripePriceCg = process.env.STRIPE_PRICE_CHARACTER_GENERATION?.trim();
+      if (stripePriceCg) {
+        defs['process.env.STRIPE_PRICE_CHARACTER_GENERATION'] = JSON.stringify(stripePriceCg);
+      }
+
+      /*
+       * Grok: do NOT DefinePlugin-replace process.env.GROK_API_KEY.
+       * Replacing it baked the build-time value forever, so fixing the Amplify Console
+       * key did nothing until rebuild — and a wrong bake kept returning "Incorrect API key".
+       * Inline a fallback name only; runtime GROK_API_KEY / XAI_API_KEY win when present.
+       */
+      const normalizeSecret = (raw) => {
+        if (!raw) return '';
+        let k = String(raw).trim();
+        if (
+          (k.startsWith('"') && k.endsWith('"')) ||
+          (k.startsWith("'") && k.endsWith("'"))
+        ) {
+          k = k.slice(1, -1).trim();
+        }
+        if (/^bearer\s+/i.test(k)) k = k.replace(/^bearer\s+/i, '').trim();
+        return k;
+      };
+      const grokApiKey = normalizeSecret(
+        process.env.GROK_API_KEY || process.env.XAI_API_KEY
+      );
+      if (grokApiKey) {
+        defs['process.env.ARELLS_GROK_API_KEY_BUILD'] = JSON.stringify(grokApiKey);
+        console.log(
+          `[next.config] Grok build fallback set (len=${grokApiKey.length}, prefix=${grokApiKey.slice(0, 4)})`
+        );
+      } else {
+        console.warn(
+          '[next.config] GROK_API_KEY missing at build — runtime Amplify env must supply it'
+        );
+      }
+      const grokImageModel = process.env.GROK_IMAGE_MODEL?.trim();
+      if (grokImageModel) {
+        defs['process.env.GROK_IMAGE_MODEL'] = JSON.stringify(grokImageModel);
+      }
+      const grokVideoModel = process.env.GROK_VIDEO_MODEL?.trim();
+      if (grokVideoModel) {
+        defs['process.env.GROK_VIDEO_MODEL'] = JSON.stringify(grokVideoModel);
+      }
+      const grokVideoResolution = process.env.GROK_VIDEO_RESOLUTION?.trim();
+      if (grokVideoResolution) {
+        defs['process.env.GROK_VIDEO_RESOLUTION'] = JSON.stringify(grokVideoResolution);
+      }
+
+      /* Non-secret Lambda name — must be inlined; Amplify often drops custom runtime env. */
+      const alienGenerateWorker =
+        process.env.ALIEN_GENERATE_WORKER_FUNCTION_NAME?.trim();
+      if (alienGenerateWorker) {
+        defs['process.env.ALIEN_GENERATE_WORKER_FUNCTION_NAME'] =
+          JSON.stringify(alienGenerateWorker);
+      }
+      const alienGenerateAllowClient =
+        process.env.ALIEN_GENERATE_ALLOW_CLIENT?.trim();
+      if (alienGenerateAllowClient) {
+        defs['process.env.ALIEN_GENERATE_ALLOW_CLIENT'] =
+          JSON.stringify(alienGenerateAllowClient);
       }
 
       if (Object.keys(defs).length > 0) {

@@ -3420,7 +3420,7 @@ const VavityTron: React.FC = () => {
 
   return (
     <>
-      <AssetMissionHeader title={ASSET.label} />
+      <AssetMissionHeader title={ASSET.label} assetId={ASSET.id} />
       <div className="asset-page-content asset-page-content--tron page-slide-down">
       <div
         className="asset-panel asset-panel--tron asset-header-panel asset-section-slide"

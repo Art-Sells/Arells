@@ -3439,7 +3439,7 @@ const VavityAlphabet: React.FC = () => {
 
   return (
     <>
-      <AssetMissionHeader title={ASSET.label} />
+      <AssetMissionHeader title={ASSET.label} assetId={ASSET.id} />
       <div className="asset-page-content asset-page-content--alphabet page-slide-down">
       <div
         className="asset-panel asset-panel--alphabet asset-header-panel asset-section-slide"

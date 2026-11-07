@@ -11,6 +11,8 @@ interface UserContextType {
   sessionReady: boolean;
 
   email: string;
+  /** Referral / share id for personalized asset URLs (`/bitcoin/{shareId}`). */
+  shareId: string;
   isSignedIn: boolean;
   signOut: () => void;
   authSessionLoading: boolean;
@@ -50,6 +52,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [sessionReady, setSessionReady] = useState<boolean>(false);
 
   const [email, setEmailState] = useState<string>('');
+  const [shareId, setShareIdState] = useState<string>('');
   const [authSessionLoading, setAuthSessionLoading] = useState<boolean>(true);
   const [emailLoading, setEmailLoading] = useState<boolean>(false);
   const [emailInvestmentsReady, setEmailInvestmentsReady] = useState<boolean>(false);
@@ -85,6 +88,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const signOut = useCallback(() => {
     void fetch('/api/auth/logout', { method: 'POST', ...fetchOpts }).finally(() => {
       setEmailState('');
+      setShareIdState('');
       setEmailInvestments([]);
       setEmailInvestmentsReady(false);
       setEmailTotals({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
@@ -122,9 +126,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       });
       const data = await res.json().catch(() => ({}));
       const next = typeof data?.email === 'string' ? data.email.trim().toLowerCase() : '';
+      const nextShare =
+        typeof data?.shareId === 'string' ? data.shareId.trim().toLowerCase() : '';
       setEmailState(next);
+      setShareIdState(next ? nextShare : '');
     } catch {
       setEmailState('');
+      setShareIdState('');
     }
   }, []);
 
@@ -140,9 +148,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         const data = await res.json().catch(() => ({}));
         if (cancelled) return;
         const next = typeof data?.email === 'string' ? data.email.trim().toLowerCase() : '';
+        const nextShare =
+          typeof data?.shareId === 'string' ? data.shareId.trim().toLowerCase() : '';
         setEmailState(next);
+        setShareIdState(next ? nextShare : '');
       } catch {
-        if (!cancelled) setEmailState('');
+        if (!cancelled) {
+          setEmailState('');
+          setShareIdState('');
+        }
       } finally {
         if (!cancelled) setAuthSessionLoading(false);
       }
@@ -313,6 +327,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         sessionReady,
 
         email,
+        shareId,
         isSignedIn,
         signOut,
         authSessionLoading,

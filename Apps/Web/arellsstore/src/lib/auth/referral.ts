@@ -42,7 +42,26 @@ export async function resolveReferrerEmailFromCode(code: string): Promise<string
 export async function ensureReferralCodeForUser(email: string): Promise<string> {
   const auth = await getUserAuthByEmail(email);
   if (!auth) throw new Error('Account not found');
-  if (auth.referralCode) return auth.referralCode;
+  if (auth.referralCode) {
+    const code = auth.referralCode.trim().toLowerCase();
+    const key = referralCodeIndexKey(code);
+    try {
+      await s3.headObject({ Bucket: bucket(), Key: key }).promise();
+    } catch (err: unknown) {
+      const e = err as { code?: string; statusCode?: number };
+      if (e.code !== 'NotFound' && e.code !== 'NoSuchKey' && e.statusCode !== 404) throw err;
+      await s3
+        .putObject({
+          Bucket: bucket(),
+          Key: key,
+          Body: JSON.stringify({ email: normalizeEmail(email) }),
+          ContentType: 'application/json',
+          ACL: 'private',
+        })
+        .promise();
+    }
+    return code;
+  }
 
   let code = generateReferralCode();
   for (let attempt = 0; attempt < 8; attempt += 1) {

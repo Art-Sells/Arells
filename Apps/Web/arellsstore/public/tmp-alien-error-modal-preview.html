@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Failed To Upload modal preview</title>
+  <style>
+    :root {
+      --asset-hover-dot-color: rgb(248, 141, 0);
+      --asset-line-color: rgb(248, 141, 0);
+      --asset-range-button-label-color: rgb(248, 141, 0);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f3f0ea;
+    }
+    .page {
+      padding: 40px 24px;
+      opacity: 0.35;
+      filter: blur(0.5px);
+      color: #444;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .blood-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.86);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 16px;
+      overflow-y: auto;
+      z-index: 2500;
+    }
+    .blood-overlay-card {
+      width: 200px;
+      height: 300px;
+      background: color-mix(in srgb, var(--asset-hover-dot-color) 6%, #ffffff);
+      border: 1px solid color-mix(in srgb, var(--asset-hover-dot-color) 30%, transparent);
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      margin-top: auto;
+      margin-bottom: auto;
+      flex-shrink: 0;
+    }
+    .blood-overlay-icon {
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      opacity: 0.5;
+      background: var(--asset-line-color);
+      -webkit-mask-image: url('/images/Arells-Icon.png');
+      mask-image: url('/images/Arells-Icon.png');
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+    }
+    .blood-overlay-copy {
+      margin: 0;
+      width: 100%;
+      font-size: 13px;
+      line-height: 15px;
+      font-weight: 400;
+      letter-spacing: -0.3px;
+      color: var(--asset-line-color);
+      opacity: 0.7;
+      text-align: center;
+    }
+    .blood-overlay-line { display: block; }
+    .blood-ok {
+      width: 80px;
+      height: 40px;
+      margin-top: 10px;
+      padding: 0;
+      border-radius: 6px;
+      border: 1px solid color-mix(in srgb, var(--asset-hover-dot-color) 90%, transparent);
+      background: color-mix(in srgb, var(--asset-hover-dot-color) 18%, transparent);
+      color: var(--asset-range-button-label-color);
+      font: inherit;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <p>Bitcoin page behind the overlay…</p>
+    <p>Add yourself / character photo slot would sit here.</p>
+  </div>
+  <div class="blood-overlay is-visible" role="presentation">
+    <div class="blood-overlay-card" role="dialog" aria-modal="true" aria-labelledby="err">
+      <span class="blood-overlay-icon" aria-hidden="true"></span>
+      <p id="err" class="blood-overlay-copy">
+        <span class="blood-overlay-line">Failed To Upload</span>
+        <span class="blood-overlay-line">Try Again</span>
+      </p>
+      <button type="button" class="blood-ok">Ok</button>
+    </div>
+  </div>
+</body>
+</html>
