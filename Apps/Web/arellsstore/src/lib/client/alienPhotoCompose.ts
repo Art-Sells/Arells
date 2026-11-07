@@ -10,7 +10,13 @@ const UPLOAD_MIN_EDGE = 640;
 const UPLOAD_JPEG_QUALITY = 0.82;
 const UPLOAD_HARD_MAX_BYTES = 2_500_000;
 /** Stay well under Amplify’s ~1MB API body after JSON wrapping. */
-const CHUNK_BASE64_CHARS = 450_000;
+/**
+ * arells.com (Amplify Mainnet / CloudFront+WAF) rejects POST bodies ≥ 8KB
+ * with HTML 403 "request could not be satisfied". Test Amplify URL allows
+ * larger bodies, which is why upload worked on test and failed on main.
+ * Keep each JSON request under ~8KB including email/uploadId envelope.
+ */
+const CHUNK_BASE64_CHARS = 6_000;
 
 /** Broad accept — iOS camera roll is often HEIC; Safari may still hand us a JPEG. */
 export const ALIEN_PHOTO_ACCEPT = 'image/*,.heic,.heif,image/heic,image/heif';
@@ -797,7 +803,12 @@ async function postJson(
   if (!res.ok && res.status !== 202 && typeof json.error !== 'string') {
     if (res.status === 413) json.error = 'Photo too large for upload';
     else if (res.status === 402) json.error = 'Character generation payment required';
-    else if (res.status >= 500) {
+    else if (
+      res.status === 403 &&
+      /could not be satisfied|request blocked/i.test(text)
+    ) {
+      json.error = 'Upload blocked by CDN (request too large)';
+    } else if (res.status >= 500) {
       json.error =
         text && text.length < 280 && !text.trim().startsWith('<')
           ? text.trim()
@@ -844,8 +855,8 @@ async function postJsonRetry(
 }
 
 /**
- * Always chunk through the API — Amplify rejects ~1MB+ bodies, and S3 browser
- * PUT needs bucket CORS (often missing). Each chunk stays well under 1MB.
+ * Chunk through the API. arells.com WAF caps bodies at 8KB; Amplify also
+ * rejects ~1MB+. S3 browser PUT needs bucket CORS (often missing).
  */
 async function uploadAlienSelfieJpeg(
   email: string,

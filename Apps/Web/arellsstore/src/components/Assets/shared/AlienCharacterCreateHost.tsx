@@ -227,6 +227,11 @@ export default function AlienCharacterCreateHost() {
                   {error.stage === 'upload' ? (
                     <>
                       <span className="blood-overlay-line">Failed to Upload Photo</span>
+                      {error.message ? (
+                        <span className="blood-overlay-line blood-overlay-line--detail">
+                          {error.message}
+                        </span>
+                      ) : null}
                       <span className="blood-overlay-line">Try Again</span>
                     </>
                   ) : (

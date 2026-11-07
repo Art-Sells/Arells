@@ -8234,6 +8234,15 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	-webkit-text-fill-color: var(--asset-line-color);
 }
 
+.blood-overlay-line--detail {
+	display: block;
+	margin-top: 8px;
+	font-size: 0.78em;
+	line-height: 1.35;
+	opacity: 0.72;
+	word-break: break-word;
+}
+
 .blood-overlay-line {
 	display: block;
 }
