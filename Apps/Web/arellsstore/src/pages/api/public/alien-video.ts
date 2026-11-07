@@ -52,7 +52,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const contentType = head.ContentType || 'video/mp4';
     if (req.method === 'HEAD') {
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=86400');
+      // Do not let Amplify/CloudFront keep a stale HEAD for a day — that makes
+      // guest pages think an old loop is current after a regenerate.
+      res.setHeader('Cache-Control', 'private, no-store');
       res.setHeader('Accept-Ranges', 'bytes');
       return res.status(200).end();
     }
