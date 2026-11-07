@@ -1,6 +1,12 @@
 import { normalizeEmailKey } from '../auth/normalize';
 
 export const ALIEN_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+/**
+ * Max chunked selfie parts (indexes 0 .. N-1). Keep in sync with
+ * CHUNK_BASE64_CHARS / UPLOAD_HARD_MAX_BYTES in alienPhotoCompose.ts.
+ * 40 was too low — a 1280px JPEG easily needs 50–100+ × 6KB WAF-safe chunks.
+ */
+export const ALIEN_PHOTO_MAX_UPLOAD_PARTS = 120;
 export const ALIEN_PHOTO_ASSETS = new Set(['bitcoin']);
 
 export type AlienPhotoMime = 'image/jpeg' | 'image/png' | 'image/webp';

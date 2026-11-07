@@ -8,8 +8,6 @@ import { clearPaidCreditPending } from './characterGenerationPay';
 const UPLOAD_MAX_EDGE = 1280;
 const UPLOAD_MIN_EDGE = 640;
 const UPLOAD_JPEG_QUALITY = 0.82;
-const UPLOAD_HARD_MAX_BYTES = 2_500_000;
-/** Stay well under Amplify’s ~1MB API body after JSON wrapping. */
 /**
  * arells.com (Amplify Mainnet / CloudFront+WAF) rejects POST bodies ≥ 8KB
  * with HTML 403 "request could not be satisfied". Test Amplify URL allows
@@ -17,6 +15,12 @@ const UPLOAD_HARD_MAX_BYTES = 2_500_000;
  * Keep each JSON request under ~8KB including email/uploadId envelope.
  */
 const CHUNK_BASE64_CHARS = 6_000;
+/** Must match ALIEN_PHOTO_MAX_UPLOAD_PARTS on /api/user/alien-photo. */
+const MAX_UPLOAD_PARTS = 120;
+/** ~MAX_UPLOAD_PARTS × 6KB base64 ≈ 540KB binary JPEG ceiling. */
+const UPLOAD_HARD_MAX_BYTES = Math.floor(
+  MAX_UPLOAD_PARTS * CHUNK_BASE64_CHARS * 0.75 * 0.95
+);
 
 /** Broad accept — iOS camera roll is often HEIC; Safari may still hand us a JPEG. */
 export const ALIEN_PHOTO_ACCEPT = 'image/*,.heic,.heif,image/heic,image/heif';
@@ -883,6 +887,9 @@ async function uploadAlienSelfieJpeg(
   const b64 = await blobToBase64(jpeg);
   if (!b64) throw new Error('Could not encode photo');
   const parts = Math.max(1, Math.ceil(b64.length / CHUNK_BASE64_CHARS));
+  if (parts > MAX_UPLOAD_PARTS) {
+    throw new Error('Photo is too large after compression — try a smaller image');
+  }
   for (let i = 0; i < parts; i++) {
     const data = b64.slice(i * CHUNK_BASE64_CHARS, (i + 1) * CHUNK_BASE64_CHARS);
     report(8 + ((i + 1) / parts) * 10);

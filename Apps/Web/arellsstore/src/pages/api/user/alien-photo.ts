@@ -3,6 +3,7 @@ import { assertUserEmailMatchesSession } from '../../../lib/auth/requireUserApi'
 import { getSessionFromRequest } from '../../../lib/auth/session';
 import {
   ALIEN_PHOTO_MAX_BYTES,
+  ALIEN_PHOTO_MAX_UPLOAD_PARTS,
   alienPhotoFallbackKey,
   alienPhotoObjectKey,
   decodeAlienPhotoDataUrl,
@@ -183,7 +184,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (action === 'chunk') {
       const uploadId = isSafeUploadId(body.uploadId);
       const index = Number(body.index);
-      if (!uploadId || !Number.isInteger(index) || index < 0 || index > 40) {
+      if (
+        !uploadId ||
+        !Number.isInteger(index) ||
+        index < 0 ||
+        index >= ALIEN_PHOTO_MAX_UPLOAD_PARTS
+      ) {
         return res.status(400).json({ error: 'Invalid upload chunk' });
       }
       const raw = typeof body.data === 'string' ? body.data : '';
@@ -213,7 +219,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (action === 'commit') {
       const uploadId = isSafeUploadId(body.uploadId);
       const parts = Number(body.parts);
-      if (!uploadId || !Number.isInteger(parts) || parts < 1 || parts > 40) {
+      if (
+        !uploadId ||
+        !Number.isInteger(parts) ||
+        parts < 1 ||
+        parts > ALIEN_PHOTO_MAX_UPLOAD_PARTS
+      ) {
         return res.status(400).json({ error: 'Invalid upload' });
       }
       const bucket = s3BucketNameOrThrow();
