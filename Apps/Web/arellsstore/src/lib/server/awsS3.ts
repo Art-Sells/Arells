@@ -40,14 +40,17 @@ export function getServerS3(): AWS.S3 {
  * Presigned GET so browsers/players fetch media from S3 directly.
  * Amplify Hosting compute cannot proxy large MP4s through the API Lambda.
  *
- * Pass `versionId` when present so a replaced metaloop is a new URL (browsers
- * otherwise keep playing a cached MP4 for the same S3 key).
+ * Keep this signature minimal (key + content-type only). VersionId needs
+ * s3:GetObjectVersion (403 without it). Extra Response* overrides have also
+ * broken playback. Bust caches via the /api/...&t= query instead.
  */
 export function getServerS3SignedGetUrl(args: {
   key: string;
   expiresSec?: number;
   responseContentType?: string;
+  /** Ignored — call sites may still pass head.VersionId. */
   versionId?: string | null;
+  /** Ignored — do not put ResponseCacheControl on the signed URL. */
   responseCacheControl?: string;
 }): string {
   return getServerS3().getSignedUrl('getObject', {
@@ -57,8 +60,6 @@ export function getServerS3SignedGetUrl(args: {
     ...(args.responseContentType
       ? { ResponseContentType: args.responseContentType }
       : {}),
-    ...(args.versionId ? { VersionId: args.versionId } : {}),
-    ResponseCacheControl: args.responseCacheControl || 'no-store, max-age=0',
   });
 }
 
