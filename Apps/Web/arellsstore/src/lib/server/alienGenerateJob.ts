@@ -346,7 +346,7 @@ export async function runAlienGeneratePipeline(
     await assertJobStillCurrent(email, assetId, startedAt);
     await promoteAlienStagedMedia(email, assetId, {
       require: ['composed', 'portrait', 'seasonone', 'metaloop', 'seasononeloop'],
-      clearMissingLoops: false,
+      clearMissingLoops: true,
     });
 
     const finishedAt = new Date().toISOString();

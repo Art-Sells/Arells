@@ -99,18 +99,24 @@ async function readJpeg(s3: AWS.S3, bucket: string, key: string): Promise<Buffer
   }
 }
 
-/** Square still the metaposter loop is generated from. Never the wide crop. */
+/**
+ * Square still the metaposter loop is generated from. Never the wide crop.
+ * During create, use staging only so a new loop cannot be built from an old live still.
+ */
 export async function loadCharacterMetaloopSource(
   s3: AWS.S3,
   bucket: string,
   email: string,
-  asset: string
+  asset: string,
+  opts?: { stagingOnly?: boolean }
 ): Promise<Buffer> {
-  for (const staging of [true, false]) {
+  const stagingOnly = opts?.stagingOnly === true;
+  const stages = stagingOnly ? [true] : [true, false];
+  for (const staging of stages) {
     const source = await readJpeg(s3, bucket, alienMetaloopSourceKey(email, asset, staging));
     if (source) return source;
   }
-  for (const staging of [true, false]) {
+  for (const staging of stages) {
     const composed = await readJpeg(s3, bucket, alienComposedKey(email, asset, staging));
     if (!composed) continue;
     const size = await orientedSize(composed);

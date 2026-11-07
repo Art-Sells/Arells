@@ -26,10 +26,23 @@ function s3CopySource(bucket: string, key: string): string {
   return `${bucket}/${key.split('/').map(encodeURIComponent).join('/')}`;
 }
 
+async function stagingExists(bucket: string, key: string): Promise<boolean> {
+  try {
+    await s3.headObject({ Bucket: bucket, Key: key }).promise();
+    return true;
+  } catch (err) {
+    if (isMissingS3Object(err)) return false;
+    throw err;
+  }
+}
+
 /**
  * Promote staged create outputs to live keys so guests never see a mixed generation
- * (new poster + old video). Required kinds must exist; optional loops are copied when
- * present, otherwise live loops are cleared so a prior character cannot linger.
+ * (new poster + old video).
+ *
+ * All required staging keys are checked BEFORE any live copy. Otherwise a missing
+ * metaloop could throw after stills were already published and leave the old launch
+ * loop live.
  */
 export async function promoteAlienStagedMedia(
   email: string,
@@ -42,23 +55,30 @@ export async function promoteAlienStagedMedia(
   const promoted: AlienStagedMediaKind[] = [];
   const missing: AlienStagedMediaKind[] = [];
 
+  const present = new Map<AlienStagedMediaKind, string>();
   for (const kind of ALIEN_STAGED_MEDIA_KINDS) {
     const stagingKey = alienStagedObjectKey(email, asset, kind, true);
+    if (await stagingExists(bucket, stagingKey)) {
+      present.set(kind, stagingKey);
+    } else {
+      missing.push(kind);
+    }
+  }
+
+  for (const kind of missing) {
+    if (require.has(kind)) {
+      throw new Error(`Missing staged ${kind} — cannot publish character`);
+    }
+  }
+
+  for (const kind of ALIEN_STAGED_MEDIA_KINDS) {
     const liveKey = alienStagedObjectKey(email, asset, kind, false);
-    try {
-      await s3.headObject({ Bucket: bucket, Key: stagingKey }).promise();
-    } catch (err) {
-      if (isMissingS3Object(err)) {
-        missing.push(kind);
-        if (require.has(kind)) {
-          throw new Error(`Missing staged ${kind} — cannot publish character`);
-        }
-        if (clearMissingLoops && REPLACE_OR_CLEAR_KINDS.includes(kind)) {
-          await deleteQuiet(bucket, liveKey);
-        }
-        continue;
+    const stagingKey = present.get(kind);
+    if (!stagingKey) {
+      if (clearMissingLoops && REPLACE_OR_CLEAR_KINDS.includes(kind)) {
+        await deleteQuiet(bucket, liveKey);
       }
-      throw err;
+      continue;
     }
 
     await s3
@@ -74,8 +94,7 @@ export async function promoteAlienStagedMedia(
     if (kind === 'composed') {
       const sourceStaging = alienMetaloopSourceKey(email, asset, true);
       const sourceLive = alienMetaloopSourceKey(email, asset, false);
-      try {
-        await s3.headObject({ Bucket: bucket, Key: sourceStaging }).promise();
+      if (await stagingExists(bucket, sourceStaging)) {
         await s3
           .copyObject({
             Bucket: bucket,
@@ -86,8 +105,6 @@ export async function promoteAlienStagedMedia(
           })
           .promise();
         await deleteQuiet(bucket, sourceStaging);
-      } catch (err) {
-        if (!isMissingS3Object(err)) throw err;
       }
     }
     promoted.push(kind);

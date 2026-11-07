@@ -96,7 +96,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (doMetaloop) {
       const key = alienMetaloopKey(allowed, asset, true);
       try {
-        const composedJpeg = await loadCharacterMetaloopSource(s3, bucket, allowed, asset);
+        /* Drop any prior staged loop so finalize cannot publish an old clip with new stills. */
+        try {
+          await s3.deleteObject({ Bucket: bucket, Key: key }).promise();
+        } catch {
+          /* missing is fine */
+        }
+        const composedJpeg = await loadCharacterMetaloopSource(s3, bucket, allowed, asset, {
+          stagingOnly: true,
+        });
         const metaloop = await generateAlienMetaloopVideo(composedJpeg);
         await s3
           .putObject({

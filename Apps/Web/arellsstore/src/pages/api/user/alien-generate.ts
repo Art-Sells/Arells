@@ -156,7 +156,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         await promoteAlienStagedMedia(allowed, asset, {
           require,
-          clearMissingLoops: false,
+          clearMissingLoops: true,
         });
       } catch (err) {
         if (!alreadyComplete) throw err;
