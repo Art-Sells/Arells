@@ -74,6 +74,6 @@ export function getServerS3SignedPutUrl(args: {
     Key: args.key,
     ContentType: args.contentType,
     Expires: args.expiresSec ?? 600,
-    ACL: 'private',
+    // No ACL — Bucket owner enforced rejects it and browser PUTs 403.
   });
 }
