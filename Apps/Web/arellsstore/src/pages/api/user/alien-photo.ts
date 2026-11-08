@@ -228,33 +228,57 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(400).json({ error: 'Invalid upload' });
       }
       const bucket = s3BucketNameOrThrow();
-      const chunks: Buffer[] = [];
-      for (let i = 0; i < parts; i++) {
-        try {
-          const obj = await s3
-            .getObject({ Bucket: bucket, Key: uploadChunkKey(allowed, asset, uploadId, i) })
-            .promise();
-          const bodyBuf = obj.Body;
-          if (!bodyBuf) throw new Error('missing');
-          chunks.push(Buffer.isBuffer(bodyBuf) ? bodyBuf : Buffer.from(bodyBuf as ArrayBuffer));
-        } catch {
-          return res.status(400).json({ error: `Missing upload chunk ${i}` });
+      /*
+       * WAF forces ~6KB API chunks → dozens of S3 parts. Sequential getObject
+       * here used to blow Amplify’s ~30s gateway timeout (“server timed out”).
+       */
+      const chunks: Buffer[] = new Array(parts);
+      const COMMIT_READ_CONCURRENCY = 20;
+      for (let start = 0; start < parts; start += COMMIT_READ_CONCURRENCY) {
+        const batch = Array.from(
+          { length: Math.min(COMMIT_READ_CONCURRENCY, parts - start) },
+          (_, offset) => start + offset
+        );
+        const results = await Promise.all(
+          batch.map(async (i) => {
+            try {
+              const obj = await s3
+                .getObject({ Bucket: bucket, Key: uploadChunkKey(allowed, asset, uploadId, i) })
+                .promise();
+              const bodyBuf = obj.Body;
+              if (!bodyBuf) throw new Error('missing');
+              return {
+                i,
+                buf: Buffer.isBuffer(bodyBuf)
+                  ? bodyBuf
+                  : Buffer.from(bodyBuf as ArrayBuffer),
+              };
+            } catch {
+              return { i, buf: null as Buffer | null };
+            }
+          })
+        );
+        for (const row of results) {
+          if (!row.buf) {
+            return res.status(400).json({ error: `Missing upload chunk ${row.i}` });
+          }
+          chunks[row.i] = row.buf;
         }
       }
       const buf = Buffer.concat(chunks);
       const put = await putSelfieBuffer(allowed, asset, buf);
-      for (let i = 0; i < parts; i++) {
-        try {
-          await s3
-            .deleteObject({ Bucket: bucket, Key: uploadChunkKey(allowed, asset, uploadId, i) })
-            .promise();
-        } catch {
-          /* ignore */
-        }
-      }
       if (!('ok' in put)) {
         return res.status(put.status).json({ error: put.error });
       }
+      /* Parallel cleanup — sequential deletes helped blow the ~30s gateway. */
+      await Promise.all(
+        Array.from({ length: parts }, (_, i) =>
+          s3
+            .deleteObject({ Bucket: bucket, Key: uploadChunkKey(allowed, asset, uploadId, i) })
+            .promise()
+            .catch(() => undefined)
+        )
+      );
       return res.status(200).json({ ok: true });
     }
 

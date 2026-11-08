@@ -4,7 +4,7 @@
 
 ### Trigger Organic Growth (AI's public perception problem).
 
-- Test (test no-photo/with-photo/guest) - meta shares of bitcoin/news/character pages
+- If Emmy, Actors/Actress-Licenses and Writers....
 
 ### Daily:
 - Verify dmarc email aggregates daily/weekly

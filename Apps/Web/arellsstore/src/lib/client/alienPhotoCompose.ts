@@ -858,9 +858,38 @@ async function postJsonRetry(
   return last;
 }
 
+/** Prefer one browser→S3 PUT (avoids Amplify 30s commit). Falls back if CORS blocks. */
+async function uploadAlienSelfieViaPresign(
+  email: string,
+  assetId: string,
+  jpeg: Blob
+): Promise<boolean> {
+  const pre = await postJson('/api/user/alien-photo', {
+    email,
+    asset: assetId,
+    action: 'presign',
+  });
+  const uploadUrl =
+    typeof pre.json.uploadUrl === 'string' ? pre.json.uploadUrl : '';
+  const contentType =
+    typeof pre.json.contentType === 'string' ? pre.json.contentType : 'image/jpeg';
+  if (!pre.ok || !uploadUrl) return false;
+  try {
+    const res = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': contentType },
+      body: jpeg,
+    });
+    return res.ok;
+  } catch {
+    /* Missing bucket CORS → fall back to chunked API upload. */
+    return false;
+  }
+}
+
 /**
- * Chunk through the API. arells.com WAF caps bodies at 8KB; Amplify also
- * rejects ~1MB+. S3 browser PUT needs bucket CORS (often missing).
+ * Upload selfie under arells.com’s 8KB WAF cap. Prefer S3 presign; else chunk
+ * through the API. Commit used to time out on Amplify when reassembling many parts.
  */
 async function uploadAlienSelfieJpeg(
   email: string,
@@ -869,6 +898,12 @@ async function uploadAlienSelfieJpeg(
   onProgress?: AlienCreateProgressFn
 ): Promise<void> {
   const report = (n: number) => onProgress?.(clampProgress(n));
+  report(8);
+  if (await uploadAlienSelfieViaPresign(email, assetId, jpeg)) {
+    report(20);
+    return;
+  }
+
   const begin = await postJson('/api/user/alien-photo', {
     email,
     asset: assetId,
@@ -882,8 +917,6 @@ async function uploadAlienSelfieJpeg(
     );
   }
 
-  /* First visible % — only after upload has actually started. */
-  report(8);
   const b64 = await blobToBase64(jpeg);
   if (!b64) throw new Error('Could not encode photo');
   const parts = Math.max(1, Math.ceil(b64.length / CHUNK_BASE64_CHARS));
@@ -911,7 +944,7 @@ async function uploadAlienSelfieJpeg(
   }
 
   report(19);
-  const commit = await postJson('/api/user/alien-photo', {
+  const commit = await postJsonRetry('/api/user/alien-photo', {
     email,
     asset: assetId,
     action: 'commit',
