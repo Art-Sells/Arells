@@ -104,8 +104,9 @@ export function splitTBARDaysAt(
   return { news, other };
 }
 
-const VIDEO_QUALITY_PAREN_RE = /^(.+?)\((480|720|1080)p?\)(\.[^.]+)$/i;
-const VIDEO_QUALITY_SUFFIX_RE = /^(.+?)(480|720|1080)p?(\.[^.]+)$/i;
+/* Allow optional trailing junk after quality, e.g. TBARS1E3W3(480p)1.mp4 */
+const VIDEO_QUALITY_PAREN_RE = /^(.+?)\((480|720|1080)p?\)\d*(\.[^.]+)$/i;
+const VIDEO_QUALITY_SUFFIX_RE = /^(.+?)(480|720|1080)p?\d*(\.[^.]+)$/i;
 
 export function parseVideoQualityName(
   name: string
@@ -137,8 +138,8 @@ function isPreviewPath(name: string): boolean {
 function isPreviewAsset(name: string): boolean {
   if (isPreviewPath(name)) return true;
   const file = name.split('/').filter(Boolean).pop() || name;
-  // `NamePreview.jpg` or `Name(preview).jpg`
-  return /(?:preview|\(preview\))\.(jpe?g|png|webp|gif)$/i.test(file);
+  // `NamePreview.jpg`, `Name(preview).jpg`, or `Name(preview)1.jpg`
+  return /(?:preview\d*|\(preview\)\d*)\.(jpe?g|png|webp|gif)$/i.test(file);
 }
 
 function normalizePairingKey(key: string): string {
@@ -149,7 +150,10 @@ function pairingKey(name: string): string {
   const file = name.split('/').filter(Boolean).pop() || name;
   const stem = file.replace(/\.[^.]+$/, '').toLowerCase();
   return normalizePairingKey(
-    stem.replace(/characterprofile.*$/i, '').replace(/\(preview\)$/i, '').replace(/preview$/i, '')
+    stem
+      .replace(/characterprofile.*$/i, '')
+      .replace(/\(preview\)\d*$/i, '')
+      .replace(/preview\d*$/i, '')
   );
 }
 
@@ -191,6 +195,9 @@ export function groupTBARMedia(files: TBARMedia[]): TBARMedia[] {
     groups.set(parsed.base, existing);
   });
 
+  const solePreviewUrl =
+    previewByKey.size === 1 ? previewByKey.values().next().value : undefined;
+
   const grouped: { item: TBARMedia; order: number }[] = [];
   for (const [, group] of groups) {
     const chosen = group.parts['720'] || group.parts['1080'] || group.parts['480']!;
@@ -199,7 +206,8 @@ export function groupTBARMedia(files: TBARMedia[]): TBARMedia[] {
       if (group.parts[q]) urls[q] = group.parts[q]!.url;
     });
     const previewKey = videoPairingKey(chosen.name);
-    const previewUrl = previewKey ? previewByKey.get(previewKey) : undefined;
+    const previewUrl =
+      (previewKey ? previewByKey.get(previewKey) : undefined) || solePreviewUrl;
     grouped.push({
       order: group.order,
       item: {
