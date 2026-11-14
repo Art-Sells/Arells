@@ -14,10 +14,10 @@ export const THE_BITCOIN_ALIEN_REPORT: TBARCatalog[] = [
   {
     folder: '11.13.26',
     files: [
-      'TBARS1E3W2(preview).jpg',
-      'TBARS1E3W2(480p).mp4',
-      'TBARS1E3W2(720p).mp4',
-      'TBARS1E3W2(1080p).mp4',
+      'TBARS1E3W2(preview)1.jpg',
+      'TBARS1E3W3(480p)1.mp4',
+      'TBARS1E3W3(720p)1.mp4',
+      'TBARS1E3W3(1080p)1.mp4',
     ],
   },
   {
