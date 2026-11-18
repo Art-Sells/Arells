@@ -4,6 +4,7 @@
 
 ### Trigger Organic Growth (AI's public perception problem).
 
+- Switch Grok to Seedance/Seedream API (test)
 - Start work on new Homepage/my-investments/Asset
 
 1. Remove:
