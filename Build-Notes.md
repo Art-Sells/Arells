@@ -4,7 +4,24 @@
 
 ### Trigger Organic Growth (AI's public perception problem).
 
-- If Emmy, Actors/Actress-Licenses and Writers....
+- Start work on new Homepage/my-investments/Asset
+
+1. Remove:
+All blood and investment sections/delete all the code related to them in my-investments and the asset pages.
+
+2. Build:
+- - Home Page (title/slogan)
+- - - Asset Name
+- - - - Humans (list of profiles)
+- - My-Investments -> ((username)'s-{asset-name}-Profile ((username)'s {Asset-Name} Profile)
+- - - - (Image (<my character page no "click to add profile/etc"), if not them)
+- - - - - (username's) {asset name} Story (Link to their asset Page)
+- - My-Character
+- - - photo addition ability not clickable it not them...
+- - username's Asset Page 
+- - - (Image (<my character page no "click to add profile/etc"), if not them)
+
+- If Emmy, Actors/Actress-Licenses and Writers(reality-integrated storytelling genre): AI/SI stories affect the real world....
 
 ### Daily:
 - Verify dmarc email aggregates daily/weekly
@@ -19,6 +36,7 @@
 - *brink1111111@outlook.com and j6767677@outlook.com test emails*
 
 #### If sharing (organic) happens:
+- Integrate sign in with Google immediately (if organic starts)
 - Add Terms of Service to Stripe Public Details and Sign-up page (under).
 - Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
 - Prepare to change banners for other assets
