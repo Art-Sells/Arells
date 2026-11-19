@@ -5867,7 +5867,7 @@ a.asset-action-button--myinv-asset-link {
 	font-family: Arial, sans-serif;
 	font-weight: 800;
 	letter-spacing: -.6px;
-	/* Match the Home slogan ("On a mission to ensure investments never lose value.") */
+	/* Match the Home slogan ("investments never die") */
 	font-size: 14px;
 	color: #000;
 	opacity: .5;
@@ -6707,7 +6707,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	opacity: 0.95;
 }
 
-/* “we are on a mission…” — accent; not `.myinv-mission-sub` (“currently in”). */
+/* “on a mission to ensure investments never die” — accent; not `.myinv-mission-sub` (“currently in”). */
 .myinv-mission-line {
 	margin: 0;
 	font-size: 15px;

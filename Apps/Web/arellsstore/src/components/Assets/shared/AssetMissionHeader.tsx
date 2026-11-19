@@ -27,8 +27,6 @@ export default function AssetMissionHeader({ assetId, line, children }: AssetMis
       <p className="asset-mission-header-line asset-guest-mount-slide asset-guest-mount-slide--slogan">
         {line ?? (
           <>
-            on a mission to ensure
-            <br />
             <span className="asset-mission-possessive" aria-label={possessive}>
               <span
                 className={`asset-mission-possessive-word${
@@ -47,7 +45,7 @@ export default function AssetMissionHeader({ assetId, line, children }: AssetMis
                 my
               </span>
             </span>{' '}
-            investments never lose value
+            investments never die
           </>
         )}
       </p>

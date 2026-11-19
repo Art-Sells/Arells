@@ -127,9 +127,7 @@ export default function AssetGuestLanding({
           className={`home-guest-slogan asset-guest-landing-mission asset-guest-landing-mission--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
         >
           <span className="asset-guest-landing-mission-tail">
-            on a mission to ensure
-            <br />
-            {possessiveMission ? 'your investments never lose value' : 'investments never lose value'}
+            {possessiveMission ? 'your investments never die' : 'investments never die'}
           </span>
         </p>
         <div

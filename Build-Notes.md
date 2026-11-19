@@ -14,6 +14,7 @@ All blood and investment sections/delete all the code related to them in my-inve
 - - Home Page (title/slogan)
 - - - Asset Name
 - - - - Humans (list of profiles)
+- - - - (slider/my-profile(from my-investments)
 - - My-Investments -> ((username)'s-{asset-name}-Profile ((username)'s {Asset-Name} Profile)
 - - - - (Image (<my character page no "click to add profile/etc"), if not them)
 - - - - - (username's) {asset name} Story (Link to their asset Page)

@@ -2,7 +2,7 @@
 
 # [Arells](https://arells.com)
 
-Arells is on a mission to ensure investments never lose value.
+Investments never die.
 
 Powered by a ledger that shows investments never losing value.
 
