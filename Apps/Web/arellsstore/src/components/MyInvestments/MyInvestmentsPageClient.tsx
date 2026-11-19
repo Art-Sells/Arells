@@ -1284,7 +1284,7 @@ const MyInvestmentsPageClient: React.FC = () => {
             <p
               className={`myinv-descriptioner myinv-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
             >
-              can never lose value
+              never die
             </p>
           </div>
         </div>
@@ -1649,7 +1649,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                         <div className="myinv-panel myinv-panel--shell myinv-mission-inner-shell">
                           <div className="myinv-mission-accent-body">
                             <p className="myinv-mission-line">
-                              we are on a mission to ensure your investments never lose value
+                              on a mission to ensure investments never die
                             </p>
                             <div className="myinv-panel-section myinv-accent-border myinv-mission-phase-card">
                               <div className="myinv-panel myinv-panel--shell myinv-mission-phase-shell">
