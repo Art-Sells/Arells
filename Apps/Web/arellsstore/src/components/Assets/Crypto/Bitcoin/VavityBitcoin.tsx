@@ -933,10 +933,19 @@ const VavityBitcoin: React.FC = () => {
     !showInitialFetchLoader &&
     !isClearingInvestments;
   const [emptyTeaserOpen, setEmptyTeaserOpen] = useState(false);
+  /** After 0→px ease finishes, drop to max-height:none so media/layout shifts don’t jitter. */
+  const [emptyTeaserSettled, setEmptyTeaserSettled] = useState(false);
   const [emptyTeaserHeight, setEmptyTeaserHeight] = useState(0);
   const emptyTeaserContentRef = useRef<HTMLDivElement | null>(null);
   const emptyTeaserWrapRef = useRef<HTMLDivElement | null>(null);
   const emptyTeaserCollapseAnimRef = useRef<Animation | null>(null);
+  const emptyTeaserSettleCancelRef = useRef<(() => void) | null>(null);
+  const measureEmptyTeaserHeight = useCallback(() => {
+    const node = emptyTeaserContentRef.current;
+    if (!node) return 0;
+    // +40 buffer matches other Bitcoin height-downs — avoids clip if media settles taller.
+    return Math.max(node.scrollHeight + 40, 1);
+  }, []);
   /** Mount hold: teaser / character stay collapsed until height-down (empty or with investments). */
   // Hold padding (25↔14 / 10↔14) is only for a fully collapsed header stack.
   // First-add used to set hasInvestmentsUI && !summaryOpen while the teaser was
@@ -1282,8 +1291,9 @@ const VavityBitcoin: React.FC = () => {
           // Teaser stays; only My Character summary heights up then empty shell (Add My Blood) heights down.
           // Latch teaser open BEFORE dropping isClearingInvestments — while invested, teaser was held
           // by clearing/summary, not emptyTeaserOpen; otherwise maxHeight goes to 0px (height-up).
-          const teaserH = emptyTeaserContentRef.current?.scrollHeight ?? 0;
+          const teaserH = measureEmptyTeaserHeight();
           if (teaserH > 0) setEmptyTeaserHeight(teaserH);
+          setEmptyTeaserSettled(emptyTeaserOpen || teaserH <= 0);
           setEmptyTeaserOpen(true);
           setEmptyActionsMountPhase('hidden');
           setEmptyBloodOpen(false);
@@ -1367,6 +1377,12 @@ const VavityBitcoin: React.FC = () => {
     addFormSubmitAnimating,
     submitLoading,
     triggerEmptyButtonsExpand,
+    measureEmptyTeaserHeight,
+    emptyTeaserOpen,
+    beginClearing,
+    showEmptyAddForm,
+    showAddForm,
+    addFormOpen,
   ]);
 
   useEffect(() => {
@@ -3454,18 +3470,46 @@ const VavityBitcoin: React.FC = () => {
     };
   }, [isGuestView, bitcoinEmptyPreview, hasInvestmentsUI, showInitialFetchLoader]);
 
+  // Freeze measured px while expanding. ResizeObserver mid-flight restarts the ease → jitter.
   useEffect(() => {
     const node = emptyTeaserContentRef.current;
     if (showInitialFetchLoader || !node || typeof ResizeObserver === 'undefined') return;
+    if (emptyTeaserOpen && !emptyTeaserSettled) return;
+    if (emptyTeaserSettled) return;
     const measure = () => {
-      const next = node.scrollHeight;
+      const next = measureEmptyTeaserHeight();
       setEmptyTeaserHeight((prev) => (prev === next ? prev : next));
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(node);
     return () => ro.disconnect();
-  }, [showInitialFetchLoader, emptyTeaserOpen, hasInvestmentsUI, isClearingInvestments]);
+  }, [
+    showInitialFetchLoader,
+    emptyTeaserOpen,
+    emptyTeaserSettled,
+    hasInvestmentsUI,
+    isClearingInvestments,
+    measureEmptyTeaserHeight,
+  ]);
+
+  // Settle only after a real 0→px expand (height > 0) — not while pinned at 0.
+  useEffect(() => {
+    if (!emptyTeaserOpen || emptyTeaserSettled || emptyTeaserHeight <= 0) return;
+    emptyTeaserSettleCancelRef.current?.();
+    emptyTeaserSettleCancelRef.current = runAfterMaxHeightTransitionEnd(
+      emptyTeaserWrapRef.current,
+      () => {
+        emptyTeaserSettleCancelRef.current = null;
+        setEmptyTeaserSettled(true);
+      },
+      { timeoutMs: 3500 }
+    );
+    return () => {
+      emptyTeaserSettleCancelRef.current?.();
+      emptyTeaserSettleCancelRef.current = null;
+    };
+  }, [emptyTeaserOpen, emptyTeaserSettled, emptyTeaserHeight]);
 
   useEffect(() => {
     if (showInitialFetchLoader) return;
@@ -3476,9 +3520,20 @@ const VavityBitcoin: React.FC = () => {
     if (emptyTeaserOpen) return;
 
     const holdTimer = globalThis.setTimeout(() => {
-      const h = emptyTeaserContentRef.current?.scrollHeight ?? 0;
-      if (h > 0) setEmptyTeaserHeight(h);
-      setEmptyTeaserOpen(true);
+      // Same model as openInvestmentsSection: paint 0 with transition armed, then ease to px.
+      flushSync(() => {
+        setEmptyTeaserSettled(false);
+        setEmptyTeaserHeight(0);
+        setEmptyTeaserOpen(true);
+      });
+      const wrap = emptyTeaserWrapRef.current;
+      if (wrap) void wrap.offsetHeight;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const h = measureEmptyTeaserHeight();
+          setEmptyTeaserHeight(h > 0 ? h : 1);
+        });
+      });
     }, BITCOIN_SECTIONS_MOUNT_HOLD_MS);
     return () => globalThis.clearTimeout(holdTimer);
   }, [
@@ -3487,6 +3542,7 @@ const VavityBitcoin: React.FC = () => {
     emptyTeaserOpen,
     hasInvestmentsUI,
     isClearingInvestments,
+    measureEmptyTeaserHeight,
   ]);
 
   // Once teaser is visible with investments / during clear, latch emptyTeaserOpen so delete-all
@@ -3497,8 +3553,9 @@ const VavityBitcoin: React.FC = () => {
       isClearingInvestments ||
       (hasInvestmentsUI && (summaryOpen || summaryAnimating));
     if (!shown) return;
-    const h = emptyTeaserContentRef.current?.scrollHeight ?? 0;
+    const h = measureEmptyTeaserHeight();
     if (h > 0) setEmptyTeaserHeight(h);
+    setEmptyTeaserSettled(false);
     setEmptyTeaserOpen(true);
   }, [
     emptyTeaserOpen,
@@ -3506,6 +3563,7 @@ const VavityBitcoin: React.FC = () => {
     hasInvestmentsUI,
     summaryOpen,
     summaryAnimating,
+    measureEmptyTeaserHeight,
   ]);
 
   useLayoutEffect(() => {
@@ -3703,16 +3761,21 @@ const VavityBitcoin: React.FC = () => {
               className="asset-slide-panel"
               style={{
                 maxHeight:
-                  emptyTeaserOpen ||
-                  isClearingInvestments ||
-                  (hasInvestmentsUI && (summaryOpen || summaryAnimating))
-                    ? emptyTeaserHeight
-                      ? `${emptyTeaserHeight}px`
-                      : 'none'
-                    : '0px',
-                transition: 'max-height 3s ease',
+                  emptyTeaserSettled &&
+                  (emptyTeaserOpen ||
+                    isClearingInvestments ||
+                    (hasInvestmentsUI && (summaryOpen || summaryAnimating)))
+                    ? 'none'
+                    : emptyTeaserOpen ||
+                        isClearingInvestments ||
+                        (hasInvestmentsUI && (summaryOpen || summaryAnimating))
+                      ? emptyTeaserHeight
+                        ? `${emptyTeaserHeight}px`
+                        : '0px'
+                      : '0px',
+                transition: emptyTeaserSettled ? 'none' : 'max-height 3s ease',
                 overflowX: 'visible',
-                overflowY: 'hidden',
+                overflowY: emptyTeaserSettled ? 'visible' : 'hidden',
               }}
             >
               <div ref={emptyTeaserContentRef}>

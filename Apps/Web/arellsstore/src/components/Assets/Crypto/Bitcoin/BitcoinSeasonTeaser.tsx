@@ -50,8 +50,8 @@ export default function BitcoinSeasonTeaser({ seasonOnly = false }: BitcoinSeaso
     loopSrc,
     5000,
     1500,
-    stillLoaded
-    // Match launch metaposter: video→still through-black; still→video crossfade.
+    stillLoaded,
+    'through-black'
   );
   const showStill = showStillLayer && stillLoaded;
   const frameReady =
