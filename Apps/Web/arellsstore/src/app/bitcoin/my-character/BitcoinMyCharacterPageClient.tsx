@@ -645,7 +645,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           smallIcon
           showTrailer={!personalGuest}
           hideWordmark
-          possessiveMission={personalGuest}
         />
       </div>
     );
@@ -683,7 +682,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           showTrailer
           hideWordmark
           hideSigninPrompt
-          possessiveMission
         />
       </div>
     );

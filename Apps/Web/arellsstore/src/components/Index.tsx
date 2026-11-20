@@ -1,88 +1,27 @@
-"use client";
+'use client';
 
 import type { ImageLoaderProps } from 'next/image';
-import { useMemo, useState, useEffect, useCallback, useLayoutEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
-import { liquidSolidToggleKnobStyle } from './Assets/shared/liquidSolidToggleKnobStyle';
-import { useLiquidSolidToggleTrackSync } from './Assets/shared/useLiquidSolidToggleTrackSync';
-import { useVavity } from '../context/VavityAggregator';
 import { useUser } from '../context/UserContext';
 import { useGuestPreview } from '../hooks/useGuestPreview';
-import HomeAssetCategoryCard from './Home/HomeAssetCategoryCard';
-import HomeCryptoAssetRow, { type HomeCryptoAssetRowData } from './Home/HomeCryptoAssetRow';
-import HomeMarketSearchCard from './Home/HomeMarketSearchCard';
-import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
+import HomeAboutMountLoader from './HomeAboutMountLoader';
+import HomeBitcoinAlienRaceCard from './Home/HomeBitcoinAlienRaceCard';
 import PortfolioWeeklyGuestPageView from './MyPortfolio/PortfolioWeeklyGuestPageView';
-import {
-  CRYPTO_ASSETS,
-} from '../lib/assets/cryptoAssetRegistry';
-import { assetSharePath } from '../lib/assets/assetSharePath';
-import { compareByMarketCapDesc, latestLiquidMarketCap } from '../lib/assets/marketCapSort';
-
-const VISIBLE_HOME_CRYPTO = CRYPTO_ASSETS.filter((a) => a.id === 'bitcoin');
 
 const Index = () => {
-  // Loader Functions
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   };
 
-  const [showLoading, setLoading] = useState<boolean>(true);
-  const [fadeOut, setFadeOut] = useState<boolean>(false);
-  const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
-    wordLogo: false,
-  });
-  const { getAsset, loadMoreAssets } = useVavity();
-  const visibleAssetCount = VISIBLE_HOME_CRYPTO.length;
-  const { email, shareId, authSessionLoading } = useUser();
+  const { email, authSessionLoading } = useUser();
   const guestPreview = useGuestPreview();
-  const forceHomeInvestmentsPreview = false;
-  /** During auth, keep signed-in shell + loader — never blank / guest-flash. */
   const showGuestLanding =
-    guestPreview || (!authSessionLoading && !email && !forceHomeInvestmentsPreview);
+    guestPreview || (!authSessionLoading && !email);
   const showSignedInHome =
-    !guestPreview && (authSessionLoading || !!email || forceHomeInvestmentsPreview);
-  const showHomeLoader = showLoading && showSignedInHome;
-  const [cardNumbersVisible, setCardNumbersVisible] = useState(false);
-  const [cardShimmersFading, setCardShimmersFading] = useState(false);
-  const [cardFadeInDone, setCardFadeInDone] = useState(false);
-  const cardNumbersDidMountRef = useRef(false);
-  const [isLiquidMode, setIsLiquidMode] = useState(false);
-  const [toggleKnobLeftPx, setToggleKnobLeftPx] = useState<number | null>(null);
-  const [toggleAlpha, setToggleAlpha] = useState<number>(0);
-  const toggleAlphaRef = useRef(0);
-  const [toggleAnimating, setToggleAnimating] = useState(false);
-  const toggleAnimRafRef = useRef<number | null>(null);
-  const toggleResizeTimerRef = useRef<number | null>(null);
-  const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
-
-  const homeHeaderRef = useRef<HTMLDivElement | null>(null);
-  const homeLogoRef = useRef<HTMLImageElement | null>(null);
-  const [homeAssetsLayout, setHomeAssetsLayout] = useState<{ left: number; width: number } | null>(null);
-  const homeAssetsWrapRef = useRef<HTMLDivElement | null>(null);
-  const [toggleTrack, setToggleTrack] = useState<{ minLeft: number; maxLeft: number; mid: number } | null>(null);
-  const toggleDragRef = useRef<{
-    active: boolean;
-    pointerId: number | null;
-    startX: number;
-    startLeft: number;
-    lastLeft: number;
-    didDrag: boolean;
-    track: { minLeft: number; maxLeft: number; mid: number } | null;
-    raf: number | null;
-  }>({
-    active: false,
-    pointerId: null,
-    startX: 0,
-    startLeft: 0,
-    lastLeft: 0,
-    didDrag: false,
-    track: null,
-    raf: null,
-  });
-  const showSignedInHomeRef = useRef(false);
+    !guestPreview && (authSessionLoading || !!email);
 
   // Home should always own/reset the global background so asset-page tint never bleeds into `/`.
   useEffect(() => {
@@ -94,600 +33,63 @@ const Index = () => {
     document.body.style.backgroundColor = bg;
   }, []);
 
-
-
-  const handleImageLoaded = (imageName: string) => {
-    setImagesLoaded(prevState => ({ 
-      ...prevState, 
-      [imageName]: true 
-    }));
-  };
-
+  const [homeSlideIn, setHomeSlideIn] = useState(false);
   useEffect(() => {
-    if (showGuestLanding) {
-      setLoading(false);
-      setFadeOut(false);
+    if (!showSignedInHome) {
+      setHomeSlideIn(false);
       return;
     }
-    if (showSignedInHome && !showSignedInHomeRef.current) {
-      setLoading(true);
-      setFadeOut(false);
-    }
-    showSignedInHomeRef.current = showSignedInHome;
-
-    if (!showSignedInHome) return;
-
-    if (Object.values(imagesLoaded).every(Boolean)) {
-      const fadeTimer = setTimeout(() => {
-        setFadeOut(true);
-      }, 1000);
-
-      const hideTimer = setTimeout(() => {
-        setLoading(false);
-        setFadeOut(false);
-      }, 2000);
-
-      return () => {
-        clearTimeout(fadeTimer);
-        clearTimeout(hideTimer);
-      };
-    }
-  }, [imagesLoaded, showGuestLanding, showSignedInHome]);
-
-  const displayIsLiquidMode = toggleAlpha > 0.5;
-  const realityOpacity = Math.max(0, Math.min(1, Math.abs(toggleAlpha - 0.5) * 2));
-  const toggleKnobLeftComputedPx = useMemo(() => {
-    if (!toggleTrack) return null;
-    return toggleTrack.maxLeft - toggleAlpha * (toggleTrack.maxLeft - toggleTrack.minLeft);
-  }, [toggleAlpha, toggleTrack]);
-  const toggleKnobLeftEffectivePx = useMemo(() => {
-    const base = toggleKnobLeftPx ?? toggleKnobLeftComputedPx;
-    if (base == null || !toggleTrack) return base;
-    return Math.min(toggleTrack.maxLeft, Math.max(toggleTrack.minLeft, base));
-  }, [toggleKnobLeftPx, toggleKnobLeftComputedPx, toggleTrack]);
-  const realityFadeStyle = useMemo(() => {
-    return {
-      opacity: realityOpacity,
-      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
-    } as React.CSSProperties;
-  }, [realityOpacity, toggleAnimating, toggleKnobLeftPx]);
-
-  const clamp01 = useCallback((v: number) => Math.max(0, Math.min(1, v)), []);
-
-  const measureToggleTrack = useCallback(() => {
-    const btn = toggleBtnRef.current;
-    if (!btn) return null;
-    const cs = window.getComputedStyle(btn);
-    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
-    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
-    const w = btn.getBoundingClientRect().width;
-    const minLeft = leftInset;
-    const maxLeft = Math.max(leftInset, w - rightInset);
-    const mid = (minLeft + maxLeft) / 2;
-    const next = { minLeft, maxLeft, mid };
-    setToggleTrack(next);
-    return next;
-  }, []);
-
-  useEffect(() => {
-    toggleAlphaRef.current = toggleAlpha;
-  }, [toggleAlpha]);
-
-  useEffect(() => {
-    if (toggleKnobLeftPx != null) return;
-    setToggleAlpha(isLiquidMode ? 1 : 0);
-  }, [isLiquidMode, toggleKnobLeftPx]);
-
-  useLiquidSolidToggleTrackSync(
-    toggleBtnRef,
-    toggleDragRef,
-    toggleAnimRafRef,
-    measureToggleTrack,
-    setToggleKnobLeftPx
-  );
-
-  const animateToggleToAlpha = useCallback(
-    (targetAlpha: number) => {
-      const track = measureToggleTrack();
-      if (!track) return;
-      const fromAlpha = toggleAlphaRef.current;
-      const toAlpha = clamp01(targetAlpha);
-      if (toggleAnimRafRef.current != null) window.cancelAnimationFrame(toggleAnimRafRef.current);
-      setToggleAnimating(true);
-      // Seed knob at its current (released) position so the first animating render doesn't snap to a stale value.
-      setToggleKnobLeftPx(track.maxLeft - fromAlpha * (track.maxLeft - track.minLeft));
-
-      const start = performance.now();
-      const duration = 350;
-      const step = (now: number) => {
-        const t = Math.min(1, Math.max(0, (now - start) / duration));
-        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        const alpha = fromAlpha + (toAlpha - fromAlpha) * eased;
-        const left = track.maxLeft - alpha * (track.maxLeft - track.minLeft);
-        setToggleKnobLeftPx(left);
-        setToggleAlpha(alpha);
-        if (t < 1) {
-          toggleAnimRafRef.current = window.requestAnimationFrame(step);
-          return;
-        }
-        toggleAnimRafRef.current = null;
-        setToggleAnimating(false);
-        setToggleKnobLeftPx(null);
-        toggleBtnRef.current?.style.removeProperty('--toggle-knob-left');
-        const nextMode = toAlpha > 0.5;
-        setIsLiquidMode(nextMode);
-        setToggleAlpha(toAlpha);
-      };
-      toggleAnimRafRef.current = window.requestAnimationFrame(step);
-    },
-    [clamp01, measureToggleTrack, toggleTrack]
-  );
-
-  useEffect(() => {
-    return () => {
-      if (toggleAnimRafRef.current != null) window.cancelAnimationFrame(toggleAnimRafRef.current);
-    };
-  }, []);
-
-  const updateHomeLogoShift = useCallback(() => {
-    const header = homeHeaderRef.current;
-    const logo = homeLogoRef.current;
-    if (!header || !logo) return;
-    const headerWidth = header.clientWidth;
-    const logoWidth = logo.offsetWidth;
-    const currentLeft = logo.offsetLeft;
-    const targetLeft = (headerWidth - logoWidth) / 2;
-    const shift = targetLeft - currentLeft;
-    header.style.setProperty('--home-logo-shift', `${shift}px`);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    updateHomeLogoShift();
-    const handleResize = () => updateHomeLogoShift();
-    window.addEventListener('resize', handleResize);
-    const headerEl = homeHeaderRef.current;
-    const logoEl = homeLogoRef.current;
-    let resizeObserver: ResizeObserver | null = null;
-    if (headerEl && logoEl && 'ResizeObserver' in window) {
-      resizeObserver = new ResizeObserver(updateHomeLogoShift);
-      resizeObserver.observe(headerEl);
-      resizeObserver.observe(logoEl);
-    }
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (resizeObserver) resizeObserver.disconnect();
-    };
-  }, [updateHomeLogoShift]);
-
-  useLayoutEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stack = homeAssetsWrapRef.current;
-    if (!stack || typeof ResizeObserver === 'undefined') return;
-
-    const getLayoutTarget = () =>
-      stack.querySelector<HTMLElement>('.home-asset-category-card.home-assets-wrapper') ?? stack;
-
-    const measure = () => {
-      const target = getLayoutTarget();
-      const r = target.getBoundingClientRect();
-      setHomeAssetsLayout({
-        left: r.left + r.width / 2,
-        width: r.width,
-      });
-    };
-    let raf: number | null = null;
-    const schedule = () => {
-      if (raf != null) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = null;
-        measure();
-      });
-    };
-    measure();
-    const ro = new ResizeObserver(schedule);
-    ro.observe(stack);
-    const layoutTarget = getLayoutTarget();
-    if (layoutTarget !== stack) ro.observe(layoutTarget);
-    const onResize = () => {
-      schedule();
-      window.requestAnimationFrame(schedule);
-    };
-    window.addEventListener('resize', onResize);
-    window.addEventListener('scroll', schedule);
-    return () => {
-      if (raf != null) window.cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('scroll', schedule);
-    };
-  }, [showSignedInHome, visibleAssetCount]);
-
-  const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
-    if (!history.length) return 0;
-    const latest = history[history.length - 1]?.price ?? 0;
-    if (latest <= 0) return 0;
-    if (days == null) {
-      const first = history.find((entry) => entry.price > 0)?.price ?? 0;
-      return first > 0 ? ((latest - first) / first) * 100 : 0;
-    }
-    const lastDate = history[history.length - 1]?.date;
-    if (!lastDate) return 0;
-    const cutoff = new Date(`${lastDate}T00:00:00.000Z`);
-    cutoff.setUTCDate(cutoff.getUTCDate() - days);
-    let base = history[0]?.price ?? 0;
-    for (let i = history.length - 1; i >= 0; i -= 1) {
-      const entryDate = new Date(`${history[i].date}T00:00:00.000Z`);
-      if (entryDate <= cutoff) {
-        base = history[i].price;
-        break;
-      }
-    }
-    return base > 0 ? ((latest - base) / base) * 100 : 0;
-  };
-
-  const assetRows = useMemo(() => {
-    const rows = VISIBLE_HOME_CRYPTO.map((a, registryIndex) => {
-      const asset = {
-        id: a.id,
-        label: a.label,
-        ticker: a.ticker,
-        href: a.href,
-      };
-      const snapshot = getAsset(asset.id);
-      const solidHistory =
-        (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
-          ? snapshot.solidHistory
-          : Array.isArray(snapshot?.liquidHistory)
-            ? snapshot.liquidHistory
-            : []) ?? [];
-      const liquidHistory =
-        (Array.isArray(snapshot?.liquidHistory) && snapshot.liquidHistory.length > 0
-          ? snapshot.liquidHistory
-          : Array.isArray(snapshot?.solidHistory)
-            ? snapshot.solidHistory
-            : []) ?? [];
-      const solidPrice = snapshot?.vapa ?? 0;
-      const liquidPrice =
-        typeof snapshot?.price === 'number' ? snapshot.price : typeof snapshot?.vapa === 'number' ? snapshot.vapa : 0;
-      return {
-        ...asset,
-        registryIndex,
-        marketCap: latestLiquidMarketCap(snapshot),
-        solidPrice,
-        liquidPrice,
-        solidChange1w: getPercentChange(solidHistory, 7),
-        solidChange1y: getPercentChange(solidHistory, 365),
-        solidChangeAll: getPercentChange(solidHistory),
-        liquidChange1w: getPercentChange(liquidHistory, 7),
-        liquidChange1y: getPercentChange(liquidHistory, 365),
-        liquidChangeAll: getPercentChange(liquidHistory),
-      };
-    });
-
-    rows.sort(compareByMarketCapDesc);
-    return rows.slice(0, visibleAssetCount);
-  }, [getAsset, visibleAssetCount]);
-
-  const sortedRows = assetRows;
-
-  useEffect(() => {
-    if (!showSignedInHome) return;
-    void loadMoreAssets(VISIBLE_HOME_CRYPTO.map((a) => a.id));
-  }, [showSignedInHome, loadMoreAssets]);
-
-  const handleEnsureCryptoLoaded = useCallback(
-    (assetIds: string[]) => {
-      void loadMoreAssets(assetIds);
-    },
-    [loadMoreAssets]
-  );
-
-  const getCryptoRow = useCallback(
-    (assetId: string): HomeCryptoAssetRowData | null => {
-      const asset =
-        VISIBLE_HOME_CRYPTO.find((a) => a.id === assetId);
-      if (!asset) return null;
-      const snapshot = getAsset(asset.id);
-      const solidHistory =
-        (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
-          ? snapshot.solidHistory
-          : Array.isArray(snapshot?.liquidHistory)
-            ? snapshot.liquidHistory
-            : []) ?? [];
-      const liquidHistory =
-        (Array.isArray(snapshot?.liquidHistory) && snapshot.liquidHistory.length > 0
-          ? snapshot.liquidHistory
-          : Array.isArray(snapshot?.solidHistory)
-            ? snapshot.solidHistory
-            : []) ?? [];
-      const solidPrice = snapshot?.vapa ?? 0;
-      const liquidPrice =
-        typeof snapshot?.price === 'number' ? snapshot.price : typeof snapshot?.vapa === 'number' ? snapshot.vapa : 0;
-      return {
-        id: asset.id,
-        label: asset.label,
-        ticker: asset.ticker,
-        href: assetSharePath(asset.href, shareId),
-        solidPrice,
-        liquidPrice,
-        solidChange1w: getPercentChange(solidHistory, 7),
-        solidChange1y: getPercentChange(solidHistory, 365),
-        solidChangeAll: getPercentChange(solidHistory),
-        liquidChange1w: getPercentChange(liquidHistory, 7),
-        liquidChange1y: getPercentChange(liquidHistory, 365),
-        liquidChangeAll: getPercentChange(liquidHistory),
-      };
-    },
-    [getAsset, shareId]
-  );
-
-  useEffect(() => {
-    if (cardNumbersDidMountRef.current) return;
-    const hasData = sortedRows.some((r) => r.liquidPrice > 0 || r.solidPrice > 0);
-    if (!hasData) return;
-    cardNumbersDidMountRef.current = true;
-    setCardShimmersFading(true);
-    setTimeout(() => {
-      requestAnimationFrame(() => {
-        setCardNumbersVisible(true);
-        setTimeout(() => setCardFadeInDone(true), 2100);
-      });
-    }, 600);
-  }, [sortedRows]);
-
-  const cardFadeStyle = useMemo<React.CSSProperties>(() => {
-    if (!cardNumbersVisible) return { opacity: 0, transition: 'opacity 2s ease' };
-    if (!cardFadeInDone) return { opacity: realityOpacity, transition: 'opacity 2s ease' };
-    return realityFadeStyle;
-  }, [cardFadeInDone, cardNumbersVisible, realityFadeStyle, realityOpacity]);
+    const t = window.setTimeout(() => setHomeSlideIn(true), 50);
+    return () => window.clearTimeout(t);
+  }, [showSignedInHome]);
 
   return (
     <>
-      {showHomeLoader && (
-        <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
+      {showSignedInHome ? <HomeAboutMountLoader /> : null}
+
+      {showSignedInHome ? (
+        <>
           <div
-            className="loader-toggle-clone loader-toggle-clone--home"
-            style={
-              showSignedInHome && homeAssetsLayout
-                ? {
-                    left: homeAssetsLayout.left - homeAssetsLayout.width / 2,
-                    width: homeAssetsLayout.width,
-                    transform: 'none',
-                  }
-                : undefined
-            }
+            className={`home-header-inner${homeSlideIn ? ' page-slide-down' : ''}`}
           >
-            <div className="home-toggle-shell-wrap">
-              <div className="home-toggle-shell home-toggle-shell--bordered myinv-accent-border">
-                <div className="asset-reality-toggle-row home-toggle-row">
-                  <span className="asset-reality-toggle-label">Liquid</span>
-                  <button type="button" className="asset-reality-toggle" aria-hidden="true" tabIndex={-1}>
-                    <span className="asset-reality-toggle-knob" aria-hidden="true" />
-                  </button>
-                  <span className="asset-reality-toggle-label">Solid</span>
-                </div>
-              </div>
+            <Image
+              loader={imageLoader}
+              alt=""
+              width={70}
+              height={23}
+              id="word-logoo"
+              src="images/Arells-Logo-Ebony.png"
+              priority
+            />
+          </div>
+          <div className={`home-slogan-layer${homeSlideIn ? ' page-slide-down' : ''}`}>
+            <div id="descriptioner-wrapper">
+              <p
+                id="descriptioner"
+                className="home-slogan-text"
+                style={{ letterSpacing: '0px', marginLeft: '0px' }}
+              >
+                investments never die
+              </p>
             </div>
           </div>
-        </div>
-      )}
 
-      {showSignedInHome && (
-      <>
-      <div
-        ref={homeHeaderRef}
-        className={`home-header-inner page-slide-down${displayIsLiquidMode ? ' is-liquid' : ''}`}
-      >
-        <Image
-          loader={imageLoader}
-          onLoad={() => handleImageLoaded('wordLogo')}
-          alt=""
-            width={70}
-            height={23}
-          id="word-logoo"
-          src="images/Arells-Logo-Ebony.png"
-          ref={homeLogoRef}
-        />
-      </div>
-      <div className="home-slogan-layer page-slide-down">
-        <div id="descriptioner-wrapper">
-          <p
-            id="descriptioner"
-            className={`home-slogan-text${displayIsLiquidMode ? ' is-hidden' : ''}`}
-            style={{ letterSpacing: '0px', marginLeft: '0px' }}
-          >
-            investments never die
-          </p>
-        </div>
-      </div>
-
-      <div ref={homeAssetsWrapRef} className="home-asset-category-stack">
-        <HomeMarketSearchCard
-          enabled={showSignedInHome}
-          displayIsLiquidMode={displayIsLiquidMode}
-          imageLoader={imageLoader}
-          getCryptoRow={getCryptoRow}
-          onEnsureCryptoLoaded={handleEnsureCryptoLoaded}
-        />
-        <HomeAssetCategoryCard
-          enabled={showSignedInHome}
-          panelTransition="max-height 1.5s ease-out"
-        >
-          <div className="home-assets-rows-shell">
-            {sortedRows.map((row) => (
-              <HomeCryptoAssetRow
-                key={row.id}
-                row={row}
-                displayIsLiquidMode={displayIsLiquidMode}
-                cardNumbersVisible={cardNumbersVisible}
-                cardShimmersFading={cardShimmersFading}
-                cardFadeStyle={cardFadeStyle}
-                imageLoader={imageLoader}
-              />
-            ))}
+          <div className="home-asset-category-stack">
+            <HomeBitcoinAlienRaceCard />
           </div>
-        </HomeAssetCategoryCard>
 
-      </div>
-      <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
-        <div className="home-assets-footer-text">News Updates Every Week</div>
-      </div>
-
-      <div
-        className="home-toggle-footer"
-        style={
-          homeAssetsLayout
-            ? {
-                left: homeAssetsLayout.left - homeAssetsLayout.width / 2,
-                width: homeAssetsLayout.width,
-                transform: 'none',
-              }
-            : undefined
-        }
-      >
-        <div className="home-toggle-shell-wrap shadow-border-wrap">
-          <span className="shadow-border" aria-hidden="true" />
-          <div className="home-toggle-shell-bg">
-            <div className="home-toggle-shell home-toggle-shell--bordered myinv-accent-border">
-              <div className="asset-reality-toggle-row home-toggle-row">
-                <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
-                <button
-                  type="button"
-                  ref={toggleBtnRef}
-                  className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${
-                    toggleKnobLeftPx != null ? ' is-dragging' : ''
-                  }${toggleAnimating ? ' is-animating' : ''}`}
-                  aria-pressed={displayIsLiquidMode}
-                  aria-label="Toggle Liquid/Solid mode"
-                  style={liquidSolidToggleKnobStyle(toggleAnimating, toggleKnobLeftEffectivePx)}
-                  onPointerDown={(e) => {
-                    if (toggleAnimating) return;
-                    const btn = e.currentTarget;
-                    const cs = window.getComputedStyle(btn);
-                    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
-                    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
-                    const w = btn.getBoundingClientRect().width;
-                    const minLeft = leftInset;
-                    const maxLeft = Math.max(leftInset, w - rightInset);
-                    const currentLeft = toggleKnobLeftPx ?? (displayIsLiquidMode ? minLeft : maxLeft);
-                    setToggleTrack({ minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 });
-
-                    toggleDragRef.current.active = true;
-                    toggleDragRef.current.pointerId = e.pointerId;
-                    toggleDragRef.current.startX = e.clientX;
-                    toggleDragRef.current.startLeft = currentLeft;
-                    toggleDragRef.current.lastLeft = currentLeft;
-                    toggleDragRef.current.didDrag = false;
-                    toggleDragRef.current.track = { minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 };
-                    btn.classList.add('is-dragging');
-
-                    try {
-                      btn.setPointerCapture(e.pointerId);
-                    } catch {}
-                    setToggleKnobLeftPx(currentLeft);
-                    btn.style.setProperty('--toggle-knob-left', `${currentLeft}px`);
-                    const alpha = (maxLeft - currentLeft) / Math.max(1e-6, maxLeft - minLeft);
-                    toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
-                    setToggleAlpha(toggleAlphaRef.current);
-                    e.preventDefault();
-                  }}
-                  onPointerMove={(e) => {
-                    if (!toggleDragRef.current.active) return;
-                    const btn = e.currentTarget;
-                    const track = toggleDragRef.current.track;
-                    if (!track) return;
-                    const minLeft = track.minLeft;
-                    const maxLeft = track.maxLeft;
-                    const dx = e.clientX - toggleDragRef.current.startX;
-                    if (Math.abs(dx) > 2) toggleDragRef.current.didDrag = true;
-                    const next = Math.min(maxLeft, Math.max(minLeft, toggleDragRef.current.startLeft + dx));
-                    toggleDragRef.current.lastLeft = next;
-                    btn.style.setProperty('--toggle-knob-left', `${next}px`);
-                    const alpha = (maxLeft - next) / Math.max(1e-6, maxLeft - minLeft);
-                    toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
-                    if (toggleDragRef.current.raf == null) {
-                      toggleDragRef.current.raf = window.requestAnimationFrame(() => {
-                        toggleDragRef.current.raf = null;
-                        setToggleAlpha((prev) => (Math.abs(prev - toggleAlphaRef.current) > 0.001 ? toggleAlphaRef.current : prev));
-                      });
-                    }
-                    e.preventDefault();
-                  }}
-                  onPointerUp={(e) => {
-                    if (!toggleDragRef.current.active) return;
-                    const btn = e.currentTarget;
-                    const cs = window.getComputedStyle(btn);
-                    const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
-                    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
-                    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
-                    const w = btn.getBoundingClientRect().width;
-                    const minLeft = leftInset;
-                    const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
-                    const mid = (minLeft + maxLeft) / 2;
-                    const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
-                    const nextIsLiquid = finalLeft <= mid;
-
-                    toggleDragRef.current.active = false;
-                    toggleDragRef.current.pointerId = null;
-                    toggleDragRef.current.track = null;
-                    btn.classList.remove('is-dragging');
-                    try {
-                      btn.releasePointerCapture(e.pointerId);
-                    } catch {}
-
-                    if (!toggleDragRef.current.didDrag) {
-                      animateToggleToAlpha(displayIsLiquidMode ? 0 : 1);
-                      e.preventDefault();
-                      return;
-                    }
-
-                    animateToggleToAlpha(nextIsLiquid ? 1 : 0);
-                    e.preventDefault();
-                  }}
-                  onPointerCancel={(e) => {
-                    if (!toggleDragRef.current.active) return;
-                    toggleDragRef.current.active = false;
-                    toggleDragRef.current.pointerId = null;
-                    toggleDragRef.current.track = null;
-                    if (toggleDragRef.current.raf != null) {
-                      window.cancelAnimationFrame(toggleDragRef.current.raf);
-                      toggleDragRef.current.raf = null;
-                    }
-                    setToggleKnobLeftPx(null);
-                    e.currentTarget.style.removeProperty('--toggle-knob-left');
-                    setToggleAlpha(isLiquidMode ? 1 : 0);
-                    try {
-                      e.currentTarget.classList.remove('is-dragging');
-                      e.currentTarget.releasePointerCapture(e.pointerId);
-                    } catch {}
-                  }}
-                  onClick={() => {}}
-                >
-                  <span className="asset-reality-toggle-knob" aria-hidden="true" />
-                </button>
-                <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
-              </div>
-            </div>
+          <div className={`home-assets-about-wrap${homeSlideIn ? ' page-slide-in' : ''}`}>
+            <Link className="myinv-about-button home-assets-about-button" href="/about">
+              <span className="myinv-about-button-bg" aria-hidden="true" />
+              <span className="myinv-about-button-text">about</span>
+            </Link>
           </div>
-        </div>
-      </div>
-      <div className="home-assets-about-wrap page-slide-in">
-        <Link className="myinv-about-button home-assets-about-button" href="/about">
-          <span className="myinv-about-button-bg" aria-hidden="true" />
-          <span className="myinv-about-button-text">about</span>
-        </Link>
-      </div>
-      </>
-      )}
-
-      {showGuestLanding ? (
-        <PortfolioWeeklyGuestPageView />
+        </>
       ) : null}
 
-      {!showLoading && showSignedInHome && <HomeInvestmentsSlideUpCTA />}
+      {showGuestLanding ? <PortfolioWeeklyGuestPageView /> : null}
     </>
   );
-}
+};
 
 export default Index;

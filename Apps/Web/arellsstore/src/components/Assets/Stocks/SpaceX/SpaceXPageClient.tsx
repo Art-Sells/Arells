@@ -2,7 +2,6 @@
 
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import AssetFooterPortfolioButton from '../../shared/AssetFooterPortfolioButton';
 import AssetQuestionsSupport from '../../shared/AssetQuestionsSupport';
 import AssetFooterHold from '../../shared/AssetFooterHold';
 import SpaceX from './spacex';
@@ -59,19 +58,7 @@ const SpaceXPageClient: React.FC = () => {
       <SpaceX />
 
       {!isGuest && (
-        <footer className="asset-footer">
-          {!!email && <AssetFooterPortfolioButton cssModifier={ASSET.cssModifier} />}
-          <Link
-            href="/"
-            className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-view-more-assets asset-view-more-assets--footer asset-footer-viewmore`}
-          >
-            <span className="asset-view-more-assets-text">view</span>
-            <span className="asset-footer-about-divider" aria-hidden="true" />
-            <span className="asset-view-more-assets-text">more</span>
-            <span className="asset-footer-about-divider" aria-hidden="true" />
-            <span className="asset-view-more-assets-text">assets</span>
-          </Link>
-          <Link
+        <footer className="asset-footer">          <Link
             className={`asset-action-button asset-action-button--${ASSET.cssModifier} asset-action-button--invest-show asset-footer-about-button`}
             href="/about"
           >

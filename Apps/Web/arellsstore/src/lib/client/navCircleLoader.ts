@@ -171,6 +171,24 @@ export function markNavControlLoading(el: HTMLElement, href?: string | null): vo
     return;
   }
 
+  /* Home Bitcoin CTA — only the nested badge chip spins; Season One stays. */
+  if (el.classList.contains('home-bitcoin-alien-race-card')) {
+    const badge = el.querySelector('.bitcoin-alien-race-asset-card');
+    if (badge instanceof HTMLElement) {
+      badge.setAttribute('aria-busy', 'true');
+      badge.classList.add(LOADING_CLASS);
+      badge
+        .querySelectorAll(
+          '.asset-action-button--home-asset-chip, .home-asset-name.asset-action-button'
+        )
+        .forEach((chip) => {
+          if (!(chip instanceof HTMLElement)) return;
+          chip.classList.add('is-nav-loading-chip');
+        });
+    }
+    return;
+  }
+
   /* Asset badge cards — React rows read pending href; spinner via CSS ::after. */
   if (isAssetBadgeLink(el)) {
     el.setAttribute('aria-busy', 'true');

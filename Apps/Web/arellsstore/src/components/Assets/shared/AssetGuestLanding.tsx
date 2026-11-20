@@ -27,8 +27,6 @@ type AssetGuestLandingProps = {
   showTrailer?: boolean;
   hideWordmark?: boolean;
   hideSigninPrompt?: boolean;
-  /** User-id guest pages keep “your”. Plain guest pages leave it off. */
-  possessiveMission?: boolean;
 };
 
 export default function AssetGuestLanding({
@@ -42,7 +40,6 @@ export default function AssetGuestLanding({
   showTrailer = false,
   hideWordmark = false,
   hideSigninPrompt = false,
-  possessiveMission = false,
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
   const hasLoop = Boolean(posterSrc && posterLoopSrc);
@@ -127,7 +124,7 @@ export default function AssetGuestLanding({
           className={`home-guest-slogan asset-guest-landing-mission asset-guest-landing-mission--${cssModifier} asset-guest-mount-slide asset-guest-mount-slide--slogan`}
         >
           <span className="asset-guest-landing-mission-tail">
-            {possessiveMission ? 'your investments never die' : 'investments never die'}
+            investments never die
           </span>
         </p>
         <div
