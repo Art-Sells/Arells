@@ -2024,12 +2024,17 @@ a.asset-alien-photo-hit {
 	background: transparent;
 }
 
-/* Character Season One only: 5px past the frame; the frame's rounded overflow clips it to the stroke. */
+/* Character Season One: overscan media shell + video/poster so cover sits flush under the stroke.
+   (Shell also clips — overscanning only the img/video was not enough.) */
+.asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-media {
+	inset: -3px;
+}
+
 .asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-img {
-	inset: -5px;
-	width: calc(100% + 10px) !important;
-	height: calc(100% + 10px) !important;
+	inset: -3px;
+	width: calc(100% + 6px) !important;
+	height: calc(100% + 6px) !important;
 }
 
 .asset-bitcoin-season-teaser-video {
