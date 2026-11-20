@@ -162,6 +162,8 @@ export default function VideoPlayer({
   const rootRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const posterImgRef = useRef<HTMLImageElement | null>(null);
+  const hasStartedRef = useRef(false);
   const hideTimerRef = useRef<number | null>(null);
   const pendingSeekRef = useRef<number | null>(null);
   const pendingPlayRef = useRef(false);
@@ -188,7 +190,8 @@ export default function VideoPlayer({
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [posterVisible, setPosterVisible] = useState(true);
+  // Fade poster in after load (not on mount). No poster → ready for controls.
+  const [posterVisible, setPosterVisible] = useState(() => !poster);
   const [idlePlayMounted, setIdlePlayMounted] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [hovering, setHovering] = useState(false);
@@ -207,6 +210,38 @@ export default function VideoPlayer({
     (next: GuestTrailerQuality) => trailerSrcForQuality(next, sources),
     [sources]
   );
+
+  useEffect(() => {
+    hasStartedRef.current = hasStarted;
+  }, [hasStarted]);
+
+  // Reveal poster after decode (incl. cache hit). Double-rAF so opacity:0 paints first.
+  useEffect(() => {
+    if (!poster) {
+      if (!hasStartedRef.current) setPosterVisible(true);
+      return;
+    }
+    if (hasStartedRef.current) return;
+    setPosterVisible(false);
+    let cancelled = false;
+    let raf1 = 0;
+    let raf2 = 0;
+    const reveal = () => {
+      if (cancelled || hasStartedRef.current) return;
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => {
+          if (!cancelled && !hasStartedRef.current) setPosterVisible(true);
+        });
+      });
+    };
+    const img = posterImgRef.current;
+    if (img?.complete && img.naturalWidth > 0) reveal();
+    return () => {
+      cancelled = true;
+      if (raf1) cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+    };
+  }, [poster]);
 
   const showChrome = settingsOpen
     ? true
@@ -966,10 +1001,19 @@ export default function VideoPlayer({
         </div>
         {poster ? (
           <img
+            ref={posterImgRef}
             className={`guest-trailer-poster${posterVisible ? ' is-visible' : ''}`}
             src={poster}
             alt=""
             draggable={false}
+            onLoad={() => {
+              if (hasStartedRef.current) return;
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  if (!hasStartedRef.current) setPosterVisible(true);
+                });
+              });
+            }}
             onTransitionEnd={() => {
               if (!posterVisible) setIdlePlayMounted(false);
             }}

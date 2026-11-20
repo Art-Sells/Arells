@@ -18,7 +18,24 @@ export default function TBARImage({ src, theme, href, label }: TBARImageProps) {
   const [loaderGone, setLoaderGone] = useState(false);
 
   useEffect(() => {
-    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) setLoaded(true);
+    setLoaded(false);
+    let cancelled = false;
+    let raf1 = 0;
+    let raf2 = 0;
+    const reveal = () => {
+      if (cancelled) return;
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => {
+          if (!cancelled) setLoaded(true);
+        });
+      });
+    };
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) reveal();
+    return () => {
+      cancelled = true;
+      if (raf1) cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+    };
   }, [src]);
 
   useEffect(() => {
@@ -48,7 +65,11 @@ export default function TBARImage({ src, theme, href, label }: TBARImageProps) {
         src={src}
         alt=""
         className={`tbar-thumb-img${loaded ? ' is-visible' : ''}`}
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => setLoaded(true));
+          });
+        }}
       />
     </>
   );
