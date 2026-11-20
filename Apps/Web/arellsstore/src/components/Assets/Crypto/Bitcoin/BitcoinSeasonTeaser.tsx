@@ -15,7 +15,12 @@ const SEASON_ONE_POSTERS_BASE =
 const SEASON_ONE_COPY_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneCopy.jpg`;
 const SEASON_ONE_LOOP_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneLoop.mp4`;
 
-export default function BitcoinSeasonTeaser() {
+type BitcoinSeasonTeaserProps = {
+  /** Home CTA: Season One poster/loop only (no trailer / episodes). */
+  seasonOnly?: boolean;
+};
+
+export default function BitcoinSeasonTeaser({ seasonOnly = false }: BitcoinSeasonTeaserProps) {
   const { isSignedIn, authSessionLoading, sessionReady } = useUser();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const seasonLoadGenRef = useRef(0);
@@ -250,6 +255,8 @@ export default function BitcoinSeasonTeaser() {
               ) : null}
             </div>
           </div>
+{seasonOnly ? null : (
+            <>
           <div className="asset-bitcoin-season-teaser-trailer-section">
             {!trailerMounted ? (
               <div className="home-assets-show-more-wrap tbar-more tbar-more--hub-link asset-bitcoin-season-teaser-trailer-cta">
@@ -316,6 +323,8 @@ export default function BitcoinSeasonTeaser() {
               notchPlay
             />
           </div>
+            </>
+          )}
         </div>
       </div>
     </div>

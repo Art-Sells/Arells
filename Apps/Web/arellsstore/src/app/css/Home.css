@@ -1640,6 +1640,60 @@ a.asset-alien-photo-hit {
 	color: #b42318;
 }
 
+.home-bitcoin-alien-race-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	margin: 0;
+	box-sizing: border-box;
+	padding: 14px 12px 12px;
+	border-radius: 17px;
+	/* Border like the home Bitcoin card; no orange fill — badge chip keeps that. */
+	background: transparent !important;
+	border: 1px solid rgba(236, 131, 0, 0.34);
+	--asset-line-color: rgb(209, 142, 55);
+	--asset-slogan-color: rgb(172, 97, 0);
+	text-decoration: none;
+	color: inherit;
+	box-shadow: none !important;
+	-webkit-tap-highlight-color: transparent;
+	transition: transform 0.2s ease;
+	cursor: pointer;
+}
+
+.home-bitcoin-alien-race-card:active {
+	transform: translateY(-2px);
+	box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.home-bitcoin-alien-race-card:hover {
+		transform: translateY(-2px);
+		box-shadow: none !important;
+	}
+}
+
+.home-bitcoin-alien-race-card .asset-bitcoin-season-teaser-badge {
+	width: 100%;
+}
+
+/* Nested badge owns its own border/fill; outer link handles hover lift. */
+.home-bitcoin-alien-race-card .bitcoin-alien-race-asset-card.myinv-asset-home-card:hover,
+.home-bitcoin-alien-race-card .bitcoin-alien-race-asset-card.myinv-asset-home-card:active {
+	transform: none;
+}
+
+.home-bitcoin-alien-race-card-season {
+	pointer-events: none;
+	width: 100%;
+}
+
+.home-bitcoin-alien-race-card-season .asset-bitcoin-season-teaser {
+	padding-bottom: 0;
+}
+
 .asset-bitcoin-season-teaser {
 	width: 100%;
 	box-sizing: border-box;
@@ -6968,7 +7022,8 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 .home-assets-about-wrap {
 	width: min(920px, 90%);
 	min-width: 350px;
-	margin: var(--home-assets-about-gap, 0px) auto 0;
+	/* Match myinv about gap — was lost when the card moved into home-assets-wrapper. */
+	margin: var(--home-assets-about-gap, 50px) auto 0;
 	display: flex;
 	justify-content: center;
 }
@@ -9923,7 +9978,7 @@ a.myinv-about-button:focus-visible {
 	}
 
 	.asset-footer {
-		margin-top: 10px; /* <- edit footer top spacing */
+		margin-top: 20px; /* <- edit footer top spacing */
 	}
 }
 
@@ -10434,6 +10489,7 @@ a.myinv-about-button:focus-visible {
 	margin-left: 0;
 	margin-right: 0;
 	margin-bottom: 0;
+	padding-top: 15px; /* match padding-bottom */
 	box-sizing: border-box;
 }
 
@@ -13669,9 +13725,45 @@ a.asset-action-button--save-signin {
 
 .asset-mission-header-icon {
 	position: relative;
-	display: block;
-	width: 30px;
-	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Same footprint as `.about-page .about-icon-button` — asset ring, no fill. */
+.asset-mission-header .about-icon-button.asset-mission-icon-button {
+	width: 91px; /* 41 + 50 */
+	height: 37px; /* 31 + 3 top + 3 bottom */
+	padding-top: 4px; /* 1 + 3 */
+	padding-bottom: 4px;
+	margin-bottom: 0;
+	background: transparent !important;
+	box-sizing: border-box;
+}
+
+.asset-mission-header .about-icon-button.asset-mission-icon-button:focus,
+.asset-mission-header .about-icon-button.asset-mission-icon-button:focus-visible,
+.asset-mission-header .about-icon-button.asset-mission-icon-button:active,
+.asset-mission-header .about-icon-button.asset-mission-icon-button:visited {
+	background: transparent !important;
+}
+
+.asset-mission-header .about-icon-button.asset-mission-icon-button::before {
+	background: var(--asset-line-color);
+}
+
+.asset-mission-header .about-icon.asset-mission-icon {
+	width: 17px;
+	height: 17px;
+	background: var(--asset-line-color);
+	-webkit-mask-image: url('/images/Arells-Icon.png');
+	mask-image: url('/images/Arells-Icon.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
 }
 
 .asset-mission-header-line {
@@ -13683,24 +13775,6 @@ a.asset-action-button--save-signin {
 	line-height: 1.15;
 	color: var(--asset-line-color);
 	-webkit-text-fill-color: var(--asset-line-color);
-}
-
-/* Crossfade your → my (stacked; cell width = “your”; end-align so “my” isn’t gappy). */
-.asset-mission-possessive {
-	display: inline-grid;
-	vertical-align: baseline;
-	justify-items: end;
-}
-
-.asset-mission-possessive-word {
-	grid-area: 1 / 1;
-	opacity: 0;
-	transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-	pointer-events: none;
-}
-
-.asset-mission-possessive-word.is-active {
-	opacity: 1;
 }
 
 .asset-page--bitcoin .asset-mission-header {

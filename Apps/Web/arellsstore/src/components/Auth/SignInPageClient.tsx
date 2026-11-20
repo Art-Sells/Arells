@@ -112,7 +112,8 @@ const SignInPageClient: React.FC = () => {
         return;
       }
       await refreshAuthSession();
-      router.push('/my-investments');
+      /* /bitcoin redirects signed-in users to /bitcoin/{shareId}. */
+      router.push('/bitcoin');
       router.refresh();
     } catch {
       setError('Something went wrong. Try again.');

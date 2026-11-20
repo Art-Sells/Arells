@@ -867,7 +867,7 @@ const VavitySolana: React.FC = () => {
     { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
   const displayTotals = displayIsLiquidMode ? totalsLiquid : totals;
   const suppressInvestmentsUI = isSubmitCollapsing && submitTargetRef.current === 'add';
-  const hasInvestmentsUI = (investments.length > 0 || isClearingInvestments) && !suppressInvestmentsUI;
+  const hasInvestmentsUI = false;
   const showInvestmentsHeader = investments.length > 0;
   const shouldFetchInitialData = isSignedIn ? Boolean(email) : Boolean(sessionReady && sessionId && fetchVavityAggregator);
   const showInitialFetchLoader = shouldFetchInitialData && !initialFetchDone;
@@ -3070,7 +3070,7 @@ const VavitySolana: React.FC = () => {
   const investmentsSectionMaxHeight = investmentsListOpen
     ? `${investmentsListHeight + investmentsListHeaderHeight + investmentsListBorderHeight + (hasActiveDelete ? 11 : 5)}px`
     : '0px';
-  const emptyBloodMaxHeight = emptyBloodOpen ? `${Math.max(0, emptyBloodHeight)}px` : '0px';
+  const emptyBloodMaxHeight = '0px';
 
   const toggleBloodPanel = useCallback(() => {
     if (bloodPanelAnimating) return;
@@ -4201,17 +4201,7 @@ const VavitySolana: React.FC = () => {
                   <AlienPhotoSlot assetId={ASSET.id} assetName={ASSET.displayName} />
                 </div>
               ) : null}
-              {!emptyBloodOpen && !addFormSubmitCollapsing ? (
-                <div className="asset-portfolio-actions asset-portfolio-actions--show asset-portfolio-actions--blood">
-                  <button
-                    type="button"
-                    className="asset-action-button asset-action-button--solana asset-action-button--invest-show"
-                    onClick={openEmptyBlood}
-                  >
-                    Add My Blood
-                  </button>
-                </div>
-              ) : null}
+              {/* Add My Blood removed */}
               <div
                 className="asset-blood-panel"
                 style={{
