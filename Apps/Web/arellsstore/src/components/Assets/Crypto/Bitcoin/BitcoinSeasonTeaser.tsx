@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import VideoPlayer from '../../../VideoPlayer';
 import { useUser } from '../../../../context/UserContext';
 import { ALIEN_COMPOSE_DONE_EVENT } from '../../../../lib/assets/assetSharePath';
@@ -14,6 +14,10 @@ const SEASON_ONE_POSTERS_BASE =
 
 const SEASON_ONE_COPY_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneCopy.jpg`;
 const SEASON_ONE_LOOP_SRC = `${SEASON_ONE_POSTERS_BASE}/SeasonOneLoop.mp4`;
+/** Character Season One frame (taller than stock banner). */
+const CHARACTER_SEASON_ASPECT = 1091 / 4561;
+/** Match Bitcoin page height-downs (empty teaser / investments). */
+const CHARACTER_FRAME_HEIGHT_MS = 2000;
 
 type BitcoinSeasonTeaserProps = {
   /** Home CTA: Season One poster/loop only (no trailer / episodes). */
@@ -23,13 +27,17 @@ type BitcoinSeasonTeaserProps = {
 export default function BitcoinSeasonTeaser({ seasonOnly = false }: BitcoinSeasonTeaserProps) {
   const { isSignedIn, authSessionLoading, sessionReady } = useUser();
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const frameRef = useRef<HTMLDivElement | null>(null);
   const seasonLoadGenRef = useRef(0);
+  const characterHeightAnimRef = useRef(false);
   // Empty until auth settles — never seed stock loop (flashes before personal media).
   const [stillSrc, setStillSrc] = useState('');
   const [loopSrc, setLoopSrc] = useState('');
   const [loopEnabled, setLoopEnabled] = useState(false);
   const [mediaReady, setMediaReady] = useState(false);
   const [stillLoaded, setStillLoaded] = useState(false);
+  /** Stock aspect until character media loads, then height-down to character ratio. */
+  const [characterAspectSettled, setCharacterAspectSettled] = useState(false);
   const [trailerMounted, setTrailerMounted] = useState(false);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [trailerSettled, setTrailerSettled] = useState(false);
@@ -56,8 +64,9 @@ export default function BitcoinSeasonTeaser({ seasonOnly = false }: BitcoinSeaso
   const showStill = showStillLayer && stillLoaded;
   const frameReady =
     mediaReady && ((playbackEnabled ? videoReady : stillLoaded) || showStill || stillLoaded);
-  /** No personal still: same 2660×382 frame as the stock Season One poster. */
-  const stockSeasonFrame = !stillSrc.startsWith('blob:');
+  const isCharacterSrc = stillSrc.startsWith('blob:');
+  /** Keep stock (short) aspect until character height-down finishes — avoids pop. */
+  const stockSeasonFrame = !characterAspectSettled;
 
   const applyStockSeasonOne = useCallback(() => {
     setStillSrc((prev) => {
@@ -202,11 +211,77 @@ export default function BitcoinSeasonTeaser({ seasonOnly = false }: BitcoinSeaso
     return () => window.clearTimeout(timer);
   }, [trailerOpen, trailerSettled]);
 
+  // Back to stock (sign-out / no personal media): drop character aspect latch.
+  useEffect(() => {
+    if (isCharacterSrc) return;
+    characterHeightAnimRef.current = false;
+    setCharacterAspectSettled(false);
+    const el = frameRef.current;
+    if (!el) return;
+    el.style.height = '';
+    el.style.aspectRatio = '';
+    el.style.transition = '';
+    el.style.overflow = '';
+  }, [isCharacterSrc]);
+
+  // Character still ready: height-down from stock banner → character frame (no pop).
+  useEffect(() => {
+    if (!isCharacterSrc || !stillLoaded || !frameReady || characterAspectSettled) return;
+    if (characterHeightAnimRef.current) return;
+    const el = frameRef.current;
+    if (!el) return;
+
+    const width = el.getBoundingClientRect().width;
+    const fromH = el.getBoundingClientRect().height;
+    const toH = width * CHARACTER_SEASON_ASPECT;
+    if (!width || Math.abs(toH - fromH) < 1) {
+      setCharacterAspectSettled(true);
+      return;
+    }
+
+    characterHeightAnimRef.current = true;
+    el.style.height = `${fromH}px`;
+    el.style.aspectRatio = 'auto';
+    el.style.overflow = 'hidden';
+    void el.offsetHeight;
+    el.style.transition = `height ${CHARACTER_FRAME_HEIGHT_MS}ms ease`;
+    el.style.height = `${toH}px`;
+
+    const onEnd = (event: TransitionEvent) => {
+      if (event.target !== el || event.propertyName !== 'height') return;
+      el.removeEventListener('transitionend', onEnd);
+      // Flip class to character aspect FIRST; clearing height while is-stock
+      // still applied snapped short→tall (the jitter).
+      el.style.transition = 'none';
+      el.style.aspectRatio = '4561 / 1091';
+      el.style.height = '';
+      el.style.overflow = '';
+      setCharacterAspectSettled(true);
+    };
+    el.addEventListener('transitionend', onEnd);
+    return () => {
+      el.removeEventListener('transitionend', onEnd);
+    };
+  }, [isCharacterSrc, stillLoaded, frameReady, characterAspectSettled]);
+
+  // After React drops is-stock, drop inline aspect lock (same ratio — no layout change).
+  useLayoutEffect(() => {
+    if (!characterAspectSettled) return;
+    const el = frameRef.current;
+    if (!el) return;
+    el.style.transition = '';
+    el.style.height = '';
+    el.style.aspectRatio = '';
+    el.style.overflow = '';
+    characterHeightAnimRef.current = false;
+  }, [characterAspectSettled]);
+
   return (
     <div className="asset-bitcoin-season-teaser">
       <div className="asset-bitcoin-season-teaser-show">
         <div className="asset-bitcoin-season-teaser-season">
           <div
+            ref={frameRef}
             className={`asset-bitcoin-season-teaser-frame${stockSeasonFrame ? ' is-stock' : ''}${
               frameReady ? ' is-loaded' : ''
             }${showStill ? ' is-still' : ''}${isHandoff ? ' is-handoff' : ''}`}

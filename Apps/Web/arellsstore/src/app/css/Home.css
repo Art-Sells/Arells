@@ -1944,7 +1944,9 @@ a.asset-alien-photo-hit {
 	padding: 0;
 	line-height: 0;
 	border-radius: 13px;
-	overflow: hidden;
+	/* Match `.guest-trailer-frame`: no overflow clip — permanent overflow:hidden
+	   trims the 3px overscan at the radius and leaves a black hairline on the ring. */
+	overflow: visible;
 	border: 0;
 	background: rgba(248, 141, 0, 0.08);
 	aspect-ratio: 4561 / 1091;
