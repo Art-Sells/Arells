@@ -1934,17 +1934,18 @@ a.asset-alien-photo-hit {
 	}
 }
 
-/* Same border model as guest poster: 1px orange border, media clipped to same radius */
+/* Same ring model as episode/trailer `.guest-trailer-frame`: orange fill + 1px inset
+   media (not a CSS border — that leaves a cream AA gap at the radius). */
 .asset-bitcoin-season-teaser-frame {
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
 	padding: 0;
 	line-height: 0;
-	border-radius: 12px;
+	border-radius: 13px;
 	overflow: hidden;
-	border: 1px solid rgba(248, 141, 0, 0.55);
-	background: transparent;
+	border: 0;
+	background: rgba(248, 141, 0, 0.55);
 	aspect-ratio: 4561 / 1091;
 }
 
@@ -1957,23 +1958,24 @@ a.asset-alien-photo-hit {
 	content: none;
 }
 
-/* Same media shell as launch guest poster — black plate lives here. */
+/* 1px inset reveals the frame’s orange as the stroke — same as `.guest-trailer`. */
 .asset-bitcoin-season-teaser-media {
 	position: absolute;
-	inset: 0;
-	border-radius: 0;
+	inset: 1px;
+	border-radius: 12px;
 	overflow: hidden;
 	isolation: isolate;
 	background: transparent;
 }
 
-/* Under video/still — video fades out to black, then still fades in (sequential). */
+/* Under video/still — video fades out to black, then still fades in (sequential).
+   Same radius as the media shell so corner AA doesn’t flash a black crescent on the ring. */
 .asset-bitcoin-season-teaser-media::after {
 	content: '';
 	position: absolute;
 	inset: 0;
 	z-index: 0;
-	border-radius: 0;
+	border-radius: inherit;
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
@@ -2009,7 +2011,8 @@ a.asset-alien-photo-hit {
 .asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-img {
 	position: absolute;
-	/* Stock banner: exact frame size — a bleed changes the box shape and cover zooms the wide banner. */
+	/* Fill media shell; radius 0 so the shell’s overflow clips — avoids double
+	   corner AA that flashes the black handoff plate on the orange ring. */
 	inset: 0;
 	width: 100% !important;
 	height: 100% !important;
@@ -2022,19 +2025,6 @@ a.asset-alien-photo-hit {
 	will-change: opacity;
 	border: none;
 	background: transparent;
-}
-
-/* Character Season One: overscan media shell + video/poster so cover sits flush under the stroke.
-   (Shell also clips — overscanning only the img/video was not enough.) */
-.asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-media {
-	inset: -3px;
-}
-
-.asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-video,
-.asset-bitcoin-season-teaser-frame:not(.is-stock) .asset-bitcoin-season-teaser-img {
-	inset: -3px;
-	width: calc(100% + 6px) !important;
-	height: calc(100% + 6px) !important;
 }
 
 .asset-bitcoin-season-teaser-video {
@@ -2068,8 +2058,13 @@ a.asset-alien-photo-hit {
 }
 
 @media (max-width: 750px) {
+	/* Match guest poster: outer 6px, inset media 5px (desktop is 13 / 12). */
 	.asset-bitcoin-season-teaser-frame {
 		border-radius: 6px;
+	}
+
+	.asset-bitcoin-season-teaser-media {
+		border-radius: 5px;
 	}
 }
 
@@ -8099,30 +8094,41 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	line-height: 1;
 }
 
-/* Same border model as guest poster / Season One */
+/* Same ring as Season One / guest launch: accent fill + 1px-inset media. */
 .asset-alien-meta-preview-frame {
 	position: relative;
 	width: calc(100% - 10px);
 	margin: 2px auto 0;
 	line-height: 0;
-	border-radius: 10px;
+	border-radius: 11px;
 	overflow: hidden;
 	box-sizing: border-box;
-	border: 1px solid color-mix(
+	border: 0;
+	background: color-mix(
 		in srgb,
 		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
 		transparent
 	);
-	background: transparent;
 	aspect-ratio: 1 / 1;
+}
+
+/* Media shell inset reveals the frame’s accent as the stroke. */
+.asset-alien-meta-preview-frame::before {
+	content: '';
+	position: absolute;
+	inset: 1px;
+	z-index: 0;
+	border-radius: 10px;
+	overflow: hidden;
+	pointer-events: none;
 }
 
 .asset-alien-meta-preview-frame::after {
 	content: '';
 	position: absolute;
-	inset: 0;
+	inset: 1px;
 	z-index: 0;
-	border-radius: 0;
+	border-radius: 10px; /* match inset media — no black corner flash on the ring */
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
@@ -8140,8 +8146,9 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 
 .asset-alien-meta-preview-loader {
 	position: absolute;
-	inset: 0;
+	inset: 1px;
 	z-index: 4;
+	border-radius: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -8172,9 +8179,9 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 .asset-alien-meta-preview-video,
 .asset-alien-meta-preview-frame--loop .asset-alien-meta-preview.asset-alien-meta-preview--loop-still {
 	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
+	inset: 1px;
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
 	display: block;
 	object-fit: cover;
 	box-sizing: border-box;
@@ -8182,7 +8189,7 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
 	border: none;
-	border-radius: 0;
+	border-radius: 0; /* frame overflow + inset clip — no corner AA over black plate */
 	background: transparent;
 }
 
@@ -8238,15 +8245,16 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	opacity: 1;
 }
 
-/* Success modal only: 5px past the frame on every side so cover sits flush under the border. */
+/* Success modal: fill the 1px-inset media area (ring is the frame accent fill). */
 .blood-overlay-card--alien-meta .asset-alien-meta-preview-frame > .asset-alien-meta-preview-video,
 .blood-overlay-card--alien-meta .asset-alien-meta-preview-frame > .asset-alien-meta-preview {
 	position: absolute;
-	inset: -5px;
-	width: calc(100% + 10px) !important;
-	height: calc(100% + 10px) !important;
+	inset: 1px;
+	width: calc(100% - 2px) !important;
+	height: calc(100% - 2px) !important;
 	max-width: none;
 	object-fit: cover;
+	border-radius: 0;
 }
 
 .blood-overlay-card.myinv-accent-border {
@@ -13839,8 +13847,8 @@ a.asset-action-button--save-signin {
 }
 
 /*
- * Shell keeps 10px padding (gap to outer card).
- * Poster uses a real 1px orange border; media fills inside it (no bg-ring / no clip black edge).
+ * Same ring as Season One / episode trailer: orange fill + 1px-inset media
+ * (not a CSS border — avoids cream AA gap at the radius).
  */
 .asset-guest-poster-frame {
 	position: relative;
@@ -13848,11 +13856,10 @@ a.asset-action-button--save-signin {
 	box-sizing: border-box;
 	padding: 0;
 	line-height: 0;
-	/* Same radius as .asset-guest-action-shell; overflow clips media to this curve */
-	border-radius: 12px;
+	border-radius: 13px;
 	overflow: hidden;
-	border: 1px solid rgba(248, 141, 0, 0.55);
-	background: transparent;
+	border: 0;
+	background: rgba(248, 141, 0, 0.55);
 }
 
 .asset-guest-poster-frame:not(.is-loaded) {
@@ -13861,8 +13868,8 @@ a.asset-action-button--save-signin {
 
 .asset-guest-poster-media {
 	position: absolute;
-	inset: 0;
-	border-radius: 0;
+	inset: 1px;
+	border-radius: 12px;
 	overflow: hidden;
 	isolation: isolate;
 	background: transparent;
@@ -13874,7 +13881,7 @@ a.asset-action-button--save-signin {
 	position: absolute;
 	inset: 0;
 	z-index: 0;
-	border-radius: 0;
+	border-radius: inherit;
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
@@ -13914,7 +13921,7 @@ a.asset-action-button--save-signin {
 	width: 100% !important;
 	height: 100% !important;
 	display: block;
-	border-radius: 0;
+	border-radius: 0; /* shell overflow clips — no corner AA over the black plate */
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
@@ -13982,11 +13989,7 @@ a.asset-action-button--save-signin {
 		border-radius: 6px;
 	}
 
-	.asset-guest-poster-frame--loop::before,
-	.asset-guest-poster-frame--loop::after,
-	.asset-guest-poster-media,
-	.asset-guest-poster-video,
-	.asset-guest-poster-frame--loop .asset-guest-poster-img {
+	.asset-guest-poster-media {
 		border-radius: 5px;
 	}
 }
