@@ -1935,7 +1935,8 @@ a.asset-alien-photo-hit {
 }
 
 /* Same ring model as episode/trailer `.guest-trailer-frame`: orange fill + 1px inset
-   media (not a CSS border — that leaves a cream AA gap at the radius). */
+   media (not a CSS border — that leaves a cream AA gap at the radius).
+   Pre-load: light orange tint (original loader look). Loaded: solid ring fill. */
 .asset-bitcoin-season-teaser-frame {
 	position: relative;
 	width: 100%;
@@ -1945,8 +1946,12 @@ a.asset-alien-photo-hit {
 	border-radius: 13px;
 	overflow: hidden;
 	border: 0;
-	background: rgba(248, 141, 0, 0.55);
+	background: rgba(248, 141, 0, 0.08);
 	aspect-ratio: 4561 / 1091;
+}
+
+.asset-bitcoin-season-teaser-frame.is-loaded {
+	background: rgba(248, 141, 0, 0.55);
 }
 
 .asset-bitcoin-season-teaser-frame.is-stock {
@@ -1958,33 +1963,32 @@ a.asset-alien-photo-hit {
 	content: none;
 }
 
-/* 1px inset reveals the frame’s orange as the stroke — same as `.guest-trailer`. */
+/* 1px inset = orange ring. overflow visible so overscan+clip can match `.guest-trailer-video`. */
 .asset-bitcoin-season-teaser-media {
 	position: absolute;
 	inset: 1px;
 	border-radius: 12px;
-	overflow: hidden;
+	overflow: visible;
 	isolation: isolate;
 	background: transparent;
 }
 
-/* Under video/still — video fades out to black, then still fades in (sequential).
-   Same radius as the media shell so corner AA doesn’t flash a black crescent on the ring. */
+/* Same geometry as video (overscan + clip) — flush to the ring, no padded black box. */
 .asset-bitcoin-season-teaser-media::after {
 	content: '';
 	position: absolute;
-	inset: 0;
+	inset: -3px;
 	z-index: 0;
-	border-radius: inherit;
+	border-radius: 12px;
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
+	clip-path: inset(3px round 12px);
 	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.asset-bitcoin-season-teaser-frame.is-handoff .asset-bitcoin-season-teaser-media::after {
+.asset-bitcoin-season-teaser-frame.is-loaded.is-handoff .asset-bitcoin-season-teaser-media::after {
 	opacity: 1;
-	transition-duration: 0.01s;
 }
 
 .asset-bitcoin-season-teaser-loader {
@@ -2011,16 +2015,16 @@ a.asset-alien-photo-hit {
 .asset-bitcoin-season-teaser-video,
 .asset-bitcoin-season-teaser-img {
 	position: absolute;
-	/* Fill media shell; radius 0 so the shell’s overflow clips — avoids double
-	   corner AA that flashes the black handoff plate on the orange ring. */
-	inset: 0;
-	width: 100% !important;
-	height: 100% !important;
+	/* Same flush fill as `.guest-trailer-video`: 3px overscan + clip to the ring. */
+	inset: -3px;
+	width: calc(100% + 6px) !important;
+	height: calc(100% + 6px) !important;
 	display: block;
-	border-radius: 0;
+	border-radius: 12px;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
+	clip-path: inset(3px round 12px);
 	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
 	border: none;
@@ -2058,13 +2062,19 @@ a.asset-alien-photo-hit {
 }
 
 @media (max-width: 750px) {
-	/* Match guest poster: outer 6px, inset media 5px (desktop is 13 / 12). */
 	.asset-bitcoin-season-teaser-frame {
 		border-radius: 6px;
 	}
 
 	.asset-bitcoin-season-teaser-media {
 		border-radius: 5px;
+	}
+
+	.asset-bitcoin-season-teaser-media::after,
+	.asset-bitcoin-season-teaser-video,
+	.asset-bitcoin-season-teaser-img {
+		border-radius: 5px;
+		clip-path: inset(3px round 5px);
 	}
 }
 
@@ -8094,7 +8104,8 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	line-height: 1;
 }
 
-/* Same ring as Season One / guest launch: accent fill + 1px-inset media. */
+/* Same ring as Season One / guest launch: accent fill + 1px-inset media.
+   Pre-load: light accent (original loader). Loaded: solid ring fill. */
 .asset-alien-meta-preview-frame {
 	position: relative;
 	width: calc(100% - 10px);
@@ -8106,38 +8117,40 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	border: 0;
 	background: color-mix(
 		in srgb,
-		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 8%,
 		transparent
 	);
 	aspect-ratio: 1 / 1;
 }
 
-/* Media shell inset reveals the frame’s accent as the stroke. */
-.asset-alien-meta-preview-frame::before {
-	content: '';
-	position: absolute;
-	inset: 1px;
-	z-index: 0;
-	border-radius: 10px;
-	overflow: hidden;
-	pointer-events: none;
+.asset-alien-meta-preview-frame.is-loaded {
+	background: color-mix(
+		in srgb,
+		var(--asset-hover-dot-color, var(--myinv-accent-color, rgba(248, 141, 0, 1))) 55%,
+		transparent
+	);
 }
 
+.asset-alien-meta-preview-frame::before {
+	content: none;
+}
+
+/* Same overscan+clip as video — flush to the ring, no padded black box. */
 .asset-alien-meta-preview-frame::after {
 	content: '';
 	position: absolute;
-	inset: 1px;
+	inset: -2px;
 	z-index: 0;
-	border-radius: 10px; /* match inset media — no black corner flash on the ring */
+	border-radius: 10px;
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
+	clip-path: inset(3px round 10px);
 	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.asset-alien-meta-preview-frame.is-handoff::after {
+.asset-alien-meta-preview-frame.is-loaded.is-handoff::after {
 	opacity: 1;
-	transition-duration: 0.01s;
 }
 
 .asset-alien-meta-preview-frame:not(.is-loaded) {
@@ -8179,17 +8192,19 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 .asset-alien-meta-preview-video,
 .asset-alien-meta-preview-frame--loop .asset-alien-meta-preview.asset-alien-meta-preview--loop-still {
 	position: absolute;
-	inset: 1px;
-	width: calc(100% - 2px);
-	height: calc(100% - 2px);
+	/* 1px ring + 3px overscan/clip — same flush model as Season One / trailer. */
+	inset: -2px;
+	width: calc(100% + 4px);
+	height: calc(100% + 4px);
 	display: block;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
+	border-radius: 10px;
+	clip-path: inset(3px round 10px);
 	transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
 	border: none;
-	border-radius: 0; /* frame overflow + inset clip — no corner AA over black plate */
 	background: transparent;
 }
 
@@ -8245,16 +8260,17 @@ a.phase-one-bitcoin-alien-race-button:focus-visible {
 	opacity: 1;
 }
 
-/* Success modal: fill the 1px-inset media area (ring is the frame accent fill). */
+/* Success modal: same overscan+clip as above. */
 .blood-overlay-card--alien-meta .asset-alien-meta-preview-frame > .asset-alien-meta-preview-video,
 .blood-overlay-card--alien-meta .asset-alien-meta-preview-frame > .asset-alien-meta-preview {
 	position: absolute;
-	inset: 1px;
-	width: calc(100% - 2px) !important;
-	height: calc(100% - 2px) !important;
+	inset: -2px;
+	width: calc(100% + 4px) !important;
+	height: calc(100% + 4px) !important;
 	max-width: none;
 	object-fit: cover;
-	border-radius: 0;
+	border-radius: 10px;
+	clip-path: inset(3px round 10px);
 }
 
 .blood-overlay-card.myinv-accent-border {
@@ -13849,6 +13865,7 @@ a.asset-action-button--save-signin {
 /*
  * Same ring as Season One / episode trailer: orange fill + 1px-inset media
  * (not a CSS border — avoids cream AA gap at the radius).
+ * Pre-load: light orange (original loader). Loaded: solid ring fill.
  */
 .asset-guest-poster-frame {
 	position: relative;
@@ -13859,6 +13876,10 @@ a.asset-action-button--save-signin {
 	border-radius: 13px;
 	overflow: hidden;
 	border: 0;
+	background: rgba(248, 141, 0, 0.08);
+}
+
+.asset-guest-poster-frame.is-loaded {
 	background: rgba(248, 141, 0, 0.55);
 }
 
@@ -13870,27 +13891,27 @@ a.asset-action-button--save-signin {
 	position: absolute;
 	inset: 1px;
 	border-radius: 12px;
-	overflow: hidden;
+	overflow: visible;
 	isolation: isolate;
 	background: transparent;
 }
 
-/* Under video/still — sequential fade through black (no video↔still crossfade). */
+/* Same overscan+clip as video — flush to the ring. */
 .asset-guest-poster-media::after {
 	content: '';
 	position: absolute;
-	inset: 0;
+	inset: -3px;
 	z-index: 0;
-	border-radius: inherit;
+	border-radius: 12px;
 	background: #000;
 	pointer-events: none;
 	opacity: 0;
+	clip-path: inset(3px round 12px);
 	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.asset-guest-poster-frame.is-handoff .asset-guest-poster-media::after {
+.asset-guest-poster-frame.is-loaded.is-handoff .asset-guest-poster-media::after {
 	opacity: 1;
-	transition-duration: 0.01s;
 }
 
 .asset-guest-poster-loader {
@@ -13917,14 +13938,15 @@ a.asset-action-button--save-signin {
 .asset-guest-poster-video,
 .asset-guest-poster-frame--loop .asset-guest-poster-img {
 	position: absolute;
-	inset: 0;
-	width: 100% !important;
-	height: 100% !important;
+	inset: -3px;
+	width: calc(100% + 6px) !important;
+	height: calc(100% + 6px) !important;
 	display: block;
-	border-radius: 0; /* shell overflow clips — no corner AA over the black plate */
+	border-radius: 12px;
 	object-fit: cover;
 	box-sizing: border-box;
 	opacity: 0;
+	clip-path: inset(3px round 12px);
 	transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: opacity;
 	border: none;
@@ -13991,6 +14013,13 @@ a.asset-action-button--save-signin {
 
 	.asset-guest-poster-media {
 		border-radius: 5px;
+	}
+
+	.asset-guest-poster-media::after,
+	.asset-guest-poster-video,
+	.asset-guest-poster-frame--loop .asset-guest-poster-img {
+		border-radius: 5px;
+		clip-path: inset(3px round 5px);
 	}
 }
 
