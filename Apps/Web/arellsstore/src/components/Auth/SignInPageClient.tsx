@@ -7,7 +7,9 @@ import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthCircleLoader from './AuthCircleLoader';
 import AuthGoogleSection from './AuthGoogleSection';
+import AuthSuccessArellsMark from './AuthSuccessArellsMark';
 import { useAuthCircleLoader } from './useAuthCircleLoader';
+import { useAuthCredentialsRevealHeight } from './useAuthCredentialsRevealHeight';
 import { useUser } from '../../context/UserContext';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
@@ -47,6 +49,9 @@ const SignInPageClient: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  /** Email/password fields hidden until Sign in is clicked. */
+  const [credentialsOpen, setCredentialsOpen] = useState(false);
+  const credentialsReveal = useAuthCredentialsRevealHeight(credentialsOpen);
   const [phase, setPhase] = useState<'form' | 'exiting'>('form');
   const circleLoader = useAuthCircleLoader();
   /** `?signInPreview=loading` — frozen signing-in UI for styling (no API, no redirect). */
@@ -56,12 +61,14 @@ const SignInPageClient: React.FC = () => {
     if (typeof window === 'undefined') return;
     if (new URLSearchParams(window.location.search).get('signInPreview') === 'loading') {
       signInPreviewLoadingRef.current = true;
+      setCredentialsOpen(true);
       setSubmitting(true);
       circleLoader.show();
     }
   }, [circleLoader.show]);
 
   useLayoutEffect(() => {
+    if (!credentialsOpen) return;
     const el = forgotLinkRef.current;
     if (!el) return;
     const run = () => syncForgotLinkAccentPhase(el);
@@ -71,7 +78,7 @@ const SignInPageClient: React.FC = () => {
         window.setTimeout(run, 0);
       });
     });
-  }, []);
+  }, [credentialsOpen]);
 
   useEffect(() => {
     if (phase !== 'exiting') return;
@@ -89,7 +96,7 @@ const SignInPageClient: React.FC = () => {
 
   const finishSignIn = async () => {
     await refreshAuthSession();
-    circleLoader.hide();
+    // Keep circle loader up through height-up + redirect (do not hide on success).
     setPhase('exiting');
   };
 
@@ -97,6 +104,10 @@ const SignInPageClient: React.FC = () => {
     e.preventDefault();
     if (signInPreviewLoadingRef.current) return;
     if (phase === 'exiting') return;
+    if (!credentialsOpen) {
+      setCredentialsOpen(true);
+      return;
+    }
     setError(null);
     setErrorCode(null);
     const em = normalizeEmail(email);
@@ -145,70 +156,27 @@ const SignInPageClient: React.FC = () => {
   };
 
   const formDisabled = phase === 'exiting' || submitting;
+  const signingIn = submitting || phase === 'exiting';
+  const belowCard =
+    phase === 'exiting' ? (
+      <AuthSuccessArellsMark />
+    ) : (
+      <Link
+        href="/signup"
+        className="auth-secondary-link auth-submit asset-range-button myinv-range-button"
+      >
+        Sign up
+      </Link>
+    );
 
   return (
     <>
-    <AuthPageShell
-      title="sign in"
-      belowCard={
-        <Link href="/signup" className="auth-secondary-link auth-submit--accent asset-range-button myinv-range-button">
-          Sign up
-        </Link>
-      }
-    >
+    <AuthPageShell title="sign in" belowCard={belowCard}>
       <div className={`auth-form-collapse-wrap${phase === 'exiting' ? ' is-collapsing' : ''}`}>
         <div
           className={`auth-form-collapse-inner${phase === 'exiting' ? ' auth-form-collapse-inner--inactive' : ''}`}
         >
-          <form className="auth-form" onSubmit={onSubmit} noValidate>
-            <label className="auth-label" htmlFor="auth-signin-email">
-              Email
-            </label>
-            <input
-              id="auth-signin-email"
-              className="auth-input"
-              type="email"
-              autoComplete="email"
-              placeholder=" "
-              value={email}
-              disabled={formDisabled}
-              onChange={(ev) => {
-                setEmail(ev.target.value);
-                setErrorCode((c) => {
-                  if (isEmailRelatedAuthError(c)) {
-                    setError(null);
-                    return null;
-                  }
-                  return c;
-                });
-              }}
-            />
-            <label className="auth-label" htmlFor="auth-signin-password">
-              Password
-            </label>
-            <input
-              id="auth-signin-password"
-              className="auth-input"
-              type="password"
-              autoComplete="current-password"
-              placeholder=" "
-              value={password}
-              disabled={formDisabled}
-              onChange={(ev) => {
-                setPassword(ev.target.value);
-                setErrorCode((c) => {
-                  if (isPasswordFieldAuthError(c) || c === 'USE_GOOGLE') {
-                    setError(null);
-                    return null;
-                  }
-                  return c;
-                });
-              }}
-            />
-            <Link ref={forgotLinkRef} href="/forgot-password" className="auth-forgot-link">
-              Forgot Password
-            </Link>
-            <AuthFormMessage error={error} errorCode={errorCode} />
+          <div className="auth-form auth-form--gate">
             <AuthGoogleSection
               mode="signin"
               disabled={formDisabled}
@@ -226,14 +194,76 @@ const SignInPageClient: React.FC = () => {
                 circleLoader.hide();
               }}
             />
-            <button
-              type="submit"
-              className="auth-submit asset-range-button myinv-range-button"
-              disabled={formDisabled}
-            >
-              Sign in
-            </button>
-          </form>
+
+            <form className="auth-credentials-form" onSubmit={onSubmit} noValidate>
+              <div
+                className={`auth-success-reveal auth-credentials-reveal${
+                  credentialsOpen ? ' is-open' : ''
+                }`}
+                style={credentialsReveal.style}
+              >
+                <div ref={credentialsReveal.innerRef} className="auth-success-reveal-inner">
+                  <label className="auth-label" htmlFor="auth-signin-email">
+                    Email
+                  </label>
+                  <input
+                    id="auth-signin-email"
+                    className="auth-input"
+                    type="email"
+                    autoComplete="email"
+                    placeholder=" "
+                    value={email}
+                    disabled={formDisabled || !credentialsOpen}
+                    onChange={(ev) => {
+                      setEmail(ev.target.value);
+                      setErrorCode((c) => {
+                        if (isEmailRelatedAuthError(c)) {
+                          setError(null);
+                          return null;
+                        }
+                        return c;
+                      });
+                    }}
+                  />
+                  <label className="auth-label" htmlFor="auth-signin-password">
+                    Password
+                  </label>
+                  <input
+                    id="auth-signin-password"
+                    className="auth-input"
+                    type="password"
+                    autoComplete="current-password"
+                    placeholder=" "
+                    value={password}
+                    disabled={formDisabled || !credentialsOpen}
+                    onChange={(ev) => {
+                      setPassword(ev.target.value);
+                      setErrorCode((c) => {
+                        if (isPasswordFieldAuthError(c) || c === 'USE_GOOGLE') {
+                          setError(null);
+                          return null;
+                        }
+                        return c;
+                      });
+                    }}
+                  />
+                  <Link ref={forgotLinkRef} href="/forgot-password" className="auth-forgot-link">
+                    Forgot Password
+                  </Link>
+                </div>
+              </div>
+
+              <AuthFormMessage error={error} errorCode={errorCode} />
+
+              <button
+                type="submit"
+                className="auth-submit asset-range-button myinv-range-button"
+                disabled={formDisabled}
+              >
+                {signingIn ? 'Signing in…' : 'Sign in'}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </AuthPageShell>

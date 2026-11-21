@@ -75,8 +75,7 @@ export type AuthGoogleSectionProps = {
 };
 
 /**
- * Google Identity button above the primary auth submit.
- * Same API for /signin and /signup: create-or-link + session cookie.
+ * Google first, then “or” — email form stays closed until Sign in / Sign up is clicked.
  */
 export default function AuthGoogleSection({
   mode,
@@ -187,12 +186,12 @@ export default function AuthGoogleSection({
       }`}
       aria-busy={busy || undefined}
     >
+      <div ref={buttonHostRef} className="auth-google-button-host" />
       <div className="auth-google-divider" aria-hidden="true">
         <span className="auth-google-divider-line" />
         <span className="auth-google-divider-text">or</span>
         <span className="auth-google-divider-line" />
       </div>
-      <div ref={buttonHostRef} className="auth-google-button-host" />
     </div>
   );
 }

@@ -12656,13 +12656,15 @@ a.growth-metrics-about-button:focus-visible {
 }
 
 .auth-form-collapse-inner {
-	min-height: 0;
+	/* min-height:0 only while collapsing — otherwise nested height-down (credentials)
+	   gets clipped by overflow:hidden on .auth-success-reveal-inner. */
 	overflow: visible;
 	opacity: 1;
 }
 
 /* Contain content only while the form height collapses (sign-up / verify exit) */
 .auth-form-collapse-wrap.is-collapsing .auth-form-collapse-inner {
+	min-height: 0;
 	overflow: hidden;
 }
 
@@ -12933,13 +12935,61 @@ a.auth-secondary-link.auth-submit--accent:focus-visible {
 	margin-top: 0;
 }
 
-/* Google Identity — above Sign in / Sign up submit */
+/* Google first → or → Sign in / Sign up (email form height-downs after that click) */
+.auth-form--gate {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	width: 100%;
+	text-align: left;
+}
+
+.auth-credentials-form {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	width: 100%;
+	gap: 0;
+	text-align: left;
+}
+
+/* Measured max-height (inline) — not grid 0fr/1fr, which under-cuts confirm password */
+.auth-credentials-reveal.auth-success-reveal {
+	display: block;
+	width: 100%;
+	margin-bottom: 0;
+	overflow: hidden;
+	grid-template-rows: unset;
+	transition: max-height 1.5s ease, margin-bottom 1.5s ease;
+}
+
+.auth-credentials-reveal.is-open {
+	margin-bottom: 4px;
+}
+
+/* Same as .auth-form / reset reveal — labels span full width so text-align:center works */
+.auth-credentials-reveal .auth-success-reveal-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	width: 100%;
+	min-height: 0;
+	overflow: visible;
+	/* Contain last-input negative margin so layout height covers the full control. */
+	padding-bottom: 8px;
+	box-sizing: border-box;
+}
+
+.auth-credentials-reveal .auth-input.auth-input--signup-verify-password {
+	margin-bottom: 0;
+}
+
 .auth-google-section {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
-	margin: 18px 0 14px;
+	margin: 0 0 4px;
 	gap: 14px;
 }
 
@@ -12955,6 +13005,17 @@ a.auth-secondary-link.auth-submit--accent:focus-visible {
 	gap: 10px;
 	width: 100%;
 	max-width: 280px;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+/* No reserved error band between “or” and Sign in / Sign up while credentials stay closed */
+.auth-credentials-form:not(:has(.auth-credentials-reveal.is-open)) > .auth-message-slot:not(:has(.auth-message)) {
+	min-height: 0;
+	height: 0;
+	margin: 0;
+	overflow: hidden;
+	pointer-events: none;
 }
 
 .auth-google-divider-line {

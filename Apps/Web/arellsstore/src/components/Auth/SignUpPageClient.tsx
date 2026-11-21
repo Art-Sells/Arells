@@ -7,6 +7,7 @@ import AuthFormMessage from './AuthFormMessage';
 import AuthSuccessArellsMark from './AuthSuccessArellsMark';
 import AuthOtpCodeForm from './AuthOtpCodeForm';
 import AuthGoogleSection from './AuthGoogleSection';
+import { useAuthCredentialsRevealHeight } from './useAuthCredentialsRevealHeight';
 import { useUser } from '../../context/UserContext';
 import { assetSharePath } from '../../lib/assets/assetSharePath';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
@@ -43,6 +44,9 @@ const SignUpPageClient: React.FC = () => {
   const [revealSuccess, setRevealSuccess] = useState(false);
   const [otpExiting, setOtpExiting] = useState(false);
   const [loadingPortfolio, setLoadingPortfolio] = useState(false);
+  /** Email/password fields hidden until Sign up is clicked. */
+  const [credentialsOpen, setCredentialsOpen] = useState(false);
+  const credentialsReveal = useAuthCredentialsRevealHeight(credentialsOpen);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -102,6 +106,11 @@ const SignUpPageClient: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (phase === 'exiting' || phase === 'googleExiting') return;
+    if (!credentialsOpen) {
+      setCredentialsOpen(true);
+      return;
+    }
     setError(null);
     setErrorCode(null);
     const em = normalizeEmail(email);
@@ -306,77 +315,7 @@ const SignUpPageClient: React.FC = () => {
                   : ''
               }`}
             >
-              <form className="auth-form" onSubmit={onSubmit} noValidate>
-                <label className="auth-label" htmlFor="auth-signup-email">
-                  Email
-                </label>
-                <input
-                  id="auth-signup-email"
-                  className="auth-input"
-                  type="email"
-                  autoComplete="email"
-                  placeholder=" "
-                  value={email}
-                  disabled={formDisabled}
-                  onChange={(ev) => {
-                    setEmail(ev.target.value);
-                    setErrorCode((c) => {
-                      if (isEmailRelatedAuthError(c)) {
-                        setError(null);
-                        return null;
-                      }
-                      return c;
-                    });
-                  }}
-                />
-                <label className="auth-label" htmlFor="auth-signup-password">
-                  Password
-                </label>
-                <input
-                  id="auth-signup-password"
-                  className="auth-input"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder=" "
-                  value={password}
-                  disabled={formDisabled}
-                  onChange={(ev) => {
-                    setPassword(ev.target.value);
-                    setErrorCode((c) => {
-                      if (isPasswordFieldAuthError(c)) {
-                        setError(null);
-                        return null;
-                      }
-                      return c;
-                    });
-                  }}
-                />
-                <label
-                  className="auth-label auth-label--signup-verify-password"
-                  htmlFor="auth-signup-password2"
-                >
-                  Confirm Password
-                </label>
-                <input
-                  id="auth-signup-password2"
-                  className="auth-input auth-input--signup-verify-password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder=" "
-                  value={passwordConfirm}
-                  disabled={formDisabled}
-                  onChange={(ev) => {
-                    setPasswordConfirm(ev.target.value);
-                    setErrorCode((c) => {
-                      if (isConfirmFieldAuthError(c)) {
-                        setError(null);
-                        return null;
-                      }
-                      return c;
-                    });
-                  }}
-                />
-                <AuthFormMessage error={error} errorCode={errorCode} />
+              <div className="auth-form auth-form--gate">
                 <AuthGoogleSection
                   mode="signup"
                   disabled={submitting || formDisabled}
@@ -386,14 +325,98 @@ const SignUpPageClient: React.FC = () => {
                     setErrorCode('GOOGLE_FAILED');
                   }}
                 />
-                <button
-                  type="submit"
-                  className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button"
-                  disabled={submitting || formDisabled}
-                >
-                  {submitting ? 'Signing up…' : 'Sign up'}
-                </button>
-              </form>
+
+                <form className="auth-credentials-form" onSubmit={onSubmit} noValidate>
+                  <div
+                    className={`auth-success-reveal auth-credentials-reveal${
+                      credentialsOpen ? ' is-open' : ''
+                    }`}
+                    style={credentialsReveal.style}
+                  >
+                    <div ref={credentialsReveal.innerRef} className="auth-success-reveal-inner">
+                      <label className="auth-label" htmlFor="auth-signup-email">
+                        Email
+                      </label>
+                      <input
+                        id="auth-signup-email"
+                        className="auth-input"
+                        type="email"
+                        autoComplete="email"
+                        placeholder=" "
+                        value={email}
+                        disabled={formDisabled || !credentialsOpen}
+                        onChange={(ev) => {
+                          setEmail(ev.target.value);
+                          setErrorCode((c) => {
+                            if (isEmailRelatedAuthError(c)) {
+                              setError(null);
+                              return null;
+                            }
+                            return c;
+                          });
+                        }}
+                      />
+                      <label className="auth-label" htmlFor="auth-signup-password">
+                        Password
+                      </label>
+                      <input
+                        id="auth-signup-password"
+                        className="auth-input"
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder=" "
+                        value={password}
+                        disabled={formDisabled || !credentialsOpen}
+                        onChange={(ev) => {
+                          setPassword(ev.target.value);
+                          setErrorCode((c) => {
+                            if (isPasswordFieldAuthError(c)) {
+                              setError(null);
+                              return null;
+                            }
+                            return c;
+                          });
+                        }}
+                      />
+                      <label
+                        className="auth-label auth-label--signup-verify-password"
+                        htmlFor="auth-signup-password2"
+                      >
+                        Confirm Password
+                      </label>
+                      <input
+                        id="auth-signup-password2"
+                        className="auth-input auth-input--signup-verify-password"
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder=" "
+                        value={passwordConfirm}
+                        disabled={formDisabled || !credentialsOpen}
+                        onChange={(ev) => {
+                          setPasswordConfirm(ev.target.value);
+                          setErrorCode((c) => {
+                            if (isConfirmFieldAuthError(c)) {
+                              setError(null);
+                              return null;
+                            }
+                            return c;
+                          });
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <AuthFormMessage error={error} errorCode={errorCode} />
+
+                  <button
+                    type="submit"
+                    className="auth-submit asset-range-button myinv-range-button"
+                    disabled={submitting || formDisabled}
+                  >
+                    {submitting ? 'Signing up…' : 'Sign up'}
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         ) : null}
