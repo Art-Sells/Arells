@@ -292,8 +292,10 @@ export default function BitcoinSeasonTeaser({ seasonOnly = false }: BitcoinSeaso
             )}
           </div>
           <div className="asset-bitcoin-season-teaser-episode">
-            <p className="asset-bitcoin-season-teaser-cadence">
-              <span>Episode Two</span>
+            <p className="asset-bitcoin-season-teaser-cadence asset-bitcoin-season-teaser-cadence--dated">
+              <span className="asset-bitcoin-season-teaser-episode-title">Saturday</span>
+              <span className="asset-bitcoin-season-teaser-episode-dot" aria-hidden="true" />
+              <span className="asset-bitcoin-season-teaser-episode-date">10/31/26</span>
             </p>
             <VideoPlayer
               theme="bitcoin"
@@ -303,8 +305,8 @@ export default function BitcoinSeasonTeaser({ seasonOnly = false }: BitcoinSeaso
             />
           </div>
           <div className="asset-bitcoin-season-teaser-episode">
-            <p className="asset-bitcoin-season-teaser-cadence">
-              <span>Episode Three</span>
+            <p className="asset-bitcoin-season-teaser-cadence asset-bitcoin-season-teaser-cadence--dated">
+              <span className="asset-bitcoin-season-teaser-episode-title">Episode Three</span>
             </p>
             <div className="asset-bitcoin-season-teaser-cadence-wrap">
               <p className="asset-bitcoin-season-teaser-cadence">
@@ -313,8 +315,10 @@ export default function BitcoinSeasonTeaser({ seasonOnly = false }: BitcoinSeaso
             </div>
           </div>
           <div className="asset-bitcoin-season-teaser-episode">
-            <p className="asset-bitcoin-season-teaser-cadence">
-              <span>Episode One</span>
+            <p className="asset-bitcoin-season-teaser-cadence asset-bitcoin-season-teaser-cadence--dated">
+              <span className="asset-bitcoin-season-teaser-episode-title">Saturday</span>
+              <span className="asset-bitcoin-season-teaser-episode-dot" aria-hidden="true" />
+              <span className="asset-bitcoin-season-teaser-episode-date">10/03/26</span>
             </p>
             <VideoPlayer
               theme="bitcoin"

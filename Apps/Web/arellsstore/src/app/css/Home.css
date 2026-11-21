@@ -1991,8 +1991,34 @@ a.asset-alien-photo-hit {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
+	align-items: baseline;
 	column-gap: 0.3em;
 	row-gap: 0;
+}
+
+/* Episode One / Two titles + dates: same type scale as week-segment `.tbar-date` */
+.asset-bitcoin-season-teaser-cadence--dated {
+	font-size: 15px;
+	font-weight: 700;
+	letter-spacing: -0.4px;
+}
+
+.asset-bitcoin-season-teaser-episode-title,
+.asset-bitcoin-season-teaser-episode-date {
+	font-weight: 700;
+	font-size: 15px;
+	letter-spacing: -0.4px;
+	line-height: 1;
+}
+
+.asset-bitcoin-season-teaser-episode-dot {
+	display: inline-block;
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	background: currentColor;
+	flex-shrink: 0;
+	align-self: center;
 }
 
 @media (max-width: 750px) {
@@ -2008,8 +2034,21 @@ a.asset-alien-photo-hit {
 		column-gap: 0;
 	}
 
+	.asset-bitcoin-season-teaser-cadence--dated {
+		font-size: 15px;
+		letter-spacing: -0.4px;
+		flex-direction: row;
+		flex-wrap: wrap;
+		column-gap: 0.3em;
+	}
+
 	.asset-bitcoin-season-teaser-cadence span:last-child {
 		margin-top: 0px;
+	}
+
+	.asset-bitcoin-season-teaser-episode-title,
+	.asset-bitcoin-season-teaser-episode-date {
+		font-size: 15px;
 	}
 }
 
