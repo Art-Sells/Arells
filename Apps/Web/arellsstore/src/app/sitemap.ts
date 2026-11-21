@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/signin',
     '/signup',
     '/about',
+    '/privacy',
     '/my-investments',
     '/vavity',
   ];

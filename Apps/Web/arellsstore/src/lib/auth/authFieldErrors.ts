@@ -25,7 +25,8 @@ export function isPasswordFieldAuthError(code: string | null): boolean {
     code === 'PASSWORD_POLICY' ||
     code === 'SAME_PASSWORD' ||
     code === 'REQUIRED_PASSWORD' ||
-    code === 'PASSWORD_MISMATCH'
+    code === 'PASSWORD_MISMATCH' ||
+    code === 'USE_GOOGLE'
   );
 }
 

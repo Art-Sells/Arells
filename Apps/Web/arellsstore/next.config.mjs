@@ -88,6 +88,14 @@ const nextConfig = {
         defs['process.env.AUTH_JWT_SECRET'] = JSON.stringify(authJwtSecret);
       }
 
+      const googleClientId =
+        process.env.GOOGLE_CLIENT_ID?.trim() ||
+        process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.trim();
+      if (googleClientId) {
+        defs['process.env.GOOGLE_CLIENT_ID'] = JSON.stringify(googleClientId);
+        defs['process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID'] = JSON.stringify(googleClientId);
+      }
+
       const massiveApiKey = process.env.MASSIVE_API_KEY?.trim();
       if (massiveApiKey) {
         defs['process.env.MASSIVE_API_KEY'] = JSON.stringify(massiveApiKey);

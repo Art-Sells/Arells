@@ -36,6 +36,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
+    if (!auth.passwordHash) {
+      return res.status(401).json({
+        error: 'Use Sign in with Google for this account.',
+        code: 'USE_GOOGLE',
+      });
+    }
+
     const ok = await bcrypt.compare(password, auth.passwordHash);
     if (!ok) {
       return res.status(401).json({
