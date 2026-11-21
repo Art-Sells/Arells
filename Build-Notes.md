@@ -53,6 +53,7 @@ All blood and investment sections/delete all the code related to them in my-inve
 -*update indexing after main submission, check google after a week*
 
 - Minor Fixes:
+- - Season One on mobile border/image|video spacing
 - - (about buton accent color flicker and toggle accent color issues [take pic for reference to fix])
 - - Fix Favicon issue on Yahoo and other Websearchers
 
