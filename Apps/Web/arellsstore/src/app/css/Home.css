@@ -470,6 +470,74 @@ body {
 	color: var(--myinv-accent-color);
 }
 
+/* Privacy Policy — same shell as About; wider card + readable body copy */
+.privacy-page .privacy-card {
+	width: min(560px, 100%);
+	max-width: 560px;
+	text-align: left;
+}
+
+.privacy-page .privacy-title {
+	text-align: center;
+}
+
+.privacy-updated {
+	margin: 10px 0 0;
+	text-align: center;
+	font-size: 12px;
+	font-weight: 700;
+	color: #888;
+}
+
+.privacy-heading {
+	margin: 0 0 10px;
+	font-size: 14px;
+	font-weight: 800;
+	letter-spacing: 0;
+	color: var(--myinv-accent-color);
+}
+
+.privacy-body {
+	margin: 0 0 10px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.55;
+	color: #555;
+}
+
+.privacy-body:last-child {
+	margin-bottom: 0;
+}
+
+.privacy-body--muted {
+	color: #888;
+	font-weight: 700;
+}
+
+.privacy-list {
+	margin: 0 0 10px;
+	padding-left: 1.15em;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.55;
+	color: #555;
+}
+
+.privacy-list li + li {
+	margin-top: 6px;
+}
+
+.privacy-link {
+	color: var(--myinv-accent-color);
+	font-weight: 800;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.privacy-link:hover {
+	opacity: 0.85;
+}
+
 .home-loader-overlay {
 	position: fixed;
 	inset: 0;
@@ -12857,6 +12925,56 @@ a.auth-secondary-link.auth-submit--accent:focus-visible {
 .auth-message-slot + .auth-submit,
 .auth-message-slot + a.auth-submit {
 	margin-top: 0;
+}
+
+/* Google Identity — above Sign in / Sign up submit */
+.auth-google-section {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	margin: 18px 0 14px;
+	gap: 14px;
+}
+
+.auth-google-section.is-busy {
+	pointer-events: none;
+	opacity: 0.72;
+}
+
+.auth-google-divider {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	width: 100%;
+	max-width: 280px;
+}
+
+.auth-google-divider-line {
+	flex: 1;
+	height: 1px;
+	background: rgba(0, 0, 0, 0.12);
+}
+
+.auth-google-divider-text {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: lowercase;
+	color: rgba(0, 0, 0, 0.45);
+}
+
+.auth-google-button-host {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	max-width: 320px;
+	min-height: 40px;
+}
+
+.auth-google-button-host > div {
+	margin: 0 auto !important;
 }
 
 /*

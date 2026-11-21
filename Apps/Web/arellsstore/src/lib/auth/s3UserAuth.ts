@@ -9,9 +9,19 @@ function bucket(): string {
   return b;
 }
 
+export type GoogleAuthProvider = {
+  sub: string;
+  linkedAt: number;
+};
+
+export type UserAuthProviders = {
+  google?: GoogleAuthProvider;
+};
+
 export type UserAuthRecord = {
   email: string;
-  passwordHash: string;
+  /** Absent for Google-only accounts until they set a password. */
+  passwordHash?: string;
   verified: boolean;
   verificationToken?: string;
   verificationExpiresAt?: number;
@@ -23,6 +33,8 @@ export type UserAuthRecord = {
   /** Normalized referrer email set once at registration. */
   referredByEmail?: string;
   referredAt?: number;
+  /** Linked social providers (Google first). */
+  providers?: UserAuthProviders;
 };
 
 export type PendingVerification = {

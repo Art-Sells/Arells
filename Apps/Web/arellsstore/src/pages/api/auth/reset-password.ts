@@ -48,16 +48,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'This reset session is invalid.', code: 'BAD_TOKEN' });
     }
 
-    const samePassword = await bcrypt.compare(password, auth.passwordHash);
-    if (samePassword) {
-      return res.status(400).json({
-        error: 'New password cannot be the same as your current password.',
-        code: 'SAME_PASSWORD',
-      });
+    if (auth.passwordHash) {
+      const samePassword = await bcrypt.compare(password, auth.passwordHash);
+      if (samePassword) {
+        return res.status(400).json({
+          error: 'New password cannot be the same as your current password.',
+          code: 'SAME_PASSWORD',
+        });
+      }
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
     await putUserAuth(email, {
+      ...auth,
       email,
       passwordHash,
       verified: auth.verified,

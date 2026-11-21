@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthSuccessArellsMark from './AuthSuccessArellsMark';
 import AuthOtpCodeForm from './AuthOtpCodeForm';
+import AuthGoogleSection from './AuthGoogleSection';
 import { useUser } from '../../context/UserContext';
 import { assetSharePath } from '../../lib/assets/assetSharePath';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
@@ -24,6 +26,7 @@ import {
 const COLLAPSE_MS = 1500;
 
 const SignUpPageClient: React.FC = () => {
+  const router = useRouter();
   const { refreshAuthSession, shareId } = useUser();
 
   const [email, setEmail] = useState('');
@@ -31,7 +34,9 @@ const SignUpPageClient: React.FC = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
-  const [phase, setPhase] = useState<'form' | 'exiting' | 'sent' | 'verified'>('form');
+  const [phase, setPhase] = useState<'form' | 'exiting' | 'sent' | 'verified' | 'googleExiting'>(
+    'form'
+  );
   const [sentTo, setSentTo] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [otpSubmitting, setOtpSubmitting] = useState(false);
@@ -57,6 +62,15 @@ const SignUpPageClient: React.FC = () => {
   }, [phase]);
 
   useEffect(() => {
+    if (phase !== 'googleExiting') return;
+    const t = window.setTimeout(() => {
+      router.push('/bitcoin');
+      router.refresh();
+    }, COLLAPSE_MS);
+    return () => window.clearTimeout(t);
+  }, [phase, router]);
+
+  useEffect(() => {
     if (!otpExiting) return;
     const t = window.setTimeout(() => {
       setOtpExiting(false);
@@ -66,7 +80,7 @@ const SignUpPageClient: React.FC = () => {
   }, [otpExiting]);
 
   useEffect(() => {
-    if (phase !== 'exiting' && !otpExiting) return;
+    if (phase !== 'exiting' && phase !== 'googleExiting' && !otpExiting) return;
     return scrollDocumentToTopOverMs(AUTH_COLLAPSE_SCROLL_TOP_MS);
   }, [phase, otpExiting]);
 
@@ -184,9 +198,13 @@ const SignUpPageClient: React.FC = () => {
     window.location.assign(assetSharePath('/bitcoin', shareId));
   };
 
-  const formDisabled = phase === 'exiting';
+  const formDisabled = phase === 'exiting' || phase === 'googleExiting';
   const belowMark =
-    phase === 'exiting' || phase === 'sent' || phase === 'verified' || otpExiting ? (
+    phase === 'exiting' ||
+    phase === 'googleExiting' ||
+    phase === 'sent' ||
+    phase === 'verified' ||
+    otpExiting ? (
       <AuthSuccessArellsMark />
     ) : undefined;
 
@@ -196,6 +214,11 @@ const SignUpPageClient: React.FC = () => {
       : phase === 'sent' || otpExiting
         ? 'verify email'
         : 'sign up';
+
+  const finishGoogleSignUp = async () => {
+    await refreshAuthSession();
+    setPhase('googleExiting');
+  };
 
   return (
     <>
@@ -270,10 +293,18 @@ const SignUpPageClient: React.FC = () => {
           </div>
         ) : null}
 
-        {phase === 'form' || phase === 'exiting' ? (
-          <div className={`auth-form-collapse-wrap${phase === 'exiting' ? ' is-collapsing' : ''}`}>
+        {phase === 'form' || phase === 'exiting' || phase === 'googleExiting' ? (
+          <div
+            className={`auth-form-collapse-wrap${
+              phase === 'exiting' || phase === 'googleExiting' ? ' is-collapsing' : ''
+            }`}
+          >
             <div
-              className={`auth-form-collapse-inner${phase === 'exiting' ? ' auth-form-collapse-inner--inactive' : ''}`}
+              className={`auth-form-collapse-inner${
+                phase === 'exiting' || phase === 'googleExiting'
+                  ? ' auth-form-collapse-inner--inactive'
+                  : ''
+              }`}
             >
               <form className="auth-form" onSubmit={onSubmit} noValidate>
                 <label className="auth-label" htmlFor="auth-signup-email">
@@ -346,6 +377,15 @@ const SignUpPageClient: React.FC = () => {
                   }}
                 />
                 <AuthFormMessage error={error} errorCode={errorCode} />
+                <AuthGoogleSection
+                  mode="signup"
+                  disabled={submitting || formDisabled}
+                  onSuccess={finishGoogleSignUp}
+                  onError={(message) => {
+                    setError(message);
+                    setErrorCode('GOOGLE_FAILED');
+                  }}
+                />
                 <button
                   type="submit"
                   className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button"

@@ -6,14 +6,17 @@ import { useRouter } from 'next/navigation';
 import AuthPageShell from './AuthPageShell';
 import AuthFormMessage from './AuthFormMessage';
 import AuthCircleLoader from './AuthCircleLoader';
+import AuthGoogleSection from './AuthGoogleSection';
 import { useAuthCircleLoader } from './useAuthCircleLoader';
 import { useUser } from '../../context/UserContext';
 import { EMAIL_RE, normalizeEmail } from '../../lib/auth/normalize';
 import { isEmailRelatedAuthError, isPasswordFieldAuthError } from '../../lib/auth/authFieldErrors';
+import { AUTH_COLLAPSE_SCROLL_TOP_MS, scrollDocumentToTopOverMs } from '../../lib/client/documentScroll';
 
 /** Fallback when POST /api/auth/login fails without a usable API message. */
 const SIGN_IN_FAILED_MESSAGE = 'Wrong email/password combo.';
 const SIGN_IN_FAILED_CODE = 'SIGN_IN_COMBO';
+const COLLAPSE_MS = 1500;
 
 function cssKeyframeName(a: Animation): string {
   return (a as CSSAnimation).animationName ?? '';
@@ -44,6 +47,7 @@ const SignInPageClient: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [phase, setPhase] = useState<'form' | 'exiting'>('form');
   const circleLoader = useAuthCircleLoader();
   /** `?signInPreview=loading` — frozen signing-in UI for styling (no API, no redirect). */
   const signInPreviewLoadingRef = useRef(false);
@@ -69,9 +73,30 @@ const SignInPageClient: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (phase !== 'exiting') return;
+    return scrollDocumentToTopOverMs(AUTH_COLLAPSE_SCROLL_TOP_MS);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'exiting') return;
+    const t = window.setTimeout(() => {
+      router.push('/bitcoin');
+      router.refresh();
+    }, COLLAPSE_MS);
+    return () => window.clearTimeout(t);
+  }, [phase, router]);
+
+  const finishSignIn = async () => {
+    await refreshAuthSession();
+    circleLoader.hide();
+    setPhase('exiting');
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (signInPreviewLoadingRef.current) return;
+    if (phase === 'exiting') return;
     setError(null);
     setErrorCode(null);
     const em = normalizeEmail(email);
@@ -111,16 +136,15 @@ const SignInPageClient: React.FC = () => {
         circleLoader.hide();
         return;
       }
-      await refreshAuthSession();
-      /* /bitcoin redirects signed-in users to /bitcoin/{shareId}. */
-      router.push('/bitcoin');
-      router.refresh();
+      await finishSignIn();
     } catch {
       setError('Something went wrong. Try again.');
       setSubmitting(false);
       circleLoader.hide();
     }
   };
+
+  const formDisabled = phase === 'exiting' || submitting;
 
   return (
     <>
@@ -132,61 +156,86 @@ const SignInPageClient: React.FC = () => {
         </Link>
       }
     >
-      <form className="auth-form" onSubmit={onSubmit} noValidate>
-        <label className="auth-label" htmlFor="auth-signin-email">
-          Email
-        </label>
-        <input
-          id="auth-signin-email"
-          className="auth-input"
-          type="email"
-          autoComplete="email"
-          placeholder=" "
-          value={email}
-          onChange={(ev) => {
-            setEmail(ev.target.value);
-            setErrorCode((c) => {
-              if (isEmailRelatedAuthError(c)) {
-                setError(null);
-                return null;
-              }
-              return c;
-            });
-          }}
-        />
-        <label className="auth-label" htmlFor="auth-signin-password">
-          Password
-        </label>
-        <input
-          id="auth-signin-password"
-          className="auth-input"
-          type="password"
-          autoComplete="current-password"
-          placeholder=" "
-          value={password}
-          onChange={(ev) => {
-            setPassword(ev.target.value);
-            setErrorCode((c) => {
-              if (isPasswordFieldAuthError(c)) {
-                setError(null);
-                return null;
-              }
-              return c;
-            });
-          }}
-        />
-        <Link ref={forgotLinkRef} href="/forgot-password" className="auth-forgot-link">
-          Forgot Password
-        </Link>
-        <AuthFormMessage error={error} errorCode={errorCode} />
-        <button
-          type="submit"
-          className="auth-submit asset-range-button myinv-range-button"
-          disabled={submitting}
+      <div className={`auth-form-collapse-wrap${phase === 'exiting' ? ' is-collapsing' : ''}`}>
+        <div
+          className={`auth-form-collapse-inner${phase === 'exiting' ? ' auth-form-collapse-inner--inactive' : ''}`}
         >
-          Sign in
-        </button>
-      </form>
+          <form className="auth-form" onSubmit={onSubmit} noValidate>
+            <label className="auth-label" htmlFor="auth-signin-email">
+              Email
+            </label>
+            <input
+              id="auth-signin-email"
+              className="auth-input"
+              type="email"
+              autoComplete="email"
+              placeholder=" "
+              value={email}
+              disabled={formDisabled}
+              onChange={(ev) => {
+                setEmail(ev.target.value);
+                setErrorCode((c) => {
+                  if (isEmailRelatedAuthError(c)) {
+                    setError(null);
+                    return null;
+                  }
+                  return c;
+                });
+              }}
+            />
+            <label className="auth-label" htmlFor="auth-signin-password">
+              Password
+            </label>
+            <input
+              id="auth-signin-password"
+              className="auth-input"
+              type="password"
+              autoComplete="current-password"
+              placeholder=" "
+              value={password}
+              disabled={formDisabled}
+              onChange={(ev) => {
+                setPassword(ev.target.value);
+                setErrorCode((c) => {
+                  if (isPasswordFieldAuthError(c) || c === 'USE_GOOGLE') {
+                    setError(null);
+                    return null;
+                  }
+                  return c;
+                });
+              }}
+            />
+            <Link ref={forgotLinkRef} href="/forgot-password" className="auth-forgot-link">
+              Forgot Password
+            </Link>
+            <AuthFormMessage error={error} errorCode={errorCode} />
+            <AuthGoogleSection
+              mode="signin"
+              disabled={formDisabled}
+              onStart={() => {
+                setSubmitting(true);
+                setError(null);
+                setErrorCode(null);
+                circleLoader.show();
+              }}
+              onSuccess={finishSignIn}
+              onError={(message) => {
+                setError(message);
+                setErrorCode('GOOGLE_FAILED');
+                setSubmitting(false);
+                circleLoader.hide();
+              }}
+            />
+            <button
+              type="submit"
+              className="auth-submit asset-range-button myinv-range-button"
+              disabled={formDisabled}
+            >
+              Sign in
+            </button>
+          </form>
+        </div>
+      </div>
     </AuthPageShell>
     <AuthCircleLoader mounted={circleLoader.mounted} visible={circleLoader.visible} />
     </>
