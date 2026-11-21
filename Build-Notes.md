@@ -38,8 +38,6 @@ All blood and investment sections/delete all the code related to them in my-inve
 - *brink1111111@outlook.com and j6767677@outlook.com test emails*
 
 #### If sharing (organic) happens:
-- Integrate sign in with Google immediately (if organic starts)
-- Add Terms of Service to Stripe Public Details and Sign-up page (under).
 - Start process of building the APP (test for Android + IOS))... After Episode 4 (App Link On top of Website [Sticky])
 - Prepare to change banners for other assets
 - Purchase MDR for: Binaural Frequency Meditation (and others) - Positive Relaxing Dreamy Peaceful Ambient 
