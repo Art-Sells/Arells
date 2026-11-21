@@ -4,8 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import HomeAboutMountLoader from '../../components/HomeAboutMountLoader';
 
-const LAST_UPDATED = 'November 21, 2026';
-
 const PrivacyPageClient = () => {
   const [slideIn, setSlideIn] = useState(false);
   useEffect(() => {
@@ -44,8 +42,7 @@ const PrivacyPageClient = () => {
           <div className={`about-content privacy-content${slideIn ? ' page-slide-in' : ''}`}>
             <div className="about-section about-section--outer myinv-accent-border">
               <div className="about-section about-section--lead myinv-accent-border">
-                <p className="about-text about-text--outer privacy-title">Privacy Policy</p>
-                <p className="privacy-updated">Last updated: {LAST_UPDATED}</p>
+                <p className="about-text about-text--mid privacy-title">Privacy Policy</p>
               </div>
 
               <div className="about-section about-section--mid myinv-accent-border">
@@ -157,7 +154,7 @@ const PrivacyPageClient = () => {
                   </p>
                 </section>
 
-                <section className="about-section about-section--mid-body myinv-accent-border privacy-block">
+                <section className="about-section about-section--mid-body myinv-accent-border privacy-block privacy-block--contact">
                   <h2 className="privacy-heading">Contact</h2>
                   <p className="privacy-body">
                     Questions about privacy:{' '}
