@@ -1679,6 +1679,11 @@ a.asset-alien-photo-hit {
 	width: 100%;
 }
 
+/* Badge is a div inside the Link — override season-teaser `cursor: default`. */
+.home-bitcoin-alien-race-card .asset-bitcoin-season-teaser-badge > div.bitcoin-alien-race-asset-card.myinv-asset-home-card {
+	cursor: pointer;
+}
+
 /* Nested badge owns its own border/fill; outer link handles hover lift. */
 .home-bitcoin-alien-race-card .bitcoin-alien-race-asset-card.myinv-asset-home-card:hover,
 .home-bitcoin-alien-race-card .bitcoin-alien-race-asset-card.myinv-asset-home-card:active {
