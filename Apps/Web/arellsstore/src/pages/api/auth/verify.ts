@@ -32,8 +32,8 @@ async function completeVerification(
   await putUserAuth(
     email,
     mergeAuthPreservingReferral(auth, {
+      ...auth,
       email,
-      passwordHash: auth.passwordHash,
       verified: true,
       verificationToken: undefined,
       verificationExpiresAt: undefined,
