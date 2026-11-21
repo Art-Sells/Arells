@@ -681,7 +681,6 @@ const BitcoinMyCharacterPageClient: React.FC<BitcoinMyCharacterPageClientProps> 
           smallIcon
           showTrailer
           hideWordmark
-          hideSigninPrompt
         />
       </div>
     );
