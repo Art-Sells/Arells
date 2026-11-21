@@ -11,11 +11,12 @@ export function useAssetSummaryCircleLoader() {
   const [phase, setPhase] = useState<LoaderPhase>('hidden');
   const dismissedRef = useRef(false);
 
-  const show = useCallback(() => {
+  const show = useCallback((opts?: { immediate?: boolean }) => {
     dismissedRef.current = false;
     setPhase((current) => {
       if (current === 'entering' || current === 'visible') return current;
-      return 'entering';
+      // Page mount: visible on first paint (home-style). Soft fade-in stays default.
+      return opts?.immediate ? 'visible' : 'entering';
     });
   }, []);
 

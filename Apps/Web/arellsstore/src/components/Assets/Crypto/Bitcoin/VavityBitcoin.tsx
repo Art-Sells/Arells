@@ -80,7 +80,10 @@ const VavityBitcoin: React.FC = () => {
   const { email, isSignedIn, authSessionLoading, sessionReady, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [bitcoinEmptyPreview, setBitcoinEmptyPreview] = useState(false);
   const guestPreview = useGuestPreview();
-  const isGuestView = guestPreview || (!bitcoinEmptyPreview && !isSignedIn && !email);
+  // Match home: hold signed-in shell + loader while session resolves (don't flash guest).
+  const isGuestView =
+    guestPreview ||
+    (!bitcoinEmptyPreview && !authSessionLoading && !isSignedIn && !email);
   const pathShareId = useMemo(() => bitcoinPathShareId(pathname), [pathname]);
   const shareGuest = useBitcoinGuestCharacterMedia(pathShareId, isGuestView);
   const summaryCircleLoader = useAssetSummaryCircleLoader();
@@ -3665,21 +3668,22 @@ const VavityBitcoin: React.FC = () => {
   ]);
 
 
-  useEffect(() => {
+  // useLayoutEffect + immediate: first paint shows the ring (like HomeAboutMountLoader).
+  useLayoutEffect(() => {
     if (isGuestView) return;
     if (bitcoinEmptyPreview) return;
 
     // Empty / still fetching: keep circle through mount hold until empty actions reveal.
     if (!hasInvestmentsUI) {
       if (emptyActionsMountPhase === 'hidden') {
-        summaryCircleLoader.show();
+        summaryCircleLoader.show({ immediate: true });
       }
       return;
     }
 
     if (!initialFetchDone) return;
     if (investmentsWholeHeight > 0 && summaryOpen) return;
-    summaryCircleLoader.show();
+    summaryCircleLoader.show({ immediate: true });
   }, [
     isGuestView,
     bitcoinEmptyPreview,
