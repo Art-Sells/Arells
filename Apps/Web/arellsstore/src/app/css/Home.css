@@ -470,6 +470,74 @@ body {
 	color: var(--myinv-accent-color);
 }
 
+/* Privacy Policy — same shell as About; wider card + readable body copy */
+.privacy-page .privacy-card {
+	width: min(560px, 100%);
+	max-width: 560px;
+	text-align: left;
+}
+
+.privacy-page .privacy-title {
+	text-align: center;
+}
+
+.privacy-updated {
+	margin: 10px 0 0;
+	text-align: center;
+	font-size: 12px;
+	font-weight: 700;
+	color: #888;
+}
+
+.privacy-heading {
+	margin: 0 0 10px;
+	font-size: 14px;
+	font-weight: 800;
+	letter-spacing: 0;
+	color: var(--myinv-accent-color);
+}
+
+.privacy-body {
+	margin: 0 0 10px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.55;
+	color: #555;
+}
+
+.privacy-body:last-child {
+	margin-bottom: 0;
+}
+
+.privacy-body--muted {
+	color: #888;
+	font-weight: 700;
+}
+
+.privacy-list {
+	margin: 0 0 10px;
+	padding-left: 1.15em;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.55;
+	color: #555;
+}
+
+.privacy-list li + li {
+	margin-top: 6px;
+}
+
+.privacy-link {
+	color: var(--myinv-accent-color);
+	font-weight: 800;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.privacy-link:hover {
+	opacity: 0.85;
+}
+
 .home-loader-overlay {
 	position: fixed;
 	inset: 0;
