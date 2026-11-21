@@ -13527,7 +13527,9 @@ a.asset-action-button--save-signin {
 
 .auth-page .auth-forgot-link:link,
 .auth-page .auth-forgot-link:visited,
-.auth-page button.auth-forgot-link {
+.auth-page button.auth-forgot-link,
+.guest-landing-footer-stack .auth-forgot-link:link,
+.guest-landing-footer-stack .auth-forgot-link:visited {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -13548,7 +13550,9 @@ a.asset-action-button--save-signin {
 }
 
 .auth-page .auth-forgot-link:hover,
-.auth-page .auth-forgot-link:focus-visible {
+.auth-page .auth-forgot-link:focus-visible,
+.guest-landing-footer-stack .auth-forgot-link:hover,
+.guest-landing-footer-stack .auth-forgot-link:focus-visible {
 	opacity: 0.88;
 	outline: none;
 }
@@ -14671,15 +14675,18 @@ a.asset-action-button--save-signin {
 	gap: 14px;
 }
 
-.guest-landing-footer-stack .guest-landing-copyright--home {
-	margin: 0;
+.guest-landing-footer-rule {
+	display: block;
+	width: min(280px, 72%);
+	height: 1px;
+	margin: 0 auto 4px;
+	border: none;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--myinv-accent-color, #222) 45%, transparent);
 }
 
-.guest-landing-privacy-button.myinv-about-button {
-	width: auto;
-	min-width: 120px;
-	padding-left: 14px;
-	padding-right: 14px;
+.guest-landing-footer-stack .guest-landing-copyright--home {
+	margin: 0;
 }
 
 .myinv-page--weekly-guest .guest-landing-footer-stack {

@@ -24,9 +24,9 @@ export default function GuestLandingCopyright({ variant, cssModifier, className 
             : 'guest-landing-footer-stack'
         }
       >
-        <Link href="/privacy" className="myinv-about-button guest-landing-privacy-button">
-          <span className="myinv-about-button-bg" aria-hidden="true" />
-          <span className="myinv-about-button-text">Privacy Policy</span>
+        <span className="guest-landing-footer-rule" aria-hidden="true" />
+        <Link href="/privacy" className="auth-forgot-link guest-landing-privacy-link">
+          Privacy Policy
         </Link>
         <p className={copyrightClass}>© Arells, Inc</p>
       </div>
