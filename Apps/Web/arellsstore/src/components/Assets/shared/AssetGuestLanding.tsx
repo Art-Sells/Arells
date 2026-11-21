@@ -26,7 +26,6 @@ type AssetGuestLandingProps = {
   smallIcon?: boolean;
   showTrailer?: boolean;
   hideWordmark?: boolean;
-  hideSigninPrompt?: boolean;
 };
 
 export default function AssetGuestLanding({
@@ -39,7 +38,6 @@ export default function AssetGuestLanding({
   smallIcon = false,
   showTrailer = false,
   hideWordmark = false,
-  hideSigninPrompt = false,
 }: AssetGuestLandingProps) {
   const showPoster = Boolean(posterSrc);
   const hasLoop = Boolean(posterSrc && posterLoopSrc);
@@ -187,7 +185,6 @@ export default function AssetGuestLanding({
           {showTrailer ? <VideoPlayer theme="bitcoin" /> : null}
           <div className={`asset-guest-signin-nested asset-panel asset-panel--${cssModifier}`}>
             <div className="asset-guest-signin-inner">
-              {hideSigninPrompt ? null : <p className="asset-signin-believe-prompt">Sign in to learn more</p>}
               <Link
                 href="/signin"
                 className={`asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty asset-action-button--${cssModifier}`}

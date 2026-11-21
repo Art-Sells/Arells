@@ -130,7 +130,6 @@ const PortfolioWeeklyGuestLanding: React.FC = () => {
           </div>
           <div className="home-guest-signin-panel myinv-accent-border">
             <div className="home-guest-signin-inner">
-              <p className="home-guest-signin-lead">Sign In to learn more</p>
               <Link
                 href="/signin"
                 className="auth-submit auth-submit--accent auth-submit--signup-page asset-range-button myinv-range-button home-assets-show-more-button home-guest-signin-button"

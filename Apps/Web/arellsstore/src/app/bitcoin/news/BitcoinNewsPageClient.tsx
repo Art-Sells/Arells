@@ -269,7 +269,6 @@ const BitcoinNewsPageClient: React.FC<BitcoinNewsPageClientProps> = ({
           smallIcon
           showTrailer={!personalGuest}
           hideWordmark
-          hideSigninPrompt={!pathShareId || personalGuest}
         />
       </div>
     );
