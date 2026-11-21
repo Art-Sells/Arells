@@ -161,12 +161,13 @@ const SignInPageClient: React.FC = () => {
     phase === 'exiting' ? (
       <AuthSuccessArellsMark />
     ) : (
-      <Link
-        href="/signup"
+      <button
+        type="button"
         className="auth-secondary-link auth-submit asset-range-button myinv-range-button"
+        onClick={() => router.push('/signup')}
       >
         Sign up
-      </Link>
+      </button>
     );
 
   return (

@@ -12829,6 +12829,17 @@ a.growth-metrics-about-button:focus-visible {
 	border-radius: 15px;
 }
 
+/* Outline Sign up under sign-in: same type + accent as form Sign in */
+.auth-page button.auth-secondary-link.auth-submit.myinv-range-button:not(.auth-submit--accent) {
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 800;
+	line-height: 1.1;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
 a.auth-secondary-link.auth-submit--accent,
 a.auth-secondary-link.auth-submit--accent:hover,
 a.auth-secondary-link.auth-submit--accent:active,
