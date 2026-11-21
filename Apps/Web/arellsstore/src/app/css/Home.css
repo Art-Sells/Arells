@@ -470,23 +470,28 @@ body {
 	color: var(--myinv-accent-color);
 }
 
-/* Privacy Policy — same shell as About; wider card + readable body copy */
+/* Privacy Policy — same card width / icon centering as About */
 .privacy-page .privacy-card {
-	width: min(560px, 100%);
-	max-width: 560px;
-	text-align: left;
+	width: 350px;
+	max-width: 350px;
+	text-align: center;
 }
 
 .privacy-page .privacy-title {
+	width: auto;
+	max-width: 100%;
+	margin-top: 0;
+	margin-bottom: 0;
+	font-size: 22px;
 	text-align: center;
 }
 
-.privacy-updated {
-	margin: 10px 0 0;
+.privacy-page .privacy-block {
+	text-align: left;
+}
+
+.privacy-page .privacy-block--contact {
 	text-align: center;
-	font-size: 12px;
-	font-weight: 700;
-	color: #888;
 }
 
 .privacy-heading {
@@ -494,13 +499,14 @@ body {
 	font-size: 14px;
 	font-weight: 800;
 	letter-spacing: 0;
+	text-align: center;
 	color: var(--myinv-accent-color);
 }
 
 .privacy-body {
 	margin: 0 0 10px;
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 400;
 	line-height: 1.55;
 	color: #555;
 }
@@ -511,14 +517,14 @@ body {
 
 .privacy-body--muted {
 	color: #888;
-	font-weight: 700;
+	font-weight: 400;
 }
 
 .privacy-list {
 	margin: 0 0 10px;
 	padding-left: 1.15em;
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 400;
 	line-height: 1.55;
 	color: #555;
 }
@@ -14656,6 +14662,30 @@ a.asset-action-button--save-signin {
 	padding-bottom: 0;
 }
 
+.guest-landing-footer-stack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	margin: 28px 0 0;
+	gap: 14px;
+}
+
+.guest-landing-footer-stack .guest-landing-copyright--home {
+	margin: 0;
+}
+
+.guest-landing-privacy-button.myinv-about-button {
+	width: auto;
+	min-width: 120px;
+	padding-left: 14px;
+	padding-right: 14px;
+}
+
+.myinv-page--weekly-guest .guest-landing-footer-stack {
+	margin-top: 28px;
+}
+
 .asset-page--bitcoin .asset-guest-landing .guest-landing-copyright--asset {
 	color: var(--asset-slogan-color, rgb(172, 97, 0)) !important;
 }
@@ -17055,7 +17085,8 @@ a.is-nav-loading .home-asset-name.asset-action-button.is-nav-loading-chip::after
 	-webkit-text-fill-color: var(--myinv-accent-color);
 }
 
-.myinv-page--weekly-guest .myportfolio-weekly-guest-copyright.guest-landing-copyright--home {
+.myinv-page--weekly-guest .myportfolio-weekly-guest-copyright.guest-landing-copyright--home,
+.myinv-page--weekly-guest .myportfolio-weekly-guest-copyright .guest-landing-copyright--home {
 	color: var(--myinv-accent-color);
 }
 
