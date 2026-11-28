@@ -6,8 +6,7 @@ const EPISODE_THREE_S3_BASE =
 export const EPISODE_THREE_POSTER = `${EPISODE_THREE_S3_BASE}/TBARS1E3Preview.jpg`;
 
 export const EPISODE_THREE_SOURCES: TrailerSources = {
-  '480': `${EPISODE_THREE_S3_BASE}/TheBitcoinAlienRaceS1E3(480p).mp4`,
-  '720': `${EPISODE_THREE_S3_BASE}/TheBitcoinAlienRaceS1E3(720p).mp4`,
-  // TEMP: 1080p still uploading — point at 720p. Restore to the 1080p file once it finishes.
-  '1080': `${EPISODE_THREE_S3_BASE}/TheBitcoinAlienRaceS1E3(720p).mp4`,
+  '480': `${EPISODE_THREE_S3_BASE}/TheBitcoinAlienRaceS1E3(480p)c.mp4`,
+  '720': `${EPISODE_THREE_S3_BASE}/TheBitcoinAlienRaceS1E3(720p)c.mp4`,
+  '1080': `${EPISODE_THREE_S3_BASE}/TheBitcoinAlienRaceS1E3(1080p)c.mp4`,
 };
