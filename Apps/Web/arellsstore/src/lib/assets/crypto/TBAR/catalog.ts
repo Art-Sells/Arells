@@ -12,6 +12,15 @@ export type TBARCatalog = {
  */
 export const THE_BITCOIN_ALIEN_REPORT: TBARCatalog[] = [
   {
+    folder: '11.27.26',
+    files: [
+      'TBARS1E3W5(preview).jpg',
+      'TBARS1E3W5(480p).mp4',
+      'TBARS1E3W5(720p).mp4',
+      'TBARS1E3W5(1080p).mp4',
+    ],
+  },
+  {
     folder: '11.20.26',
     files: [
       'TBARS1E3W4(preview).jpg',
