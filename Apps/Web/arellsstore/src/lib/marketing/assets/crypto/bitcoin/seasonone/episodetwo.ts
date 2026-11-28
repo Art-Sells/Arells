@@ -6,7 +6,7 @@ const EPISODE_TWO_S3_BASE =
 export const EPISODE_TWO_POSTER = `${EPISODE_TWO_S3_BASE}/TBARS1E2Preview.jpg`;
 
 export const EPISODE_TWO_SOURCES: TrailerSources = {
-  '480': `${EPISODE_TWO_S3_BASE}/TheBitcoinAlienRaceS1E2(480p)c.mp4`,
-  '720': `${EPISODE_TWO_S3_BASE}/TheBitcoinAlienRaceS1E2(720p)c.mp4`,
-  '1080': `${EPISODE_TWO_S3_BASE}/TheBitcoinAlienRaceS1E2(1080p)c.mp4`,
+  '480': `${EPISODE_TWO_S3_BASE}/TheBitcoinAlienRaceS1E2(480p)cc.mp4`,
+  '720': `${EPISODE_TWO_S3_BASE}/TheBitcoinAlienRaceS1E2(720p)cc.mp4`,
+  '1080': `${EPISODE_TWO_S3_BASE}/TheBitcoinAlienRaceS1E2(1080p)cc.mp4`,
 };
